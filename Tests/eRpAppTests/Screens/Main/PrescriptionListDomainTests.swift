@@ -26,16 +26,11 @@ import eRpRemoteStorage
 import FHIRClient
 import XCTest
 
+@MainActor
 final class PrescriptionListDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        PrescriptionListDomain.State,
-        PrescriptionListDomain.Action,
-        PrescriptionListDomain.State,
-        PrescriptionListDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<PrescriptionListDomain>
 
     var mockPrescriptionRepository: MockPrescriptionRepository!
     var userSession: MockUserSession!
@@ -51,10 +46,9 @@ final class PrescriptionListDomainTests: XCTestCase {
     }
 
     private func testStore(for _: PrescriptionRepository) -> TestStore {
-        .init(
-            initialState: PrescriptionListDomain.State(),
-            reducer: PrescriptionListDomain()
-        ) { dependencies in
+        TestStore(initialState: PrescriptionListDomain.State()) {
+            PrescriptionListDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.serviceLocator = ServiceLocator()
             dependencies.userSession = userSession
@@ -62,7 +56,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
     }
 
-    func testLoadingPrescriptionsLocalTwoTimes() {
+    func testLoadingPrescriptionsLocalTwoTimes() async {
         // given
         let input: [Prescription] = []
         mockPrescriptionRepository.loadLocalReturnValue = Just(input)
@@ -74,31 +68,31 @@ final class PrescriptionListDomainTests: XCTestCase {
             .value(input)
 
         // when
-        store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading([])
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
             // then
             state.loadingState = expected
             state.prescriptions = input
         }
         // when
-        store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading(input)
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
             // then
             state.loadingState = expected
         }
     }
 
-    func testLoadingPrescriptionsFromCloudTwoTimesWhenAuthenticated() {
+    func testLoadingPrescriptionsFromCloudTwoTimesWhenAuthenticated() async {
         // given
         let input = Prescription.Fixtures.prescriptions
 
@@ -111,31 +105,31 @@ final class PrescriptionListDomainTests: XCTestCase {
         let expected: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value(input)
         // when
-        store.send(.loadRemotePrescriptionsAndSave) {
+        await store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             // then
             state.loadingState = expected
             state.prescriptions = input
         }
         // when
-        store.send(.loadRemotePrescriptionsAndSave) {
+        await store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             // then
             state.loadingState = expected
         }
     }
 
-    func testLoadingPrescriptionsFromCloudTwoTimesWhenNotAuthenticated() {
+    func testLoadingPrescriptionsFromCloudTwoTimesWhenNotAuthenticated() async {
         // given
         mockPrescriptionRepository.silentLoadRemoteForReturnValue = Just(.notAuthenticated)
             .setFailureType(to: PrescriptionRepositoryError.self)
@@ -146,30 +140,30 @@ final class PrescriptionListDomainTests: XCTestCase {
             .value([])
 
         // when
-        store.send(.loadRemotePrescriptionsAndSave) {
+        await store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             // then
             state.loadingState = expected
         }
         // when
-        store.send(.loadRemotePrescriptionsAndSave) {
+        await store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             // then
             state.loadingState = expected
         }
     }
 
-    func testLoadingPrescriptionsFromDiskAndCloudWhenNotAuthenticated() {
+    func testLoadingPrescriptionsFromDiskAndCloudWhenNotAuthenticated() async {
         // given
         let input = Prescription.Fixtures.prescriptions
         mockPrescriptionRepository.loadLocalReturnValue = Just(input)
@@ -185,29 +179,29 @@ final class PrescriptionListDomainTests: XCTestCase {
         let expectedValueForFetch: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value([])
         // when
-        store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading([])
         }
         // when
-        store.send(.loadRemotePrescriptionsAndSave) {
+        await store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad))) { state in
             // then
             state.loadingState = expectedValueForLoad
             state.prescriptions = input
         }
-        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch))) { state in
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch))) { state in
             // then
             state.loadingState = expectedValueForFetch
         }
     }
 
-    func testLoadingPrescriptionsFromDiskAndCloudWhenAuthenticated() {
+    func testLoadingPrescriptionsFromDiskAndCloudWhenAuthenticated() async {
         // given
         let input = Prescription.Fixtures.prescriptions
 
@@ -225,29 +219,29 @@ final class PrescriptionListDomainTests: XCTestCase {
             .value(input)
         let expectedValueForFetch = expectedValueForLoad
         // when
-        store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading([])
         }
         // when
-        store.send(.loadRemotePrescriptionsAndSave) {
+        await store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad))) { state in
             // then
             state.loadingState = expectedValueForLoad
             state.prescriptions = input
         }
-        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch)))
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch)))
     }
 
     let loadingErrorTasks: PrescriptionRepositoryError = .erxRepository(.local(.notImplemented))
     let loadingErrorAuditEvents: PrescriptionRepositoryError = .erxRepository(.local(.notImplemented))
 
-    func testLoadingFromDiskWithError() {
+    func testLoadingFromDiskWithError() async {
         mockPrescriptionRepository.loadLocalReturnValue = Fail(
             outputType: [Prescription].self,
             failure: loadingErrorTasks
@@ -259,39 +253,39 @@ final class PrescriptionListDomainTests: XCTestCase {
         let expected: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .error(loadingErrorTasks)
         // when
-        store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading([])
             XCTAssert($0.loadingState.isError == false)
         }
         // when
-        testScheduler.advance()
-        store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
             // then
             state.loadingState = expected
             XCTAssert(state.loadingState.isError == true)
         }
     }
 
-    func testLoadingFromCloudWithError() {
+    func testLoadingFromCloudWithError() async {
         let store = testStore(for: mockPrescriptionRepository)
         mockPrescriptionRepository.silentLoadRemoteForReturnValue = Fail(error: loadingErrorTasks).eraseToAnyPublisher()
         let expectedTasks: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .idle
 
-        store.send(.loadRemotePrescriptionsAndSave) {
+        await store.send(.loadRemotePrescriptionsAndSave) {
             $0.loadingState = .loading(nil)
             XCTAssert($0.loadingState.isError == false)
         }
-        testScheduler.advance()
-        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedTasks))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedTasks))) { state in
             // then
             state.loadingState = expectedTasks
             XCTAssert(state.loadingState.isError == false)
         }
     }
 
-    func testRefreshShouldShowCardWallWhenNotAuthenticated() {
+    func testRefreshShouldShowCardWallWhenNotAuthenticated() async {
         userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
         mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Just(.notAuthenticated)
             .setFailureType(to: PrescriptionRepositoryError.self)
@@ -302,14 +296,14 @@ final class PrescriptionListDomainTests: XCTestCase {
             isNFCReady: true,
             profileId: userSession.profileId
         )
-        store.send(.refresh) {
+        await store.send(.refresh) {
             $0.loadingState = .loading(nil)
         }
-        testScheduler.advance()
-        store.receive(.response(.showCardWallReceived(expected)))
+        await testScheduler.advance()
+        await store.receive(.response(.showCardWallReceived(expected)))
     }
 
-    func testRefreshShouldShowCardWallServerResponseIs403Forbidden() {
+    func testRefreshShouldShowCardWallServerResponseIs403Forbidden() async {
         userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
         mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Fail(
             outputType: PrescriptionRepositoryLoadRemoteResult.self,
@@ -323,14 +317,14 @@ final class PrescriptionListDomainTests: XCTestCase {
             isNFCReady: true,
             profileId: userSession.profileId
         )
-        store.send(.refresh) {
+        await store.send(.refresh) {
             $0.loadingState = .loading(nil)
         }
-        testScheduler.advance()
-        store.receive(.response(.showCardWallReceived(expected)))
+        await testScheduler.advance()
+        await store.receive(.response(.showCardWallReceived(expected)))
     }
 
-    func testRefreshShouldShowCardWallServerResponseIs401Unauthorized() {
+    func testRefreshShouldShowCardWallServerResponseIs401Unauthorized() async {
         userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
 
         mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Fail(
@@ -345,14 +339,14 @@ final class PrescriptionListDomainTests: XCTestCase {
             isNFCReady: true,
             profileId: userSession.profileId
         )
-        store.send(.refresh) {
+        await store.send(.refresh) {
             $0.loadingState = .loading(nil)
         }
-        testScheduler.advance()
-        store.receive(.response(.showCardWallReceived(expected)))
+        await testScheduler.advance()
+        await store.receive(.response(.showCardWallReceived(expected)))
     }
 
-    func testRefreshShouldLoadFromCloudWhenAuthenticated() {
+    func testRefreshShouldLoadFromCloudWhenAuthenticated() async {
         let input = Prescription.Fixtures.prescriptions
 
         mockPrescriptionRepository
@@ -363,24 +357,24 @@ final class PrescriptionListDomainTests: XCTestCase {
 
         let expected: LoadingState<[Prescription], PrescriptionRepositoryError> = .value(input)
 
-        store.send(.refresh) {
+        await store.send(.refresh) {
             $0.loadingState = .loading(nil)
         }
-        testScheduler.advance()
-        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             state.loadingState = expected
             state.prescriptions = input
         }
     }
 
-    func testNavigateIntoLowDetailPrescriptionDetails() {
+    func testNavigateIntoLowDetailPrescriptionDetails() async {
         // given
         let prescription = Prescription.Fixtures.prescriptions
 
         let store = testStore(for: mockPrescriptionRepository)
 
         // when
-        store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription.first!))
+        await store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription.first!))
 
         // nothing happens, as this is currently supposed to be handled in the parent domain
     }

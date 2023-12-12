@@ -27,3 +27,38 @@ extension UIImage {
         self.init(named: testBundleNamed, in: Self.testBundle, with: nil)
     }
 }
+
+extension ViewImageConfig {
+    func noInsets() -> Self {
+        .init(safeArea: .init(top: 47, left: 0, bottom: 0, right: 0), size: size, traits: traits)
+    }
+}
+
+import SnapshotTesting
+import SwiftUI
+
+struct SnapshotHelper {
+    private static var didRecord = false
+
+    static func fixOffsetProblem() {
+        guard didRecord == false else { return }
+
+        let dummy = NavigationView {
+            Text("*")
+                .navigationTitle("⚕︎ Redeem")
+        }
+        assertSnapshot(matching: dummy, as: .image(precision: 0.0), named: "dummy", record: false)
+        didRecord = true
+    }
+}
+
+import XCTest
+
+class ERPSnapshotTestCase: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        diffTool = "open"
+
+        SnapshotHelper.fixOffsetProblem()
+    }
+}

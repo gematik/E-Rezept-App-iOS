@@ -1,0 +1,42 @@
+{
+  "configurations" : [
+    {
+      "id" : "69D3ADC4-0B29-4816-808C-42F12B64D3CF",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:eRp-App.xcodeproj",
+          "identifier" : "BA579C3E6E6F09B39566B41D",
+          "name" : "eRpApp"
+        }
+      ]
+    },
+    "language" : "de",
+    "region" : "DE",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:eRp-App.xcodeproj",
+      "identifier" : "BA579C3E6E6F09B39566B41D",
+      "name" : "eRpApp"
+    }
+  },
+  "testTargets" : [
+    {
+      "deviceAppDataReference" : {
+        "resolvedPath" : "..\/..\/Tests\/eRpAppUITests\/Support\/empty.xcappdata"
+      },
+      "target" : {
+        "containerPath" : "container:eRp-App.xcodeproj",
+        "identifier" : "F1442CF0C7FDC63F4BAC7C0F",
+        "name" : "eRpAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

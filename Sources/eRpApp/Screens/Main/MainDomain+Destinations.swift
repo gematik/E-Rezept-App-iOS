@@ -42,7 +42,7 @@ extension MainDomain {
             // sourcery: AnalyticsScreen = main_welcomeDrawer
             case welcomeDrawer
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<MainDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
         }
 
         enum Action: Equatable {
@@ -55,6 +55,12 @@ extension MainDomain {
             case prescriptionArchiveAction(action: PrescriptionArchiveDomain.Action)
             case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
             case redeemMethods(action: RedeemMethodsDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case dismiss
+                case cardWall
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {

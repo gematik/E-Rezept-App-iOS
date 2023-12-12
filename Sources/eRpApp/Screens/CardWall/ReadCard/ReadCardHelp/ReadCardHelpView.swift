@@ -21,35 +21,38 @@ import eRpStyleKit
 import SwiftUI
 
 struct ReadCardHelpView: View {
-    let store: Store<CardWallReadCardHelpDomain.State, CardWallReadCardDomain.Action>
+    let store: Store<ReadCardHelpDomain.State, ReadCardHelpDomain.Action>
+    @ObservedObject var viewStore: ViewStoreOf<ReadCardHelpDomain>
 
-    init(store: Store<CardWallReadCardHelpDomain.State, CardWallReadCardDomain.Action>) {
+    init(store: Store<ReadCardHelpDomain.State, ReadCardHelpDomain.Action>) {
         self.store = store
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Colors.primary500)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(Colors.systemLabelQuarternary)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
-            TabView(selection: viewStore.binding(
-                get: { $0 },
-                send: {
-                    CardWallReadCardDomain.Action.updatePageIndex(page: $0)
-                }
-            )) {
-                ReadCardHelpCardView(store: store.stateless)
-                    .tag(CardWallReadCardHelpDomain.State.first)
-
-                ReadCardHelpVideoView(store: store.stateless)
-                    .tag(CardWallReadCardHelpDomain.State.second)
-
-                ReadCardHelpListView(store: store.stateless)
-                    .tag(CardWallReadCardHelpDomain.State.third)
+        TabView(selection: viewStore.binding(
+            get: { $0 },
+            send: {
+                ReadCardHelpDomain.Action.delegate(.updatePageIndex($0))
             }
-            .background(Colors.systemBackground)
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+        )) {
+            ReadCardHelpCardView(store: store)
+                .tag(ReadCardHelpDomain.State.first)
+
+            ReadCardHelpPositionView(store: store)
+                .tag(ReadCardHelpDomain.State.second)
+
+            ReadCardHelpVideoView(store: store)
+                .tag(ReadCardHelpDomain.State.third)
+
+            ReadCardHelpListView(store: store)
+                .tag(ReadCardHelpDomain.State.fourth)
         }
+        .background(Colors.systemBackground)
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
     }
 }
 
@@ -57,10 +60,11 @@ struct ReadCardHelpView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView<ReadCardHelpView> {
             ReadCardHelpView(
-                store: Store<CardWallReadCardHelpDomain.State, CardWallReadCardDomain.Action>(
-                    initialState: .first,
-                    reducer: EmptyReducer()
-                )
+                store: Store<ReadCardHelpDomain.State, ReadCardHelpDomain.Action>(
+                    initialState: .first
+                ) {
+                    EmptyReducer()
+                }
             )
         }
         .previewDevice("iPhone SE")

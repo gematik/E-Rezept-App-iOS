@@ -34,6 +34,8 @@ class MockUserSession: UserSession {
     lazy var trustStoreSession: TrustStoreSession = DemoTrustStoreSession()
     var mockPrescriptionRepository: MockPrescriptionRepository
     var mockIDPSession: IDPSessionMock
+    var profileSecureDataWiper: ProfileSecureDataWiper
+    var secureUserStore: SecureUserDataStore
 
     var isLoggedIn: Bool
     var profileId: UUID
@@ -42,12 +44,16 @@ class MockUserSession: UserSession {
         isAuthenticated: Bool = true,
         profileId: UUID = UUID(),
         prescriptionRepository: MockPrescriptionRepository = MockPrescriptionRepository(),
-        idpSession: IDPSessionMock = IDPSessionMock()
+        idpSession: IDPSessionMock = IDPSessionMock(),
+        secureUserStore: SecureUserDataStore = MockSecureUserStore(),
+        profileSecureDataWiper: ProfileSecureDataWiper = MockProfileSecureDataWiper()
     ) {
         isLoggedIn = isAuthenticated
         self.profileId = profileId
         mockPrescriptionRepository = prescriptionRepository
         mockIDPSession = idpSession
+        self.profileSecureDataWiper = profileSecureDataWiper
+        self.secureUserStore = secureUserStore
     }
 
     var isDemoMode: Bool {
@@ -64,14 +70,12 @@ class MockUserSession: UserSession {
         extAuthRequestStorageMock
     }
 
-    var biometrieIdpSession: IDPSession = IDPSessionMock()
+    lazy var pairingIdpSession: IDPSession = {
+        mockIDPSession
+    }()
 
     lazy var vauStorage: VAUStorage = {
         DemoVAUStorage()
-    }()
-
-    lazy var secureUserStore: SecureUserDataStore = {
-        MockSecureUserStore()
     }()
 
     lazy var mockUserDataStore: MockUserDataStore = {
@@ -134,8 +138,6 @@ class MockUserSession: UserSession {
         profileReturnValue
     }
 
-    var profileSecureDataWiper: ProfileSecureDataWiper = MockProfileSecureDataWiper()
-
     lazy var avsSession: AVSSession = {
         MockAVSSession()
     }()
@@ -156,7 +158,7 @@ class MockUserSession: UserSession {
         MockLoginHandler()
     }()
 
-    lazy var biometricsIdpSessionLoginHandler: LoginHandler = {
+    lazy var pairingIdpSessionLoginHandler: LoginHandler = {
         MockLoginHandler()
     }()
 
@@ -330,6 +332,21 @@ class FakeErxTaskRepository: ErxTaskRepository {
         .Profile)
         -> AnyPublisher<Int, ErxRepositoryError> {
         Just(0).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    // MARK: - AuditEvents
+
+    func loadRemoteLatestAuditEvents(for _: String?)
+        -> AnyPublisher<eRpKit.PagedContent<[eRpKit.ErxAuditEvent]>, eRpKit.ErxRepositoryError> {
+        Just(PagedContent(content: [], next: nil)).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func loadRemoteAuditEventsPage(from _: URL,
+                                   locale _: String?) -> AnyPublisher<
+        eRpKit.PagedContent<[eRpKit.ErxAuditEvent]>,
+        eRpKit.ErxRepositoryError
+    > {
+        Just(PagedContent(content: [], next: nil)).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
     // MARK: - ChargeItem

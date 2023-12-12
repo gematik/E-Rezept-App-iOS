@@ -40,7 +40,7 @@ struct DebugEGKScannerView: View {
             AVScannerView(erxCodeTypes: [.qr, .dataMatrix],
                           supportedCodeTypes: [.qr, .dataMatrix],
                           scanning: show) { output in
-                guard case let .erxCode(keyBase64Wrapped) = output.first,
+                guard case let .text(keyBase64Wrapped) = output.first,
                       let keyBase64 = keyBase64Wrapped else { return }
                 do {
                     let data = try Base64.decode(string: keyBase64)

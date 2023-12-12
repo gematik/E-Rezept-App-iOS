@@ -27,12 +27,7 @@ import IDP
 struct PrescriptionListDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
+    enum CancelID: CaseIterable, Hashable {
         case loadLocalPrescriptionId
         case fetchPrescriptionId
         case refreshId
@@ -124,29 +119,30 @@ struct PrescriptionListDomain: ReducerProtocol {
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .registerSelectedProfileIDListener:
-            return userProfileService.selectedProfileId
-                .removeDuplicates()
-                .map { .response(.selectedProfileIDReceived($0)) }
-                .receive(on: schedulers.main)
-                .eraseToEffect()
-                .cancellable(id: Token.selectedProfileId)
+            return .publisher(
+                userProfileService.selectedProfileId
+                    .removeDuplicates()
+                    .map { .response(.selectedProfileIDReceived($0)) }
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case .unregisterSelectedProfileIDListener:
-            return .cancel(id: Token.selectedProfileId)
+            return .cancel(id: CancelID.selectedProfileId)
         case .response(.selectedProfileIDReceived):
             return .concatenate(
-                EffectTask(value: .loadLocalPrescriptions),
-                EffectTask(value: .loadRemotePrescriptionsAndSave)
+                EffectTask.send(.loadLocalPrescriptions),
+                EffectTask.send(.loadRemotePrescriptionsAndSave)
             )
-
         case .unregisterActiveUserProfileListener:
-            return .cancel(id: Token.activeUserProfile)
+            return .cancel(id: CancelID.activeUserProfile)
         case .registerActiveUserProfileListener:
-            return userProfileService.activeUserProfilePublisher()
-                .catchToEffect()
-                .map { .response(.activeUserProfileReceived($0)) }
-                .cancellable(id: Token.activeUserProfile, cancelInFlight: true)
-                .receive(on: schedulers.main)
-                .eraseToEffect()
+            return .publisher(
+                userProfileService.activeUserProfilePublisher()
+                    .catchToPublisher()
+                    .map { .response(.activeUserProfileReceived($0)) }
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case .response(.activeUserProfileReceived(.failure)):
             state.profile = nil
             return .none
@@ -155,11 +151,14 @@ struct PrescriptionListDomain: ReducerProtocol {
             return .none
         case .loadLocalPrescriptions:
             state.loadingState = .loading(state.prescriptions)
-            return prescriptionRepository.loadLocal()
-                .receive(on: schedulers.main.animation())
-                .catchToLoadingStateEffect()
-                .map { .response(.loadLocalPrescriptionsReceived($0)) }
-                .cancellable(id: Token.loadLocalPrescriptionId, cancelInFlight: true)
+            return .publisher(
+                prescriptionRepository.loadLocal()
+                    .receive(on: schedulers.main.animation())
+                    .catchToLoadingStateEffect()
+                    .map { Action.response(.loadLocalPrescriptionsReceived($0)) }
+                    .eraseToAnyPublisher
+            )
+            .cancellable(id: CancelID.loadLocalPrescriptionId, cancelInFlight: true)
         case let .response(.loadLocalPrescriptionsReceived(loadingState)):
             state.loadingState = loadingState
             state.prescriptions = loadingState.value ?? []
@@ -167,7 +166,7 @@ struct PrescriptionListDomain: ReducerProtocol {
         case .loadRemotePrescriptionsAndSave:
             state.loadingState = .loading(nil)
             return environment.loadRemoteTasksAndSave()
-                .cancellable(id: Token.fetchPrescriptionId, cancelInFlight: true)
+                .cancellable(id: CancelID.fetchPrescriptionId, cancelInFlight: true)
         case let .response(.loadRemotePrescriptionsAndSaveReceived(loadingState)):
             state.loadingState = loadingState
             // prevent overriding values previously loaded from .loadLocalPrescriptions
@@ -177,7 +176,7 @@ struct PrescriptionListDomain: ReducerProtocol {
             return .none
         case .refresh:
             state.loadingState = .loading(nil)
-            return environment.refreshOrShowCardWall().cancellable(id: Token.refreshId, cancelInFlight: true)
+            return environment.refreshOrShowCardWall().cancellable(id: CancelID.refreshId, cancelInFlight: true)
         case .alertDismissButtonTapped:
             state.loadingState = .idle
             return .none
@@ -215,52 +214,56 @@ extension PrescriptionListDomain.Environment {
 
     /// "Silently" try to load ErxTasks if preconditions are met
     func loadRemoteTasksAndSave() -> EffectTask<PrescriptionListDomain.Action> {
-        prescriptionRepository
-            .silentLoadRemote(for: locale)
-            .map { status -> PrescriptionListDomain.Action in
-                switch status {
-                case let .prescriptions(value):
-                    return .response(.loadRemotePrescriptionsAndSaveReceived(.value(value)))
-                case .notAuthenticated,
-                     .authenticationRequired:
-                    return .response(.loadRemotePrescriptionsAndSaveReceived(.value([])))
+        .publisher(
+            prescriptionRepository
+                .silentLoadRemote(for: locale)
+                .map { status -> PrescriptionListDomain.Action in
+                    switch status {
+                    case let .prescriptions(value):
+                        return .response(.loadRemotePrescriptionsAndSaveReceived(.value(value)))
+                    case .notAuthenticated,
+                         .authenticationRequired:
+                        return .response(.loadRemotePrescriptionsAndSaveReceived(.value([])))
+                    }
                 }
-            }
-            .catch { _ in Just(.response(.loadRemotePrescriptionsAndSaveReceived(.idle))) }
-            .receive(on: schedulers.main.animation())
-            .eraseToEffect()
+                .catch { _ in Just(.response(.loadRemotePrescriptionsAndSaveReceived(.idle))) }
+                .receive(on: schedulers.main.animation())
+                .eraseToAnyPublisher
+        )
     }
 
     /// Load ErxTasks if already logged in else show CardWall or error
     func refreshOrShowCardWall() -> EffectTask<PrescriptionListDomain.Action> {
-        prescriptionRepository
-            .forcedLoadRemote(for: locale)
-            .catchUnauthorizedToShowCardwall()
-            .flatMap { status -> AnyPublisher<PrescriptionListDomain.Action, PrescriptionRepositoryError> in
-                switch status {
-                case let .prescriptions(value):
-                    return Just(.response(.loadRemotePrescriptionsAndSaveReceived(.value(value))))
-                        .setFailureType(to: PrescriptionRepositoryError.self)
-                        .eraseToAnyPublisher()
-                case .notAuthenticated,
-                     .authenticationRequired:
-                    return cardWall()
-                        .receive(on: schedulers.main)
-                        .setFailureType(to: PrescriptionRepositoryError.self)
-                        .map { .response(.showCardWallReceived($0)) }
+        .publisher(
+            prescriptionRepository
+                .forcedLoadRemote(for: locale)
+                .catchUnauthorizedToShowCardwall()
+                .flatMap { status -> AnyPublisher<PrescriptionListDomain.Action, PrescriptionRepositoryError> in
+                    switch status {
+                    case let .prescriptions(value):
+                        return Just(.response(.loadRemotePrescriptionsAndSaveReceived(.value(value))))
+                            .setFailureType(to: PrescriptionRepositoryError.self)
+                            .eraseToAnyPublisher()
+                    case .notAuthenticated,
+                         .authenticationRequired:
+                        return cardWall()
+                            .receive(on: schedulers.main)
+                            .setFailureType(to: PrescriptionRepositoryError.self)
+                            .map { .response(.showCardWallReceived($0)) }
+                            .eraseToAnyPublisher()
+                    }
+                }
+                .catch { error in
+                    if case let PrescriptionRepositoryError.loginHandler(error) = error {
+                        return Just(Action.response(.errorReceived(error)))
+                            .eraseToAnyPublisher()
+                    }
+                    return Just(Action.response(.loadRemotePrescriptionsAndSaveReceived(.error(error))))
                         .eraseToAnyPublisher()
                 }
-            }
-            .catch { error in
-                if case let PrescriptionRepositoryError.loginHandler(error) = error {
-                    return Just(Action.response(.errorReceived(error)))
-                        .eraseToAnyPublisher()
-                }
-                return Just(Action.response(.loadRemotePrescriptionsAndSaveReceived(.error(error))))
-                    .eraseToAnyPublisher()
-            }
-            .receive(on: schedulers.main)
-            .eraseToEffect()
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
     }
 }
 
@@ -300,12 +303,18 @@ extension PrescriptionListDomain {
             profile: UserProfile.Dummies.profileA
         )
 
-        static let store = Store(initialState: state,
-                                 reducer: PrescriptionListDomain())
+        static let store = Store(
+            initialState: state
+        ) {
+            PrescriptionListDomain()
+        }
 
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: PrescriptionListDomain())
+            Store(
+                initialState: state
+            ) {
+                PrescriptionListDomain()
+            }
         }
     }
 }

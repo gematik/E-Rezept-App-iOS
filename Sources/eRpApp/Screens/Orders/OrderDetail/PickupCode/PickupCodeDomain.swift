@@ -66,17 +66,19 @@ struct PickupCodeDomain: ReducerProtocol {
                 return .none
             }
             let size = calcMatrixCodeSize(screenSize: screenSize)
-            return matrixCodeGenerator.matrixCodePublisher(
-                for: dmcCode,
-                with: size,
-                scale: screenScale,
-                orientation: .up
+            return .publisher(
+                matrixCodeGenerator.matrixCodePublisher(
+                    for: dmcCode,
+                    with: size,
+                    scale: screenScale,
+                    orientation: .up
+                )
+                .receive(on: schedulers.main.animation())
+                .first()
+                .map { .response(.matrixCodeImageReceived($0)) }
+                .catch { _ in Empty() }
+                .eraseToAnyPublisher
             )
-            .receive(on: schedulers.main.animation())
-            .first()
-            .catch { _ in EffectTask.none }
-            .map { .response(.matrixCodeImageReceived($0)) }
-            .eraseToEffect()
         case let .response(.matrixCodeImageReceived(matrixCodeImage)):
             if let image = matrixCodeImage {
                 UIScreen.main.brightness = CGFloat(1.0)
@@ -100,11 +102,18 @@ extension PickupCodeDomain {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(pickupCodeHR: "1234",
                                  pickupCodeDMC: "123456789")
-        static let store = Store(initialState: state,
-                                 reducer: PickupCodeDomain())
+        static let store = Store(
+            initialState: state
+        ) {
+            PickupCodeDomain()
+        }
+
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: PickupCodeDomain())
+            Store(
+                initialState: state
+            ) {
+                PickupCodeDomain()
+            }
         }
     }
 }

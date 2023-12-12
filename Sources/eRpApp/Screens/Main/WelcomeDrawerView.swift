@@ -26,18 +26,15 @@ import SwiftUI
 struct WelcomeDrawerView: View {
     let store: MainDomain.Store
 
-    @ObservedObject var viewStore: ViewStore<Void, MainDomain.Action>
-
     init(store: MainDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.stateless)
     }
 
     var body: some View {
         VStack {
             Section(header: HeaderView()) {
                 Button(action: {
-                    viewStore.send(.setNavigation(tag: .cardWall), animation: .easeInOut)
+                    store.send(.setNavigation(tag: .cardWall), animation: .easeInOut)
                 }, label: {
                     HStack {
                         Spacer()
@@ -55,7 +52,7 @@ struct WelcomeDrawerView: View {
                     .accessibility(identifier: A11y.welcomedrawer.wlcdBtnLogin)
 
                 Button(action: {
-                    viewStore.send(.setNavigation(tag: .none), animation: .easeInOut)
+                    store.send(.setNavigation(tag: .none), animation: .easeInOut)
                 }, label: {
                     HStack {
                         Spacer()

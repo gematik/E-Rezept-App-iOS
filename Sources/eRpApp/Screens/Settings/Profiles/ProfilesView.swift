@@ -28,7 +28,7 @@ struct ProfilesView: View {
 
     init(store: ProfilesDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -41,38 +41,37 @@ struct ProfilesView: View {
     }
 
     var body: some View {
-        SectionContainer(header: {
-            Label(title: {
-                Text(L10n.stgTxtHeaderProfiles)
-            }, icon: {})
-                .accessibility(identifier: A11y.settings.profiles.stgTxtHeaderProfiles)
-        }, content: {
-            ForEach(viewStore.profiles) { profile in
-                Button(action: {
-                    viewStore.send(.editProfile(profile))
-                }, label: {
-                    SingleProfileView(profile: profile, selectedProfileId: viewStore.selectedProfileId)
-                })
-                    .buttonStyle(.navigation)
-                    .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
-            }
-            .accessibilityElement(children: .contain)
-            .accessibility(identifier: A11y.settings.profiles.stgConProfiles)
+        SectionContainer(
+            header: {
+                Label(title: {
+                    Text(L10n.stgTxtHeaderProfiles)
+                }, icon: {})
+                    .accessibility(identifier: A11y.settings.profiles.stgTxtHeaderProfiles)
+            }, content: {
+                ForEach(viewStore.profiles) { profile in
+                    Button(action: {
+                        viewStore.send(.editProfile(profile))
+                    }, label: {
+                        SingleProfileView(profile: profile, selectedProfileId: viewStore.selectedProfileId)
+                    })
+                        .buttonStyle(.navigation)
+                        .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
+                }
+                .accessibilityElement(children: .contain)
+                .accessibility(identifier: A11y.settings.profiles.stgConProfiles)
 
-            Button(action: {
-                viewStore.send(.addNewProfile)
-            }, label: {
-                Label(L10n.stgBtnAddProfile, systemImage: SFSymbolName.plus)
-            })
-                .buttonStyle(.simple(showSeparator: false))
-                .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
-        })
-            .onAppear {
-                viewStore.send(.registerListener)
+                Button(action: {
+                    viewStore.send(.addNewProfile)
+                }, label: {
+                    Label(L10n.stgBtnAddProfile, systemImage: SFSymbolName.plus)
+                })
+                    .buttonStyle(.simple(showSeparator: false))
+                    .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
             }
-            .onDisappear {
-                viewStore.send(.unregisterListener)
-            }
+        )
+        .task {
+            await viewStore.send(.registerListener).finish()
+        }
     }
 
     private struct SingleProfileView: View {

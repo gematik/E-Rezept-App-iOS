@@ -24,14 +24,9 @@ import Nimble
 import TestUtils
 import XCTest
 
+@MainActor
 final class CardWallExtAuthSelectionDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        CardWallExtAuthSelectionDomain.State,
-        CardWallExtAuthSelectionDomain.Action,
-        CardWallExtAuthSelectionDomain.State,
-        CardWallExtAuthSelectionDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<CardWallExtAuthSelectionDomain>
 
     var idpSessionMock: IDPSessionMock!
 
@@ -55,10 +50,9 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
 
     func testStore(for state: CardWallExtAuthSelectionDomain.State)
         -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: CardWallExtAuthSelectionDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            CardWallExtAuthSelectionDomain()
+        } withDependencies: { dependencies in
             dependencies.idpSession = idpSessionMock
             dependencies.schedulers = schedulers
         }
@@ -69,51 +63,51 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
         testStore(for: .init())
     }
 
-    func testLoadingTriggerSucceeds() {
+    func testLoadingTriggerSucceeds() async {
         let sut = testStore()
 
         idpSessionMock.loadDirectoryKKApps_Publisher = Just(Self.testDirectory)
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
 
-        sut.send(.loadKKList)
-        uiScheduler.run()
-        sut.receive(.response(.loadKKList(.success(Self.testDirectory)))) { state in
+        await sut.send(.loadKKList)
+        await uiScheduler.run()
+        await sut.receive(.response(.loadKKList(.success(Self.testDirectory)))) { state in
             state.kkList = Self.testDirectory
         }
     }
 
-    func testLoadingTriggerFails() {
+    func testLoadingTriggerFails() async {
         let sut = testStore()
 
         idpSessionMock.loadDirectoryKKApps_Publisher = Fail(error: Self.testError)
             .eraseToAnyPublisher()
 
-        sut.send(.loadKKList)
-        uiScheduler.run()
-        sut.receive(.response(.loadKKList(.failure(Self.testError)))) { state in
+        await sut.send(.loadKKList)
+        await uiScheduler.run()
+        await sut.receive(.response(.loadKKList(.failure(Self.testError)))) { state in
             state.error = Self.testError
         }
     }
 
-    func testSelectingAnEntrySucceeds() {
+    func testSelectingAnEntrySucceeds() async {
         let sut = testStore()
 
-        sut.send(.selectKK(Self.testEntryA)) { state in
+        await sut.send(.selectKK(Self.testEntryA)) { state in
             state.selectedKK = Self.testEntryA
         }
     }
 
-    func testSearchListNoResult() {
+    func testSearchListNoResult() async {
         let sut = testStore(for: .init(kkList: Self.testDirectory))
 
-        sut.send(.filteredKKList(search: "NonExistentKK"))
+        await sut.send(.filteredKKList(search: "NonExistentKK"))
     }
 
-    func testSearchListResult() {
+    func testSearchListResult() async {
         let sut = testStore(for: .init(kkList: Self.testDirectory))
 
-        sut.send(.filteredKKList(search: "Test Entry A")) { state in
+        await sut.send(.filteredKKList(search: "Test Entry A")) { state in
             state.filteredKKList = KKAppDirectory(apps: [Self.testEntryA])
         }
     }

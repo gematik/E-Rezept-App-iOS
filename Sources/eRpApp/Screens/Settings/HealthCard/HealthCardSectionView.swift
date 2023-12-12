@@ -27,7 +27,7 @@ struct HealthCardSectionView: View {
 
     init(store: SettingsDomain.Store) {
         self.store = store
-        viewStore = ViewStore(self.store.scope(state: ViewState.init))
+        viewStore = ViewStore(self.store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -45,82 +45,50 @@ struct HealthCardSectionView: View {
             },
             content: {
                 // Destination: "Order health card"
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /SettingsDomain.Destinations.State.egk,
-                            action: SettingsDomain.Destinations.Action.egkAction
-                        ),
-                        then: OrderHealthCardListView.init(store:)
-                    ),
-                    tag: SettingsDomain.Destinations.State.Tag.egk,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: SettingsDomain.Action.setNavigation
-                    )
-                ) {
-                    Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon)
-                }
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                    state: /SettingsDomain.Destinations.State.egk,
+                    action: SettingsDomain.Destinations.Action.egkAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .egk)) },
+                    destination: OrderHealthCardListView.init(store:),
+                    label: { Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon) }
+                )
                 .accessibility(identifier: A11y.settings.card.stgTxtCardOrderNewCard)
                 .buttonStyle(.navigation)
 
                 // Destination: "Forgot PIN"
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /SettingsDomain.Destinations.State.healthCardPasswordForgotPin,
-                            action: SettingsDomain.Destinations.Action.healthCardPasswordForgotPinAction
-                        ),
-                        then: HealthCardPasswordView.init(store:)
-                    ),
-                    tag: SettingsDomain.Destinations.State.Tag.healthCardPasswordForgotPin,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: SettingsDomain.Action.setNavigation
-                    )
-                ) {
-                    Label(L10n.stgTxtCardForgotPin, systemImage: SFSymbolName.questionmarkCircle)
-                }
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                    state: /SettingsDomain.Destinations.State.healthCardPasswordForgotPin,
+                    action: SettingsDomain.Destinations.Action.healthCardPasswordForgotPinAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .healthCardPasswordForgotPin)) },
+                    destination: HealthCardPasswordView.init(store:),
+                    label: { Label(L10n.stgTxtCardForgotPin, systemImage: SFSymbolName.questionmarkCircle) }
+                )
                 .accessibility(identifier: A11y.settings.card.stgTxtCardForgotPin)
                 .buttonStyle(.navigation)
 
                 // Destination: "Set a custom PIN"
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /SettingsDomain.Destinations.State.healthCardPasswordSetCustomPin,
-                            action: SettingsDomain.Destinations.Action.healthCardPasswordSetCustomPinAction
-                        ),
-                        then: HealthCardPasswordView.init(store:)
-                    ),
-                    tag: SettingsDomain.Destinations.State.Tag.healthCardPasswordSetCustomPin,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: SettingsDomain.Action.setNavigation
-                    )
-                ) {
-                    Label(L10n.stgTxtCardCustomPin, systemImage: SFSymbolName.cardIconAnd123)
-                }
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                    state: /SettingsDomain.Destinations.State.healthCardPasswordSetCustomPin,
+                    action: SettingsDomain.Destinations.Action.healthCardPasswordSetCustomPinAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .healthCardPasswordSetCustomPin)) },
+                    destination: HealthCardPasswordView.init(store:),
+                    label: { Label(L10n.stgTxtCardCustomPin, systemImage: SFSymbolName.cardIconAnd123) }
+                )
                 .accessibility(identifier: A11y.settings.card.stgTxtCardCustomPin)
                 .buttonStyle(.navigation)
 
                 // Destination: "Unlock health card"
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /SettingsDomain.Destinations.State.healthCardPasswordUnlockCard,
-                            action: SettingsDomain.Destinations.Action.healthCardPasswordUnlockCardAction
-                        ),
-                        then: HealthCardPasswordView.init(store:)
-                    ),
-                    tag: SettingsDomain.Destinations.State.Tag.healthCardPasswordUnlockCard,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: SettingsDomain.Action.setNavigation
-                    )
-                ) {
-                    Label(L10n.stgTxtCardUnlockCard, systemImage: SFSymbolName.lockRotation)
-                }
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                    state: /SettingsDomain.Destinations.State.healthCardPasswordUnlockCard,
+                    action: SettingsDomain.Destinations.Action.healthCardPasswordUnlockCardAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .healthCardPasswordUnlockCard)) },
+                    destination: HealthCardPasswordView.init(store:),
+                    label: { Label(L10n.stgTxtCardUnlockCard, systemImage: SFSymbolName.lockRotation) }
+                )
                 .accessibility(identifier: A11y.settings.card.stgTxtCardUnlockCard)
                 .buttonStyle(.navigation)
             }

@@ -980,7 +980,8 @@ extension ErxChargeItem.Fixtures {
     static let chargeItem1: ErxChargeItem = .init(
         identifier: "charge_id_1",
         fhirData: "fhirData1".data(using: .utf8)!,
-        enteredDate: "2023-02-19T14:07:47.809+00:00"
+        enteredDate: "2023-02-19T14:07:47.809+00:00",
+        accessCode: "0986JSJSN1834JSFNNS1934"
     )
 
     static let chargeItem2: ErxChargeItem = .init(
@@ -999,6 +1000,7 @@ extension ErxChargeItem.Fixtures {
         identifier: "chargeItem_id_12",
         fhirData: chargeItemAsFHIRData,
         enteredDate: "2023-02-17T14:07:46.964+00:00",
+        accessCode: "0986JSJSN1834JSFNNS1934",
         medication: ErxMedication(
             name: "Schmerzmittel",
             profile: ErxMedication.ProfileType.pzn,

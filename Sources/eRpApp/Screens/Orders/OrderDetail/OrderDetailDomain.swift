@@ -26,31 +26,17 @@ import ZXingObjC
 struct OrderDetailDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            cleanupSubDomains(),
-            EffectTask<T>.cancel(ids: Token.allCases)
-        )
-    }
-
-    private static func cleanupSubDomains<T>() -> EffectTask<T> {
-        PrescriptionDetailDomain.cleanup()
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case loadMedications
-    }
-
     struct State: Equatable {
         var order: OrderCommunications
         var erxTasks: IdentifiedArrayOf<ErxTask> = []
         var openUrlSheetUrl: URL?
 
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
+        case task
+
         case didReadCommunications
         case loadTasks
         case tasksReceived([ErxTask])
@@ -66,7 +52,7 @@ struct OrderDetailDomain: ReducerProtocol {
         case openMailApp
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
     }
 
     struct Destinations: ReducerProtocol {
@@ -76,12 +62,18 @@ struct OrderDetailDomain: ReducerProtocol {
             // sourcery: AnalyticsScreen = prescriptionDetail
             case prescriptionDetail(PrescriptionDetailDomain.State)
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<OrderDetailDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
         }
 
         enum Action: Equatable {
             case prescriptionDetail(action: PrescriptionDetailDomain.Action)
             case pickupCode(action: PickupCodeDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case dismiss
+                case openMail(message: String)
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -113,7 +105,7 @@ struct OrderDetailDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -121,6 +113,11 @@ struct OrderDetailDomain: ReducerProtocol {
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
+        case .task:
+            return .merge(
+                .send(.didReadCommunications),
+                .send(.loadTasks)
+            )
         case let .didSelectMedication(erxTask):
             let prescription = Prescription(erxTask: erxTask, dateFormatter: uiDateFormatter)
             state.destination = .prescriptionDetail(
@@ -131,14 +128,16 @@ struct OrderDetailDomain: ReducerProtocol {
             )
             return .none
         case .didReadCommunications:
-            return setReadState(for: state.order.communications.elements).fireAndForget()
+            let communications = state.order.communications.elements
+            return .run { _ in
+                for try await _ in self.setReadState(for: communications).values {}
+            }
         case .loadTasks:
             let taskIds = Set(state.order.communications.map(\.taskId))
             guard !taskIds.isEmpty else {
                 return .none
             }
             return loadTasks(taskIds)
-                .cancellable(id: Token.loadMedications, cancelInFlight: true)
         case let .tasksReceived(tasks):
             state.erxTasks = IdentifiedArray(uniqueElements: tasks.sorted())
             return .none
@@ -159,7 +158,8 @@ struct OrderDetailDomain: ReducerProtocol {
                 state.destination = .alert(Self.openUrlAlertState(for: url))
             }
             return .none
-        case let .openMail(message):
+        case let .openMail(message),
+             let .destination(.presented(.alert(.openMail(message)))):
             state.destination = nil
             if let url = Self.createEmailUrl(
                 to: L10n.ordDetailTxtEmailSupport.text,
@@ -204,10 +204,10 @@ struct OrderDetailDomain: ReducerProtocol {
             }
             return .none
         case .setNavigation(tag: .none),
-             .destination(.pickupCode(action: .delegate(.close))),
-             .destination(.prescriptionDetail(action: .delegate(.close))):
+             .destination(.presented(.pickupCode(action: .delegate(.close)))),
+             .destination(.presented(.prescriptionDetail(action: .delegate(.close)))):
             state.destination = nil
-            return Self.cleanup()
+            return .none
         case .setNavigation,
              .destination:
             return .none
@@ -224,15 +224,17 @@ extension OrderDetailDomain {
                 .eraseToAnyPublisher()
         }
 
-        return publishers
-            .combineLatest()
-            .first()
-            .map { .tasksReceived($0.compactMap { $0 }) }
-            .receive(on: schedulers.main)
-            .eraseToEffect()
+        return .publisher(
+            publishers
+                .combineLatest()
+                .first()
+                .map { .tasksReceived($0.compactMap { $0 }) }
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
     }
 
-    func setReadState(for communications: [ErxTask.Communication]) -> EffectPublisher<Bool, ErxRepositoryError> {
+    func setReadState(for communications: [ErxTask.Communication]) -> AnyPublisher<Bool, ErxRepositoryError> {
         let readCommunications = communications.filter { !$0.isRead }
             .map { comm -> ErxTask.Communication in
                 var readComm = comm
@@ -241,7 +243,7 @@ extension OrderDetailDomain {
             }
         return erxTaskRepository.saveLocal(communications: readCommunications)
             .receive(on: schedulers.main)
-            .eraseToEffect()
+            .eraseToAnyPublisher()
     }
 }
 
@@ -304,11 +306,11 @@ extension OrderDetailDomain {
         return urlString?.url
     }
 
-    static var openMailAlertState: ErpAlertState<Action> = {
+    static var openMailAlertState: ErpAlertState<Destinations.Action.Alert> = {
         .init(
             title: L10n.ordDetailTxtOpenMailErrorTitle,
             actions: {
-                ButtonState(role: .cancel) {
+                ButtonState(role: .cancel, action: .dismiss) {
                     .init(L10n.alertBtnClose)
                 }
             },
@@ -316,11 +318,11 @@ extension OrderDetailDomain {
         )
     }()
 
-    static func openUrlAlertState(for url: URL) -> ErpAlertState<Action> {
+    static func openUrlAlertState(for url: URL) -> ErpAlertState<Destinations.Action.Alert> {
         .init(
             title: L10n.ordDetailTxtErrorTitle,
             actions: {
-                ButtonState(role: .cancel) {
+                ButtonState(role: .cancel, action: .dismiss) {
                     .init(L10n.alertBtnClose)
                 }
                 ButtonState(action: .openMail(message: url.absoluteString)) {
@@ -339,12 +341,18 @@ extension OrderDetailDomain {
             erxTasks: [ErxTask.Demo.erxTask1, ErxTask.Demo.erxTask13]
         )
 
-        static let store = Store(initialState: state,
-                                 reducer: OrderDetailDomain())
+        static let store = Store(
+            initialState: state
+        ) {
+            OrderDetailDomain()
+        }
 
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: OrderDetailDomain())
+            Store(
+                initialState: state
+            ) {
+                OrderDetailDomain()
+            }
         }
     }
 }

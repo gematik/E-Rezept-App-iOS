@@ -137,6 +137,7 @@ public enum Workflow {
         /// Order ID
         public static let orderIdKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/NamingSystem/OrderID",
+            .v1_2_0: "https://gematik.de/fhir/NamingSystem/OrderID",
         ]
     }
 }

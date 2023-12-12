@@ -22,16 +22,11 @@ import ComposableArchitecture
 import eRpKit
 import XCTest
 
+@MainActor
 final class AppAuthenticationBiometricsDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        AppAuthenticationBiometricsDomain.State,
-        AppAuthenticationBiometricsDomain.Action,
-        AppAuthenticationBiometricsDomain.State,
-        AppAuthenticationBiometricsDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<AppAuthenticationBiometricsDomain>
 
     private func testStore(for biometryType: BiometryType,
                            withResult result: AuthenticationChallengeProviderResult) -> TestStore {
@@ -41,9 +36,10 @@ final class AppAuthenticationBiometricsDomainTests: XCTestCase {
             initialState: AppAuthenticationBiometricsDomain.State(
                 biometryType: biometryType,
                 startImmediateAuthenticationChallenge: false
-            ),
-            reducer: AppAuthenticationBiometricsDomain()
-        ) { dependencies in
+            )
+        ) {
+            AppAuthenticationBiometricsDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(
                 uiScheduler: testScheduler.eraseToAnyScheduler()
             )
@@ -51,34 +47,34 @@ final class AppAuthenticationBiometricsDomainTests: XCTestCase {
         }
     }
 
-    func testPerformAuthenticationChallenge_FaceID_Success() {
+    func testPerformAuthenticationChallenge_FaceID_Success() async {
         let store = testStore(for: .faceID, withResult: .success(true))
 
-        store.send(.startAuthenticationChallenge)
+        await store.send(.startAuthenticationChallenge)
 
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.success(true))) {
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.success(true))) {
             $0.authenticationResult = .success(true)
         }
     }
 
-    func testPerformAuthenticationChallenge_FaceID_Failure_Cannot_Evaluate_Policy() {
+    func testPerformAuthenticationChallenge_FaceID_Failure_Cannot_Evaluate_Policy() async {
         let store = testStore(for: .faceID, withResult: .failure(.cannotEvaluatePolicy(nil)))
 
-        store.send(.startAuthenticationChallenge)
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.failure(.cannotEvaluatePolicy(nil)))) {
+        await store.send(.startAuthenticationChallenge)
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.failure(.cannotEvaluatePolicy(nil)))) {
             $0.authenticationResult = .failure(.cannotEvaluatePolicy(nil))
             $0.errorToDisplay = .cannotEvaluatePolicy(nil)
         }
     }
 
-    func testPerformAuthenticationChallenge_FaceID_Failure_Failed_Evaluating_Policy() {
+    func testPerformAuthenticationChallenge_FaceID_Failure_Failed_Evaluating_Policy() async {
         let store = testStore(for: .faceID, withResult: .failure(.failedEvaluatingPolicy(nil)))
 
-        store.send(.startAuthenticationChallenge)
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.failure(.failedEvaluatingPolicy(nil)))) {
+        await store.send(.startAuthenticationChallenge)
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.failure(.failedEvaluatingPolicy(nil)))) {
             $0.authenticationResult = .failure(.failedEvaluatingPolicy(nil))
             $0.errorToDisplay = .failedEvaluatingPolicy(nil)
         }

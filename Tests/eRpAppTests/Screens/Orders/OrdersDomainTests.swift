@@ -25,14 +25,9 @@ import Nimble
 import Pharmacy
 import XCTest
 
+@MainActor
 final class OrdersDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        OrdersDomain.State,
-        OrdersDomain.Action,
-        OrdersDomain.State,
-        OrdersDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<OrdersDomain>
 
     let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
     var mockOrdersRepository: MockErxTaskRepository!
@@ -48,10 +43,9 @@ final class OrdersDomainTests: XCTestCase {
     }
 
     private func testStore(for state: OrdersDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: OrdersDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            OrdersDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.ordersRepository = mockOrdersRepository
             dependencies.pharmacyRepository = mockPharmacyRepository
@@ -89,19 +83,19 @@ final class OrdersDomainTests: XCTestCase {
         )
     }
 
-    func testOrdersDomainSubscriptionWithoutMessages() {
+    func testOrdersDomainSubscriptionWithoutMessages() async {
         let mockErxTaskRepoAccess = erxTaskRepository(with: [])
         let mockPharmacyRepoAccess = pharmacyRepository(with: [])
         mockOrdersRepository = mockErxTaskRepoAccess
         mockPharmacyRepository = mockPharmacyRepoAccess
         let store = testStore(for: OrdersDomain.State(orders: []))
 
-        store.send(.subscribeToCommunicationChanges)
-        store.receive(.response(.communicationChangeReceived([])))
+        await store.send(.subscribeToCommunicationChanges)
+        await store.receive(.response(.communicationChangeReceived([])))
         expect(mockErxTaskRepoAccess.listCommunicationsCallsCount) == 1
     }
 
-    func testOrdersDomainSubscriptionWithMessages() {
+    func testOrdersDomainSubscriptionWithMessages() async {
         let orderId = "orderId"
         var expected = OrderCommunications(
             orderId: orderId,
@@ -114,13 +108,13 @@ final class OrdersDomainTests: XCTestCase {
         mockPharmacyRepository = mockPharmacyRepoAccess
         let store = testStore(for: OrdersDomain.State(orders: []))
 
-        store.send(.subscribeToCommunicationChanges)
-        store.receive(.response(.communicationChangeReceived(expected.communications.elements))) { state in
+        await store.send(.subscribeToCommunicationChanges)
+        await store.receive(.response(.communicationChangeReceived(expected.communications.elements))) { state in
             state.orders = IdentifiedArray(uniqueElements: [expected])
             expect(mockErxTaskRepoAccess.listCommunicationsCallsCount) == 1
             expect(mockErxTaskRepoAccess.saveCommunicationsCallsCount) == 0
         }
-        store.receive(.response(.pharmaciesReceived([pharmacy]))) { state in
+        await store.receive(.response(.pharmaciesReceived([pharmacy]))) { state in
             expected.pharmacy = self.pharmacy
             state.orders = IdentifiedArray(uniqueElements: [expected])
             expect(mockPharmacyRepoAccess.loadCachedCallsCount) == 1
@@ -128,7 +122,7 @@ final class OrdersDomainTests: XCTestCase {
         }
     }
 
-    func testSelectOrder() {
+    func testSelectOrder() async {
         let orderId = "orderId"
         let expected = OrderCommunications(
             orderId: orderId,
@@ -136,7 +130,7 @@ final class OrdersDomainTests: XCTestCase {
         )
         let store = testStore(for: IdentifiedArray(uniqueElements: [expected]))
 
-        store.send(.didSelect(communicationOnPremise.orderId!)) { state in
+        await store.send(.didSelect(communicationOnPremise.orderId!)) { state in
             state.destination = .orderDetail(.init(order: expected))
         }
     }

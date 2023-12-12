@@ -24,14 +24,14 @@ extension PrescriptionDetailView {
     struct TechnicalInformationsView: View {
         @ObservedObject var viewStore: ViewStore<
             PrescriptionDetailDomain.Destinations.TechnicalInformationsState,
-            PrescriptionDetailDomain.Action
+            PrescriptionDetailDomain.Destinations.Action.None
         >
 
         init(store: Store<
             PrescriptionDetailDomain.Destinations.TechnicalInformationsState,
-            PrescriptionDetailDomain.Action
+            PrescriptionDetailDomain.Destinations.Action.None
         >) {
-            viewStore = ViewStore(store)
+            viewStore = ViewStore(store) { $0 }
         }
 
         var body: some View {

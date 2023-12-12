@@ -67,12 +67,12 @@ struct ProfileValidator: IDTokenValidator {
     let otherProfiles: [Profile]
 
     func validate(idToken: TokenPayload.IDTokenPayload) -> Result<Bool, Error> {
-        guard idToken.idNummer == currentProfile.insuranceId || currentProfile.insuranceId == nil else {
-            return .failure(IDTokenValidatorError.profileNotMatchingInsuranceId(currentProfile.insuranceId))
-        }
-
         if let profile = otherProfiles.first(where: { $0.insuranceId == idToken.idNummer }) {
             return .failure(IDTokenValidatorError.profileWithInsuranceIdExists(profile.name))
+        }
+
+        guard idToken.idNummer == currentProfile.insuranceId || currentProfile.insuranceId == nil else {
+            return .failure(IDTokenValidatorError.profileNotMatchingInsuranceId(currentProfile.insuranceId))
         }
 
         return .success(true)

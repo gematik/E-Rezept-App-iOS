@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -247,6 +247,13 @@ extension IDPCardWallDomain.Action {
         }
     }
 }
+extension IngredientDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
 extension MainDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
@@ -256,6 +263,13 @@ extension MainDomain.Action {
                 action.analytics(tracker: tracker)
             case let .horizontalProfileSelection(action: action):
                 action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
+extension MatrixCodeDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
             default: break
         }
     }
@@ -388,7 +402,7 @@ extension ProfilesDomain.Action {
         }
     }
 }
-extension RedeemMatrixCodeDomain.Action {
+extension ReadCardHelpDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
             default: break

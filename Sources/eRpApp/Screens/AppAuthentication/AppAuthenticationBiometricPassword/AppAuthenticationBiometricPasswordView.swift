@@ -27,7 +27,7 @@ struct AppAuthenticationBiometricPasswordView: View {
 
     init(store: AppAuthenticationBiometricPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -131,7 +131,7 @@ struct PasswordView: View {
 
     init(store: AppAuthenticationBiometricPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {

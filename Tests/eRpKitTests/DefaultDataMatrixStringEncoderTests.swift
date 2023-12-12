@@ -32,7 +32,7 @@ final class DefaultDataMatrixStringEncoderTests: XCTestCase {
 
         // when
         let worker = DefaultDataMatrixStringEncoder()
-        let stringRepresentation = try? worker.stringEncodeTasks([data])
+        let stringRepresentation = try? worker.stringEncode(tasks: [data])
 
         // then
         expect(stringRepresentation) == """
@@ -57,7 +57,7 @@ final class DefaultDataMatrixStringEncoderTests: XCTestCase {
 
         // when
         let worker = DefaultDataMatrixStringEncoder()
-        let stringRepresentation = try? worker.stringEncodeTasks([data1, data2, data3])
+        let stringRepresentation = try? worker.stringEncode(tasks: [data1, data2, data3])
 
         // then
         // swiftlint:disable line_length
@@ -72,11 +72,34 @@ final class DefaultDataMatrixStringEncoderTests: XCTestCase {
 
         // when
         let worker = DefaultDataMatrixStringEncoder()
-        let stringRepresentation = try? worker.stringEncodeTasks([])
+        let stringRepresentation = try? worker.stringEncode(tasks: [])
 
         // then
         expect(stringRepresentation) == """
         {"urls":[]}
         """
+    }
+
+    func testCreatingAJsonStringForInvoiceData() {
+        // given
+        // swiftlint:disable:next force_unwrapping
+        let data = ChargeItem(
+            id: "5678",
+            accessCode: "91838hdha9c42ceec14aec3ddlasnf021ß15f58fe4"
+        )
+
+        // when
+        let worker = DefaultDataMatrixStringEncoder()
+        let stringRepresentation = try? worker.stringEncode(chargeItem: data)
+
+        // then
+        expect(stringRepresentation) == """
+        {"urls":["ChargeItem/5678?ac=91838hdha9c42ceec14aec3ddlasnf021ß15f58fe4"]}
+        """
+    }
+
+    private struct ChargeItem: ErxChargeItemMatrixCode {
+        var id: String
+        var accessCode: String?
     }
 }

@@ -39,7 +39,7 @@ struct CardWallCANView: View {
     }
 
     var body: some View {
-        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+        WithViewStore(store, observe: ViewState.init) { viewStore in
             VStack(alignment: .leading, spacing: 8) {
                 CANView(store: store)
 
@@ -57,23 +57,16 @@ struct CardWallCANView: View {
                     viewStore.send(.advance)
                 }.padding(.horizontal)
 
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /CardWallCANDomain.Destinations.State.pin,
-                            action: CardWallCANDomain.Destinations.Action.pinAction(action:)
-                        ),
-                        then: CardWallPINView.init(store:)
-                    ),
-                    tag: CardWallCANDomain.Destinations.State.Tag.pin,
-                    selection: viewStore.binding(
-                        get: \.destinationTag
-                    ) {
-                        .setNavigation(tag: $0)
-                    }
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: CardWallCANDomain.Action.destination),
+                    state: /CardWallCANDomain.Destinations.State.pin,
+                    action: CardWallCANDomain.Destinations.Action.pinAction(action:),
+                    onTap: { viewStore.send(.setNavigation(tag: .pin)) },
+                    destination: CardWallPINView.init(store:),
+                    label: {}
+                )
+                .hidden()
+                .accessibility(hidden: true)
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtCanDemoModeInfo)
@@ -107,7 +100,7 @@ struct CardWallCANView: View {
         }
 
         var body: some View {
-            WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+            WithViewStore(store, observe: ViewState.init) { viewStore in
                 ScrollView(.vertical, showsIndicators: true) {
                     if viewStore.state.wrongCANEntered {
                         WorngCANEnteredWarningView()
@@ -165,10 +158,12 @@ struct CardWallCANView: View {
                             content: {
                                 NavigationView {
                                     IfLetStore(
-                                        store.destinationsScope(
-                                            state: /CardWallCANDomain.Destinations.State.egk,
-                                            action: CardWallCANDomain.Destinations.Action.egkAction(action:)
+                                        store.scope(
+                                            state: \.$destination,
+                                            action: CardWallCANDomain.Action.destination
                                         ),
+                                        state: /CardWallCANDomain.Destinations.State.egk,
+                                        action: CardWallCANDomain.Destinations.Action.egkAction(action:),
                                         then: OrderHealthCardListView.init(store:)
                                     )
                                     .accentColor(Colors.primary700)

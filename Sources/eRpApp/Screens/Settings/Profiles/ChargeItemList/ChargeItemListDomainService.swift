@@ -66,6 +66,8 @@ enum ChargeItemDomainServiceFetchResult: Equatable {
         case erxRepository(ErxRepositoryError)
         // sourcery: errorCode = "04"
         case unexpected
+        // sourcery: errorCode = "05"
+        case chargeItemConsentService(ChargeItemConsentService.Error)
     }
 }
 
@@ -101,6 +103,8 @@ enum ChargeItemListDomainServiceGrantResult: Equatable {
         case unexpectedGrantConsentResponse
         // sourcery: errorCode = "05"
         case unexpected
+        // sourcery: errorCode = "06"
+        case chargeItemConsentService(ChargeItemConsentService.Error)
     }
 }
 
@@ -140,9 +144,9 @@ enum ChargeItemDomainServiceDeleteResult: Equatable {
     }
 }
 
-// swiftlint:disable:next type_body_length
 struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
     let userSessionProvider: UserSessionProvider
+    let chargeItemConsentService: ChargeItemConsentService
 
     private func loginHandler(for profileId: UUID) -> LoginHandler {
         let userSession = userSessionProvider.userSession(for: profileId)
@@ -167,57 +171,36 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
     }
 
     func fetchRemoteChargeItemsAndSave(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
-        let loginHandler = loginHandler(for: profileId)
-        let erxTaskRepository = erxTaskRepository(for: profileId)
-        let userSession = userSessionProvider.userSession(for: profileId)
-
-        return loginHandler.isAuthenticated()
-            .first()
-            .flatMap { (loginResult: LoginResult) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> in
-                switch loginResult {
-                case .success(true):
-                    return userSession.profile()
-                        .first()
-                        .flatMap { profile -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> in
-                            guard let insuranceId = profile.insuranceId else {
-                                // At this point, we expect the profile to be associated with a insuranceId
-                                return Just(.error(.unexpected))
-                                    .eraseToAnyPublisher()
-                            }
-                            return erxTaskRepository.fetchConsents()
-                                .first()
-                                .flatMap { erxConsents in
-                                    if Self.checkForValidChargeItemsConsent(erxConsents, for: insuranceId) {
-                                        return erxTaskRepository.loadRemoteChargeItems()
-                                            .first()
-                                            .map { .success($0) }
-                                            .catch { error in
-                                                Just(ChargeItemDomainServiceFetchResult.error(.erxRepository(error)))
-                                                    .eraseToAnyPublisher()
-                                            }
-                                            .eraseToAnyPublisher()
-                                    } else {
-                                        return Just(ChargeItemDomainServiceFetchResult.consentNotGranted)
-                                            .eraseToAnyPublisher()
-                                    }
-                                }
-                                .catch { error -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> in
-                                    Just(.error(.erxRepository(error))).eraseToAnyPublisher()
-                                }
-                                .eraseToAnyPublisher()
-                        }
-                        .catch { error -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> in
-                            Just(.error(.localStore(error))).eraseToAnyPublisher()
-                        }
-                        .eraseToAnyPublisher()
-
-                case LoginResult.success(false):
-                    return Just(.notAuthenticated).eraseToAnyPublisher()
-                case let LoginResult.failure(error):
-                    return Just(.error(.loginHandler(error))).eraseToAnyPublisher()
-                }
+        Future<ChargeItemConsentService.CheckResult, Swift.Error> {
+            try await chargeItemConsentService.checkForConsent(profileId)
+        }
+        .mapError { error in
+            guard let error = error as? ChargeItemConsentService.Error
+            else { return ChargeItemConsentService.Error.unexpected }
+            return error
+        }
+        .flatMap { chargeItemConsentServiceResult -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> in
+            switch chargeItemConsentServiceResult {
+            case .granted:
+                return erxTaskRepository(for: profileId).loadRemoteChargeItems()
+                    .first()
+                    .map { ChargeItemDomainServiceFetchResult.success($0) }
+                    .catch { error in
+                        Just(ChargeItemDomainServiceFetchResult.error(.erxRepository(error))).eraseToAnyPublisher()
+                    }
+                    .eraseToAnyPublisher()
+            case .notGranted:
+                return Just(ChargeItemDomainServiceFetchResult.consentNotGranted)
+                    .eraseToAnyPublisher()
+            case .notAuthenticated:
+                return Just(ChargeItemDomainServiceFetchResult.notAuthenticated)
+                    .eraseToAnyPublisher()
             }
-            .eraseToAnyPublisher()
+        }
+        .catch { error -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> in
+            Just(.error(.chargeItemConsentService(error))).eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
     }
 
     func delete(
@@ -282,51 +265,24 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
     }
 
     func grantChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> {
-        let loginHandler = loginHandler(for: profileId)
-        let erxTaskRepository = erxTaskRepository(for: profileId)
-        let userSession = userSessionProvider.userSession(for: profileId)
-
-        return loginHandler.isAuthenticated()
-            .first()
-            .flatMap { (loginResult: LoginResult) -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> in
-                switch loginResult {
-                case .success(true):
-                    return userSession.profile()
-                        .first()
-                        .flatMap { profile -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> in
-                            guard let insuranceId = profile.insuranceId else {
-                                // At this point, we expect the profile to be associated with an insuranceId
-                                return Just(.error(.unexpected))
-                                    .eraseToAnyPublisher()
-                            }
-                            let chargeItemsConsent = Self.createChargeItemsConsent(insuranceId: insuranceId)
-                            return erxTaskRepository.grantConsent(chargeItemsConsent)
-                                .first()
-                                .map { receivedConsent -> ChargeItemListDomainServiceGrantResult in
-                                    if Self.checkForValidChargeItemsConsent(receivedConsent, for: insuranceId) {
-                                        return .success
-                                    } else {
-                                        return .error(.unexpectedGrantConsentResponse)
-                                    }
-                                }
-                                .catch { error -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> in
-                                    Just(.error(.erxRepository(error))).eraseToAnyPublisher()
-                                }
-                                .eraseToAnyPublisher()
-                        }
-                        .catch { error -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> in
-                            Just(.error(.localStore(error))).eraseToAnyPublisher()
-                        }
-                        .eraseToAnyPublisher()
-
-                case LoginResult.success(false):
-                    return Just(.notAuthenticated).eraseToAnyPublisher()
-
-                case let LoginResult.failure(error):
-                    return Just(.error(.loginHandler(error))).eraseToAnyPublisher()
-                }
+        Future<ChargeItemConsentService.GrantResult, Swift.Error> {
+            try await chargeItemConsentService.grantConsent(profileId)
+        }
+        .mapError { error in
+            guard let error = error as? ChargeItemConsentService.Error
+            else { return ChargeItemConsentService.Error.unexpected }
+            return error
+        }
+        .map { chargeItemConsentServiceResult -> ChargeItemListDomainServiceGrantResult in
+            switch chargeItemConsentServiceResult {
+            case .success: return .success
+            case .notAuthenticated: return .notAuthenticated
             }
-            .eraseToAnyPublisher()
+        }
+        .catch { error -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> in
+            Just(.error(.chargeItemConsentService(error))).eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
     }
 
     func fetchChargeItemsAssumingConsentGranted(for profileId: UUID)
@@ -409,35 +365,16 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
         -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
         Just(.success).eraseToAnyPublisher() // to-do: integration
     }
-
-    private static func checkForValidChargeItemsConsent(_ erxConsents: [ErxConsent], for insuranceId: String) -> Bool {
-        erxConsents.contains { erxConsent in
-            checkForValidChargeItemsConsent(erxConsent, for: insuranceId)
-        }
-    }
-
-    private static func checkForValidChargeItemsConsent(_ erxConsent: ErxConsent?, for insuranceId: String) -> Bool {
-        guard let erxConsent else { return false }
-        return erxConsent.category == .chargcons && erxConsent.insuranceId == insuranceId
-    }
-
-    private static func createChargeItemsConsent(insuranceId: String) -> ErxConsent {
-        ErxConsent(
-            identifier: "\(ErxConsent.Category.chargcons.rawValue)-\(insuranceId)",
-            insuranceId: insuranceId,
-            timestamp: FHIRDateFormatter.shared.string(from: Date(), format: .yearMonthDay),
-            scope: .patientPrivacy,
-            category: .chargcons,
-            policyRule: .optIn
-        )
-    }
 }
 
 // MARK: TCA Dependency
 
 extension DefaultChargeItemListDomainService {
-    static let live: Self = DefaultChargeItemListDomainService(userSessionProvider: UserSessionProviderDependency
-        .liveValue)
+    static let live: Self = DefaultChargeItemListDomainService(
+        userSessionProvider: UserSessionProviderDependency
+            .liveValue,
+        chargeItemConsentService: ChargeItemConsentService.liveValue
+    )
 }
 
 struct ChargeItemListDomainServiceDependency: DependencyKey {

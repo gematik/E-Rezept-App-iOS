@@ -23,34 +23,47 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct AccidentInfoView: View {
-        let store: Store<PrescriptionDetailDomain.Destinations.AccidentInfoState, PrescriptionDetailDomain.Action>
+        let store: Store<
+            PrescriptionDetailDomain.Destinations.AccidentInfoState,
+            PrescriptionDetailDomain.Destinations.Action.None
+        >
+        @ObservedObject var viewStore: ViewStore<
+            PrescriptionDetailDomain.Destinations.AccidentInfoState,
+            PrescriptionDetailDomain.Destinations.Action.None
+        >
+
+        init(store: Store<
+            PrescriptionDetailDomain.Destinations.AccidentInfoState,
+            PrescriptionDetailDomain.Destinations.Action.None
+        >) {
+            self.store = store
+            viewStore = ViewStore(store) { $0 }
+        }
 
         var body: some View {
-            WithViewStore(store) { viewStore in
-                ScrollView(.vertical) {
-                    SectionContainer {
-                        SubTitle(
-                            title: viewStore.accidentInfo.localizedReason,
-                            description: L10n.prscDtlTxtAccidentReason
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentReason)
+            ScrollView(.vertical) {
+                SectionContainer {
+                    SubTitle(
+                        title: viewStore.accidentInfo.localizedReason,
+                        description: L10n.prscDtlTxtAccidentReason
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentReason)
 
-                        SubTitle(
-                            title: viewStore.accidentInfo.date ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtAccidentDate
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentDate)
+                    SubTitle(
+                        title: viewStore.accidentInfo.date ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtAccidentDate
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentDate)
 
-                        SubTitle(
-                            title: viewStore.accidentInfo.workPlaceIdentifier ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtAccidentId
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentId)
+                    SubTitle(
+                        title: viewStore.accidentInfo.workPlaceIdentifier ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtAccidentId
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentId)
 
-                    }.sectionContainerStyle(.inline)
-                }
-                .navigationBarTitle(Text(L10n.prscDtlTxtAccidentReason), displayMode: .inline)
+                }.sectionContainerStyle(.inline)
             }
+            .navigationBarTitle(Text(L10n.prscDtlTxtAccidentReason), displayMode: .inline)
         }
     }
 }

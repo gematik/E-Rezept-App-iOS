@@ -21,14 +21,10 @@ import ComposableArchitecture
 import Nimble
 import XCTest
 
+@MainActor
 final class AppAuthenticationPasswordDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        AppAuthenticationPasswordDomain.State,
-        AppAuthenticationPasswordDomain.Action,
-        AppAuthenticationPasswordDomain.State,
-        AppAuthenticationPasswordDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<AppAuthenticationPasswordDomain>
+
     let emptyPassword = AppAuthenticationPasswordDomain.State(password: "")
     let abcPassword = AppAuthenticationPasswordDomain.State(password: "abc")
     var mockAppSecurityPasswordManager: MockAppSecurityManager!
@@ -39,41 +35,40 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
     }
 
     func testStore(for state: AppAuthenticationPasswordDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: AppAuthenticationPasswordDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            AppAuthenticationPasswordDomain()
+        } withDependencies: { dependencies in
             dependencies.appSecurityManager = mockAppSecurityPasswordManager
         }
     }
 
-    func testSetPassword() {
+    func testSetPassword() async {
         let store = testStore(for: emptyPassword)
 
-        store.send(.setPassword("MyPassword")) { state in
+        await store.send(.setPassword("MyPassword")) { state in
             state.password = "MyPassword"
         }
     }
 
-    func testPasswordIsCheckedWhenContinueButtonWasTapped() {
+    func testPasswordIsCheckedWhenContinueButtonWasTapped() async {
         let store = testStore(for: abcPassword)
         mockAppSecurityPasswordManager.matchesPasswordReturnValue = true
 
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beFalse())
-        store.send(.loginButtonTapped)
-        store.receive(.passwordVerificationReceived(true)) { state in
+        await store.send(.loginButtonTapped)
+        await store.receive(.passwordVerificationReceived(true)) { state in
             state.lastMatchResultSuccessful = true
         }
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beTrue())
     }
 
-    func testPasswordDoesNotMatch() {
+    func testPasswordDoesNotMatch() async {
         let store = testStore(for: abcPassword)
         mockAppSecurityPasswordManager.matchesPasswordReturnValue = false
 
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beFalse())
-        store.send(.loginButtonTapped)
-        store.receive(.passwordVerificationReceived(false)) { state in
+        await store.send(.loginButtonTapped)
+        await store.receive(.passwordVerificationReceived(false)) { state in
             state.lastMatchResultSuccessful = false
         }
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beTrue())

@@ -21,37 +21,41 @@ import SwiftUI
 
 struct AppAuthenticationWithBiometricsView: View {
     let store: AppAuthenticationBiometricsDomain.Store
+    @ObservedObject var viewStore: ViewStoreOf<AppAuthenticationBiometricsDomain>
+
+    init(store: AppAuthenticationBiometricsDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store) { $0 }
+    }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
-            VStack(spacing: 8) {
-                switch viewStore.biometryType {
-                case .faceID:
-                    FaceIDView {
-                        viewStore.send(.startAuthenticationChallenge)
-                    }
-                case .touchID:
-                    TouchIDView {
-                        viewStore.send(.startAuthenticationChallenge)
-                    }
+        VStack(spacing: 8) {
+            switch viewStore.biometryType {
+            case .faceID:
+                FaceIDView {
+                    viewStore.send(.startAuthenticationChallenge)
                 }
-            }
-            .padding(.vertical)
-            .onAppear {
-                if viewStore.startImmediateAuthenticationChallenge {
+            case .touchID:
+                TouchIDView {
                     viewStore.send(.startAuthenticationChallenge)
                 }
             }
-            .alert(isPresented: viewStore.binding(
-                get: { $0.errorToDisplay != nil },
-                send: AppAuthenticationBiometricsDomain.Action.dismissError
-            )) {
-                Alert(
-                    title: Text(L10n.alertErrorTitle),
-                    message: Text(viewStore.errorToDisplay?.errorDescription ?? ""),
-                    dismissButton: .default(Text(L10n.alertBtnOk))
-                )
+        }
+        .padding(.vertical)
+        .onAppear {
+            if viewStore.startImmediateAuthenticationChallenge {
+                viewStore.send(.startAuthenticationChallenge)
             }
+        }
+        .alert(isPresented: viewStore.binding(
+            get: { $0.errorToDisplay != nil },
+            send: AppAuthenticationBiometricsDomain.Action.dismissError
+        )) {
+            Alert(
+                title: Text(L10n.alertErrorTitle),
+                message: Text(viewStore.errorToDisplay?.errorDescription ?? ""),
+                dismissButton: .default(Text(L10n.alertBtnOk))
+            )
         }
     }
 
@@ -105,9 +109,10 @@ struct AppAuthenticationWithBiometricsView_Previews: PreviewProvider {
                     initialState: AppAuthenticationBiometricsDomain.State(
                         biometryType: .faceID,
                         startImmediateAuthenticationChallenge: false
-                    ),
-                    reducer: AppAuthenticationBiometricsDomain()
-                )
+                    )
+                ) {
+                    AppAuthenticationBiometricsDomain()
+                }
             )
         }
     }

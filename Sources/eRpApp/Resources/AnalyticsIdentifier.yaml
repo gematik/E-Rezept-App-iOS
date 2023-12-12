@@ -101,6 +101,8 @@ screens:
     name: "troubleShooting:readCardHelp2"
   troubleShooting_readCardHelp3:
     name: "troubleShooting:readCardHelp3"
+  troubleShooting_readCardHelp4:
+    name: "troubleShooting:readCardHelp4"
   contactInsuranceCompany:
     name: "contactInsuranceCompany"
   contactInsuranceCompany_selectKK: #not used in Android orderHealthCard2.0
@@ -139,6 +141,8 @@ screens:
     name: "healthCardPassword:readCard"
   healthCardPassword_scanner:
     name: "healthCardPassword:scanner"
+  healthCardPassword_pin_alert:
+    name: "healthCardPassword:pinAlert"
   scanner_imageGallery:
     name: "scanner:imageGallery"
   scanner_documentImporter:

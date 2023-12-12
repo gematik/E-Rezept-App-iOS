@@ -53,7 +53,7 @@ class DemoSessionContainer: UserSession {
 
     var profileDataStore: ProfileDataStore
 
-    lazy var biometrieIdpSession: IDPSession = {
+    lazy var pairingIdpSession: IDPSession = {
         DemoIDPSession(storage: secureUserStore)
     }()
 
@@ -184,9 +184,9 @@ class DemoSessionContainer: UserSession {
         )
     }()
 
-    lazy var biometricsIdpSessionLoginHandler: LoginHandler = {
+    lazy var pairingIdpSessionLoginHandler: LoginHandler = {
         DefaultLoginHandler(
-            idpSession: biometrieIdpSession,
+            idpSession: pairingIdpSession,
             signatureProvider: secureEnclaveSignatureProvider
         )
     }()

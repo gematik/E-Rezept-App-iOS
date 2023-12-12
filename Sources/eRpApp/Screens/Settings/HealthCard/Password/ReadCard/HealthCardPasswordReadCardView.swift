@@ -31,7 +31,7 @@ struct HealthCardPasswordReadCardView: View {
 
     init(store: HealthCardPasswordReadCardDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     static let height: CGFloat = {
@@ -98,8 +98,12 @@ struct HealthCardPasswordReadCardView: View {
             .padding(.horizontal)
         }
         .alert(
-            store.destinationsScope(state: /HealthCardPasswordReadCardDomain.Destinations.State.alert),
-            dismiss: .nothing
+            store.scope(
+                state: \.$destination,
+                action: HealthCardPasswordReadCardDomain.Action.destination
+            ),
+            state: /HealthCardPasswordReadCardDomain.Destinations.State.alert,
+            action: HealthCardPasswordReadCardDomain.Destinations.Action.alert
         )
         .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
         .navigationBarHidden(true)

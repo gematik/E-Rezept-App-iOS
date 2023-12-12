@@ -24,14 +24,9 @@ import Nimble
 import TestUtils
 import XCTest
 
+@MainActor
 final class HealthCardPasswordReadCardDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        HealthCardPasswordReadCardDomain.State,
-        HealthCardPasswordReadCardDomain.Action,
-        HealthCardPasswordReadCardDomain.State,
-        HealthCardPasswordReadCardDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<HealthCardPasswordReadCardDomain>
 
     var mockNFCSessionController: MockNFCHealthCardPasswordController!
 
@@ -49,16 +44,15 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
     }
 
     func testStore(for state: HealthCardPasswordReadCardDomain.State) -> TestStore {
-        .init(
-            initialState: state,
-            reducer: HealthCardPasswordReadCardDomain()
-        ) { dependecies in
-            dependecies.schedulers = schedulers
-            dependecies.nfcHealthCardPasswordController = mockNFCSessionController
+        .init(initialState: state) {
+            HealthCardPasswordReadCardDomain()
+        } withDependencies: { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.nfcHealthCardPasswordController = mockNFCSessionController
         }
     }
 
-    func testUnlockCard_Success() throws {
+    func testUnlockCard_Success() async throws {
         let sut = testStore(
             for: .init(mode: .healthCardResetPinCounterNoNewSecret(can: "123123", puk: "12345678"))
         )
@@ -68,19 +62,19 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
             .setFailureType(to: NFCHealthCardPasswordControllerError.self)
             .eraseToAnyPublisher()
 
-        sut.send(.readCard)
-        uiScheduler.advance()
-        sut.receive(.response(.nfcHealthCardPasswordControllerResponseReceived(.success))) {
+        await sut.send(.readCard)
+        await uiScheduler.advance()
+        await sut.receive(.response(.nfcHealthCardPasswordControllerResponseReceived(.success))) {
             $0.destination = .alert(HealthCardPasswordReadCardDomain.AlertStates.cardUnlocked)
         }
 
-        sut.send(.alertOkButtonTapped) {
+        await sut.send(.destination(.presented(.alert(.settings)))) {
             $0.destination = nil
         }
-        sut.receive(.delegate(.navigateToSettings))
+        await sut.receive(.delegate(.navigateToSettings))
     }
 
-    func testSetNewPin_Success() {
+    func testSetNewPin_Success() async {
         let sut = testStore(
             for: .init(
                 mode: .healthCardSetNewPinSecret(can: "123123", oldPin: "123456", newPin: "654321")
@@ -92,19 +86,19 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
             .setFailureType(to: NFCHealthCardPasswordControllerError.self)
             .eraseToAnyPublisher()
 
-        sut.send(.readCard)
-        uiScheduler.advance()
-        sut.receive(.response(.nfcHealthCardPasswordControllerResponseReceived(.success))) {
+        await sut.send(.readCard)
+        await uiScheduler.advance()
+        await sut.receive(.response(.nfcHealthCardPasswordControllerResponseReceived(.success))) {
             $0.destination = .alert(HealthCardPasswordReadCardDomain.AlertStates.setNewPin)
         }
 
-        sut.send(.alertOkButtonTapped) {
+        await sut.send(.destination(.presented(.alert(.settings)))) {
             $0.destination = nil
         }
-        sut.receive(.delegate(.navigateToSettings))
+        await sut.receive(.delegate(.navigateToSettings))
     }
 
-    func testSetNewPin_PinCounterExhausted() {
+    func testSetNewPin_PinCounterExhausted() async {
         let sut = testStore(
             for: .init(
                 mode: .healthCardSetNewPinSecret(can: "123123", oldPin: "123456", newPin: "654321")
@@ -117,15 +111,15 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
             .setFailureType(to: NFCHealthCardPasswordControllerError.self)
             .eraseToAnyPublisher()
 
-        sut.send(.readCard)
-        uiScheduler.advance()
-        sut.receive(.response(.nfcHealthCardPasswordControllerResponseReceived(.commandBlocked))) {
+        await sut.send(.readCard)
+        await uiScheduler.advance()
+        await sut.receive(.response(.nfcHealthCardPasswordControllerResponseReceived(.commandBlocked))) {
             $0.destination = .alert(HealthCardPasswordReadCardDomain.AlertStates.pinCounterExhausted)
         }
 
-        sut.send(.alertOkButtonTapped) {
+        await sut.send(.destination(.presented(.alert(.settings)))) {
             $0.destination = nil
         }
-        sut.receive(.delegate(.navigateToSettings))
+        await sut.receive(.delegate(.navigateToSettings))
     }
 }

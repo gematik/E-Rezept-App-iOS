@@ -22,43 +22,47 @@ import SwiftUI
 
 struct RedeemSuccessView: View {
     let store: RedeemSuccessDomain.Store
+    @ObservedObject var viewStore: ViewStoreOf<RedeemSuccessDomain>
+
+    init(store: RedeemSuccessDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store) { $0 }
+    }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
-            ScrollView {
-                VStack(spacing: 16) {
-                    if let url = videoURLforSource(viewStore.state.redeemOption) {
-                        LoopingVideoPlayerContainerView(withURL: url)
-                            .frame(
-                                minWidth: 160,
-                                idealWidth: 240,
-                                maxWidth: 300,
-                                minHeight: 160,
-                                idealHeight: 240,
-                                maxHeight: 300
-                            )
-                            .clipShape(Circle())
-                            .padding(.vertical, 8)
-                    }
-
-                    Text(titlelForSource(viewStore.state.redeemOption))
-                        .font(Font.title3.bold())
-
-                    ContentView(option: viewStore.state.redeemOption)
-
-                    Spacer()
-
-                    LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
-                                         isLoading: false) {
-                        viewStore.send(.closeButtonTapped)
-                    }
-                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
+        ScrollView {
+            VStack(spacing: 16) {
+                if let url = videoURLforSource(viewStore.state.redeemOption) {
+                    LoopingVideoPlayerContainerView(withURL: url)
+                        .frame(
+                            minWidth: 160,
+                            idealWidth: 240,
+                            maxWidth: 300,
+                            minHeight: 160,
+                            idealHeight: 240,
+                            maxHeight: 300
+                        )
+                        .clipShape(Circle())
+                        .padding(.vertical, 8)
                 }
-                .navigationBarBackButtonHidden(true)
-                .navigationTitle(L10n.phaSuccessRedeemTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .padding()
+
+                Text(titlelForSource(viewStore.state.redeemOption))
+                    .font(Font.title3.bold())
+
+                ContentView(option: viewStore.state.redeemOption)
+
+                Spacer()
+
+                LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
+                                     isLoading: false) {
+                    viewStore.send(.closeButtonTapped)
+                }
+                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
             }
+            .navigationBarBackButtonHidden(true)
+            .navigationTitle(L10n.phaSuccessRedeemTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .padding()
         }
     }
 

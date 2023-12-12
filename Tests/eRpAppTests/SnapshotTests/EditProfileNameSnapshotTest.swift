@@ -34,9 +34,11 @@ final class EditProfileNameSnapshotTest: XCTestCase {
     func testEditProfileNameViewEmpty() {
         let sut = EditProfileNameView(
             store: .init(
-                initialState: .init(profileName: "   ", profileId: UUID()),
-                reducer: EmptyReducer()
-            )
+                initialState: .init(profileName: "   ", profileId: UUID())
+
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -47,9 +49,11 @@ final class EditProfileNameSnapshotTest: XCTestCase {
     func testEditProfileProfileViewFilled() {
         let sut = EditProfileNameView(
             store: .init(
-                initialState: .init(profileName: "Lazy Niklas", profileId: UUID()),
-                reducer: EmptyReducer()
-            )
+                initialState: .init(profileName: "Lazy Niklas", profileId: UUID())
+
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

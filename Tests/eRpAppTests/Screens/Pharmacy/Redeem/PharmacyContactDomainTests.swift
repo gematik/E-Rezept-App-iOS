@@ -23,18 +23,13 @@ import eRpKit
 import Nimble
 import XCTest
 
+@MainActor
 class PharmacyContactDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
     var mockShipmentInfoDataStore: MockShipmentInfoDataStore!
     var mockInputValidator: MockRedeemInputValidator!
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        PharmacyContactDomain.State,
-        PharmacyContactDomain.Action,
-        PharmacyContactDomain.State,
-        PharmacyContactDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<PharmacyContactDomain>
     var store: TestStore!
 
     let shipmentInfo = ShipmentInfo(
@@ -59,17 +54,16 @@ class PharmacyContactDomainTests: XCTestCase {
     }
 
     func testStore(for state: PharmacyContactDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: PharmacyContactDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            PharmacyContactDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.shipmentInfoDataStore = mockShipmentInfoDataStore
             dependencies.redeemInputValidator = mockInputValidator
         }
     }
 
-    func test_saveContactInformation() {
+    func test_saveContactInformation() async {
         // given
         let sut = testStore(for: PharmacyContactDomain.State(
             shipmentInfo: shipmentInfo,
@@ -80,16 +74,16 @@ class PharmacyContactDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         // when
-        sut.send(.save)
+        await sut.send(.save)
 
         // then
         expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
-        sut.receive(.response(.shipmentInfoSaved(.success(shipmentInfo))))
+        await sut.receive(.response(.shipmentInfoSaved(.success(shipmentInfo))))
         expect(self.mockShipmentInfoDataStore.setSelectedShipmentInfoIdCallsCount).to(equal(1))
-        sut.receive(.delegate(.close))
+        await sut.receive(.delegate(.close))
     }
 
-    func test_saveContactInformationWithError() {
+    func test_saveContactInformationWithError() async {
         // given
         let expectedError = LocalStoreError.write(error: DemoError.demo)
         let sut = testStore(
@@ -104,24 +98,24 @@ class PharmacyContactDomainTests: XCTestCase {
                 .eraseToAnyPublisher()
 
         // when
-        sut.send(.save)
+        await sut.send(.save)
 
         // then
         expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
-        sut.receive(.response(.shipmentInfoSaved(.failure(expectedError)))) {
+        await sut.receive(.response(.shipmentInfoSaved(.failure(expectedError)))) {
             $0.alertState = AlertState(
                 title: TextState("Fehler"),
                 message: TextState(LocalStoreError.write(error: DemoError.demo).localizedDescriptionWithErrorList),
-                dismissButton: ButtonState.default(
+                dismissButton: ButtonState.cancel(
                     TextState("Okay"),
-                    action: .send(PharmacyContactDomain.Action.alertDismissButtonTapped)
+                    action: .send(.none)
                 )
             )
         }
         expect(self.mockShipmentInfoDataStore.setSelectedShipmentInfoIdCallsCount).to(equal(0))
     }
 
-    func testChangingInputIntoSomethingInvalid() {
+    func testChangingInputIntoSomethingInvalid() async {
         let shipmentInfo = shipmentInfo
         let sut = testStore(
             for: PharmacyContactDomain.State(
@@ -131,37 +125,37 @@ class PharmacyContactDomainTests: XCTestCase {
         )
 
         mockInputValidator.returnValue = .invalid("that is invalid")
-        sut.send(.setDeliveryInfo("hey")) { state in
+        await sut.send(.setDeliveryInfo("hey")) { state in
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
-        sut.send(.alertDismissButtonTapped) {
+        await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        sut.send(.setName("Some Name")) { state in
+        await sut.send(.setName("Some Name")) { state in
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
-        sut.send(.alertDismissButtonTapped) {
+        await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        sut.send(.setStreet("Street")) { state in
+        await sut.send(.setStreet("Street")) { state in
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
-        sut.send(.alertDismissButtonTapped) {
+        await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        sut.send(.setZip("123")) { state in
+        await sut.send(.setZip("123")) { state in
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
-        sut.send(.alertDismissButtonTapped) {
+        await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        sut.send(.setCity("Köln")) { state in
+        await sut.send(.setCity("Köln")) { state in
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
-        sut.send(.alertDismissButtonTapped) {
+        await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        sut.send(.setPhone("1")) { state in
+        await sut.send(.setPhone("1")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: shipmentInfo.name,
@@ -174,7 +168,7 @@ class PharmacyContactDomainTests: XCTestCase {
                              deliveryInfo: shipmentInfo.deliveryInfo)
             )
         }
-        sut.send(.setMail("mail")) { state in
+        await sut.send(.setMail("mail")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: shipmentInfo.name,
@@ -188,12 +182,12 @@ class PharmacyContactDomainTests: XCTestCase {
             )
         }
         mockInputValidator.returnValue = .invalid("Invalid Phone")
-        sut.send(.save) { state in
+        await sut.send(.save) { state in
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "Invalid Phone")
         }
     }
 
-    func testChangingInputIntoSomethingValid() {
+    func testChangingInputIntoSomethingValid() async {
         let shipmentInfo = shipmentInfo
         let sut = testStore(
             for: PharmacyContactDomain.State(
@@ -203,7 +197,7 @@ class PharmacyContactDomainTests: XCTestCase {
         )
 
         mockInputValidator.returnValue = .valid
-        sut.send(.setDeliveryInfo("hey")) { state in
+        await sut.send(.setDeliveryInfo("hey")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: shipmentInfo.name,
@@ -213,7 +207,7 @@ class PharmacyContactDomainTests: XCTestCase {
                              deliveryInfo: "hey")
             )
         }
-        sut.send(.setName("Some Name")) { state in
+        await sut.send(.setName("Some Name")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
@@ -224,7 +218,7 @@ class PharmacyContactDomainTests: XCTestCase {
             )
         }
 
-        sut.send(.setStreet("Street")) { state in
+        await sut.send(.setStreet("Street")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
@@ -235,7 +229,7 @@ class PharmacyContactDomainTests: XCTestCase {
             )
         }
 
-        sut.send(.setZip("123")) { state in
+        await sut.send(.setZip("123")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
@@ -245,7 +239,7 @@ class PharmacyContactDomainTests: XCTestCase {
                              deliveryInfo: "hey")
             )
         }
-        sut.send(.setCity("Köln")) { state in
+        await sut.send(.setCity("Köln")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
@@ -256,7 +250,7 @@ class PharmacyContactDomainTests: XCTestCase {
             )
         }
 
-        sut.send(.setPhone("1771234")) { state in
+        await sut.send(.setPhone("1771234")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
@@ -275,18 +269,18 @@ class PharmacyContactDomainTests: XCTestCase {
                                              phone: "1771234",
                                              mail: "mail",
                                              deliveryInfo: "hey")
-        sut.send(.setMail("mail")) { state in
+        await sut.send(.setMail("mail")) { state in
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(finalShipmentInfo)
         }
 
         mockShipmentInfoDataStore.saveShipmentInfosReturnValue = Just([finalShipmentInfo])
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
-        sut.send(.save)
+        await sut.send(.save)
 
         expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
-        sut.receive(.response(.shipmentInfoSaved(.success(finalShipmentInfo))))
+        await sut.receive(.response(.shipmentInfoSaved(.success(finalShipmentInfo))))
         expect(self.mockShipmentInfoDataStore.setSelectedShipmentInfoIdCallsCount).to(equal(1))
-        sut.receive(.delegate(.close))
+        await sut.receive(.delegate(.close))
     }
 }

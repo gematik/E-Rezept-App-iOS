@@ -18,6 +18,7 @@
 
 import Combine
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import IDP
@@ -25,7 +26,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class ExtAuthPendingViewSnapshotTests: XCTestCase {
+final class ExtAuthPendingViewSnapshotTests: ERPSnapshotTestCase {
     let networkScheduler = DispatchQueue.immediate
     let uiScheduler = DispatchQueue.immediate
 
@@ -55,17 +56,15 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
                 .setFailureType(to: LocalStoreError.self)
                 .eraseToAnyPublisher()
         let store = ExtAuthPendingDomain.Store(
-            initialState: .extAuthSuccessful(KKAppDirectory.Entry(name: "Gematik KK", identifier: "abc")),
-            reducer: .empty,
-            environment: ExtAuthPendingDomain.Environment(
-                idpSession: DemoIDPSession(storage: MemoryStorage(schedulers: schedulers)),
-                schedulers: schedulers,
-                profileDataStore: mockUserSession.profileDataStore,
-                extAuthRequestStorage: DummyExtAuthRequestStorage(),
-                currentProfile: mockUserSession.profile(),
-                idTokenValidator: mockUserSession.idTokenValidator()
+            initialState: .init(
+                extAuthState: .extAuthSuccessful(KKAppDirectory
+                    .Entry(name: "Gematik KK", identifier: "abc"))
             )
-        )
+
+        ) {
+            EmptyReducer()
+        }
+
         let sut = ExtAuthPendingView(store: store)
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -84,17 +83,15 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
                 .setFailureType(to: LocalStoreError.self)
                 .eraseToAnyPublisher()
         let store = ExtAuthPendingDomain.Store(
-            initialState: .pendingExtAuth(KKAppDirectory.Entry(name: "Gematik KK", identifier: "abc")),
-            reducer: .empty,
-            environment: ExtAuthPendingDomain.Environment(
-                idpSession: DemoIDPSession(storage: MemoryStorage(schedulers: schedulers)),
-                schedulers: schedulers,
-                profileDataStore: mockUserSession.profileDataStore,
-                extAuthRequestStorage: DummyExtAuthRequestStorage(),
-                currentProfile: mockUserSession.profile(),
-                idTokenValidator: mockUserSession.idTokenValidator()
+            initialState: .init(
+                extAuthState: .pendingExtAuth(KKAppDirectory
+                    .Entry(name: "Gematik KK", identifier: "abc"))
             )
-        )
+
+        ) {
+            EmptyReducer()
+        }
+
         let sut = ExtAuthPendingView(store: store)
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

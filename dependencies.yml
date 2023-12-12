@@ -10,7 +10,25 @@ additional:
     :url: https://www.openssl.org/source
     :license_uri: https://www.openssl.org/source/apache-license-2.0.txt
     :version: 3.0.7
+purpose:
+  generic: >
+    This library contains convenience functions for creating the application ui.
+  specific:
+    OpenSSL: >
+      OpenSSL is used for all cryptographics that cannot be achieved with iOS standard crypto libraries (e.g. Brainpool ECC, PKCS#7).
+    DataKit: >
+      This library contains convenience functions for handling data and encoding e.g. from and to Base64 representation.
+    zxingify-objc: >
+      This library is used to create data matrix codes for redeeming prescriptions at a local pharmacy.
+    zxcvbn-ios: >
+      This library is used to rate the strength of passwords.
+    fhirmodels: >
+      This library is used to handle FHIR data structures and serialize/deserialize into/from JSON.
+    swift-protobuf: >
+      This library is used by fhirmodels as an unused dependency.
 exclude_identities_from_package_resolved:
   - cs_ios_sdk
   - cwlcatchexception
   - cwlpreconditiontesting
+  - nimble
+  - ohhttpstubs

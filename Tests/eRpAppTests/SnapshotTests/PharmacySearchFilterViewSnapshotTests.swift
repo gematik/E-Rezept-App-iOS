@@ -23,7 +23,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class PharmacySearchFilterViewSnapshotTests: XCTestCase {
+final class PharmacySearchFilterViewSnapshotTests: ERPSnapshotTestCase {
     var resourceHandlerMock: MockResourceHandler!
 
     override func setUp() {
@@ -37,9 +37,11 @@ final class PharmacySearchFilterViewSnapshotTests: XCTestCase {
         let sut = NavigationView {
             PharmacySearchFilterView(
                 store: PharmacySearchFilterDomain.Store(
-                    initialState: .init(pharmacyFilterOptions: []),
-                    reducer: EmptyReducer()
-                )
+                    initialState: .init(pharmacyFilterOptions: [PharmacySearchFilterDomain.PharmacyFilterOption]())
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -52,9 +54,14 @@ final class PharmacySearchFilterViewSnapshotTests: XCTestCase {
         let sut = NavigationView {
             PharmacySearchFilterView(
                 store: PharmacySearchFilterDomain.Store(
-                    initialState: .init(pharmacyFilterOptions: [.currentLocation, .shipment]),
-                    reducer: EmptyReducer()
-                )
+                    initialState: .init(pharmacyFilterOptions: [
+                        PharmacySearchFilterDomain.PharmacyFilterOption.currentLocation,
+                        PharmacySearchFilterDomain.PharmacyFilterOption.shipment,
+                    ])
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 

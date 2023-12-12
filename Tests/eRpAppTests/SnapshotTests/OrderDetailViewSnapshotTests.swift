@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class OrderDetailViewSnapshotTests: XCTestCase {
+final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
@@ -100,9 +100,11 @@ final class OrderDetailViewSnapshotTests: XCTestCase {
                 initialState: .init(order: OrderCommunications(
                     orderId: "test",
                     communications: [communicationDispRequest]
-                )),
-                reducer: EmptyReducer()
-            )
+                ))
+
+            ) {
+                EmptyReducer()
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -117,9 +119,11 @@ final class OrderDetailViewSnapshotTests: XCTestCase {
                     communications: [communicationOnPremise,
                                      communicationShipment,
                                      communicationDelivery]
-                )),
-                reducer: EmptyReducer()
-            )
+                ))
+
+            ) {
+                EmptyReducer()
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -133,9 +137,11 @@ final class OrderDetailViewSnapshotTests: XCTestCase {
                     orderId: "test",
                     communications: [communicationOnPremiseWithUrl,
                                      communicationWithoutPayload]
-                )),
-                reducer: EmptyReducer()
-            ))
+                ))
+
+            ) {
+                EmptyReducer()
+            })
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

@@ -28,11 +28,17 @@ struct PharmacySearchView: View {
 
     @ObservedObject var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
 
-    init(store: PharmacySearchDomain.Store,
-         isRedeemRecipe: Bool = true) {
+    init(store: PharmacySearchDomain.Store) {
+        self.init(store: store, isRedeemRecipe: true)
+    }
+
+    init(
+        store: PharmacySearchDomain.Store,
+        isRedeemRecipe: Bool
+    ) {
         self.store = store
         self.isRedeemRecipe = isRedeemRecipe
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     @State var scrollOffset: CGFloat = 0
@@ -110,10 +116,9 @@ struct PharmacySearchView: View {
                 onDismiss: {},
                 content: {
                     IfLetStore(
-                        store.destinationsScope(
-                            state: /PharmacySearchDomain.Destinations.State.filter,
-                            action: PharmacySearchDomain.Destinations.Action.pharmacyFilterView(action:)
-                        ),
+                        store.scope(state: \.$destination, action: PharmacySearchDomain.Action.destination),
+                        state: /PharmacySearchDomain.Destinations.State.filter,
+                        action: PharmacySearchDomain.Destinations.Action.pharmacyFilterView(action:),
                         then: PharmacySearchFilterView.init(store:)
                     )
                     .accentColor(Colors.primary600)
@@ -141,16 +146,18 @@ struct PharmacySearchView: View {
             viewStore.send(.performSearch, animation: .default)
         }
         .alert(
-            store.destinationsScope(state: /PharmacySearchDomain.Destinations.State.alert),
-            dismiss: .setNavigation(tag: .none)
+            store.scope(state: \.$destination, action: PharmacySearchDomain.Action.destination),
+            state: /PharmacySearchDomain.Destinations.State.alert,
+            action: PharmacySearchDomain.Destinations.Action.alert
         )
         .searchableForceCancelButtonVisible(forceCancelButtonVisible)
-        .onAppear {
-            viewStore.send(.onAppear)
+        .task {
+            await viewStore.send(.task).finish()
         }
+        .onAppear { viewStore.send(.onAppear) }
         .onReceive(NotificationCenter.default
             .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                viewStore.send(.onAppear)
+                viewStore.send(.task)
         }
     }
 
@@ -240,7 +247,7 @@ extension PharmacySearchView {
         let searchState: PharmacySearchDomain.SearchState
         let pharmacies: [PharmacyLocationViewModel]
         let filter: [PharmacyFilterBar<PharmacySearchFilterDomain.PharmacyFilterOption>
-            .Filter<PharmacySearchFilterDomain.PharmacyFilterOption>]
+            .Filter]
         let showDistance: Bool
 
         let searchHistory: [String]
@@ -271,25 +278,20 @@ extension PharmacySearchView {
         let isRedeemRecipe: Bool
 
         var body: some View {
-            WithViewStore(store.scope(state: \.destination?.tag)) { viewStore in
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /PharmacySearchDomain.Destinations.State.pharmacy,
-                            action: PharmacySearchDomain.Destinations.Action.pharmacyDetailView(action:)
-                        )
-                    ) { scopedStore in
+            WithViewStore(store, observe: \.destination?.tag) { viewStore in
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: PharmacySearchDomain.Action.destination),
+                    state: /PharmacySearchDomain.Destinations.State.pharmacy,
+                    action: PharmacySearchDomain.Destinations.Action.pharmacyDetailView(action:),
+                    onTap: { viewStore.send(.setNavigation(tag: .pharmacy)) },
+                    destination: { scopedStore in
                         PharmacyDetailView(store: scopedStore, isRedeemRecipe: isRedeemRecipe)
                             .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
                     },
-                    tag: PharmacySearchDomain.Destinations.State.Tag.pharmacy,
-                    selection: viewStore.binding(
-                        get: { $0 },
-                        send: { .setNavigation(tag: $0) }
-                    )
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
+                    label: {}
+                )
+                .hidden()
+                .accessibility(hidden: true)
             }
         }
     }
@@ -317,6 +319,7 @@ extension PharmacySearchView {
                 }
             }
             .sectionContainerStyle(.inline)
+            .accessibilityElement(children: .contain)
             .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
         }
     }

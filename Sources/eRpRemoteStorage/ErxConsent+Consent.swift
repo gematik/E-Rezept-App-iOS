@@ -21,7 +21,13 @@ import Foundation
 import ModelsR4
 
 extension ErxConsent {
-    func asConsentResource(encoder: JSONEncoder = JSONEncoder()) throws -> Data {
+    func asConsentResource(
+        encoder: JSONEncoder = {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .sortedKeys
+            return encoder
+        }()
+    ) throws -> Data {
         let consent = try createFHIRConsent()
         return try encoder.encode(consent)
     }

@@ -29,6 +29,8 @@ enum DemoDate: CaseIterable {
     case yesterday
     case today
     case tomorrow
+    case dayAfterTomorrow
+    case threeDaysAhead
     case twelveDaysAhead
     case twentyEightDaysAhead
     case ninetyTwoDaysAhead
@@ -53,6 +55,10 @@ enum DemoDate: CaseIterable {
             aDate = Date()
         case .tomorrow:
             aDate = Date(timeIntervalSinceNow: 60 * 60 * 24)
+        case .dayAfterTomorrow:
+            aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 2)
+        case .threeDaysAhead:
+            aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 3)
         case .twelveDaysAhead:
             aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 12)
         case .twentyEightDaysAhead:

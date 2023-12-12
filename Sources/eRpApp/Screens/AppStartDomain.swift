@@ -92,13 +92,14 @@ struct AppStartDomain: ReducerProtocol {
              .onboarding:
             return .none
         case .refreshOnboardingState:
-            return userDataStore.hideOnboarding
-                .zip(userDataStore.onboardingVersion)
-                .first()
-                .receive(on: schedulers.main)
-                .map(OnboardingDomain.Composition.init)
-                .map(AppStartDomain.Action.refreshOnboardingStateReceived)
-                .eraseToEffect()
+            return .publisher(
+                userDataStore.onboardingVersion
+                    .first()
+                    .receive(on: schedulers.main)
+                    .map(OnboardingDomain.Composition.init)
+                    .map(AppStartDomain.Action.refreshOnboardingStateReceived)
+                    .eraseToAnyPublisher
+            )
 
         case let .refreshOnboardingStateReceived(composition):
             guard composition.isEmpty else {
@@ -128,30 +129,40 @@ struct AppStartDomain: ReducerProtocol {
         switch route {
         case .settings:
             return .concatenate(
-                EffectTask(value: .app(action: .subdomains(.settings(action: .popToRootView)))),
-                EffectTask(value: .app(action: .setNavigation(.settings)))
+                EffectTask.send(.app(action: .subdomains(.settings(action: .popToRootView)))),
+                EffectTask.send(.app(action: .setNavigation(.settings)))
             )
         case .scanner:
-            return EffectTask(value: .app(action: .subdomains(.main(action: .showScannerView))))
+            return EffectTask.send(.app(action: .subdomains(.main(action: .showScannerView))))
         case .orders:
-            return EffectTask(value: .app(action: .setNavigation(.orders)))
+            return EffectTask.send(.app(action: .setNavigation(.orders)))
         case let .mainScreen(endpoint):
             switch endpoint {
             case .login:
                 return .merge(
-                    EffectTask(value: .app(action: .setNavigation(.main))),
-                    EffectTask(value: .app(action: .subdomains(.main(action: .prescriptionList(action: .refresh)))))
+                    EffectTask.send(.app(action: .setNavigation(.main))),
+                    EffectTask.send(.app(action: .subdomains(.main(action: .prescriptionList(action: .refresh)))))
                 )
             default:
-                return EffectTask(value: .app(action: .setNavigation(.main)))
+                return EffectTask.send(.app(action: .setNavigation(.main)))
             }
         // [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
         case let .universalLink(url):
             switch url.path {
             case "/extauth":
-                return EffectTask(value: .app(action: .subdomains(.main(action: .externalLogin(url)))))
+                return EffectTask.send(.app(action: .subdomains(.main(action: .externalLogin(url)))))
+            case "/pharmacies/index.html",
+                 "/pharmacies":
+                return Effect.concatenate(
+                    EffectTask.send(.app(action: .setNavigation(.pharmacySearch))),
+                    Effect.run(operation: { _ in
+                        @Dependency(\.schedulers) var schedulers
+                        try await schedulers.main.sleep(for: 0.5)
+                    }),
+                    EffectTask.send(.app(action: .subdomains(.pharmacySearch(action: .universalLink(url)))))
+                )
             case "/prescription":
-                return EffectTask(value: .app(action: .subdomains(.main(action: .importTaskByUrl(url)))))
+                return EffectTask.send(.app(action: .subdomains(.main(action: .importTaskByUrl(url)))))
             default:
                 return .none
             }

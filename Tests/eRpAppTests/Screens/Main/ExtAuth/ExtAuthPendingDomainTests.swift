@@ -25,14 +25,9 @@ import Nimble
 import TestUtils
 import XCTest
 
+@MainActor
 final class ExtAuthPendingDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        ExtAuthPendingDomain.State,
-        ExtAuthPendingDomain.Action,
-        ExtAuthPendingDomain.State,
-        ExtAuthPendingDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<ExtAuthPendingDomain>
 
     var idpSessionMock: IDPSessionMock!
     var extAuthRequestStorageMock: ExtAuthRequestStorageMock!
@@ -69,10 +64,9 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         mockProfileDataStore.listAllProfilesReturnValue = Just([testProfile])
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
-        return TestStore(
-            initialState: state,
-            reducer: ExtAuthPendingDomain()
-        ) { dependencies in
+        return TestStore(initialState: state) {
+            ExtAuthPendingDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.idpSession = idpSessionMock
             dependencies.profileDataStore = mockUserSession.profileDataStore
@@ -86,34 +80,34 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         testStore(for: .init())
     }
 
-    func testNoRequestsResultsInEmptyState() {
-        let sut = testStore(for: .pendingExtAuth(KKAppDirectory.Entry(name: "", identifier: "")))
+    func testNoRequestsResultsInEmptyState() async {
+        let sut = testStore(for: .init(extAuthState: .pendingExtAuth(KKAppDirectory.Entry(name: "", identifier: ""))))
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([]).eraseToAnyPublisher()
 
-        sut.send(.registerListener)
-        uiScheduler.run()
-        sut.receive(.response(.pendingExtAuthRequestsReceived([]))) { state in
-            state = .empty
+        await sut.send(.registerListener)
+        await uiScheduler.run()
+        await sut.receive(.response(.pendingExtAuthRequestsReceived([]))) { state in
+            state.extAuthState = .empty
         }
     }
 
-    func testEntriesResultInPendingState() {
-        let sut = testStore(for: .empty)
+    func testEntriesResultInPendingState() async {
+        let sut = testStore(for: .init(extAuthState: .empty))
         let healthInsurance = KKAppDirectory.Entry(name: "KK name", identifier: "kk id")
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
                                               for: healthInsurance)
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
 
-        sut.send(.registerListener)
-        uiScheduler.run()
-        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
-            state = .pendingExtAuth(healthInsurance)
+        await sut.send(.registerListener)
+        await uiScheduler.run()
+        await sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
+            state.extAuthState = .pendingExtAuth(healthInsurance)
         }
     }
 
-    func testExternalURLFiresIDPRequestHappyPath() {
-        let sut = testStore(for: .empty)
+    func testExternalURLFiresIDPRequestHappyPath() async {
+        let sut = testStore(for: .init(extAuthState: .empty))
         let healthInsurance = KKAppDirectory.Entry(name: "KK name", identifier: "kk id")
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
@@ -123,10 +117,10 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             .eraseToAnyPublisher()
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
 
-        sut.send(.registerListener)
-        uiScheduler.run()
-        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
-            state = .pendingExtAuth(healthInsurance)
+        await sut.send(.registerListener)
+        await uiScheduler.run()
+        await sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
+            state.extAuthState = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de")!
 
@@ -135,21 +129,21 @@ final class ExtAuthPendingDomainTests: XCTestCase {
                 .setFailureType(to: IDPError.self)
                 .eraseToAnyPublisher()
 
-        sut.send(.externalLogin(urlFixture)) { state in
-            state = .extAuthReceived(healthInsurance)
+        await sut.send(.externalLogin(urlFixture)) { state in
+            state.extAuthState = .extAuthReceived(healthInsurance)
         }
-        uiScheduler.run()
-        sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
-            state = .extAuthSuccessful(healthInsurance)
+        await uiScheduler.run()
+        await sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
+            state.extAuthState = .extAuthSuccessful(healthInsurance)
         }
-        uiScheduler.run()
-        sut.receive(.hide) { state in
-            state = .empty
+        await uiScheduler.run()
+        await sut.receive(.hide) { state in
+            state.extAuthState = .empty
         }
     }
 
-    func testExternalURLFiresIDPRequestHappyPathWithState() {
-        let sut = testStore(for: .empty)
+    func testExternalURLFiresIDPRequestHappyPathWithState() async {
+        let sut = testStore(for: .init(extAuthState: .empty))
         let healthInsurance = KKAppDirectory.Entry(name: "KK name", identifier: "kk id")
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
@@ -159,10 +153,10 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        sut.send(.registerListener)
-        uiScheduler.run()
-        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
-            state = .pendingExtAuth(healthInsurance)
+        await sut.send(.registerListener)
+        await uiScheduler.run()
+        await sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
+            state.extAuthState = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de?state=hallo")!
 
@@ -174,45 +168,46 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         let requestingKK = KKAppDirectory.Entry(name: "Requested KK", identifier: "1234")
         let actualSessionResponse = ExtAuthChallengeSession(verifierCode: "code", nonce: "nonce", for: requestingKK)
         extAuthRequestStorageMock.getExtAuthRequestForReturnValue = actualSessionResponse
-        sut.send(.externalLogin(urlFixture)) { state in
-            state = .extAuthReceived(requestingKK)
+        await sut.send(.externalLogin(urlFixture)) { state in
+            state.extAuthState = .extAuthReceived(requestingKK)
         }
-        uiScheduler.run()
-        sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
-            state = .extAuthSuccessful(requestingKK)
+        await uiScheduler.run()
+        await sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
+            state.extAuthState = .extAuthSuccessful(requestingKK)
         }
-        uiScheduler.advance(by: .seconds(2.1))
-        sut.receive(.hide) { state in
-            state = .empty
+        await uiScheduler.advance(by: .seconds(2.1))
+        await sut.receive(.hide) { state in
+            state.extAuthState = .empty
         }
     }
 
-    func testExternalURLFiresIDPRequestFailurePath() {
-        let sut = testStore(for: .empty)
+    func testExternalURLFiresIDPRequestFailurePath() async {
+        let sut = testStore(for: .init(extAuthState: .empty))
         let healthInsurance = KKAppDirectory.Entry(name: "Gematik KK", identifier: "kk id")
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
                                               for: healthInsurance)
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
 
-        sut.send(.registerListener)
-        uiScheduler.run()
-        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
-            state = .pendingExtAuth(healthInsurance)
+        await sut.send(.registerListener)
+        await uiScheduler.run()
+        await sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
+            state.extAuthState = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de")!
 
         idpSessionMock.extAuthVerifyAndExchange_Publisher =
             Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
 
-        sut.send(.externalLogin(urlFixture)) { state in
-            state = .extAuthReceived(healthInsurance)
+        await sut.send(.externalLogin(urlFixture)) { state in
+            state.extAuthState = .extAuthReceived(healthInsurance)
         }
-        uiScheduler.run()
-        sut
+        await uiScheduler.run()
+        await sut
             .receive(.response(.externalLoginReceived(.failure(.idpError(.extAuthOriginalRequestMissing,
                                                                          urlFixture))))) { state in
-                state = .extAuthFailed(
+                state.extAuthState = .extAuthFailed
+                state.destination = .extAuthAlert(
                     ExtAuthPendingDomain.alertState(
                         title: healthInsurance.name,
                         message: "Error while processing external authentication: original request not found.\n\nFehlernummern: \ni-10019",
@@ -223,9 +218,9 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             }
     }
 
-    func testCancelPendingRequestsRemovesCorrectly() {
+    func testCancelPendingRequestsRemovesCorrectly() async {
         let healthInsurance = KKAppDirectory.Entry(name: "Gematik KK", identifier: "123")
-        let sut = testStore(for: .pendingExtAuth(healthInsurance))
+        let sut = testStore(for: .init(extAuthState: .pendingExtAuth(healthInsurance)))
 
         let pendingRequests = [
             ExtAuthChallengeSession(verifierCode: "VerifierCode1",
@@ -235,31 +230,32 @@ final class ExtAuthPendingDomainTests: XCTestCase {
                                     nonce: "nonce2",
                                     for: healthInsurance),
         ]
-        extAuthRequestStorageMock.underlyingPendingExtAuthRequests = CurrentValueSubject(pendingRequests)
+        extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just(pendingRequests)
             .eraseToAnyPublisher()
-        sut.send(.registerListener)
-        uiScheduler.run()
-        sut.receive(.response(.pendingExtAuthRequestsReceived(pendingRequests)))
+        await sut.send(.registerListener)
+        await uiScheduler.run()
+        await sut.receive(.response(.pendingExtAuthRequestsReceived(pendingRequests)))
         expect(self.extAuthRequestStorageMock.resetCalled).to(beFalse())
-        sut.send(.cancelAllPendingRequests) { state in
-            state = .empty
+        await sut.send(.cancelAllPendingRequests) { state in
+            state.extAuthState = .empty
         }
         expect(self.extAuthRequestStorageMock.resetCalled).to(beTrue())
-        sut.send(.unregisterListener)
     }
 
-    func testCloseNilsTheState() {
-        let sut = testStore(for: .pendingExtAuth(KKAppDirectory.Entry(name: "Gematik KK", identifier: "123")))
+    func testCloseNilsTheState() async {
+        let sut =
+            testStore(for: .init(extAuthState: .pendingExtAuth(KKAppDirectory
+                    .Entry(name: "Gematik KK", identifier: "123"))))
 
-        sut.send(.hide) { state in
-            state = .empty
+        await sut.send(.hide) { state in
+            state.extAuthState = .empty
         }
     }
 
-    func testExistingEntriesMovingToZeroKeepsSuccessStateForAnimation() {
+    func testExistingEntriesMovingToZeroKeepsSuccessStateForAnimation() async {
         let requestingKK = KKAppDirectory.Entry(name: "Requested KK", identifier: "1234")
 
-        let sut = testStore(for: .empty)
+        let sut = testStore(for: .init(extAuthState: .empty))
 
         let healthInsurance = KKAppDirectory.Entry(name: "KK name", identifier: "kk id")
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
@@ -267,12 +263,12 @@ final class ExtAuthPendingDomainTests: XCTestCase {
                                               for: healthInsurance)
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
 
-        sut.send(.registerListener)
+        await sut.send(.registerListener)
 
-        uiScheduler.run()
+        await uiScheduler.run()
 
-        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
-            state = .pendingExtAuth(healthInsurance)
+        await sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
+            state.extAuthState = .pendingExtAuth(healthInsurance)
         }
 
         let actualSessionResponse = ExtAuthChallengeSession(verifierCode: "code", nonce: "nonce", for: requestingKK)
@@ -282,21 +278,21 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         publisher.send([])
 
-        uiScheduler.advance(by: .seconds(2.1))
+        await uiScheduler.advance(by: .seconds(2.1))
     }
 
-    func testProfileValidatorWithError() {
-        let sut = testStore(for: .empty)
+    func testProfileValidatorWithError() async {
+        let sut = testStore(for: .init(extAuthState: .empty))
         let healthInsurance = KKAppDirectory.Entry(name: "Gematik KK", identifier: "kk id")
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
                                               for: healthInsurance)
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
 
-        sut.send(.registerListener)
-        uiScheduler.run()
-        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
-            state = .pendingExtAuth(healthInsurance)
+        await sut.send(.registerListener)
+        await uiScheduler.run()
+        await sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
+            state.extAuthState = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de")!
         let expectedInternalError = IDTokenValidatorError.profileNotMatchingInsuranceId("X123")
@@ -304,14 +300,15 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             error: .unspecified(error: expectedInternalError)
         ).eraseToAnyPublisher()
 
-        sut.send(.externalLogin(urlFixture)) { state in
-            state = .extAuthReceived(healthInsurance)
+        await sut.send(.externalLogin(urlFixture)) { state in
+            state.extAuthState = .extAuthReceived(healthInsurance)
         }
-        uiScheduler.run()
-        sut.receive(.response(
+        await uiScheduler.run()
+        await sut.receive(.response(
             .externalLoginReceived(.failure(.profileValidation(error: expectedInternalError)))
         )) { state in
-            state = .extAuthFailed(
+            state.extAuthState = .extAuthFailed
+            state.destination = .extAuthAlert(
                 ExtAuthPendingDomain.alertState(
                     title: healthInsurance.name,
                     message: expectedInternalError.localizedDescriptionWithErrorList
@@ -320,8 +317,8 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         }
     }
 
-    func testSaveProfileWithError() {
-        let sut = testStore(for: .empty)
+    func testSaveProfileWithError() async {
+        let sut = testStore(for: .init(extAuthState: .empty))
         let healthInsurance = KKAppDirectory.Entry(name: "KK name", identifier: "kk id")
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
@@ -330,10 +327,10 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             Fail(error: LocalStoreError.notImplemented).eraseToAnyPublisher()
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
 
-        sut.send(.registerListener)
-        uiScheduler.run()
-        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
-            state = .pendingExtAuth(healthInsurance)
+        await sut.send(.registerListener)
+        await uiScheduler.run()
+        await sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
+            state.extAuthState = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de")!
 
@@ -342,16 +339,17 @@ final class ExtAuthPendingDomainTests: XCTestCase {
                 .setFailureType(to: IDPError.self)
                 .eraseToAnyPublisher()
 
-        sut.send(.externalLogin(urlFixture)) { state in
-            state = .extAuthReceived(healthInsurance)
+        await sut.send(.externalLogin(urlFixture)) { state in
+            state.extAuthState = .extAuthReceived(healthInsurance)
         }
-        uiScheduler.run()
-        sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
-            state = .extAuthSuccessful(healthInsurance)
+        await uiScheduler.run()
+        await sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
+            state.extAuthState = .extAuthSuccessful(healthInsurance)
         }
-        uiScheduler.run()
-        sut.receive(.saveProfile(error: LocalStoreError.notImplemented)) { state in
-            state = .extAuthFailed(ExtAuthPendingDomain.saveProfileAlert)
+        await uiScheduler.run()
+        await sut.receive(.saveProfile(error: LocalStoreError.notImplemented)) { state in
+            state.extAuthState = .extAuthFailed
+            state.destination = .extAuthAlert(ExtAuthPendingDomain.saveProfileAlert)
         }
     }
 }

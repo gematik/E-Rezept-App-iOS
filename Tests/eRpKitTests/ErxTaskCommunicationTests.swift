@@ -31,7 +31,22 @@ final class ErxTaskCommunicationTests: XCTestCase {
             pickUpCodeHR: nil,
             pickUpCodeDMC: nil,
             url: "www.das-e-rezept-fuer-deutschland.de",
-            version: "1"
+            version: 1
+        )
+        let payload = try ErxTask.Communication.Payload.from(string: inputJson)
+        expect(payload) == expected
+    }
+
+    func testParsingShipmentPayloadWithUrlWithVersionInt() throws {
+        let inputJson =
+            "{\"version\": 1,\"supplyOptionsType\": \"shipment\",\"info_text\": \"Wir möchten Sie informieren, dass Ihre bestellten Medikamente versandt wurde!\",\"url\": \"www.das-e-rezept-fuer-deutschland.de\"}"
+        let expected = ErxTask.Communication.Payload(
+            supplyOptionsType: .shipment,
+            infoText: "Wir möchten Sie informieren, dass Ihre bestellten Medikamente versandt wurde!",
+            pickUpCodeHR: nil,
+            pickUpCodeDMC: nil,
+            url: "www.das-e-rezept-fuer-deutschland.de",
+            version: 1
         )
         let payload = try ErxTask.Communication.Payload.from(string: inputJson)
         expect(payload) == expected
@@ -46,7 +61,22 @@ final class ErxTaskCommunicationTests: XCTestCase {
             pickUpCodeHR: "12341234",
             pickUpCodeDMC: "465465465f6s4g6df54gs65dfg",
             url: "",
-            version: "1"
+            version: 1
+        )
+        let payload = try ErxTask.Communication.Payload.from(string: inputJson)
+        expect(payload) == expected
+    }
+
+    func testParsingOnPremisePayloadWithUrlWithVersionInt() throws {
+        let inputJson =
+            "{\"version\": 1,\"supplyOptionsType\": \"onPremise\",\"info_text\": \"bitte abholen\",\"pickUpCodeHR\": \"12341234\",\"pickUpCodeDMC\": \"465465465f6s4g6df54gs65dfg\",\"url\": \"\"}"
+        let expected = ErxTask.Communication.Payload(
+            supplyOptionsType: .onPremise,
+            infoText: "bitte abholen",
+            pickUpCodeHR: "12341234",
+            pickUpCodeDMC: "465465465f6s4g6df54gs65dfg",
+            url: "",
+            version: 1
         )
         let payload = try ErxTask.Communication.Payload.from(string: inputJson)
         expect(payload) == expected

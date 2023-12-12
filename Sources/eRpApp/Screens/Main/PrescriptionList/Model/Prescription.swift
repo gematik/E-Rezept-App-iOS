@@ -115,14 +115,22 @@ struct Prescription: Equatable, Identifiable {
                 return .redeem(at: L10n.erxTxtRedeemAt(localizedDateString).text)
             }
             if let acceptedUntilDate = erxTask.acceptedUntil?.date,
-               let remainingDays = date.daysUntil(including: acceptedUntilDate),
+               let remainingDays = date.days(until: acceptedUntilDate),
                remainingDays > 0 {
-                return .open(until: L10n.erxTxtAcceptedUntil(remainingDays).text)
+                // Use (remainingDays - 1) to obtain a 3rd cardinality distinction in the stringsdict
+                // (remainingDays - 1) == "zero" ---> "valid only today"
+                // (remainingDays - 1) == "one" ---> "valid only until tomorrow"
+                // (remainingDays - 1) == "other" ---> "valid for \(other) more days"
+                return .open(until: L10n.erxTxtAcceptedUntil(remainingDays - 1).text)
             }
             if let expiresDate = erxTask.expiresOn?.date,
-               let remainingDays = date.daysUntil(including: expiresDate),
+               let remainingDays = date.days(until: expiresDate),
                remainingDays > 0 {
-                return .open(until: L10n.erxTxtExpiresIn(remainingDays).text)
+                // Use (remainingDays - 1) to obtain a 3rd cardinality distinction in the stringsdict
+                // (remainingDays - 1) == "zero" ---> "valid only today"
+                // (remainingDays - 1) == "one" ---> "valid only until tomorrow"
+                // (remainingDays - 1) == "other" ---> "valid for \(other) more days"
+                return .open(until: L10n.erxTxtExpiresIn(remainingDays - 1).text)
             }
 
             return .archived(message: L10n.erxTxtInvalid.text)

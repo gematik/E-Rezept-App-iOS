@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class PrescriptionArchiveSnapshotTests: XCTestCase {
+final class PrescriptionArchiveSnapshotTests: ERPSnapshotTestCase {
     let testScheduler = DispatchQueue.immediate
     let initialState = PrescriptionArchiveDomain.Dummies.state
 
@@ -34,10 +34,10 @@ final class PrescriptionArchiveSnapshotTests: XCTestCase {
     }
 
     func testPrescriptionArchiveView_Show() {
-        let store: StoreOf<PrescriptionArchiveDomain> = Store(
-            initialState: initialState,
-            reducer: EmptyReducer()
-        )
+        let store: StoreOf<PrescriptionArchiveDomain> = Store(initialState: initialState) {
+            EmptyReducer()
+        }
+
         let sut = PrescriptionArchiveView(store: store)
             .frame(width: 320, height: 2000)
         assertSnapshots(matching: sut, as: snapshotModi())

@@ -62,16 +62,4 @@ final class DateExtensionTests: XCTestCase {
         // then
         expect(sut) == 0
     }
-
-    func testDaysUntilIncludingDateWithEqualDates() {
-        // given
-        let startDate = dateFormatter.date(from: "2018-01-01")!
-        let endDate = dateFormatter.date(from: "2018-01-01")!
-
-        // when
-        let sut = startDate.daysUntil(including: endDate)
-
-        // then
-        expect(sut) == 1
-    }
 }

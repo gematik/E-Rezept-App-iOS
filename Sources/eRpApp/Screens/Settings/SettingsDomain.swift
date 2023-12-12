@@ -28,41 +28,20 @@ import IDP
 struct SettingsDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            cleanupSubDomains(),
-            EffectTask<T>.cancel(ids: Token.allCases),
-            ProfilesDomain.cleanup()
-        )
-    }
-
-    static func cleanupSubDomains<T>() -> EffectTask<T> {
-        .concatenate(
-            HealthCardPasswordDomain.cleanup(),
-            DebugDomain.cleanup(),
-            EditProfileDomain.cleanup()
-        )
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case trackingStatus
-        case demoModeStatus
-    }
-
     struct State: Equatable {
         var isDemoMode: Bool
         var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil)
         var appVersion = AppVersion.current
         var trackerOptIn = false
 
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             case debug(DebugDomain.State)
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<SettingsDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
             // sourcery: AnalyticsScreen = healthCardPassword_forgotPin
             case healthCardPasswordForgotPin(HealthCardPasswordDomain.State)
             // sourcery: AnalyticsScreen = healthCardPassword_setCustomPin
@@ -98,6 +77,20 @@ struct SettingsDomain: ReducerProtocol {
             case egkAction(OrderHealthCardDomain.Action)
             case editProfileAction(EditProfileDomain.Action)
             case newProfileAction(NewProfileDomain.Action)
+            case alert(Alert)
+
+            case complyTracking(None)
+            case legalNotice(None)
+            case dataProtection(None)
+            case openSourceLicence(None)
+            case termsOfUse(None)
+
+            enum None: Equatable {}
+
+            enum Alert: Equatable {
+                case dismiss
+                case profile(SettingsDomain.Action)
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -144,7 +137,7 @@ struct SettingsDomain: ReducerProtocol {
 
     enum Action: Equatable {
         case close
-        case initSettings
+        case task
         case trackerStatusReceived(Bool)
         case demoModeStatusReceived(Bool)
         case toggleTrackingTapped(Bool)
@@ -153,7 +146,7 @@ struct SettingsDomain: ReducerProtocol {
         case profiles(action: ProfilesDomain.Action)
         case popToRootView
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
     }
 
     @Dependency(\.changeableUserSessionContainer) var changeableUserSessionContainer: UsersSessionContainer
@@ -165,7 +158,7 @@ struct SettingsDomain: ReducerProtocol {
         }
 
         Reduce(core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -173,16 +166,18 @@ struct SettingsDomain: ReducerProtocol {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .initSettings:
+        case .task:
             return .merge(
-                tracker.optInPublisher
-                    .map(Action.trackerStatusReceived)
-                    .eraseToEffect()
-                    .cancellable(id: Token.trackingStatus, cancelInFlight: true),
-                changeableUserSessionContainer.isDemoMode
-                    .map(Action.demoModeStatusReceived)
-                    .eraseToEffect()
-                    .cancellable(id: Token.demoModeStatus, cancelInFlight: true)
+                .publisher(
+                    tracker.optInPublisher
+                        .map(Action.trackerStatusReceived)
+                        .eraseToAnyPublisher
+                ),
+                .publisher(
+                    changeableUserSessionContainer.isDemoMode
+                        .map(Action.demoModeStatusReceived)
+                        .eraseToAnyPublisher
+                )
             )
         case let .demoModeStatusReceived(isDemo):
             state.isDemoMode = isDemo
@@ -223,23 +218,38 @@ struct SettingsDomain: ReducerProtocol {
             tracker.optIn = true
             state.destination = nil
             return .none
-        case .destination(.healthCardPasswordUnlockCardAction(.delegate(.navigateToSettings))),
-             .destination(.healthCardPasswordForgotPinAction(.delegate(.navigateToSettings))),
-             .destination(.healthCardPasswordSetCustomPinAction(.delegate(.navigateToSettings))):
+        case .destination(.presented(.healthCardPasswordUnlockCardAction(.delegate(.navigateToSettings)))),
+             .destination(.presented(.healthCardPasswordForgotPinAction(.delegate(.navigateToSettings)))),
+             .destination(.presented(.healthCardPasswordSetCustomPinAction(.delegate(.navigateToSettings)))):
             state.destination = nil
-            return HealthCardPasswordReadCardDomain.cleanup()
-        case .destination(.healthCardPasswordUnlockCardAction),
-             .destination(.healthCardPasswordForgotPinAction),
-             .destination(.healthCardPasswordSetCustomPinAction):
+            return .none
+        case .destination(.presented(.healthCardPasswordUnlockCardAction)),
+             .destination(.presented(.healthCardPasswordForgotPinAction)),
+             .destination(.presented(.healthCardPasswordSetCustomPinAction)):
             return .none
         case .setNavigation(tag: .healthCardPasswordForgotPin):
-            state.destination = .healthCardPasswordForgotPin(.init(mode: .forgotPin))
+            state.destination = .healthCardPasswordForgotPin(
+                .init(
+                    mode: .forgotPin,
+                    destination: .introduction
+                )
+            )
             return .none
         case .setNavigation(tag: .healthCardPasswordSetCustomPin):
-            state.destination = .healthCardPasswordSetCustomPin(.init(mode: .setCustomPin))
+            state.destination = .healthCardPasswordSetCustomPin(
+                .init(
+                    mode: .setCustomPin,
+                    destination: .introduction
+                )
+            )
             return .none
         case .setNavigation(tag: .healthCardPasswordUnlockCard):
-            state.destination = .healthCardPasswordUnlockCard(.init(mode: .unlockCard))
+            state.destination = .healthCardPasswordUnlockCard(
+                .init(
+                    mode: .unlockCard,
+                    destination: .introduction
+                )
+            )
             return .none
         case let .setNavigation(tag: tag):
             switch tag {
@@ -259,36 +269,36 @@ struct SettingsDomain: ReducerProtocol {
                 state.destination = .appSecurity(.init(availableSecurityOptions: []))
             case .none:
                 state.destination = nil
-                return Self.cleanupSubDomains()
+                return .none
             default: break
             }
             return .none
-        case .destination(.egkAction(.delegate(.close))):
+        case .destination(.presented(.egkAction(.delegate(.close)))):
             state.destination = nil
-            return Self.cleanup()
+            return .none
         case let .profiles(action: .delegate(delegateAction)):
             switch delegateAction {
             case let .showEditProfile(editProfileState):
                 state.destination = .editProfile(editProfileState)
             case .showNewProfile:
-                state.destination = .newProfile(.init(name: "", acronym: "", color: .blue))
+                state.destination = .newProfile(.init(name: "", color: .blue))
             case let .alert(alert):
                 state.destination = .alert(
                     alert.pullback { action in
-                        Action.profiles(action: action)
+                        .profile(.profiles(action: action))
                     }
                 )
             }
             return .none
-        case let .destination(.editProfileAction(.delegate(action))):
+        case let .destination(.presented(.editProfileAction(.delegate(action)))):
             switch action {
             case .logout:
-                return .init(value: .profiles(action: .registerListener))
+                return .send(.profiles(action: .registerListener))
             case .close:
                 state.destination = nil
                 return .none
             }
-        case let .destination(.newProfileAction(.delegate(action))):
+        case let .destination(.presented(.newProfileAction(.delegate(action)))):
             switch action {
             case .close:
                 state.destination = nil
@@ -297,29 +307,25 @@ struct SettingsDomain: ReducerProtocol {
         case .popToRootView:
             state.destination = nil
             return .none
-        case .destination(.debugAction),
-             .destination(.editProfileAction),
-             .destination(.newProfileAction),
-             .destination(.egkAction),
-             .destination(.appSecurityStateAction),
+        case .destination,
              .profiles:
             return .none
         }
     }
 
-    static var demoModeOnAlertState: AlertState<Action> = {
-        AlertState<Action>(
+    static var demoModeOnAlertState: AlertState<Destinations.Action.Alert> = {
+        AlertState(
             title: TextState(L10n.stgTxtAlertTitleDemoMode),
             message: TextState(L10n.stgTxtAlertMessageDemoModeOn),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.dismiss))
         )
     }()
 
-    static var demoModeOffAlertState: AlertState<Action> = {
-        AlertState<Action>(
+    static var demoModeOffAlertState: AlertState<Destinations.Action.Alert> = {
+        AlertState(
             title: TextState(L10n.stgTxtAlertTitleDemoModeOff),
             message: TextState(L10n.stgTxtAlertMessageDemoModeOff),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.dismiss))
         )
     }()
 }
@@ -338,9 +344,10 @@ extension SettingsDomain {
 
         static func storeFor(_ state: State) -> Store {
             Store(
-                initialState: state,
-                reducer: SettingsDomain()
-            )
+                initialState: state
+            ) {
+                SettingsDomain()
+            }
         }
     }
 }

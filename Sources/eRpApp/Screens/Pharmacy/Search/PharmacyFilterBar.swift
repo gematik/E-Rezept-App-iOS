@@ -24,10 +24,10 @@ extension PharmacyFilterBar.Filter: Equatable where FilterType: Equatable {}
 
 struct PharmacyFilterBar<FilterType: Identifiable>: View {
     var openFiltersAction: () -> Void
-    var removeFilter: (Filter<FilterType>) -> Void
-    var elements: [Filter<FilterType>]
+    var removeFilter: (Filter) -> Void
+    var elements: [Filter]
 
-    struct Filter<FilterType: Identifiable>: Identifiable {
+    struct Filter: Identifiable {
         var id: FilterType.ID { element.id }
 
         let element: FilterType

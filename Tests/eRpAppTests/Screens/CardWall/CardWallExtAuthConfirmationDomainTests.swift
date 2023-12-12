@@ -24,14 +24,9 @@ import Nimble
 import TestUtils
 import XCTest
 
+@MainActor
 final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        CardWallExtAuthConfirmationDomain.State,
-        CardWallExtAuthConfirmationDomain.Action,
-        CardWallExtAuthConfirmationDomain.State,
-        CardWallExtAuthConfirmationDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<CardWallExtAuthConfirmationDomain>
 
     var idpSessionMock: IDPSessionMock!
 
@@ -58,10 +53,9 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
 
     func testStore(for state: CardWallExtAuthConfirmationDomain.State)
         -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: CardWallExtAuthConfirmationDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            CardWallExtAuthConfirmationDomain()
+        } withDependencies: { dependencies in
             dependencies.idpSession = idpSessionMock
             dependencies.schedulers = schedulers
             dependencies.resourceHandler = resourceHandlerMock
@@ -73,7 +67,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         testStore(for: .init(selectedKK: Self.testEntry))
     }
 
-    func testConfirmationHappyPath() {
+    func testConfirmationHappyPath() async {
         let sut = testStore()
 
         let urlFixture = URL(string: "https://dummy.gematik.de")!
@@ -81,11 +75,11 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         idpSessionMock.startExtAuth_Publisher = Just(urlFixture).setFailureType(to: IDPError.self).eraseToAnyPublisher()
         resourceHandlerMock.canOpenURLReturnValue = true
 
-        sut.send(.confirmKK) { state in
+        await sut.send(.confirmKK) { state in
             state.loading = true
         }
-        uiScheduler.run()
-        sut.receive(.openURL(urlFixture))
+        await uiScheduler.run()
+        await sut.receive(.openURL(urlFixture))
 
         guard let receivedArgs = resourceHandlerMock.openOptionsCompletionHandlerReceivedArguments,
               let completion = receivedArgs.completion else {
@@ -93,31 +87,31 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
             return
         }
         completion(true)
-        uiScheduler.run()
+        await uiScheduler.run()
 
-        sut.receive(.response(.openURL(true))) { state in
+        await sut.receive(.response(.openURL(true))) { state in
             state.loading = false
         }
 
-        sut.receive(.delegate(.close))
+        await sut.receive(.delegate(.close))
     }
 
-    func testConfirmationFailsWithIDPError() {
+    func testConfirmationFailsWithIDPError() async {
         let sut = testStore()
 
         idpSessionMock.startExtAuth_Publisher = Fail(error: Self.testError).eraseToAnyPublisher()
 
-        sut.send(.confirmKK) { state in
+        await sut.send(.confirmKK) { state in
             state.loading = true
         }
-        uiScheduler.run()
-        sut.receive(.error(CardWallExtAuthConfirmationDomain.Error.idpError(Self.testError))) { state in
+        await uiScheduler.run()
+        await sut.receive(.error(CardWallExtAuthConfirmationDomain.Error.idpError(Self.testError))) { state in
             state.loading = false
             state.error = CardWallExtAuthConfirmationDomain.Error.idpError(Self.testError)
         }
     }
 
-    func testConfirmationFailsOpenURLError() {
+    func testConfirmationFailsOpenURLError() async {
         let sut = testStore(for: .init(
             selectedKK: Self.testEntry,
             loading: true,
@@ -129,10 +123,10 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
 
         resourceHandlerMock.canOpenURLReturnValue = false
 
-        sut.send(.openURL(urlFixture))
-        uiScheduler.run()
+        await sut.send(.openURL(urlFixture))
+        await uiScheduler.run()
 
-        sut.receive(.response(.openURL(false))) { state in
+        await sut.receive(.response(.openURL(false))) { state in
             state.loading = false
             state.error = CardWallExtAuthConfirmationDomain.Error.universalLinkFailed
         }

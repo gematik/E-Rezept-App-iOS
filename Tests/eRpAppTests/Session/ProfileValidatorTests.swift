@@ -64,9 +64,26 @@ final class ProfileValidatorTests: XCTestCase {
         }
     }
 
+    func testProfileValidator_WithInsuranceIdMismatchOnlyOneUser() throws {
+        let idTokenPayload = try idTokenPayload()
+        let currentProfile = Profile(name: "CurrentProfile", insuranceId: "not like idToken")
+
+        let sut = ProfileValidator(
+            currentProfile: currentProfile,
+            otherProfiles: []
+        )
+
+        do {
+            _ = try sut.validate(idToken: idTokenPayload).get()
+        } catch {
+            let error = error as? IDTokenValidatorError
+            expect(error) == IDTokenValidatorError.profileNotMatchingInsuranceId(currentProfile.insuranceId)
+        }
+    }
+
     func testProfileValidator_WithInsuranceIdConnectedToOtherProfile() throws {
         let idTokenPayload = try idTokenPayload()
-        let currentProfile = Profile(name: "CurrentProfile", insuranceId: nil)
+        let currentProfile = Profile(name: "CurrentProfile", insuranceId: "not like idToken")
         let otherProfile = Profile(name: "OtherProfile", insuranceId: idTokenPayload.idNummer)
 
         let sut = ProfileValidator(
@@ -78,8 +95,8 @@ final class ProfileValidatorTests: XCTestCase {
             let unexpectedValue = try sut.validate(idToken: idTokenPayload).get()
             expect(unexpectedValue) == false
         } catch {
-            let expectedError = error as? IDTokenValidatorError
-            expect(expectedError) == IDTokenValidatorError.profileWithInsuranceIdExists(otherProfile.name)
+            let error = error as? IDTokenValidatorError
+            expect(error) == IDTokenValidatorError.profileWithInsuranceIdExists(otherProfile.name)
         }
     }
 }

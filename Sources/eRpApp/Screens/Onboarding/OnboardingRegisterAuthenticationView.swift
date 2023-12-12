@@ -20,13 +20,14 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
+// [REQ:BSI-eRp-ePA:O.Resi_1#2] View containing onboarding authentication
 struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
     let store: RegisterAuthenticationDomain.Store
     @ObservedObject var viewStore: ViewStore<ViewState, RegisterAuthenticationDomain.Action>
 
     init(store: RegisterAuthenticationDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -116,10 +117,7 @@ struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
             }
         }
         .padding(.horizontal)
-        .alert(
-            self.store.scope(state: \.alertState),
-            dismiss: .alertDismissButtonTapped
-        )
+        .alert(store: store.scope(state: \.$alertState, action: RegisterAuthenticationDomain.Action.alert))
         .onAppear {
             viewStore.send(.loadAvailableSecurityOptions)
         }
@@ -131,7 +129,7 @@ extension OnboardingRegisterAuthenticationView {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
-                    Image(decorative: Asset.Onboarding.developer)
+                    Image(decorative: Asset.Onboarding.developerCircle)
                         .accessibilityHidden(true)
 
                     Spacer()
@@ -250,7 +248,7 @@ extension OnboardingRegisterAuthenticationView {
 
         init(store: RegisterAuthenticationDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store)
+            viewStore = ViewStore(store) { $0 }
         }
 
         var passwordA: Binding<String> {
@@ -330,7 +328,7 @@ extension OnboardingRegisterAuthenticationView {
 
         init(store: RegisterAuthenticationDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store)
+            viewStore = ViewStore(store) { $0 }
         }
 
         var body: some View {

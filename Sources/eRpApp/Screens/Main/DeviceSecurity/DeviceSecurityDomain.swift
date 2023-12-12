@@ -24,12 +24,6 @@ import Foundation
 struct DeviceSecurityDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     struct State: Equatable {
         let warningType: DeviceSecurityWarningType
     }
@@ -55,12 +49,12 @@ struct DeviceSecurityDomain: ReducerProtocol {
         switch action {
         case .acceptRootedDevice:
             deviceSecurityManager.set(ignoreRootedDeviceWarningForSession: true)
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
         case let .acceptMissingPin(permanently):
             deviceSecurityManager.set(ignoreDeviceSystemPinWarningForSession: true)
             deviceSecurityManager
                 .set(ignoreDeviceSystemPinWarningPermanently: permanently)
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
         case .delegate(.close):
             // Handled by parent domain
             return .none
@@ -73,8 +67,9 @@ extension DeviceSecurityDomain {
         static let state = State(warningType: .devicePinMissing)
 
         static let store = Store(
-            initialState: state,
-            reducer: DeviceSecurityDomain()
-        )
+            initialState: state
+        ) {
+            DeviceSecurityDomain()
+        }
     }
 }

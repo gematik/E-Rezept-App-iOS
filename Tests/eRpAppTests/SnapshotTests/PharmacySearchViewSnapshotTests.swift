@@ -23,11 +23,13 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class PharmacySearchViewSnapshotTests: XCTestCase {
+final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
     var resourceHandlerMock: MockResourceHandler!
 
     override func setUp() {
         super.setUp()
+
+        SnapshotHelper.fixOffsetProblem()
 
         resourceHandlerMock = MockResourceHandler()
         diffTool = "open"
@@ -37,10 +39,12 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
         let sut = NavigationView {
             PharmacySearchView(
                 store: PharmacySearchDomain.Store(
-                    initialState: PharmacySearchDomainTests.TestData.stateWithStartView,
-                    reducer: EmptyReducer()
-                )
+                    initialState: PharmacySearchDomainTests.TestData.stateWithStartView
+                ) {
+                    EmptyReducer()
+                }
             )
+            .navigationTitle("⚕︎ Redeem")
         }
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -65,10 +69,9 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
         )
         let sut = NavigationView {
             PharmacySearchView(
-                store: PharmacySearchDomain.Store(
-                    initialState: state,
-                    reducer: EmptyReducer()
-                )
+                store: PharmacySearchDomain.Store(initialState: state) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -82,12 +85,14 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
             PharmacySearchView(
                 store: .init(
                     initialState: .init(
-                        erxTasks: [],
+                        erxTasks: [ErxTask](),
                         searchText: "Apothekesdfwerwerasdf",
                         searchState: .searchResultEmpty
-                    ),
-                    reducer: EmptyReducer()
-                ),
+                    )
+                ) {
+                    EmptyReducer()
+                },
+
                 isRedeemRecipe: false
             )
         }
@@ -102,13 +107,15 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
             PharmacySearchView(
                 store: .init(
                     initialState: .init(
-                        erxTasks: [],
+                        erxTasks: [ErxTask](),
                         searchText: "Adler Apo",
                         pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
                         searchState: .searchResultOk
-                    ),
-                    reducer: EmptyReducer()
-                ),
+                    )
+                ) {
+                    EmptyReducer()
+                },
+
                 isRedeemRecipe: false
             )
         }

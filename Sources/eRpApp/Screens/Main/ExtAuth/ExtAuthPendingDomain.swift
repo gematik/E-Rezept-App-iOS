@@ -25,16 +25,25 @@ import IDP
 struct ExtAuthPendingDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case pendingExtAuthRequestsSubscription
+    private enum CancelID {
         case login
     }
 
-    enum State: Equatable {
+    struct State: Equatable {
+        @PresentationState var destination: Destinations.State?
+
+        var extAuthState: ExtAuthState
+
+        init(
+            destination: Destinations.State? = nil,
+            extAuthState: ExtAuthState = ExtAuthState()
+        ) {
+            self.destination = destination
+            self.extAuthState = extAuthState
+        }
+    }
+
+    enum ExtAuthState: Equatable {
         init() {
             self = .empty
         }
@@ -43,7 +52,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         case pendingExtAuth(KKAppDirectory.Entry)
         case extAuthReceived(KKAppDirectory.Entry)
         case extAuthSuccessful(KKAppDirectory.Entry)
-        case extAuthFailed(ErpAlertState<Action>)
+        case extAuthFailed
 
         var entry: KKAppDirectory.Entry? {
             switch self {
@@ -71,20 +80,38 @@ struct ExtAuthPendingDomain: ReducerProtocol {
 
     enum Action: Equatable {
         case registerListener
-        case unregisterListener
         case externalLogin(URL)
         case saveProfile(error: LocalStoreError)
         /// Hides the visisble part of the view, e.g. while finishing a login. The view itself will stay in the
         /// hierarchy, to handle additional requests.
         case hide
         case cancelAllPendingRequests
-        case nothing
 
+        case destination(PresentationAction<Destinations.Action>)
         case response(Response)
 
         enum Response: Equatable {
             case pendingExtAuthRequestsReceived([ExtAuthChallengeSession])
             case externalLoginReceived(Result<IDPToken, Error>)
+        }
+    }
+
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case extAuthAlert(ErpAlertState<Action.Alert>)
+        }
+
+        enum Action: Equatable {
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case externalLogin(URL)
+                case cancelAllPendingRequests
+            }
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            EmptyReducer()
         }
     }
 
@@ -116,36 +143,39 @@ struct ExtAuthPendingDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
+            .ifLet(\.$destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .registerListener:
-            return environment.extAuthRequestStorage.pendingExtAuthRequests
-                .map { .response(.pendingExtAuthRequestsReceived($0)) }
-                .receive(on: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.pendingExtAuthRequestsSubscription, cancelInFlight: true)
-        case .unregisterListener:
-            return .cancel(id: Token.pendingExtAuthRequestsSubscription)
+            return .publisher(
+                environment.extAuthRequestStorage.pendingExtAuthRequests
+                    .map { .response(.pendingExtAuthRequestsReceived($0)) }
+                    .receive(on: schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
         case let .response(.pendingExtAuthRequestsReceived(requests)):
             if requests.isEmpty {
-                if case .pendingExtAuth = state {
-                    state = .empty
+                if case .pendingExtAuth = state.extAuthState {
+                    state.extAuthState = .empty
                 }
             } else if let request = requests.first {
-                switch state {
+                switch state.extAuthState {
                 case .extAuthFailed,
                      .empty:
-                    state = .pendingExtAuth(request.entry)
+                    state.extAuthState = .pendingExtAuth(request.entry)
                 default:
                     break
                 }
             }
             return .none
         // [REQ:BSI-eRp-ePA:O.Source_1#8] Validate data by parsing url and only allowing predefined variables as String
-        case let .externalLogin(url):
+        case let .externalLogin(url),
+             let .destination(.presented(.alert(.externalLogin(url)))):
             let environment = environment
             let entry: KKAppDirectory.Entry?
 
@@ -156,77 +186,87 @@ struct ExtAuthPendingDomain: ReducerProtocol {
                 entry = newEntry
             } else {
                 // this should never happen, but do not throw the error here, let IDPSession decide
-                entry = state.entry
+                entry = state.extAuthState.entry
             }
 
             guard let entry = entry else { return .none }
 
-            state = .extAuthReceived(entry)
-            return environment.idTokenValidator
-                .mapError(Error.profileValidation)
-                .flatMap { idTokenValidator -> AnyPublisher<IDPToken, Error> in
-                    environment.idpSession
-                        .extAuthVerifyAndExchange(url, idTokenValidator: idTokenValidator.validate(idToken:))
-                        .mapError { error in
-                            if case let .unspecified(error) = error,
-                               let validationError = error as? IDTokenValidatorError {
-                                return .profileValidation(error: validationError)
-                            } else {
-                                return .idpError(error, url)
+            state.extAuthState = .extAuthReceived(entry)
+            return .publisher(
+                environment.idTokenValidator
+                    .mapError(Error.profileValidation)
+                    .flatMap { idTokenValidator -> AnyPublisher<IDPToken, Error> in
+                        environment.idpSession
+                            .extAuthVerifyAndExchange(url, idTokenValidator: idTokenValidator.validate(idToken:))
+                            .mapError { error in
+                                if case let .unspecified(error) = error,
+                                   let validationError = error as? IDTokenValidatorError {
+                                    return .profileValidation(error: validationError)
+                                } else {
+                                    return .idpError(error, url)
+                                }
                             }
-                        }
-                        .eraseToAnyPublisher()
-                }
-                .catchToEffect()
-                .cancellable(id: Token.login, cancelInFlight: true)
-                .map { .response(.externalLoginReceived($0)) }
-                .receive(on: environment.schedulers.main.animation())
-                .eraseToEffect()
-        case let .response(.externalLoginReceived(.success(idpToken))):
-            guard case let .extAuthReceived(entry) = state else { return .none }
-            let payload = try? idpToken.idTokenPayload()
-            state = .extAuthSuccessful(entry)
-            let overrideInsuranceTypeToPkv = idpToken.isPkvFastTrackFlowInitiated
-            return environment.saveProfileWith(
-                insuranceId: payload?.idNummer,
-                insurance: payload?.organizationName,
-                givenName: payload?.givenName,
-                familyName: payload?.familyName,
-                overrideInsuranceTypeToPkv: overrideInsuranceTypeToPkv
+                            .eraseToAnyPublisher()
+                    }
+                    .catchToPublisher()
+                    .map { .response(.externalLoginReceived($0)) }
+                    .receive(on: environment.schedulers.main.animation())
+                    .eraseToAnyPublisher
             )
-            .delay(for: 2,
-                   scheduler: schedulers.main.animation())
-            .eraseToEffect()
+            .cancellable(id: CancelID.login, cancelInFlight: true)
+        case let .response(.externalLoginReceived(.success(idpToken))):
+            guard case let .extAuthReceived(entry) = state.extAuthState else { return .none }
+            let payload = try? idpToken.idTokenPayload()
+            state.extAuthState = .extAuthSuccessful(entry)
+            let overrideInsuranceTypeToPkv = idpToken.isPkvFastTrackFlowInitiated
+            return
+                .concatenate(
+                    .run { _ in
+                        try await schedulers.main.sleep(for: 1)
+                    },
+                    environment.saveProfileWith(
+                        insuranceId: payload?.idNummer,
+                        insurance: payload?.organizationName,
+                        givenName: payload?.givenName,
+                        familyName: payload?.familyName,
+                        overrideInsuranceTypeToPkv: overrideInsuranceTypeToPkv
+                    )
+                    .animation()
+                )
         case .saveProfile:
-            state = .extAuthFailed(Self.saveProfileAlert)
+            state.extAuthState = .extAuthFailed
+            state.destination = .extAuthAlert(Self.saveProfileAlert)
             return .none
         case let .response(.externalLoginReceived(.failure(.idpError(error, url)))):
-            guard case let .extAuthReceived(entry) = state else { return .none }
+            guard case let .extAuthReceived(entry) = state.extAuthState else { return .none }
             let alertState = Self.alertState(
                 title: entry.name,
                 message: error.localizedDescriptionWithErrorList,
                 url: url
             )
-            state = .extAuthFailed(alertState)
+            state.extAuthState = .extAuthFailed
+            state.destination = .extAuthAlert(alertState)
             return .none
         case let .response(.externalLoginReceived(.failure(.profileValidation(error: error)))):
-            guard case let .extAuthReceived(entry) = state else { return .none }
+            guard case let .extAuthReceived(entry) = state.extAuthState else { return .none }
             let alertState = Self.alertState(title: entry.name, message: error.localizedDescriptionWithErrorList)
-            state = .extAuthFailed(alertState)
+            state.extAuthState = .extAuthFailed
+            state.destination = .extAuthAlert(alertState)
             return .none
         case .hide:
-            state = .empty
+            state.extAuthState = .empty
             return .none
-        case .cancelAllPendingRequests:
+        case .cancelAllPendingRequests,
+             .destination(.presented(.alert(.cancelAllPendingRequests))):
             environment.extAuthRequestStorage.reset()
-            state = .empty
-            return .cancel(id: Token.login)
-        case .nothing:
+            state.extAuthState = .empty
+            return .cancel(id: CancelID.login)
+        case .destination:
             return .none
         }
     }
 
-    static func alertState(title: String, message: String, url: URL) -> ErpAlertState<Action> {
+    static func alertState(title: String, message: String, url: URL) -> ErpAlertState<Destinations.Action.Alert> {
         ErpAlertState(.init(
             title: TextState(L10n.mainTxtPendingextauthFailed(title)),
             message: TextState(message),
@@ -237,7 +277,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         ))
     }
 
-    static func alertState(title: String, message: String) -> ErpAlertState<Action> {
+    static func alertState(title: String, message: String) -> ErpAlertState<Destinations.Action.Alert> {
         ErpAlertState(.init(
             title: TextState(title),
             message: TextState(message),
@@ -246,7 +286,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         ))
     }
 
-    static var saveProfileAlert: ErpAlertState<Action> = {
+    static var saveProfileAlert: ErpAlertState<Destinations.Action.Alert> = {
         ErpAlertState(.init(
             title: TextState(L10n.cdwTxtExtauthAlertTitleSaveProfile),
             message: TextState(L10n.cdwTxtExtauthAlertMessageSaveProfile),
@@ -264,57 +304,49 @@ extension ExtAuthPendingDomain.Environment {
         familyName: String?,
         overrideInsuranceTypeToPkv: Bool = false
     ) -> EffectTask<ExtAuthPendingDomain.Action> {
-        currentProfile
-            .first()
-            .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
-                profileDataStore.update(profileId: profile.id) { profile in
-                    profile.insuranceId = insuranceId
-                    // This is needed to ensure proper pKV faking and can be removed when the debug option to fake pKV
-                    // is removed.
-                    if profile.insuranceType == .unknown {
-                        profile.insuranceType = .gKV
+        .publisher(
+            currentProfile
+                .first()
+                .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
+                    profileDataStore.update(profileId: profile.id) { profile in
+                        profile.insuranceId = insuranceId
+                        // This is needed to ensure proper pKV faking.
+                        // It can be removed when the debug option to fake pKV is removed.
+                        if profile.insuranceType == .unknown {
+                            profile.insuranceType = .gKV
+                        }
+                        // This is also temporary code until replaced by a proper implementation
+                        if overrideInsuranceTypeToPkv {
+                            profile.insuranceType = .pKV
+                        }
+                        profile.insurance = insurance
+                        profile.givenName = givenName
+                        profile.familyName = familyName
                     }
-                    // This is also temporary code until replaced by a proper implementation
-                    if overrideInsuranceTypeToPkv {
-                        profile.insuranceType = .pKV
-                    }
-                    profile.insurance = insurance
-                    profile.givenName = givenName
-                    profile.familyName = familyName
+                    .eraseToAnyPublisher()
                 }
-                .eraseToAnyPublisher()
-            }
-            .map { _ in
-                ExtAuthPendingDomain.Action.hide
-            }
-            .catch { error in
-                Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
-            }
-            .receive(on: schedulers.main)
-            .eraseToEffect()
+                .map { _ in
+                    ExtAuthPendingDomain.Action.hide
+                }
+                .catch { error in
+                    Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
+                }
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
     }
 }
 
 extension ExtAuthPendingDomain {
     enum Dummies {
         static let state = State()
-        static let environment = Environment(
-            idpSession: DemoIDPSession(storage: MemoryStorage()),
-            schedulers: Schedulers(),
-            profileDataStore: DemoProfileDataStore(),
-            extAuthRequestStorage: DummyExtAuthRequestStorage(),
-            currentProfile: DummySessionContainer().profile(),
-            idTokenValidator: DummySessionContainer().idTokenValidator()
-        )
 
-        static let store = Store(initialState: state,
-                                 reducer: .empty,
-                                 environment: environment)
+        static let store = store(for: state)
 
         static func store(for state: State) -> Store {
-            Store(initialState: state,
-                  reducer: .empty,
-                  environment: environment)
+            Store(initialState: state) {
+                EmptyReducer()
+            }
         }
     }
 }

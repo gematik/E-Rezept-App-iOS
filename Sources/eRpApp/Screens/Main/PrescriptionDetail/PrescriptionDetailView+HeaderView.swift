@@ -24,76 +24,124 @@ extension PrescriptionDetailView {
     struct HeaderView: View {
         let store: StoreOf<PrescriptionDetailDomain>
         @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
+        @FocusState var focus: PrescriptionDetailDomain.State.Field?
 
         init(store: PrescriptionDetailDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         var body: some View {
             VStack {
-                Text(viewStore.title)
-                    .multilineTextAlignment(.center)
-                    .font(.title2.weight(.bold))
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitle)
-                    .fixedSize(horizontal: false, vertical: true)
+                if viewStore.type == .scanned {
+                    HStack {
+                        TextField(
+                            viewStore.medicationName,
+                            text: viewStore.binding(
+                                get: \.medicationName,
+                                send: PrescriptionDetailDomain.Action.setName
+                            )
+                        )
+                        .multilineTextAlignment(.center)
+                        .font(.title2.weight(.bold))
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitleInput)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .focused($focus, equals: .medicationName)
+                        .bind(
+                            viewStore.binding(
+                                get: \.focus,
+                                send: PrescriptionDetailDomain.Action.setFocus
+                            ),
+                            to: self.$focus
+                        )
+
+                        Button {
+                            viewStore.send(.pencilButtonTapped)
+                        } label: {
+                            Image(systemName: SFSymbolName.pencil)
+                                .font(.title3.weight(.bold))
+                                .foregroundColor(Colors.primary700)
+                        }
+                        .buttonStyle(.borderless)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnEditTitle)
+                        .hidden(focus == .medicationName)
+                    }.padding()
+                } else {
+                    Text(viewStore.medicationName)
+                        .multilineTextAlignment(.center)
+                        .font(.title2.weight(.bold))
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitle)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
 
                 // Flag/Hints for the prescription type
                 switch viewStore.type {
                 case .directAssignment:
-                    Button(action: { viewStore.send(.setNavigation(tag: .directAssignmentInfo)) }, label: {
-                        Label(L10n.prscDtlBtnDirectAssignment, systemImage: SFSymbolName.info)
-                            .labelStyle(.blueFlag)
-                    })
-                        .padding(8)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnDirectAssignmentInfo)
+                    Button(
+                        action: { viewStore.send(.setNavigation(tag: .directAssignmentInfo)) },
+                        label: {
+                            Label(L10n.prscDtlBtnDirectAssignment, systemImage: SFSymbolName.info)
+                                .labelStyle(.blueFlag)
+                        }
+                    )
+                    .padding(8)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnDirectAssignmentInfo)
                 case .regular, .multiplePrescription:
                     if viewStore.prescription.viewStatus.isError {
-                        Button(action: { viewStore.send(.setNavigation(tag: .errorInfo)) }, label: {
-                            Label(L10n.prscDtlDrErrorInfoTitle, systemImage: SFSymbolName.exclamationMark)
-                                .labelStyle(.redFlag)
-                        })
-                            .padding(8)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnErrorInfo)
+                        Button(
+                            action: { viewStore.send(.setNavigation(tag: .errorInfo)) }, label: {
+                                Label(L10n.prscDtlDrErrorInfoTitle, systemImage: SFSymbolName.exclamationMark)
+                                    .labelStyle(.redFlag)
+                            }
+                        )
+                        .padding(8)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnErrorInfo)
 
                     } else if viewStore.isSubstitutionAllowed {
-                        Button(action: { viewStore.send(.setNavigation(tag: .substitutionInfo)) }, label: {
-                            Label(L10n.prscDtlDrSubstitutionInfoTitle, systemImage: SFSymbolName.info)
-                                .labelStyle(.blueFlag)
-                        })
-                            .padding(8)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo)
+                        Button(
+                            action: { viewStore.send(.setNavigation(tag: .substitutionInfo)) }, label: {
+                                Label(L10n.prscDtlDrSubstitutionInfoTitle, systemImage: SFSymbolName.info)
+                                    .labelStyle(.blueFlag)
+                            }
+                        )
+                        .padding(8)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo)
                     }
                 case .scanned:
-                    Button(action: { viewStore.send(.setNavigation(tag: .scannedPrescriptionInfo)) }, label: {
-                        Label(L10n.prscDtlDrScannedPrescriptionInfoTitle, systemImage: SFSymbolName.info)
-                            .labelStyle(.blueFlag)
-                    })
-                        .padding(8)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnScannedPrescriptionInfo)
+                    Button(
+                        action: { viewStore.send(.setNavigation(tag: .scannedPrescriptionInfo)) }, label: {
+                            Label(L10n.prscDtlDrScannedPrescriptionInfoTitle, systemImage: SFSymbolName.info)
+                                .labelStyle(.blueFlag)
+                        }
+                    )
+                    .padding(8)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnScannedPrescriptionInfo)
                 }
 
                 // Status message about validity and prescription status
                 let message = viewStore.statusMessage
                 if !message.isEmpty {
-                    Button(action: { viewStore.send(.setNavigation(tag: .prescriptionValidityInfo)) }, label: {
-                        HStack {
-                            Text(message)
-                                .padding(.vertical, 8)
-                                .multilineTextAlignment(.center)
-                                .font(Font.subheadline)
-                                .foregroundColor(Colors.systemLabelSecondary)
+                    Button(
+                        action: { viewStore.send(.setNavigation(tag: .prescriptionValidityInfo)) },
+                        label: {
+                            HStack {
+                                Text(message)
+                                    .padding(.vertical, 8)
+                                    .multilineTextAlignment(.center)
+                                    .font(Font.subheadline)
+                                    .foregroundColor(Colors.systemLabelSecondary)
 
-                            if viewStore.showStatusMessageAsButton {
-                                Image(systemName: SFSymbolName.info)
-                                    .foregroundColor(Colors.primary600)
-                                    .font(.subheadline.weight(.semibold))
+                                if viewStore.showStatusMessageAsButton {
+                                    Image(systemName: SFSymbolName.info)
+                                        .foregroundColor(Colors.primary600)
+                                        .font(.subheadline.weight(.semibold))
+                                }
                             }
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtPrescriptionValidity)
                         }
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtPrescriptionValidity)
-                    })
-                        .disabled(!viewStore.showStatusMessageAsButton)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPrescriptionValidityInfo)
+                    )
+                    .disabled(!viewStore.showStatusMessageAsButton)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPrescriptionValidityInfo)
                 }
 
                 Rectangle()
@@ -106,10 +154,11 @@ extension PrescriptionDetailView {
                             }
                         }
                     )) {
-                        PrescriptionValidityView(
-                            store: store
-                                .destinationsScope(state: /PrescriptionDetailDomain.Destinations.State
-                                    .prescriptionValidityInfo)
+                        IfLetStore(
+                            store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                            state: /PrescriptionDetailDomain.Destinations.State.prescriptionValidityInfo,
+                            action: PrescriptionDetailDomain.Destinations.Action.prescriptionValidityInfo,
+                            then: PrescriptionValidityView.init(store:)
                         )
                     }
                     .accessibility(hidden: true)
@@ -237,14 +286,14 @@ extension PrescriptionDetailView {
         struct PrescriptionValidityView: View {
             @ObservedObject var viewStore: ViewStore<
                 PrescriptionDetailDomain.Destinations.PrescriptionValidityState?,
-                PrescriptionDetailDomain.Action
+                PrescriptionDetailDomain.Destinations.Action.None
             >
 
             init(store: Store<
                 PrescriptionDetailDomain.Destinations.PrescriptionValidityState?,
-                PrescriptionDetailDomain.Action
+                PrescriptionDetailDomain.Destinations.Action.None
             >) {
-                viewStore = ViewStore(store)
+                viewStore = ViewStore(store) { $0 }
             }
 
             var body: some View {
@@ -253,14 +302,20 @@ extension PrescriptionDetailView {
                         .font(.headline)
                         .padding(.vertical, 8)
 
-                    DateView(fromDate: viewStore.state?.authoredOnDate, toDate: viewStore.state?.acceptUntilDate)
+                    DateView(
+                        fromDate: viewStore.state?.acceptBeginDisplayDate,
+                        toDate: viewStore.state?.acceptEndDisplayDate
+                    )
 
                     Text(L10n.prscDtlDrPrescriptionValidityInfoAcceptDateDescription)
                         .font(Font.body)
                         .padding(.bottom)
                         .foregroundColor(Colors.systemLabelSecondary)
 
-                    DateView(fromDate: viewStore.state?.acceptUntilDate, toDate: viewStore.state?.expiresOnDate)
+                    DateView(
+                        fromDate: viewStore.state?.expiresBeginDisplayDate,
+                        toDate: viewStore.state?.expiresEndDisplayDate
+                    )
 
                     Text(L10n.prscDtlDrPrescriptionValidityInfoExpireDateDescription)
                         .font(Font.body)
@@ -292,7 +347,7 @@ extension PrescriptionDetailView {
 
         struct ViewState: Equatable {
             let prescription: Prescription
-            let title: String
+            let medicationName: String
             let statusMessage: String
             let showStatusMessageAsButton: Bool
             let isDirectAssignment: Bool
@@ -300,10 +355,11 @@ extension PrescriptionDetailView {
             var destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
             let type: Prescription.PrescriptionType
             let isManualRedeemEnabled: Bool
+            let focus: PrescriptionDetailDomain.State.Field?
 
             init(state: PrescriptionDetailDomain.State) {
                 prescription = state.prescription
-                title = state.prescription.title
+                medicationName = state.prescription.title
                 statusMessage = state.prescription.statusMessage
                 showStatusMessageAsButton = state.prescription.status == .ready && state.prescription
                     .type != .directAssignment
@@ -312,6 +368,7 @@ extension PrescriptionDetailView {
                 destinationTag = state.destination?.tag
                 type = state.prescription.type
                 isManualRedeemEnabled = state.prescription.isManualRedeemEnabled
+                focus = state.focus
             }
         }
     }
@@ -322,6 +379,17 @@ struct PrescriptionDetailHeaderView_Previews: PreviewProvider {
         NavigationView {
             PrescriptionDetailView.HeaderView(store: PrescriptionDetailDomain.Dummies.store)
         }
+
+        PrescriptionDetailView.HeaderView(
+            store: Store(
+                initialState: .init(
+                    prescription: Prescription.Dummies.scanned,
+                    isArchived: false
+                )
+            ) {
+                PrescriptionDetailDomain()
+            }
+        )
 
         PrescriptionDetailView.HeaderView(store: PrescriptionDetailDomain.Dummies.store)
             .previewLayout(.fixed(width: 480, height: 3200))

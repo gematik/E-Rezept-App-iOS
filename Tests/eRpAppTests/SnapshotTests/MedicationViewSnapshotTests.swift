@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class MedicationViewSnapshotTests: XCTestCase {
+final class MedicationViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
@@ -33,8 +33,9 @@ final class MedicationViewSnapshotTests: XCTestCase {
     func testMedicationView_PZN() {
         let sut = NavigationView {
             MedicationView(
-                store: Store(initialState: .init(subscribed: ErxTask.Fixtures.medication1),
-                             reducer: EmptyReducer())
+                store: Store(initialState: .init(subscribed: ErxTask.Fixtures.medication1)) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -46,8 +47,9 @@ final class MedicationViewSnapshotTests: XCTestCase {
     func testMedicationView_FreeText() {
         let sut = NavigationView {
             MedicationView(
-                store: Store(initialState: .init(subscribed: ErxTask.Fixtures.freeTextMedication),
-                             reducer: EmptyReducer())
+                store: Store(initialState: .init(subscribed: ErxTask.Fixtures.freeTextMedication)) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -59,8 +61,9 @@ final class MedicationViewSnapshotTests: XCTestCase {
     func testMedicationView_Rezeptur() {
         let sut = NavigationView {
             MedicationView(
-                store: Store(initialState: .init(subscribed: ErxTask.Fixtures.ingredientMedication),
-                             reducer: EmptyReducer())
+                store: Store(initialState: .init(subscribed: ErxTask.Fixtures.ingredientMedication)) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -72,8 +75,9 @@ final class MedicationViewSnapshotTests: XCTestCase {
     func testMedicationView_Compounding() {
         let sut = NavigationView {
             MedicationView(
-                store: Store(initialState: .init(subscribed: ErxTask.Fixtures.compoundingMedication),
-                             reducer: EmptyReducer())
+                store: Store(initialState: .init(subscribed: ErxTask.Fixtures.compoundingMedication)) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -89,9 +93,11 @@ final class MedicationViewSnapshotTests: XCTestCase {
                     initialState: .init(
                         dispensed: ErxTask.Fixtures.medicationDispense2,
                         dateFormatter: UIDateFormatter.testValue
-                    ),
-                    reducer: EmptyReducer()
-                )
+                    )
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 

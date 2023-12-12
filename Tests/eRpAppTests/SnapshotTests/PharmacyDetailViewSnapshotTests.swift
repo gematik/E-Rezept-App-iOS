@@ -23,14 +23,16 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class PharmacyDetailViewSnapshotTests: XCTestCase {
+final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
     override class func setUp() {
         super.setUp()
         diffTool = "open"
     }
 
     func store(for state: PharmacyDetailDomain.State) -> PharmacyDetailDomain.Store {
-        .init(initialState: state, reducer: EmptyReducer())
+        .init(initialState: state) {
+            EmptyReducer()
+        }
     }
 
     func testPharmacyDetailWithAllButtons() {

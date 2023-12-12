@@ -25,35 +25,53 @@ import Foundation
 struct AppMigrationDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
+    struct State: Equatable {
+        var migration: MigrationState
+
+        @PresentationState var destination: Destinations.State?
+
+        init(
+            migration: MigrationState,
+            destination: Destinations.State? = nil
+        ) {
+            self.migration = migration
+            self.destination = destination
+        }
     }
 
-    enum Token: CaseIterable, Hashable {
-        case migration
-    }
-
-    enum State: Equatable {
+    enum MigrationState: Equatable {
         case none
         case inProgress
         case finished
-        case failed(AlertState<Action>)
-
-        var failedValue: AlertState<Action>? {
-            guard case let .failed(alertState) = self else {
-                return nil
-            }
-            return alertState
-        }
+        case failed
     }
 
     enum Action: Equatable {
         case loadCurrentModelVersion
         case startMigration(from: ModelVersion)
         case startMigrationReceived(Result<ModelVersion, MigrationError>)
-        case deleteDatabase
-        case close
-        case nothing
+
+        case destination(PresentationAction<Destinations.Action>)
+    }
+
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case alert(AlertState<Action.Alert>)
+        }
+
+        enum Action: Equatable {
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case loadCurrentModelVersion
+                case deleteDatabase
+                case close
+            }
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            EmptyReducer()
+        }
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
@@ -66,28 +84,34 @@ struct AppMigrationDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
+            .ifLet(\.$destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .loadCurrentModelVersion:
+        case .loadCurrentModelVersion,
+             .destination(.presented(.alert(.loadCurrentModelVersion))):
             let currentVersion = userDataStore.latestCompatibleModelVersion
-            return EffectTask(value: .startMigration(from: currentVersion))
+            return EffectTask.send(.startMigration(from: currentVersion))
         case let .startMigration(from: currentVersion):
-            state = .inProgress
-            return migrationManager.startModelMigration(from: currentVersion)
-                .first()
-                .catchToEffect()
-                .map(Action.startMigrationReceived)
-                .receive(on: schedulers.main)
-                .eraseToEffect()
+            state.migration = .inProgress
+            return .publisher(
+                migrationManager.startModelMigration(from: currentVersion)
+                    .first()
+                    .catchToPublisher()
+                    .map(Action.startMigrationReceived)
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .startMigrationReceived(.success(newVersion)):
-            state = .finished
+            state.migration = .finished
             userDataStore.latestCompatibleModelVersion = newVersion
 
             if !newVersion.isLastVersion {
-                return EffectTask(value: .startMigration(from: newVersion))
+                return EffectTask.send(.startMigration(from: newVersion))
             }
 
             finishedMigration()
@@ -95,22 +119,24 @@ struct AppMigrationDomain: ReducerProtocol {
         case let .startMigrationReceived(.failure(error)):
             if error == .isLatestVersion {
                 assertionFailure("MigrationManager should not have been called when the latest version is reached")
-                state = .finished
+                state.migration = .finished
                 finishedMigration()
                 return .none
             }
 
-            state = .failed(
+            state.migration = .failed
+            state.destination = .alert(
                 Self.alertState(
                     title: L10n.amgBtnAlertTitle.text,
                     message: error.localizedDescription
                 )
             )
             return .none
-        case .deleteDatabase:
+        case .destination(.presented(.alert(.deleteDatabase))):
             let databaseUrl = factory.databaseUrl
             guard fileManager.fileExists(atPath: databaseUrl.path) else {
-                state = .failed(Self.deleteDatabaseAlertState())
+                state.migration = .failed
+                state.destination = .alert(Self.deleteDatabaseAlertState())
                 return .none
             }
             do {
@@ -126,23 +152,24 @@ struct AppMigrationDomain: ReducerProtocol {
                 try fileManager.removeItem(at: shmFileUrl)
                 try fileManager.removeItem(at: walFileUrl)
                 try fileManager.removeItem(at: databaseUrl)
-                state = .finished
+                state.migration = .finished
                 finishedMigration()
             } catch {
-                state = .failed(Self.deleteDatabaseAlertState())
+                state.migration = .failed
+                state.destination = .alert(Self.deleteDatabaseAlertState())
             }
             return .none
-        case .close:
-            state = .finished
+        case .destination(.presented(.alert(.close))):
+            state.migration = .finished
             finishedMigration()
             return .none
-        case .nothing:
+        case .destination:
             return .none
         }
     }
 
-    static func deleteDatabaseAlertState() -> AlertState<Action> {
-        AlertState<Action>(
+    static func deleteDatabaseAlertState() -> AlertState<Destinations.Action.Alert> {
+        AlertState(
             title: TextState(L10n.amgTxtAlertTitleDeleteDatabase),
             message: TextState(L10n.amgTxtAlertMessageDeleteDatabase),
             primaryButton: .destructive(TextState(L10n.amgBtnAlertDeleteDatabase), action: .send(.deleteDatabase)),
@@ -150,8 +177,8 @@ struct AppMigrationDomain: ReducerProtocol {
         )
     }
 
-    static func alertState(title: String, message: String) -> AlertState<Action> {
-        AlertState<Action>(
+    static func alertState(title: String, message: String) -> AlertState<Destinations.Action.Alert> {
+        AlertState(
             title: TextState(title),
             message: TextState(message),
             primaryButton: .destructive(TextState(L10n.amgBtnAlertDeleteDatabase), action: .send(.deleteDatabase)),
@@ -164,9 +191,10 @@ extension AppMigrationDomain {
     enum Dummies {
         static func store(for state: AppMigrationDomain.State) -> AppMigrationDomain.Store {
             AppMigrationDomain.Store(
-                initialState: state,
-                reducer: AppMigrationDomain {}
-            )
+                initialState: state
+            ) {
+                AppMigrationDomain {}
+            }
         }
     }
 }

@@ -23,16 +23,11 @@ import eRpKit
 import Nimble
 import XCTest
 
+@MainActor
 final class AppAuthenticationDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate.eraseToAnyScheduler()
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        AppAuthenticationDomain.State,
-        AppAuthenticationDomain.Action,
-        AppAuthenticationDomain.State,
-        AppAuthenticationDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<AppAuthenticationDomain>
 
     struct MockAuthenticationProvider: AppAuthenticationProvider {
         var authenticationOption: AppSecurityOption
@@ -57,10 +52,9 @@ final class AppAuthenticationDomainTests: XCTestCase {
         let mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
             .eraseToAnyPublisher()
-        return TestStore(
-            initialState: AppAuthenticationDomain.State(),
-            reducer: AppAuthenticationDomain {}
-        ) { dependencies in
+        return TestStore(initialState: AppAuthenticationDomain.State()) {
+            AppAuthenticationDomain {}
+        } withDependencies: { dependencies in
             dependencies.userDataStore = userDataStore
             dependencies.schedulers = Schedulers(
                 uiScheduler: testScheduler.eraseToAnyScheduler()
@@ -73,13 +67,13 @@ final class AppAuthenticationDomainTests: XCTestCase {
         }
     }
 
-    func testLoadingBiometricAppAuthenticationWithoutPreviousFailedAuthentications() {
+    func testLoadingBiometricAppAuthenticationWithoutPreviousFailedAuthentications() async {
         let store = testStore(for: .biometry(.faceID))
         userDataStore.underlyingFailedAppAuthentications = Just(0).eraseToAnyPublisher() // no failed authentications
 
-        store.send(.onAppear)
-        store.receive(.failedAppAuthenticationsReceived(0))
-        store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 0)) {
+        await store.send(.task)
+        await store.receive(.failedAppAuthenticationsReceived(0))
+        await store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 0)) {
             $0.biometrics = AppAuthenticationBiometricsDomain.State(
                 biometryType: .faceID,
                 startImmediateAuthenticationChallenge: true
@@ -88,21 +82,20 @@ final class AppAuthenticationDomainTests: XCTestCase {
             $0.didCompleteAuthentication = false
             $0.password = nil
         }
-        store.send(.removeSubscriptions) // cancel long running effects
     }
 
-    func testLoadingBiometricAppAuthenticationWithPreviousFailedAuthentications() {
+    func testLoadingBiometricAppAuthenticationWithPreviousFailedAuthentications() async {
         let store = testStore(for: .biometry(.faceID))
         userDataStore.underlyingFailedAppAuthentications = Just(1).eraseToAnyPublisher()
 
-        store.send(.onAppear)
-        store.receive(.failedAppAuthenticationsReceived(1)) {
+        await store.send(.task)
+        await store.receive(.failedAppAuthenticationsReceived(1)) {
             $0.biometrics = nil
             $0.password = nil
             $0.failedAuthenticationsCount = 1
             $0.didCompleteAuthentication = false
         }
-        store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 1)) {
+        await store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 1)) {
             $0.biometrics = AppAuthenticationBiometricsDomain.State(
                 biometryType: .faceID,
                 startImmediateAuthenticationChallenge: false
@@ -111,10 +104,9 @@ final class AppAuthenticationDomainTests: XCTestCase {
             $0.didCompleteAuthentication = false
             $0.password = nil
         }
-        store.send(.removeSubscriptions)
     }
 
-    func testCloseAppAuthenticationBiometryViewWhenVerified() {
+    func testCloseAppAuthenticationBiometryViewWhenVerified() async {
         var didCompleteAuthenticationCalledCount = 0
         var didCompleteAuthenticationCalled: Bool {
             didCompleteAuthenticationCalledCount > 0
@@ -131,9 +123,10 @@ final class AppAuthenticationDomainTests: XCTestCase {
                     startImmediateAuthenticationChallenge: false
                 ),
                 password: nil
-            ),
-            reducer: AppAuthenticationDomain { didCompleteAuthenticationCalledCount += 1 }
-        ) { dependencies in
+            )
+        ) {
+            AppAuthenticationDomain { didCompleteAuthenticationCalledCount += 1 }
+        } withDependencies: { dependencies in
             dependencies.userDataStore = MockUserDataStore()
             dependencies.schedulers = Schedulers(
                 uiScheduler: testScheduler.eraseToAnyScheduler()
@@ -147,7 +140,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
         let expectedResponse = AuthenticationChallengeProviderResult.success(true)
         expect(didCompleteAuthenticationCalled).to(beFalse())
-        store.send(.biometrics(action: .authenticationChallengeResponse(expectedResponse))) { state in
+        await store.send(.biometrics(action: .authenticationChallengeResponse(expectedResponse))) { state in
             state.didCompleteAuthentication = true
             state.password = nil
             state.biometrics = nil
@@ -155,29 +148,28 @@ final class AppAuthenticationDomainTests: XCTestCase {
         expect(didCompleteAuthenticationCalled).to(beTrue())
     }
 
-    func testLoadingPasswordAppAuthentication() {
+    func testLoadingPasswordAppAuthentication() async {
         let testStore = testStore(for: .password)
 
         userDataStore.failedAppAuthentications = Just(0).eraseToAnyPublisher()
         userDataStore.appSecurityOption = Just(.password).eraseToAnyPublisher()
 
-        testStore.send(.onAppear)
-        testStore.receive(.failedAppAuthenticationsReceived(0))
-        testStore.receive(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
+        await testStore.send(.task)
+        await testStore.receive(.failedAppAuthenticationsReceived(0))
+        await testStore.receive(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
             state.password = AppAuthenticationPasswordDomain.State()
         }
-        testStore.send(.removeSubscriptions)
     }
 
-    func testLoadingPasswordAppAuthenticationResponse() {
+    func testLoadingPasswordAppAuthenticationResponse() async {
         let testStore = testStore(for: .password)
 
-        testStore.send(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
+        await testStore.send(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
             state.password = AppAuthenticationPasswordDomain.State()
         }
     }
 
-    func testCloseAppAuthenticationPasswordViewWhenPasswordVerified() {
+    func testCloseAppAuthenticationPasswordViewWhenPasswordVerified() async {
         var didCompleteAuthenticationCalledCount = 0
         var didCompleteAuthenticationCalled: Bool {
             didCompleteAuthenticationCalledCount > 0
@@ -191,9 +183,10 @@ final class AppAuthenticationDomainTests: XCTestCase {
             initialState: AppAuthenticationDomain.State(
                 biometrics: nil,
                 password: AppAuthenticationPasswordDomain.State()
-            ),
-            reducer: AppAuthenticationDomain { didCompleteAuthenticationCalledCount += 1 }
-        ) { dependencies in
+            )
+        ) {
+            AppAuthenticationDomain { didCompleteAuthenticationCalledCount += 1 }
+        } withDependencies: { dependencies in
             dependencies.userDataStore = MockUserDataStore()
             dependencies.schedulers = Schedulers(
                 uiScheduler: testScheduler.eraseToAnyScheduler()
@@ -206,7 +199,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
         }
 
         expect(didCompleteAuthenticationCalled).to(beFalse())
-        store.send(.password(action: .passwordVerificationReceived(true))) { state in
+        await store.send(.password(action: .passwordVerificationReceived(true))) { state in
             state.didCompleteAuthentication = true
             state.password = nil
         }

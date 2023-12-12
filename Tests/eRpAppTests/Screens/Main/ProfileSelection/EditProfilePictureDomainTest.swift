@@ -24,17 +24,12 @@ import IDP
 import Nimble
 import XCTest
 
+@MainActor
 final class EditProfilePictureDomainTest: XCTestCase {
     let testScheduler = DispatchQueue.test
     var mockUserProfileService: MockUserProfileService!
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        EditProfilePictureDomain.State,
-        EditProfilePictureDomain.Action,
-        EditProfilePictureDomain.State,
-        EditProfilePictureDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<EditProfilePictureDomain>
 
     override func setUp() {
         super.setUp()
@@ -47,19 +42,18 @@ final class EditProfilePictureDomainTest: XCTestCase {
     }
 
     func testStore(for state: EditProfilePictureDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: EditProfilePictureDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            EditProfilePictureDomain()
+        } withDependencies: { dependencies in
             dependencies.userProfileService = mockUserProfileService
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         }
     }
 
-    func testEditProfilePictureColor() {
+    func testEditProfilePictureColor() async {
         let sut = testStore(
             for: EditProfilePictureDomain.State(
-                profile: Fixtures.profileA
+                profileId: Fixtures.profileA.id
             )
         )
 
@@ -68,19 +62,19 @@ final class EditProfilePictureDomainTest: XCTestCase {
             .eraseToAnyPublisher()
 
         expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beFalse())
-        sut.send(.editColor(.blue)) { state in
+        await sut.send(.editColor(.blue)) { state in
             state.color = .blue
         }
         expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beTrue())
 
-        testScheduler.run()
-        sut.receive(.updateProfileReceived(.success(true)))
+        await testScheduler.run()
+        await sut.receive(.updateProfileReceived(.success(true)))
     }
 
-    func testEditProfilePictureImage() {
+    func testEditProfilePictureImage() async {
         let sut = testStore(
             for: EditProfilePictureDomain.State(
-                profile: Fixtures.profileA
+                profileId: Fixtures.profileA.id
             )
         )
 
@@ -89,13 +83,13 @@ final class EditProfilePictureDomainTest: XCTestCase {
             .eraseToAnyPublisher()
 
         expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beFalse())
-        sut.send(.editPicture(.boyWithCard)) { state in
+        await sut.send(.editPicture(.boyWithCard)) { state in
             state.picture = .boyWithCard
         }
         expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beTrue())
 
-        testScheduler.run()
-        sut.receive(.updateProfileReceived(.success(true)))
+        await testScheduler.run()
+        await sut.receive(.updateProfileReceived(.success(true)))
     }
 }
 

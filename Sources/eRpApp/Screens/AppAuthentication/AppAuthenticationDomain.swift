@@ -23,14 +23,6 @@ import eRpKit
 struct AppAuthenticationDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case failedAuthentications
-    }
-
     struct State: Equatable {
         var didCompleteAuthentication = false
         var biometrics: AppAuthenticationBiometricsDomain.State?
@@ -40,10 +32,9 @@ struct AppAuthenticationDomain: ReducerProtocol {
     }
 
     enum Action: Equatable {
-        case onAppear
+        case task
         case failedAppAuthenticationsReceived(Int)
         case loadAppAuthenticationOptionResponse(AppSecurityOption?, Int)
-        case removeSubscriptions
         case biometrics(action: AppAuthenticationBiometricsDomain.Action)
         case password(action: AppAuthenticationPasswordDomain.Action)
         case biometricAndPassword(action: AppAuthenticationBiometricPasswordDomain.Action)
@@ -71,10 +62,9 @@ struct AppAuthenticationDomain: ReducerProtocol {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .onAppear:
+        case .task:
             return .merge(
-                subscribeToFailedAuthenticationChanges()
-                    .cancellable(id: Token.failedAuthentications, cancelInFlight: true),
+                subscribeToFailedAuthenticationChanges(),
                 loadAppAuthenticationOption()
             )
         case let .failedAppAuthenticationsReceived(count):
@@ -131,8 +121,6 @@ struct AppAuthenticationDomain: ReducerProtocol {
             }
 
             return .none
-        case .removeSubscriptions:
-            return Self.cleanup()
         case .password,
              .biometrics,
              .biometricAndPassword:
@@ -143,21 +131,25 @@ struct AppAuthenticationDomain: ReducerProtocol {
 
 extension AppAuthenticationDomain {
     func subscribeToFailedAuthenticationChanges() -> EffectTask<AppAuthenticationDomain.Action> {
-        userDataStore.failedAppAuthentications
-            .receive(on: schedulers.main.animation())
-            .map(AppAuthenticationDomain.Action.failedAppAuthenticationsReceived)
-            .eraseToEffect()
+        .publisher(
+            userDataStore.failedAppAuthentications
+                .receive(on: schedulers.main.animation())
+                .map(AppAuthenticationDomain.Action.failedAppAuthenticationsReceived)
+                .eraseToAnyPublisher
+        )
     }
 
     // [REQ:BSI-eRp-ePA:O.Biom_5#1] Check whether at least one biometric reference is available.
     func loadAppAuthenticationOption() -> EffectTask<AppAuthenticationDomain.Action> {
-        appAuthenticationProvider
-            .loadAppAuthenticationOption()
-            .zip(userDataStore.failedAppAuthentications.first())
-            .receive(on: schedulers.main)
-            .first()
-            .map(AppAuthenticationDomain.Action.loadAppAuthenticationOptionResponse)
-            .eraseToEffect()
+        .publisher(
+            appAuthenticationProvider
+                .loadAppAuthenticationOption()
+                .zip(userDataStore.failedAppAuthentications.first())
+                .receive(on: schedulers.main)
+                .first()
+                .map(AppAuthenticationDomain.Action.loadAppAuthenticationOptionResponse)
+                .eraseToAnyPublisher
+        )
     }
 }
 
@@ -165,16 +157,14 @@ extension AppAuthenticationDomain {
     enum Dummies {
         static let state = State()
 
-        static let store = Store(
-            initialState: state,
-            reducer: AppAuthenticationDomain {}
-        )
+        static let store = Store(initialState: state) {
+            AppAuthenticationDomain {}
+        }
 
         static func storeFor(_ state: State) -> Store {
-            Store(
-                initialState: state,
-                reducer: AppAuthenticationDomain {}
-            )
+            Store(initialState: state) {
+                AppAuthenticationDomain {}
+            }
         }
     }
 }

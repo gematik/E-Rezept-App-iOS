@@ -18,6 +18,7 @@
 
 import AVS
 import Combine
+import Dependencies
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
@@ -109,7 +110,7 @@ class StandardSessionContainer: UserSession {
         )
     }()
 
-    lazy var biometrieIdpSession: IDPSession = {
+    lazy var pairingIdpSession: IDPSession = {
         let idpConfig = DefaultIDPSession.Configuration(
             clientId: appConfiguration.clientId,
             redirectURI: appConfiguration.redirectUri,
@@ -119,7 +120,7 @@ class StandardSessionContainer: UserSession {
         )
         return DefaultIDPSession(
             config: idpConfig,
-            storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp biometrics session
+            storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp pairing session
             schedulers: schedulers,
             httpClient: idpHttpClient,
             trustStoreSession: trustStoreSession,
@@ -182,11 +183,13 @@ class StandardSessionContainer: UserSession {
         return FileVAUStorage(vauStorageBaseFilePath: vauStorageFilePath)
     }()
 
+    @Dependency(\.pharmacyServiceFactory) var pharmacyServiceFactory: PharmacyServiceFactory
+
     lazy var pharmacyRepository: PharmacyRepository = {
         DefaultPharmacyRepository(
             disk: pharmacyCoreDataStore,
-            cloud: PharmacyFHIRDataSource(
-                fhirClient: FHIRClient(
+            cloud: pharmacyServiceFactory.construct(
+                FHIRClient(
                     server: appConfiguration.apoVzd,
                     httpClient: pharmacyHttpClient
                 )
@@ -272,9 +275,9 @@ class StandardSessionContainer: UserSession {
         )
     }()
 
-    lazy var biometricsIdpSessionLoginHandler: LoginHandler = {
+    lazy var pairingIdpSessionLoginHandler: LoginHandler = {
         DefaultLoginHandler(
-            idpSession: biometrieIdpSession,
+            idpSession: pairingIdpSession,
             signatureProvider: secureEnclaveSignatureProvider
         )
     }()

@@ -24,17 +24,12 @@ import IDP
 import Nimble
 import XCTest
 
+@MainActor
 final class EditProfileNameDomainTest: XCTestCase {
     let testScheduler = DispatchQueue.test
     var mockUserProfileService: MockUserProfileService!
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        EditProfileNameDomain.State,
-        EditProfileNameDomain.Action,
-        EditProfileNameDomain.State,
-        EditProfileNameDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<EditProfileNameDomain>
 
     override func setUp() {
         super.setUp()
@@ -47,16 +42,15 @@ final class EditProfileNameDomainTest: XCTestCase {
     }
 
     func testStore(for state: EditProfileNameDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: EditProfileNameDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            EditProfileNameDomain()
+        } withDependencies: { dependencies in
             dependencies.userProfileService = mockUserProfileService
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         }
     }
 
-    func testEditProfileNameWithValidName() {
+    func testEditProfileNameWithValidName() async {
         let validName = "Niklas"
         let sut = testStore(
             for: EditProfileNameDomain.State(
@@ -70,15 +64,15 @@ final class EditProfileNameDomainTest: XCTestCase {
             .eraseToAnyPublisher()
 
         expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beFalse())
-        sut.send(.saveEditedProfileName(name: "Crazy Niklas"))
+        await sut.send(.saveEditedProfileName(name: "Crazy Niklas"))
         expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beTrue())
 
-        testScheduler.run()
-        sut.receive(.saveEditedProfileNameReceived(.success(true)))
-        sut.receive(.delegate(.close))
+        await testScheduler.run()
+        await sut.receive(.saveEditedProfileNameReceived(.success(true)))
+        await sut.receive(.delegate(.close))
     }
 
-    func testEditProfileNameWithInvalidName() {
+    func testEditProfileNameWithInvalidName() async {
         let invalidName = " "
         let sut = testStore(
             for: EditProfileNameDomain.State(
@@ -87,9 +81,9 @@ final class EditProfileNameDomainTest: XCTestCase {
             )
         )
 
-        sut.send(.saveEditedProfileName(name: invalidName))
+        await sut.send(.saveEditedProfileName(name: invalidName))
         expect(self.mockUserProfileService.updateProfileIdMutatingCalled).to(beFalse())
-        sut.receive(.delegate(.close))
+        await sut.receive(.delegate(.close))
     }
 }
 

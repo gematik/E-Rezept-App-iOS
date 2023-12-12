@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class PrescriptionDetailViewSnapshotTests: XCTestCase {
+final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
@@ -35,9 +35,11 @@ final class PrescriptionDetailViewSnapshotTests: XCTestCase {
             initialState: .init(
                 prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue),
                 isArchived: false
-            ),
-            reducer: EmptyReducer()
-        )
+            )
+
+        ) {
+            EmptyReducer()
+        }
     }
 
     func testPrescriptionDetail_WithSubstitutionAllowedPrescription() {
@@ -79,8 +81,9 @@ final class PrescriptionDetailViewSnapshotTests: XCTestCase {
                 store: Store(initialState: .init(
                     taskId: "34235f983-1e67-321g-8955-63bf44e44fb8",
                     accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24"
-                ),
-                reducer: EmptyReducer())
+                )) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -92,8 +95,9 @@ final class PrescriptionDetailViewSnapshotTests: XCTestCase {
     func testPrescriptionDetail_PatientView() {
         let sut = NavigationView {
             PrescriptionDetailView.PatientView(
-                store: Store(initialState: .init(patient: ErxTask.Fixtures.demoPatient),
-                             reducer: EmptyReducer())
+                store: Store(initialState: .init(patient: ErxTask.Fixtures.demoPatient)) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -105,8 +109,9 @@ final class PrescriptionDetailViewSnapshotTests: XCTestCase {
     func testPrescriptionDetail_PractitionerView() {
         let sut = NavigationView {
             PrescriptionDetailView.PractitionerView(
-                store: Store(initialState: .init(practitioner: ErxTask.Fixtures.demoPractitioner),
-                             reducer: EmptyReducer())
+                store: Store(initialState: .init(practitioner: ErxTask.Fixtures.demoPractitioner)) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -118,8 +123,9 @@ final class PrescriptionDetailViewSnapshotTests: XCTestCase {
     func testPrescriptionDetail_OrganizationView() {
         let sut = NavigationView {
             PrescriptionDetailView.OrganizationView(
-                store: Store(initialState: .init(organization: ErxTask.Fixtures.demoOrganization),
-                             reducer: EmptyReducer())
+                store: Store(initialState: .init(organization: ErxTask.Fixtures.demoOrganization)) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -131,8 +137,9 @@ final class PrescriptionDetailViewSnapshotTests: XCTestCase {
     func testPrescriptionDetail_AccidentInfoView() {
         let sut = NavigationView {
             PrescriptionDetailView.AccidentInfoView(
-                store: Store(initialState: .init(accidentInfo: ErxTask.Fixtures.demoAccidentInfo),
-                             reducer: EmptyReducer())
+                store: Store(initialState: .init(accidentInfo: ErxTask.Fixtures.demoAccidentInfo)) {
+                    EmptyReducer()
+                }
             )
         }
 

@@ -36,7 +36,7 @@ struct CardWallLoginOptionView: View {
     }
 
     var body: some View {
-        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+        WithViewStore(store, observe: ViewState.init) { viewStore in
             VStack(alignment: .leading) {
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading) {
@@ -81,10 +81,10 @@ struct CardWallLoginOptionView: View {
                         .hidden()
                         .accessibility(hidden: true)
                         .alert(
-                            self.store.destinationsScope(state: /CardWallLoginOptionDomain.Destinations.State.alert),
-                            dismiss: .setNavigation(tag: .none)
+                            store.scope(state: \.$destination, action: CardWallLoginOptionDomain.Action.destination),
+                            state: /CardWallLoginOptionDomain.Destinations.State.alert,
+                            action: CardWallLoginOptionDomain.Destinations.Action.alert
                         )
-
                     PrivacyWarningViewContainer(store: store)
                 }
                 .padding()
@@ -101,23 +101,16 @@ struct CardWallLoginOptionView: View {
                 .accessibility(label: Text(L10n.cdwBtnBiometryContinueLabel))
                 .padding([.bottom, .leading, .trailing])
 
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /CardWallLoginOptionDomain.Destinations.State.readcard,
-                            action: CardWallLoginOptionDomain.Destinations.Action.readcardAction(action:)
-                        ),
-                        then: CardWallReadCardView.init(store:)
-                    ),
-                    tag: CardWallLoginOptionDomain.Destinations.State.Tag.readcard,
-                    selection: viewStore.binding(
-                        get: \.destinationTag
-                    ) {
-                        .setNavigation(tag: $0)
-                    }
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: CardWallLoginOptionDomain.Action.destination),
+                    state: /CardWallLoginOptionDomain.Destinations.State.readcard,
+                    action: CardWallLoginOptionDomain.Destinations.Action.readcardAction(action:),
+                    onTap: { viewStore.send(.setNavigation(tag: .readcard)) },
+                    destination: CardWallReadCardView.init(store:),
+                    label: {}
+                )
+                .hidden()
+                .accessibility(hidden: true)
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtBiometryDemoModeInfo)
@@ -134,6 +127,7 @@ struct CardWallLoginOptionView: View {
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
+    // [REQ:BSI-eRp-ePA:O.Resi_1#3] View containing information regarding the login options.
     struct PrivacyWarningViewContainer: View {
         let store: StoreOf<CardWallLoginOptionDomain>
 
@@ -146,7 +140,7 @@ struct CardWallLoginOptionView: View {
         }
 
         var body: some View {
-            WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+            WithViewStore(store, observe: ViewState.init) { viewStore in
                 VStack(alignment: .leading) {
                     Rectangle()
                         .frame(width: 0, height: 0, alignment: .center)

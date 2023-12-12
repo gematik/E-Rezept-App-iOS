@@ -183,48 +183,6 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
         return delete(resultsOf: request)
     }
 
-    public func pagedAuditEventsController(for profileId: UUID,
-                                           with locale: String?) throws -> PagedAuditEventsController {
-        let viewContext: NSManagedObjectContext
-        do {
-            let coreData = try coreDataControllerFactory.loadCoreDataController()
-            viewContext = coreData.container.viewContext
-        } catch {
-            throw Error.initialization(error: error)
-        }
-
-        let request: NSFetchRequest<ErxAuditEventEntity> = ErxAuditEventEntity.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxAuditEventEntity.timestamp), ascending: false)]
-
-        var subPredicates = [NSPredicate]()
-
-        let profilePredicate = NSPredicate(
-            format: "%K == %@",
-            argumentArray: [#keyPath(ErxAuditEventEntity.profile.identifier), profileId]
-        )
-        subPredicates.append(profilePredicate)
-
-        if let locale = locale {
-            let localePredicate = NSCompoundPredicate(
-                orPredicateWithSubpredicates: [
-                    NSPredicate(
-                        format: "%K == %@",
-                        #keyPath(ErxAuditEventEntity.locale),
-                        locale
-                    ),
-                    NSPredicate(
-                        format: "%K == nil",
-                        #keyPath(ErxAuditEventEntity.locale)
-                    ),
-                ]
-            )
-            subPredicates.append(localePredicate)
-        }
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subPredicates)
-
-        return PagedAuditEventsEntityController(for: request, mapping: ErxAuditEvent.init, in: viewContext)
-    }
-
     // sourcery: CodedError = "502"
     public enum Error: Swift.Error {
         // sourcery: errorCode = "01"

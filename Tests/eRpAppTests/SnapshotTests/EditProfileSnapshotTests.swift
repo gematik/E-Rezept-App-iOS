@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class EditProfileSnapshotTests: XCTestCase {
+final class EditProfileSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
@@ -46,9 +46,11 @@ final class EditProfileSnapshotTests: XCTestCase {
                         userImageData: nil,
                         color: .blue,
                         profileId: UUID()
-                    ),
-                    reducer: EmptyReducer()
-                )
+                    )
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
         .frame(width: 375, height: 1807, alignment: .center)
@@ -72,9 +74,11 @@ final class EditProfileSnapshotTests: XCTestCase {
                         color: .blue,
                         profileId: UUID(),
                         token: IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
-                    ),
-                    reducer: EmptyReducer()
-                )
+                    )
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
         .frame(width: 375, height: 1807, alignment: .center)
@@ -98,9 +102,11 @@ final class EditProfileSnapshotTests: XCTestCase {
                         color: .blue,
                         profileId: UUID(),
                         token: IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
-                    ),
-                    reducer: EmptyReducer()
-                )
+                    )
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
         .frame(width: 375, height: 1807, alignment: .center)
@@ -122,9 +128,10 @@ final class EditProfileSnapshotTests: XCTestCase {
                     userImageData: nil,
                     color: .green,
                     profileId: UUID()
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -146,9 +153,10 @@ final class EditProfileSnapshotTests: XCTestCase {
                     userImageData: nil,
                     color: .green,
                     profileId: UUID()
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -170,9 +178,10 @@ final class EditProfileSnapshotTests: XCTestCase {
                     userImageData: nil,
                     color: .yellow,
                     profileId: UUID()
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
         .frame(width: 375, height: 1400)
 
@@ -193,9 +202,10 @@ final class EditProfileSnapshotTests: XCTestCase {
                     image: .boyWithCard,
                     color: .red,
                     insuranceType: .pKV
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
         .frame(width: 375, height: 1400)
 

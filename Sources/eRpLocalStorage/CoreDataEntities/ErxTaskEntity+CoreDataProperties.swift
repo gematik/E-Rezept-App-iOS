@@ -57,22 +57,6 @@ extension ErxTaskEntity {
     @NSManaged public var accidentInfo: ErxTaskAccidentInfoEntity?
 }
 
-// MARK: Generated accessors for auditEvents
-
-extension ErxTaskEntity {
-    @objc(addAuditEventsObject:)
-    @NSManaged public func addToAuditEvents(_ value: ErxAuditEventEntity)
-
-    @objc(removeAuditEventsObject:)
-    @NSManaged public func removeFromAuditEvents(_ value: ErxAuditEventEntity)
-
-    @objc(addAuditEvents:)
-    @NSManaged public func addToAuditEvents(_ values: NSSet)
-
-    @objc(removeAuditEvents:)
-    @NSManaged public func removeFromAuditEvents(_ values: NSSet)
-}
-
 // MARK: Generated accessors for avsTransaction
 
 extension ErxTaskEntity {

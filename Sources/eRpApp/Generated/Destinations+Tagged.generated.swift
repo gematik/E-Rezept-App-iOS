@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -25,6 +25,18 @@ extension AppDomain.Destinations.State {
         }
     }
 }
+extension AppMigrationDomain.Destinations.State {
+    enum Tag: Int {
+        case alert
+    }
+
+    var tag: Tag {
+        switch self {
+            case .alert:
+                return .alert
+        }
+    }
+}
 extension AppSecurityDomain.Destinations.State {
     enum Tag: Int {
         case appPassword
@@ -34,6 +46,21 @@ extension AppSecurityDomain.Destinations.State {
         switch self {
             case .appPassword:
                 return .appPassword
+        }
+    }
+}
+extension AuditEventsDomain.Destinations.State {
+    enum Tag: Int {
+        case alert
+        case cardWall
+    }
+
+    var tag: Tag {
+        switch self {
+            case .alert:
+                return .alert
+            case .cardWall:
+                return .cardWall
         }
     }
 }
@@ -140,6 +167,7 @@ extension ChargeItemDomain.Destinations.State {
     enum Tag: Int {
         case shareSheet
         case idpCardWall
+        case alterChargeItem
         case alert
     }
 
@@ -149,6 +177,8 @@ extension ChargeItemDomain.Destinations.State {
                 return .shareSheet
             case .idpCardWall:
                 return .idpCardWall
+            case .alterChargeItem:
+                return .alterChargeItem
             case .alert:
                 return .alert
         }
@@ -217,6 +247,18 @@ extension EditProfilePictureDomain.Destinations.State {
         }
     }
 }
+extension ExtAuthPendingDomain.Destinations.State {
+    enum Tag: Int {
+        case extAuthAlert
+    }
+
+    var tag: Tag {
+        switch self {
+            case .extAuthAlert:
+                return .extAuthAlert
+        }
+    }
+}
 extension HealthCardPasswordDomain.Destinations.State {
     enum Tag: Int {
         case introduction
@@ -226,6 +268,7 @@ extension HealthCardPasswordDomain.Destinations.State {
         case pin
         case readCard
         case scanner
+        case pinAlert
     }
 
     var tag: Tag {
@@ -244,6 +287,8 @@ extension HealthCardPasswordDomain.Destinations.State {
                 return .readCard
             case .scanner:
                 return .scanner
+            case .pinAlert:
+                return .pinAlert
         }
     }
 }
@@ -328,12 +373,15 @@ extension MedicationOverviewDomain.Destinations.State {
 extension NewProfileDomain.Destinations.State {
     enum Tag: Int {
         case editProfilePicture
+        case alert
     }
 
     var tag: Tag {
         switch self {
             case .editProfilePicture:
                 return .editProfilePicture
+            case .alert:
+                return .alert
         }
     }
 }
@@ -540,14 +588,14 @@ extension RedeemMethodsDomain.Destinations.State {
 }
 extension RegisteredDevicesDomain.Destinations.State {
     enum Tag: Int {
-        case idpCardWall
+        case cardWallCAN
         case alert
     }
 
     var tag: Tag {
         switch self {
-            case .idpCardWall:
-                return .idpCardWall
+            case .cardWallCAN:
+                return .cardWallCAN
             case .alert:
                 return .alert
         }
@@ -557,6 +605,8 @@ extension ScannerDomain.Destinations.State {
     enum Tag: Int {
         case imageGallery
         case documentImporter
+        case alert
+        case sheet
     }
 
     var tag: Tag {
@@ -565,6 +615,10 @@ extension ScannerDomain.Destinations.State {
                 return .imageGallery
             case .documentImporter:
                 return .documentImporter
+            case .alert:
+                return .alert
+            case .sheet:
+                return .sheet
         }
     }
 }

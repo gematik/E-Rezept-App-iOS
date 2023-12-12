@@ -90,13 +90,10 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     /// - Parameters:
     ///   - locale: The locale to fetch the audit events by
     /// - Returns: AnyPublisher that emits an array of all `ErxTask`s or `DefaultErxTaskRepository.Error`
-    public func loadRemoteAll(for locale: String?) -> AnyPublisher<[ErxTask], ErrorType> {
+    public func loadRemoteAll(for _: String?) -> AnyPublisher<[ErxTask], ErrorType> {
         loadRemoteLatestTasks()
             .flatMap { _ in
                 self.loadRemoteLatestCommunications()
-            }
-            .flatMap { _ in
-                self.loadRemoteLatestAuditEvents(for: locale)
             }
             .flatMap { _ -> AnyPublisher<[ErxTask], ErrorType> in
                 self.disk.listAllTasks()
@@ -107,7 +104,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
-    private func loadRemoteLatestTasks() -> AnyPublisher<Bool, ErrorType> {
+    public func loadRemoteLatestTasks() -> AnyPublisher<Bool, ErrorType> {
         disk.fetchLatestLastModifiedForErxTasks()
             .first() // only read once, we are interested in latest event to fetch all younger events.
             .mapError(ErrorType.local)
@@ -115,28 +112,37 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                 self.cloud.listAllTasks(after: lastModified)
                     .mapError(ErrorType.remote)
             }
-            .flatMap(loadRemoteMedicationDispenses(for:))
-            .flatMap {
-                self.disk.save(tasks: $0, updateProfileLastAuthenticated: true)
-                    .mapError(ErrorType.local)
+            .flatMap { tasks -> AnyPublisher<Bool, ErrorType> in
+                self.loadRemoteMedicationDispenses(for: tasks.content)
+                    .flatMap {
+                        self.disk.save(tasks: $0, updateProfileLastAuthenticated: true)
+                            .mapError(ErrorType.local)
+                    }
+                    .flatMap { result -> AnyPublisher<Bool, ErrorType> in
+                        if result, tasks.next != nil {
+                            return self.loadRemoteTasksPage(of: tasks)
+                        } else {
+                            return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+                        }
+                    }
+                    .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
     }
 
-    internal func loadRemoteLatestAuditEvents(for locale: String?) -> AnyPublisher<Bool, ErrorType> {
-        disk.fetchLatestTimestampForAuditEvents()
+    private func loadRemoteTasksPage(of previousPage: PagedContent<[ErxTask]>) -> AnyPublisher<Bool, ErrorType> {
+        cloud.listTasksNextPage(of: previousPage)
             .first() // only read once, we are interested in latest event to fetch all younger events.
-            .mapError(ErrorType.local)
-            .flatMap { timestamp in
-                self.cloud.listAllAuditEvents(after: timestamp, for: locale)
-                    .mapError(ErrorType.remote)
-            }
-            .flatMap { auditEvents in
-                self.disk.save(auditEvents: auditEvents.content)
-                    .mapError(ErrorType.local)
+            .mapError(ErrorType.remote)
+            .flatMap { tasks -> AnyPublisher<Bool, ErrorType> in
+                self.loadRemoteMedicationDispenses(for: tasks.content)
+                    .flatMap {
+                        self.disk.save(tasks: $0, updateProfileLastAuthenticated: true)
+                            .mapError(ErrorType.local)
+                    }
                     .flatMap { result -> AnyPublisher<Bool, ErrorType> in
-                        if result, auditEvents.next != nil {
-                            return self.loadRemoteAuditEventsPage(of: auditEvents, for: locale)
+                        if result, tasks.next != nil {
+                            return self.loadRemoteTasksPage(of: tasks)
                         } else {
                             return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
                         }
@@ -146,22 +152,19 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
-    internal func loadRemoteAuditEventsPage(of lastPage: PagedContent<[ErxAuditEvent]>, for locale: String?)
-        -> AnyPublisher<Bool, ErrorType> {
-        cloud.listAuditEventsNextPage(of: lastPage, for: locale)
+    public func loadRemoteLatestAuditEvents(for locale: String?)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErrorType> {
+        cloud.listAllAuditEvents(after: nil, for: locale)
             .mapError(ErrorType.remote)
-            .flatMap { auditEvents in
-                self.disk.save(auditEvents: auditEvents.content)
-                    .mapError(ErrorType.local)
-                    .flatMap { result -> AnyPublisher<Bool, ErrorType> in
-                        if result, auditEvents.next != nil {
-                            return self.loadRemoteAuditEventsPage(of: auditEvents, for: locale)
-                        } else {
-                            return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
-                        }
-                    }
-                    .eraseToAnyPublisher()
-            }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    public func loadRemoteAuditEventsPage(from url: URL, locale: String?)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErrorType> {
+        cloud.listAuditEventsNextPage(from: url, locale: locale)
+            .mapError(ErrorType.remote)
+            .first()
             .eraseToAnyPublisher()
     }
 

@@ -16,6 +16,7 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
 import eRpKit
 import Foundation
@@ -24,24 +25,20 @@ struct AuditEventsDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
     static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
+        .merge(CancelID.allCases.map(EffectPublisher.cancel(id:)))
     }
 
-    enum Token: CaseIterable, Hashable {
-        case loadEvents
+    enum CancelID: CaseIterable, Hashable {
+        case loadNextAuditEvents
     }
 
     struct State: Equatable {
         var profileUUID: UUID
         var entries: IdentifiedArrayOf<State.AuditEvent>?
+        var nextPageUrl: URL?
+        var needsAuthentication = false
 
-        var pages: IdentifiedArrayOf<Page>?
-
-        var selectedPage: Page?
-        var previousPage: Page?
-        var nextPage: Page?
-
-        var lastUpdated: String?
+        @PresentationState var destination: Destinations.State?
 
         struct AuditEvent: Equatable, Identifiable {
             let id: String
@@ -51,129 +48,177 @@ struct AuditEventsDomain: ReducerProtocol {
         }
     }
 
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            // sourcery: AnalyticsScreen = errorAlert
+            case alert(ErpAlertState<Destinations.Action.Alert>)
+            // sourcery: AnalyticsScreen = cardWall
+            case cardWall(CardWallIntroductionDomain.State)
+        }
+
+        enum Action: Equatable {
+            case cardWall(action: CardWallIntroductionDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case cardWall
+            }
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.cardWall,
+                action: /Action.cardWall
+            ) {
+                CardWallIntroductionDomain()
+            }
+        }
+    }
+
     enum Action: Equatable {
-        case loadPageList
-        case loadPage(Page)
+        case task
+        case loadNextPage
         case close
+        case showCardWall
+        case destination(PresentationAction<Destinations.Action>)
 
         case response(Response)
 
         enum Response: Equatable {
-            case profileReceived(Result<Profile?, LocalStoreError>)
-            case loadPageReceived(Result<[State.AuditEvent], LocalStoreError>)
+            case loadNextPageReceived(Result<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>)
+            case taskReceived(Result<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>)
         }
 
         enum Delegate: Equatable {}
     }
 
+    @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
     @Dependency(\.schedulers) var schedulers: Schedulers
-    @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
+    @Dependency(\.auditEventsService) var auditEventsService: AuditEventsService
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        return dateFormatter
-    }()
+    @Dependency(\.uiDateFormatter.compactDateAndTimeFormatter) var dateFormatter: DateFormatter
+    var currentLanguageCode = Locale.current.languageCode
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.$destination, action: /Action.destination) {
+                Destinations()
+            }
+    }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .loadPageList:
-            state
-                .pages = (try? profileDataStore
-                    .pagedAuditEventsController(for: state.profileUUID, with: nil).getPageContainer())
-                .map { IdentifiedArrayOf(uniqueElements: $0.pages) }
-
-            if let firstPage = state.pages?.first {
-                return .concatenate(
-                    profileDataStore.fetchProfile(by: state.profileUUID)
-                        .first()
-                        .catchToEffect()
-                        .map(Action.Response.profileReceived)
-                        .map(Action.response)
-                        .cancellable(id: Token.loadEvents, cancelInFlight: true)
-                        .receive(on: schedulers.main)
-                        .eraseToEffect(),
-                    EffectTask(value: .loadPage(firstPage))
+        case .task:
+            return .publisher(
+                auditEventsService
+                    .loadAuditEvents(for: state.profileUUID, locale: currentLanguageCode)
+                    .map { .response(.taskReceived(.success($0))) }
+                    .catch { error in
+                        Just(error)
+                            .map { Action.response(.taskReceived(.failure($0))) }
+                    }
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
+        case let .response(.taskReceived(result)):
+            switch result {
+            case let .success(pagedContent):
+                let auditEvents = IdentifiedArrayOf(
+                    uniqueElements: pagedContent.content.asAuditEventStates(
+                        dateFormatter: dateFormatter,
+                        fhirDateFormatter: fhirDateFormatter
+                    )
                 )
+                state.entries = auditEvents
+                state.nextPageUrl = pagedContent.next
+            case let .failure(error):
+                if error == .missingAuthentication {
+                    state.needsAuthentication = true
+                } else {
+                    state.destination = .alert(.init(for: error))
+                }
+                state.entries = []
+                state.nextPageUrl = nil
             }
-
-            return profileDataStore.fetchProfile(by: state.profileUUID)
-                .first()
-                .catchToEffect()
-                .map(Action.Response.profileReceived)
-                .map(Action.response)
-                .cancellable(id: Token.loadEvents, cancelInFlight: true)
-                .receive(on: schedulers.main)
-                .eraseToEffect()
-        case let .loadPage(page):
-            guard let pages = state.pages,
-                  let index = pages.index(id: page.id) else {
+            return .none
+        case .loadNextPage:
+            guard let url = state.nextPageUrl else {
+                // nothing more to load
                 return .none
             }
-
-            state.selectedPage = page
-            if index > pages.startIndex {
-                let before = pages.index(before: index)
-                let page = pages[before]
-                state.previousPage = page
-            } else {
-                state.previousPage = nil
+            return .publisher(
+                auditEventsService.loadNextAuditEvents(for: state.profileUUID, url: url, locale: currentLanguageCode)
+                    .map { .response(.loadNextPageReceived((.success($0)))) }
+                    .catch { error in
+                        Just(error)
+                            .map { Action.response(.loadNextPageReceived(.failure($0))) }
+                    }
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
+            .cancellable(id: CancelID.loadNextAuditEvents)
+        case let .response(.loadNextPageReceived(result)):
+            switch result {
+            case let .success(pagedContent):
+                let auditEvents = IdentifiedArrayOf(
+                    uniqueElements: pagedContent.content.asAuditEventStates(
+                        dateFormatter: dateFormatter,
+                        fhirDateFormatter: fhirDateFormatter
+                    )
+                )
+                state.entries?.append(contentsOf: auditEvents)
+                state.nextPageUrl = pagedContent.next
+                return .none
+            case let .failure(error):
+                if error == .missingAuthentication {
+                    state.needsAuthentication = true
+                } else {
+                    state.destination = .alert(.init(for: error))
+                }
             }
 
-            if index < pages.endIndex - 1 {
-                let after = pages.index(after: index)
-                let page = pages[after]
-                state.nextPage = page
-            } else {
-                state.nextPage = nil
-            }
-
-            return (try? profileDataStore.pagedAuditEventsController(for: state.profileUUID, with: nil))
-                .map {
-                    $0
-                        .getPage(page)
-                        .first()
-                        .map {
-                            $0
-                                .map {
-                                    let date: String?
-                                    if let inputDateString = $0.timestamp,
-                                       let inputDate = fhirDateFormatter.date(from: inputDateString) {
-                                        date = dateFormatter.string(from: inputDate)
-                                    } else {
-                                        date = dateFormatter.string(from: Date()) // nil
-                                    }
-
-                                    return State.AuditEvent(
-                                        id: $0.id,
-                                        title: $0.title,
-                                        description: $0.text?.trimmed(),
-                                        date: date
-                                    )
-                                }
-                        }
-                        .catchToEffect()
-                        .map(Action.Response.loadPageReceived)
-                        .map(Action.response)
-                } ?? .none
-        case let .response(.loadPageReceived(.success(page))):
-            state.entries = IdentifiedArrayOf(uniqueElements: page)
             return .none
-        case .response(.loadPageReceived(.failure)):
-            return .none
-        case .response(.profileReceived(.failure)):
-            return .none
-        case let .response(.profileReceived(.success(events))):
-            if let lastAuthenticated = events?.lastAuthenticated {
-                state.lastUpdated = dateFormatter.string(from: lastAuthenticated)
-            } else {
-                state.lastUpdated = nil
-            }
-            return .none
+        case .destination(.presented(.cardWall(action: .delegate(.close)))):
+            state.destination = nil
+            state.entries = nil
+            state.needsAuthentication = false
+            state.nextPageUrl = nil
+            return EffectTask.send(.task)
         case .close:
             return .none
+        case .showCardWall:
+            state.destination = .cardWall(CardWallIntroductionDomain.State(
+                isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
+                profileId: state.profileUUID
+            ))
+            return .none
+        case .destination:
+            return .none
+        }
+    }
+}
+
+extension Collection where Element == ErxAuditEvent {
+    func asAuditEventStates(
+        dateFormatter: DateFormatter,
+        fhirDateFormatter: FHIRDateFormatter
+    ) -> [AuditEventsDomain.State.AuditEvent] {
+        map {
+            let date: String?
+            if let inputDateString = $0.timestamp,
+               let inputDate = fhirDateFormatter.date(from: inputDateString) {
+                date = dateFormatter.string(from: inputDate)
+            } else {
+                date = dateFormatter.string(from: Date()) // nil
+            }
+
+            return AuditEventsDomain.State.AuditEvent(
+                id: $0.id,
+                title: $0.title,
+                description: $0.text?.trimmed(),
+                date: date
+            )
         }
     }
 }
@@ -182,7 +227,6 @@ extension AuditEventsDomain {
     var environment: Environment {
         .init(
             schedulers: schedulers,
-            profileDataStore: profileDataStore,
             fhirDateFormatter: fhirDateFormatter,
             dateFormatter: dateFormatter
         )
@@ -190,38 +234,8 @@ extension AuditEventsDomain {
 
     struct Environment {
         let schedulers: Schedulers
-        let profileDataStore: ProfileDataStore
         let fhirDateFormatter: FHIRDateFormatter
         let dateFormatter: DateFormatter
-
-        func loadAuditEventsPage(_ page: Page, ofProfile profile: UUID) -> EffectTask<AuditEventsDomain.Action> {
-            guard let pageController = try? profileDataStore.pagedAuditEventsController(for: profile, with: nil) else {
-                return .none
-            }
-
-            return pageController.getPage(page)
-                .map { auditEvents in
-                    auditEvents.map { // Map Array Elements
-                        let date: String?
-                        if let inputDateString = $0.timestamp,
-                           let inputDate = fhirDateFormatter.date(from: inputDateString) {
-                            date = dateFormatter.string(from: inputDate)
-                        } else {
-                            date = dateFormatter.string(from: Date()) // nil
-                        }
-
-                        return AuditEventsDomain.State.AuditEvent(
-                            id: $0.id,
-                            title: $0.title,
-                            description: $0.text?.trimmed(),
-                            date: date
-                        )
-                    }
-                }
-                .catchToEffect()
-                .map(Action.Response.loadPageReceived)
-                .map(Action.response)
-        }
     }
 }
 
@@ -229,9 +243,8 @@ extension AuditEventsDomain {
     enum Dummies {
         static let state = State(profileUUID: DemoProfileDataStore.anna.id)
 
-        static let store = Store(
-            initialState: state,
-            reducer: AuditEventsDomain()
-        )
+        static let store = Store(initialState: state) {
+            AuditEventsDomain(currentLanguageCode: Locale.current.languageCode)
+        }
     }
 }

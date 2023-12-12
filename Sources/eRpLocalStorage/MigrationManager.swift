@@ -230,8 +230,9 @@ extension MigrationManager: CoreDataCrudable {
     }
 
     func deleteAllAuditEvents() -> AnyPublisher<Bool, MigrationError> {
-        let request: NSFetchRequest<ErxAuditEventEntity> = ErxAuditEventEntity.fetchRequest()
-        return delete(resultsOf: request)
+        // Note: AuditEvents have been removed in core data model version 16!
+        // Therefore deletion of audit events in earlier versions is not necessary and can be omitted
+        Just(true)
             .mapError(MigrationError.delete)
             .eraseToAnyPublisher()
     }

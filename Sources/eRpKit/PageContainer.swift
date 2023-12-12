@@ -41,6 +41,12 @@ public struct PageContainer: Equatable {
 }
 
 public struct Page: Equatable, Identifiable, Hashable {
+    public init(name: String, offset: Int, size: Int) {
+        self.name = name
+        self.offset = offset
+        self.size = size
+    }
+
     public let name: String
     public let offset: Int
     public let size: Int

@@ -27,7 +27,7 @@ struct PharmacyContactView: View {
 
     init(store: PharmacyContactDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
@@ -125,10 +125,7 @@ struct PharmacyContactView: View {
                         viewStore.send(.save)
                     }
                 )
-                .alert(
-                    store.scope(state: \.alertState),
-                    dismiss: .alertDismissButtonTapped
-                )
+                .alert(store: store.scope(state: \.$alertState, action: PharmacyContactDomain.Action.alert))
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())

@@ -81,6 +81,22 @@ extension ErxTask {
         }
 
         public struct Payload: Codable, Equatable {
+            public init(
+                supplyOptionsType: RedeemOption,
+                infoText: String? = nil,
+                pickUpCodeHR: String? = nil,
+                pickUpCodeDMC: String? = nil,
+                url: String? = nil,
+                version: Int
+            ) {
+                self.supplyOptionsType = supplyOptionsType
+                self.infoText = infoText
+                self.pickUpCodeHR = pickUpCodeHR
+                self.pickUpCodeDMC = pickUpCodeDMC
+                self.url = url
+                self.version = version
+            }
+
             /// The selected shipment option by the user
             public let supplyOptionsType: RedeemOption
             /// Free description text by the pharmacy
@@ -94,7 +110,7 @@ extension ErxTask {
             /// Contains an url with informations about the shipment
             public let url: String?
             /// Version of the JSON
-            let version: String
+            let version: Int
 
             public static func from(string: String, decoder: JSONDecoder = defaultDecoder) throws -> Self {
                 try from(data: Data(string.utf8), decoder: decoder)
@@ -102,6 +118,26 @@ extension ErxTask {
 
             static func from(data: Data, decoder: JSONDecoder = defaultDecoder) throws -> Self {
                 try decoder.decode(Payload.self, from: data)
+            }
+
+            public init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                supplyOptionsType = try container.decode(RedeemOption.self, forKey: .supplyOptionsType)
+                infoText = try container.decodeIfPresent(String.self, forKey: .infoText)
+                pickUpCodeHR = try container.decodeIfPresent(String.self, forKey: .pickUpCodeHR)
+                pickUpCodeDMC = try container.decodeIfPresent(String.self, forKey: .pickUpCodeDMC)
+                url = try container.decodeIfPresent(String.self, forKey: .url)
+
+                if let intVersion = try? container.decode(Int.self, forKey: .version) {
+                    version = intVersion
+                }
+                // Must be supported for backward compatibility
+                else if let stringVersion = try? container.decode(String.self, forKey: .version),
+                        let intVersion = Int(stringVersion) {
+                    version = intVersion
+                } else {
+                    version = try container.decode(Int.self, forKey: .version)
+                }
             }
 
             public static var defaultDecoder: JSONDecoder {

@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class CreateProfileViewSnapshotTests: XCTestCase {
+final class CreateProfileViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
@@ -34,9 +34,11 @@ final class CreateProfileViewSnapshotTests: XCTestCase {
     func testCreateProfileViewEmpty() {
         let sut = CreateProfileView(
             store: .init(
-                initialState: .init(profileName: ""),
-                reducer: EmptyReducer()
-            )
+                initialState: .init(profileName: "")
+
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -47,9 +49,11 @@ final class CreateProfileViewSnapshotTests: XCTestCase {
     func testCreateProfileViewFilled() {
         let sut = CreateProfileView(
             store: .init(
-                initialState: .init(profileName: "Spooky Dennis"),
-                reducer: EmptyReducer()
-            )
+                initialState: .init(profileName: "Spooky Dennis")
+
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

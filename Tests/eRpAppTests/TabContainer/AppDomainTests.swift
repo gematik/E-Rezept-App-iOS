@@ -22,22 +22,17 @@ import ComposableArchitecture
 import Nimble
 import XCTest
 
+@MainActor
 final class AppDomainTests: XCTestCase {
     var mockUserDataStore: MockUserDataStore!
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        AppDomain.State,
-        AppDomain.Action,
-        AppDomain.State,
-        AppDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<AppDomain>
 
     override func setUp() {
         super.setUp()
     }
 
-    func testTappingOnActiveTabItem_rootView() {
+    func testTappingOnActiveTabItem_rootView() async {
         let testStore = TestStore(
             initialState: .init(
                 destination: .settings,
@@ -52,15 +47,16 @@ final class AppDomainTests: XCTestCase {
                 ),
                 unreadOrderMessageCount: 0,
                 isDemoMode: false
-            ),
-            reducer: AppDomain()
-        )
+            )
+        ) {
+            AppDomain()
+        }
 
         // when already in TabView's root destination, navigation state does not change
-        testStore.send(.setNavigation(.settings))
+        await testStore.send(.setNavigation(.settings))
     }
 
-    func testTappingOnActiveTabItem_oneLinkDownLeadsToTabViewsRootView() {
+    func testTappingOnActiveTabItem_oneLinkDownLeadsToTabViewsRootView() async {
         let testStore = TestStore(
             initialState: .init(
                 destination: .settings,
@@ -75,11 +71,12 @@ final class AppDomainTests: XCTestCase {
                 ),
                 unreadOrderMessageCount: 0,
                 isDemoMode: false
-            ),
-            reducer: AppDomain()
-        )
+            )
+        ) {
+            AppDomain()
+        }
 
-        testStore.send(.setNavigation(.settings)) {
+        await testStore.send(.setNavigation(.settings)) {
             $0.subdomains = .init(
                 main: Self.Fixtures.mainDomainState,
                 pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
@@ -92,7 +89,7 @@ final class AppDomainTests: XCTestCase {
         }
     }
 
-    func testTappingOnActiveTabItem_twoLinksDownLeadsToTabViewsRootView() {
+    func testTappingOnActiveTabItem_twoLinksDownLeadsToTabViewsRootView() async {
         let testStore = TestStore(
             initialState: .init(
                 destination: .settings,
@@ -114,11 +111,12 @@ final class AppDomainTests: XCTestCase {
                 ),
                 unreadOrderMessageCount: 0,
                 isDemoMode: false
-            ),
-            reducer: AppDomain()
-        )
+            )
+        ) {
+            AppDomain()
+        }
 
-        testStore.send(.setNavigation(.settings)) {
+        await testStore.send(.setNavigation(.settings)) {
             $0.subdomains = .init(
                 main: Self.Fixtures.mainDomainState,
                 pharmacySearch: Self.Fixtures.pharmacySearchDomainState,

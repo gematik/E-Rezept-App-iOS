@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class OnboardingSnapshotTests: XCTestCase {
+final class OnboardingSnapshotTests: ERPSnapshotTestCase {
     let next: (() -> Void) = {}
 
     override func setUp() {
@@ -54,9 +54,11 @@ final class OnboardingSnapshotTests: XCTestCase {
         )
         let sut = OnboardingRegisterAuthenticationView(
             store: RegisterAuthenticationDomain.Store(
-                initialState: state,
-                reducer: EmptyReducer()
-            )
+                initialState: state
+
+            ) {
+                EmptyReducer()
+            }
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -69,9 +71,11 @@ final class OnboardingSnapshotTests: XCTestCase {
         )
         let sut = OnboardingRegisterAuthenticationView(
             store: RegisterAuthenticationDomain.Store(
-                initialState: state,
-                reducer: EmptyReducer()
-            )
+                initialState: state
+
+            ) {
+                EmptyReducer()
+            }
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -84,9 +88,11 @@ final class OnboardingSnapshotTests: XCTestCase {
         )
         let sut = OnboardingRegisterAuthenticationView(
             store: RegisterAuthenticationDomain.Store(
-                initialState: state,
-                reducer: EmptyReducer()
-            )
+                initialState: state
+
+            ) {
+                EmptyReducer()
+            }
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -101,9 +107,11 @@ final class OnboardingSnapshotTests: XCTestCase {
                 passwordB: "A",
                 passwordStrength: .strong,
                 showPasswordErrorMessage: true
-            ),
-            reducer: EmptyReducer()
-        )
+            )
+
+        ) {
+            EmptyReducer()
+        }
 
         let sut = OnboardingRegisterAuthenticationView(store: store)
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -119,9 +127,11 @@ final class OnboardingSnapshotTests: XCTestCase {
                 passwordB: "Abc",
                 passwordStrength: .veryWeak,
                 showPasswordErrorMessage: true
-            ),
-            reducer: EmptyReducer()
-        )
+            )
+
+        ) {
+            EmptyReducer()
+        }
 
         let sut = OnboardingRegisterAuthenticationView(store: store)
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -136,16 +146,18 @@ final class OnboardingSnapshotTests: XCTestCase {
         )
         let sut = OnboardingRegisterAuthenticationView(
             store: RegisterAuthenticationDomain.Store(
-                initialState: state,
-                reducer: EmptyReducer()
-            )
+                initialState: state
+
+            ) {
+                EmptyReducer()
+            }
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
     func testOnboardingLegalInfoView() {
-        let sut = OnboardingLegalInfoView(action: next)
+        let sut = OnboardingLegalInfoView(isAllAccepted: .constant(false), action: next)
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
     }

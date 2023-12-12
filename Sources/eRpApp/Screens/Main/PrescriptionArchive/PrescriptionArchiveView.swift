@@ -25,7 +25,7 @@ struct PrescriptionArchiveView: View {
 
     init(store: PrescriptionArchiveDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -56,28 +56,19 @@ struct PrescriptionArchiveView: View {
             }
         }
         .navigationBarTitle(Text(L10n.prscArchTxtTitle), displayMode: .inline)
-        .onAppear {
-            viewStore.send(.loadLocalPrescriptions)
+        .task {
+            await viewStore.send(.loadLocalPrescriptions).finish()
         }
 
         // Navigation into details
-        NavigationLink(
-            destination: IfLetStore(
-                store.destinationsScope(
-                    state: /PrescriptionArchiveDomain.Destinations.State.prescriptionDetail,
-                    action: PrescriptionArchiveDomain.Destinations.Action.prescriptionDetail
-                )
-            ) { scopedStore in
-                PrescriptionDetailView(store: scopedStore)
-            },
-            tag: PrescriptionArchiveDomain.Destinations.State.Tag.prescriptionDetail,
-            selection: viewStore.binding(
-                get: \.destinationTag,
-                send: PrescriptionArchiveDomain.Action.setNavigation
-            )
-        ) {
-            EmptyView()
-        }.accessibility(hidden: true)
+        NavigationLinkStore(
+            store.scope(state: \.$destination, action: PrescriptionArchiveDomain.Action.destination),
+            state: /PrescriptionArchiveDomain.Destinations.State.prescriptionDetail,
+            action: PrescriptionArchiveDomain.Destinations.Action.prescriptionDetail,
+            onTap: { viewStore.send(.setNavigation(tag: .prescriptionDetail)) },
+            destination: PrescriptionDetailView.init(store:),
+            label: { EmptyView() }
+        ).accessibility(hidden: true)
     }
 }
 

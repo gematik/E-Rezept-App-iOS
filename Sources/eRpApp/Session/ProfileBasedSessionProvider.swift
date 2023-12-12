@@ -61,7 +61,7 @@ struct DefaultSessionProvider: ProfileBasedSessionProvider {
     }
 
     func biometrieIdpSession(for profileId: UUID) -> IDPSession {
-        userSession(for: profileId).biometrieIdpSession
+        userSession(for: profileId).pairingIdpSession
     }
 
     func userDataStore(for profileId: UUID) -> SecureUserDataStore {
@@ -91,7 +91,7 @@ struct RegisterSessionProvider: ProfileBasedSessionProvider {
     private let userSession: UserSession
 
     func idpSession(for profileId: UUID) -> IDPSession {
-        userSession(for: profileId).biometrieIdpSession
+        userSession(for: profileId).pairingIdpSession
     }
 
     func biometrieIdpSession(for profileId: UUID) -> IDPSession {

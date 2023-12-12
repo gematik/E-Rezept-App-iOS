@@ -24,10 +24,6 @@ import SwiftUI
 
 struct CardWallReadCardView: View {
     let store: StoreOf<CardWallReadCardDomain>
-    static let height: CGFloat = {
-        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
-        180 * UIScreen.main.scale / UIScreen.main.nativeScale
-    }()
 
     init(store: StoreOf<CardWallReadCardDomain>) {
         self.store = store
@@ -46,68 +42,27 @@ struct CardWallReadCardView: View {
     }
 
     var body: some View {
-        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+        WithViewStore(store, observe: ViewState.init) { viewStore in
             VStack(spacing: 0) {
                 ScrollView {
-                    VStack(spacing: 0) {
-                        // Use overlay to also fill safe area but specify fixed height
-                        VStack {}
-                            .frame(width: nil, height: Self.height, alignment: .top)
-                            .overlay(
-                                HStack {
-                                    Image(Asset.CardWall.onScreenEgk)
-                                        .scaledToFill()
-                                        .frame(width: nil, height: Self.height, alignment: .bottom)
-                                }
-                            )
-                        Line()
-                            .stroke(style: StrokeStyle(lineWidth: 2,
-                                                       lineCap: CoreGraphics.CGLineCap.round,
-                                                       lineJoin: CoreGraphics.CGLineJoin.round,
-                                                       miterLimit: 2,
-                                                       dash: [8, 8],
-                                                       dashPhase: 0))
-                            .foregroundColor(Color(.opaqueSeparator))
-                            .frame(width: nil, height: 2, alignment: .center)
-                    }
-                    Text(L10n.cdwTxtRcPlacement)
-                        .font(.subheadline.bold())
-                        .foregroundColor(Color(.secondaryLabel))
-                        .padding(8)
-                        .padding(.bottom, 16)
-
                     Text(L10n.cdwTxtRcCta)
                         .font(.title3.bold())
                         .multilineTextAlignment(.center)
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(16)
-                        .padding()
+                        .padding(.bottom, 8)
+                        .padding(.top, 48)
+                        .padding(.horizontal)
 
-                    TertiaryButton(text: L10n.cdwBtnRcHelp.key, imageName: SFSymbolName.questionmarkCircle) {
-                        viewStore.send(.openHelpViewScreen)
-                    }
-                    .fullScreenCover(isPresented: Binding<Bool>(
-                        get: { viewStore.state.destinationTag == .help },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil))
-                            }
-                        }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        NavigationView {
-                            IfLetStore(
-                                store.destinationsScope(state: /CardWallReadCardDomain.Destinations.State.help),
-                                then: ReadCardHelpView.init(store:)
-                            )
-                        }
-                        .accentColor(Colors.primary700)
-                        .navigationViewStyle(StackNavigationViewStyle())
-                    })
-                    .padding()
+                    Text(L10n.cdwTxtRcSubheadline)
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(.secondaryLabel))
+                        .padding(.horizontal)
+                        .padding(.bottom, 32)
+
+                    NFCPhoneView()
                 }
+                .padding(.horizontal)
+
                 Spacer()
 
                 GreyDivider()
@@ -128,28 +83,98 @@ struct CardWallReadCardView: View {
                 .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcNext)
                 .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
                 .padding(.vertical)
-
-                Button(action: {
-                    viewStore.send(.delegate(.singleClose))
-                }, label: {
-                    Label(title: { Text(L10n.cdwBtnRcBack) }, icon: {})
-                })
-                    .buttonStyle(.secondary)
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtRcDemoModeInfo)
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        viewStore.send(.openHelpView)
+                    }, label: {
+                        HStack(alignment: .center) {
+                            Image(systemName: SFSymbolName.questionmarkCircle)
+                            Text(L10n.cdwBtnRcHelp.key)
+                        }
+                        .foregroundColor(Colors.textSecondary)
+                        .font(.subheadline.weight(.semibold))
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 16)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    })
+                        .fullScreenCover(
+                            isPresented: Binding<Bool>(
+                                get: { viewStore.state.destinationTag == .help },
+                                set: { show in
+                                    if !show {
+                                        viewStore.send(.setNavigation(tag: nil))
+                                    }
+                                }
+                            ),
+                            onDismiss: {},
+                            content: {
+                                NavigationView {
+                                    IfLetStore(
+                                        store.scope(
+                                            state: \.$destination,
+                                            action: CardWallReadCardDomain.Action.destination
+                                        ),
+                                        state: /CardWallReadCardDomain.Destinations.State.help,
+                                        action: CardWallReadCardDomain.Destinations.Action.help,
+                                        then: ReadCardHelpView.init(store:)
+                                    )
+                                }
+                                .accentColor(Colors.primary700)
+                                .navigationViewStyle(StackNavigationViewStyle())
+                            }
+                        )
+                }
+            }
             .alert(
-                store.destinationsScope(state: /CardWallReadCardDomain.Destinations.State.alert),
-                dismiss: .setNavigation(tag: .none)
+                store.scope(state: \.$destination, action: CardWallReadCardDomain.Action.destination),
+                state: /CardWallReadCardDomain.Destinations.State.alert,
+                action: CardWallReadCardDomain.Destinations.Action.alert
             )
             .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
             .onAppear {
                 viewStore.send(.getChallenge)
             }
         }
-        .navigationBarHidden(true)
         .statusBar(hidden: true)
+    }
+
+    struct NFCPhoneView: View {
+        @State private var step1 = false
+        @State private var step2 = false
+
+        var body: some View {
+            ZStack(alignment: .topTrailing) {
+                ZStack(alignment: .center) {
+                    Circle()
+                        .fill(Colors.primary100)
+                        .frame(width: 210, height: 210, alignment: .leading)
+                        .opacity(step2 ? 0 : 1)
+                    Circle()
+                        .fill(Colors.primary300)
+                        .frame(width: 90, height: 90, alignment: .leading)
+                        .opacity(step1 ? 0 : 1)
+                }
+                .task {
+                    withAnimation(.easeInOut(duration: 0.45).delay(0.65).repeatForever(autoreverses: true)) {
+                        step2.toggle()
+                    }
+                    withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
+                        step1.toggle()
+                    }
+                }
+                Image(Asset.CardReader.cardReadPosition1.name)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(.top, 50)
+                    .padding(.trailing, 35)
+            }
+        }
     }
 
     struct Line: Shape {

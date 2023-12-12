@@ -25,13 +25,6 @@ import SwiftUI
 struct MedicationOverviewDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = prescriptionDetail_medication
@@ -55,11 +48,11 @@ struct MedicationOverviewDomain: ReducerProtocol {
     struct State: Equatable {
         let subscribed: ErxMedication
         let dispensed: [ErxMedicationDispense]
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case showSubscribedMedication
         case showDispensedMedication(ErxMedicationDispense)
         case setNavigation(tag: Destinations.State.Tag?)
@@ -89,7 +82,7 @@ struct MedicationOverviewDomain: ReducerProtocol {
                 return .none
             }
         }
-        .ifLet(\.destination, action: /Action.destination) {
+        .ifLet(\.$destination, action: /Action.destination) {
             Destinations()
         }
     }

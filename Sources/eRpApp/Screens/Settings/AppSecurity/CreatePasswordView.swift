@@ -27,7 +27,7 @@ struct CreatePasswordView: View {
 
     init(store: CreatePasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var currentPassword: Binding<String> {

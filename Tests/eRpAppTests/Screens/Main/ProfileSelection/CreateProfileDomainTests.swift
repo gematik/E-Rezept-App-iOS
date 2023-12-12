@@ -23,17 +23,12 @@ import eRpKit
 import Nimble
 import XCTest
 
+@MainActor
 final class CreateProfileDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
     var mockUserProfileService: MockUserProfileService!
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        CreateProfileDomain.State,
-        CreateProfileDomain.Action,
-        CreateProfileDomain.State,
-        CreateProfileDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<CreateProfileDomain>
 
     override func setUp() {
         super.setUp()
@@ -46,16 +41,15 @@ final class CreateProfileDomainTests: XCTestCase {
     }
 
     func testStore(for state: CreateProfileDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: CreateProfileDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            CreateProfileDomain()
+        } withDependencies: { dependencies in
             dependencies.userProfileService = mockUserProfileService
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         }
     }
 
-    func testSavingProfileWithValidName() {
+    func testSavingProfileWithValidName() async {
         let validName = "Niklas"
         let sut = testStore(
             for: CreateProfileDomain.State(
@@ -68,7 +62,7 @@ final class CreateProfileDomainTests: XCTestCase {
             .eraseToAnyPublisher()
 
         expect(self.mockUserProfileService.saveProfilesCalled).to(beFalse())
-        sut.send(.createAndSaveProfile(name: validName))
+        await sut.send(.createAndSaveProfile(name: validName))
         expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beFalse())
         expect(self.mockUserProfileService.saveProfilesCalled).to(beTrue())
 
@@ -77,14 +71,14 @@ final class CreateProfileDomainTests: XCTestCase {
             expect(profileId) == savedProfile.id
         }
 
-        testScheduler.run()
-        sut.receive(.createAndSaveProfileReceived(.success(savedProfile.id)))
+        await testScheduler.run()
+        await sut.receive(.createAndSaveProfileReceived(.success(savedProfile.id)))
         expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beTrue())
 
-        sut.receive(.delegate(.close))
+        await sut.receive(.delegate(.close))
     }
 
-    func testSavingProfileWithInvalidName() {
+    func testSavingProfileWithInvalidName() async {
         let invalidName = " "
         let sut = testStore(
             for: CreateProfileDomain.State(
@@ -92,7 +86,7 @@ final class CreateProfileDomainTests: XCTestCase {
             )
         )
 
-        sut.send(.createAndSaveProfile(name: invalidName))
+        await sut.send(.createAndSaveProfile(name: invalidName))
         expect(self.mockUserProfileService.saveProfilesCalled).to(beFalse())
         expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beFalse())
     }

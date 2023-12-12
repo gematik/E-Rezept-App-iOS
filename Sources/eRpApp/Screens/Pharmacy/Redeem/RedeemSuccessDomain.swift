@@ -39,7 +39,7 @@ struct RedeemSuccessDomain: ReducerProtocol {
     func reduce(into _: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .closeButtonTapped:
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
         case .delegate:
             return .none
         }
@@ -49,9 +49,16 @@ struct RedeemSuccessDomain: ReducerProtocol {
 extension RedeemSuccessDomain {
     enum Dummies {
         static let state = State(redeemOption: .delivery)
-        static let store = Store(initialState: state, reducer: RedeemSuccessDomain())
+        static let store = Store(
+            initialState: state
+        ) {
+            RedeemSuccessDomain()
+        }
+
         static func store(with option: RedeemOption) -> Store {
-            Store(initialState: State(redeemOption: option), reducer: EmptyReducer())
+            Store(initialState: State(redeemOption: option)) {
+                EmptyReducer()
+            }
         }
     }
 }

@@ -24,15 +24,6 @@ import Foundation
 struct ChargeItemDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case authenticate
-        case deleteChargeItem
-    }
-
     struct State: Equatable {
         enum AuthenticationState: Equatable {
             /// When the user is authenticated
@@ -50,39 +41,25 @@ struct ChargeItemDomain: ReducerProtocol {
         let chargeItem: ErxChargeItem
         var authenticationState: AuthenticationState = .notAuthenticated
 
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
-        // swiftlint:disable identifier_name
         case deleteButtonTapped
-        case alertDeleteConfirmButtonTapped
-        case alertDeleteCancelButtonTapped
-        case alertDeleteAuthenticateConnectButtonTapped
-        case alertDeleteAuthenticateCancelButtonTapped
-        case alertAuthenticateRetryButtonTapped
-        case alertAuthenticateOkayButtonTapped
-        case alertDeleteChargeItemsErrorRetryButtonTapped
-        case alertDeleteChargeItemsErrorOkayButtonTapped
-        // swiftlint:enable identifier_name
 
         case redeem
         case authenticate
+        // Needs to be enhanced if chargeItem can be altered inApp
+        case alterChargeItem
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
-        case nothing
+        case destination(PresentationAction<Destinations.Action>)
 
         case response(Response)
-        case delegate(Delegate)
 
         enum Response: Equatable {
             case authenticate(ChargeItemDomainServiceAuthenticateResult)
             case deleteChargeItem(ChargeItemDomainServiceDeleteResult)
-        }
-
-        enum Delegate: Equatable {
-            case close
         }
     }
 
@@ -90,11 +67,28 @@ struct ChargeItemDomain: ReducerProtocol {
         enum State: Equatable {
             case shareSheet([URL])
             case idpCardWall(IDPCardWallDomain.State)
-            case alert(ErpAlertState<ChargeItemDomain.Action>)
+            case alterChargeItem(MatrixCodeDomain.State)
+            case alert(ErpAlertState<Action.Alert>)
         }
 
         enum Action: Equatable {
+            case shareSheet(Sheet)
             case idpCardWallAction(IDPCardWallDomain.Action)
+            case alterChargeItem(MatrixCodeDomain.Action)
+            case alert(Alert)
+
+            enum Sheet: Equatable {}
+
+            enum Alert: Equatable {
+                case deleteConfirm
+                case deleteCancel
+                case deleteAuthenticateConnect
+                case deleteAuthenticateCancel
+                case authenticateRetry
+                case authenticateOkay
+                case deleteChargeItemsErrorRetry
+                case deleteChargeItemsErrorOkay
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -104,6 +98,12 @@ struct ChargeItemDomain: ReducerProtocol {
             ) {
                 IDPCardWallDomain()
             }
+            Scope(
+                state: /State.alterChargeItem,
+                action: /Action.alterChargeItem
+            ) {
+                MatrixCodeDomain()
+            }
         }
     }
 
@@ -111,10 +111,11 @@ struct ChargeItemDomain: ReducerProtocol {
     @Dependency(\.chargeItemsDomainService) var chargeItemsService: ChargeItemListDomainService
     @Dependency(\.chargeItemPDFService) var pdfService: ChargeItemPDFService
     @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
+    @Dependency(\.dismiss) var dismiss
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -136,23 +137,29 @@ struct ChargeItemDomain: ReducerProtocol {
         case .deleteButtonTapped:
             state.destination = .alert(AlertStates.deleteConfirm)
             return .none
-        case .alertDeleteConfirmButtonTapped:
+        case .alterChargeItem:
+            state.destination = .alterChargeItem(.init(
+                type: .erxChargeItem,
+                erxChargeItem: state.chargeItem
+            ))
+            return .none
+        case .destination(.presented(.alert(.deleteConfirm))):
             state.destination = nil
-
-            return chargeItemsService.delete(
+            return .publisher(chargeItemsService.delete(
                 chargeItem: state.chargeItem,
                 for: state.profileId
             )
             .first()
             .receive(on: schedulers.main)
-            .eraseToEffect(Action.Response.deleteChargeItem)
+            .eraseToAnyPublisher()
+            .map(Action.Response.deleteChargeItem)
             .map(Action.response)
-            .cancellable(id: Token.deleteChargeItem)
+            .eraseToAnyPublisher)
         case let .response(.deleteChargeItem(result)):
             switch result {
             case .success:
                 state.authenticationState = .authenticated
-                return .send(.delegate(.close))
+                return .run { _ in await dismiss() }
             case .notAuthenticated:
                 state.authenticationState = .notAuthenticated
                 state.destination = .alert(AlertStates.deleteNotAuthenticated)
@@ -161,22 +168,15 @@ struct ChargeItemDomain: ReducerProtocol {
                 state.destination = .alert(AlertStates.deleteErrorFor(error: error))
                 return .none
             }
-        case .alertDeleteCancelButtonTapped:
+        case .destination(.presented(.alert(.authenticateRetry))):
             state.destination = nil
-            return .none
-        case .alertAuthenticateRetryButtonTapped:
+            return .run { send in
+                await send(.authenticate)
+            }
+        case .destination(.presented(.alert(.deleteChargeItemsErrorRetry))):
             state.destination = nil
-            return .task { .authenticate }
-        case .alertAuthenticateOkayButtonTapped:
-            state.destination = nil
-            return .none
-        case .alertDeleteChargeItemsErrorRetryButtonTapped:
-            state.destination = nil
-            return .task { .alertDeleteConfirmButtonTapped }
-        case .alertDeleteChargeItemsErrorOkayButtonTapped:
-            state.destination = nil
-            return .none
-        case .alertDeleteAuthenticateConnectButtonTapped:
+            return .send(.destination(.presented(.alert(.deleteConfirm))))
+        case .destination(.presented(.alert(.deleteChargeItemsErrorOkay))):
             let userSession = userSessionProvider.userSession(for: state.profileId)
             state.destination = .idpCardWall(
                 .init(
@@ -188,24 +188,26 @@ struct ChargeItemDomain: ReducerProtocol {
                     ),
                     pin: .init(
                         isDemoModus: userSession.isDemoMode,
+                        profileId: state.profileId,
                         pin: "",
                         transition: .fullScreenCover
                     )
                 )
             )
             return .none
-        case .alertDeleteAuthenticateCancelButtonTapped:
+        case .destination(.presented(.alert(.deleteAuthenticateCancel))):
             state.destination = nil
             return .none
         case .authenticate:
             state.authenticationState = .loading
-            return chargeItemsService.authenticate(for: state.profileId)
-                .eraseToEffect()
-                .map(Action.Response.authenticate)
-                .map(Action.response)
-                .receive(on: schedulers.main)
-                .eraseToEffect()
-                .cancellable(id: Token.authenticate)
+            return .publisher(
+                chargeItemsService.authenticate(for: state.profileId)
+                    .eraseToAnyPublisher()
+                    .map(Action.Response.authenticate)
+                    .map(Action.response)
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.authenticate(result)):
             switch result {
             case .success:
@@ -219,22 +221,13 @@ struct ChargeItemDomain: ReducerProtocol {
                 state.destination = .alert(AlertStates.authenticateErrorFor(error: error))
                 return .none
             }
-        case let .delegate(delegate):
-            switch delegate {
-            case .close:
-                return Self.cleanup()
-            }
-        case .destination(.idpCardWallAction(.delegate(.close))):
-            state.destination = nil
-            return CardWallIntroductionDomain.cleanup()
-        case .destination(.idpCardWallAction):
+        case .destination(.presented(.idpCardWallAction)):
             return .none
         case .setNavigation(tag: .none):
             state.destination = nil
             return .none
         case .setNavigation,
-             .destination,
-             .nothing:
+             .destination:
             return .none
         }
     }
@@ -242,15 +235,15 @@ struct ChargeItemDomain: ReducerProtocol {
 
 extension ChargeItemDomain {
     enum AlertStates {
-        typealias Action = ChargeItemDomain.Action
+        typealias Action = ChargeItemDomain.Destinations.Action.Alert
 
         static let deleteConfirm: ErpAlertState<Action> = .init(
             title: L10n.stgTxtChargeItemAlertDeleteConfirmTitle,
             actions: {
-                ButtonState(role: .destructive, action: .alertDeleteConfirmButtonTapped) {
+                ButtonState(role: .destructive, action: .deleteConfirm) {
                     .init(L10n.stgBtnChargeItemAlertDeleteConfirmDelete)
                 }
-                ButtonState(role: .cancel, action: .alertDeleteCancelButtonTapped) {
+                ButtonState(role: .cancel, action: .deleteCancel) {
                     .init(L10n.stgBtnChargeItemAlertErrorCancel)
                 }
             },
@@ -260,10 +253,10 @@ extension ChargeItemDomain {
         static let deleteNotAuthenticated: ErpAlertState<Action> = .init(
             title: L10n.stgTxtChargeItemAlertDeleteNotAuthTitle,
             actions: {
-                ButtonState(action: .alertDeleteAuthenticateConnectButtonTapped) {
+                ButtonState(action: .deleteAuthenticateConnect) {
                     .init(L10n.stgBtnChargeItemAlertDeleteNotAuthConnect)
                 }
-                ButtonState(role: .cancel, action: .alertDeleteAuthenticateCancelButtonTapped) {
+                ButtonState(role: .cancel, action: .deleteAuthenticateCancel) {
                     .init(L10n.stgBtnChargeItemAlertErrorCancel)
                 }
             },
@@ -275,10 +268,10 @@ extension ChargeItemDomain {
                 for: error,
                 title: L10n.stgTxtChargeItemListErrorAlertAuthenticateTitle
             ) {
-                ButtonState(action: .alertAuthenticateRetryButtonTapped) {
+                ButtonState(action: .authenticateRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(role: .cancel, action: .alertAuthenticateOkayButtonTapped) {
+                ButtonState(role: .cancel, action: .authenticateOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -289,10 +282,10 @@ extension ChargeItemDomain {
                 for: error,
                 title: L10n.stgTxtChargeItemAlertErrorTitle
             ) {
-                ButtonState(action: .alertDeleteChargeItemsErrorRetryButtonTapped) {
+                ButtonState(action: .deleteChargeItemsErrorRetry) {
                     .init(L10n.stgBtnChargeItemAlertErrorRetry)
                 }
-                ButtonState(role: .cancel, action: .alertDeleteChargeItemsErrorOkayButtonTapped) {
+                ButtonState(role: .cancel, action: .deleteChargeItemsErrorOkay) {
                     .init(L10n.stgBtnChargeItemAlertErrorOkay)
                 }
             }

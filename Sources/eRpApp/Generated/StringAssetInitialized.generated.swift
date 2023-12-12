@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import SwiftUI
@@ -22,11 +22,6 @@ import eRpStyleKit
 
 
 
-extension AltRegistrationView.BiometryButton {
-    init(text: StringAsset, image: Image, backgroundColor: Color, action: @escaping () -> Void) {
-        self.init(text: text.key, image: image, backgroundColor: backgroundColor, action: action)
-    }
-}
 extension DefaultTextButton {
     init(text: StringAsset, a11y: String, style: Style = .primary, action: @escaping () -> Void) {
         self.init(text: text.key, a11y: a11y, style: style, action: action)

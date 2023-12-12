@@ -30,9 +30,9 @@ fi
 
 if [[ -z "${CIBUILD}" ]]; then
   export SAST_FILENAME="scan_$(date '+%Y-%m-%d_%H:%M:%s').zip"
-  zip -r "$SAST_FILENAME" . -x ".git*" -x "DerivedData/*" -x "artifacts/*" -x "distribution/*" -x "*.ipa" -x "*.zip" -x "Carthage/Checkouts/*"
+  zip -r "$SAST_FILENAME" . -x ".git*" -x "DerivedData/*" -x "artifacts/*" -x "distribution/*" -x "*.ipa" -x "*.zip"
 else
-  rm -rf "./DerivedData" "./artifacts" "./distribution" "./*.ipa" "./*.zip" "./Carthage/Checkouts"
+  rm -rf "./DerivedData" "./artifacts" "./distribution" "./*.ipa" "./*.zip"
 fi
 
 echo "Done"

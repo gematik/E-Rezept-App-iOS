@@ -105,6 +105,8 @@ struct AppDomain: ReducerProtocol {
     }
 
     enum Action: Equatable {
+        case task
+
         case isDemoModeReceived(Bool)
         case registerDemoModeListener
         case registerNewOrderMessageListener
@@ -129,17 +131,30 @@ struct AppDomain: ReducerProtocol {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .subdomains(.settings(action: .destination(.editProfileAction(.confirmDeleteProfile)))),
-             .subdomains(.settings(action: .destination(.newProfileAction(.response(.saveReceived(.success)))))):
+        case .task:
+            return .merge(
+                .send(.registerDemoModeListener),
+                .send(.registerNewOrderMessageListener)
+            )
+        case .subdomains(
+            .settings(
+                action: .destination(
+                    .presented(.editProfileAction(.destination(.presented(.alert(.confirmDeleteProfile)))))
+                )
+            )
+        ),
+        .subdomains(
+            .settings(action: .destination(.presented(.newProfileAction(.response(.saveReceived(.success))))))
+        ):
             return .concatenate(
-                .init(value: .subdomains(.main(action: .setNavigation(tag: nil)))),
-                .init(value: .subdomains(.orders(action: .setNavigation(tag: nil)))),
-                .init(value: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
+                .send(.subdomains(.main(action: .setNavigation(tag: nil)))),
+                .send(.subdomains(.orders(action: .setNavigation(tag: nil)))),
+                .send(.subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
             )
         case .subdomains(.main(action: .horizontalProfileSelection(action: .selectProfile))):
             return .concatenate(
-                .init(value: .subdomains(.orders(action: .setNavigation(tag: nil)))),
-                .init(value: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
+                .send(.subdomains(.orders(action: .setNavigation(tag: nil)))),
+                .send(.subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
             )
         case .subdomains:
             return .none
@@ -148,16 +163,20 @@ struct AppDomain: ReducerProtocol {
             state.subdomains.settingsState.isDemoMode = isDemoMode
             return .none
         case .registerDemoModeListener:
-            return userSessionContainer.isDemoMode
-                .map(AppDomain.Action.isDemoModeReceived)
-                .eraseToEffect()
+            return .publisher(
+                userSessionContainer.isDemoMode
+                    .map(AppDomain.Action.isDemoModeReceived)
+                    .eraseToAnyPublisher
+            )
         case .registerNewOrderMessageListener:
-            return erxTaskRepository
-                .countAllUnreadCommunications(for: .all)
-                .receive(on: schedulers.main.animation())
-                .map(AppDomain.Action.newOrderMessageReceived)
-                .catch { _ in EffectTask.none }
-                .eraseToEffect()
+            return .publisher(
+                erxTaskRepository
+                    .countAllUnreadCommunications(for: .all)
+                    .receive(on: schedulers.main.animation())
+                    .map(AppDomain.Action.newOrderMessageReceived)
+                    .catch { _ in Empty() }
+                    .eraseToAnyPublisher
+            )
         case let .newOrderMessageReceived(unreadOrderMessageCount):
             state.unreadOrderMessageCount = unreadOrderMessageCount
             return .none
@@ -168,16 +187,16 @@ struct AppDomain: ReducerProtocol {
                 switch destination {
                 case .main:
                     state.subdomains.main.destination = nil
-                    return MainDomain.cleanupSubDomains()
+                    return .none
                 case .pharmacySearch:
                     state.subdomains.pharmacySearch.destination = nil
-                    return PharmacySearchDomain.cleanupSubDomains()
+                    return .none
                 case .orders:
                     state.subdomains.orders.destination = nil
-                    return OrdersDomain.cleanupSubDomains()
+                    return .none
                 case .settings:
                     state.subdomains.settingsState.destination = nil
-                    return SettingsDomain.cleanupSubDomains()
+                    return .none
                 }
             } else {
                 state.destination = destination
@@ -189,10 +208,9 @@ struct AppDomain: ReducerProtocol {
 
 extension AppDomain {
     enum Dummies {
-        static let store = Store(
-            initialState: state,
-            reducer: AppDomain()
-        )
+        static let store = Store(initialState: state) {
+            AppDomain()
+        }
 
         static let state = State(
             destination: .main,

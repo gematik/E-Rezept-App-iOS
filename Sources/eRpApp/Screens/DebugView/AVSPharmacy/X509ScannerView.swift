@@ -38,7 +38,7 @@ struct X509ScannerView: View {
             AVScannerView(erxCodeTypes: [.qr, .dataMatrix],
                           supportedCodeTypes: [.qr, .dataMatrix],
                           scanning: show) { output in
-                guard case let .erxCode(outputString) = output.first,
+                guard case let .text(outputString) = output.first,
                       let output = outputString else { return }
                 do {
                     let derBytes = try Base64.decode(string: output)

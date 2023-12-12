@@ -26,15 +26,6 @@ import IDP
 struct DebugDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case updates
-    }
-
     struct State: Equatable {
         var trackingOptIn: Bool
 
@@ -283,7 +274,6 @@ struct DebugDomain: ReducerProtocol {
                 onReceiveVirtualEGK(),
                 onReceiveCurrentProfile()
             )
-            .cancellable(id: Token.updates)
         case let .profileReceived(.success(profile)):
             state.profile = profile.profile
             return .none
@@ -328,83 +318,94 @@ struct DebugDomain: ReducerProtocol {
 #if ENABLE_DEBUG_VIEW
 extension DebugDomain {
     func onReceiveHideOnboarding() -> EffectTask<DebugDomain.Action> {
-        localUserStore.onboardingVersion
-            .receive(on: schedulers.main)
-            .map(DebugDomain.Action.hideOnboardingReceived)
-            .eraseToEffect()
+        .publisher(
+            localUserStore.onboardingVersion
+                .receive(on: schedulers.main)
+                .map(DebugDomain.Action.hideOnboardingReceived)
+                .eraseToAnyPublisher
+        )
     }
 
     func onReceiveHideCardWallIntro() -> EffectTask<DebugDomain.Action> {
-        localUserStore.hideCardWallIntro
-            .receive(on: schedulers.main)
-            .map(DebugDomain.Action.hideCardWallIntroReceived)
-            .eraseToEffect()
+        .publisher(
+            localUserStore.hideCardWallIntro
+                .receive(on: schedulers.main)
+                .map(DebugDomain.Action.hideCardWallIntroReceived)
+                .eraseToAnyPublisher
+        )
     }
 
     func onReceiveIsAuthenticated() -> EffectTask<DebugDomain.Action> {
-        userSession.isAuthenticated
-            .receive(on: schedulers.main)
-            .map(DebugDomain.Action.isAuthenticatedReceived)
-            .catch { _ in
-                Just(DebugDomain.Action.isAuthenticatedReceived(nil))
-            }
-            .eraseToEffect()
+        .publisher(
+            userSession.isAuthenticated
+                .receive(on: schedulers.main)
+                .map(DebugDomain.Action.isAuthenticatedReceived)
+                .catch { _ in
+                    Just(DebugDomain.Action.isAuthenticatedReceived(nil))
+                }
+                .eraseToAnyPublisher
+        )
     }
 
     func onReceiveToken() -> EffectTask<DebugDomain.Action> {
-        userSession.idpSession.autoRefreshedToken
-            .receive(on: schedulers.main)
-            .map(DebugDomain.Action.tokenReceived)
-            .catch { _ in EffectTask.none }
-            .eraseToEffect()
+        .publisher(
+            userSession.idpSession.autoRefreshedToken
+                .receive(on: schedulers.main)
+                .map(DebugDomain.Action.tokenReceived)
+                .catch { _ in Empty() }
+                .eraseToAnyPublisher
+        )
     }
 
     func onReceiveConfigurationName(for availableEnvironments: [DebugDomain.State.ServerEnvironment])
         -> EffectTask<DebugDomain.Action> {
-        localUserStore.serverEnvironmentConfiguration
-            .map { name in
-                let configuration = availableEnvironments.first { environment in
-                    environment.name == name
+        .publisher(
+            localUserStore.serverEnvironmentConfiguration
+                .map { name in
+                    let configuration = availableEnvironments.first { environment in
+                        environment.name == name
+                    }
+                    guard let unwrappedConfiguration = configuration else {
+                        return DebugDomain.State.ServerEnvironment(name: "Default", configuration: defaultConfiguration)
+                    }
+                    return unwrappedConfiguration
                 }
-                guard let unwrappedConfiguration = configuration else {
-                    return DebugDomain.State.ServerEnvironment(name: "Default", configuration: defaultConfiguration)
-                }
-                return unwrappedConfiguration
-            }
-            .receive(on: schedulers.main)
-            .map(DebugDomain.Action.configurationReceived)
-            .eraseToEffect()
+                .receive(on: schedulers.main)
+                .map(DebugDomain.Action.configurationReceived)
+                .eraseToAnyPublisher
+        )
     }
 
     func onReceiveVirtualEGK() -> EffectTask<DebugDomain.Action> {
         .concatenate([
-            EffectTask(value: DebugDomain.Action.toggleVirtualLogin(UserDefaults.standard.isVirtualEGKEnabled)),
-            EffectTask(value: DebugDomain.Action
+            EffectTask.send(DebugDomain.Action.toggleVirtualLogin(UserDefaults.standard.isVirtualEGKEnabled)),
+            EffectTask.send(DebugDomain.Action
                 .virtualPrkCHAutReceived(UserDefaults.standard.virtualEGKPrkCHAut ?? "")),
-            EffectTask(value: DebugDomain.Action.virtualCCHAutReceived(UserDefaults.standard.virtualEGKCCHAut ?? "")),
+            EffectTask.send(DebugDomain.Action.virtualCCHAutReceived(UserDefaults.standard.virtualEGKCCHAut ?? "")),
         ])
     }
 
     func onReceiveCurrentProfile() -> EffectTask<DebugDomain.Action> {
-        userProfileService
-            .activeUserProfilePublisher()
-            .catchToEffect()
-            .receive(on: schedulers.main)
-            .map(DebugDomain.Action.profileReceived)
-            .eraseToEffect()
+        .publisher(
+            userProfileService
+                .activeUserProfilePublisher()
+                .catchToPublisher()
+                .receive(on: schedulers.main)
+                .map(DebugDomain.Action.profileReceived)
+                .eraseToAnyPublisher
+        )
     }
 
     func setProfileInsuranceTypeToPKV(profileId: UUID) -> EffectTask<DebugDomain.Action> {
         let userProfileService = self.userProfileService
 
-        return userProfileService
-            .update(profileId: profileId) { profile in
-                profile.insuranceType = .pKV
-                profile.insurance = "Dummy pKV"
-            }
-            .receive(on: schedulers.main)
-            .fireAndForget()
-            .eraseToEffect()
+        return .run { _ in
+            for try await _ in userProfileService
+                .update(profileId: profileId, mutating: { profile in
+                    profile.insuranceType = .pKV
+                    profile.insurance = "Dummy pKV"
+                }).values {}
+        }
     }
 }
 #endif
@@ -414,8 +415,9 @@ extension DebugDomain {
         static let state = State(trackingOptIn: false)
 
         static let store = Store(
-            initialState: state,
-            reducer: DebugDomain()
-        )
+            initialState: state
+        ) {
+            DebugDomain()
+        }
     }
 }

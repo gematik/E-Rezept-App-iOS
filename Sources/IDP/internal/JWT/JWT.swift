@@ -228,6 +228,8 @@ extension JWT {
     public init<E: Claims>(header: Header, payload: E) throws {
         let jsonEncoder = JSONEncoder()
         jsonEncoder.dateEncodingStrategy = .secondsSince1970
+        jsonEncoder.outputFormatting = .sortedKeys
+
         let header = try jsonEncoder.encode(header)
         let serializedPayload = try jsonEncoder.encode(payload)
         try self.init(from: header.encodeBase64urlsafe() + JWT.dot + serializedPayload.encodeBase64urlsafe())

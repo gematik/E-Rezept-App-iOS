@@ -30,7 +30,7 @@ struct OrdersView: View {
 
     init(store: OrdersDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -73,27 +73,20 @@ struct OrdersView: View {
                 }
 
                 // Navigation into details
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /OrdersDomain.Destinations.State.orderDetail,
-                            action: OrdersDomain.Destinations.Action.orderDetail(action:)
-                        ),
-                        then: OrderDetailView.init(store:)
-                    ),
-                    tag: OrdersDomain.Destinations.State.Tag.orderDetail,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: OrdersDomain.Action.setNavigation
-                    )
-                ) {
-                    EmptyView()
-                }.accessibility(hidden: true)
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: OrdersDomain.Action.destination),
+                    state: /OrdersDomain.Destinations.State.orderDetail,
+                    action: OrdersDomain.Destinations.Action.orderDetail(action:),
+                    onTap: { viewStore.send(.setNavigation(tag: .orderDetail)) },
+                    destination: OrderDetailView.init(store:),
+                    label: { EmptyView() }
+                ).accessibility(hidden: true)
             }
             .navigationBarTitle(L10n.ordTxtTitle, displayMode: .automatic)
             .accessibility(identifier: A11y.orders.list.ordTxtTitle)
-            .onAppear { viewStore.send(.subscribeToCommunicationChanges) }
-            .onDisappear { viewStore.send(.removeSubscription) }
+            .task {
+                await viewStore.send(.subscribeToCommunicationChanges).finish()
+            }
             .toolbar {}
         }
         .accentColor(Colors.primary600)

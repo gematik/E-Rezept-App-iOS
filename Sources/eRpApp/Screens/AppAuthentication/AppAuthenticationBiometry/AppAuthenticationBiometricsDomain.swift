@@ -47,12 +47,14 @@ struct AppAuthenticationBiometricsDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .startAuthenticationChallenge:
-            return authenticationChallengeProvider
-                .startAuthenticationChallenge()
-                .first()
-                .map { Action.authenticationChallengeResponse($0) }
-                .receive(on: schedulers.main.animation())
-                .eraseToEffect()
+            return .publisher(
+                authenticationChallengeProvider
+                    .startAuthenticationChallenge()
+                    .first()
+                    .map { Action.authenticationChallengeResponse($0) }
+                    .receive(on: schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
         case let .authenticationChallengeResponse(response):
             state.authenticationResult = response
             if case let .failure(error) = response {

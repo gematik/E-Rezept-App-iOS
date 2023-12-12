@@ -163,3 +163,27 @@ extension UIImage {
         self.init(named: testBundleNamed, in: Self.testBundle, with: nil)
     }
 }
+
+enum SnapshotHelper {
+    static var didRecord = false
+
+    static func fixOffsetProblem() {
+        guard didRecord == false else { return }
+
+        let dummy = NavigationView {
+            Text("*")
+                .navigationTitle("⚕︎ Redeem")
+        }
+        assertSnapshot(matching: dummy, as: .image(precision: 0.0), named: "dummy", record: false)
+        didRecord = true
+    }
+}
+
+class ERPSnapshotTestCase: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        diffTool = "open"
+
+        SnapshotHelper.fixOffsetProblem()
+    }
+}

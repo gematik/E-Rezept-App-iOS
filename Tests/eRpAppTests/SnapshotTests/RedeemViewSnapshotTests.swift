@@ -23,7 +23,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class RedeemViewSnapshotTests: XCTestCase {
+final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
@@ -38,14 +38,16 @@ final class RedeemViewSnapshotTests: XCTestCase {
     }
 
     func testRedeemMatrixCodeViewSnapshot() {
-        let sut = RedeemMatrixCodeView(
-            store: RedeemMatrixCodeDomain.Store(
+        let sut = MatrixCodeView(
+            store: MatrixCodeDomain.Store(
                 initialState: .init(
+                    type: .erxTask,
                     erxTasks: ErxTask.Demo.erxTasks,
                     loadingState: .value(UIImage(testBundleNamed: "qrcode")!)
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

@@ -25,37 +25,25 @@ import SwiftUI
 struct MedicationDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = prescriptionDetail_medication_ingredients
-            case ingredient(IngredientState)
+            case ingredient(IngredientDomain.State)
         }
 
-        enum Action: Equatable {}
+        enum Action: Equatable {
+            case ingredient(IngredientDomain.Action)
+        }
 
         var body: some ReducerProtocol<State, Action> {
             EmptyReducer()
-        }
-
-        struct IngredientState: Equatable {
-            let text: String?
-            let strength: String?
-            let form: String?
-            let number: String?
         }
     }
 
     struct State: Equatable {
         let medication: ErxMedication?
         let dispenseState: DispenseState?
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
 
         init(subscribed: ErxMedication) {
             medication = subscribed
@@ -85,7 +73,7 @@ struct MedicationDomain: ReducerProtocol {
     }
 
     enum Action: Equatable {
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case showIngredient(ErxMedication.Ingredient)
         case setNavigation(tag: Destinations.State.Tag?)
     }
@@ -94,7 +82,7 @@ struct MedicationDomain: ReducerProtocol {
         Reduce { state, action in
             switch action {
             case let .showIngredient(ingredient):
-                let ingredientState = Destinations.IngredientState(
+                let ingredientState = IngredientDomain.State(
                     text: ingredient.text,
                     strength: ingredient.strengthDescription,
                     form: ingredient.localizedForm,
@@ -110,7 +98,7 @@ struct MedicationDomain: ReducerProtocol {
                 return .none
             }
         }
-        .ifLet(\.destination, action: /Action.destination) {
+        .ifLet(\.$destination, action: /Action.destination) {
             Destinations()
         }
     }

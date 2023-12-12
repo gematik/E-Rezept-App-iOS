@@ -53,7 +53,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
             }
         }
 
-        var destination: Destinations.State? = .searchPicker
+        @PresentationState var destination: Destinations.State? = .searchPicker
     }
 
     enum ServiceInquiry: Int, CaseIterable, Identifiable {
@@ -79,7 +79,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
         case resetList
         case advance
 
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case setNavigation(tag: Destinations.State.Tag?)
 
         case delegate(Delegate)
@@ -108,7 +108,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -165,7 +165,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
         case let .setService(service):
             state.serviceInquiryId = service.id
             state.serviceInquiry = service
-            return EffectTask(value: .advance)
+            return EffectTask.send(.advance)
         case let .selectHealthInsurance(id):
             state.healthInsuranceCompanyId = id
             state.insuranceCompany = state.insuranceCompanies.first { $0.id == state.healthInsuranceCompanyId }
@@ -175,7 +175,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
             } else {
                 state.serviceInquiryId = -1
             }
-            return EffectTask(value: .advance)
+            return EffectTask.send(.advance)
         case .resetList:
             state.searchHealthInsurance = state.insuranceCompanies
             return .none
@@ -183,6 +183,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
             state.destination = nil
             return .none
         case .delegate,
+             .destination,
              .setNavigation:
             return .none
         }
@@ -296,7 +297,11 @@ extension OrderHealthCardDomain {
         static let store = storeFor(state)
 
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state, reducer: OrderHealthCardDomain())
+            Store(
+                initialState: state
+            ) {
+                OrderHealthCardDomain()
+            }
         }
     }
 }

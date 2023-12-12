@@ -8,6 +8,7 @@
 		<string>applinks:das-e-rezept-fuer-deutschland.de</string>
 		<string>applinks:www.das-e-rezept-fuer-deutschland.de</string>
 		<string>webcredentials:das-e-rezept-fuer-deutschland.de</string>
+		<string>applinks:erezept.gematik.de</string>
 	</array>
 	<key>com.apple.developer.default-data-protection</key>
 	<string>NSFileProtectionCompleteUnlessOpen</string>

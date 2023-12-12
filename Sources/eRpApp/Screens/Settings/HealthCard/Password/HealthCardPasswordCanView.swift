@@ -28,18 +28,18 @@ struct HealthCardPasswordCanView: View {
 
     init(store: HealthCardPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
         let mode: HealthCardPasswordDomain.Mode
         let canMayAdvance: Bool
-        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag?
 
         init(state: HealthCardPasswordDomain.State) {
             mode = state.mode
             canMayAdvance = state.canMayAdvance
-            destinationTag = state.destination.tag
+            destinationTag = state.destination?.tag
         }
     }
 
@@ -153,87 +153,91 @@ struct HealthCardPasswordCanView: View {
         @State var showAnimation = true
         @State var scannedcan: ScanCAN?
 
+        @ObservedObject var viewStore: ViewStoreOf<HealthCardPasswordDomain>
+
+        init(store: HealthCardPasswordDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store) { $0 }
+        }
+
         var body: some View {
-            WithViewStore(store) { viewStore in
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        if showAnimation {
-                            HStack(alignment: .center) {
-                                Spacer()
-                                Image(Asset.CardWall.cardwallCard)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(maxWidth: 343, maxHeight: 215, alignment: .center)
-                                    .accessibility(identifier: A11y.cardWall.canInput.cdwImgCanCard)
-                                    .accessibility(label: Text(L10n.cdwImgCanCardLabel))
-                                    .padding(.bottom, 24)
-                                    .transition(.asymmetric(insertion: .move(edge: .trailing),
-                                                            removal: .move(edge: .leading)))
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading, spacing: 8) {
+                    if showAnimation {
+                        HStack(alignment: .center) {
+                            Spacer()
+                            Image(Asset.CardWall.cardwallCard)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxWidth: 343, maxHeight: 215, alignment: .center)
+                                .accessibility(identifier: A11y.cardWall.canInput.cdwImgCanCard)
+                                .accessibility(label: Text(L10n.cdwImgCanCardLabel))
+                                .padding(.bottom, 24)
+                                .transition(.asymmetric(insertion: .move(edge: .trailing),
+                                                        removal: .move(edge: .leading)))
 
-                                Spacer()
-                            }
+                            Spacer()
                         }
-                        Text(L10n.cdwTxtCanSubtitle)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.title2)
-                            .bold()
-                            .padding(.top)
-                            .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
-
-                        Text(L10n.cdwTxtCanDescription)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.body)
-                            .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
                     }
-                    .padding()
-
-                    CardWallCANInputView(
-                        can: viewStore.binding(get: \.can) { .canUpdateCan($0) }
-                    ) {}
+                    Text(L10n.cdwTxtCanSubtitle)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.title2)
+                        .bold()
                         .padding(.top)
+                        .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
 
-                    TertiaryListButton(
-                        text: L10n.cdwBtnCanScanner,
-                        imageName: SFSymbolName.cameraViewfinder,
-                        accessibilityIdentifier: A11y.cardWall.canInput.cdwBtnCanScan
-                    ) {
-                        viewStore.send(.setNavigation(tag: .scanner))
+                    Text(L10n.cdwTxtCanDescription)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.body)
+                        .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
+                }
+                .padding()
+
+                CardWallCANInputView(
+                    can: viewStore.binding(get: \.can) { .canUpdateCan($0) }
+                ) {}
+                    .padding(.top)
+
+                TertiaryListButton(
+                    text: L10n.cdwBtnCanScanner,
+                    imageName: SFSymbolName.cameraViewfinder,
+                    accessibilityIdentifier: A11y.cardWall.canInput.cdwBtnCanScan
+                ) {
+                    viewStore.send(.setNavigation(tag: .scanner))
+                }
+                .padding()
+                .fullScreenCover(isPresented: Binding<Bool>(
+                    get: { viewStore.state.destination == .scanner },
+                    set: { show in
+                        if !show {
+                            viewStore.send(.setNavigation(tag: .can))
+                        }
                     }
-                    .padding()
-                    .fullScreenCover(isPresented: Binding<Bool>(
-                        get: { viewStore.state.destination == .scanner },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: .can))
+                ),
+                onDismiss: {},
+                content: {
+                    NavigationView {
+                        CANCameraScanner(canScan: $scannedcan) { canScan in
+                            if let canScan = scannedcan {
+                                viewStore.send(.canUpdateCan(canScan))
                             }
+                            viewStore.send(.setNavigation(tag: .can))
                         }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        NavigationView {
-                            CANCameraScanner(canScan: $scannedcan) { canScan in
-                                if let canScan = scannedcan {
-                                    viewStore.send(.canUpdateCan(canScan))
-                                }
-                                viewStore.send(.setNavigation(tag: .can))
-                            }
-                        }
-                        .accentColor(Colors.primary700)
-                        .navigationViewStyle(StackNavigationViewStyle())
-                    })
-                }
-                .onReceive(NotificationCenter.default
-                    .publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
-                        withAnimation {
-                            showAnimation = false
-                        }
-                }
-                .onReceive(NotificationCenter.default
-                    .publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
-                        UIApplication.shared.dismissKeyboard()
-                        withAnimation {
-                            showAnimation = true
-                        }
+                    }
+                    .accentColor(Colors.primary700)
+                    .navigationViewStyle(StackNavigationViewStyle())
+                })
+            }
+            .onReceive(NotificationCenter.default
+                .publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
+                    withAnimation {
+                        showAnimation = false
+                    }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
+                UIApplication.shared.dismissKeyboard()
+                withAnimation {
+                    showAnimation = true
                 }
             }
             .onTapGesture {

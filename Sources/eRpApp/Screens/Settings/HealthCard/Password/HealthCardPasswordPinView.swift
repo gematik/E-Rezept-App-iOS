@@ -28,7 +28,7 @@ struct HealthCardPasswordPinView: View {
 
     init(store: HealthCardPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -37,7 +37,7 @@ struct HealthCardPasswordPinView: View {
         let newPin2: String
         let pinMayAdvance: Bool
         let pinShowWarning: Bool
-        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag?
 
         init(state: HealthCardPasswordDomain.State) {
             mode = state.mode
@@ -45,7 +45,7 @@ struct HealthCardPasswordPinView: View {
             newPin2 = state.newPin2
             pinMayAdvance = state.pinMayAdvance
             pinShowWarning = state.pinShowWarning
-            destinationTag = state.destination.tag
+            destinationTag = state.destination?.tag
         }
     }
 
@@ -75,10 +75,12 @@ struct HealthCardPasswordPinView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .alert(
-            store.scope(
-                state: \HealthCardPasswordDomain.State.pinAlertState
+            store: store.scope(
+                state: \.$destination,
+                action: HealthCardPasswordDomain.Action.destination
             ),
-            dismiss: .nothing
+            state: /HealthCardPasswordDomain.Destinations.State.pinAlert,
+            action: HealthCardPasswordDomain.Destinations.Action.alert
         )
     }
 
@@ -127,7 +129,7 @@ struct HealthCardPasswordPinView: View {
                             id: A11y.settings.card.stgTxtCardResetPinHintMessage,
                             title: L10n.stgTxtCardResetPinHintTitle.text,
                             message: L10n.stgTxtCardResetPinHintMessage.text,
-                            image: .init(name: Asset.Illustrations.info.name),
+                            image: .init(name: Asset.Illustrations.infoLogo.name),
                             style: .neutral,
                             buttonStyle: .quaternary,
                             imageStyle: .topAligned

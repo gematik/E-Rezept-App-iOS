@@ -28,6 +28,7 @@ public enum PharmacyBundleParsingError: Swift.Error {
     case parseError(String)
 }
 
+/// [REQ:BSI-eRp-ePA:O.Source_2#7] Extension containing all FHIR related parsing for Pharmacies
 extension ModelsR4.Bundle {
     /// Parse and extract all found Pharmacy Locations from `Self`
     ///

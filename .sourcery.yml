@@ -78,10 +78,10 @@ configurations:
       protocolMockTestableImports: [ TrustStore ]
   - sources:  # writes to Tests/VAUClientTests/Mocks/Generated/
       - Sources
-      - Tests/VAUTests
+      - Tests/VAUClientTests
     templates:
       - Templates/Sourcery/Tests/ProtocolMock.stencil
-    output: Tests/VAUTests
+    output: Tests/VAUClientTests
     args:
       protocolMockImports: [ Combine,Foundation,OpenSSL,TrustStore ]
       protocolMockTestableImports: [ VAUClient ]

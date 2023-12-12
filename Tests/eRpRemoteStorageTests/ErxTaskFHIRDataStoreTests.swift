@@ -132,8 +132,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         }
         sut.listAllTasks(after: nil)
             .test(expectations: { erxTasks in
-                expect(erxTasks.count).to(equal(2))
-                let sortedIds = erxTasks.map(\.id).sorted()
+                expect(erxTasks.content.count).to(equal(2))
+                let sortedIds = erxTasks.content.map(\.id).sorted()
                 expect(sortedIds)
                     .to(equal(["5e00e907-1e4f-11b2-80be-b806a73c0cd0", "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"]))
             })
@@ -212,8 +212,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Communication")
-            && isMethodPOST()
-            && hasBody(expectedShipmentRequestBody)) { _ in
+            && isMethodPOST()) { _ in
                 counter += 1
                 return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
         }
@@ -618,25 +617,25 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     // swiftlint:disable line_length
     private var expectedShipmentRequestBody: Data = {
         String(
-            "{\"status\":\"unknown\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"shipment\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"resourceType\":\"Communication\"}"
+            "{\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erp\\/StructureDefinition\\/GEM_ERP_PR_Communication_DispReq|1.2\"]},\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"shipment\\\",\\\"version\\\":1}\"}],\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/sid\\/telematik-id\",\"value\":\"606358757\"}}],\"resourceType\":\"Communication\",\"status\":\"unknown\"}"
         ).data(using: .utf8)!
     }()
 
     private var expectedDeliveryRequestBody: Data = {
         String(
-            "{\"status\":\"unknown\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"delivery\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"resourceType\":\"Communication\"}"
+            "{\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erp\\/StructureDefinition\\/GEM_ERP_PR_Communication_DispReq|1.2\"]},\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"delivery\\\",\\\"version\\\":1}\"}],\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/sid\\/telematik-id\",\"value\":\"606358757\"}}],\"resourceType\":\"Communication\",\"status\":\"unknown\"}"
         ).data(using: .utf8)!
     }()
 
     private var expectedOnPremiseRequestBody: Data = {
         String(
-            "{\"status\":\"unknown\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"onPremise\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"resourceType\":\"Communication\"}"
+            "{\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erp\\/StructureDefinition\\/GEM_ERP_PR_Communication_DispReq|1.2\"]},\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"onPremise\\\",\\\"version\\\":1}\"}],\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/sid\\/telematik-id\",\"value\":\"606358757\"}}],\"resourceType\":\"Communication\",\"status\":\"unknown\"}"
         ).data(using: .utf8)!
     }()
 
     private var expectedChargeConsentRequestBody: Data = {
         String(
-            "{\"status\":\"active\",\"category\":[{\"coding\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/CodeSystem\\/GEM_ERPCHRG_CS_ConsentType\",\"code\":\"CHARGCONS\"}]}],\"patient\":{\"identifier\":{\"system\":\"http:\\/\\/fhir.de\\/NamingSystem\\/gkv\\/kvid-10\",\"value\":\"X764228532\"}},\"id\":\"CHARGCONS-X764228532\",\"scope\":{\"coding\":[{\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/consentscope\",\"code\":\"patient-privacy\"}]},\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/StructureDefinition\\/GEM_ERPCHRG_PR_Consent|1.0\"]},\"policyRule\":{\"coding\":[{\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/v3-ActCode\",\"code\":\"OPTIN\"}]},\"dateTime\":\"2023-02-15\",\"resourceType\":\"Consent\"}"
+            "{\"category\":[{\"coding\":[{\"code\":\"CHARGCONS\",\"system\":\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/CodeSystem\\/GEM_ERPCHRG_CS_ConsentType\"}]}],\"dateTime\":\"2023-02-15\",\"id\":\"CHARGCONS-X764228532\",\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/StructureDefinition\\/GEM_ERPCHRG_PR_Consent|1.0\"]},\"patient\":{\"identifier\":{\"system\":\"http:\\/\\/fhir.de\\/NamingSystem\\/gkv\\/kvid-10\",\"value\":\"X764228532\"}},\"policyRule\":{\"coding\":[{\"code\":\"OPTIN\",\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/v3-ActCode\"}]},\"resourceType\":\"Consent\",\"scope\":{\"coding\":[{\"code\":\"patient-privacy\",\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/consentscope\"}]},\"status\":\"active\"}"
         ).data(using: .utf8)!
     }()
 

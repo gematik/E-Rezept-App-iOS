@@ -23,14 +23,6 @@ import UIKit
 struct CardWallExtAuthSelectionDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case loadKKList
-    }
-
     struct State: Equatable {
         var kkList: KKAppDirectory?
         var filteredKKList: KKAppDirectory = .init(apps: [KKAppDirectory.Entry]())
@@ -39,7 +31,7 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
         var searchText: String = ""
 
         var orderEgkVisible = false
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     struct Destinations: ReducerProtocol {
@@ -83,7 +75,7 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
         case reset
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case response(Response)
         case delegate(Delegate)
@@ -102,7 +94,7 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -114,13 +106,14 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
             state.error = nil
             state.selectedKK = nil
             // [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
-            return idpSession.loadDirectoryKKApps()
-                .first()
-                .catchToEffect()
-                .map { Action.response(.loadKKList($0)) }
-                .receive(on: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.loadKKList)
+            return .publisher(
+                idpSession.loadDirectoryKKApps()
+                    .first()
+                    .catchToPublisher()
+                    .map { Action.response(.loadKKList($0)) }
+                    .receive(on: schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
         case let .response(.loadKKList(.success(result))):
             state.error = nil
             state.kkList = result
@@ -150,16 +143,16 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
         case let .updateSearchText(newString):
             state.searchText = newString.trimmed()
             return state.searchText
-                .isEmpty ? EffectTask(value: .reset) : EffectTask(value: .filteredKKList(search: state.searchText))
+                .isEmpty ? EffectTask.send(.reset) : EffectTask.send(.filteredKKList(search: state.searchText))
         case .setNavigation(tag: nil),
-             .destination(.egkAction(action: .delegate(.close))):
+             .destination(.presented(.egkAction(action: .delegate(.close)))):
             state.destination = nil
             return .none
         case let .error(error):
             state.error = error
             return .none
-        case .destination(.confirmation(action: .delegate(.close))):
-            return EffectTask(value: .delegate(.close))
+        case .destination(.presented(.confirmation(action: .delegate(.close)))):
+            return EffectTask.send(.delegate(.close))
         case .setNavigation(tag: .egk):
             state.destination = .egk(.init())
             return .none
@@ -182,6 +175,8 @@ extension CardWallExtAuthSelectionDomain {
     enum Dummies {
         static let state = State()
 
-        static let store = Store(initialState: state, reducer: CardWallExtAuthSelectionDomain())
+        static let store = Store(initialState: state) {
+            CardWallExtAuthSelectionDomain()
+        }
     }
 }

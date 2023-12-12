@@ -93,7 +93,7 @@ extension OnboardingAnalyticsView {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
-                    Image(decorative: Asset.Onboarding.hands)
+                    Image(decorative: Asset.Onboarding.handsCircle)
                         .accessibilityHidden(true)
 
                     Spacer()

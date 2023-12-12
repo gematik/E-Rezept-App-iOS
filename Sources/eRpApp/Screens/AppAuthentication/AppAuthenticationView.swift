@@ -26,7 +26,7 @@ struct AppAuthenticationView: View {
 
     init(store: AppAuthenticationDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -112,11 +112,8 @@ struct AppAuthenticationView: View {
                 }
                 .frame(minHeight: geometry.size.height)
             }
-        }.onAppear {
-            viewStore.send(.onAppear)
-        }
-        .onDisappear {
-            viewStore.send(.removeSubscriptions)
+        }.task {
+            await viewStore.send(.task).finish()
         }
         .ignoresSafeArea(.all, edges: .bottom)
     }

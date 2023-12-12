@@ -22,48 +22,50 @@ import SwiftUI
 struct PickupCodeView: View {
     let store: PickupCodeDomain.Store
     @State var originalBrightness: CGFloat?
+    @ObservedObject var viewStore: ViewStoreOf<PickupCodeDomain>
 
     init(store: PickupCodeDomain.Store) {
         self.store = store
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
         NavigationView {
-            WithViewStore(store) { viewStore in
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(spacing: 0) {
-                        if let dmcCode = viewStore.pickupCodeDMC {
-                            DMCView(image: viewStore.dmcImage, dmcCode: dmcCode)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical)
-                        }
-
-                        if let hrCode = viewStore.pickupCodeHR {
-                            HRCodeView(code: hrCode)
-                                .padding(.vertical, 8)
-                        }
-
-                        TitleView(store: store)
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 0) {
+                    if let dmcCode = viewStore.pickupCodeDMC {
+                        DMCView(image: viewStore.dmcImage, dmcCode: dmcCode)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical)
                     }
-                }
-                .navigationBarItems(trailing: CloseButton { viewStore.send(.delegate(.close)) })
-                .navigationBarTitleDisplayMode(.inline)
-                .introspectNavigationController { navigationController in
-                    let navigationBar = navigationController.navigationBar
-                    navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                    let navigationBarAppearance = UINavigationBarAppearance()
-                    navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                    navigationBar.standardAppearance = navigationBarAppearance
-                }
-                .onAppear {
-                    originalBrightness = UIScreen.main.brightness
-                    viewStore.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size))
-                }
-                .onDisappear {
-                    if let originalBrightness = originalBrightness {
-                        UIScreen.main.brightness = originalBrightness
+
+                    if let hrCode = viewStore.pickupCodeHR {
+                        HRCodeView(code: hrCode)
+                            .padding(.vertical, 8)
                     }
+
+                    TitleView(store: store)
+                }
+            }
+            .navigationBarItems(trailing: CloseButton { viewStore.send(.delegate(.close)) })
+            .navigationBarTitleDisplayMode(.inline)
+            .introspectNavigationController { navigationController in
+                let navigationBar = navigationController.navigationBar
+                navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                let navigationBarAppearance = UINavigationBarAppearance()
+                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                navigationBar.standardAppearance = navigationBarAppearance
+            }
+            .task {
+                await viewStore.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size)).finish()
+            }
+            .onAppear {
+                originalBrightness = UIScreen.main.brightness
+            }
+            .onDisappear {
+                if let originalBrightness = originalBrightness {
+                    UIScreen.main.brightness = originalBrightness
                 }
             }
         }
@@ -73,22 +75,26 @@ struct PickupCodeView: View {
 
     struct TitleView: View {
         let store: PickupCodeDomain.Store
+        @ObservedObject var viewStore: ViewStoreOf<PickupCodeDomain>
+
+        init(store: PickupCodeDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store) { $0 }
+        }
 
         var body: some View {
-            WithViewStore(store) { viewStore in
-                VStack(spacing: 8) {
-                    Text(L10n.pucTxtTitle)
-                        .foregroundColor(Colors.systemLabel)
-                        .font(Font.subheadline.weight(.semibold))
-                        .accessibility(identifier: A11y.orderDetail.pickupCode.pucTxtTitle)
+            VStack(spacing: 8) {
+                Text(L10n.pucTxtTitle)
+                    .foregroundColor(Colors.systemLabel)
+                    .font(Font.subheadline.weight(.semibold))
+                    .accessibility(identifier: A11y.orderDetail.pickupCode.pucTxtTitle)
 
-                    let name = viewStore.pharmacyName ?? L10n.ordTxtNoPharmacyName.text
-                    Text(L10n.pucTxtSubtitle(name))
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .font(Font.subheadline)
-                        .multilineTextAlignment(.center)
-                        .accessibility(identifier: A11y.orderDetail.pickupCode.pucTxtSubtitle)
-                }
+                let name = viewStore.pharmacyName ?? L10n.ordTxtNoPharmacyName.text
+                Text(L10n.pucTxtSubtitle(name))
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    .font(Font.subheadline)
+                    .multilineTextAlignment(.center)
+                    .accessibility(identifier: A11y.orderDetail.pickupCode.pucTxtSubtitle)
             }
         }
     }

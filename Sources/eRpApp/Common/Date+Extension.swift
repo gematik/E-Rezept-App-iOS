@@ -22,24 +22,9 @@ extension Date {
     ///
     /// - Parameters:
     ///   - date: the `date` to compare self with
-    /// - Returns: number of days left to `date`. Returns a negative number if `date` lies in the past relatet to self
+    /// - Returns: number of days left to `date`. Returns a negative number if `date` lies in the past related to self
     func days(until date: Date) -> Int? {
         Date.days(from: self, to: date)
-    }
-
-    /// Calculates remaining days between self and a given date.
-    /// including the day of the end date
-    ///
-    /// - Parameters:
-    ///   - date: the `date` to compare self with
-    /// - Returns: number of days left to `date`. Returns a negative number if `date` lies in the past relatet to self
-    func daysUntil(including date: Date) -> Int? {
-        let calendar = Calendar.current
-        let dateIncluding = {
-            let newDate = calendar.startOfDay(for: date)
-            return calendar.date(byAdding: .day, value: 1, to: newDate) ?? newDate
-        }()
-        return Date.days(from: self, to: dateIncluding, calendar: calendar)
     }
 
     /// Calculates remaining days between two dates.
@@ -49,7 +34,7 @@ extension Date {
     ///   - end: date until which the `start` date will count the days
     ///   - calendar: calendar which is used
     /// - Returns: number of days left to `date`.
-    /// 		   Returns a negative number  if `end` lies in the past relatet to `start`
+    /// 		   Returns a negative number  if `end` lies in the past related to `start`
     static func days(
         from start: Date,
         to end: Date,

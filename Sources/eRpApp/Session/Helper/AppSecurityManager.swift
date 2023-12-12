@@ -80,6 +80,9 @@ struct DefaultAppSecurityManager: AppSecurityManager {
             return ([.biometry(.faceID), .password, .biometryAndPassword(.faceID)], nil)
         case .touchID:
             return ([.biometry(.touchID), .password, .biometryAndPassword(.touchID)], nil)
+        // apple vision pro only
+        case .opticID:
+            return ([.password], nil)
         case .none:
             return ([.password], nil)
         @unknown default:

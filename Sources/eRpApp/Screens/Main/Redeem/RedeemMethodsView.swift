@@ -21,49 +21,79 @@ import SwiftUI
 
 struct RedeemMethodsView: View {
     let store: RedeemMethodsDomain.Store
-    @ObservedObject var viewStore: ViewStore<Void, RedeemMethodsDomain.Action>
 
     init(store: RedeemMethodsDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.stateless)
     }
+
+    @Environment(\.sizeCategory) var sizeCategory
 
     var body: some View {
         NavigationView {
-            VStack(alignment: .center, spacing: 16) {
-                Text(L10n.rdmTxtTitle)
-                    .foregroundColor(Colors.systemLabel)
-                    .font(Font.title.bold())
-                    .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacyTitle)
-                Text(L10n.rdmTxtSubtitle)
-                    .font(.subheadline)
-                    .foregroundColor(Colors.systemLabel)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacySubtitle)
+            ScrollView {
+                VStack(alignment: .center, spacing: 16) {
+                    if sizeCategory <= ContentSizeCategory.extraExtraExtraLarge {
+                        Spacer()
+                        Image(Asset.Redeem.pharmacistBlue)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
+                            .frame(width: 240, height: 240)
+                    }
 
-                Button(action: { viewStore.send(.setNavigation(tag: .matrixCode)) }, label: {
-                    Tile(iconSystemName: SFSymbolName.qrCode,
-                         title: L10n.rdmBtnRedeemPharmacyTitle,
-                         description: L10n.rdmBtnRedeemPharmacyDescription,
-                         discloseIcon: SFSymbolName.rightDisclosureIndicator)
-                        .padding([.leading, .trailing], 16)
-                })
+                    VStack(spacing: 8) {
+                        Text(L10n.rdmTxtTitle)
+                            .foregroundColor(Colors.systemLabel)
+                            .font(Font.title.bold())
+                            .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacyTitle)
+
+                        Text(L10n.rdmTxtSubtitle)
+                            .font(.subheadline)
+                            .foregroundColor(Colors.systemLabelSecondary)
+                            .multilineTextAlignment(.center)
+                            .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacySubtitle)
+                    }
+                    .padding(.horizontal)
+
+                    if sizeCategory <= ContentSizeCategory.extraExtraExtraLarge {
+                        Spacer()
+                    }
+
+                    Button(
+                        action: { store.send(.setNavigation(tag: .matrixCode)) },
+                        label: {
+                            Tile(
+                                title: L10n.rdmBtnRedeemPharmacyTitle,
+                                description: L10n.rdmBtnRedeemPharmacyDescription,
+                                discloseIcon: SFSymbolName.rightDisclosureIndicator
+                            )
+                            .padding([.leading, .trailing], 16)
+                        }
+                    )
+                    .buttonStyle(.plain)
                     .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
 
-                Button(action: { viewStore.send(.setNavigation(tag: .pharmacySearch)) }, label: {
-                    Tile(iconSystemName: SFSymbolName.bag,
-                         title: L10n.rdmBtnRedeemSearchPharmacyTitle,
-                         description: L10n.rdmBtnRedeemSearchPharmacyDescription,
-                         discloseIcon: SFSymbolName.rightDisclosureIndicator)
-                        .padding([.leading, .trailing], 16)
-                })
+                    Button(
+                        action: { store.send(.setNavigation(tag: .pharmacySearch)) },
+                        label: {
+                            Tile(
+                                title: L10n.rdmBtnRedeemSearchPharmacyTitle,
+                                description: L10n.rdmBtnRedeemSearchPharmacyDescription,
+                                discloseIcon: SFSymbolName.rightDisclosureIndicator
+                            )
+                            .padding([.leading, .trailing], 16)
+                        }
+                    )
+                    .buttonStyle(.plain)
                     .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
-                Spacer()
+
+                    Spacer()
+                }
+
+                RedeemMethodsViewNavigation(store: store)
             }
-            .navigations(for: store)
             .navigationBarItems(
-                trailing: NavigationBarCloseItem { viewStore.send(.closeButtonTapped) }
+                trailing: NavigationBarCloseItem { store.send(.closeButtonTapped) }
                     .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
             )
             .navigationBarTitleDisplayMode(.inline)
@@ -80,13 +110,13 @@ struct RedeemMethodsView: View {
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
-    struct Navigation: ViewModifier {
+    struct RedeemMethodsViewNavigation: View {
         let store: RedeemMethodsDomain.Store
         @ObservedObject var viewStore: ViewStore<ViewState, RedeemMethodsDomain.Action>
 
         init(store: RedeemMethodsDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -97,58 +127,29 @@ struct RedeemMethodsView: View {
             }
         }
 
-        func body(content: Content) -> some View {
-            Group {
-                content
-
-                NavigationLink(
-                    destination: dataMatrixDestination,
-                    tag: RedeemMethodsDomain.Destinations.State.Tag.matrixCode,
-                    selection: viewStore.binding(get: \.destinationTag) { .setNavigation(tag: $0) }
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
-
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /RedeemMethodsDomain.Destinations.State.pharmacySearch,
-                            action: RedeemMethodsDomain.Destinations.Action.pharmacySearchAction(action:)
-                        )
-                    ) { scopedStore in
-                        PharmacySearchView(store: scopedStore)
-                    },
-                    tag: RedeemMethodsDomain.Destinations.State.Tag.pharmacySearch,
-                    selection: viewStore.binding(get: \.destinationTag) { .setNavigation(tag: $0) }
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
-                // This is a workaround due to a SwiftUI bug where never 2 NavigationLink
-                // should be on the same view. See:
-                // https://forums.swift.org/t/14-5-beta3-navigationlink-unexpected-pop/45279
-                NavigationLink(destination: EmptyView()) {
-                    EmptyView()
-                }.accessibility(hidden: true)
-            }
-        }
-
-        private var dataMatrixDestination: some View {
-            IfLetStore(
-                store.destinationsScope(
-                    state: /RedeemMethodsDomain.Destinations.State.matrixCode,
-                    action: RedeemMethodsDomain.Destinations.Action.redeemMatrixCodeAction(action:)
-                ),
-                then: RedeemMatrixCodeView.init(store:)
+        var body: some View {
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: RedeemMethodsDomain.Action.destination),
+                state: /RedeemMethodsDomain.Destinations.State.matrixCode,
+                action: RedeemMethodsDomain.Destinations.Action.redeemMatrixCodeAction(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .matrixCode)) },
+                destination: MatrixCodeView.init(store:),
+                label: {}
             )
-        }
-    }
-}
+            .hidden()
+            .accessibility(hidden: true)
 
-extension View {
-    func navigations(for store: RedeemMethodsDomain.Store) -> some View {
-        modifier(
-            RedeemMethodsView.Navigation(store: store)
-        )
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: RedeemMethodsDomain.Action.destination),
+                state: /RedeemMethodsDomain.Destinations.State.pharmacySearch,
+                action: RedeemMethodsDomain.Destinations.Action.pharmacySearchAction(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .pharmacySearch)) },
+                destination: PharmacySearchView.init(store:),
+                label: {}
+            )
+            .hidden()
+            .accessibility(hidden: true)
+        }
     }
 }
 

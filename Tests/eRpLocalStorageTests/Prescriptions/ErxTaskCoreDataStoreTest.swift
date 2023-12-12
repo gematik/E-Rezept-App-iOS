@@ -33,7 +33,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB")
+        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB_ErxTaskCoreDataStoreTest")
     }
 
     override func tearDown() {
@@ -505,7 +505,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     // swiftlint:disable line_length
     lazy var communication0: ErxTask.Communication = {
         let payload = ErxTaskOrder.Payload(
-            version: String(1),
+            version: 1,
             supplyOptionsType: .shipment,
             name: "Name_0",
             address: [],
@@ -1097,155 +1097,10 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         cancellable.cancel()
     }
 
-    // MARK: - AuditEvents
-
-    func testSaveAuditEvent() throws {
-        let store = loadErxCoreDataStore()
-        try store.add(auditEvents: [ErxAuditEvent.Fixtures.auditEvent1])
-    }
-
-    func testListAllAuditEvents() throws {
-        // given
-        let store = loadErxCoreDataStore()
-        try store.add(auditEvents: [ErxAuditEvent.Fixtures.auditEvent1, ErxAuditEvent.Fixtures.auditEvent2])
-
-        // when
-        var receivedValues = [[ErxAuditEvent]]()
-        var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
-        let cancellable = store.listAllAuditEvents(for: nil)
-            .sink(receiveCompletion: { completion in
-                receivedCompletions.append(completion)
-            }, receiveValue: { list in
-                receivedValues.append(list)
-            })
-
-        // then
-        expect(receivedValues.count).toEventually(equal(1))
-        expect(receivedValues.first?.count) == 2
-        expect(receivedCompletions.count) == 0
-        expect(receivedValues.first?[0]) == ErxAuditEvent.Fixtures.auditEvent2
-        expect(receivedValues.first?[1]) == ErxAuditEvent.Fixtures.auditEvent1
-
-        cancellable.cancel()
-    }
-
-    func testListAllAuditEventsWithLocale() throws {
-        // given
-        let store = loadErxCoreDataStore()
-        try store.add(auditEvents: [ErxAuditEvent.Fixtures.auditEvent1,
-                                    ErxAuditEvent.Fixtures.auditEvent2,
-                                    ErxAuditEvent.Fixtures.auditEvent3])
-
-        // when
-        var receivedValues = [[ErxAuditEvent]]()
-        var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
-        let cancellable = store.listAllAuditEvents(for: ErxAuditEvent.Fixtures.auditEvent1.locale)
-            .sink(receiveCompletion: { completion in
-                receivedCompletions.append(completion)
-            }, receiveValue: { list in
-                receivedValues.append(list)
-            })
-
-        // then
-        expect(receivedValues.count).toEventually(equal(1))
-        expect(receivedValues.first?.count) == 1
-        expect(receivedCompletions.count) == 0
-        expect(receivedValues.first?[0]) == ErxAuditEvent.Fixtures.auditEvent1
-
-        cancellable.cancel()
-    }
-
-    func testListingOnlyAuditEventsWithRelationshipToProfile() throws {
-        // given
-        let testProfile = Profile(name: "TestProfile")
-        try prepareStores(profiles: [testProfile], auditEvents: [ErxAuditEvent.Fixtures.auditEvent1,
-                                                                 ErxAuditEvent.Fixtures.auditEvent2])
-
-        // when accessing the store with a profile and saving a audit event to that profile
-        let store = loadErxCoreDataStore(for: testProfile.id)
-        try store.add(auditEvents: [ErxAuditEvent.Fixtures.auditEvent3])
-
-        // then listing tasks for that profile
-        var receivedListAllValues = [[ErxAuditEvent]]()
-        let cancellable = store.listAllAuditEvents(for: nil)
-            .sink(receiveCompletion: { _ in
-                fail("did not expect to receive a completion")
-            }, receiveValue: { auditEvents in
-                receivedListAllValues.append(auditEvents)
-            })
-
-        // should only return the audit event with a set relationship to that profile
-        expect(receivedListAllValues.count).toEventually(equal(1))
-        expect(receivedListAllValues.first?.count) == 1
-        expect(receivedListAllValues[0].first) == ErxAuditEvent.Fixtures.auditEvent3
-
-        cancellable.cancel()
-    }
-
-    func testFetchingLatestAuditEvent() throws {
-        let store = loadErxCoreDataStore()
-        // given
-        try store.add(auditEvents: [ErxAuditEvent.Fixtures.auditEvent1,
-                                    ErxAuditEvent.Fixtures.auditEvent2])
-
-        var receivedLatesValues = [String?]()
-        // when fetching the latest `handOverDate` of all `MedicationDispense`s
-        _ = store.fetchLatestTimestampForAuditEvents()
-            .sink(receiveCompletion: { _ in
-                fail("unexpected complete")
-            }, receiveValue: { timestamp in
-                receivedLatesValues.append(timestamp)
-            })
-
-        expect(receivedLatesValues.count).toEventually(equal(1))
-        // then the latest date has to be returned
-        expect(receivedLatesValues.first) == ErxAuditEvent.Fixtures.auditEvent2.timestamp
-
-        // verify that two auditEvents have been in store
-        var receivedValues = [[ErxAuditEvent]]()
-        let cancellable = store.listAllAuditEvents(for: nil)
-            .sink(receiveCompletion: { _ in
-                fail("unexpected complete")
-            }, receiveValue: { auditEvents in
-                receivedValues.append(auditEvents)
-            })
-
-        expect(receivedValues.count).toEventually(equal(1))
-        expect(receivedValues[0].count) == 2
-
-        cancellable.cancel()
-    }
-
-    func testFetchingLatestAuditEventWithProfileRelationship() throws {
-        // given
-        let testProfile = Profile(name: "TestProfile")
-        try prepareStores(profiles: [testProfile], auditEvents: [ErxAuditEvent.Fixtures.auditEvent1,
-                                                                 ErxAuditEvent.Fixtures.auditEvent2])
-
-        let store = loadErxCoreDataStore(for: testProfile.id)
-        try store.add(auditEvents: [ErxAuditEvent.Fixtures.auditEvent3])
-
-        // when
-        var receivedLatesValues = [String?]()
-        _ = store.fetchLatestTimestampForAuditEvents()
-            .sink(receiveCompletion: { _ in
-                fail("unexpected complete")
-            }, receiveValue: { timestamp in
-                receivedLatesValues.append(timestamp)
-            })
-
-        // then the timestamp of the audit event with a relationship is returned even though
-        // there are newer events in store
-        expect(receivedLatesValues.count).toEventually(equal(1))
-        expect(receivedLatesValues.first) == ErxAuditEvent.Fixtures.auditEvent3.timestamp
-        expect(ErxAuditEvent.Fixtures.auditEvent3.timestamp?.date) < ErxAuditEvent.Fixtures.auditEvent1.timestamp!.date!
-    }
-
     private func prepareStores(
         with tasks: [ErxTask] = [],
         profiles: [Profile] = [],
         communications: [ErxTask.Communication] = [],
-        auditEvents: [ErxAuditEvent] = [],
         medicationDispenses: [ErxMedicationDispense] = [],
         chargeItems: [ErxSparseChargeItem] = []
     ) throws {
@@ -1258,9 +1113,6 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         }
         if !communications.isEmpty {
             try erxTaskStore.add(communications: communications)
-        }
-        if !auditEvents.isEmpty {
-            try erxTaskStore.add(auditEvents: auditEvents)
         }
         if !medicationDispenses.isEmpty {
             try erxTaskStore.add(medicationDispenses: medicationDispenses)
@@ -1334,25 +1186,6 @@ extension ErxTaskCoreDataStore {
         var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
 
         let cancellable = save(chargeItems: chargeItems)
-            .sink(receiveCompletion: { completion in
-                receivedSaveCompletions.append(completion)
-            }, receiveValue: { result in
-                receivedResults.append(result)
-            })
-
-        expect(receivedResults.count).toEventually(equal(1))
-        expect(receivedResults.last) == true
-        expect(receivedSaveCompletions.count) == 1
-        expect(receivedSaveCompletions.first) == .finished
-
-        cancellable.cancel()
-    }
-
-    func add(auditEvents: [ErxAuditEvent]) throws {
-        var receivedResults = [Bool]()
-        var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
-
-        let cancellable = save(auditEvents: auditEvents)
             .sink(receiveCompletion: { completion in
                 receivedSaveCompletions.append(completion)
             }, receiveValue: { result in

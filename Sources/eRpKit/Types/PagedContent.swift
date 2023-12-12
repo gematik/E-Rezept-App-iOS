@@ -19,7 +19,7 @@
 import Foundation
 
 /// Container format for handling paged FHIR content.
-public struct PagedContent<Content> {
+public struct PagedContent<Content>: Equatable where Content: Equatable {
     /// Initializes a PagedContent with a given content and an optional next page link.
     /// - Parameters:
     ///   - content: Actual content of this page.

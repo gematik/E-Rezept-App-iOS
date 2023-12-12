@@ -25,21 +25,16 @@ import IDP
 import Nimble
 import XCTest
 
+@MainActor
 final class PrescriptionDetailDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
-    let initialState = PrescriptionDetailDomain.Dummies.state
+    let initialState = Fixtures
     let mockErxTaskRepository = MockErxTaskRepository()
     let uiDateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
     let mockResourceHandler = MockResourceHandler()
-    let mockMatrixCodeGenerator = MockErxTaskMatrixCodeGenerator()
+    let mockMatrixCodeGenerator = MockErxMatrixCodeGenerator()
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        PrescriptionDetailDomain.State,
-        PrescriptionDetailDomain.Action,
-        PrescriptionDetailDomain.State,
-        PrescriptionDetailDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<PrescriptionDetailDomain>
 
     func testStore(_ state: PrescriptionDetailDomain.State? = nil,
                    dateProvider: @escaping (() -> Date) = Date.init) -> TestStore {
@@ -47,10 +42,9 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let userSessionContainer = MockUsersSessionContainer()
         userSessionContainer.userSession = MockUserSession()
 
-        return TestStore(
-            initialState: state ?? initialState,
-            reducer: PrescriptionDetailDomain()
-        ) { dependencies in
+        return TestStore(initialState: state ?? initialState) {
+            PrescriptionDetailDomain()
+        } withDependencies: { dependencies in
             dependencies.changeableUserSessionContainer = userSessionContainer
             dependencies.erxTaskRepository = mockErxTaskRepository
             dependencies.schedulers = schedulers
@@ -58,95 +52,95 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             dependencies.dateProvider = dateProvider
             dependencies.uiDateFormatter = uiDateFormatter
             dependencies.resourceHandler = mockResourceHandler
-            dependencies.erxTaskMatrixCodeGenerator = mockMatrixCodeGenerator
+            dependencies.erxMatrixCodeGenerator = mockMatrixCodeGenerator
         }
     }
 
     /// Tests the case when delete was hit but in the alert 'No' was chosen.
-    func testCancelDeleteWithAlert() {
+    func testCancelDeleteWithAlert() async {
         let store = testStore()
 
         // when
-        store.send(.delete) { sut in
+        await store.send(.delete) { sut in
             // then
             sut.destination = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
         }
-        store.send(.setNavigation(tag: .none)) { sut in
+        await store.send(.setNavigation(tag: .none)) { sut in
             // then
             sut.destination = nil
         }
     }
 
     /// Tests the case when delete was hit and in the alert 'Yes' was chosen.
-    func testDeleteWithAlertSuccess() {
+    func testDeleteWithAlertSuccess() async {
         let store = testStore()
 
         mockErxTaskRepository.deletePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
         // when
-        store.send(.delete) { sut in
+        await store.send(.delete) { sut in
             // then
             sut.destination = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
         }
-        store.send(.confirmedDelete) { sut in
+        await store.send(.destination(.presented(.alert(.confirmedDelete)))) { sut in
             // then
             sut.isDeleting = true
             sut.destination = nil
         }
-        store.receive(.response(.taskDeletedReceived(Result.success(true)))) { state in
+        await store.receive(.response(.taskDeletedReceived(Result.success(true)))) { state in
             // then
             state.isDeleting = false
             state.destination = nil
         }
-        store.receive(.delegate(.close))
+        await store.receive(.delegate(.close))
     }
 
     /// Tests the case when delete was hit and deletion has failed when not being logged in
-    func testDeleteWhenNotLoggedIn() {
+    func testDeleteWhenNotLoggedIn() async {
         let store = testStore()
         let expectedError = ErxRepositoryError.remote(.fhirClientError(IDPError.tokenUnavailable))
         mockErxTaskRepository.deletePublisher = Fail(error: expectedError).eraseToAnyPublisher()
         // when
-        store.send(.delete) { sut in
+        await store.send(.delete) { sut in
             // then
             sut.destination = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
         }
-        store.send(.confirmedDelete) { sut in
+        await store.send(.destination(.presented(.alert(.confirmedDelete)))) { sut in
             // then
             sut.destination = nil
             sut.isDeleting = true
         }
-        store.receive(.response(.taskDeletedReceived(
+        await store.receive(.response(.taskDeletedReceived(
             Result.failure(expectedError)
         ))) { state in
             // then
             state.destination = .alert(PrescriptionDetailDomain.missingTokenAlertState())
             state.isDeleting = false
         }
-        store.send(.setNavigation(tag: .none)) { state in
+        await store.send(.setNavigation(tag: .none)) { state in
             state.destination = nil
         }
 
-        store.send(.delegate(.close))
+        await store.send(.delegate(.close))
     }
 
     /// Tests the case when delete was hit and deletion has failed with other errors.
-    func testDeleteWithOtherErrorMessage() {
+    func testDeleteWithOtherErrorMessage() async {
         let store = testStore()
         let expectedError = ErxRepositoryError.local(.notImplemented)
         mockErxTaskRepository.deletePublisher = Fail(error: expectedError).eraseToAnyPublisher()
 
         // when
-        store.send(.delete) { sut in
+        await store.send(.delete) { sut in
             // then
             sut.destination = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
         }
-        store.send(.confirmedDelete) { sut in
+        await store.send(.destination(.presented(.alert(.confirmedDelete)))) { sut in
             // then
             sut.isDeleting = true
             sut.destination = nil
         }
-        store.receive(.response(.taskDeletedReceived(
+        await store.receive(.response(.taskDeletedReceived(
             Result.failure(ErxRepositoryError.local(.notImplemented))
         ))) { state in
             // then
@@ -158,13 +152,13 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 )
             )
         }
-        store.send(.setNavigation(tag: nil)) { state in
+        await store.send(.setNavigation(tag: nil)) { state in
             state.destination = nil
         }
-        store.send(.delegate(.close))
+        await store.send(.delegate(.close))
     }
 
-    func testDeletingPrescriptionInProgress() {
+    func testDeletingPrescriptionInProgress() async {
         let prescription = Prescription(
             erxTask: ErxTask.Fixtures.erxTaskInProgressAndValid,
             dateFormatter: UIDateFormatter.testValue
@@ -174,11 +168,11 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             isArchived: true
         ))
 
-        sut.send(.delete) {
+        await sut.send(.delete) {
             $0.destination = .alert(ErpAlertState(
                 title: L10n.dtlBtnDeleteDisabledNote,
                 actions: {
-                    ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                    ButtonState(role: .cancel, action: .dismiss) {
                         .init(L10n.alertBtnOk)
                     }
                 }
@@ -186,7 +180,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testDeletingPrescriptionWithDirectAssignemnt() {
+    func testDeletingPrescriptionWithDirectAssignment() async {
         let prescription = Prescription(
             erxTask: ErxTask.Fixtures.erxTaskDirectAssigned,
             dateFormatter: UIDateFormatter.testValue
@@ -196,11 +190,11 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             isArchived: true
         ))
 
-        sut.send(.delete) {
+        await sut.send(.delete) {
             $0.destination = .alert(ErpAlertState(
                 title: L10n.prscDeleteNoteDirectAssignment,
                 actions: {
-                    ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                    ButtonState(role: .cancel, action: .dismiss) {
                         .init(L10n.alertBtnOk)
                     }
                 }
@@ -209,7 +203,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     }
 
     /// Test redeem low-detail prescriptions.
-    func testManualRedeemScannedTaskWithoutCommunicationsOrAvsTransactions() {
+    func testManualRedeemScannedTaskWithoutCommunicationsOrAvsTransactions() async {
         let dateToday = Date()
         var erxTask = ErxTask.Fixtures.scannedTask
         let store = testStore(
@@ -231,21 +225,21 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         mockErxTaskRepository.savePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
         // when
-        store.send(.toggleRedeemPrescription) { sut in
+        await store.send(.toggleRedeemPrescription) { sut in
             // then
             sut.prescription = expectedPrescription
             sut.isArchived = true
         }
-        store.receive(.response(.redeemedOnSavedReceived(true)))
-        store.send(.toggleRedeemPrescription) { sut in
+        await store.receive(.response(.redeemedOnSavedReceived(true)))
+        await store.send(.toggleRedeemPrescription) { sut in
             // then
             sut.prescription = prescription
             sut.isArchived = false
         }
-        store.receive(.response(.redeemedOnSavedReceived(true)))
+        await store.receive(.response(.redeemedOnSavedReceived(true)))
     }
 
-    func testManualRedeemScannedTaskWithAVSTransaction() {
+    func testManualRedeemScannedTaskWithAVSTransaction() async {
         let dateToday = Date()
         // given a scanned tasks that has been redeemed (via avs) before
         let erxTask = ErxTask.Fixtures.scannedTaskWithAVSTransaction
@@ -258,37 +252,37 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         )
 
         // when trying to toggle the state manually
-        store.send(.toggleRedeemPrescription)
+        await store.send(.toggleRedeemPrescription)
         // then no state change should be allowed
     }
 
-    func testManualRedeemARemoteTask() {
+    func testManualRedeemARemoteTask() async {
         let dateToday = Date()
         // given a tasks that has been loaded from fachdienst
         let store = testStore(dateProvider: { dateToday })
 
         // when trying to toggle the state manually
-        store.send(.toggleRedeemPrescription)
+        await store.send(.toggleRedeemPrescription)
         // then no state change should be allowed
     }
 
-    func testShowDirectAssignmentInfo() {
+    func testShowDirectAssignmentInfo() async {
         let sut = testStore()
 
-        sut.send(.setNavigation(tag: .directAssignmentInfo)) {
+        await sut.send(.setNavigation(tag: .directAssignmentInfo)) {
             $0.destination = .directAssignmentInfo
         }
     }
 
-    func testShowEmergencyServiceFeeInfo() {
+    func testShowEmergencyServiceFeeInfo() async {
         let sut = testStore()
 
-        sut.send(.setNavigation(tag: .emergencyServiceFeeInfo)) {
+        await sut.send(.setNavigation(tag: .emergencyServiceFeeInfo)) {
             $0.destination = .emergencyServiceFeeInfo
         }
     }
 
-    func testShowCoPaymentInfo() {
+    func testShowCoPaymentInfo() async {
         let erxTaskWithSubjectToChargeStatus = ErxTask.Fixtures.erxTask3
         let sut = testStore(
             .init(
@@ -302,12 +296,12 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let expectedCoPaymentState = PrescriptionDetailDomain.Destinations
             .CoPaymentState(status: erxTaskWithSubjectToChargeStatus.medicationRequest.coPaymentStatus!)
 
-        sut.send(.setNavigation(tag: .coPaymentInfo)) {
+        await sut.send(.setNavigation(tag: .coPaymentInfo)) {
             $0.destination = .coPaymentInfo(expectedCoPaymentState)
         }
     }
 
-    func testNotShowingCoPaymentInfo() {
+    func testNotShowingCoPaymentInfo() async {
         let taskWithoutCoPaymentInfo = ErxTask.Fixtures.erxTask12
         let sut = testStore(
             .init(
@@ -317,10 +311,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         )
 
         // then no state change expected
-        sut.send(.setNavigation(tag: .coPaymentInfo))
+        await sut.send(.setNavigation(tag: .coPaymentInfo))
     }
 
-    func testShowCoPaymentInfoState_noCharge() {
+    func testShowCoPaymentInfoState_noCharge() async {
         let erxTaskWithNoSubjectToChargeStatus = ErxTask.Fixtures.erxTask2
         let sut = testStore(
             .init(
@@ -334,59 +328,63 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let expectedCoPaymentState = PrescriptionDetailDomain.Destinations
             .CoPaymentState(status: erxTaskWithNoSubjectToChargeStatus.medicationRequest.coPaymentStatus!)
 
-        sut.send(.setNavigation(tag: .coPaymentInfo)) {
+        await sut.send(.setNavigation(tag: .coPaymentInfo)) {
             $0.destination = .coPaymentInfo(expectedCoPaymentState)
         }
     }
 
-    func testOpenUrlGesundBundDe() {
+    func testOpenUrlGesundBundle() async {
         let sut = testStore()
         mockResourceHandler.canOpenURLReturnValue = true
 
         expect(self.mockResourceHandler.canOpenURLCalled).to(beFalse())
-        sut.send(.openUrlGesundBundDe)
+        await sut.send(.openUrlGesundBundDe)
         expect(self.mockResourceHandler.canOpenURLCalled).to(beTrue())
         expect(self.mockResourceHandler.canOpenURLCalled).to(beTrue())
     }
 
-    func testShowPrescriptionValidityInfo() {
+    func testShowPrescriptionValidityInfo() async {
         let sut = testStore()
         let expectedValidityInfo = PrescriptionDetailDomain.Destinations.PrescriptionValidityState(
-            authoredOnDate: uiDateFormatter.date(initialState.prescription.authoredOn),
-            acceptUntilDate: uiDateFormatter.date(initialState.prescription.acceptedUntil),
-            expiresOnDate: uiDateFormatter.date(initialState.prescription.expiresOn)
+            acceptBeginDisplayDate: uiDateFormatter.date(initialState.prescription.authoredOn),
+            acceptEndDisplayDate: uiDateFormatter.date(
+                initialState.prescription.acceptedUntil,
+                advancedBy: -60 * 60 * 24
+            ),
+            expiresBeginDisplayDate: uiDateFormatter.date(initialState.prescription.acceptedUntil),
+            expiresEndDisplayDate: uiDateFormatter.date(initialState.prescription.expiresOn, advancedBy: -60 * 60 * 24)
         )
 
-        sut.send(.setNavigation(tag: .prescriptionValidityInfo)) {
+        await sut.send(.setNavigation(tag: .prescriptionValidityInfo)) {
             $0.destination = .prescriptionValidityInfo(expectedValidityInfo)
         }
     }
 
-    func testShowErrorInfo() {
+    func testShowErrorInfo() async {
         let sut = testStore()
 
-        sut.send(.setNavigation(tag: .errorInfo)) {
+        await sut.send(.setNavigation(tag: .errorInfo)) {
             $0.destination = .errorInfo
         }
     }
 
-    func testShowSubstitutionInfo() {
+    func testShowSubstitutionInfo() async {
         let sut = testStore()
 
-        sut.send(.setNavigation(tag: .substitutionInfo)) {
+        await sut.send(.setNavigation(tag: .substitutionInfo)) {
             $0.destination = .substitutionInfo
         }
     }
 
-    func testShowScannedPrescriptionInfo() {
+    func testShowScannedPrescriptionInfo() async {
         let sut = testStore()
 
-        sut.send(.setNavigation(tag: .scannedPrescriptionInfo)) {
+        await sut.send(.setNavigation(tag: .scannedPrescriptionInfo)) {
             $0.destination = .scannedPrescriptionInfo
         }
     }
 
-    func testLoadingImageAndShowShareSheet() {
+    func testLoadingImageAndShowShareSheet() async {
         let sut = testStore()
         let expectedUrl = initialState.prescription.erxTask.shareUrl()!
         let expectedImage = mockMatrixCodeGenerator.uiImage
@@ -397,84 +395,84 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             url: expectedUrl,
             dataMatrixCodeImage: expectedImage
         )
-        sut.send(.loadMatrixCodeImage(screenSize: CGSize(width: 100.0, height: 100.0))) {
+        await sut.send(.loadMatrixCodeImage(screenSize: CGSize(width: 100.0, height: 100.0))) {
             $0.loadingState = .loading(nil)
         }
 
-        sut.receive(.response(.matrixCodeImageReceived(expectedLoadingState))) {
+        await sut.receive(.response(.matrixCodeImageReceived(expectedLoadingState))) {
             $0.loadingState = expectedLoadingState
             $0.destination = .sharePrescription(shareState)
         }
     }
 
-    func testShowTechnicalInformations() {
+    func testShowTechnicalInformations() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.TechnicalInformationsState(
             taskId: initialState.prescription.erxTask.identifier,
             accessCode: initialState.prescription.erxTask.accessCode
         )
 
-        sut.send(.setNavigation(tag: .technicalInformations)) {
+        await sut.send(.setNavigation(tag: .technicalInformations)) {
             $0.destination = .technicalInformations(expectedState)
         }
     }
 
-    func testShowPatient() {
+    func testShowPatient() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.PatientState(
             patient: initialState.prescription.patient!
         )
 
-        sut.send(.setNavigation(tag: .patient)) {
+        await sut.send(.setNavigation(tag: .patient)) {
             $0.destination = .patient(expectedState)
         }
     }
 
-    func testShowPractitioner() {
+    func testShowPractitioner() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.PractitionerState(
             practitioner: initialState.prescription.practitioner!
         )
 
-        sut.send(.setNavigation(tag: .practitioner)) {
+        await sut.send(.setNavigation(tag: .practitioner)) {
             $0.destination = .practitioner(expectedState)
         }
     }
 
-    func testShowOrganization() {
+    func testShowOrganization() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.OrganizationState(
             organization: initialState.prescription.organization!
         )
 
-        sut.send(.setNavigation(tag: .organization)) {
+        await sut.send(.setNavigation(tag: .organization)) {
             $0.destination = .organization(expectedState)
         }
     }
 
-    func testShowAccidentInfo() {
+    func testShowAccidentInfo() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.AccidentInfoState(
             accidentInfo: initialState.prescription.medicationRequest.accidentInfo!
         )
 
-        sut.send(.setNavigation(tag: .accidentInfo)) {
+        await sut.send(.setNavigation(tag: .accidentInfo)) {
             $0.destination = .accidentInfo(expectedState)
         }
     }
 
-    func testShowMedication_when_not_dispensed() {
+    func testShowMedication_when_not_dispensed() async {
         let sut = testStore()
         let expectedState = MedicationDomain.State(
             subscribed: initialState.prescription.medication!
         )
 
-        sut.send(.setNavigation(tag: .medication)) {
+        await sut.send(.setNavigation(tag: .medication)) {
             $0.destination = .medication(expectedState)
         }
     }
 
-    func testShowMedicationOverview_when_dispensed() {
+    func testShowMedicationOverview_when_dispensed() async {
         let redeemedPrescription = Prescription(
             erxTask: ErxTask.Fixtures.erxTaskRedeemed,
             dateFormatter: UIDateFormatter.testValue
@@ -485,8 +483,266 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             dispensed: redeemedPrescription.medicationDispenses
         )
 
-        sut.send(.setNavigation(tag: .medication)) {
+        await sut.send(.setNavigation(tag: .medication)) {
             $0.destination = .medicationOverview(expectedState)
         }
     }
+
+    func testUpdateMedicationName() async {
+        let dateFormatter = UIDateFormatter.previewValue
+        let sut = testStore(
+            PrescriptionDetailDomain.State(
+                prescription: Prescription(
+                    erxTask: Self.erxTaskFixtureWith(
+                        erxMedication: Self.medicationFixture
+                    ),
+                    dateFormatter: dateFormatter
+                ),
+                isArchived: false
+            )
+        )
+        let validName = "Hustenbonbons"
+
+        await sut.send(.pencilButtonTapped) { state in
+            state.focus = .medicationName
+        }
+
+        mockErxTaskRepository.savePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        let expectedErxTask = Self.erxTaskFixtureWith(
+            erxMedication: ErxMedication(
+                name: "Hustenbonbons",
+                pzn: "06876512",
+                amount: ErxMedication.Ratio(
+                    numerator: ErxMedication.Quantity(value: "10", unit: "St.")
+                ),
+                dosageForm: "PUL",
+                normSizeCode: "N1",
+                batch: .init(
+                    lotNumber: "TOTO-5236-VL",
+                    expiresOn: "12.12.2024"
+                ),
+                packaging: "Box",
+                manufacturingInstructions: "Anleitung beiliegend",
+                ingredients: []
+            )
+        )
+
+        await sut.send(.setName(validName))
+
+        await sut.receive(.response(.changeNameReceived(.success(expectedErxTask)))) { state in
+            state.prescription = Prescription(
+                erxTask: expectedErxTask,
+                dateFormatter: dateFormatter
+            )
+        }
+
+        expect(self.mockErxTaskRepository.saveCalled).to(beTrue())
+        expect(self.mockErxTaskRepository.saveCallsCount).to(equal(1))
+
+        // Set name again but now the repo returns an error
+        let error = ErxRepositoryError.remote(.notImplemented)
+        mockErxTaskRepository.savePublisher = Fail(outputType: Bool.self, failure: error).eraseToAnyPublisher()
+
+        await sut.send(.setName("Hustenbonbonss"))
+
+        await sut.receive(.response(.changeNameReceived(Result.failure(error)))) { state in
+            state.destination = .alert(PrescriptionDetailDomain.changeNameReceivedAlertState(error: error))
+        }
+        expect(self.mockErxTaskRepository.saveCallsCount).to(equal(2))
+    }
+
+    func testUpdateMedicationNameEmptyFailure() async {
+        let sut = testStore()
+        let invalidName = " "
+
+        await sut.send(.setName(invalidName))
+
+        expect(self.mockErxTaskRepository.saveCalled).to(beFalse())
+    }
+}
+
+extension PrescriptionDetailDomainTests {
+    static let medicationFixture = ErxMedication(
+        name: "Saflorblüten-Extrakt Pulver Peroral",
+        pzn: "06876512",
+        amount: ErxMedication.Ratio(
+            numerator: ErxMedication.Quantity(value: "10", unit: "St.")
+        ),
+        dosageForm: "PUL",
+        normSizeCode: "N1",
+        batch: .init(
+            lotNumber: "TOTO-5236-VL",
+            expiresOn: "12.12.2024"
+        ),
+        packaging: "Box",
+        manufacturingInstructions: "Anleitung beiliegend",
+        ingredients: []
+    )
+
+    static func erxTaskFixtureWith(erxMedication: ErxMedication) -> ErxTask {
+        ErxTask(
+            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.today),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: erxMedication,
+            medicationRequest: .init(
+                substitutionAllowed: true,
+                hasEmergencyServiceFee: true,
+                accidentInfo: AccidentInfo(
+                    type: .workAccident,
+                    workPlaceIdentifier: "1234567890",
+                    date: "9.4.2021"
+                ),
+                coPaymentStatus: .subjectToCharge
+            ),
+            patient: ErxPatient(
+                name: "Ludger Königsstein",
+                address: "Musterstr. 1 \n10623 Berlin",
+                birthDate: "22.6.1935",
+                phone: "555 1234567",
+                status: "Mitglied",
+                insurance: "AOK Rheinland/Hamburg",
+                insuranceId: "A123456789"
+            ),
+            practitioner: ErxPractitioner(
+                lanr: "123456789",
+                name: "Dr. Dr. med. Carsten van Storchhausen",
+                qualification: "Allgemeinarzt/Hausarzt",
+                email: "noreply@google.de",
+                address: "Hinter der Bahn 2\n12345 Berlin"
+            ),
+            organization: ErxOrganization(
+                identifier: "987654321",
+                name: "Praxis van Storchhausen",
+                phone: "555 76543321",
+                email: "noreply@praxisvonstorchhausen.de",
+                address: "Vor der Bahn 6\n54321 Berlin"
+            )
+        )
+    }
+
+    static let prescriptionDetailDomainStateFixture = PrescriptionDetailDomain.State(
+        prescription: Prescription(
+            erxTask: ErxTask(
+                identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
+                accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+                fullUrl: nil,
+                authoredOn: DemoDate.createDemoDate(.today),
+                expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+                acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+                author: "Dr. Dr. med. Carsten van Storchhausen",
+                medication: medicationFixture,
+                medicationRequest: .init(
+                    substitutionAllowed: true,
+                    hasEmergencyServiceFee: true,
+                    accidentInfo: AccidentInfo(
+                        type: .workAccident,
+                        workPlaceIdentifier: "1234567890",
+                        date: "9.4.2021"
+                    ),
+                    coPaymentStatus: .subjectToCharge
+                ),
+                patient: ErxPatient(
+                    name: "Ludger Königsstein",
+                    address: "Musterstr. 1 \n10623 Berlin",
+                    birthDate: "22.6.1935",
+                    phone: "555 1234567",
+                    status: "Mitglied",
+                    insurance: "AOK Rheinland/Hamburg",
+                    insuranceId: "A123456789"
+                ),
+                practitioner: ErxPractitioner(
+                    lanr: "123456789",
+                    name: "Dr. Dr. med. Carsten van Storchhausen",
+                    qualification: "Allgemeinarzt/Hausarzt",
+                    email: "noreply@google.de",
+                    address: "Hinter der Bahn 2\n12345 Berlin"
+                ),
+                organization: ErxOrganization(
+                    identifier: "987654321",
+                    name: "Praxis van Storchhausen",
+                    phone: "555 76543321",
+                    email: "noreply@praxisvonstorchhausen.de",
+                    address: "Vor der Bahn 6\n54321 Berlin"
+                )
+            ),
+            dateFormatter: UIDateFormatter.previewValue
+        ),
+        isArchived: false
+    )
+}
+
+extension PrescriptionDetailDomainTests {
+    static let Fixtures = PrescriptionDetailDomain.State(
+        prescription: Prescription(
+            erxTask: ErxTask(
+                identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
+                accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+                fullUrl: nil,
+                authoredOn: DemoDate.createDemoDate(.today),
+                expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+                acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+                author: "Dr. Dr. med. Carsten van Storchhausen",
+                medication: ErxMedication(
+                    name: "Saflorblüten-Extrakt Pulver Peroral",
+                    pzn: "06876512",
+                    amount: ErxMedication.Ratio(
+                        numerator: ErxMedication.Quantity(value: "10", unit: "St.")
+                    ),
+                    dosageForm: "PUL",
+                    normSizeCode: "N1",
+                    batch: .init(
+                        lotNumber: "TOTO-5236-VL",
+                        expiresOn: "12.12.2024"
+                    ),
+                    packaging: "Box",
+                    manufacturingInstructions: "Anleitung beiliegend",
+                    ingredients: []
+                ),
+                medicationRequest: .init(
+                    substitutionAllowed: true,
+                    hasEmergencyServiceFee: true,
+                    accidentInfo: AccidentInfo(
+                        type: .workAccident,
+                        workPlaceIdentifier: "1234567890",
+                        date: "9.4.2021"
+                    ),
+                    coPaymentStatus: .subjectToCharge
+                ),
+                patient: ErxPatient(
+                    name: "Ludger Königsstein",
+                    address: "Musterstr. 1 \n10623 Berlin",
+                    birthDate: "22.6.1935",
+                    phone: "555 1234567",
+                    status: "Mitglied",
+                    insurance: "AOK Rheinland/Hamburg",
+                    insuranceId: "A123456789"
+                ),
+                practitioner: ErxPractitioner(
+                    lanr: "123456789",
+                    name: "Dr. Dr. med. Carsten van Storchhausen",
+                    qualification: "Allgemeinarzt/Hausarzt",
+                    email: "noreply@google.de",
+                    address: "Hinter der Bahn 2\n12345 Berlin"
+                ),
+                organization: ErxOrganization(
+                    identifier: "987654321",
+                    name: "Praxis van Storchhausen",
+                    phone: "555 76543321",
+                    email: "noreply@praxisvonstorchhausen.de",
+                    address: "Vor der Bahn 6\n54321 Berlin"
+                )
+            ),
+            dateFormatter: UIDateFormatter.previewValue
+        ),
+        isArchived: false
+    )
 }

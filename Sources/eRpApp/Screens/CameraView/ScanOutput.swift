@@ -18,6 +18,6 @@
 
 /// Transfer object for downstream communication (ViewModel to camera / scanning framework)
 enum ScanOutput: Equatable {
-    case erxCode(String?)
+    case text(String?)
     case invalidCode
 }

@@ -91,7 +91,7 @@ class AVScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
             return .invalidCode
         }
         let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject
-        return .erxCode(readableObject?.stringValue?.dropGS1Prefix())
+        return .text(readableObject?.stringValue?.dropGS1Prefix())
     }
 
     override func viewWillAppear(_ animated: Bool) {

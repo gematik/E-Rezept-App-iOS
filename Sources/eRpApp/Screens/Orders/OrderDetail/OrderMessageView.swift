@@ -26,11 +26,8 @@ struct OrderMessageView: View {
     init(store: OrderDetailDomain.Store,
          communication: ErxTask.Communication,
          style: Indicator.Style = .middle) {
-        viewStore = ViewStore(
-            store.scope {
-                ViewState(state: $0, communication: communication, style: style)
-            }
-        )
+        // swiftlint:disable:next trailing_closure
+        viewStore = ViewStore(store, observe: { ViewState(state: $0, communication: communication, style: style) })
     }
 
     var body: some View {

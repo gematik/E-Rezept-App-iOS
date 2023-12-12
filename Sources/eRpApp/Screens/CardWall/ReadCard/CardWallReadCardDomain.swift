@@ -25,29 +25,8 @@ import IDP
 import NFCCardReaderProvider
 import UIKit
 
-enum CardWallReadCardHelpDomain {
-    enum State: Int {
-        // sourcery: AnalyticsScreen = troubleShooting_readCardHelp1
-        case first
-        // sourcery: AnalyticsScreen = troubleShooting_readCardHelp2
-        case second
-        // sourcery: AnalyticsScreen = troubleShooting_readCardHelp3
-        case third
-    }
-}
-
 struct CardWallReadCardDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
-
-    /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .cancel(id: CardWallReadCardDomain.Token.self)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case idpChallenge
-        case signAndVerify
-    }
 
     struct State: Equatable {
         let isDemoModus: Bool
@@ -56,20 +35,31 @@ struct CardWallReadCardDomain: ReducerProtocol {
         var loginOption: LoginOption
         var output: Output
 
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<CardWallReadCardDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
             // Screen tracking handled inside
-            case help(CardWallReadCardHelpDomain.State)
+            case help(ReadCardHelpDomain.State)
         }
 
         enum Action: Equatable {
             case egkAction(action: OrderHealthCardDomain.Action)
             case confirmation(action: CardWallExtAuthConfirmationDomain.Action)
+            case help(action: ReadCardHelpDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case dismiss
+                case getChallenge
+                case wrongCAN
+                case wrongPIN
+                case openMail(String)
+                case openHelpView
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -80,14 +70,12 @@ struct CardWallReadCardDomain: ReducerProtocol {
     enum Action: Equatable {
         case getChallenge
         case signChallenge(IDPChallengeSession)
-
         case saveError(LocalStoreError)
-        case openMail(String)
-        case openHelpViewScreen
-        case updatePageIndex(page: CardWallReadCardHelpDomain.State)
+        case openHelpView
+        case updatePageIndex(page: ReadCardHelpDomain.State)
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case response(Response)
         case delegate(Delegate)
@@ -140,11 +128,14 @@ struct CardWallReadCardDomain: ReducerProtocol {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .getChallenge:
+        case .getChallenge,
+             .destination(.presented(.alert(.getChallenge))):
             state.destination = nil
-            return environment.idpChallengePublisher(for: state.profileId)
-                .eraseToEffect()
-                .cancellable(id: Token.idpChallenge, cancelInFlight: true)
+            return .run { [profileId = state.profileId] send in
+                for await value in environment.idpChallengePublisher(for: profileId) {
+                    await send(value)
+                }
+            }
         case let .response(.state(.loggedIn(idpToken))):
             let payload = try? idpToken.idTokenPayload()
             state.output = .loggedIn(idpToken)
@@ -203,9 +194,6 @@ struct CardWallReadCardDomain: ReducerProtocol {
                 break
             }
             return .none
-        case .delegate(.close):
-            // This should be handled by the parent reducer
-            return Self.cleanup()
         // [REQ:BSI-eRp-ePA:O.Auth_3#2] Implementation of eGK connection
         case let .signChallenge(challenge):
             let pin = state.pin
@@ -213,44 +201,45 @@ struct CardWallReadCardDomain: ReducerProtocol {
             let profileID = state.profileId
 
             let environment = environment
-
-            return .concatenate(
-                .cancel(id: Token.idpChallenge),
-                environment.sessionProvider.userDataStore(for: state.profileId).can
-                    .first()
-                    .flatMap { can -> EffectTask<Action> in
-                        guard let can = can else {
-                            return Just(Action
-                                .response(.state(State.Output.retrievingChallenge(.error(.inputError(.missingCAN))))))
-                                                            .eraseToEffect()
-                        }
-
-                        if biometrieFlow {
-                            return environment.signChallengeThenAltAuthWithNFCCard(
-                                can: can,
-                                pin: pin,
-                                profileID: profileID
-                            )
-                        }
-                        return environment.signChallengeWithNFCCard(
-                            can: can,
-                            pin: pin,
-                            profileID: profileID,
-                            challenge: challenge
-                        )
+            return .run { [profileId = state.profileId] send in
+                let can = await withCheckedContinuation { continuation in
+                    _ = environment.sessionProvider.userDataStore(for: profileId).can.first().sink { can in
+                        continuation.resume(with: .success(can))
                     }
-                    .receive(on: environment.schedulers.main)
-                    .eraseToEffect()
-                    .cancellable(id: Token.signAndVerify, cancelInFlight: true)
-            )
-        case let .openMail(message):
+                }
+                guard let can = can else {
+                    await send(.response(.state(State.Output.retrievingChallenge(.error(.inputError(.missingCAN))))))
+                    return
+                }
+
+                if biometrieFlow {
+                    for await value in environment.signChallengeThenAltAuthWithNFCCard(
+                        can: can,
+                        pin: pin,
+                        profileID: profileID
+                    ) {
+                        await send(value)
+                    }
+                } else {
+                    for await value in environment.signChallengeWithNFCCard(
+                        can: can,
+                        pin: pin,
+                        profileID: profileID,
+                        challenge: challenge
+                    ) {
+                        await send(value)
+                    }
+                }
+            }
+        case let .destination(.presented(.alert(.openMail(message)))):
             let mailState = EmailState(subject: L10n.cdwTxtMailSubject.text, body: message)
             guard let url = mailState.createEmailUrl() else { return .none }
             if resourceHandler.canOpenURL(url) {
                 resourceHandler.open(url)
             }
             return .none
-        case .openHelpViewScreen:
+        case .openHelpView,
+             .destination(.presented(.alert(.openHelpView))):
             state.destination = .help(.first)
             return .none
         case let .updatePageIndex(page):
@@ -260,6 +249,21 @@ struct CardWallReadCardDomain: ReducerProtocol {
         case .delegate(.navigateToIntro):
             state.destination = nil
             return .none
+        case .destination(.presented(.alert(.wrongPIN))):
+            return .send(.delegate(.wrongPIN))
+        case .destination(.presented(.alert(.wrongCAN))):
+            return .send(.delegate(.wrongCAN))
+        case let .destination(.presented(.help(action: .delegate(delegate)))):
+            switch delegate {
+            case .close:
+                state.destination = nil
+                return .none
+            case .navigateToIntro:
+                state.destination = nil
+                return .send(.delegate(.navigateToIntro))
+            case let .updatePageIndex(index):
+                return .send(.updatePageIndex(page: index))
+            }
         case .setNavigation(tag: .none):
             state.destination = nil
             return .none
@@ -334,7 +338,9 @@ extension CardWallReadCardDomain {
             output: .idle
         )
 
-        static let store = Store(initialState: state, reducer: CardWallReadCardDomain())
+        static let store = Store(initialState: state) {
+            CardWallReadCardDomain()
+        }
     }
 }
 
@@ -346,43 +352,58 @@ extension CardWallReadCardDomain.Environment {
         givenName: String?,
         familyName: String?
     ) -> EffectTask<CardWallReadCardDomain.Action> {
-        profileDataStore.update(profileId: profileId) { profile in
-            profile.insuranceId = insuranceId
-            // This is needed to ensure proper pKV faking (can be removed when the debug option to fake pKV is removed.)
-            if profile.insuranceType == .unknown {
-                profile.insuranceType = .gKV
+        .publisher(
+            profileDataStore.update(profileId: profileId) { profile in
+                if let insuranceId = insuranceId {
+                    profile.insuranceId = insuranceId
+                }
+                // This is needed to ensure proper pKV faking.
+                // It can be removed when the debug option to fake pKV is removed.
+                if profile.insuranceType == .unknown {
+                    profile.insuranceType = .gKV
+                }
+                if let insurance = insurance {
+                    profile.insurance = insurance
+                }
+                if let givenName = givenName {
+                    profile.givenName = givenName
+                }
+                if let familyName = familyName {
+                    profile.familyName = familyName
+                }
             }
-            profile.insurance = insurance
-            profile.givenName = givenName
-            profile.familyName = familyName
-        }
-        .map { _ in
-            CardWallReadCardDomain.Action.delegate(.close)
-        }
-        .catch { error in
-            Just(CardWallReadCardDomain.Action.saveError(error))
-        }
-        .receive(on: schedulers.main)
-        .eraseToEffect()
+            .map { _ in
+                CardWallReadCardDomain.Action.delegate(.close)
+            }
+            .catch { error in
+                Just(CardWallReadCardDomain.Action.saveError(error))
+            }
+            .receive(on: schedulers.main)
+            .eraseToAnyPublisher
+        )
     }
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
-    func idpChallengePublisher(for profileID: UUID) -> EffectTask<CardWallReadCardDomain.Action> {
-        EffectTask<CardWallReadCardDomain.Action>.run { subscriber -> Cancellable in
-            sessionProvider
+    func idpChallengePublisher(for profileID: UUID) -> AsyncStream<CardWallReadCardDomain.Action> {
+        AsyncStream { continuation in
+            let cancellation = sessionProvider
                 .idpSession(for: profileID)
                 .requestChallenge()
                 .map { CardWallReadCardDomain.State.Output.challengeLoaded($0) }
                 .catch { Just(CardWallReadCardDomain.State.Output.retrievingChallenge(.error(.idpError($0)))) }
                 .onSubscribe { _ in
-                    subscriber.send(.response(.state(.retrievingChallenge(.loading))))
+                    continuation.yield(.response(.state(.retrievingChallenge(.loading))))
                 }
                 .receive(on: self.schedulers.main)
                 .sink(receiveCompletion: { _ in
-                    subscriber.send(completion: .finished)
+                    continuation.finish()
                 }, receiveValue: { value in
-                    subscriber.send(.response(.state(value)))
+                    continuation.yield(.response(.state(value)))
                 })
+
+            continuation.onTermination = { _ in
+                cancellation.cancel()
+            }
         }
     }
 
@@ -391,27 +412,32 @@ extension CardWallReadCardDomain.Environment {
     func signChallengeWithNFCCard(can: String,
                                   pin: String,
                                   profileID: UUID,
-                                  challenge: IDPChallengeSession) -> EffectTask<CardWallReadCardDomain.Action> {
-        .run { subscriber -> Cancellable in
+                                  challenge: IDPChallengeSession) -> AsyncStream<CardWallReadCardDomain.Action> {
+        AsyncStream { continuation in
+            continuation.yield(.response(.state(.signingChallenge(.loading))))
 
-            subscriber.send(.response(.state(.signingChallenge(.loading))))
-
-            return self.nfcSessionProvider
+            let cancellation = self.nfcSessionProvider
                 .sign(can: can, pin: pin, challenge: challenge)
                 .first()
                 .mapError(CardWallReadCardDomain.State.Error.signChallengeError)
                 .receive(on: self.schedulers.main)
                 .flatMap { signedChallenge in
-                    self.verifyResultWithIDP(signedChallenge, can: can, pin: pin, profileID: profileID)
+                    continuation.yield(.response(.state(.verifying(.loading))))
+
+                    return self.verifyResultWithIDP(signedChallenge, can: can, pin: pin, profileID: profileID)
                 }
                 .sink(receiveCompletion: { completion in
                     if case let .failure(error) = completion {
-                        subscriber.send(.response(.state(.signingChallenge(.error(error)))))
+                        continuation.yield(.response(.state(.signingChallenge(.error(error)))))
                     }
-                    subscriber.send(completion: .finished)
+                    continuation.finish()
                 }, receiveValue: { value in
-                    subscriber.send(value)
+                    continuation.yield(value)
                 })
+
+            continuation.onTermination = { _ in
+                cancellation.cancel()
+            }
         }
     }
 
@@ -422,27 +448,21 @@ extension CardWallReadCardDomain.Environment {
                                      pin _: String,
                                      profileID: UUID,
                                      registerBiometrics _: Bool = false)
-        -> EffectTask<CardWallReadCardDomain.Action> {
-        .run { subscriber -> Cancellable in
-            subscriber.send(.response(.state(.verifying(.loading))))
-            return sessionProvider.idTokenValidator(for: profileID)
-                .mapError(CardWallReadCardDomain.State.Error.profileValidation)
-                .flatMap { idTokenValidator in
-                    self.sessionProvider.idpSession(for: profileID)
-                        .verify(signedChallenge)
-                        .exchangeIDPToken(
-                            idp: sessionProvider.idpSession(for: profileID),
-                            challengeSession: signedChallenge.originalChallenge,
-                            idTokenValidator: idTokenValidator.validate(idToken:)
-                        )
-                }
-                .eraseToCardWallLoginState()
-                .receive(on: self.schedulers.main)
-                .sink(receiveCompletion: { _ in
-                    subscriber.send(completion: .finished)
-                }, receiveValue: { value in
-                    subscriber.send(.response(.state(value)))
-                })
-        }
+        -> AnyPublisher<CardWallReadCardDomain.Action, Never> {
+        sessionProvider.idTokenValidator(for: profileID)
+            .mapError(CardWallReadCardDomain.State.Error.profileValidation)
+            .flatMap { idTokenValidator in
+                self.sessionProvider.idpSession(for: profileID)
+                    .verify(signedChallenge)
+                    .exchangeIDPToken(
+                        idp: sessionProvider.idpSession(for: profileID),
+                        challengeSession: signedChallenge.originalChallenge,
+                        idTokenValidator: idTokenValidator.validate(idToken:)
+                    )
+            }
+            .eraseToCardWallLoginState()
+            .receive(on: schedulers.main)
+            .map { CardWallReadCardDomain.Action.response(.state($0)) }
+            .eraseToAnyPublisher()
     }
 }

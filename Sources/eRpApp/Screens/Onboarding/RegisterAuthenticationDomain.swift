@@ -26,16 +26,6 @@ import Zxcvbn
 struct RegisterAuthenticationDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case comparePasswords
-        case continueBiometry
-    }
-
     struct State: Equatable {
         let timeout: DispatchQueue.SchedulerTimeType.Stride = .seconds(0.5)
         var availableSecurityOptions: [AppSecurityOption]
@@ -67,7 +57,7 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
 
         var showNoSelectionMessage = false
         var securityOptionsError: AppSecurityManagerError?
-        var alertState: AlertState<Action>?
+        @PresentationState var alertState: AlertState<Action.Alert>?
 
         var hasValidSelection: Bool {
             guard selectedSecurityOption != nil else {
@@ -92,7 +82,6 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
         case select(_ option: AppSecurityOption)
         case startBiometry
         case authenticationChallengeResponse(AuthenticationChallengeProviderResult)
-        case alertDismissButtonTapped
         case setPasswordA(String)
         case setPasswordB(String)
         case comparePasswords
@@ -101,6 +90,9 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
         case saveSelectionSuccess
         case continueBiometry
         case nextPage
+        case alert(PresentationAction<Alert>)
+
+        enum Alert: Equatable {}
     }
 
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
@@ -110,8 +102,13 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
     @Dependency(\.passwordStrengthTester) var passwordStrengthTester: PasswordStrengthTester
     @Dependency(\.feedbackReceiver) var feedbackReceiver
 
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(core)
+            .ifLet(\.$alertState, action: /RegisterAuthenticationDomain.Action.alert)
+    }
+
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadAvailableSecurityOptions:
             let availableOptions = appSecurityManager.availableSecurityOptions
@@ -137,12 +134,14 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
                 state.passwordA = ""
                 state.passwordB = ""
                 UIApplication.shared.dismissKeyboard()
-                return authenticationChallengeProvider
-                    .startAuthenticationChallenge()
-                    .first()
-                    .map { Action.authenticationChallengeResponse($0) }
-                    .receive(on: schedulers.main.animation())
-                    .eraseToEffect()
+                return .publisher(
+                    authenticationChallengeProvider
+                        .startAuthenticationChallenge()
+                        .first()
+                        .map { Action.authenticationChallengeResponse($0) }
+                        .receive(on: schedulers.main.animation())
+                        .eraseToAnyPublisher
+                )
             }
             return .none
         case let .authenticationChallengeResponse(response):
@@ -155,7 +154,7 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
                     state.alertState = AlertState(
                         title: TextState(L10n.alertErrorTitle),
                         message: TextState(errorMessage),
-                        dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+                        dismissButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.none))
                     )
                 }
             case .success(true):
@@ -163,17 +162,15 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
                 feedbackReceiver.hapticFeedbackSuccess()
                 switch state.selectedSecurityOption {
                 case .biometry:
-                    return EffectTask(value: .continueBiometry)
-                        .delay(for: state.timeout, scheduler: schedulers.main.animation())
-                        .eraseToEffect()
-                        .cancellable(id: Token.continueBiometry, cancelInFlight: true)
+                    return .run { [timeout = state.timeout] send in
+                        try await schedulers.main.sleep(for: timeout)
+                        await send(.continueBiometry)
+                    }
+                    .animation()
                 default:
                     return .none
                 }
             }
-            return .none
-        case .alertDismissButtonTapped:
-            state.alertState = nil
             return .none
         case let .setPasswordA(string):
             guard string != state.passwordA else {
@@ -182,22 +179,22 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
             state.passwordStrength = passwordStrengthTester.passwordStrength(for: string)
             state.showPasswordErrorMessage = false
             state.passwordA = string
-            return EffectTask(value: .comparePasswords)
-                .delay(for: state.timeout, scheduler: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.comparePasswords, cancelInFlight: true)
-
+            return .run { [timeout = state.timeout] send in
+                try await schedulers.main.sleep(for: timeout)
+                await send(.comparePasswords)
+            }
+            .animation()
         case let .setPasswordB(string):
             guard string != state.passwordB else {
                 return .none
             }
             state.showPasswordErrorMessage = false
             state.passwordB = string
-            return EffectTask(value: .comparePasswords)
-                .delay(for: state.timeout, scheduler: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.comparePasswords, cancelInFlight: true)
-
+            return .run { [timeout = state.timeout] send in
+                try await schedulers.main.sleep(for: timeout)
+                await send(.comparePasswords)
+            }
+            .animation()
         case .comparePasswords:
             if state.hasValidPasswordEntries {
                 state.showPasswordErrorMessage = false
@@ -208,10 +205,11 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
             }
             return .none
         case .enterButtonTapped:
-            return EffectTask(value: .comparePasswords)
-                .delay(for: state.timeout, scheduler: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.comparePasswords, cancelInFlight: true)
+            return .run { [timeout = state.timeout] send in
+                try await schedulers.main.sleep(for: timeout)
+                await send(.comparePasswords)
+            }
+            .animation()
         case .saveSelection:
             guard state.hasValidSelection,
                   let selectedOption = state.selectedSecurityOption else {
@@ -233,14 +231,15 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
                     return .none
                 }
                 userDataStore.set(appSecurityOption: selectedOption)
-                return EffectTask(value: .saveSelectionSuccess)
+                return EffectTask.send(.saveSelectionSuccess)
             } else {
                 userDataStore.set(appSecurityOption: selectedOption)
-                return EffectTask(value: .saveSelectionSuccess)
+                return EffectTask.send(.saveSelectionSuccess)
             }
         case .saveSelectionSuccess,
              .continueBiometry,
-             .nextPage:
+             .nextPage,
+             .alert:
             // handled by OnboardingDomain
             return .none
         }
@@ -255,15 +254,15 @@ extension RegisterAuthenticationDomain {
         )
 
         static let store = Store(
-            initialState: state,
-            reducer: RegisterAuthenticationDomain()
-        )
+            initialState: state
+        ) {
+            RegisterAuthenticationDomain()
+        }
 
         static func store(with state: State) -> Store {
-            Store(
-                initialState: state,
-                reducer: RegisterAuthenticationDomain()
-            )
+            Store(initialState: state) {
+                RegisterAuthenticationDomain()
+            }
         }
     }
 }

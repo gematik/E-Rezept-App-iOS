@@ -24,17 +24,9 @@ import Foundation
 struct PharmacyContactDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case shipmentInfoStore
-    }
-
     struct State: Equatable {
         var contactInfo: ContactInfo
-        var alertState: AlertState<Action>?
+        @PresentationState var alertState: AlertState<Action.Alert>?
         let service: RedeemServiceOption
 
         private let originalContactInfo: ContactInfo?
@@ -59,10 +51,13 @@ struct PharmacyContactDomain: ReducerProtocol {
         case setMail(String)
         case setDeliveryInfo(String)
         case save
-        case alertDismissButtonTapped
         case closeButtonTapped
+
+        case alert(PresentationAction<Alert>)
         case response(Response)
         case delegate(Delegate)
+
+        enum Alert: Equatable {}
 
         enum Delegate: Equatable {
             case close
@@ -77,37 +72,41 @@ struct PharmacyContactDomain: ReducerProtocol {
     @Dependency(\.shipmentInfoDataStore) var shipmentInfoStore: ShipmentInfoDataStore
     @Dependency(\.redeemInputValidator) var validator: RedeemInputValidator
 
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(core)
+            .ifLet(\.$alertState, action: /Action.alert)
+    }
+
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .save:
             if case let .invalid(errorMessage) = validator.validate(state.contactInfo) {
                 state.alertState = Self.invalidInputAlert(with: errorMessage)
                 return .none
             }
-            return shipmentInfoStore.save(shipmentInfo: state.contactInfo.shipmentInfo)
-                .catchToEffect()
-                .map { Action.response(.shipmentInfoSaved($0)) }
-                .first()
-                .receive(on: schedulers.main)
-                .eraseToEffect()
+            return .publisher(
+                shipmentInfoStore.save(shipmentInfo: state.contactInfo.shipmentInfo)
+                    .catchToPublisher()
+                    .map { Action.response(.shipmentInfoSaved($0)) }
+                    .first()
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.shipmentInfoSaved(.success(info))):
             if let identifier = info?.identifier {
                 shipmentInfoStore.set(selectedShipmentInfoId: identifier)
             }
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
         case let .response(.shipmentInfoSaved(.failure(error))):
             state.alertState = AlertState(
                 title: TextState(L10n.alertErrorTitle),
                 message: TextState(error.localizedDescriptionWithErrorList),
-                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+                dismissButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.none))
             )
             return .none
-        case .alertDismissButtonTapped:
-            state.alertState = nil
-            return .none
         case .closeButtonTapped:
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
         case .delegate:
             return .none
         case let .setName(name):
@@ -151,14 +150,16 @@ struct PharmacyContactDomain: ReducerProtocol {
             }
             state.contactInfo.deliveryInfo = info
             return .none
+        case .alert:
+            return .none
         }
     }
 
-    static func invalidInputAlert(with message: String) -> AlertState<Action> {
+    static func invalidInputAlert(with message: String) -> AlertState<Action.Alert> {
         AlertState(
             title: TextState(L10n.alertErrorTitle),
             message: TextState(message),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(Action.alertDismissButtonTapped))
+            dismissButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.none))
         )
     }
 }
@@ -254,8 +255,9 @@ extension PharmacyContactDomain {
         )
 
         static let store = Store(
-            initialState: state,
-            reducer: PharmacyContactDomain()
-        )
+            initialState: state
+        ) {
+            PharmacyContactDomain()
+        }
     }
 }

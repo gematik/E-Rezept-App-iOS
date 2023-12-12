@@ -28,13 +28,19 @@ extension PharmacyRedeemDomain {
             // sourcery: AnalyticsScreen = cardWall
             case cardWall(CardWallIntroductionDomain.State)
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<PharmacyRedeemDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
         }
 
         enum Action: Equatable {
             case redeemSuccessView(action: RedeemSuccessDomain.Action)
             case pharmacyContact(action: PharmacyContactDomain.Action)
             case cardWall(action: CardWallIntroductionDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case dismiss
+                case contact
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {

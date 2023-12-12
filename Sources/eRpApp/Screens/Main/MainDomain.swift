@@ -25,35 +25,9 @@ import IDP
 struct MainDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            cleanupSubDomains(),
-            EffectTask<T>.cancel(ids: Token.allCases),
-            PrescriptionListDomain.cleanup()
-        )
-    }
-
-    static func cleanupSubDomains<T>() -> EffectTask<T> {
-        .concatenate(
-            DeviceSecurityDomain.cleanup(),
-            CardWallIntroductionDomain.cleanup(),
-            PrescriptionDetailDomain.cleanup(),
-            RedeemMethodsDomain.cleanup(),
-            CreateProfileDomain.cleanup(),
-            EditProfileNameDomain.cleanup(),
-            EditProfilePictureDomain.cleanup()
-        )
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case demoMode
-        case checkForTaskDuplicates
-    }
-
     struct State: Equatable {
         var isDemoMode = false
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
 
         // Child domain states
         var prescriptionListState: PrescriptionListDomain.State
@@ -68,17 +42,15 @@ struct MainDomain: ReducerProtocol {
         case loadDeviceSecurityView
         /// Start listening to demo mode changes
         case subscribeToDemoModeChange
-        case unsubscribeFromDemoModeChange
         /// Tapping the demo mode banner can also turn the demo mode off
         case turnOffDemoMode
         case externalLogin(URL)
         case importTaskByUrl(URL)
         case showWelcomeDrawer
         case refreshPrescription
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case setNavigation(tag: Destinations.State.Tag?)
         case response(Response)
-        case nothing
 
         // Child Domain Actions
         case extAuthPending(action: ExtAuthPendingDomain.Action)
@@ -112,6 +84,7 @@ struct MainDomain: ReducerProtocol {
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.deviceSecurityManager) var deviceSecurityManager
+    @Dependency(\.profileSecureDataWiper) var profileSecureDataWiper: ProfileSecureDataWiper
     @Dependency(\.router) var router: Routing
 
     var environment: Environment {
@@ -123,7 +96,8 @@ struct MainDomain: ReducerProtocol {
             schedulers: schedulers,
             fhirDateFormatter: fhirDateFormatter,
             userDataStore: userDataStore,
-            deviceSecurityManager: deviceSecurityManager
+            deviceSecurityManager: deviceSecurityManager,
+            profileSecureDataWiper: profileSecureDataWiper
         )
     }
 
@@ -136,6 +110,7 @@ struct MainDomain: ReducerProtocol {
         var fhirDateFormatter: FHIRDateFormatter
         var userDataStore: UserDataStore
         var deviceSecurityManager: DeviceSecurityManager
+        var profileSecureDataWiper: ProfileSecureDataWiper
     }
 
     var body: some ReducerProtocol<State, Action> {
@@ -150,7 +125,7 @@ struct MainDomain: ReducerProtocol {
         }
 
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -164,45 +139,55 @@ extension MainDomain {
             environment.router.routeTo(.settings)
             return .none
         case let .prescriptionList(action: .profilePictureViewTapped(profile)):
-            state.destination = .editProfilePicture(EditProfilePictureDomain.State(profile: profile))
+            state.destination = .editProfilePicture(
+                EditProfilePictureDomain.State(
+                    profileId: profile.id,
+                    color: profile.color,
+                    picture: profile.image,
+                    userImageData: profile.userImageData,
+                    isFullScreenPresented: false
+                )
+            )
             return .none
         case .showScannerView:
             state.destination = .scanner(ScannerDomain.State())
             return .none
         case .loadDeviceSecurityView:
-            return environment.deviceSecurityManager.showSystemSecurityWarning
-                .map { type in
-                    switch type {
-                    case .none:
-                        return nil
-                    default:
-                        return DeviceSecurityDomain.State(warningType: type)
+            return .publisher(
+                environment.deviceSecurityManager.showSystemSecurityWarning
+                    .map { type in
+                        switch type {
+                        case .none:
+                            return nil
+                        default:
+                            return DeviceSecurityDomain.State(warningType: type)
+                        }
                     }
-                }
-                .map { .response(.loadDeviceSecurityViewReceived($0)) }
-                .receive(on: environment.schedulers.main)
-                .eraseToEffect()
+                    .map { .response(.loadDeviceSecurityViewReceived($0)) }
+                    .receive(on: environment.schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.loadDeviceSecurityViewReceived(deviceSecurityState)):
             if let deviceSecurityState = deviceSecurityState {
                 state.destination = .deviceSecurity(deviceSecurityState)
             }
             return .none
         case .subscribeToDemoModeChange:
-            return environment.userSessionContainer.isDemoMode
-                .map { .response(.demoModeChangeReceived($0)) }
-                .receive(on: environment.schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.demoMode)
+            return .publisher(
+                environment.userSessionContainer.isDemoMode
+                    .map { .response(.demoModeChangeReceived($0)) }
+                    .receive(on: environment.schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
         case let .response(.demoModeChangeReceived(demoModeValue)):
             state.isDemoMode = demoModeValue
             return .none
-        case .unsubscribeFromDemoModeChange:
-            return Self.cleanup()
         case let .externalLogin(url):
             // [REQ:BSI-eRp-ePA:O.Source_1#7] redirect into correct domain
-            return EffectTask(value: .extAuthPending(action: .externalLogin(url)))
-                .delay(for: 5, scheduler: environment.schedulers.main)
-                .eraseToEffect()
+            return .run { send in
+                try await schedulers.main.sleep(for: 5)
+                await send(.extAuthPending(action: .externalLogin(url)))
+            }
         case let .importTaskByUrl(url):
             guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
                   components.path.contains("prescription"),
@@ -211,40 +196,46 @@ extension MainDomain {
                 return .none
             }
             return environment.checkForTaskDuplicatesThenSave(sharedTasks)
-                .cancellable(id: Token.checkForTaskDuplicates)
         case .response(.importReceived(.success)):
             state.destination = .alert(.init(title: L10n.erxTxtPrescriptionAddedAlertTitle))
             return .none
         case let .response(.importReceived(.failure(error))):
             state.destination = .alert(.init(for: error, title: L10n.erxTxtPrescriptionDuplicateAlertTitle))
             return .none
-        case .destination(.deviceSecurity(.delegate(.close))),
+        case .destination(.presented(.deviceSecurity(.delegate(.close)))),
              .setNavigation(tag: .none):
             state.destination = nil
-            return Self.cleanupSubDomains()
-        case .setNavigation(tag: .cardWall):
+            return .none
+        case .setNavigation(tag: .cardWall),
+             .destination(.presented(.alert(.cardWall))):
             environment.userSession.idpSession.invalidateAccessToken()
             state.destination = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
             return .none
         case let .prescriptionList(action: .response(.errorReceived(error))):
-            let alertState: ErpAlertState<Action>
             switch error {
             case .idpError(.biometrics) where error.contains(PrivateKeyContainer.Error.canceledByUser):
-                alertState = .init(for: error, title: L10n.errSpecificI10808Title, actions: {
-                    ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                state.destination = .alert(.init(for: error, title: L10n.errSpecificI10808Title, actions: {
+                    ButtonState(role: .cancel, action: .dismiss) {
                         .init(L10n.alertBtnOk)
                     }
-                })
+                }))
+            case let .idpError(.serverError(response))
+                where response.code == IDPError.Code.pairingAuthorizationFailed.rawValue:
+                state.destination = .alert(AlertStates.devicePairingInvalid())
+                return .run { [profileId = environment.userSession.profileId] _ in
+                    for try await _ in environment.profileSecureDataWiper.wipeSecureData(of: profileId).values {}
+                }
             case .idpError(.biometrics), .idpError(.serverError):
-                alertState = AlertStates.loginNecessaryAlert(for: error)
+                state.destination = .alert(AlertStates.loginNecessaryAlert(for: error))
             default:
-                alertState = .init(for: error, actions: {
-                    ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
-                        .init(L10n.alertBtnOk)
-                    }
-                })
+                state.destination = .alert(
+                    .init(for: error, actions: {
+                        ButtonState(role: .cancel, action: .dismiss) {
+                            .init(L10n.alertBtnOk)
+                        }
+                    })
+                )
             }
-            state.destination = .alert(alertState)
             return .none
         case let .prescriptionList(action: .response(.showCardWallReceived(cardWallState))):
             state.destination = .cardWall(cardWallState)
@@ -264,28 +255,25 @@ extension MainDomain {
         case .prescriptionList(action: .showArchivedButtonTapped):
             state.destination = .prescriptionArchive(.init())
             return .none
-        case .destination(.cardWall(action: .delegate(.close))):
+        case .destination(.presented(.cardWall(action: .delegate(.close)))):
             state.destination = nil
-            return .concatenate(
-                CardWallIntroductionDomain.cleanup(),
-                EffectTask(value: .prescriptionList(action: .loadRemotePrescriptionsAndSave))
-            )
-        case .destination(.redeemMethods(action: .delegate(.close))),
-             .destination(.prescriptionArchiveAction(action: .delegate(.close))),
-             .destination(.prescriptionDetailAction(action: .delegate(.close))):
+            return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
+        case .destination(.presented(.redeemMethods(action: .delegate(.close)))),
+             .destination(.presented(.prescriptionArchiveAction(action: .delegate(.close)))),
+             .destination(.presented(.prescriptionDetailAction(action: .delegate(.close)))):
             state.destination = nil
-            return Self.cleanupSubDomains()
+            return .none
         case let .horizontalProfileSelection(action: .response(.loadReceived(.failure(error)))):
             state.destination = .alert(
                 .init(for: error, actions: {
-                    ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                    ButtonState(role: .cancel, action: .dismiss) {
                         .init(L10n.alertBtnOk)
                     }
                 })
             )
             return .none
         case .refreshPrescription:
-            return EffectTask(value: .prescriptionList(action: .refresh))
+            return EffectTask.send(.prescriptionList(action: .refresh))
         case .horizontalProfileSelection(action: .showAddProfileView):
             state.destination = .createProfile(CreateProfileDomain.State())
             return .none
@@ -298,62 +286,55 @@ extension MainDomain {
                 environment.userDataStore.hideWelcomeDrawer = true
             }
             return .none
-        case let .destination(.createProfileAction(action: .delegate(delegateAction))):
+        case let .destination(.presented(.createProfileAction(action: .delegate(delegateAction)))):
             switch delegateAction {
             case .close:
                 state.destination = nil
-                return CreateProfileDomain.cleanup()
+                return .none
             case let .failure(error):
                 state.destination = .alert(
                     .init(for: error, actions: {
-                        ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                        ButtonState(role: .cancel, action: .dismiss) {
                             .init(L10n.alertBtnOk)
                         }
                     })
                 )
                 return .none
             }
-        case let .destination(.scanner(action: .delegate(delegateAction))):
+        case let .destination(.presented(.editProfileNameAction(action: .delegate(delegateAction)))):
             switch delegateAction {
             case .close:
                 state.destination = nil
-                return ScannerDomain.cleanup()
-            }
-        case let .destination(.editProfileNameAction(action: .delegate(delegateAction))):
-            switch delegateAction {
-            case .close:
-                state.destination = nil
-                return EditProfileNameDomain.cleanup()
+                return .none
             case let .failure(error):
                 state.destination = .alert(
                     .init(for: error, actions: {
-                        ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                        ButtonState(role: .cancel, action: .dismiss) {
                             .init(L10n.alertBtnOk)
                         }
                     })
                 )
                 return .none
             }
-        case let .destination(.editProfilePictureAction(action: .delegate(delegateAction))):
+        case let .destination(.presented(.editProfilePictureAction(action: .delegate(delegateAction)))):
             switch delegateAction {
             case .close:
                 state.destination = nil
-                return EditProfilePictureDomain.cleanup()
+                return .none
             case let .failure(error):
                 state.destination = .alert(
                     .init(for: error, actions: {
-                        ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                        ButtonState(role: .cancel, action: .dismiss) {
                             .init(L10n.alertBtnOk)
                         }
                     })
                 )
-                return Self.cleanupSubDomains()
+                return .none
             }
         case .destination,
              .setNavigation,
              .prescriptionList,
              .extAuthPending,
-             .nothing,
              .horizontalProfileSelection:
             return .none
         }
@@ -362,15 +343,30 @@ extension MainDomain {
 
 extension MainDomain {
     enum AlertStates {
-        static func loginNecessaryAlert(for error: LoginHandlerError) -> ErpAlertState<Action> {
+        static func loginNecessaryAlert(for error: LoginHandlerError) -> ErpAlertState<Destinations.Action.Alert> {
             .init(
                 for: error,
                 title: L10n.errTitleLoginNecessary
             ) {
-                ButtonState(action: .setNavigation(tag: .cardWall)) {
+                ButtonState(action: .cardWall) {
                     .init(L10n.erxBtnAlertLogin)
                 }
             }
+        }
+
+        static func devicePairingInvalid() -> ErpAlertState<Destinations.Action.Alert> {
+            .init(
+                title: L10n.errTitlePairingInvalid,
+                actions: {
+                    ButtonState(action: .dismiss) {
+                        .init(L10n.erxBtnAlertOk)
+                    }
+                    ButtonState(action: .cardWall) {
+                        .init(L10n.erxBtnAlertLogin)
+                    }
+                },
+                message: L10n.errMessagePairingInvalid
+            )
         }
     }
 }
@@ -380,25 +376,27 @@ extension MainDomain.Environment {
         let authoredOn = fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
         let erxTaskRepository = self.erxTaskRepository
 
-        return checkForTaskDuplicatesInStore(sharedTasks)
-            .flatMap { tasks -> AnyPublisher<[ErxTask], MainDomain.Error> in
-                let erxTasks = tasks.asErxTasks(
-                    status: .ready,
-                    with: authoredOn,
-                    author: L10n.scnTxtAuthor.text
-                ) { L10n.scnTxtMedication($0).text }
+        return .publisher(
+            checkForTaskDuplicatesInStore(sharedTasks)
+                .flatMap { tasks -> AnyPublisher<[ErxTask], MainDomain.Error> in
+                    let erxTasks = tasks.asErxTasks(
+                        status: .ready,
+                        with: authoredOn,
+                        author: L10n.scnTxtAuthor.text
+                    ) { L10n.scnTxtMedication($0).text }
 
-                return erxTaskRepository.save(
-                    erxTasks: erxTasks
-                )
-                .map { _ in erxTasks }
-                .mapError(MainDomain.Error.repositoryError)
-                .eraseToAnyPublisher()
-            }
-            .catchToEffect()
-            .map { .response(.importReceived($0)) }
-            .receive(on: schedulers.main)
-            .eraseToEffect()
+                    return erxTaskRepository.save(
+                        erxTasks: erxTasks
+                    )
+                    .map { _ in erxTasks }
+                    .mapError(MainDomain.Error.repositoryError)
+                    .eraseToAnyPublisher()
+                }
+                .catchToPublisher()
+                .map { .response(.importReceived($0)) }
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
     }
 
     func checkForTaskDuplicatesInStore(_ sharedTasks: [SharedTask]) -> AnyPublisher<[SharedTask], MainDomain.Error> {

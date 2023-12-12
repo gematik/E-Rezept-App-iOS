@@ -92,7 +92,7 @@ public struct PharmacyLocation: Identifiable, Equatable {
     /// Container that holds urls to the AVS Endpoints and their certificates to send requests with the AVSModul
     public var avsEndpoints: AVSEndpoints?
     /// Array of certificates for all recipients
-    public var avsCertificates: [X509]
+    public var avsCertificates: [X509] = []
 
     public var canBeDisplayedInMap: Bool {
         position?.latitude != nil && position?.longitude != nil
@@ -148,7 +148,7 @@ public struct PharmacyLocation: Identifiable, Equatable {
         hasReservationAVSService || hasShipmentAVSService || hasDeliveryAVSService
     }
 
-    public struct AVSEndpoints: Equatable {
+    public struct AVSEndpoints: Codable, Equatable {
         public let onPremiseUrl: String?
         public let onPremiseUrlAdditionalHeaders: [String: String]
         public let shipmentUrl: String?
@@ -276,7 +276,7 @@ extension PharmacyLocation {
         }
     }
 
-    public struct Position: Equatable, Hashable {
+    public struct Position: Codable, Equatable, Hashable {
         public init(latitude: Decimal? = nil,
                     longitude: Decimal? = nil) {
             self.latitude = latitude
@@ -287,7 +287,7 @@ extension PharmacyLocation {
         public let longitude: Decimal?
     }
 
-    public struct Address: Hashable {
+    public struct Address: Codable, Hashable {
         public init(street: String? = nil,
                     houseNumber: String? = nil,
                     zip: String? = nil,
@@ -342,7 +342,7 @@ extension PharmacyLocation {
         }
     }
 
-    public struct Telecom: Hashable {
+    public struct Telecom: Codable, Hashable {
         public init(phone: String? = nil,
                     fax: String? = nil,
                     email: String? = nil,
@@ -359,7 +359,7 @@ extension PharmacyLocation {
         public let web: String?
     }
 
-    public struct HoursOfOperation: Hashable {
+    public struct HoursOfOperation: Codable, Hashable {
         public init(daysOfWeek: [String] = [],
                     openingTime: String? = nil,
                     closingTime: String? = nil) {
@@ -378,5 +378,25 @@ extension Decimal {
     /// Returns a `Double`type for this decimal type
     public var doubleValue: Double {
         NSDecimalNumber(decimal: self).doubleValue
+    }
+}
+
+extension PharmacyLocation: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id
+        case status
+        case telematikID
+        case created
+        case name
+        case types
+        case position
+        case address
+        case telecom
+        case lastUsed
+        case isFavorite
+        case imagePath
+        case countUsage
+        case hoursOfOperation
+        case avsEndpoints
     }
 }

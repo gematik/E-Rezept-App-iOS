@@ -22,80 +22,74 @@ import ComposableArchitecture
 import Nimble
 import XCTest
 
+@MainActor
 final class SettingsDomainTests: XCTestCase {
     var mockTracker = MockTracker()
     let mockUserSessionContainer = MockUsersSessionContainer()
     let scheduler = DispatchQueue.immediate.eraseToAnyScheduler()
-    typealias TestStore = ComposableArchitecture.TestStore<
-        SettingsDomain.State,
-        SettingsDomain.Action,
-        SettingsDomain.State,
-        SettingsDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<SettingsDomain>
 
     func testStore() -> TestStore {
         testStore(for: SettingsDomain.Dummies.state)
     }
 
     func testStore(for state: SettingsDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: SettingsDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            SettingsDomain()
+        } withDependencies: { dependencies in
             dependencies.changeableUserSessionContainer = mockUserSessionContainer
             dependencies.tracker = mockTracker
             dependencies.router = MockRouting()
         }
     }
 
-    func testDemoModeToggleShouldSetDemoModeWhenDemoModeIsFalse() {
+    func testDemoModeToggleShouldSetDemoModeWhenDemoModeIsFalse() async {
         let store = testStore()
 
         mockUserSessionContainer.underlyingIsDemoMode = Just(false).eraseToAnyPublisher()
-        store.send(.demoModeStatusReceived(false))
+        await store.send(.demoModeStatusReceived(false))
         // when
-        store.send(.toggleDemoModeSwitch) { sut in
+        await store.send(.toggleDemoModeSwitch) { sut in
             // then
             sut.destination = .alert(.info(SettingsDomain.demoModeOnAlertState))
         }
         expect(self.mockUserSessionContainer.switchToDemoModeCalled).to(beTrue())
     }
 
-    func testDemoModeToggleShouldSetStandardModeWhenDemoModeIsTrue() {
+    func testDemoModeToggleShouldSetStandardModeWhenDemoModeIsTrue() async {
         let store = testStore(
             for: SettingsDomain.State(
                 isDemoMode: true
             )
         )
         // when
-        store.send(.toggleDemoModeSwitch) { sut in
+        await store.send(.toggleDemoModeSwitch) { sut in
             // then
             sut.destination = .alert(.info(SettingsDomain.demoModeOffAlertState))
         }
         expect(self.mockUserSessionContainer.switchToStandardModeCalled).to(beTrue())
     }
 
-    func testToggleHealthCardView() {
+    func testToggleHealthCardView() async {
         let store = testStore()
 
         // when
-        store.send(.setNavigation(tag: .egk)) { sut in
+        await store.send(.setNavigation(tag: .egk)) { sut in
             // then
             sut.destination = .egk(.init())
         }
 
         // when
-        store.send(.setNavigation(tag: .egk))
+        await store.send(.setNavigation(tag: .egk))
 
         // when
-        store.send(.setNavigation(tag: nil)) { sut in
+        await store.send(.setNavigation(tag: nil)) { sut in
             // then
             sut.destination = nil
         }
     }
 
-    func testAppTrackingOptInStartsComplyDialog() {
+    func testAppTrackingOptInStartsComplyDialog() async {
         let store = testStore(
             for: SettingsDomain.State(
                 isDemoMode: false
@@ -103,14 +97,14 @@ final class SettingsDomainTests: XCTestCase {
         )
 
         // when
-        store.send(.toggleTrackingTapped(true)) { sut in
+        await store.send(.toggleTrackingTapped(true)) { sut in
             // then
             sut.trackerOptIn = false
             sut.destination = .complyTracking
         }
     }
 
-    func testAppTrackingOptInConfirmAlert() {
+    func testAppTrackingOptInConfirmAlert() async {
         let store = testStore(
             for: SettingsDomain.State(
                 isDemoMode: false
@@ -120,12 +114,12 @@ final class SettingsDomainTests: XCTestCase {
         mockTracker.optIn = false
 
         // when
-        store.send(.toggleTrackingTapped(true)) { sut in
+        await store.send(.toggleTrackingTapped(true)) { sut in
             // then
             sut.trackerOptIn = false
             sut.destination = .complyTracking
         }
-        store.send(.confirmedOptInTracking) { sut in
+        await store.send(.confirmedOptInTracking) { sut in
             sut.trackerOptIn = true
             sut.destination = nil
         }
@@ -133,7 +127,7 @@ final class SettingsDomainTests: XCTestCase {
         expect(self.mockTracker.optIn).to(beTrue())
     }
 
-    func testAppTrackingOptInDisableAfterConfirm() {
+    func testAppTrackingOptInDisableAfterConfirm() async {
         let store = testStore(
             for: SettingsDomain.State(
                 isDemoMode: false
@@ -142,12 +136,12 @@ final class SettingsDomainTests: XCTestCase {
 
         mockTracker.optIn = true
 
-        store.send(.toggleTrackingTapped(false))
+        await store.send(.toggleTrackingTapped(false))
 
         expect(self.mockTracker.optIn).to(beFalse())
     }
 
-    func testAppTrackingOptInCancelAlert() {
+    func testAppTrackingOptInCancelAlert() async {
         let store = testStore(
             for: SettingsDomain.State(
                 isDemoMode: false
@@ -156,12 +150,12 @@ final class SettingsDomainTests: XCTestCase {
         mockTracker.optIn = false
 
         // when
-        store.send(.toggleTrackingTapped(true)) { sut in
+        await store.send(.toggleTrackingTapped(true)) { sut in
             // then
             sut.trackerOptIn = false
             sut.destination = .complyTracking
         }
-        store.send(.setNavigation(tag: nil)) { sut in
+        await store.send(.setNavigation(tag: nil)) { sut in
             sut.trackerOptIn = false
             sut.destination = nil
         }

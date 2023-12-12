@@ -28,7 +28,7 @@ struct SettingsView: View {
 
     init(store: SettingsDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -67,10 +67,6 @@ struct SettingsView: View {
 
                     BottomSectionView(store: store)
                 }
-                .alert(
-                    store.destinationsScope(state: /SettingsDomain.Destinations.State.alert),
-                    dismiss: .setNavigation(tag: nil)
-                )
 
                 // Tracking comply sheet presentation
                 // [REQ:BSI-eRp-ePA:O.Purp_5#3] Show comply view for settings triggered analytics enabling
@@ -102,59 +98,48 @@ struct SettingsView: View {
                     onDismiss: {},
                     content: {
                         IfLetStore(
-                            store.destinationsScope(
-                                state: /SettingsDomain.Destinations.State.newProfile,
-                                action: SettingsDomain.Destinations.Action.newProfileAction
-                            ),
+                            store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                            state: /SettingsDomain.Destinations.State.newProfile,
+                            action: SettingsDomain.Destinations.Action.newProfileAction,
                             then: NewProfileView.init(store:)
                         )
                     })
                     .hidden()
                     .accessibility(hidden: true)
 
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /SettingsDomain.Destinations.State.editProfile,
-                            action: SettingsDomain.Destinations.Action.editProfileAction
-                        ),
-                        then: EditProfileView.init(store:)
-                    ),
-                    tag: SettingsDomain.Destinations.State.Tag.editProfile, // swiftlint:disable:next trailing_closure
-                    selection: viewStore.binding(get: \.destinationTag, send: { tag in
-                        SettingsDomain.Action.setNavigation(tag: tag)
-                    })
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                    state: /SettingsDomain.Destinations.State.editProfile,
+                    action: SettingsDomain.Destinations.Action.editProfileAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .editProfile)) },
+                    destination: EditProfileView.init(store:),
+                    label: {}
+                )
+                .hidden()
+                .accessibility(hidden: true)
 
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /SettingsDomain.Destinations.State.appSecurity,
-                            action: SettingsDomain.Destinations.Action.appSecurityStateAction
-                        ),
-                        then: AppSecuritySelectionView.init(store:)
-                    ),
-                    tag: SettingsDomain.Destinations.State.Tag.appSecurity,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: SettingsDomain.Action.setNavigation
-                    )
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                    state: /SettingsDomain.Destinations.State.appSecurity,
+                    action: SettingsDomain.Destinations.Action.appSecurityStateAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .appSecurity)) },
+                    destination: AppSecuritySelectionView.init(store:),
+                    label: {}
+                )
+                .hidden()
+                .accessibility(hidden: true)
             }
             .accentColor(Colors.primary600)
             .background(Color(.secondarySystemBackground).ignoresSafeArea())
             .navigationTitle(L10n.stgTxtTitle)
             .demoBanner(isPresented: viewStore.isDemoMode)
             .alert(
-                store.destinationsScope(state: /SettingsDomain.Destinations.State.alert),
-                dismiss: .setNavigation(tag: .none)
+                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                state: /SettingsDomain.Destinations.State.alert,
+                action: SettingsDomain.Destinations.Action.alert
             )
-            .onAppear {
-                viewStore.send(.initSettings)
+            .task {
+                await viewStore.send(.task).finish()
             }
         }.navigationViewStyle(StackNavigationViewStyle())
     }
@@ -168,7 +153,7 @@ extension SettingsView {
 
         init(store: SettingsDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -208,7 +193,7 @@ extension SettingsView {
 
         init(store: SettingsDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store)
+            viewStore = ViewStore(store) { $0 }
         }
 
         var body: some View {
@@ -234,7 +219,7 @@ extension SettingsView {
 
         init(store: SettingsDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -299,7 +284,7 @@ extension SettingsView {
 
         init(store: SettingsDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -317,30 +302,17 @@ extension SettingsView {
                 }, icon: {})
                     .accessibilityIdentifier("stg_txt_debug_title")
             }, content: {
-                NavigationLink(
-                    destination: IfLetStore(
-                        destinationsScopedStore
-                            .scope(
-                                state: /SettingsDomain.Destinations.State.debug,
-                                action: SettingsDomain.Destinations.Action.debugAction
-                            ),
-                        then: DebugView.init(store:)
-                    ),
-                    tag: SettingsDomain.Destinations.State.Tag.debug,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: SettingsDomain.Action.setNavigation
-                    )
-                ) {
-                    Label("Debug", systemImage: SFSymbolName.ant)
-                }
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                    state: /SettingsDomain.Destinations.State.debug,
+                    action: SettingsDomain.Destinations.Action.debugAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .debug)) },
+                    destination: DebugView.init(store:),
+                    label: { Label("Debug", systemImage: SFSymbolName.ant) }
+                )
                 .accessibility(identifier: "stg_btn_debug")
                 .buttonStyle(.navigation)
             })
-        }
-
-        var destinationsScopedStore: Store<SettingsDomain.Destinations.State?, SettingsDomain.Destinations.Action> {
-            store.scope(state: \SettingsDomain.State.destination, action: SettingsDomain.Action.destination)
         }
     }
     #endif
@@ -352,7 +324,7 @@ extension SettingsView {
 
         init(store: SettingsDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -375,11 +347,8 @@ extension SettingsView {
     struct TrackingComplyView: View {
         let store: SettingsDomain.Store
 
-        @ObservedObject var viewStore: ViewStore<Void, SettingsDomain.Action>
-
         init(store: SettingsDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.stateless)
         }
 
         var body: some View {
@@ -404,12 +373,12 @@ extension SettingsView {
                             text: L10n.stgTrkBtnAlertYes,
                             a11y: A11y.settings.tracking.stgTrkBtnYes
                         ) {
-                            viewStore.send(.confirmedOptInTracking)
+                            store.send(.confirmedOptInTracking)
                         }
                         .font(Font.body.weight(.semibold))
                         .padding()
                         Button(L10n.stgTrkBtnAlertNo) {
-                            viewStore.send(.setNavigation(tag: nil))
+                            store.send(.setNavigation(tag: nil))
                         }
                         .accessibility(identifier: A11y.settings.tracking.stgTrkBtnNo)
                         .font(Font.body.weight(.semibold))
@@ -417,7 +386,7 @@ extension SettingsView {
                     }
                 }
                 .navigationBarItems(
-                    trailing: CloseButton { viewStore.send(.setNavigation(tag: nil)) }
+                    trailing: CloseButton { store.send(.setNavigation(tag: nil)) }
                         .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
                 )
                 .navigationBarTitleDisplayMode(.inline)

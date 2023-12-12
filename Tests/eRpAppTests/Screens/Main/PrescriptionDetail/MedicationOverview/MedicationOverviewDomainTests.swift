@@ -25,37 +25,31 @@ import IDP
 import Nimble
 import XCTest
 
+@MainActor
 final class MedicationOverviewDomainTests: XCTestCase {
     let stateWithIngredientMedication = MedicationOverviewDomain.State(
         subscribed: ErxTask.Fixtures.ingredientMedication,
         dispensed: ErxTask.Fixtures.medicationDispenses
     )
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        MedicationOverviewDomain.State,
-        MedicationOverviewDomain.Action,
-        MedicationOverviewDomain.State,
-        MedicationOverviewDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<MedicationOverviewDomain>
 
     func testStore(_ state: MedicationOverviewDomain.State? = nil) -> TestStore {
-        TestStore(
-            initialState: state ?? stateWithIngredientMedication,
-            reducer: MedicationOverviewDomain()
-        )
+        TestStore(initialState: state ?? stateWithIngredientMedication) {
+            MedicationOverviewDomain()
+        }
     }
 
-    func testShowSubscribedMedication() {
+    func testShowSubscribedMedication() async {
         let expectedMedication = MedicationDomain.State(subscribed: stateWithIngredientMedication.subscribed)
         let sut = testStore()
 
-        sut.send(.showSubscribedMedication) {
+        await sut.send(.showSubscribedMedication) {
             $0.destination = .medication(expectedMedication)
         }
     }
 
-    func testShowDispensedMedication() {
+    func testShowDispensedMedication() async {
         let selectedDispense = stateWithIngredientMedication.dispensed.first!
         let expectedState = MedicationDomain.State(
             dispensed: selectedDispense,
@@ -63,7 +57,7 @@ final class MedicationOverviewDomainTests: XCTestCase {
         )
         let sut = testStore()
 
-        sut.send(.showDispensedMedication(selectedDispense)) {
+        await sut.send(.showDispensedMedication(selectedDispense)) {
             $0.destination = .medication(expectedState)
         }
     }

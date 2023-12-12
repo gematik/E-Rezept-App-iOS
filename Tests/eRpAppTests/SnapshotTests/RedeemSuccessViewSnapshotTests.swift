@@ -21,7 +21,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class RedeemSuccessViewSnapshotTests: XCTestCase {
+final class RedeemSuccessViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"

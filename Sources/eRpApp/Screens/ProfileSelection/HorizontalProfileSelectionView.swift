@@ -23,14 +23,11 @@ struct HorizontalProfileSelectionView: View {
     let store: HorizontalProfileSelectionDomain.Store
     let width = UIScreen.main.bounds.size.width * UIScreen.main.scale / UIScreen.main.nativeScale
 
-    @ObservedObject var viewStore: ViewStore<
-        HorizontalProfileSelectionDomain.State,
-        HorizontalProfileSelectionDomain.Action
-    >
+    @ObservedObject var viewStore: ViewStoreOf<HorizontalProfileSelectionDomain>
 
     init(store: HorizontalProfileSelectionDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
@@ -74,11 +71,8 @@ struct HorizontalProfileSelectionView: View {
             }
             .padding(.vertical)
             .padding(.horizontal)
-            .onAppear {
-                viewStore.send(.registerListener)
-            }
-            .onDisappear {
-                viewStore.send(.unregisterListener)
+            .task {
+                await viewStore.send(.registerListener).finish()
             }
         }
         .highPriorityGesture(DragGesture())

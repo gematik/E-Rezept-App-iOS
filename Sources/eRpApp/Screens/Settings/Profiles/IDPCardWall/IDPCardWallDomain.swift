@@ -24,15 +24,6 @@ import UIKit
 struct IDPCardWallDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            CardWallReadCardDomain.cleanup(),
-            EffectTask<T>.cancel(ids: Token.allCases)
-        )
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     struct State: Equatable {
         let profileId: UUID
 
@@ -107,12 +98,13 @@ struct IDPCardWallDomain: ReducerProtocol {
         case .canAction(action: .delegate(.close)),
              .pinAction(action: .delegate(.close)):
             // closing a subscreen should close the whole stack -> forward to generic `.close`
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
         case .readCard(action: .delegate(.close)):
             state.pin.destination = nil
-            return EffectTask(value: .delegate(.finished))
-                .delay(for: Self.dismissTimeout, scheduler: schedulers.main)
-                .eraseToEffect()
+            return .run { send in
+                try await schedulers.main.sleep(for: Self.dismissTimeout)
+                await send(.delegate(.finished))
+            }
         case .delegate,
              .canAction,
              .pinAction,
@@ -127,10 +119,13 @@ extension IDPCardWallDomain {
         static let state = State(
             profileId: DemoProfileDataStore.anna.id,
             can: CardWallCANDomain.State(isDemoModus: false, profileId: UUID(), can: ""),
-            pin: CardWallPINDomain.State(isDemoModus: false, pin: "", transition: .fullScreenCover)
+            pin: CardWallPINDomain.State(isDemoModus: false, profileId: UUID(), pin: "", transition: .fullScreenCover)
         )
 
-        static let store = Store(initialState: state,
-                                 reducer: IDPCardWallDomain())
+        static let store = Store(
+            initialState: state
+        ) {
+            IDPCardWallDomain()
+        }
     }
 }

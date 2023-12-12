@@ -23,15 +23,16 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class MainViewSnapshotTests: XCTestCase {
+final class MainViewSnapshotTests: ERPSnapshotTestCase {
     override class func setUp() {
         super.setUp()
         diffTool = "open"
     }
 
     private func store(for state: MainDomain.State) -> MainDomain.Store {
-        MainDomain.Store(initialState: state,
-                         reducer: EmptyReducer())
+        MainDomain.Store(initialState: state) {
+            EmptyReducer()
+        }
     }
 
     private func store(for state: PrescriptionListDomain.State)
@@ -39,19 +40,23 @@ final class MainViewSnapshotTests: XCTestCase {
         MainDomain.Store(
             initialState: MainDomain.State(
                 prescriptionListState: state, horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
-            ),
-            reducer: EmptyReducer()
-        )
+            )
+
+        ) {
+            EmptyReducer()
+        }
     }
 
     private func store(for _: UserProfile? = nil) -> HorizontalProfileSelectionDomain.Store {
         HorizontalProfileSelectionDomain.Store(
             initialState: .init(
-                profiles: [],
+                profiles: [UserProfile](),
                 selectedProfileId: nil
-            ),
-            reducer: EmptyReducer()
-        )
+            )
+
+        ) {
+            EmptyReducer()
+        }
     }
 
     func testMainView_Empty() {

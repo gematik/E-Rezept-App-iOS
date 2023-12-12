@@ -24,7 +24,7 @@ import NFCCardReaderProvider
 // swiftlint:disable trailing_closure
 extension CardWallReadCardDomain {
     enum AlertStates {
-        typealias Action = CardWallReadCardDomain.Action
+        typealias Action = CardWallReadCardDomain.Destinations.Action.Alert
         typealias Error = CardWallReadCardDomain.State.Error
 
         static var saveProfile: ErpAlertState<Action> = .info(
@@ -37,7 +37,7 @@ extension CardWallReadCardDomain {
 
         static func wrongCAN(_ error: State.Error) -> ErpAlertState<Action> {
             .init(for: error, actions: {
-                ButtonState(action: .delegate(.wrongCAN)) {
+                ButtonState(action: .wrongCAN) {
                     .init(L10n.cdwBtnRcCorrectCan)
                 }
             })
@@ -48,7 +48,7 @@ extension CardWallReadCardDomain {
             Self.tagConnectionLostCount += 1
             if tagConnectionLostCount <= 3 {
                 return .init(for: error, actions: {
-                    ButtonState(action: .openHelpViewScreen) {
+                    ButtonState(action: .openHelpView) {
                         .init(L10n.cdwBtnRcHelp)
                     }
                     ButtonState(role: .cancel, action: .getChallenge) {
@@ -70,10 +70,10 @@ extension CardWallReadCardDomain {
 
         static func wrongPIN(_ error: Error) -> ErpAlertState<Action> {
             .init(for: error, actions: {
-                ButtonState(action: .delegate(.wrongPIN)) {
+                ButtonState(action: .wrongPIN) {
                     .init(L10n.cdwBtnRcCorrectPin)
                 }
-                ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                ButtonState(role: .cancel, action: .dismiss) {
                     .init(L10n.cdwBtnRcAlertCancel)
                 }
             })
@@ -81,7 +81,7 @@ extension CardWallReadCardDomain {
 
         static func alertFor(_ error: CodedError) -> ErpAlertState<Action> {
             .init(for: error, actions: {
-                ButtonState(action: .setNavigation(tag: .none)) {
+                ButtonState(action: .dismiss) {
                     .init(L10n.cdwBtnRcAlertClose)
                 }
             })
@@ -99,7 +99,7 @@ extension CardWallReadCardDomain {
             })
         }
 
-        static func alert(for tagError: CoreNFCError) -> ErpAlertState<CardWallReadCardDomain.Action>? {
+        static func alert(for tagError: CoreNFCError) -> ErpAlertState<Action>? {
             switch tagError {
             case .tagConnectionLost:
                 return CardWallReadCardDomain.AlertStates.tagConnectionLost(tagError)

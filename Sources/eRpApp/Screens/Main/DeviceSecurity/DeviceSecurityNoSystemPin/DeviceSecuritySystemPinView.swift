@@ -19,6 +19,7 @@
 import ComposableArchitecture
 import SwiftUI
 
+// [REQ:BSI-eRp-ePA:O.Resi_1#4] View containing the "no system pin" message.
 struct DeviceSecuritySystemPinView: View {
     @State var ignorePermanently = false
 

@@ -21,23 +21,27 @@ import SwiftUI
 
 struct CapabilitiesView: View {
     let store: CardWallIntroductionDomain.Store
+    @ObservedObject var viewStore: ViewStoreOf<CardWallIntroductionDomain>
+
+    init(store: CardWallIntroductionDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store) { $0 }
+    }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
-            VStack(alignment: .leading) {
-                ScrollView(.vertical, showsIndicators: true) {
-                    MinimumRequirementsView().padding()
-                }
+        VStack(alignment: .leading) {
+            ScrollView(.vertical, showsIndicators: true) {
+                MinimumRequirementsView().padding()
             }
-            .navigationBarTitle(L10n.cdwTxtNfuTitle, displayMode: .inline)
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem {
-                    viewStore.send(.delegate(.close))
-                }
-                .accessibility(identifier: A11y.cardWall.notForYou.cdwBtnNfuCancel)
-                .accessibility(label: Text(L10n.cdwBtnNfuCancelLabel))
-            )
         }
+        .navigationBarTitle(L10n.cdwTxtNfuTitle, displayMode: .inline)
+        .navigationBarItems(
+            trailing: NavigationBarCloseItem {
+                viewStore.send(.delegate(.close))
+            }
+            .accessibility(identifier: A11y.cardWall.notForYou.cdwBtnNfuCancel)
+            .accessibility(label: Text(L10n.cdwBtnNfuCancelLabel))
+        )
     }
 }
 

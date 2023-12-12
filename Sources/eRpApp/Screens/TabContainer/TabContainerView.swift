@@ -27,7 +27,7 @@ struct TabContainerView: View {
 
     init(store: AppDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -105,9 +105,8 @@ struct TabContainerView: View {
                 }
                 .backport.tabContainerToolBarBackground()
             }
-            .onAppear {
-                viewStore.send(.registerDemoModeListener)
-                viewStore.send(.registerNewOrderMessageListener)
+            .task {
+                await viewStore.send(.task).finish()
             }
             // Fix tabbar background becomming 100% transparent for dynamic views, in our case using quick filters
             // within pharmacy search

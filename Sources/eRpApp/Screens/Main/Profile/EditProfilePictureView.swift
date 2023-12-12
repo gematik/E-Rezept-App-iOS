@@ -28,31 +28,29 @@ struct EditProfilePictureView: View {
 
     init(store: EditProfilePictureDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
-        let profile: UserProfile
         let color: ProfileColor
         let picture: ProfilePicture
         let userImageData: Data
         let destinationTag: EditProfilePictureDomain.Destinations.State.Tag?
+        let isFullScreenPresented: Bool
 
         init(state: EditProfilePictureDomain.State) {
-            profile = state.profile
             color = state.color ?? .grey
             picture = state.picture ?? .none
             destinationTag = state.destination?.tag
             userImageData = state.userImageData ?? .empty
+            isFullScreenPresented = state.isFullScreenPresented
         }
     }
 
     var body: some View {
         VStack {
             Section(
-                header: Text(L10n.editPictureTxt)
-                    .padding([.leading, .trailing, .top])
-                    .font(.headline.bold())
+                header: SectionHeader(isFullScreenPresented: viewStore.isFullScreenPresented)
             ) {
                 ZStack(alignment: .topTrailing) {
                     ProfilePictureView(
@@ -66,10 +64,12 @@ struct EditProfilePictureView: View {
                         .disabled(true)
 
                     if viewStore.picture != .none || viewStore.userImageData != .empty {
-                        ResetPictureButton {
-                            viewStore.send(.editPicture(nil))
-                            viewStore.send(.setUserImageData(.empty))
-                        }.background(Circle().foregroundColor(Colors.systemBackground).padding(12))
+                        ResetPictureButton(
+                            isFullScreenPresented: viewStore.isFullScreenPresented
+                        ) {
+                            viewStore.send(.resetPictureButtonTapped)
+                        }
+                        .accessibility(identifier: A11y.editProfilePicture.eppBtnResetPicture)
                     }
                 }
 
@@ -87,12 +87,20 @@ struct EditProfilePictureView: View {
                             send: EditProfilePictureDomain.Action.editColor
                         )
                     )
+                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileBgColorPicker)
+                    .background(Colors.systemBackgroundTertiary)
                     .cornerRadius(16)
 
-                    Text(viewStore.color.name)
-                        .foregroundColor(Colors.textSecondary)
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    if !viewStore.isFullScreenPresented {
+                        Text(viewStore.color.name)
+                            .foregroundColor(Colors.textSecondary)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                    }
                 }
+            }
+
+            if viewStore.isFullScreenPresented {
+                Spacer()
             }
 
             Rectangle()
@@ -120,19 +128,18 @@ struct EditProfilePictureView: View {
                 .accessibility(hidden: true)
         }
         .alert(
-            store.destinationsScope(state: /EditProfilePictureDomain.Destinations.State.alert),
-            dismiss: .nothing
+            store.scope(state: \.$destination, action: EditProfilePictureDomain.Action.destination),
+            state: /EditProfilePictureDomain.Destinations.State.alert,
+            action: EditProfilePictureDomain.Destinations.Action.alert
         )
         .keyboardShortcut(.defaultAction)
-        .onAppear {
-            viewStore.send(.setProfileValues)
-        }
         .onChange(of: viewStore.color) { _ in
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Colors.systemBackgroundTertiary.ignoresSafeArea())
+        .background(viewStore.isFullScreenPresented ? Colors.systemBackgroundSecondary.ignoresSafeArea() : Colors
+            .systemBackgroundTertiary.ignoresSafeArea())
         .sheet(isPresented: Binding<Bool>(
             get: { viewStore.state.destinationTag == .photoPicker },
             set: { show in
@@ -150,6 +157,20 @@ struct EditProfilePictureView: View {
 }
 
 extension EditProfilePictureView {
+    private struct SectionHeader: View {
+        let isFullScreenPresented: Bool
+
+        var body: some View {
+            if isFullScreenPresented {
+                EmptyView()
+            } else {
+                Text(L10n.editPictureTxt)
+                    .padding([.leading, .trailing, .top])
+                    .font(.headline.bold())
+            }
+        }
+    }
+
     private struct ProfilePictureSelector: View {
         let store: EditProfilePictureDomain.Store
 
@@ -157,16 +178,14 @@ extension EditProfilePictureView {
 
         init(store: EditProfilePictureDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
-            let profile: UserProfile
             let color: ProfileColor
             let destinationTag: EditProfilePictureDomain.Destinations.State.Tag?
 
             init(state: EditProfilePictureDomain.State) {
-                profile = state.profile
                 color = state.color ?? .grey
                 destinationTag = state.destination?.tag
             }
@@ -207,6 +226,7 @@ extension EditProfilePictureView {
     }
 
     private struct ResetPictureButton: View {
+        let isFullScreenPresented: Bool
         let action: () -> Void
 
         var body: some View {
@@ -215,9 +235,17 @@ extension EditProfilePictureView {
                     .font(Font.caption.weight(.bold))
                     .foregroundColor(Color(.secondaryLabel))
                     .padding(8)
-                    .background(Circle().foregroundColor(Color(.systemGray6)))
-            }.accessibility(identifier: A11y.editProfilePicture.eppBtnResetPicture)
-                .padding()
+                    .background(
+                        Circle().foregroundColor(isFullScreenPresented ? Colors.systemColorWhite : Colors.systemGray6)
+                    )
+            }
+            .padding()
+            .background(
+                Circle()
+                    .foregroundColor(isFullScreenPresented ? Colors.systemBackgroundSecondary : Colors
+                        .systemBackground)
+                    .padding(12)
+            )
         }
     }
 }

@@ -24,16 +24,6 @@ import SwiftUI
 struct EditProfileNameDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case updateName
-        case activeUserProfile
-    }
-
     struct State: Equatable {
         var profileName: String
         var profileId: UUID
@@ -61,18 +51,18 @@ struct EditProfileNameDomain: ReducerProtocol {
             state.profileName = profileName
             return .none
         case .saveButtonTapped:
-            return EffectTask(value: .saveEditedProfileName(name: state.profileName))
+            return EffectTask.send(.saveEditedProfileName(name: state.profileName))
         case let .saveEditedProfileName(name):
             let name = name.trimmed()
             if name.lengthOfBytes(using: .utf8) > 0 {
                 return updateProfile(with: state.profileId, name: state.profileName)
                     .map(Action.saveEditedProfileNameReceived)
             }
-            return .init(value: .delegate(.close))
+            return .send(.delegate(.close))
         case .saveEditedProfileNameReceived(.success):
-            return .init(value: .delegate(.close))
+            return .send(.delegate(.close))
         case let .saveEditedProfileNameReceived(.failure(error)):
-            return .init(value: .delegate(.failure(error)))
+            return .send(.delegate(.failure(error)))
         case .delegate:
             return .none
         }
@@ -84,27 +74,28 @@ extension EditProfileNameDomain {
         with profileId: UUID,
         name: String
     ) -> EffectTask<Result<Bool, UserProfileServiceError>> {
-        userProfileService
-            .update(profileId: profileId, mutating: ({ profile in profile.name = name }))
-            .receive(on: schedulers.main)
-            .catchToEffect()
+        .publisher(
+            userProfileService
+                .update(profileId: profileId, mutating: ({ profile in profile.name = name }))
+                .receive(on: schedulers.main)
+                .catchToPublisher()
+                .eraseToAnyPublisher
+        )
     }
 }
 
 extension EditProfileNameDomain {
     enum Dummies {
-        static let store = Store(
-            initialState: Dummies.state,
-            reducer: EditProfileNameDomain()
-        )
+        static let store = Store(initialState: Dummies.state) {
+            EditProfileNameDomain()
+        }
 
         static let state = State(profileName: "Lazy Niklas", profileId: UUID())
 
         static func storeFor(_ state: State) -> Store {
-            Store(
-                initialState: state,
-                reducer: EditProfileNameDomain()
-            )
+            Store(initialState: state) {
+                EditProfileNameDomain()
+            }
         }
     }
 }

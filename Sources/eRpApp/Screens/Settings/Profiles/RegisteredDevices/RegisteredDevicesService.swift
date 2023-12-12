@@ -30,7 +30,7 @@ protocol RegisteredDevicesService {
 
     func deleteDevice(_ device: String, of profileId: UUID) -> AnyPublisher<Bool, RegisteredDevicesServiceError>
 
-    func cardWall(for profileId: UUID) -> AnyPublisher<IDPCardWallDomain.State, Never>
+    func cardWall(for profileId: UUID) -> AnyPublisher<CardWallCANDomain.State, Never>
 }
 
 // sourcery: CodedError = "018"
@@ -63,8 +63,8 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
 
     func registeredDevices(for profileId: UUID) -> AnyPublisher<PairingEntries, RegisteredDevicesServiceError> {
         let userSession = userSessionProvider.userSession(for: profileId)
-        let idpSession = userSession.biometrieIdpSession
-        let loginHandler = userSession.idpSessionLoginHandler
+        let idpSession = userSession.pairingIdpSession
+        let loginHandler = userSession.pairingIdpSessionLoginHandler
 
         return loginHandler.isAuthenticatedOrAuthenticate()
             .first()
@@ -112,7 +112,7 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
 
     func deleteDevice(_ device: String, of profileId: UUID) -> AnyPublisher<Bool, RegisteredDevicesServiceError> {
         let userSession = userSessionProvider.userSession(for: profileId)
-        let idpSession = userSession.biometrieIdpSession
+        let idpSession = userSession.pairingIdpSession
 
         return idpSession.autoRefreshedToken
             .mapError(RegisteredDevicesServiceError.idpError)
@@ -131,25 +131,17 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
             .eraseToAnyPublisher()
     }
 
-    func cardWall(for profileId: UUID) -> AnyPublisher<IDPCardWallDomain.State, Never> {
+    func cardWall(for profileId: UUID) -> AnyPublisher<CardWallCANDomain.State, Never> {
         let userSession = userSessionProvider.userSession(for: profileId)
         let userDataStore = userSession.secureUserStore
 
         return userDataStore.can
             .first()
             .map { can in
-                IDPCardWallDomain.State(
-                    profileId: profileId,
-                    can: (can != nil) ? nil : CardWallCANDomain.State(
-                        isDemoModus: userSession.isDemoMode,
-                        profileId: userSession.profileId,
-                        can: ""
-                    ),
-                    pin: CardWallPINDomain.State(
-                        isDemoModus: userSession.isDemoMode,
-                        pin: "",
-                        transition: .fullScreenCover
-                    )
+                CardWallCANDomain.State(
+                    isDemoModus: userSession.isDemoMode,
+                    profileId: userSession.profileId,
+                    can: can ?? ""
                 )
             }
             .eraseToAnyPublisher()

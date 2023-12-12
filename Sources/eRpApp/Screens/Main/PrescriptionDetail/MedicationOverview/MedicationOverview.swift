@@ -27,7 +27,7 @@ struct MedicationOverview: View {
 
     init(store: StoreOf<MedicationOverviewDomain>) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
@@ -65,22 +65,14 @@ struct MedicationOverview: View {
             ).sectionContainerStyle(.inline)
 
             // MedicationView
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /MedicationOverviewDomain.Destinations.State.medication,
-                        action: MedicationOverviewDomain.Destinations.Action.medication(action:)
-                    ),
-                    then: MedicationView.init(store:)
-                ),
-                tag: MedicationOverviewDomain.Destinations.State.Tag.medication,
-                selection: viewStore.binding(
-                    get: \.destination?.tag,
-                    send: MedicationOverviewDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: MedicationOverviewDomain.Action.destination),
+                state: /MedicationOverviewDomain.Destinations.State.medication,
+                action: MedicationOverviewDomain.Destinations.Action.medication(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .medication)) },
+                destination: MedicationView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
         }
         .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
     }
@@ -103,11 +95,13 @@ struct MedicationOverview_Previews: PreviewProvider {
                             subscribed: ErxTask.Demo.pznMedication,
                             dispensed: [ErxMedicationDispense.Demo.demoMedicationDispense,
                                         ErxMedicationDispense.Demo.demoMedicationDispense]
-                        ),
-                        reducer: EmptyReducer()
-                    )
+                        )
+                    ) {
+                        EmptyReducer()
+                    }
                 )
             }
+
             // With one medication dispense
             NavigationView {
                 MedicationOverview(
@@ -115,9 +109,10 @@ struct MedicationOverview_Previews: PreviewProvider {
                         initialState: .init(
                             subscribed: ErxTask.Demo.freeTextMedication,
                             dispensed: [ErxMedicationDispense.Demo.demoMedicationDispense]
-                        ),
-                        reducer: EmptyReducer()
-                    )
+                        )
+                    ) {
+                        EmptyReducer()
+                    }
                 )
             }
 
@@ -125,9 +120,13 @@ struct MedicationOverview_Previews: PreviewProvider {
             NavigationView {
                 MedicationOverview(
                     store: .init(
-                        initialState: .init(subscribed: ErxTask.Demo.compoundingMedication, dispensed: []),
-                        reducer: EmptyReducer()
-                    )
+                        initialState: .init(
+                            subscribed: ErxTask.Demo.compoundingMedication,
+                            dispensed: [ErxMedicationDispense]()
+                        )
+                    ) {
+                        EmptyReducer()
+                    }
                 )
             }.preferredColorScheme(.dark)
         }

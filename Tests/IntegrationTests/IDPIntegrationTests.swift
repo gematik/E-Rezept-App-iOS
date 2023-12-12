@@ -416,7 +416,6 @@ final class IDPIntegrationTests: XCTestCase {
             throw XCTSkip("Skip test because no IDP Server was provided")
         }
 
-
         let storage = MemStorage()
         let configuration = DefaultIDPSession.Configuration(
             clientId: "eRezeptApp",

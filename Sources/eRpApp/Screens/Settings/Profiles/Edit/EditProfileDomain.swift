@@ -29,17 +29,6 @@ import IDP
 struct EditProfileDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case idpTokenListener
-        case idpBiometricKeyIDListener
-        case canListener
-        case profileReceived
-    }
-
     struct State: Equatable {
         let profileId: UUID
         var name: String
@@ -55,14 +44,14 @@ struct EditProfileDomain: ReducerProtocol {
         var hasBiometricKeyID: Bool?
         var availableSecurityOptions: [AppSecurityOption] = []
         var securityOptionsError: AppSecurityManagerError?
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
         var insuranceType: Profile.InsuranceType
     }
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<EditProfileDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
             // sourcery: AnalyticsScreen = profile_token
             case token(IDPToken)
             // sourcery: AnalyticsScreen = profile_auditEvents
@@ -79,6 +68,15 @@ struct EditProfileDomain: ReducerProtocol {
             case registeredDevicesAction(RegisteredDevicesDomain.Action)
             case chargeItemListAction(ChargeItemListDomain.Action)
             case editProfilePictureAction(action: EditProfilePictureDomain.Action)
+            case token(None)
+            case alert(Alert)
+
+            enum None: Equatable {}
+
+            enum Alert: Equatable {
+                case confirmDeleteProfile
+                case confirmDeleteBiometricPairing
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -125,18 +123,15 @@ struct EditProfileDomain: ReducerProtocol {
         case setName(String)
         case setColor(ProfileColor)
         case showDeleteProfileAlert
-        case confirmDeleteProfile
-        case dismissAlert
         case login
         case relogin
 
         case showDeleteBiometricPairingAlert
-        case confirmDeleteBiometricPairing
         case loadAvailableSecurityOptions
         case registerListener
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case response(Response)
         case delegate(Delegate)
@@ -188,7 +183,7 @@ struct EditProfileDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -203,21 +198,18 @@ struct EditProfileDomain: ReducerProtocol {
             return .none
         case .registerListener:
             return .merge(
-                // [REQ:gemSpec_BSI_FdV:O.Tokn_9] observe token updates
-                environment.subscribeToTokenUpdates(for: state.profileId)
-                    .cancellable(id: Token.idpTokenListener, cancelInFlight: true),
-                environment.subscribeToBiometricKeyIDUpdates(for: state.profileId)
-                    .cancellable(id: Token.idpBiometricKeyIDListener, cancelInFlight: true),
-                environment.subscribeToCanUpdates(with: state.profileId)
-                    .cancellable(id: Token.canListener, cancelInFlight: true),
-                profileDataStore.fetchProfile(by: state.profileId)
-                    .first()
-                    .catchToEffect()
-                    .map(Action.Response.profileReceived)
-                    .map(Action.response)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
-                    .cancellable(id: Token.profileReceived, cancelInFlight: true)
+                environment.subscribeToTokenUpdates(for: state.profileId),
+                environment.subscribeToBiometricKeyIDUpdates(for: state.profileId),
+                environment.subscribeToCanUpdates(with: state.profileId),
+                .publisher(
+                    profileDataStore.fetchProfile(by: state.profileId)
+                        .first()
+                        .catchToPublisher()
+                        .map(Action.Response.profileReceived)
+                        .map(Action.response)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                )
             )
         case let .response(.tokenReceived(token)):
             state.token = token
@@ -245,65 +237,65 @@ struct EditProfileDomain: ReducerProtocol {
 
             guard name.lengthOfBytes(using: .utf8) > 0 else { return .none }
 
-            return environment
-                .updateProfile(with: state.profileId) { profile in
-                    profile.name = name
-                }
-                .map(Action.Response.updateProfileReceived)
-                .map(Action.response)
+            return .publisher(
+                environment
+                    .updateProfile(with: state.profileId) { profile in
+                        profile.name = name
+                    }
+                    .map(Action.Response.updateProfileReceived)
+                    .map(Action.response)
+                    .eraseToAnyPublisher
+            )
         case let .setColor(color):
             state.color = color
-            return environment
-                .updateProfile(with: state.profileId) { profile in
-                    profile.color = color.erxColor
-                }
-                .map(Action.Response.updateProfileReceived)
-                .map(Action.response)
+            return .publisher(
+                environment
+                    .updateProfile(with: state.profileId) { profile in
+                        profile.color = color.erxColor
+                    }
+                    .map(Action.Response.updateProfileReceived)
+                    .map(Action.response)
+                    .eraseToAnyPublisher
+            )
         case .showDeleteProfileAlert:
             state.destination = .alert(AlertStates.deleteProfile)
             return .none
-        case .confirmDeleteProfile:
-            return
-                .concatenate(
-                    Self.cleanup(),
-                    environment
-                        .deleteProfile(with: state.profileId)
-                        .map { result in
-                            switch result {
-                            case .success: return Action.delegate(.close)
-                            case let .failure(error): return Action.response(.updateProfileReceived(.failure(error)))
-                            }
+        case .destination(.presented(.alert(.confirmDeleteProfile))):
+            return .publisher(
+                environment
+                    .deleteProfile(with: state.profileId)
+                    .map { result in
+                        switch result {
+                        case .success: return Action.delegate(.close)
+                        case let .failure(error): return Action.response(.updateProfileReceived(.failure(error)))
                         }
-                        .eraseToEffect()
-                )
+                    }
+                    .eraseToAnyPublisher
+            )
         case .response(.updateProfileReceived(.success)):
             return .none
         case let .response(.updateProfileReceived(.failure(error))):
             state.destination = .alert(.init(for: error))
             return .none
-        case .dismissAlert:
-            state.destination = nil
-            return .none
         case .delegate(.logout):
             state.token = nil
             // [REQ:gemSpec_IDP_Frontend:A_20499-01#1] Call the SSO_TOKEN removal upon manual logout
             // [REQ:BSI-eRp-ePA:O.Tokn_6#3] Call the token removal upon manual logout
-            return profileSecureDataWiper.wipeSecureData(of: state.profileId).fireAndForget()
+            return .run { [profileId = state.profileId] _ in
+                for await _ in profileSecureDataWiper.wipeSecureData(of: profileId).values {}
+            }
         case .login:
             userDataStore.set(selectedProfileId: state.profileId)
             router.routeTo(.mainScreen(.login))
             return .none
         case .relogin:
             state.token = nil
-            let environment = environment
-            return environment.profileSecureDataWiper.wipeSecureData(of: state.profileId)
-                .handleEvents(receiveCompletion: { [state] _ in
-                    environment.userDataStore.set(selectedProfileId: state.profileId)
-                    environment.router.routeTo(.mainScreen(.login))
-                })
-                .fireAndForget()
-        case .delegate(.close):
-            return Self.cleanup()
+            return .run { [profileId = state.profileId, environment = environment] _ in
+                for await _ in environment.profileSecureDataWiper.wipeSecureData(of: profileId).values {}
+
+                environment.userDataStore.set(selectedProfileId: profileId)
+                environment.router.routeTo(.mainScreen(.login))
+            }
         case .setNavigation(tag: .none):
             state.destination = nil
             return .none
@@ -322,36 +314,45 @@ struct EditProfileDomain: ReducerProtocol {
             state.destination = .chargeItemList(.init(profileId: state.profileId))
             return .none
         case .setNavigation(tag: .editProfilePicture):
-            state.destination = .editProfilePicture(.init(profile: UserProfile(from: Profile(
-                name: state.name,
-                identifier: state.profileId,
-                color: state.color.erxColor,
-                image: state.image?.erxPicture ?? ProfilePicture.none.erxPicture,
-                userImageData: state.userImageData
-            ), token: state.token)))
+            state.destination = .editProfilePicture(.init(
+                profileId: state.profileId,
+                color: state.color,
+                picture: state.image,
+                userImageData: state.userImageData,
+                isFullScreenPresented: true
+            ))
             return .none
         case .setNavigation:
             return .none
-        case .destination(.auditEventsAction),
-             .destination(.registeredDevicesAction),
-             .destination(.chargeItemListAction),
-             .destination(.editProfilePictureAction):
+        case .destination(.presented(.auditEventsAction)),
+             .destination(.presented(.registeredDevicesAction)),
+             .destination(.presented(.chargeItemListAction)),
+             .destination(.presented(.editProfilePictureAction)):
             return .none
         case .showDeleteBiometricPairingAlert:
             state.destination = .alert(AlertStates.deleteBiometricPairing)
             return .none
-        case .confirmDeleteBiometricPairing:
+        case .destination(.presented(.alert(.confirmDeleteBiometricPairing))):
             state.destination = nil
-            return environment.deleteBiometricPairing(for: state.profileId)
+            return .publisher(
+                environment.deleteBiometricPairing(for: state.profileId)
+                    .eraseToAnyPublisher
+            )
         case let .response(.deleteBiometricPairingReceived(result)):
             switch result {
             case .success:
                 state.destination = nil
-                return environment.profileSecureDataWiper.wipeSecureData(of: state.profileId).fireAndForget()
+                let profileId = state.profileId
+                return .run { _ in
+                    for await _ in environment.profileSecureDataWiper.wipeSecureData(of: profileId).values {}
+                }
             case let .failure(error):
                 state.destination = .alert(AlertStates.deleteBiometricPairingFailed(with: error))
                 return .none
             }
+        case .destination,
+             .delegate:
+            return .none
         }
     }
 }
@@ -435,43 +436,49 @@ extension EditProfileDomain.Environment {
     typealias Action = EditProfileDomain.Action
 
     func subscribeToTokenUpdates(for profileId: UUID) -> EffectTask<Action> {
-        userSessionProvider.userSession(for: profileId).secureUserStore.token
-            .receive(on: schedulers.main.animation())
-            .map(Action.Response.tokenReceived)
-            .map(Action.response)
-            .eraseToEffect()
+        .publisher(
+            userSessionProvider.userSession(for: profileId).secureUserStore.token
+                .receive(on: schedulers.main.animation())
+                .map(Action.Response.tokenReceived)
+                .map(Action.response)
+                .eraseToAnyPublisher
+        )
     }
 
     func subscribeToCanUpdates(with profileId: UUID) -> EffectTask<Action> {
-        userSessionProvider.userSession(for: profileId).secureUserStore.can
-            .receive(on: schedulers.main.animation())
-            .map(Action.Response.canReceived)
-            .map(Action.response)
-            .eraseToEffect()
+        .publisher(
+            userSessionProvider.userSession(for: profileId).secureUserStore.can
+                .receive(on: schedulers.main.animation())
+                .map(Action.Response.canReceived)
+                .map(Action.response)
+                .eraseToAnyPublisher
+        )
     }
 
     func subscribeToBiometricKeyIDUpdates(for profileId: UUID) -> EffectTask<Action> {
-        userSessionProvider.userSession(for: profileId).secureUserStore.keyIdentifier
-            .receive(on: schedulers.main.animation())
-            .map { $0 != nil }
-            .map(Action.Response.biometricKeyIDReceived)
-            .map(Action.response)
-            .eraseToEffect()
+        .publisher(
+            userSessionProvider.userSession(for: profileId).secureUserStore.keyIdentifier
+                .receive(on: schedulers.main.animation())
+                .map { $0 != nil }
+                .map(Action.Response.biometricKeyIDReceived)
+                .map(Action.response)
+                .eraseToAnyPublisher
+        )
     }
 
     func updateProfile(
         with profileId: UUID,
         mutating: @escaping (inout Profile) -> Void
-    ) -> EffectTask<Result<Bool, LocalStoreError>> {
+    ) -> AnyPublisher<Result<Bool, LocalStoreError>, Never> {
         profileDataStore
             .update(profileId: profileId, mutating: mutating)
             .receive(on: schedulers.main)
-            .catchToEffect()
+            .catchToPublisher()
     }
 
     func deleteProfile(
         with profileId: UUID
-    ) -> EffectTask<Result<Bool, LocalStoreError>> {
+    ) -> AnyPublisher<Result<Bool, LocalStoreError>, Never> {
         let profile = Profile(name: "",
                               identifier: profileId,
                               insuranceId: nil,
@@ -493,12 +500,12 @@ extension EditProfileDomain.Environment {
                     profileDataStore.delete(profiles: [profile])
                 }
                 .receive(on: schedulers.main)
-                .catchToEffect()
+                .catchToPublisher()
     }
 
-    func deleteBiometricPairing(for profileId: UUID) -> EffectTask<Action> {
+    func deleteBiometricPairing(for profileId: UUID) -> AnyPublisher<Action, Never> {
         let profileUserSession = userSessionProvider.userSession(for: profileId)
-        let loginHandler = profileUserSession.biometricsIdpSessionLoginHandler
+        let loginHandler = profileUserSession.pairingIdpSessionLoginHandler
 
         return loginHandler.isAuthenticatedOrAuthenticate()
             .first()
@@ -506,7 +513,7 @@ extension EditProfileDomain.Environment {
                 if case .failure = result {
                     return Just(nil).eraseToAnyPublisher()
                 }
-                return profileUserSession.biometrieIdpSession.autoRefreshedToken // -> AnyPublisher<IDPToken?, IDPError>
+                return profileUserSession.pairingIdpSession.autoRefreshedToken // -> AnyPublisher<IDPToken?, IDPError>
                     .catch { _ in Just(nil) }
                     .eraseToAnyPublisher()
             }
@@ -515,22 +522,23 @@ extension EditProfileDomain.Environment {
                 profileUserSession.secureUserStore.keyIdentifier // -> AnyPublisher<Data?, Never>
             )
             .first()
-            .flatMap { pairingToken, keyIdentifier -> EffectTask<Action> in
+            .flatMap { pairingToken, keyIdentifier -> AnyPublisher<Action, Never> in
                 guard let keyIdentifier = keyIdentifier,
                       let pairingToken = pairingToken,
                       let deviceIdentifier = Base64.urlSafe.encode(data: keyIdentifier, with: .none).utf8string else {
-                    return EffectTask(value: Action.relogin)
+                    return Just(Action.relogin).eraseToAnyPublisher()
                 }
 
-                return profileUserSession.biometrieIdpSession.unregisterDevice(deviceIdentifier, token: pairingToken)
+                return profileUserSession.pairingIdpSession.unregisterDevice(deviceIdentifier, token: pairingToken)
                     // -> AnyPublisher<Bool, IDPError>
-                    .catchToEffect()
+                    .catchToPublisher()
                     .map(Action.Response.deleteBiometricPairingReceived)
                     .map(Action.response)
+                    .eraseToAnyPublisher()
             }
             .first()
             .receive(on: schedulers.main)
-            .eraseToEffect()
+            .eraseToAnyPublisher()
     }
 }
 
@@ -594,7 +602,7 @@ extension Publisher where Failure == LocalStoreError, Output == Bool {
 
 extension EditProfileDomain {
     enum AlertStates {
-        typealias Action = EditProfileDomain.Action
+        typealias Action = EditProfileDomain.Destinations.Action.Alert
 
         static let deleteProfile: ErpAlertState<Action> = {
             .init(
@@ -603,7 +611,7 @@ extension EditProfileDomain {
                     ButtonState(role: .destructive, action: .confirmDeleteProfile) {
                         .init(L10n.dtlTxtDeleteYes)
                     }
-                    ButtonState(role: .cancel, action: .dismissAlert) {
+                    ButtonState(role: .cancel) {
                         .init(L10n.stgBtnEditProfileDeleteAlertCancel)
                     }
                 },
@@ -618,7 +626,7 @@ extension EditProfileDomain {
                     ButtonState(role: .destructive, action: .confirmDeleteBiometricPairing) {
                         .init(L10n.dtlTxtDeleteYes)
                     }
-                    ButtonState(role: .cancel, action: .dismissAlert) {
+                    ButtonState(role: .cancel) {
                         .init(L10n.stgBtnEditProfileDeleteAlertCancel)
                     }
                 },
@@ -634,7 +642,7 @@ extension EditProfileDomain {
                 ButtonState(role: .destructive, action: .confirmDeleteBiometricPairing) {
                     .init(L10n.dtlTxtDeleteYes)
                 }
-                ButtonState(role: .cancel, action: .dismissAlert) {
+                ButtonState(role: .cancel) {
                     .init(L10n.stgBtnEditProfileDeleteAlertCancel)
                 }
             }
@@ -651,8 +659,9 @@ extension EditProfileDomain {
         }()
 
         static let store = Store(
-            initialState: onlineState,
-            reducer: EditProfileDomain()
-        )
+            initialState: onlineState
+        ) {
+            EditProfileDomain()
+        }
     }
 }

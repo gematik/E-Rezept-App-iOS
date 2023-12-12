@@ -81,19 +81,42 @@ extension FHIRClient {
     ///
     /// - Returns: `AnyPublisher` that emits the ids for the found  tasks
     /// - Parameter referenceDate: Tasks with modification date greater or equal `referenceDate` will be fetched
-    public func fetchAllTaskIDs(after referenceDate: String?) -> AnyPublisher<[String], FHIRClient.Error> {
-        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [String] in
+    public func fetchAllTaskIDs(after referenceDate: String?)
+        -> AnyPublisher<PagedContent<[String]>, FHIRClient.Error> {
+        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[String]> in
             let decoder = JSONDecoder()
 
             do {
                 let resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
-                return try resource.parseErxTaskIDs()
+                return try resource.parseErxTasksIDsContainer()
             } catch {
                 throw Error.decoding(error)
             }
         }
 
         return execute(operation: ErxTaskFHIROperation.allTasks(referenceDate: referenceDate, handler: handler))
+    }
+
+    /// Convenience function for requesting all task ids of a next page from a previous page.
+    /// - Parameter previousPage: The previous page retrieved from the service
+    public func fetchTasksNextPage(of previousPage: PagedContent<[ErxTask]>)
+        -> AnyPublisher<PagedContent<[String]>, FHIRClient.Error> {
+        let handler =
+            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[String]> in
+                do {
+                    let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                    return try resource.parseErxTasksIDsContainer()
+                } catch {
+                    throw Error.decoding(error)
+                }
+            }
+
+        guard let url = previousPage.next else {
+            return Fail(error: FHIRClient.Error.internalError("Requesting next page without link."))
+                .eraseToAnyPublisher()
+        }
+
+        return execute(operation: ErxTaskFHIROperation.tasksNextPage(url: url, handler: handler))
     }
 
     /// Convenience function for deleting a task
@@ -190,8 +213,9 @@ extension FHIRClient {
     ///
     /// - Returns: `AnyPublisher` that emits the audit events
     /// - Parameters:
-    ///   - previousPage: The previous page of the requested one.
-    public func fetchAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>, for locale: String?)
+    ///   - url: Link to load next page
+    ///   - locale: Location type of the language in which the result should be returned
+    public func fetchAuditEventsNextPage(from url: URL, locale: String?)
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, FHIRClient.Error> {
         let handler =
             DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[ErxAuditEvent]> in
@@ -203,12 +227,8 @@ extension FHIRClient {
                 }
             }
 
-        guard let url = previousPage.next else {
-            return Fail(error: FHIRClient.Error.internalError("Requesting next page without link."))
-                .eraseToAnyPublisher()
-        }
-
-        return execute(operation: ErxTaskFHIROperation.next(url: url, handler: handler, locale: locale))
+        return execute(operation: ErxTaskFHIROperation
+            .auditEventsNextPage(url: url, handler: handler, locale: locale))
     }
 
     /// Convenience function for redeeming an `ErxTask` in a pharmacy

@@ -19,18 +19,14 @@
 import Combine
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import IDP
 import Nimble
 import XCTest
 
+@MainActor
 final class RegisteredDevicesDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        RegisteredDevicesDomain.State,
-        RegisteredDevicesDomain.Action,
-        RegisteredDevicesDomain.State,
-        RegisteredDevicesDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<RegisteredDevicesDomain>
 
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
@@ -40,6 +36,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     var mockNFCSignatureProvider: MockNFCSignatureProvider!
     var mockSessionProvider: MockProfileBasedSessionProvider!
     var mockRegisteredDevicesService: MockRegisteredDevicesService!
+    let uidateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
 
     override func setUp() {
         super.setUp()
@@ -55,21 +52,24 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
     private func testStore(for state: RegisteredDevicesDomain.State) -> TestStore {
         TestStore(
-            initialState: state,
-            reducer: RegisteredDevicesDomain()
-        ) { dependencies in
+            initialState: state
+        ) {
+            RegisteredDevicesDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.registeredDevicesService = mockRegisteredDevicesService
+            dependencies.uiDateFormatter = uidateFormatter
         }
     }
 
     let testProfileId = UUID()
 
-    func testLoadDevicesTriggersCardwall() {
+    func testLoadDevicesTriggersCardwall() async {
         let store = testStore(for: .init(profileId: testProfileId))
-        let cardWallState = IDPCardWallDomain.State(
+        let cardWallState = CardWallCANDomain.State(
+            isDemoModus: false,
             profileId: testProfileId,
-            pin: .init(isDemoModus: false, transition: .fullScreenCover)
+            can: ""
         )
 
         mockRegisteredDevicesService.registeredDevicesForReturnValue =
@@ -82,19 +82,69 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         mockRegisteredDevicesService.cardWallForReturnValue = Just(cardWallState)
             .eraseToAnyPublisher()
 
-        store.send(.loadDevices) { state in
+        await store.send(.loadDevices) { state in
             state.content = .loading([])
         }
-        testScheduler.run()
+        await testScheduler.run()
 
-        store.receive(.showCardWall(cardWallState)) { state in
-            state.destination = .idpCardWall(cardWallState)
+        await store.receive(.showCardWall(cardWallState)) { state in
+            state.content = .notLoaded
+            state.destination = .cardWallCAN(cardWallState)
         }
 
-        store.receive(.response(.deviceIdReceived(nil)))
+        await store.receive(.response(.deviceIdReceived(nil)))
+
+        // when returing from cardwall a refresh loading should occur
     }
 
-    func testLoadDevicesAuthenticationErrorShows() {
+    func testWhenReturningFromCardwallThatReloadIsTriggered() async {
+        let store = testStore(for: .init(profileId: testProfileId))
+        let cardWallState = CardWallCANDomain.State(
+            isDemoModus: false,
+            profileId: testProfileId,
+            can: ""
+        )
+
+        let expectedDevices = Fixtures.pairingEntriesSetB
+        mockRegisteredDevicesService.registeredDevicesForReturnValue = Just(expectedDevices)
+            .setFailureType(to: RegisteredDevicesServiceError.self)
+            .eraseToAnyPublisher()
+
+        mockRegisteredDevicesService.deviceIdForReturnValue = Just(nil)
+            .eraseToAnyPublisher()
+
+        mockRegisteredDevicesService.cardWallForReturnValue = Just(cardWallState)
+            .eraseToAnyPublisher()
+
+        await store.send(.showCardWall(cardWallState)) { state in
+            state.destination = .cardWallCAN(cardWallState)
+        }
+        await testScheduler.run()
+
+        // when returning from cardwall
+        await store.send(.destination(.presented(.cardWallCAN(action: .delegate(.close))))) {
+            $0.destination = nil
+        }
+
+        await testScheduler.run()
+
+        // then a refresh loading should occur
+        await store.receive(.task) { state in
+            state.content = .loading([])
+        }
+        await testScheduler.run()
+
+        await store.receive(.response(.taskReceived(.success(expectedDevices)))) {
+            $0.content = .loaded(
+                expectedDevices.pairingEntries
+                    .map { ($0, self.uidateFormatter.compactDateAndTimeFormatter) }
+                    .map(RegisteredDevicesDomain.State.Entry.init)
+            )
+        }
+        await store.receive(.response(.deviceIdReceived(nil)))
+    }
+
+    func testLoadDevicesAuthenticationErrorShows() async {
         let store = testStore(for: .init(profileId: testProfileId))
 
         mockRegisteredDevicesService.registeredDevicesForReturnValue =
@@ -104,19 +154,21 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         mockRegisteredDevicesService.deviceIdForReturnValue = Just(nil)
             .eraseToAnyPublisher()
 
-        store.send(.loadDevices) { state in
+        await store.send(.loadDevices) { state in
             state.content = .loading([])
         }
-        testScheduler.run()
+        await testScheduler.run()
 
-        store.receive(.response(.loadDevicesReceived(.failure(RegisteredDevicesServiceError.missingToken)))) { state in
-            state.destination = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
-        }
+        await store
+            .receive(.response(.loadDevicesReceived(.failure(RegisteredDevicesServiceError.missingToken)))) { state in
+                state.content = .notLoaded
+                state.destination = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
+            }
 
-        store.receive(.response(.deviceIdReceived(nil)))
+        await store.receive(.response(.deviceIdReceived(nil)))
     }
 
-    func testDeleteDeviceSuccess() {
+    func testDeleteDeviceSuccess() async {
         let store = testStore(
             for: .init(profileId: UUID(),
                        destination: nil,
@@ -136,22 +188,22 @@ final class RegisteredDevicesDomainTests: XCTestCase {
                 .setFailureType(to: RegisteredDevicesServiceError.self)
                 .eraseToAnyPublisher()
 
-        store.send(RegisteredDevicesDomain.Action.deleteDevice(deviceId))
+        await store.send(RegisteredDevicesDomain.Action.deleteDevice(deviceId))
 
-        testScheduler.run()
+        await testScheduler.run()
 
         expect(self.mockRegisteredDevicesService.deleteDeviceOfCalled).to(beTrue())
 
-        store.receive(.response(.deleteDeviceReceived(.success(true))))
+        await store.receive(.response(.deleteDeviceReceived(.success(true))))
 
-        testScheduler.run()
+        await testScheduler.run()
 
-        store.receive(.response(.loadDevicesReceived(.success(Fixtures.pairingEntriesSetB)))) { state in
+        await store.receive(.response(.loadDevicesReceived(.success(Fixtures.pairingEntriesSetB)))) { state in
             state.content = .loaded(Fixtures.loadedDataB)
         }
     }
 
-    func testDeleteDeviceFailure() {
+    func testDeleteDeviceFailure() async {
         let store = testStore(
             for: .init(profileId: UUID(),
                        destination: nil,
@@ -165,15 +217,16 @@ final class RegisteredDevicesDomainTests: XCTestCase {
             Fail(error: RegisteredDevicesServiceError.missingToken)
                 .eraseToAnyPublisher()
 
-        store.send(RegisteredDevicesDomain.Action.deleteDevice(deviceId))
+        await store.send(RegisteredDevicesDomain.Action.deleteDevice(deviceId))
 
-        testScheduler.run()
+        await testScheduler.run()
 
         expect(self.mockRegisteredDevicesService.deleteDeviceOfCalled).to(beTrue())
 
-        store.receive(.response(.deleteDeviceReceived(.failure(RegisteredDevicesServiceError.missingToken)))) { state in
-            state.destination = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
-        }
+        await store
+            .receive(.response(.deleteDeviceReceived(.failure(RegisteredDevicesServiceError.missingToken)))) { state in
+                state.destination = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
+            }
     }
 }
 

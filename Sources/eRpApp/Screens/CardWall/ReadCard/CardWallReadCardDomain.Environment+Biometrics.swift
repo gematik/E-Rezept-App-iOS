@@ -119,20 +119,19 @@ extension CardWallReadCardDomain.Environment {
         can: String,
         pin: String,
         profileID: UUID
-    ) -> EffectTask<CardWallReadCardDomain.Action> {
-        let pairingSession: PairingSession
-        do {
-            // [REQ:BSI-eRp-ePA:O.Source_5#4] Creation of the pairing session
-            pairingSession = try signatureProvider.createPairingSession()
-        } catch {
-            return Just(.response(.state(.retrievingChallenge(.error(.biometrieError(error)))))).eraseToEffect()
-        }
+    ) -> AsyncStream<CardWallReadCardDomain.Action> {
+        AsyncStream { continuation in
+            let pairingSession: PairingSession
+            do {
+                // [REQ:BSI-eRp-ePA:O.Source_5#4] Creation of the pairing session
+                pairingSession = try signatureProvider.createPairingSession()
+            } catch {
+                continuation.yield(.response(.state(.retrievingChallenge(.error(.biometrieError(error))))))
+                return
+            }
+            continuation.yield(.response(.state(.signingChallenge(.loading))))
 
-        return EffectTask<CardWallReadCardDomain.Action>.run { subscriber -> Cancellable in
-
-            subscriber.send(.response(.state(.signingChallenge(.loading))))
-
-            return sessionProvider
+            let cancellation = sessionProvider
                 .biometrieIdpSession(for: profileID)
                 .requestChallenge() // AnyPublisher<IDPChallengeSession, IDPError>
                 .first()
@@ -214,16 +213,19 @@ extension CardWallReadCardDomain.Environment {
                 .map(CardWallReadCardDomain.State.Output.loggedIn)
                 .sink(receiveCompletion: { completion in
                     if case let .failure(error) = completion {
-                        subscriber
-                            .send(CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(error)))))
+                        continuation
+                            .yield(CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(error)))))
                         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
                         // [REQ:BSI-eRp-ePA:O.Source_5#5] Failure will delete paring data
                         _ = try? signatureProvider.abort(pairingSession: pairingSession)
                     }
-                    subscriber.send(completion: .finished)
+                    continuation.finish()
                 }, receiveValue: { value in
-                    subscriber.send(.response(.state(value)))
+                    continuation.yield(.response(.state(value)))
                 })
+            continuation.onTermination = { _ in
+                cancellation.cancel()
+            }
         }
     }
 }

@@ -27,11 +27,11 @@ struct ExtAuthPendingView: View {
 
     init(store: ExtAuthPendingDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var background: Color {
-        switch viewStore.state {
+        switch viewStore.state.extAuthState {
         case .extAuthFailed:
             return Colors.red300
         default:
@@ -40,9 +40,9 @@ struct ExtAuthPendingView: View {
     }
 
     @ViewBuilder func text() -> some View {
-        let name = viewStore.state.entry?.name ?? ""
+        let name = viewStore.state.extAuthState.entry?.name ?? ""
 
-        switch viewStore.state {
+        switch viewStore.state.extAuthState {
         case .pendingExtAuth:
             Text(L10n.mainTxtPendingextauthPending(name))
         case .extAuthReceived:
@@ -55,7 +55,7 @@ struct ExtAuthPendingView: View {
     }
 
     @ViewBuilder func icon() -> some View {
-        switch viewStore.state {
+        switch viewStore.state.extAuthState {
         case .pendingExtAuth,
              .extAuthReceived:
             ProgressView()
@@ -70,7 +70,7 @@ struct ExtAuthPendingView: View {
     }
 
     var showToast: Bool {
-        switch viewStore.state {
+        switch viewStore.state.extAuthState {
         case .empty,
              .extAuthFailed:
             return false
@@ -85,10 +85,13 @@ struct ExtAuthPendingView: View {
         VStack {
             Spacer()
                 .alert(
-                    store.scope(state: /ExtAuthPendingDomain.State.extAuthFailed),
-                    dismiss: .nothing
+                    store.scope(
+                        state: \.$destination,
+                        action: ExtAuthPendingDomain.Action.destination
+                    ),
+                    state: /ExtAuthPendingDomain.Destinations.State.extAuthAlert,
+                    action: ExtAuthPendingDomain.Destinations.Action.alert
                 )
-
             if showToast {
                 HStack(spacing: 16) {
                     icon()
@@ -111,11 +114,8 @@ struct ExtAuthPendingView: View {
                 .padding()
             }
         }
-        .onAppear {
-            viewStore.send(.registerListener)
-        }
-        .onDisappear {
-            viewStore.send(.unregisterListener)
+        .task {
+            await viewStore.send(.registerListener).finish()
         }
     }
 }
@@ -124,22 +124,22 @@ struct ExtAuthPendingView_Preview: PreviewProvider {
     static var previews: some View {
         VStack {
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
-                for: .empty
+                for: .init(extAuthState: .empty)
             ))
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
-                for: .pendingExtAuth(KKAppDirectory
-                    .Entry(name: "Gematik KK", identifier: "identifier"))
+                for: .init(extAuthState: .pendingExtAuth(KKAppDirectory
+                        .Entry(name: "Gematik KK", identifier: "identifier")))
             ))
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
-                for: .extAuthReceived(KKAppDirectory
-                    .Entry(name: "Gematik KK", identifier: "identifier"))
+                for: .init(extAuthState: .extAuthReceived(KKAppDirectory
+                        .Entry(name: "Gematik KK", identifier: "identifier")))
             ))
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
-                for: .extAuthFailed(ErpAlertState { TextState("error") })
+                for: .init(extAuthState: .extAuthFailed)
             ))
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
-                for: .extAuthSuccessful(KKAppDirectory
-                    .Entry(name: "Gematik KK", identifier: "identifier"))
+                for: .init(extAuthState: .extAuthSuccessful(KKAppDirectory
+                        .Entry(name: "Gematik KK", identifier: "identifier")))
             ))
         }
     }

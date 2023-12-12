@@ -23,7 +23,11 @@ import ModelsR4
 extension ErxChargeItemEntity {
     static func from(
         chargeItem: ErxSparseChargeItem,
-        encoder: JSONEncoder = JSONEncoder(),
+        encoder: JSONEncoder = {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .sortedKeys
+            return encoder
+        }(),
         in context: NSManagedObjectContext
     ) -> ErxChargeItemEntity? {
         ErxChargeItemEntity(

@@ -31,26 +31,6 @@ import SwiftUI
 struct PharmacyDetailDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            cleanupSubDomains(),
-            EffectTask<T>.cancel(ids: Token.allCases)
-        )
-    }
-
-    static func cleanupSubDomains<T>() -> EffectTask<T> {
-        .concatenate(
-            PharmacyRedeemDomain.cleanup()
-        )
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case loadProfile
-        case loadCertificates
-        case savePharmacy
-    }
-
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = redeem_viaAVS
@@ -105,7 +85,7 @@ struct PharmacyDetailDomain: ReducerProtocol {
         var reservationService: RedeemServiceOption = .noService
         var shipmentService: RedeemServiceOption = .noService
         var deliveryService: RedeemServiceOption = .noService
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
@@ -123,9 +103,11 @@ struct PharmacyDetailDomain: ReducerProtocol {
         case showPharmacyRedeemOption(RedeemOption)
         /// Changes favorite state of pharmacy or creates a local pharmacy
         case toggleIsFavorite
+        /// Changes favorite state of pharmacy or creates a local pharmacy
+        case setIsFavorite(_ newState: Bool)
         /// Handles navigation
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         /// Internal actions
         case response(Response)
         /// delegate actions
@@ -151,9 +133,9 @@ struct PharmacyDetailDomain: ReducerProtocol {
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
     @Dependency(\.feedbackReceiver) var feedbackReceiver
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some ReducerProtocolOf<Self> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -162,28 +144,31 @@ struct PharmacyDetailDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadCurrentProfile:
-            return userSession.profile()
-                .first()
-                .catchToEffect()
-                .map { result in
-                    if case let .success(profile) = result {
-                        return Action.response(.currentProfileReceived(profile))
+            return .publisher(
+                userSession.profile()
+                    .first()
+                    .catchToPublisher()
+                    .map { result in
+                        if case let .success(profile) = result {
+                            return Action.response(.currentProfileReceived(profile))
+                        }
+                        return Action.response(.currentProfileReceived(nil))
                     }
-                    return Action.response(.currentProfileReceived(nil))
-                }
-                .receive(on: schedulers.main)
-                .eraseToEffect()
-                .cancellable(id: Token.loadProfile, cancelInFlight: true)
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.currentProfileReceived(profile)):
             state.wasProfileAuthenticatedBefore = profile?.isLinkedToInsuranceId ?? false
             if state.pharmacy.hasAVSEndpoints {
                 // load certificate for avs service
-                return pharmacyRepository.loadAvsCertificates(for: state.pharmacyViewModel.id)
-                    .first()
-                    .receive(on: schedulers.main)
-                    .catchToEffect()
-                    .map { result in Action.response(.avsCertificatesReceived(result)) }
-                    .cancellable(id: Token.loadCertificates, cancelInFlight: true)
+                return .publisher(
+                    pharmacyRepository.loadAvsCertificates(for: state.pharmacyViewModel.id)
+                        .first()
+                        .receive(on: schedulers.main)
+                        .catchToPublisher()
+                        .map { result in Action.response(.avsCertificatesReceived(result)) }
+                        .eraseToAnyPublisher
+                )
             } else {
                 let provider = RedeemOptionProvider(
                     wasAuthenticatedBefore: state.wasProfileAuthenticatedBefore,
@@ -210,9 +195,6 @@ struct PharmacyDetailDomain: ReducerProtocol {
             state.shipmentService = provider.shipmentService
             state.deliveryService = provider.deliveryService
             return .none
-        case .delegate(.close):
-            // Note: closing is handled in parent reducer
-            return Self.cleanupSubDomains()
         case .openMapApp:
             guard let longitude = state.pharmacy.position?.longitude?.doubleValue,
                   let latitude = state.pharmacy.position?.latitude?.doubleValue else {
@@ -272,33 +254,47 @@ struct PharmacyDetailDomain: ReducerProtocol {
                 state.destination = state.shipmentService.destination(with: redeemState)
             }
             return .none
-        case .destination(.pharmacyRedeemViaErxTaskRepository(action: .close)),
-             .destination(.pharmacyRedeemViaAVS(action: .close)):
+        case .destination(.presented(.pharmacyRedeemViaErxTaskRepository(action: .close))),
+             .destination(.presented(.pharmacyRedeemViaAVS(action: .close))):
             state.destination = nil
-            return .concatenate(
-                Self.cleanupSubDomains(),
-                EffectTask(value: .delegate(.close))
-                    // swiftlint:disable:next todo
-                    // TODO: this is workaround to avoid `onAppear` of the the child view getting called
-                    .delay(for: .seconds(0.1), scheduler: schedulers.main)
-                    .eraseToEffect()
-            )
+            return .run { send in
+                // swiftlint:disable:next todo
+                // TODO: this is workaround to avoid `onAppear` of the the child view getting called
+                try await schedulers.main.sleep(for: 0.1)
+                await send(.delegate(.close))
+            }
         case .setNavigation(tag: .none):
             state.destination = nil
-            return .none
-        case .destination, .setNavigation:
             return .none
         case .toggleIsFavorite:
             var pharmacyViewModel = state.pharmacyViewModel
             pharmacyViewModel.pharmacyLocation.isFavorite.toggle()
-            return pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
-                .first()
-                .receive(on: schedulers.main.animation())
-                .map { _ in pharmacyViewModel }
-                .catchToEffect()
-                .map { .response(.toggleIsFavoriteReceived($0)) }
-                .cancellable(id: Token.savePharmacy, cancelInFlight: true)
-
+            return .publisher(
+                pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
+                    .first()
+                    .receive(on: schedulers.main.animation())
+                    .map { _ in pharmacyViewModel }
+                    .catchToPublisher()
+                    .map { .response(.toggleIsFavoriteReceived($0)) }
+                    .eraseToAnyPublisher
+            )
+        case let .setIsFavorite(value):
+            var pharmacyViewModel = state.pharmacyViewModel
+            guard value != pharmacyViewModel.pharmacyLocation.isFavorite else {
+                // give haptic feedback even if nothing actually changed
+                feedbackReceiver.hapticFeedbackSuccess()
+                return .none
+            }
+            pharmacyViewModel.pharmacyLocation.isFavorite = value
+            return .publisher(
+                pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
+                    .first()
+                    .receive(on: schedulers.main.animation())
+                    .map { _ in pharmacyViewModel }
+                    .catchToPublisher()
+                    .map { .response(.toggleIsFavoriteReceived($0)) }
+                    .eraseToAnyPublisher
+            )
         case let .response(.toggleIsFavoriteReceived(result)):
             switch result {
             case let .success(viewModel):
@@ -307,6 +303,10 @@ struct PharmacyDetailDomain: ReducerProtocol {
             case let .failure(error):
                 state.destination = .alert(.init(for: error))
             }
+            return .none
+        case .destination,
+             .delegate,
+             .setNavigation:
             return .none
         }
     }
@@ -396,6 +396,9 @@ extension PharmacyDetailDomain {
             shipmentService: .erxTaskRepository,
             deliveryService: .erxTaskRepository
         )
-        static let store = Store(initialState: state, reducer: PharmacyDetailDomain())
+        static let store = Store(
+            initialState: state
+        ) { PharmacyDetailDomain()
+        }
     }
 }

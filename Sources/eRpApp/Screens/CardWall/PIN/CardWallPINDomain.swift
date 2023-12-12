@@ -26,12 +26,13 @@ struct CardWallPINDomain: ReducerProtocol {
 
     struct State: Equatable {
         let isDemoModus: Bool
+        let profileId: UUID
         var pin: String = ""
         var wrongPinEntered = false
         var doneButtonPressed = false
         let pinPassRange = (6 ... 8)
         var transition: TransitionMode
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     struct Destinations: ReducerProtocol {
@@ -69,7 +70,7 @@ struct CardWallPINDomain: ReducerProtocol {
         case advance(TransitionMode)
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case delegate(Delegate)
 
@@ -86,19 +87,18 @@ struct CardWallPINDomain: ReducerProtocol {
         case fullScreenCover
     }
 
-    @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
     @Dependency(\.accessibilityAnnouncementReceiver) var receiver: AccessibilityAnnouncementReceiver
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .update(pin: pin):
@@ -111,8 +111,9 @@ struct CardWallPINDomain: ReducerProtocol {
         case let .advance(mode):
             if state.enteredPINValid {
                 state.transition = mode
-                state.destination = .login(.init(isDemoModus: state.isDemoModus,
-                                                 pin: state.pin))
+                state.destination = .login(
+                    .init(isDemoModus: state.isDemoModus, profileId: state.profileId, pin: state.pin)
+                )
                 return .none
             } else {
                 state.doneButtonPressed = true
@@ -127,22 +128,23 @@ struct CardWallPINDomain: ReducerProtocol {
         case .setNavigation(tag: .none):
             state.destination = nil
             return .none
-        case let .destination(.login(.delegate(delegateAction))):
+        case let .destination(.presented(.login(.delegate(delegateAction)))):
             switch delegateAction {
             case .close:
-                return EffectTask(value: .delegate(.close))
+                return EffectTask.send(.delegate(.close))
             case .wrongCanClose:
-                return EffectTask(value: .delegate(.wrongCanClose))
-                    // Delay for before CardWallCanView is displayed, Workaround for TCA pullback problem
-                    .delay(for: 0.01, scheduler: schedulers.main)
-                    .eraseToEffect()
+                return .run { send in
+                    // Delay for waiting the close animation Workaround for TCA pullback problem
+                    try await schedulers.main.sleep(for: 0.01)
+                    await send(.delegate(.wrongCanClose))
+                }
             case .wrongPinClose:
                 state.destination = nil
                 return .none
             case .navigateToIntro:
-                return EffectTask(value: .delegate(.navigateToIntro))
+                return EffectTask.send(.delegate(.navigateToIntro))
             }
-        case .destination(.egkAction(action: .delegate(.close))):
+        case .destination(.presented(.egkAction(action: .delegate(.close)))):
             state.destination = nil
             return .none
         case .setNavigation,
@@ -185,12 +187,14 @@ extension CardWallPINDomain.State {
 
 extension CardWallPINDomain {
     enum Dummies {
-        static let state = State(isDemoModus: false, pin: "", transition: .push)
+        static let state = State(isDemoModus: false, profileId: UUID(), pin: "", transition: .push)
 
         static let store = storeFor(state)
 
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state, reducer: CardWallPINDomain())
+            Store(initialState: state) {
+                CardWallPINDomain()
+            }
         }
     }
 }

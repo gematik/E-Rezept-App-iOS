@@ -24,26 +24,21 @@ import XCTest
 
 @MainActor
 final class ProfilesDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        ProfilesDomain.State,
-        ProfilesDomain.Action,
-        ProfilesDomain.State,
-        ProfilesDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<ProfilesDomain>
 
     func testStore(for state: ProfilesDomain.State) -> TestStore {
         TestStore(
-            initialState: state,
-            reducer: ProfilesDomain()
-        ) { dependencies in
+            initialState: state
+        ) {
+            ProfilesDomain()
+        } withDependencies: { dependencies in
             dependencies.userProfileService = mockUserProfileService
-            dependencies.schedulers = Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler())
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.router = DummyRouter()
         }
     }
 
-    let mainQueue = DispatchQueue.test
+    let testScheduler = DispatchQueue.test
 
     var mockAppSecurityManager: MockAppSecurityManager!
     var mockUserProfileService: MockUserProfileService!
@@ -55,13 +50,15 @@ final class ProfilesDomainTests: XCTestCase {
         mockUserProfileService = MockUserProfileService()
     }
 
-    func testLoadProfiles() {
+    func testLoadProfiles() async {
         let expectedProfiles = [
             Fixtures.profileA,
             Fixtures.profileB,
         ]
 
-        let profilesPublisher = CurrentValueSubject<[UserProfile], UserProfileServiceError>(expectedProfiles)
+        let profilesPublisher = Just<[UserProfile]>(expectedProfiles)
+            .setFailureType(to: UserProfileServiceError.self)
+            .eraseToAnyPublisher()
 
         mockUserProfileService.userProfilesPublisherReturnValue = profilesPublisher.eraseToAnyPublisher()
         mockUserProfileService.selectedProfileId = Just(Fixtures.profileA.id).eraseToAnyPublisher()
@@ -69,21 +66,18 @@ final class ProfilesDomainTests: XCTestCase {
         let sut = testStore(for: .init(profiles: [],
                                        selectedProfileId: nil))
 
-        sut.send(.registerListener)
+        await sut.send(.registerListener)
+        await testScheduler.advance()
 
-        mainQueue.advance()
-
-        sut.receive(.response(.loadReceived(.success(expectedProfiles)))) { state in
+        await sut.receive(.response(.loadReceived(.success(expectedProfiles)))) { state in
             state.profiles = expectedProfiles
         }
 
-        sut.receive(.response(.selectedProfileReceived(Fixtures.profileA.id))) { state in
+        await sut.receive(.response(.selectedProfileReceived(Fixtures.profileA.id))) { state in
             state.selectedProfileId = Fixtures.profileA.id
         }
 
-        mainQueue.run()
-
-        sut.send(.unregisterListener)
+        await testScheduler.run()
     }
 
     func testEditProfile() async {

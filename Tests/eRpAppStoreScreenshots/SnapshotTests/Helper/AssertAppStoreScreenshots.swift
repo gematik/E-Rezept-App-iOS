@@ -56,7 +56,7 @@ func assertAppStoreSnapshots<SnapshotContent: View>(
                     .image(
                         precision: precision,
                         perceptualPrecision: perceptualPrecision,
-                        layout: .device(config: config)
+                        layout: .device(config: config.noInsets())
                     ),
                     backgroundColor: backgroundColor
                 ) {
@@ -66,7 +66,7 @@ func assertAppStoreSnapshots<SnapshotContent: View>(
                 as: .image(
                     precision: precision,
                     perceptualPrecision: perceptualPrecision,
-                    layout: .device(config: config)
+                    layout: .device(config: config.noInsets())
                 ),
                 named: name,
                 file: file,

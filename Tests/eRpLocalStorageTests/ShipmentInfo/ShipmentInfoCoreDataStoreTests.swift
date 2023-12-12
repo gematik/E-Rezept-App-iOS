@@ -34,7 +34,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
     override func setUp() {
         super.setUp()
         userDefaults = MockUserDefaults()
-        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("database/\(UUID().uuidString)")
+        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("database/\(UUID().uuidString)/db")
     }
 
     override func tearDown() {
@@ -370,7 +370,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             }, receiveValue: { deletedShipmentInfos in
                 receivedDeleteResults.append(contentsOf: deletedShipmentInfos)
             })
-        expect(receivedDeleteResults.count).to(equal(2))
+        expect(receivedDeleteResults.count).toEventually(equal(2))
         expect(receivedDeleteResults.first) == shipmentToDelete1
         expect(receivedDeleteResults.last) == shipmentToDelete2
         expect(receivedDeleteCompletions.count).to(equal(1))
@@ -512,7 +512,7 @@ extension ShipmentInfoCoreDataStore {
                 receivedSaveResults.append(result)
             })
 
-        expect(receivedSaveResults.count).to(equal(1))
+        expect(receivedSaveResults.count).toEventually(equal(1))
         expect(receivedSaveResults.last) == shipmentInfo
         expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) == .finished

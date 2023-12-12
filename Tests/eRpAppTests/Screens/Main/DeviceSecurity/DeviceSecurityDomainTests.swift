@@ -22,14 +22,9 @@ import ComposableArchitecture
 import Nimble
 import XCTest
 
+@MainActor
 final class DeviceSecurityDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        DeviceSecurityDomain.State,
-        DeviceSecurityDomain.Action,
-        DeviceSecurityDomain.State,
-        DeviceSecurityDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<DeviceSecurityDomain>
 
     var mockDeviceSecurityManager: MockDeviceSecurityManager!
 
@@ -39,44 +34,43 @@ final class DeviceSecurityDomainTests: XCTestCase {
     }
 
     func testStore(for state: DeviceSecurityDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: DeviceSecurityDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            DeviceSecurityDomain()
+        } withDependencies: { dependencies in
             dependencies.deviceSecurityManager = mockDeviceSecurityManager
         }
     }
 
-    func testCloseDeviceSecurityPinViewWhenOkButtonTapped_HideScreenForSession() {
+    func testCloseDeviceSecurityPinViewWhenOkButtonTapped_HideScreenForSession() async {
         let store = testStore(for: .init(warningType: .devicePinMissing))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beFalse())
-        store.send(.acceptMissingPin(permanently: false))
-        store.receive(.delegate(.close))
+        await store.send(.acceptMissingPin(permanently: false))
+        await store.receive(.delegate(.close))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beTrue())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beTrue())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyReceivedInvocations)
             .to(equal([false]))
     }
 
-    func testCloseDeviceSecurityPinViewWhenOkButtonTapped_HideScreenPermanently() {
+    func testCloseDeviceSecurityPinViewWhenOkButtonTapped_HideScreenPermanently() async {
         let store = testStore(for: .init(warningType: .devicePinMissing))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beFalse())
-        store.send(.acceptMissingPin(permanently: true))
-        store.receive(.delegate(.close))
+        await store.send(.acceptMissingPin(permanently: true))
+        await store.receive(.delegate(.close))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beTrue())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beTrue())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyReceivedInvocations)
             .to(equal([true]))
     }
 
-    func testCloseDeviceSecurityRootedDeviceViewWhenOkButtonTapped_HideScreenForSession() {
+    func testCloseDeviceSecurityRootedDeviceViewWhenOkButtonTapped_HideScreenForSession() async {
         let store = testStore(for: .init(warningType: .jailbreakDetected))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreRootedDeviceWarningForSessionCalled).to(beFalse())
-        store.send(.acceptRootedDevice)
-        store.receive(.delegate(.close))
+        await store.send(.acceptRootedDevice)
+        await store.receive(.delegate(.close))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreRootedDeviceWarningForSessionCalled).to(beTrue())

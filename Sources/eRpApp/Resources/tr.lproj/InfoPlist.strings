@@ -1,4 +1,4 @@
 "CFBundleDisplayName" = "E-Rezept";
 "NFCReaderUsageDescription" = "Elektronik sağlık kartınızı kullanarak kendinizi tanımlamanıza ve doğrulamanıza olanak tanır";
-"NSCameraUsageDescription" = "E-Rezept, tarifleri 2D kod aracılığıyla okuyabilmek için kameraya ihtiyaç duyar.";
+"NSCameraUsageDescription" = "Reçeteleri çekmek veya fotoğraf çekmek için kamera gereklidir.";
 "NSFaceIDUsageDescription" = "E-Rezept, uygulamayı yetkisiz erişime karşı korumak için FaceID gerektirir.";

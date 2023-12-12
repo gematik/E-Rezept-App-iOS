@@ -38,7 +38,7 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
         self.content = content()
         self.header = header()
         self.action = action
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {

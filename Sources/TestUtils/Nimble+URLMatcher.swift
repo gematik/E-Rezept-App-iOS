@@ -23,7 +23,7 @@ import Nimble
 /// Checks a URL for a set of matching GET parameters.
 /// - Parameter parameters: Expected parameters for the match
 /// - Returns: Predicate indicating the result
-public func containsParameters(_ parameters: [String: String]) -> Predicate<URL> {
+public func containsParameters(_ parameters: [String: String]) -> Nimble.Predicate<URL> {
     Predicate { actualExpression throws -> PredicateResult in
         let msg = ExpectationMessage.expectedActualValueTo("equal <\(parameters)>")
         if let actualValue = try actualExpression.evaluate() {
@@ -50,7 +50,7 @@ public func containsParameters(_ parameters: [String: String]) -> Predicate<URL>
 }
 
 /// Helper function to assert by diffing data structures
-public func nodiff<T: Equatable>(_ expectedValue: T?) -> Predicate<T> {
+public func nodiff<T: Equatable>(_ expectedValue: T?) -> Nimble.Predicate<T> {
     nodiff(expectedValue, by: ==)
 }
 
@@ -58,7 +58,7 @@ public func nodiff<T: Equatable>(_ expectedValue: T?) -> Predicate<T> {
 public func nodiff<T>(
     _ expectedValue: T?,
     by areEquivalent: @escaping (T, T) -> Bool
-) -> Predicate<T> {
+) -> Nimble.Predicate<T> {
     Predicate.define("equal <\(stringify(expectedValue))>") { actualExpression, msg in
         let actualValue = try actualExpression.evaluate()
         switch (expectedValue, actualValue) {

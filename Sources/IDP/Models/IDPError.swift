@@ -89,11 +89,11 @@ public enum IDPError: Swift.Error {
     case notAvailableInDemoMode
 
     public struct ServerResponse: Codable, CustomStringConvertible, Equatable {
-        let error: String
-        let errorText: String
-        let timestamp: Int
-        let uuid: String
-        let code: String
+        public let error: String
+        public let errorText: String
+        public let timestamp: Int
+        public let uuid: String
+        public let code: String
 
         // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Error formatting
         public var description: String {
@@ -107,6 +107,69 @@ public enum IDPError: Swift.Error {
             case uuid = "gematik_uuid"
             case code = "gematik_code"
         }
+    }
+
+    public enum Code: String {
+        // 1xxx - General error
+        case clientIdMissing = "1002"
+        case redirectUriMissing = "1004"
+        case scopeMissing = "1005"
+        case redirectUriInvalid = "1020"
+        case scopeInvalid = "1022"
+        case fachdienstUnknown = "1030"
+        case generalError = "1500"
+        // 2xxx - Authorization-Endpoint
+        case pairingAuthorizationFailed = "2000"
+        case requestSignatureMissing = "2001"
+        case stateMissing = "2002"
+        case algorithmInvalid = "2003"
+        case responseTypeMissing = "2004"
+        case responseTypeNotSupported = "2005"
+        case stateInvalid = "2006"
+        case nonceInvalid = "2007"
+        case codeChallengeMethodInvalid = "2008"
+        case codeChallengeMissing = "2009"
+        case codeChallengeInvalid = "2010"
+        case requestParameterDuplicate = "2011"
+        case clientIdInvalid = "2012"
+        case requestSignatureInvalid = "2013"
+        case requestSignatureFromIdpMissing = "2014"
+        case signingAlgorithmInvalid = "2015"
+        case requestSignatureFromIdpInvalid = "2016"
+        case autCertificateInvalid = "2020"
+        case noResponseFromOcspOrTimeout = "2021"
+        case challengeInvalid = "2030"
+        case authorizationExpMissing = "2031"
+        case challengeExpired = "2032"
+        case ssoTokenInvalid = "2040"
+        case ssoTokenAndChallengeIncompatible = "2041"
+        case claimsOfUserConsentIsMissing = "2042"
+        case encryptionFailed = "2050"
+        case unknownError = "2100"
+        // 3xxx - Token-Endpoint
+        case codeVerifierAndCodeChallengeIncompatible = "3000"
+        case missingClaimsInAuthenticationCode = "3001"
+        case codeVerifierMissing = "3004"
+        case authorizationCodeMissing = "3005"
+        case grantTypeMissing = "3006"
+        case tokenClientIdInvalid = "3007"
+        case authorizationCodeSignatureInvalid = "3010"
+        case authorizationCodeExpired = "3011"
+        case tokenExpMissing = "3012"
+        case authorizationCodeNotReadable = "3013"
+        case grantTypeNotSupported = "3014"
+        case codeVerifierInvalid = "3016"
+        case keyVerifierMissing = "3020"
+        case keyVerifierNotReadable = "3021"
+        case tokenKeyMissing = "3022"
+        case tokenKeyNotReadable = "3023"
+        // 4xxx - Pairing-Endpoint
+        case pairingDeactivationFailed = "4000"
+        case accessDenied = "4001"
+        case deviceInvalid = "4002"
+        case keyRegistrationFailed = "4003"
+        case duplicateKeyRegistration = "4004"
+        case keyRegistrationDataNotReadable = "4005"
     }
 
     // sourcery: CodedError = "101"

@@ -39,7 +39,7 @@ struct OnboardingFeaturesView: View {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
-                    Image(decorative: Asset.Onboarding.womanWithPhone)
+                    Image(decorative: Asset.Onboarding.womanWithPhoneCircle)
                     Spacer()
                 }
                 .padding(.top, 10)

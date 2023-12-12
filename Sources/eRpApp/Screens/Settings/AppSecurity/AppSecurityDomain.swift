@@ -28,7 +28,7 @@ struct AppSecurityDomain: ReducerProtocol {
         var availableSecurityOptions: [AppSecurityOption]
         var selectedSecurityOption: AppSecurityOption?
         var errorToDisplay: AppSecurityManagerError?
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
         var isBiometricSelected: Bool {
             selectedSecurityOption == .biometryAndPassword(.touchID) || selectedSecurityOption ==
                 .biometryAndPassword(.faceID) || selectedSecurityOption == .biometry(.faceID) ||
@@ -47,12 +47,12 @@ struct AppSecurityDomain: ReducerProtocol {
         }
 
         enum Action: Equatable {
-            case appPasswordAction(CreatePasswordDomain.Action)
+            case appPassword(CreatePasswordDomain.Action)
         }
 
         var body: some ReducerProtocol<State, Action> {
             Scope(state: /State.appPassword,
-                  action: /Action.appPasswordAction) {
+                  action: /Action.appPassword) {
                 CreatePasswordDomain()
             }
         }
@@ -70,7 +70,7 @@ struct AppSecurityDomain: ReducerProtocol {
         case setNavigation(tag: Destinations.State.Tag?)
         case togglePasswordSelected
         case toggleBiometricSelected(BiometryType)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
     }
 
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
@@ -79,7 +79,7 @@ struct AppSecurityDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -91,13 +91,15 @@ struct AppSecurityDomain: ReducerProtocol {
             let availableSecurityOptions = appSecurityManager.availableSecurityOptions
             state.availableSecurityOptions = availableSecurityOptions.options
             state.errorToDisplay = availableSecurityOptions.error
-            return userDataStore.appSecurityOption
-                .first()
-                .map {
-                    Action.response(.loadSecurityOption($0))
-                }
-                .receive(on: schedulers.main)
-                .eraseToEffect()
+            return .publisher(
+                userDataStore.appSecurityOption
+                    .first()
+                    .map {
+                        Action.response(.loadSecurityOption($0))
+                    }
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.loadSecurityOption(appSecurityOption)):
             if !state.availableSecurityOptions.contains(appSecurityOption) {
                 userDataStore.set(appSecurityOption: .unsecured)
@@ -110,13 +112,13 @@ struct AppSecurityDomain: ReducerProtocol {
                 return .none
             }
             if !state.isPasswordSelected {
-                return EffectTask(value: .setNavigation(tag: .appPassword))
+                return EffectTask.send(.setNavigation(tag: .appPassword))
             } else {
                 switch state.selectedSecurityOption {
                 case .biometryAndPassword(.faceID):
-                    return EffectTask(value: .select(.biometry(.faceID)))
+                    return EffectTask.send(.select(.biometry(.faceID)))
                 case .biometryAndPassword(.touchID):
-                    return EffectTask(value: .select(.biometry(.touchID)))
+                    return EffectTask.send(.select(.biometry(.touchID)))
                 default:
                     return .none
                 }
@@ -126,13 +128,13 @@ struct AppSecurityDomain: ReducerProtocol {
                 return .none
             }
             if state.isBiometricSelected {
-                return EffectTask(value: .select(.password))
+                return EffectTask.send(.select(.password))
             } else {
                 switch state.selectedSecurityOption {
                 case .password:
-                    return EffectTask(value: .select(.biometryAndPassword(type)))
+                    return EffectTask.send(.select(.biometryAndPassword(type)))
                 default:
-                    return EffectTask(value: .select(.biometry(type)))
+                    return EffectTask.send(.select(.biometry(type)))
                 }
             }
         case let .select(option):
@@ -149,20 +151,20 @@ struct AppSecurityDomain: ReducerProtocol {
         case .setNavigation(tag: nil):
             state.destination = nil
             return .none
-        case .destination(.appPasswordAction(.delegate(.closeAfterPasswordSaved))):
+        case .destination(.presented(.appPassword(.delegate(.closeAfterPasswordSaved)))):
             state.destination = nil
             switch state.selectedSecurityOption {
             case .biometry(.faceID):
-                return EffectTask(value: .select(.biometryAndPassword(.faceID)))
+                return EffectTask.send(.select(.biometryAndPassword(.faceID)))
             case .biometry(.touchID):
-                return EffectTask(value: .select(.biometryAndPassword(.touchID)))
+                return EffectTask.send(.select(.biometryAndPassword(.touchID)))
             default:
-                return EffectTask(value: .select(.password))
+                return EffectTask.send(.select(.password))
             }
         case .dismissError:
             state.errorToDisplay = nil
             return .none
-        case .destination(.appPasswordAction),
+        case .destination,
              .setNavigation:
             return .none
         }
@@ -173,9 +175,8 @@ extension AppSecurityDomain {
     enum Dummies {
         static let state = State(availableSecurityOptions: [], selectedSecurityOption: .biometry(.faceID))
 
-        static let store = Store(
-            initialState: state,
-            reducer: AppSecurityDomain()
-        )
+        static let store = Store(initialState: state) {
+            AppSecurityDomain()
+        }
     }
 }

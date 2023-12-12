@@ -77,6 +77,18 @@ class MockErxTaskRepository: ErxTaskRepository {
         saveCommunicationsCallsCount > 0
     }
 
+    var loadRemoteLastAuditEventsPublisher: AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError>
+    var loadRemoteLastAuditEventsCallsCount = 0
+    var loadRemoteLastAuditEventsCalled: Bool {
+        loadRemoteLastAuditEventsCallsCount > 0
+    }
+
+    var loadRemoteAuditEventsPagePublisher: AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError>
+    var loadRemoteAuditEventsPageCallsCount = 0
+    var loadRemoteAuditEventsPageCalled: Bool {
+        loadRemoteAuditEventsPageCallsCount > 0
+    }
+
     var loadRemoteAndSaveChargeItemsPublisher: AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError>
     var loadRemoteAndSaveChargeItemsCallsCount = 0
     var loadRemoteAndSaveChargeItemsCalled: Bool {
@@ -117,6 +129,8 @@ class MockErxTaskRepository: ErxTaskRepository {
          listCommunications: AnyPublisher<[ErxTask.Communication], ErxRepositoryError> = failing(),
          countCommunications: AnyPublisher<Int, ErxRepositoryError> = failing(),
          saveCommunications: AnyPublisher<Bool, ErxRepositoryError> = failing(),
+         loadRemoteAuditEvents: AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> = failing(),
+         loadRemoteAuditEventsPage: AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> = failing(),
          findChargeItem: AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> = failing(),
          saveChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing(),
          deleteChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing()) {
@@ -133,6 +147,8 @@ class MockErxTaskRepository: ErxTaskRepository {
         listCommunicationsPublisher = listCommunications
         countUnreadCommunicationsPublisher = countCommunications
         saveCommunicationsPublisher = saveCommunications
+        loadRemoteLastAuditEventsPublisher = loadRemoteAuditEvents
+        loadRemoteAuditEventsPagePublisher = loadRemoteAuditEventsPage
         loadRemoteByIdPublisher = loadRemoteById
         loadLocalChargeItemsPublisher = findChargeItem
         loadLocalAllChargeItemsPublisher = Just(chargeItems)
@@ -205,6 +221,23 @@ class MockErxTaskRepository: ErxTaskRepository {
         return countUnreadCommunicationsPublisher
     }
 
+    // MARK: - AuditEvents
+
+    func loadRemoteLatestAuditEvents(for _: String?)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> {
+        loadRemoteLastAuditEventsCallsCount += 1
+        return loadRemoteLastAuditEventsPublisher
+    }
+
+    func loadRemoteAuditEventsPage(from _: URL,
+                                   locale _: String?) -> AnyPublisher<
+        PagedContent<[ErxAuditEvent]>,
+        eRpKit.ErxRepositoryError
+    > {
+        loadRemoteAuditEventsPageCallsCount += 1
+        return loadRemoteAuditEventsPagePublisher
+    }
+
     // MARK: - ChargeItem
 
     func loadRemoteChargeItems()
@@ -258,6 +291,14 @@ class MockErxTaskRepository: ErxTaskRepository {
         Deferred { () -> AnyPublisher<[ErxTask.Communication], ErxRepositoryError> in
             XCTFail("This publisher should not have run")
             return Just([]).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
+    }
+
+    static func failing() -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> {
+        Deferred { () -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> in
+            XCTFail("This publisher should not have run")
+            return Just(PagedContent(content: [], next: nil)).setFailureType(to: ErxRepositoryError.self)
+                .eraseToAnyPublisher()
         }.eraseToAnyPublisher()
     }
 

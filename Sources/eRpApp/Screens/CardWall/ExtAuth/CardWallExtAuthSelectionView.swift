@@ -26,7 +26,7 @@ struct CardWallExtAuthSelectionView: View {
 
     init(store: CardWallExtAuthSelectionDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -165,10 +165,12 @@ struct CardWallExtAuthSelectionView: View {
                     )) {
                         NavigationView {
                             IfLetStore(
-                                store.destinationsScope(
-                                    state: /(CardWallExtAuthSelectionDomain.Destinations.State.egk),
-                                    action: CardWallExtAuthSelectionDomain.Destinations.Action.egkAction(action:)
+                                store.scope(
+                                    state: \.$destination,
+                                    action: CardWallExtAuthSelectionDomain.Action.destination
                                 ),
+                                state: /CardWallExtAuthSelectionDomain.Destinations.State.egk,
+                                action: CardWallExtAuthSelectionDomain.Destinations.Action.egkAction(action:),
                                 then: OrderHealthCardListView.init(store:)
                             )
                         }.navigationViewStyle(StackNavigationViewStyle())
@@ -177,21 +179,14 @@ struct CardWallExtAuthSelectionView: View {
                     .accessibility(hidden: true)
             }
 
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /(CardWallExtAuthSelectionDomain.Destinations.State.confirmation),
-                        action: CardWallExtAuthSelectionDomain.Destinations.Action.confirmation
-                    ),
-                    then: CardWallExtAuthConfirmationView.init
-                ),
-                tag: CardWallExtAuthSelectionDomain.Destinations.State.Tag.confirmation,
-                selection: viewStore.binding(
-                    get: \.routeTag
-                ) {
-                    .setNavigation(tag: $0)
-                }
-            ) {}
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: CardWallExtAuthSelectionDomain.Action.destination),
+                state: /CardWallExtAuthSelectionDomain.Destinations.State.confirmation,
+                action: CardWallExtAuthSelectionDomain.Destinations.Action.confirmation,
+                onTap: { viewStore.send(.setNavigation(tag: .confirmation)) },
+                destination: CardWallExtAuthConfirmationView.init(store:),
+                label: {}
+            )
         }
         .navigationBarItems(
             trailing: NavigationBarCloseItem {
@@ -285,14 +280,17 @@ extension CardWallExtAuthSelectionView {
 struct CardWallExtAuthSelectionView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            CardWallExtAuthSelectionView(store: CardWallExtAuthSelectionDomain.Store(
-                initialState: .init(
-                    kkList: .init(apps: []),
-                    error: nil,
-                    selectedKK: .init(name: "Other KK", identifier: "def")
-                ),
-                reducer: CardWallExtAuthSelectionDomain()
-            ))
+            CardWallExtAuthSelectionView(
+                store: CardWallExtAuthSelectionDomain.Store(
+                    initialState: .init(
+                        kkList: .init(apps: [KKAppDirectory.Entry]()),
+                        error: nil,
+                        selectedKK: .init(name: "Other KK", identifier: "def")
+                    )
+                ) {
+                    CardWallExtAuthSelectionDomain()
+                }
+            )
         }
     }
 }

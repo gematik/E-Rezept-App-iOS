@@ -29,7 +29,7 @@ struct CardWallIntroductionView: View {
 
     init(store: CardWallIntroductionDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -84,23 +84,16 @@ struct CardWallIntroductionView: View {
                             .border(Colors.separator, width: 0.5, cornerRadius: 16)
                             .padding()
 
-                        NavigationLink(
-                            destination: IfLetStore(
-                                store.destinationsScope(
-                                    state: /CardWallIntroductionDomain.Destinations.State.can,
-                                    action: CardWallIntroductionDomain.Destinations.Action.canAction(action:)
-                                ),
-                                then: CardWallCANView.init(store:)
-                            ),
-                            tag: CardWallIntroductionDomain.Destinations.State.Tag.can,
-                            selection: viewStore.binding(
-                                get: \.routeTag
-                            ) {
-                                .setNavigation(tag: $0)
-                            }
-                        ) {}
-                            .hidden()
-                            .accessibility(hidden: true)
+                        NavigationLinkStore(
+                            store.scope(state: \.$destination, action: CardWallIntroductionDomain.Action.destination),
+                            state: /CardWallIntroductionDomain.Destinations.State.can,
+                            action: CardWallIntroductionDomain.Destinations.Action.canAction(action:),
+                            onTap: { viewStore.send(.setNavigation(tag: .can)) },
+                            destination: CardWallCANView.init(store:),
+                            label: {}
+                        )
+                        .hidden()
+                        .accessibility(hidden: true)
 
                         Button(action: {
                             viewStore.send(.advance)
@@ -131,23 +124,16 @@ struct CardWallIntroductionView: View {
                             .padding([.trailing, .leading, .bottom])
                             .disabled(!viewStore.isNFCReady)
 
-                        NavigationLink(
-                            destination: IfLetStore(
-                                store.destinationsScope(
-                                    state: /CardWallIntroductionDomain.Destinations.State.fasttrack,
-                                    action: CardWallIntroductionDomain.Destinations.Action.fasttrack(action:)
-                                ),
-                                then: CardWallExtAuthSelectionView.init(store:)
-                            ),
-                            tag: CardWallIntroductionDomain.Destinations.State.Tag.fasttrack,
-                            selection: viewStore.binding(
-                                get: \.routeTag
-                            ) {
-                                .setNavigation(tag: $0)
-                            }
-                        ) {}
-                            .hidden()
-                            .accessibility(hidden: true)
+                        NavigationLinkStore(
+                            store.scope(state: \.$destination, action: CardWallIntroductionDomain.Action.destination),
+                            state: /CardWallIntroductionDomain.Destinations.State.fasttrack,
+                            action: CardWallIntroductionDomain.Destinations.Action.fasttrack(action:),
+                            onTap: { viewStore.send(.setNavigation(tag: .fasttrack)) },
+                            destination: CardWallExtAuthSelectionView.init(store:),
+                            label: {}
+                        )
+                        .hidden()
+                        .accessibility(hidden: true)
                     }
                 }
                 VStack(alignment: .leading) {
@@ -178,11 +164,12 @@ struct CardWallIntroductionView: View {
                         content: {
                             NavigationView {
                                 IfLetStore(
-                                    store.destinationsScope(
-                                        state: /(CardWallIntroductionDomain.Destinations.State.egk),
-                                        action: CardWallIntroductionDomain.Destinations.Action
-                                            .egkAction(action:)
+                                    store.scope(
+                                        state: \.$destination,
+                                        action: CardWallIntroductionDomain.Action.destination
                                     ),
+                                    state: /CardWallIntroductionDomain.Destinations.State.egk,
+                                    action: CardWallIntroductionDomain.Destinations.Action.egkAction(action:),
                                     then: OrderHealthCardListView.init(store:)
                                 )
                             }
@@ -198,8 +185,9 @@ struct CardWallIntroductionView: View {
                 .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
                 .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
             )
-        }.accentColor(Colors.primary700)
-            .navigationViewStyle(StackNavigationViewStyle())
+        }
+        .accentColor(Colors.primary700)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

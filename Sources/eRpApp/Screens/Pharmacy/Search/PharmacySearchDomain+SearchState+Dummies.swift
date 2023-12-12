@@ -24,23 +24,6 @@ import Pharmacy
 import SwiftUI
 
 extension PharmacySearchDomain {
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            PharmacyDetailDomain.cleanup(),
-            EffectTask<T>.cancel(ids: Token.allCases)
-        )
-    }
-
-    /// Tokens for Cancellables
-    enum Token: CaseIterable, Hashable {
-        case search
-        case loadLocalPharmacies
-        case updateLocalPharmacy
-        case deleteAndLoad
-        case delete
-    }
-
     /// Same screen shows different UI elements based on the current state of the search
     enum SearchState: Equatable {
         case startView(loading: Bool)
@@ -132,9 +115,15 @@ extension PharmacySearchDomain {
         )
 
         static func storeOf(_ state: State) -> Store {
-            Store(initialState: state, reducer: reducer)
+            Store(
+                initialState: state
+            ) {
+                reducer
+            }
         }
 
-        static let store = Store(initialState: stateStartView, reducer: reducer)
+        static let store = Store(initialState: stateStartView) {
+            reducer
+        }
     }
 }

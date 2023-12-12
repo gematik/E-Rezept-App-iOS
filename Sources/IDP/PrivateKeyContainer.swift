@@ -135,6 +135,7 @@ public struct PrivateKeyContainer {
         guard let access =
             SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                             // [REQ:gemSpec_IDP_Frontend:A_21586] prevents migration to other devices
+                                            // [REQ:BSI-eRp-ePA:O.Data_15#2] prevents migration to other devices
                                             kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
                                             // [REQ:gemSpec_IDP_Frontend:A_21582] method selection
                                             // [REQ:gemSpec_IDP_Frontend:A_21587] via `.privateKeyUsage`

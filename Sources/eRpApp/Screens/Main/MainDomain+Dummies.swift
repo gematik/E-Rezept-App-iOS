@@ -22,9 +22,11 @@ import eRpKit
 extension MainDomain {
     enum Dummies {
         static let store = Store(
-            initialState: Dummies.state,
-            reducer: MainDomain()
-        )
+            initialState: Dummies.state
+        ) {
+            MainDomain()
+        }
+
         static let state = State(
             prescriptionListState: PrescriptionListDomain.Dummies.state,
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state

@@ -26,7 +26,7 @@ struct ProfileSelectionView: View {
 
     init(store: ProfileSelectionDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
@@ -81,8 +81,8 @@ struct ProfileSelectionView: View {
                 navigationBar.standardAppearance = navigationBarAppearance
             }
         }
-        .onAppear {
-            viewStore.send(.registerListener)
+        .task {
+            await viewStore.send(.registerListener).finish()
         }
     }
 }

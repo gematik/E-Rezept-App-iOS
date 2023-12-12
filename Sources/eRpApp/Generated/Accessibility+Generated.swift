@@ -160,6 +160,13 @@ internal enum A11y {
       static let erxTxtTooltipsProfileRename = "erx_txt_tooltips_profile_rename"
       static let erxTxtTooltipsScan = "erx_txt_tooltips_scan"
   }
+    internal enum matrixCode {
+      static let dmcTxtTitle = "dmc_txt_title"
+      static let dmcTxtSubtitle = "dmc_txt_subtitle"
+      static let dmcImgLoadingIndicator = "dmc_img_loading_indicator"
+      static let dmcImgMatrixcode = "dmc_img_matrixcode"
+      static let dmcBtnClose = "dmc_btn_close"
+  }
     internal enum migration {
       static let amgTxtAndSpinner = "amg_txt_and_spinner"
   }
@@ -258,6 +265,12 @@ internal enum A11y {
       static let phaDetailBtnOrganization = "pha_detail_btn_organization"
       static let phaDetailBtnHealthcareService = "pha_detail_btn_healthcare_service"
       static let phaDetailBtnLocation = "pha_detail_btn_location"
+      static let phaDetailBtnPickup = "pha_detail_btn_pickup"
+      static let phaDetailBtnDelivery = "pha_detail_btn_delivery"
+      static let phaDetailBtnShipment = "pha_detail_btn_shipment"
+      static let phaDetailBtnPickupViaLogin = "pha_detail_btn_pickup_via_login"
+      static let phaDetailBtnDeliveryViaLogin = "pha_detail_btn_delivery_via_login"
+      static let phaDetailBtnShipmentViaLogin = "pha_detail_btn_shipment_via_login"
       static let phaDetailHint = "pha_detail_hint"
       static let phaDetailHintNotErxReady = "pha_detail_hint_not_erx_ready"
       static let phaDetailContact = "pha_detail_contact"
@@ -310,6 +323,8 @@ internal enum A11y {
   }
     internal enum prescriptionDetails {
       static let prscDtlTxtTitle = "prsc_dtl_txt_title"
+      static let prscDtlTxtTitleInput = "prsc_dtl_txt_title_input"
+      static let prscDtlBtnEditTitle = "prsc_dtl_btn_edit_title"
       static let prscDtlBtnToggleRedeem = "prsc_dtl_btn_toggle_redeem"
       static let prscDtlBtnToolbarItem = "prsc_dtl_btn_toolbar_item"
       static let prscDtlToolbarMenu = "prsc_dtl_toolbar_menu"
@@ -397,13 +412,6 @@ internal enum A11y {
       static let proBtnSelectionAddProfile = "pro_btn_selection_add_profile"
   }
     internal enum redeem { 
-    internal enum matrixCode {
-      static let rphTxtTitle = "rph_txt_title"
-      static let rphTxtSubtitle = "rph_txt_subtitle"
-      static let rphImgMatrixcodeLoadingIndicator = "rph_img_matrixcode_loading_indicator"
-      static let rphImgMatrixcode = "rph_img_matrixcode"
-      static let rphBtnCloseButton = "rph_btn_close_button"
-  }
     internal enum overview {
       static let rdmTxtPharmacyTitle = "rdm_txt_pharmacy_title"
       static let rdmTxtPharmacySubtitle = "rdm_txt_pharmacy_subtitle"
@@ -439,13 +447,11 @@ internal enum A11y {
       static let stgCtnAuditEventsEventDescription = "stg_ctn_audit_events_event_description"
       static let stgCtnAuditEventsEventDate = "stg_ctn_audit_events_event_date"
       static let stgTxtAuditEventsLastUpdated = "stg_txt_audit_events_last_updated"
-      static let stgCtnAuditEventsNavigationContainer = "stg_ctn_audit_events_navigation_container"
-      static let stgCtnAuditEventsNavigationNext = "stg_ctn_audit_events_navigation_next"
-      static let stgCtnAuditEventsNavigationPageIndicator = "stg_ctn_audit_events_navigation_page_indicator"
-      static let stgCtnAuditEventsNavigationPrevious = "stg_ctn_audit_events_navigation_previous"
       static let stgTxtAuditEventsActivityIndicator = "stg_txt_audit_events_activity_indicator"
       static let stgTxtAuditEventsNoProtocolTitle = "stg_txt_audit_events_no_protocol_title"
       static let stgTxtAuditEventsNoProtocolDescription = "stg_txt_audit_events_no_protocol_description"
+      static let stgTxtAuditEventsBottomBannerMessage = "stg_txt_audit_events_bottom_banner_message"
+      static let stgBtnAuditEventsBottomBanner = "stg_btn_audit_events_bottom_banner"
   }
     internal enum card {
       static let stgTxtCardForgotPin = "stg_txt_card_forgot_pin"

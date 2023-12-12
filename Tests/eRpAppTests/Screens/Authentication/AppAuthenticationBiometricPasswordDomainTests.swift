@@ -23,16 +23,11 @@ import eRpKit
 import Nimble
 import XCTest
 
+@MainActor
 final class AppAuthenticationBiometricPasswordDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        AppAuthenticationBiometricPasswordDomain.State,
-        AppAuthenticationBiometricPasswordDomain.Action,
-        AppAuthenticationBiometricPasswordDomain.State,
-        AppAuthenticationBiometricPasswordDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<AppAuthenticationBiometricPasswordDomain>
 
     var mockAppSecurityPasswordManager: MockAppSecurityManager!
 
@@ -49,9 +44,10 @@ final class AppAuthenticationBiometricPasswordDomainTests: XCTestCase {
             initialState: AppAuthenticationBiometricPasswordDomain.State(
                 biometryType: .faceID,
                 startImmediateAuthenticationChallenge: false
-            ),
-            reducer: AppAuthenticationBiometricPasswordDomain()
-        ) { dependencies in
+            )
+        ) {
+            AppAuthenticationBiometricPasswordDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(
                 uiScheduler: testScheduler.eraseToAnyScheduler()
             )
@@ -60,60 +56,60 @@ final class AppAuthenticationBiometricPasswordDomainTests: XCTestCase {
         }
     }
 
-    func testPerformAuthenticationChallenge_FaceID_Success() {
+    func testPerformAuthenticationChallenge_FaceID_Success() async {
         let store = testStore(
             for: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false),
             withResult: .success(true)
         )
 
-        store.send(.startAuthenticationChallenge)
+        await store.send(.startAuthenticationChallenge)
 
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.success(true))) {
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.success(true))) {
             $0.authenticationResult = .success(true)
         }
     }
 
-    func testPerformAuthenticationChallenge_FaceID_Failure_Cannot_Evaluate_Policy() {
+    func testPerformAuthenticationChallenge_FaceID_Failure_Cannot_Evaluate_Policy() async {
         let store = testStore(
             for: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false),
             withResult: .failure(.cannotEvaluatePolicy(nil))
         )
 
-        store.send(.startAuthenticationChallenge)
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.failure(.cannotEvaluatePolicy(nil)))) {
+        await store.send(.startAuthenticationChallenge)
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.failure(.cannotEvaluatePolicy(nil)))) {
             $0.authenticationResult = .failure(.cannotEvaluatePolicy(nil))
             $0.errorToDisplay = .cannotEvaluatePolicy(nil)
         }
     }
 
-    func testPerformAuthenticationChallenge_FaceID_Failure_Failed_Evaluating_Policy() {
+    func testPerformAuthenticationChallenge_FaceID_Failure_Failed_Evaluating_Policy() async {
         let store = testStore(
             for: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false),
             withResult: .failure(.failedEvaluatingPolicy(nil))
         )
 
-        store.send(.startAuthenticationChallenge)
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.failure(.failedEvaluatingPolicy(nil)))) {
+        await store.send(.startAuthenticationChallenge)
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.failure(.failedEvaluatingPolicy(nil)))) {
             $0.authenticationResult = .failure(.failedEvaluatingPolicy(nil))
             $0.errorToDisplay = .failedEvaluatingPolicy(nil)
         }
     }
 
-    func testSetPassword() {
+    func testSetPassword() async {
         let store = testStore(
             for: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false, password: " "),
             withResult: .failure(.cannotEvaluatePolicy(nil))
         )
 
-        store.send(.setPassword("MyPassword")) { state in
+        await store.send(.setPassword("MyPassword")) { state in
             state.password = "MyPassword"
         }
     }
 
-    func testPasswordIsCheckedWhenContinueButtonWasTapped() {
+    func testPasswordIsCheckedWhenContinueButtonWasTapped() async {
         let store = testStore(
             for: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false, password: "abc"),
             withResult: .failure(.cannotEvaluatePolicy(nil))
@@ -121,14 +117,14 @@ final class AppAuthenticationBiometricPasswordDomainTests: XCTestCase {
         mockAppSecurityPasswordManager.matchesPasswordReturnValue = true
 
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beFalse())
-        store.send(.loginButtonTapped)
-        store.receive(.passwordVerificationReceived(true)) { state in
+        await store.send(.loginButtonTapped)
+        await store.receive(.passwordVerificationReceived(true)) { state in
             state.lastMatchResultSuccessful = true
         }
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beTrue())
     }
 
-    func testPasswordDoesNotMatch() {
+    func testPasswordDoesNotMatch() async {
         let store = testStore(
             for: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false, password: "abc"),
             withResult: .failure(.cannotEvaluatePolicy(nil))
@@ -136,8 +132,8 @@ final class AppAuthenticationBiometricPasswordDomainTests: XCTestCase {
         mockAppSecurityPasswordManager.matchesPasswordReturnValue = false
 
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beFalse())
-        store.send(.loginButtonTapped)
-        store.receive(.passwordVerificationReceived(false)) { state in
+        await store.send(.loginButtonTapped)
+        await store.receive(.passwordVerificationReceived(false)) { state in
             state.lastMatchResultSuccessful = false
         }
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beTrue())

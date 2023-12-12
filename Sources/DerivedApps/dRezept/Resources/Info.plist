@@ -51,7 +51,7 @@
 	<string>E-Rezept needs access to your camera so that it can read your prescritions</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>E-Rezept uses FaceID to protect access to your app.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location is only required if you want to find pharmacies around you</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location is only required if you want to find pharmacies around you</string>

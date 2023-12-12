@@ -32,7 +32,7 @@ struct CardWallCANDomain: ReducerProtocol {
         var wrongCANEntered = false
         var scannedCAN: String?
         var isFlashOn = false
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     struct Destinations: ReducerProtocol {
@@ -75,7 +75,7 @@ struct CardWallCANDomain: ReducerProtocol {
         case flashLightOff
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case delegate(Delegate)
 
@@ -90,7 +90,7 @@ struct CardWallCANDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -106,7 +106,9 @@ struct CardWallCANDomain: ReducerProtocol {
                 return .none
             }
             sessionProvider.userDataStore(for: state.profileId).set(can: state.can)
-            state.destination = .pin(CardWallPINDomain.State(isDemoModus: state.isDemoModus, transition: .push))
+            state
+                .destination = .pin(CardWallPINDomain
+                    .State(isDemoModus: state.isDemoModus, profileId: state.profileId, transition: .push))
             return .none
         case .setNavigation(tag: .egk):
             state.destination = .egk(.init())
@@ -118,22 +120,23 @@ struct CardWallCANDomain: ReducerProtocol {
             state.destination = .scanner
             return .none
         case .setNavigation(tag: .none),
-             .destination(.egkAction(action: .delegate(.close))):
+             .destination(.presented(.egkAction(action: .delegate(.close)))):
             state.destination = nil
             return .none
-        case let .destination(.pinAction(.delegate(delegateAction))):
+        case let .destination(.presented(.pinAction(.delegate(delegateAction)))):
             switch delegateAction {
             case .close:
-                return EffectTask(value: .delegate(.close))
+                return EffectTask.send(.delegate(.close))
             case .wrongCanClose:
                 state.destination = nil
                 return .none
             case .navigateToIntro:
                 state.destination = nil
-                return EffectTask(value: .delegate(.navigateToIntro))
+                return .run { send in
                     // Delay for the switch to CardWallExthView, Workaround for TCA pullback problem
-                    .delay(for: 0.05, scheduler: schedulers.main)
-                    .eraseToEffect()
+                    try await schedulers.main.sleep(for: 0.05)
+                    await send(.delegate(.navigateToIntro))
+                }
             }
         case .setNavigation,
              .delegate,
@@ -153,7 +156,9 @@ extension CardWallCANDomain {
         static let store = storeFor(state)
 
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state, reducer: CardWallCANDomain())
+            Store(initialState: state) {
+                CardWallCANDomain()
+            }
         }
     }
 }

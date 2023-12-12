@@ -27,7 +27,7 @@ struct MedicationView: View {
 
     init(store: StoreOf<MedicationDomain>) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
@@ -42,19 +42,14 @@ struct MedicationView: View {
             }
 
             // IngredientView
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(state: /MedicationDomain.Destinations.State.ingredient),
-                    then: IngredientView.init(store:)
-                ),
-                tag: MedicationDomain.Destinations.State.Tag.ingredient,
-                selection: viewStore.binding(
-                    get: \.destination?.tag,
-                    send: MedicationDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: MedicationDomain.Action.destination),
+                state: /MedicationDomain.Destinations.State.ingredient,
+                action: MedicationDomain.Destinations.Action.ingredient,
+                onTap: { viewStore.send(.setNavigation(tag: .ingredient)) },
+                destination: IngredientView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
         }
         .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
     }
@@ -162,7 +157,7 @@ struct MedicationView: View {
         @ObservedObject var viewStore: ViewStore<MedicationDomain.State, MedicationDomain.Action>
 
         init(store: Store<MedicationDomain.State, MedicationDomain.Action>) {
-            viewStore = ViewStore(store)
+            viewStore = ViewStore(store) { $0 }
         }
 
         var body: some View {
@@ -280,45 +275,6 @@ struct MedicationView: View {
     }
 }
 
-extension MedicationView {
-    struct IngredientView: View {
-        let store: Store<MedicationDomain.Destinations.IngredientState, MedicationDomain.Action>
-
-        var body: some View {
-            WithViewStore(store) { viewStore in
-                ScrollView(.vertical) {
-                    SectionContainer {
-                        SubTitle(
-                            title: viewStore.text ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscDtlMedIngredientName
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientName)
-
-                        SubTitle(
-                            title: viewStore.strength ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscDtlMedTxtAmount
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientStrength)
-
-                        SubTitle(
-                            title: viewStore.form ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtDetailsDosageForm
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientForm)
-
-                        SubTitle(
-                            title: viewStore.number ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscDtlMedTxtIngredinetNumber
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientNumber)
-                    }.sectionContainerStyle(.inline)
-                }
-                .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
-            }
-        }
-    }
-}
-
 extension ErxMedication {
     var displayName: String {
         if let name = name {
@@ -355,18 +311,20 @@ struct MedicationView_Previews: PreviewProvider {
             NavigationView {
                 MedicationView(
                     store: .init(
-                        initialState: .init(subscribed: ErxTask.Demo.pznMedication),
-                        reducer: MedicationDomain()
-                    )
+                        initialState: .init(subscribed: ErxTask.Demo.pznMedication)
+                    ) {
+                        MedicationDomain()
+                    }
                 )
             }
             // Freetext
             NavigationView {
                 MedicationView(
                     store: .init(
-                        initialState: .init(subscribed: ErxTask.Demo.freeTextMedication),
-                        reducer: MedicationDomain()
-                    )
+                        initialState: .init(subscribed: ErxTask.Demo.freeTextMedication)
+                    ) {
+                        MedicationDomain()
+                    }
                 )
             }.preferredColorScheme(.dark)
 
@@ -374,9 +332,10 @@ struct MedicationView_Previews: PreviewProvider {
             NavigationView {
                 MedicationView(
                     store: .init(
-                        initialState: .init(subscribed: ErxTask.Demo.compoundingMedication),
-                        reducer: MedicationDomain()
-                    )
+                        initialState: .init(subscribed: ErxTask.Demo.compoundingMedication)
+                    ) {
+                        MedicationDomain()
+                    }
                 )
             }.preferredColorScheme(.dark)
 
@@ -387,9 +346,10 @@ struct MedicationView_Previews: PreviewProvider {
                         initialState: .init(
                             dispensed: ErxMedicationDispense.Demo.demoMedicationDispense,
                             dateFormatter: UIDateFormatter.previewValue
-                        ),
-                        reducer: MedicationDomain()
-                    )
+                        )
+                    ) {
+                        MedicationDomain()
+                    }
                 )
             }
         }

@@ -110,9 +110,10 @@ extension DebugLogDomain {
     enum Dummies {
         static let state = State(logs: multiple)
         static let store = Store(
-            initialState: state,
-            reducer: DebugLogDomain(loggingStore: DebugLiveLogger.shared)
-        )
+            initialState: state
+        ) {
+            DebugLogDomain(loggingStore: DebugLiveLogger.shared)
+        }
 
         static var multiple: [DebugLiveLogger.RequestLog] = [
             log1,

@@ -22,12 +22,6 @@ import ComposableArchitecture
 struct AppAuthenticationPasswordDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     struct State: Equatable {
         var password: String = ""
         var lastMatchResultSuccessful: Bool?
@@ -53,9 +47,9 @@ struct AppAuthenticationPasswordDomain: ReducerProtocol {
 
         case .loginButtonTapped:
             guard let success = try? appSecurityManager.matches(password: state.password) else {
-                return EffectTask(value: .passwordVerificationReceived(false))
+                return EffectTask.send(.passwordVerificationReceived(false))
             }
-            return EffectTask(value: .passwordVerificationReceived(success))
+            return EffectTask.send(.passwordVerificationReceived(success))
 
         case let .passwordVerificationReceived(isLoggedIn):
             state.lastMatchResultSuccessful = isLoggedIn
@@ -68,16 +62,16 @@ extension AppAuthenticationPasswordDomain {
     enum Dummies {
         static let state = State()
 
-        static let store = Store(
-            initialState: state,
-            reducer: AppAuthenticationPasswordDomain()
-        )
+        static let store = Store(initialState: state) {
+            AppAuthenticationPasswordDomain()
+        }
 
         static func storeFor(_ state: State) -> Store {
             Store(
-                initialState: state,
-                reducer: AppAuthenticationPasswordDomain()
-            )
+                initialState: state
+            ) {
+                AppAuthenticationPasswordDomain()
+            }
         }
     }
 }

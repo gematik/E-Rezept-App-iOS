@@ -16,7 +16,7 @@
 # 
 #
 
-xcversion(version: ENV["FL_XCODE_VERSION"] || "14.2")
+xcversion(version: ENV["FL_XCODE_VERSION"] || "15.0.0")
 
 fastlane_version "2.187.0"
 
@@ -28,8 +28,6 @@ def true?(obj)
   obj.to_s.downcase == "true"
 end
 
-desc "Lane that detects whether the project dependencies should be resolved with"
-desc "SPM or Carthage. When both are specified, Carthage takes precedence"
 desc "Note: This lane calls `fix_test_resources` and `fix_project_resources` (because they will be lost due to spm generate-xcodeproj)"
 desc "###Options"
 desc " * **`skip_ios`**: Whether to skip the ios build [default: false]. (`G_BUILD_IOS_SKIP`)"
@@ -40,61 +38,9 @@ desc "```\nfastlane resolve_dependencies \n```"
 desc ""
 lane :resolve_dependencies do |options|
   sh "rm -rf DerivedData/SourcePackages"
-  if File.exist? "../Cartfile.resolved"
-    carthage_resolve_dependencies options
-  elsif File.exist? "../Package.swift"
+  if File.exist? "../Package.swift"
     spm(command: "resolve")
   end
-end
-
-desc "Lane that resolves the project dependencies using Carthage."
-desc "###Options"
-desc " * **`skip_ios`**: Whether to skip the ios build [default: false]. (`G_BUILD_IOS_SKIP`)"
-desc " * **`skip_macos`**: Whether to skip the macos build [default: false]. (`G_BUILD_MAC_SKIP`)"
-desc ""
-lane :carthage_resolve_dependencies do |options|
-  if !options[:skip_ios].nil?
-    skip_ios = options[:skip_ios]
-  elsif !ENV["G_BUILD_IOS_SKIP"].nil?
-    skip_ios = true?(ENV["G_BUILD_IOS_SKIP"])
-  else
-    skip_ios = false
-  end
-
-  if !options[:skip_macos].nil?
-    skip_macos = options[:skip_macos]
-  elsif !ENV["G_BUILD_MAC_SKIP"].nil?
-    skip_macos = true?(ENV["G_BUILD_MAC_SKIP"])
-  else
-    skip_macos = false
-  end
-
-  if options[:configuration]
-    configuration = options[:configuration]
-  elsif ENV["G_BUILD_CONFIGURATION"]
-    configuration = ENV["G_BUILD_CONFIGURATION"]
-  else
-    configuration = "Debug"
-  end
-
-  carthage_mint="mint run carthage"
-
-  carthage(executable: carthage_mint, command: "bootstrap", no_build: true)
-  # Create Xcodeproj when necessary for Carthage dependencies
-  sh("find", "../Carthage/Checkouts/", "-type", "d", "-mindepth", "1", "-maxdepth", "1", "!", "-exec", "sh", "-c", "test -e {}/*.xcodeproj/project.pbxproj", ";", "-execdir", "sh", "-c", "cd {}; if [ -e project.yml ]; then mint run xcodegen; fi;", ";")
-  sh("find", "../Carthage/Checkouts/", "-type", "d", "-mindepth", "1", "-maxdepth", "1", "!", "-exec", "sh", "-c", "test -e {}/*.xcodeproj/project.pbxproj", ";", "-execdir", "sh", "-c", "cd {}; if [ -e Package.swift ] && [ -e Package.xcconfig ]; then swift package generate-xcodeproj --xcconfig-overrides Package.xcconfig; elif [ -e Package.swift ]; then swift package generate-xcodeproj; fi;", ";")
-  platforms = []
-  if !skip_ios
-    platforms.push("iOS")
-  end
-  if !skip_macos
-    platforms.push("Mac")
-  end
-
-  UI.message("No platforms specified. Build all platforms.") if platforms.count == 0
-  carthage(executable: carthage_mint, command: "build", use_xcframeworks: true, cache_builds: true, configuration: configuration) if platforms.count == 0
-  UI.message("Carthage build for platforms: #{platforms}") unless platforms.count == 0
-  carthage(executable: carthage_mint, command: "build", platform: platforms.join(","), use_xcframeworks: true, cache_builds: true, configuration: configuration) unless platforms.count == 0
 end
 
 desc "Generate xcodeproj with SPM or Xcodegen. Depending on what is used by the target project"
@@ -423,6 +369,21 @@ lane :build_ios do |options|
   end
 end
 
+lane :uitests_ios do |options|
+  sdk = "iphonesimulator"
+
+  reset_simulator_contents
+  scheme = "UITests_iOS"
+
+  scan(
+    scheme: scheme,
+    sdk: sdk,
+    destination: "platform=iOS Simulator,name=iPhone 14",
+    configuration: "Debug",
+    prelaunch_simulator: true
+  )
+end
+
 desc "Pre-build AllIntegrationTest scheme."
 lane :integration_tests_setup do
   puts "Build scheme for testing."
@@ -580,8 +541,8 @@ lane :static_code_analysis do |options|
   )
 end
 
-desc "Lane that sets up the SPM/Carthage dependencies and xcodeproj."
-desc "This lane calls `set_build_env`, `resolve_dependencies`, `generate_xcodeproj`"
+desc "Lane that sets up the SPM dependencies and xcodeproj."
+desc "This lane calls `resolve_dependencies`, `generate_xcodeproj`"
 desc ""
 desc "###Example:"
 desc "```\nfastlane setup xcode:/Applications/Xcode-10.app configuration:Release --env ios12_xcode10\n```"
@@ -823,6 +784,12 @@ lane :compile_foss do
     end
 
     entry[:license] = "<p>#{license}</p>"
+
+    if dependencies_yaml["purpose"]["specific"][entry[:name]]
+      entry[:purpose] = dependencies_yaml["purpose"]["specific"][entry[:name]]
+    else
+      entry[:purpose] = dependencies_yaml["purpose"]["generic"]
+    end
 
     entry 
   }

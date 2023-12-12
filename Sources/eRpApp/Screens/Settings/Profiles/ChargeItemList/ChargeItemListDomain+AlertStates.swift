@@ -21,16 +21,16 @@ import Foundation
 
 extension ChargeItemListDomain {
     enum AlertStates {
-        typealias Action = ChargeItemListDomain.Action
+        typealias Action = ChargeItemListDomain.Destinations.Action.Alert
 
         static let grantConsentRequest: ErpAlertState<Action> = {
             .init(
                 title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
                 actions: {
-                    ButtonState(action: .grantConsentAlertGrantButtonTapped) {
+                    ButtonState(action: .grantConsent) {
                         .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonActivate)
                     }
-                    ButtonState(role: .cancel, action: .grantConsentAlertDenyGrantButtonTapped) {
+                    ButtonState(role: .cancel, action: .grantConsentDeny) {
                         .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonCancel)
                     }
                 },
@@ -42,10 +42,10 @@ extension ChargeItemListDomain {
             .init(
                 title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
                 actions: {
-                    ButtonState(role: .destructive, action: .revokeConsentErrorAlertRetryButtonTapped) {
+                    ButtonState(role: .destructive, action: .revokeConsentErrorRetry) {
                         .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonDeactivate)
                     }
-                    ButtonState(role: .cancel, action: .revokeConsentErrorAlertOkayButtonTapped) {
+                    ButtonState(role: .cancel, action: .revokeConsentErrorOkay) {
                         .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonCancel)
                     }
                 },
@@ -58,10 +58,10 @@ extension ChargeItemListDomain {
                 for: error,
                 title: L10n.stgTxtChargeItemListErrorAlertFetchChargeItemListTitle
             ) {
-                ButtonState(action: .fetchChargeItemsErrorAlertRetryButtonTapped) {
+                ButtonState(action: .fetchChargeItemsErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .fetchChargeItemsErrorAlertOkayButtonTapped) {
+                ButtonState(action: .fetchChargeItemsErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -72,10 +72,10 @@ extension ChargeItemListDomain {
                 for: error,
                 title: L10n.stgTxtChargeItemListErrorAlertAuthenticateTitle
             ) {
-                ButtonState(action: .authenticateErrorAlertRetryButtonTapped) {
+                ButtonState(action: .authenticateErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .authenticateErrorAlertOkayButtonTapped) {
+                ButtonState(action: .authenticateErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -86,10 +86,10 @@ extension ChargeItemListDomain {
                 for: error,
                 title: L10n.stgTxtChargeItemListErrorAlertGrantConsentTitle
             ) {
-                ButtonState(action: .grantConsentErrorAlertRetryButtonTapped) {
+                ButtonState(action: .grantConsentErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .grantConsentErrorAlertOkayButtonTapped) {
+                ButtonState(action: .grantConsentErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -100,10 +100,10 @@ extension ChargeItemListDomain {
                 for: error,
                 title: L10n.stgTxtChargeItemListErrorAlertRevokeConsentTitle
             ) {
-                ButtonState(action: .revokeConsentErrorAlertRetryButtonTapped) {
+                ButtonState(action: .revokeConsentErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .revokeConsentErrorAlertOkayButtonTapped) {
+                ButtonState(action: .revokeConsentErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -115,10 +115,10 @@ extension ChargeItemListDomain {
                 for: error,
                 title: .init("Löschen fehlgeschlagen")
             ) {
-                ButtonState(action: .deleteChargeItemsErrorAlertRetryButtonTapped) {
+                ButtonState(action: .deleteChargeItemsErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .deleteChargeItemsErrorAlertOkayButtonTapped) {
+                ButtonState(action: .deleteChargeItemsErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }

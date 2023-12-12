@@ -22,7 +22,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class OrderHealthCardViewSnapshotTests: XCTestCase {
+final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
     override class func setUp() {
         super.setUp()
         diffTool = "open"
@@ -31,9 +31,11 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
     func testOrderHealthCardView() {
         let sut = OrderHealthCardListView(store:
             OrderHealthCardDomain.Store(
-                initialState: .init(searchText: "EmptyKK"),
-                reducer: EmptyReducer()
-            ))
+                initialState: .init(searchText: "EmptyKK")
+
+            ) {
+                EmptyReducer()
+            })
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -52,9 +54,11 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
                                             subjectCardAndPinMail: "",
                                             bodyCardAndPinMail: "",
                                             subjectPinMail: "",
-                                            bodyPinMail: "")),
-                reducer: EmptyReducer()
-            ))
+                                            bodyPinMail: ""))
+
+            ) {
+                EmptyReducer()
+            })
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -63,9 +67,11 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
     func testOrderHealthCardView_SelectedInsurance() {
         let sut = OrderHealthCardInquiryView(store:
             OrderHealthCardDomain.Store(
-                initialState: OrderHealthCardDomain.Dummies.state,
-                reducer: EmptyReducer()
-            ))
+                initialState: OrderHealthCardDomain.Dummies.state
+
+            ) {
+                EmptyReducer()
+            })
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -75,9 +81,11 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
         let sut = OrderHealthCardContactView(store:
             OrderHealthCardDomain.Store(
                 initialState: .init(insuranceCompany: .dummyHealthInsuranceCompany,
-                                    serviceInquiry: .healthCardAndPin),
-                reducer: EmptyReducer()
-            ))
+                                    serviceInquiry: .healthCardAndPin)
+
+            ) {
+                EmptyReducer()
+            })
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -95,9 +103,11 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
                                             subjectCardAndPinMail: "",
                                             bodyCardAndPinMail: "",
                                             subjectPinMail: "",
-                                            bodyPinMail: "")),
-                reducer: EmptyReducer()
-            ))
+                                            bodyPinMail: ""))
+
+            ) {
+                EmptyReducer()
+            })
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

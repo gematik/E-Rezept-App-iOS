@@ -1,4 +1,4 @@
---exclude Package.swift,.build,vendor,Carthage,DerivedData,build,**/Generated
+--exclude Package.swift,.build,vendor,DerivedData,build,**/Generated,"Sources/eRpApp/UITestScenarios/SmartMock.generated.swift"
 
 # format options
 --swiftversion 5.7

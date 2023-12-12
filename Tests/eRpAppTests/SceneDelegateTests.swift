@@ -34,7 +34,7 @@ final class SceneDelegateTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB")
+        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB_SceneDelegateTests")
     }
 
     override func tearDown() {

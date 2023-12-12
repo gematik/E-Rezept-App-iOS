@@ -26,7 +26,7 @@ struct PharmacySearchStartView: View {
 
     init(store: Store<PharmacySearchDomain.State, PharmacySearchDomain.Action>) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {

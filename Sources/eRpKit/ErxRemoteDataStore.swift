@@ -33,7 +33,12 @@ public protocol ErxRemoteDataStore {
     /// List all tasks contained in the store
     /// - Parameter referenceDate: Tasks with modification date greater or equal  `referenceDate` will be listed.
     ///                            Pass `nil` for listing all
-    func listAllTasks(after referenceDate: String?) -> AnyPublisher<[ErxTask], RemoteStoreError>
+    func listAllTasks(after referenceDate: String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>
+
+    /// List the next page of a previous received PagedContent.
+    /// - Parameter previousPage: The previous page of the content to retrieve
+    func listTasksNextPage(of previousPage: PagedContent<[ErxTask]>)
+        -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>
 
     /// Deletes a sequence of tasks from the store
     func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, RemoteStoreError>
@@ -73,10 +78,9 @@ public protocol ErxRemoteDataStore {
 
     /// List all audit events contained in the store
     /// - Parameters:
-    ///   - referenceDate: `AuditEvent`s with modification date great or equal  `referenceDate` will be listed.
-    ///                             Pass `nil` for listing all
+    ///   - url: destination of the request
     ///   - locale: Location type of the language in which the result should be returned
-    func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>, for locale: String?)
+    func listAuditEventsNextPage(from url: URL, locale: String?)
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
 
     /// List all medication dispenses for a specific `Prescription` /  `ErxTask`

@@ -24,6 +24,7 @@ import Nimble
 import Pharmacy
 import XCTest
 
+@MainActor
 class PharmacyRedeemDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
     var mockShipmentInfoDataStore: MockShipmentInfoDataStore!
@@ -32,13 +33,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
     var mockRedeemValidator: MockRedeemInputValidator!
     var mockPharmacyRepository: MockPharmacyRepository!
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        PharmacyRedeemDomain.State,
-        PharmacyRedeemDomain.Action,
-        PharmacyRedeemDomain.State,
-        PharmacyRedeemDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<PharmacyRedeemDomain>
     var store: TestStore!
 
     override func setUp() {
@@ -57,10 +52,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
     }
 
     func testStore(for state: PharmacyRedeemDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: PharmacyRedeemDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            PharmacyRedeemDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.userSession = mockUserSession
             dependencies.shipmentInfoDataStore = mockShipmentInfoDataStore
@@ -87,7 +81,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         )
     }
 
-    func testRedeemingWhenNotLoggedIn() {
+    func testRedeemingWhenNotLoggedIn() async {
         let inputTasks = ErxTask.Fixtures.erxTasks
         let sut = testStore(for: PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
@@ -110,19 +104,19 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockRedeemService.redeemReturnValue = Fail(error: RedeemServiceError.noTokenAvailable)
             .eraseToAnyPublisher()
 
-        sut.send(.registerSelectedShipmentInfoListener)
-        sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
+        await sut.send(.registerSelectedShipmentInfoListener)
+        await sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
             $0.selectedShipmentInfo = expectedShipmentInfo
         }
 
-        sut.send(.redeem)
+        await sut.send(.redeem)
 
         let expectedCardWallState = CardWallIntroductionDomain.State(
             isNFCReady: true,
             profileId: mockUserSession.profileId,
             destination: nil
         )
-        sut.receive(.setNavigation(tag: .cardWall)) {
+        await sut.receive(.setNavigation(tag: .cardWall)) {
             $0.destination = PharmacyRedeemDomain.Destinations.State.cardWall(expectedCardWallState)
         }
         expect(self.mockPharmacyRepository.saveCallsCount) == 0
@@ -140,7 +134,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         deliveryInfo: "Bitte klingeln."
     )
 
-    func testRedeemHappyPath() {
+    func testRedeemHappyPath() async {
         let inputTasks = ErxTask.Fixtures.erxTasks
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
@@ -169,13 +163,13 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
 
-        sut.send(.registerSelectedShipmentInfoListener)
-        sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
+        await sut.send(.registerSelectedShipmentInfoListener)
+        await sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
             $0.selectedShipmentInfo = expectedShipmentInfo
         }
 
-        sut.send(.redeem)
-        sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
+        await sut.send(.redeem)
+        await sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
             $0.orderResponses = expectedOrderResponses
             $0.destination = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: .onPremise))
 
@@ -200,7 +194,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         expect(self.mockPharmacyRepository.saveCallsCount) == 1
     }
 
-    func testRedeemWithPartialSuccess() {
+    func testRedeemWithPartialSuccess() async {
         // given
         let inputTasks = ErxTask.Fixtures.erxTasks
         let initialState = PharmacyRedeemDomain.State(
@@ -235,8 +229,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
         }
 
         // when redeeming
-        sut.send(.redeem)
-        sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
+        await sut.send(.redeem)
+        await sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
             $0.orderResponses = expectedOrderResponses
             $0.destination = .alert(
                 .info(PharmacyRedeemDomain.AlertStates.failingRequest(count: expectedOrderResponses.failedCount))
@@ -245,7 +239,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         expect(self.mockPharmacyRepository.saveCallsCount) == 1
     }
 
-    func testRedeemWithFailure() {
+    func testRedeemWithFailure() async {
         // given
         let inputTasks = ErxTask.Fixtures.erxTasks
         let initialState = PharmacyRedeemDomain.State(
@@ -267,14 +261,14 @@ class PharmacyRedeemDomainTests: XCTestCase {
             .eraseToAnyPublisher()
 
         // when redeeming
-        sut.send(.redeem)
-        sut.receive(.redeemReceived(.failure(expectedError))) {
+        await sut.send(.redeem)
+        await sut.receive(.redeemReceived(.failure(expectedError))) {
             $0.destination = .alert(.init(for: expectedError))
         }
         expect(self.mockPharmacyRepository.saveCallsCount) == 1
     }
 
-    func testLoadingProfile() {
+    func testLoadingProfile() async {
         let inputTasks = ErxTask.Fixtures.erxTasks
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
@@ -289,14 +283,14 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(expectedProfile).setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        sut.send(.registerSelectedProfileListener)
+        await sut.send(.registerSelectedProfileListener)
 
-        sut.receive(.selectedProfileReceived(.success(expectedProfile))) {
+        await sut.receive(.selectedProfileReceived(.success(expectedProfile))) {
             $0.profile = expectedProfile
         }
     }
 
-    func testRedeemWithInvalidInput() {
+    func testRedeemWithInvalidInput() async {
         let inputTasks = ErxTask.Fixtures.erxTasks
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
@@ -318,21 +312,21 @@ class PharmacyRedeemDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = false
 
-        sut.send(.registerSelectedShipmentInfoListener)
-        sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
+        await sut.send(.registerSelectedShipmentInfoListener)
+        await sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
             $0.selectedShipmentInfo = expectedShipmentInfo
         }
 
         mockRedeemValidator.returnValue = .invalid("Invalid Input")
 
-        sut.send(.redeem) {
+        await sut.send(.redeem) {
             $0
                 .destination =
                 .alert(.info(PharmacyRedeemDomain.AlertStates.missingContactInfo(with: "Invalid Input")))
         }
     }
 
-    func testGeneratingShipmentInfoFromErxTask() {
+    func testGeneratingShipmentInfoFromErxTask() async {
         let erxTask = ErxTask.Fixtures.erxTask1
         let identifier = UUID()
 

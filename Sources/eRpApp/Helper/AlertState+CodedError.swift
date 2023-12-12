@@ -165,14 +165,16 @@ extension View {
     /// `nil`.
     ///
     /// - Parameters:
-    ///   - store: A store that describes if the alert is shown or dismissed.
-    ///   - dismissal: An action to send when the alert is dismissed through non-user actions, such
-    ///     as when an alert is automatically dismissed by the system. Use this action to `nil` out
-    ///     the associated alert state.
-    @ViewBuilder func alert<Action>(
-        _ store: Store<ErpAlertState<Action>?, Action>,
-        dismiss: Action
+    ///   - store: A store that is focused on ``PresentationState`` and ``PresentationAction`` for an
+    ///     alert.
+    ///   - toDestinationState: A transformation to extract alert state from the presentation state.
+    ///   - fromDestinationAction: A transformation to embed alert actions into the presentation
+    ///     action.
+    @ViewBuilder func alert<State, Action, ButtonAction>(
+        _ store: Store<PresentationState<State>, PresentationAction<Action>>,
+        state toDestinationState: @escaping (State) -> ErpAlertState<ButtonAction>?,
+        action fromDestinationAction: @escaping (ButtonAction) -> Action
     ) -> some View {
-        alert(store.scope { $0?.alert }, dismiss: dismiss)
+        alert(store: store, state: { toDestinationState($0)?.alert }, action: fromDestinationAction)
     }
 }

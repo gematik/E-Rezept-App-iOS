@@ -24,15 +24,6 @@ import SwiftUI
 struct CreateProfileDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case createAndSave
-    }
-
     struct State: Equatable {
         var profileName: String = ""
 
@@ -71,9 +62,9 @@ struct CreateProfileDomain: ReducerProtocol {
 
         case let .createAndSaveProfileReceived(.success(profileId)):
             userProfileService.set(selectedProfileId: profileId)
-            return .init(value: .delegate(.close))
+            return .send(.delegate(.close))
         case let .createAndSaveProfileReceived(.failure(error)):
-            return .init(value: .delegate(.failure(error)))
+            return .send(.delegate(.failure(error)))
 
         case .delegate:
             return .none
@@ -84,33 +75,34 @@ struct CreateProfileDomain: ReducerProtocol {
 extension CreateProfileDomain {
     func createAndSaveProfile(name: String) -> EffectTask<CreateProfileDomain.Action> {
         let profile = Profile(name: name)
-        return userProfileService
-            .save(profiles: [profile])
-            .first()
-            .catchToEffect()
-            // Proceed regardless whether `Result` is .success(true) or .success(false)
-            .map { $0.map { _ in profile.id } }
-            .cancellable(id: CreateProfileDomain.Token.createAndSave)
-            .map { .createAndSaveProfileReceived($0) }
-            .receive(on: schedulers.main)
-            .eraseToEffect()
+        return .publisher(
+            userProfileService
+                .save(profiles: [profile])
+                .first()
+                .catchToPublisher()
+                // Proceed regardless whether `Result` is .success(true) or .success(false)
+                .map { $0.map { _ in profile.id } }
+                .map { .createAndSaveProfileReceived($0) }
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
     }
 }
 
 extension CreateProfileDomain {
     enum Dummies {
         static let store = Store(
-            initialState: Dummies.state,
-            reducer: CreateProfileDomain()
-        )
+            initialState: Dummies.state
+        ) {
+            CreateProfileDomain()
+        }
 
         static let state = State()
 
         static func storeFor(_ state: State) -> Store {
-            Store(
-                initialState: state,
-                reducer: CreateProfileDomain()
-            )
+            Store(initialState: state) {
+                CreateProfileDomain()
+            }
         }
     }
 }

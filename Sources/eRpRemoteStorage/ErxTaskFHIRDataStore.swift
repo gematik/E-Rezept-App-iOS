@@ -39,7 +39,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func listAllTasks(after referenceDate: String?) -> AnyPublisher<[ErxTask], RemoteStoreError> {
+    public func listAllTasks(after referenceDate: String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
         fhirClient.fetchAllTaskIDs(after: referenceDate)
             .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
@@ -47,11 +47,21 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
             .eraseToAnyPublisher()
     }
 
+    public func listTasksNextPage(of previousPage: eRpKit
+        .PagedContent<[eRpKit.ErxTask]>)
+        -> AnyPublisher<eRpKit.PagedContent<[eRpKit.ErxTask]>, eRpKit.RemoteStoreError> {
+        fhirClient.fetchTasksNextPage(of: previousPage)
+            .mapError(RemoteStoreError.fhirClientError)
+            .first()
+            .flatMap { self.collectAndCombineLatestTaskPublishers(taskIds: $0) }
+            .eraseToAnyPublisher()
+    }
+
     private func collectAndCombineLatestTaskPublishers(
-        taskIds: [String]
-    ) -> AnyPublisher<[ErxTask], RemoteStoreError> {
+        taskIds: PagedContent<[String]>
+    ) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
         let taskPublishers: [AnyPublisher<ErxTask, RemoteStoreError>] =
-            taskIds.map { taskId in
+            taskIds.content.map { taskId in
                 self.fhirClient
                     .fetchTask(by: taskId, accessCode: nil)
                     .first()
@@ -63,6 +73,9 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         return taskPublishers
             .combineLatest()
             .first()
+            .map { tasks in
+                PagedContent(content: tasks, next: taskIds.next)
+            }
             .eraseToAnyPublisher()
     }
 
@@ -129,9 +142,9 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>, for locale: String?)
+    public func listAuditEventsNextPage(from url: URL, locale: String?)
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
-        fhirClient.fetchAuditEventsNextPage(of: previousPage, for: locale)
+        fhirClient.fetchAuditEventsNextPage(from: url, locale: locale)
             .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()

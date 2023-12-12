@@ -255,13 +255,11 @@ settings:
     - stg_ctn_audit_events_event_description
     - stg_ctn_audit_events_event_date
     - stg_txt_audit_events_last_updated
-    - stg_ctn_audit_events_navigation_container
-    - stg_ctn_audit_events_navigation_next
-    - stg_ctn_audit_events_navigation_page_indicator
-    - stg_ctn_audit_events_navigation_previous
     - stg_txt_audit_events_activity_indicator
     - stg_txt_audit_events_no_protocol_title
     - stg_txt_audit_events_no_protocol_description
+    - stg_txt_audit_events_bottom_banner_message
+    - stg_btn_audit_events_bottom_banner
   legalNotice:
     - stg_lno_txt_header_legal_info
     - stg_lno_txt_legal_notice
@@ -301,12 +299,6 @@ redeem:
     - rdm_btn_pharmacy_tile
     - rdm_btn_delivery_tile
     - rdm_btn_close_button
-  matrixCode:
-    - rph_txt_title
-    - rph_txt_subtitle
-    - rph_img_matrixcode_loading_indicator
-    - rph_img_matrixcode
-    - rph_btn_close_button
 orders:
   list:
     - ord_txt_empty_list
@@ -363,6 +355,8 @@ editProfilePicture:
     - epp_btn_action_library
 prescriptionDetails:
   - prsc_dtl_txt_title
+  - prsc_dtl_txt_title_input
+  - prsc_dtl_btn_edit_title
   - prsc_dtl_btn_toggle_redeem
   - prsc_dtl_btn_toolbar_item
   - prsc_dtl_toolbar_menu
@@ -466,6 +460,12 @@ pharmacyDetail:
   - pha_detail_btn_organization
   - pha_detail_btn_healthcare_service
   - pha_detail_btn_location
+  - pha_detail_btn_pickup
+  - pha_detail_btn_delivery
+  - pha_detail_btn_shipment
+  - pha_detail_btn_pickup_via_login
+  - pha_detail_btn_delivery_via_login
+  - pha_detail_btn_shipment_via_login
   - pha_detail_hint
   - pha_detail_hint_not_erx_ready
   - pha_detail_contact
@@ -517,6 +517,12 @@ security:
   - sec_txt_system_root_detection_footnote
   - sec_btn_system_root_detection_footnote_more
   - sec_btn_system_root_detection_done
+matrixCode:
+  - dmc_txt_title
+  - dmc_txt_subtitle
+  - dmc_img_loading_indicator
+  - dmc_img_matrixcode
+  - dmc_btn_close
 
 # ./Sources/eRpApp/Components/Tiles/FootnoteView.swift:                .accessibility(identifier: text)
 # ./Sources/eRpApp/Components/Tiles/SectionView.swift:                .accessibility(identifier: text)

@@ -31,7 +31,7 @@ struct MainView: View {
 
     init(store: MainDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -105,21 +105,21 @@ struct MainView: View {
                         .tooltip(tooltip: MainViewTooltip.scan)
                 }
             }
+            .task {
+                await viewStore.send(.subscribeToDemoModeChange).finish()
+            }
             .onAppear {
-                viewStore.send(.subscribeToDemoModeChange)
-                // [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] triggger device security check
+                // [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
                 viewStore.send(.loadDeviceSecurityView)
                 // Delay sheet animation to not interfere with Onboarding navigation
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     viewStore.send(.showWelcomeDrawer)
                 }
             }
-            .onDisappear {
-                viewStore.send(.unsubscribeFromDemoModeChange)
-            }
             .alert(
-                store.destinationsScope(state: /MainDomain.Destinations.State.alert),
-                dismiss: .nothing
+                store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                state: /MainDomain.Destinations.State.alert,
+                action: MainDomain.Destinations.Action.alert
             )
         }
         .accentColor(Colors.primary600)
@@ -153,7 +153,7 @@ private extension MainView {
 
         init(store: MainDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -197,10 +197,9 @@ private extension MainView {
                 onDismiss: {},
                 content: {
                     IfLetStore(
-                        store.destinationsScope(
-                            state: /MainDomain.Destinations.State.scanner,
-                            action: MainDomain.Destinations.Action.scanner(action:)
-                        ),
+                        store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                        state: /MainDomain.Destinations.State.scanner,
+                        action: MainDomain.Destinations.Action.scanner(action:),
                         then: ErxTaskScannerView.init(store:)
                     )
                 })
@@ -223,10 +222,9 @@ private extension MainView {
                     onDismiss: {},
                     content: {
                         IfLetStore(
-                            store.destinationsScope(
-                                state: /MainDomain.Destinations.State.deviceSecurity,
-                                action: MainDomain.Destinations.Action.deviceSecurity(action:)
-                            ),
+                            store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                            state: /MainDomain.Destinations.State.deviceSecurity,
+                            action: MainDomain.Destinations.Action.deviceSecurity(action:),
                             then: DeviceSecurityView.init(store:)
                         )
                     }
@@ -235,41 +233,24 @@ private extension MainView {
                 .accessibility(hidden: true)
 
             // Navigation into details
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /MainDomain.Destinations.State.prescriptionDetail,
-                        action: MainDomain.Destinations.Action.prescriptionDetailAction(action:)
-                    )
-                ) { scopedStore in
-                    PrescriptionDetailView(store: scopedStore)
-                },
-                tag: MainDomain.Destinations.State.Tag.prescriptionDetail,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: MainDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                state: /MainDomain.Destinations.State.prescriptionDetail,
+                action: MainDomain.Destinations.Action.prescriptionDetailAction(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .prescriptionDetail)) },
+                destination: PrescriptionDetailView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
             // Navigation into archived prescriptions
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /MainDomain.Destinations.State.prescriptionArchive,
-                        action: MainDomain.Destinations.Action.prescriptionArchiveAction(action:)
-                    ),
-                    then: PrescriptionArchiveView.init(store:)
-                ),
-                tag: MainDomain.Destinations.State.Tag.prescriptionArchive,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: MainDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                state: /MainDomain.Destinations.State.prescriptionArchive,
+                action: MainDomain.Destinations.Action.prescriptionArchiveAction(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .prescriptionArchive)) },
+                destination: PrescriptionArchiveView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
             // RedeemMethodsView sheet presentation
             Rectangle()
@@ -285,10 +266,9 @@ private extension MainView {
                 onDismiss: {},
                 content: {
                     IfLetStore(
-                        store.destinationsScope(
-                            state: /MainDomain.Destinations.State.redeem,
-                            action: MainDomain.Destinations.Action.redeemMethods(action:)
-                        ),
+                        store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                        state: /MainDomain.Destinations.State.redeem,
+                        action: MainDomain.Destinations.Action.redeemMethods(action:),
                         then: RedeemMethodsView.init(store:)
                     )
                 })
@@ -309,10 +289,9 @@ private extension MainView {
                 onDismiss: {},
                 content: {
                     IfLetStore(
-                        store.destinationsScope(
-                            state: /MainDomain.Destinations.State.cardWall,
-                            action: MainDomain.Destinations.Action.cardWall(action:)
-                        ),
+                        store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                        state: /MainDomain.Destinations.State.cardWall,
+                        action: MainDomain.Destinations.Action.cardWall(action:),
                         then: CardWallIntroductionView.init(store:)
                     )
                 })
@@ -334,10 +313,9 @@ private extension MainView {
                     content: {
                         ZStack {
                             IfLetStore(
-                                store.destinationsScope(
-                                    state: /MainDomain.Destinations.State.createProfile,
-                                    action: MainDomain.Destinations.Action.createProfileAction(action:)
-                                ),
+                                store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                                state: /MainDomain.Destinations.State.createProfile,
+                                action: MainDomain.Destinations.Action.createProfileAction(action:),
                                 then: CreateProfileView.init(store:)
                             )
                         }
@@ -360,10 +338,9 @@ private extension MainView {
                     content: {
                         ZStack {
                             IfLetStore(
-                                store.destinationsScope(
-                                    state: /MainDomain.Destinations.State.editName,
-                                    action: MainDomain.Destinations.Action.editProfileNameAction(action:)
-                                ),
+                                store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                                state: /MainDomain.Destinations.State.editName,
+                                action: MainDomain.Destinations.Action.editProfileNameAction(action:),
                                 then: EditProfileNameView.init(store:)
                             )
                         }
@@ -385,10 +362,9 @@ private extension MainView {
                     onDismiss: {},
                     content: {
                         IfLetStore(
-                            store.destinationsScope(
-                                state: /MainDomain.Destinations.State.editProfilePicture,
-                                action: MainDomain.Destinations.Action.editProfilePictureAction(action:)
-                            ),
+                            store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                            state: /MainDomain.Destinations.State.editProfilePicture,
+                            action: MainDomain.Destinations.Action.editProfilePictureAction(action:),
                             then: EditProfilePictureView.init(store:)
                         )
                     }
@@ -407,9 +383,10 @@ struct MainView_Previews: PreviewProvider {
                         destination: .createProfile(CreateProfileDomain.State()),
                         prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
-                    ),
-                    reducer: MainDomain()
-                )
+                    )
+                ) {
+                    MainDomain()
+                }
             )
             .preferredColorScheme(.light)
 
@@ -420,9 +397,10 @@ struct MainView_Previews: PreviewProvider {
                             prescriptions: Prescription.Dummies.prescriptions
                         ),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
-                    ),
-                    reducer: MainDomain()
-                )
+                    )
+                ) {
+                    MainDomain()
+                }
             )
             .preferredColorScheme(.light)
 

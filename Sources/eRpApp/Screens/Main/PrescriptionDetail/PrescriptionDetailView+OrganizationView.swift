@@ -22,10 +22,13 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct OrganizationView: View {
-        let store: Store<PrescriptionDetailDomain.Destinations.OrganizationState, PrescriptionDetailDomain.Action>
+        let store: Store<
+            PrescriptionDetailDomain.Destinations.OrganizationState,
+            PrescriptionDetailDomain.Destinations.Action.None
+        >
 
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store) { $0 } content: { viewStore in
                 ScrollView(.vertical) {
                     SectionContainer {
                         SubTitle(

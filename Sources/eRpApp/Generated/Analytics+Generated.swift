@@ -123,6 +123,10 @@ typealias AnalyticsEvent = String
     struct HealthCardPassword_pin: AnalyticsScreen {
       let name = "healthCardPassword:pin"
     }
+    static let healthCardPassword_pin_alert = HealthCardPassword_pin_alert()
+    struct HealthCardPassword_pin_alert: AnalyticsScreen {
+      let name = "healthCardPassword:pinAlert"
+    }
     static let healthCardPassword_puk = HealthCardPassword_puk()
     struct HealthCardPassword_puk: AnalyticsScreen {
       let name = "healthCardPassword:puk"
@@ -398,6 +402,10 @@ typealias AnalyticsEvent = String
     static let troubleShooting_readCardHelp3 = TroubleShooting_readCardHelp3()
     struct TroubleShooting_readCardHelp3: AnalyticsScreen {
       let name = "troubleShooting:readCardHelp3"
+    }
+    static let troubleShooting_readCardHelp4 = TroubleShooting_readCardHelp4()
+    struct TroubleShooting_readCardHelp4: AnalyticsScreen {
+      let name = "troubleShooting:readCardHelp4"
     }
   }
 }

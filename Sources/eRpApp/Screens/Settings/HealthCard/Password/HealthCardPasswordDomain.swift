@@ -22,22 +22,6 @@ import ComposableArchitecture
 struct HealthCardPasswordDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            .cancel(id: HealthCardPasswordDomain.Token.self),
-            cleanupSubDomains()
-        )
-    }
-
-    private static func cleanupSubDomains<T>() -> EffectTask<T> {
-        .concatenate(
-            HealthCardPasswordReadCardDomain.cleanup()
-        )
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     enum Mode {
         case forgotPin
         case setCustomPin
@@ -46,16 +30,21 @@ struct HealthCardPasswordDomain: ReducerProtocol {
 
     struct State: Equatable {
         let mode: HealthCardPasswordDomain.Mode
+        @PresentationState var destination: Destinations.State?
+
+        init(
+            mode: HealthCardPasswordDomain.Mode,
+            destination: Destinations.State? = nil
+        ) {
+            self.mode = mode
+            self.destination = destination
+        }
 
         var can = ""
         var puk = ""
         var oldPin = ""
         var newPin1 = ""
         var newPin2 = ""
-
-        var pinAlertState: AlertState<Action>?
-
-        var destination: Destinations.State = .introduction
     }
 
     enum Action: Equatable {
@@ -65,14 +54,10 @@ struct HealthCardPasswordDomain: ReducerProtocol {
         case oldPinUpdateOldPin(String)
         case pinUpdateNewPin1(String)
         case pinUpdateNewPin2(String)
-        case pinAlertOkButtonTapped
-
         case advance
         case setNavigation(tag: Destinations.State.Tag)
-
-        case destination(action: Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case delegate(Delegate)
-        case nothing
 
         enum Delegate {
             case navigateToSettings
@@ -95,25 +80,34 @@ struct HealthCardPasswordDomain: ReducerProtocol {
             case readCard(HealthCardPasswordReadCardDomain.State)
             // sourcery: AnalyticsScreen = healthCardPassword_scanner
             case scanner
+            // sourcery: AnalyticsScreen = healthCardPassword_pin_alert
+            case pinAlert(AlertState<Action.Alert>?)
         }
 
         enum Action: Equatable {
             case readCard(action: HealthCardPasswordReadCardDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case dismiss
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
-            Scope(state: /State.readCard, action: /Action.readCard) {
+            Scope(
+                state: /State.readCard,
+                action: /Action.readCard
+            ) {
                 HealthCardPasswordReadCardDomain()
             }
         }
     }
 
     var body: some ReducerProtocol<State, Action> {
-        Scope(state: \.destination, action: /Action.destination) {
-            Destinations()
-        }
-
         Reduce(core)
+            .ifLet(\.$destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
@@ -132,21 +126,17 @@ struct HealthCardPasswordDomain: ReducerProtocol {
             return .none
         case let .pinUpdateNewPin1(newPin1):
             if newPin1.count > 8 {
-                state.pinAlertState = AlertStates.pinTooLong
+                state.destination = .pinAlert(AlertStates.pinTooLong)
             }
             state.newPin1 = newPin1
             return .none
         case let .pinUpdateNewPin2(newPin2):
             if newPin2.count > 8 {
-                state.pinAlertState = AlertStates.pinTooLong
+                state.destination = .pinAlert(AlertStates.pinTooLong)
             }
             state.newPin2 = newPin2
             return .none
-        case .pinAlertOkButtonTapped:
-            state.pinAlertState = nil
-            return .none
-
-        case let .destination(.readCard(.delegate(readCardDelegateAction))):
+        case let .destination(.presented(.readCard(.delegate(readCardDelegateAction)))):
             switch readCardDelegateAction {
             case .close:
                 switch state.mode {
@@ -157,18 +147,18 @@ struct HealthCardPasswordDomain: ReducerProtocol {
                 case .unlockCard:
                     state.destination = .puk
                 }
-                return HealthCardPasswordDomain.cleanupSubDomains()
+                return .none
             case .navigateToCanScreen:
                 state.destination = .can
-                return HealthCardPasswordDomain.cleanupSubDomains()
+                return .none
             case .navigateToOldPinScreen:
                 state.destination = .oldPin
-                return HealthCardPasswordDomain.cleanupSubDomains()
+                return .none
             case .navigateToPukScreen:
                 state.destination = .puk
-                return HealthCardPasswordDomain.cleanupSubDomains()
+                return .none
             case .navigateToSettings:
-                return .init(value: .delegate(.navigateToSettings))
+                return .send(.delegate(.navigateToSettings))
             }
 
         case .advance:
@@ -195,12 +185,10 @@ struct HealthCardPasswordDomain: ReducerProtocol {
                     break
                 case .unlockCard:
                     state.destination = .readCard(
-                        .init(
-                            mode: .healthCardResetPinCounterNoNewSecret(
-                                can: state.can,
-                                puk: state.puk
-                            )
-                        )
+                        .init(mode: .healthCardResetPinCounterNoNewSecret(
+                            can: state.can,
+                            puk: state.puk
+                        ))
                     )
                 }
                 return .none
@@ -211,23 +199,19 @@ struct HealthCardPasswordDomain: ReducerProtocol {
                 switch state.mode {
                 case .forgotPin:
                     state.destination = .readCard(
-                        .init(
-                            mode: .healthCardResetPinCounterWithNewSecret(
-                                can: state.can,
-                                puk: state.puk,
-                                newPin: state.newPin1
-                            )
-                        )
+                        .init(mode: .healthCardResetPinCounterWithNewSecret(
+                            can: state.can,
+                            puk: state.puk,
+                            newPin: state.newPin1
+                        ))
                     )
                 case .setCustomPin:
                     state.destination = .readCard(
-                        .init(
-                            mode: .healthCardSetNewPinSecret(
-                                can: state.can,
-                                oldPin: state.oldPin,
-                                newPin: state.newPin1
-                            )
-                        )
+                        .init(mode: .healthCardSetNewPinSecret(
+                            can: state.can,
+                            oldPin: state.oldPin,
+                            newPin: state.newPin1
+                        ))
                     )
                 case .unlockCard:
                     // inconsistent state
@@ -235,10 +219,11 @@ struct HealthCardPasswordDomain: ReducerProtocol {
                 }
                 return .none
             case .readCard,
-                 .scanner:
+                 .scanner,
+                 .pinAlert,
+                 .none:
                 return .none
             }
-
         case .setNavigation(tag: .introduction):
             state.destination = .introduction
             return .none
@@ -293,8 +278,7 @@ struct HealthCardPasswordDomain: ReducerProtocol {
         case .setNavigation:
             return .none
         case .destination,
-             .delegate,
-             .nothing:
+             .delegate:
             return .none
         }
     }
@@ -329,15 +313,16 @@ extension HealthCardPasswordDomain.State {
 
 extension HealthCardPasswordDomain {
     enum AlertStates {
-        typealias Action = HealthCardPasswordDomain.Action
+        typealias Action = HealthCardPasswordDomain.Destinations.Action.Alert
 
         static let pinTooLong: AlertState<Action> = .init(
-            title: .init(L10n.stgTxtCardResetPinAlertPinTooLongTitle),
-            message: .init(L10n.stgTxtCardResetPinAlertPinTooLongMessage),
-            dismissButton: .default(
-                .init(L10n.stgBtnCardResetPinAlertOk),
-                action: .send(.pinAlertOkButtonTapped)
-            )
+            title: { .init(L10n.stgTxtCardResetPinAlertPinTooLongTitle.key) },
+            actions: {
+                ButtonState(action: .dismiss) {
+                    .init(L10n.stgBtnCardResetPinAlertOk)
+                }
+            },
+            message: { .init(L10n.stgTxtCardResetPinAlertPinTooLongMessage.key) }
         )
     }
 }
@@ -347,8 +332,9 @@ extension HealthCardPasswordDomain {
         static let state = State(mode: .unlockCard)
 
         static let store = Store(
-            initialState: state,
-            reducer: HealthCardPasswordDomain()
-        )
+            initialState: state
+        ) {
+            HealthCardPasswordDomain()
+        }
     }
 }

@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class CreatePasswordViewSnapshotTests: XCTestCase {
+final class CreatePasswordViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
@@ -41,9 +41,10 @@ final class CreatePasswordViewSnapshotTests: XCTestCase {
                     passwordStrength: .strong,
                     showPasswordErrorMessage: false,
                     showOriginalPasswordWrong: false
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -61,9 +62,10 @@ final class CreatePasswordViewSnapshotTests: XCTestCase {
                     passwordStrength: .strong,
                     showPasswordErrorMessage: true,
                     showOriginalPasswordWrong: true
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -80,9 +82,10 @@ final class CreatePasswordViewSnapshotTests: XCTestCase {
                     passwordB: "newPassword",
                     showPasswordErrorMessage: true,
                     showOriginalPasswordWrong: true
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())

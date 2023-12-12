@@ -117,8 +117,9 @@ extension PharmacySearchFilterDomain {
         )
 
         static let store = Store(
-            initialState: state,
-            reducer: PharmacySearchFilterDomain()
-        )
+            initialState: state
+        ) {
+            PharmacySearchFilterDomain()
+        }
     }
 }

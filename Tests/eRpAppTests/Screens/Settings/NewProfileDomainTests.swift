@@ -22,20 +22,14 @@ import ComposableArchitecture
 import eRpKit
 import XCTest
 
+@MainActor
 final class NewProfileDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        NewProfileDomain.State,
-        NewProfileDomain.Action,
-        NewProfileDomain.State,
-        NewProfileDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<NewProfileDomain>
 
     func testStore(for state: NewProfileDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: NewProfileDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            NewProfileDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler())
             dependencies.userDataStore = MockUserDataStore()
             dependencies.profileDataStore = mockProfileDataStore
@@ -52,44 +46,35 @@ final class NewProfileDomainTests: XCTestCase {
         mockProfileDataStore = MockProfileDataStore()
     }
 
-    func testSavingAnEmptyNameDisplaysError() {
-        let sut = testStore(for: .init(name: "", acronym: "", color: .red, alertState: nil))
+    func testSavingAnEmptyNameDisplaysError() async {
+        let sut = testStore(for: .init(name: "", color: .red))
 
-        sut.send(.save) { state in
-            state.alertState = NewProfileDomain.AlertStates.emptyName
+        await sut.send(.save) { state in
+            state.destination = .alert(NewProfileDomain.AlertStates.emptyName)
         }
     }
 
-    func testSavingSucceeds() {
-        let sut = testStore(for: .init(name: "Bob", acronym: "B", color: .red, alertState: nil))
+    func testSavingSucceeds() async {
+        let sut = testStore(for: .init(name: "Bob", color: .red))
 
         mockProfileDataStore.saveProfilesReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        sut.send(.save)
+        await sut.send(.save)
 
-        mainQueue.run()
+        await mainQueue.run()
         let newProfile = mockProfileDataStore.saveProfilesReceivedProfiles!.first!
-        sut.receive(.response(.saveReceived(.success(newProfile.id))))
+        await sut.receive(.response(.saveReceived(.success(newProfile.id))))
 
-        sut.receive(.delegate(.close))
+        await sut.receive(.delegate(.close))
     }
 
-    func testSetName() {
-        let sut = testStore(for: .init(name: "", acronym: "", color: .red, alertState: nil))
+    func testSetName() async {
+        let sut = testStore(for: .init(name: "", color: .red))
 
-        sut.send(.setName("Test")) { state in
+        await sut.send(.setName("Test")) { state in
             state.name = "Test"
-            state.acronym = "T"
-        }
-    }
-
-    func testSetColor() {
-        let sut = testStore(for: .init(name: "", acronym: "", color: .red, alertState: nil))
-
-        sut.send(.setColor(.green)) { state in
-            state.color = .green
         }
     }
 }

@@ -28,7 +28,7 @@ struct PrescriptionDetailView: View {
 
     init(store: PrescriptionDetailDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     var body: some View {
@@ -150,8 +150,9 @@ struct PrescriptionDetailView: View {
             viewStore.send(.startHandoffActivity)
         }
         .alert(
-            store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.alert),
-            dismiss: .setNavigation(tag: .none)
+            store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+            state: /PrescriptionDetailDomain.Destinations.State.alert,
+            action: PrescriptionDetailDomain.Destinations.Action.alert
         )
         .navigationBarTitle(Text(L10n.prscFdTxtNavigationTitle), displayMode: .inline)
     }
@@ -179,7 +180,7 @@ extension PrescriptionDetailView {
 
         init(store: PrescriptionDetailDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -198,7 +199,9 @@ extension PrescriptionDetailView {
                     set: { if !$0 { viewStore.send(.setNavigation(tag: nil), animation: .easeInOut) } }
                 )) {
                     IfLetStore(
-                        store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.coPaymentInfo),
+                        store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                        state: /PrescriptionDetailDomain.Destinations.State.coPaymentInfo,
+                        action: PrescriptionDetailDomain.Destinations.Action.coPaymentInfo,
                         then: CoPaymentDrawerView.init(store:)
                     )
                 }
@@ -212,124 +215,86 @@ extension PrescriptionDetailView {
                 ), content: EmergencyServiceFeeDrawerView.init)
                 .accessibility(hidden: true)
 
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.technicalInformations),
-                    then: PrescriptionDetailView.TechnicalInformationsView.init(store:)
-                ),
-                tag: PrescriptionDetailDomain.Destinations.State.Tag.technicalInformations,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: PrescriptionDetailDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.technicalInformations,
+                action: PrescriptionDetailDomain.Destinations.Action.technicalInformations,
+                onTap: { viewStore.send(.setNavigation(tag: .technicalInformations)) },
+                destination: TechnicalInformationsView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.patient),
-                    then: PrescriptionDetailView.PatientView.init(store:)
-                ),
-                tag: PrescriptionDetailDomain.Destinations.State.Tag.patient,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: PrescriptionDetailDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.patient,
+                action: PrescriptionDetailDomain.Destinations.Action.patient,
+                onTap: { viewStore.send(.setNavigation(tag: .patient)) },
+                destination: PrescriptionDetailView.PatientView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
             // PractitionerView
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.practitioner),
-                    then: PrescriptionDetailView.PractitionerView.init(store:)
-                ),
-                tag: PrescriptionDetailDomain.Destinations.State.Tag.practitioner,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: PrescriptionDetailDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.practitioner,
+                action: PrescriptionDetailDomain.Destinations.Action.practitioner,
+                onTap: { viewStore.send(.setNavigation(tag: .practitioner)) },
+                destination: PrescriptionDetailView.PractitionerView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
             // OrganisationView
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.organization),
-                    then: PrescriptionDetailView.OrganizationView.init(store:)
-                ),
-                tag: PrescriptionDetailDomain.Destinations.State.Tag.organization,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: PrescriptionDetailDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.organization,
+                action: PrescriptionDetailDomain.Destinations.Action.organization,
+                onTap: { viewStore.send(.setNavigation(tag: .organization)) },
+                destination: PrescriptionDetailView.OrganizationView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
             // AccidentInfoView
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.accidentInfo),
-                    then: PrescriptionDetailView.AccidentInfoView.init(store:)
-                ),
-                tag: PrescriptionDetailDomain.Destinations.State.Tag.accidentInfo,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: PrescriptionDetailDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.accidentInfo,
+                action: PrescriptionDetailDomain.Destinations.Action.accidentInfo,
+                onTap: { viewStore.send(.setNavigation(tag: .accidentInfo)) },
+                destination: PrescriptionDetailView.AccidentInfoView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
             // MedicationView
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /PrescriptionDetailDomain.Destinations.State.medication,
-                        action: PrescriptionDetailDomain.Destinations.Action.medication(action:)
-                    ),
-                    then: MedicationView.init(store:)
-                ),
-                tag: PrescriptionDetailDomain.Destinations.State.Tag.medication,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: PrescriptionDetailDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.medication,
+                action: PrescriptionDetailDomain.Destinations.Action.medication(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .medication)) },
+                destination: MedicationView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
             // MedicationOverview
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /PrescriptionDetailDomain.Destinations.State.medicationOverview,
-                        action: PrescriptionDetailDomain.Destinations.Action.medicationOverview(action:)
-                    ),
-                    then: MedicationOverview.init(store:)
-                ),
-                tag: PrescriptionDetailDomain.Destinations.State.Tag.medicationOverview,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: PrescriptionDetailDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.medicationOverview,
+                action: PrescriptionDetailDomain.Destinations.Action.medicationOverview(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .medicationOverview)) },
+                destination: MedicationOverview.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
         }
 
         struct CoPaymentDrawerView: View {
             @ObservedObject var viewStore: ViewStore<
                 PrescriptionDetailDomain.Destinations.CoPaymentState,
-                PrescriptionDetailDomain.Action
+                PrescriptionDetailDomain.Destinations.Action.None
             >
 
-            init(store: Store<PrescriptionDetailDomain.Destinations.CoPaymentState, PrescriptionDetailDomain.Action>) {
-                viewStore = ViewStore(store)
+            init(store: Store<
+                PrescriptionDetailDomain.Destinations.CoPaymentState,
+                PrescriptionDetailDomain.Destinations.Action.None
+            >) {
+                viewStore = ViewStore(store) { $0 }
             }
 
             var body: some View {

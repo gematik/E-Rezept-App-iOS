@@ -30,7 +30,7 @@ struct ChargeItemListView: View {
 
     init(store: ChargeItemListDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -67,7 +67,7 @@ struct ChargeItemListView: View {
 
                 Spacer()
             } else {
-                ChargeItemListView(viewStore: viewStore)
+                _ChargeItemListView(viewStore: viewStore)
             }
 
             // Bottom banner
@@ -121,10 +121,9 @@ struct ChargeItemListView: View {
                     onDismiss: {},
                     content: {
                         IfLetStore(
-                            store.destinationsScope(
-                                state: /ChargeItemListDomain.Destinations.State.idpCardWall,
-                                action: ChargeItemListDomain.Destinations.Action.idpCardWallAction
-                            ),
+                            store.scope(state: \.$destination, action: ChargeItemListDomain.Action.destination),
+                            state: /ChargeItemListDomain.Destinations.State.idpCardWall,
+                            action: ChargeItemListDomain.Destinations.Action.idpCardWallAction,
                             then: IDPCardWallView.init(store:)
                         )
                     }
@@ -132,25 +131,21 @@ struct ChargeItemListView: View {
                 .accessibility(hidden: true)
                 .hidden()
 
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /ChargeItemListDomain.Destinations.State.chargeItem,
-                        action: ChargeItemListDomain.Destinations.Action.chargeItem(action:)
-                    ),
-                    then: ChargeItemView.init(store:)
-                ),
-                tag: ChargeItemListDomain.Destinations.State.Tag.chargeItem,
-                selection: viewStore.binding(get: \.destinationTag, send: ChargeItemListDomain.Action.setNavigation)
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: ChargeItemListDomain.Action.destination),
+                state: /ChargeItemListDomain.Destinations.State.chargeItem,
+                action: ChargeItemListDomain.Destinations.Action.chargeItem(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .chargeItem)) },
+                destination: ChargeItemView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
         }
-        .environment(\.editMode, $editMode)
         .alert(
-            store.destinationsScope(state: /ChargeItemListDomain.Destinations.State.alert),
-            dismiss: .nothing
+            store.scope(state: \.$destination, action: ChargeItemListDomain.Action.destination),
+            state: /ChargeItemListDomain.Destinations.State.alert,
+            action: ChargeItemListDomain.Destinations.Action.alert
         )
+        .environment(\.editMode, $editMode)
         .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -210,14 +205,14 @@ struct ChargeItemListView: View {
         }
         .navigationTitle(L10n.stgTxtChargeItemListTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            viewStore.send(.onAppear)
+        .task {
+            await viewStore.send(.task).finish()
         }
     }
 }
 
 extension ChargeItemListView {
-    private struct ChargeItemListView: View {
+    private struct _ChargeItemListView: View {
         @ObservedObject var viewStore: ViewStore<ViewState, ChargeItemListDomain.Action>
 
         var body: some View {
@@ -243,7 +238,7 @@ extension ChargeItemListView {
             var body: some View {
                 Section {
                     ForEach(chargeItemSection.chargeItems) { chargeItem in
-                        Cell(chargeItem: chargeItem) {
+                        _ChargeItemListView.Cell(chargeItem: chargeItem) {
                             selection(chargeItem)
                         }
                         .accessibilityIdentifier(A11y.settings.chargeItemList.stgBtnChargeItemListRow)
@@ -372,11 +367,12 @@ struct ChargeItemListView_Previews: PreviewProvider {
                 Store(
                     initialState: .init(
                         profileId: UUID(),
-                        chargeItemGroups: [],
+                        chargeItemGroups: [ChargeItemListDomain.ChargeItemGroup](),
                         bottomBannerState: .loading
-                    ),
-                    reducer: ChargeItemListDomain()
-                )
+                    )
+                ) {
+                    ChargeItemListDomain()
+                }
             )
         }
     }

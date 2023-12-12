@@ -39,7 +39,7 @@ extension PrescriptionDetailDomain {
             // sourcery: AnalyticsScreen = prescriptionDetail_technicalInfo
             case technicalInformations(TechnicalInformationsState)
             // sourcery: AnalyticsScreen = errorAlert
-            case alert(ErpAlertState<PrescriptionDetailDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
             // sourcery: AnalyticsScreen = prescriptionDetail_sharePrescription
             case sharePrescription(ShareState)
             // sourcery: AnalyticsScreen = prescriptionDetail_directAssignmentInfo
@@ -61,6 +61,31 @@ extension PrescriptionDetailDomain {
         enum Action: Equatable {
             case medication(action: MedicationDomain.Action)
             case medicationOverview(action: MedicationOverviewDomain.Action)
+
+            case patient(None)
+            case practitioner(None)
+            case organization(None)
+            case accidentInfo(None)
+            case technicalInformations(None)
+            case sharePrescription(None)
+            case directAssignmentInfo(None)
+            case substitutionInfo(None)
+            case prescriptionValidityInfo(None)
+            case scannedPrescriptionInfo(None)
+            case errorInfo(None)
+            case coPaymentInfo(None)
+            case emergencyServiceFeeInfo(None)
+
+            case alert(Alert)
+
+            enum None: Equatable {}
+
+            enum Alert: Equatable {
+                case dismiss
+                /// User has confirmed to delete task
+                case confirmedDelete
+                case openEmailClient(body: String)
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -98,9 +123,10 @@ extension PrescriptionDetailDomain {
         }
 
         struct PrescriptionValidityState: Equatable {
-            let authoredOnDate: String?
-            let acceptUntilDate: String?
-            let expiresOnDate: String?
+            let acceptBeginDisplayDate: String?
+            let acceptEndDisplayDate: String?
+            let expiresBeginDisplayDate: String?
+            let expiresEndDisplayDate: String?
         }
 
         struct TechnicalInformationsState: Equatable {

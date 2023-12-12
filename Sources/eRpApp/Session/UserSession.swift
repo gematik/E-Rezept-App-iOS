@@ -72,7 +72,7 @@ protocol UserSession {
     var extAuthRequestStorage: ExtAuthRequestStorage { get }
 
     /// IDP session for pairing additional devices/keys
-    var biometrieIdpSession: IDPSession { get }
+    var pairingIdpSession: IDPSession { get }
 
     /// VAU storage holding the user pseudonym information
     var vauStorage: VAUStorage { get }
@@ -99,7 +99,7 @@ protocol UserSession {
 
     var idpSessionLoginHandler: LoginHandler { get }
 
-    var biometricsIdpSessionLoginHandler: LoginHandler { get }
+    var pairingIdpSessionLoginHandler: LoginHandler { get }
 
     var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider { get }
 }

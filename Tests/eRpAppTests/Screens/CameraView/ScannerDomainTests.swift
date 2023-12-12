@@ -26,32 +26,30 @@ import Nimble
 import XCTest
 
 // swiftlint:disable line_length
+@MainActor
 final class ScannerDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
+    let isDismissInvoked = LockIsolated(false)
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        ScannerDomain.State,
-        ScannerDomain.Action,
-        ScannerDomain.State,
-        ScannerDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<ScannerDomain>
 
     private func testStore(
-        with state: ScannerDomain.State = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: [])
+        with state: ScannerDomain.State = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: []),
+        withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         let userSessionContainer = MockUsersSessionContainer()
         userSessionContainer.userSession = MockUserSession()
 
-        return TestStore(
-            initialState: state,
-            reducer: ScannerDomain(messageInterval: 0.0)
-        ) { dependencies in
+        return TestStore(initialState: state) {
+            ScannerDomain(messageInterval: 0.0)
+        } withDependencies: { dependencies in
             dependencies.changeableUserSessionContainer = userSessionContainer
             dependencies.erxTaskRepository = FakeErxTaskRepository()
             dependencies.fhirDateFormatter = FHIRDateFormatter.shared
             dependencies.schedulers = schedulers
+            dependencies.dismiss = DismissEffect { self.isDismissInvoked.setValue(true) }
+            prepareDependencies(&dependencies)
         }
     }
 
@@ -62,35 +60,52 @@ final class ScannerDomainTests: XCTestCase {
     }
 
     private var scannedOutput: ScanOutput {
-        ScanOutput.erxCode(scannedString)
+        ScanOutput.text(scannedString)
     }
 
     private var scannedTasks: [ScannedErxTask] {
         try! ScannedErxTask.from(tasks: scannedString)
     }
 
-    func testScanStateAfterFirstValidScanToBeSuccessWithOneResult() {
+    func testScanStateAfterFirstValidScanToBeSuccessWithOneResult() async {
         let expectedState = ScannerDomain.State(
             scanState: .value(scannedTasks),
             acceptedTaskBatches: Set([scannedTasks])
         )
         let store = testStore()
 
-        store.send(.analyse(scanOutput: [scannedOutput])) {
+        await store.send(.analyse(scanOutput: [scannedOutput])) {
             $0.scanState = .loading(nil)
         }
-        testScheduler.advance()
-        store.receive(.response(.analyseReceived(.value(scannedTasks)))) { state in
+        await testScheduler.advance()
+        await store.receive(.response(.analyseReceived(.value(scannedTasks)))) { state in
             state.scanState = .value(self.scannedTasks)
             state.acceptedTaskBatches = expectedState.acceptedTaskBatches
         }
-        store.receive(.resetScannerState) { state in
+        await store.receive(.resetScannerState) { state in
             state.scanState = .idle
             state.acceptedTaskBatches = expectedState.acceptedTaskBatches
         }
     }
 
-    func testScanStateAfterTwoEqualValidScanToBeOneResult() {
+    func testScanUniversalLink() async {
+        let mockRouter = MockRouting()
+        let store = testStore { dependencies in
+            dependencies.router = mockRouter
+        }
+
+        let url: URL = "https://erezept.gematik.de/pharmacies/#tiid=123"
+
+        expect(mockRouter.routeToCallsCount).to(equal(0))
+        await store.send(.analyse(scanOutput: [.text(url.absoluteString)])) {
+            $0.scanState = .loading(nil)
+        }
+        await testScheduler.advance()
+        expect(mockRouter.routeToCallsCount).to(equal(1))
+        expect(mockRouter.routeToReceivedEndpoint).to(equal(.universalLink(url)))
+    }
+
+    func testScanStateAfterTwoEqualValidScanToBeOneResult() async {
         let expectedState = ScannerDomain.State(
             scanState: .value(scannedTasks),
             acceptedTaskBatches: Set([scannedTasks])
@@ -98,23 +113,23 @@ final class ScannerDomainTests: XCTestCase {
         let store = testStore()
 
         // when two identivcal codes were scanned
-        store.send(.analyse(scanOutput: [scannedOutput, scannedOutput])) {
+        await store.send(.analyse(scanOutput: [scannedOutput, scannedOutput])) {
             $0.scanState = .loading(nil)
         }
-        testScheduler.advance()
+        await testScheduler.advance()
         // then only one should be returned
-        store.receive(.response(.analyseReceived(.value(scannedTasks)))) { state in
+        await store.receive(.response(.analyseReceived(.value(scannedTasks)))) { state in
             state.scanState = .value(self.scannedTasks)
             state.acceptedTaskBatches = expectedState.acceptedTaskBatches
         }
-        store.receive(.resetScannerState) { state in
+        await store.receive(.resetScannerState) { state in
             state.scanState = .idle
             state.acceptedTaskBatches = expectedState.acceptedTaskBatches
         }
     }
 
-    func testScanStateAfterOneInvalidErxCodeScanToErrorWithWrongFormats() {
-        let invalidScannedOutput = ScanOutput.erxCode(
+    func testScanStateAfterOneInvalidErxCodeScanToErrorWithWrongFormats() async {
+        let invalidScannedOutput = ScanOutput.text(
             """
             {"urls":["wrongFormat"]}
             """
@@ -124,24 +139,24 @@ final class ScannerDomainTests: XCTestCase {
         let store = testStore()
 
         // when a code with a invalid format was scanned
-        store.send(.analyse(scanOutput: [invalidScannedOutput])) {
+        await store.send(.analyse(scanOutput: [invalidScannedOutput])) {
             $0.scanState = .loading(nil)
             $0.acceptedTaskBatches = Set([])
         }
         // then no code should be returned and state should be Error.format
-        store.receive(.response(.analyseReceived(expectedScanState))) { state in
+        await store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = Set([])
         }
-        testScheduler.advance()
-        store.receive(.resetScannerState) { state in
+        await testScheduler.advance()
+        await store.receive(.resetScannerState) { state in
             state.scanState = .idle
             state.acceptedTaskBatches = Set([])
         }
     }
 
-    func testScanStateAfterOneInvalidErxCodeScanToErrorWithEmptyArray() {
-        let invalidScannedOutput = ScanOutput.erxCode(
+    func testScanStateAfterOneInvalidErxCodeScanToErrorWithEmptyArray() async {
+        let invalidScannedOutput = ScanOutput.text(
             """
             {"urls":[]}
             """
@@ -150,47 +165,47 @@ final class ScannerDomainTests: XCTestCase {
         let store = testStore()
 
         // when an empty code was scanned
-        store.send(.analyse(scanOutput: [invalidScannedOutput])) {
+        await store.send(.analyse(scanOutput: [invalidScannedOutput])) {
             $0.scanState = .loading(nil)
             $0.acceptedTaskBatches = Set([])
         }
         // then no code should be returned and state should be empty
-        store.receive(.response(.analyseReceived(expectedScanState))) { state in
+        await store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = Set([])
         }
-        testScheduler.advance()
-        store.receive(.resetScannerState) { state in
+        await testScheduler.advance()
+        await store.receive(.resetScannerState) { state in
             state.scanState = .idle
             state.acceptedTaskBatches = Set([])
         }
     }
 
-    func testScanStateAfterScanningSameCodeAgainToReturnDuplicateError() {
+    func testScanStateAfterScanningSameCodeAgainToReturnDuplicateError() async {
         let initialState = ScannerDomain.State(scanState: .idle,
                                                acceptedTaskBatches: Set([scannedTasks]))
         let expectedScanState: LoadingState<[ScannedErxTask], ScannerDomain.Error> = .error(.duplicate)
         let store = testStore(with: initialState)
 
         // when scanning the same code as already scanned
-        store.send(.analyse(scanOutput: [scannedOutput])) {
+        await store.send(.analyse(scanOutput: [scannedOutput])) {
             $0.scanState = .loading(nil)
             $0.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
         // then an error of type duplicate should be returned
-        store.receive(.response(.analyseReceived(expectedScanState))) { state in
+        await store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
-        testScheduler.advance()
-        store.receive(.resetScannerState) { state in
+        await testScheduler.advance()
+        await store.receive(.resetScannerState) { state in
             state.scanState = .idle
             state.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
     }
 
-    func testScanStateToBeStoreDuplicateWhenScanningACodeAlreadySaved() {
-        let alreadySavedTaskInStore = ScanOutput.erxCode(
+    func testScanStateToBeStoreDuplicateWhenScanningACodeAlreadySaved() async {
+        let alreadySavedTaskInStore = ScanOutput.text(
             """
             {"urls":["Task/0390f983-1e67-11b2-8555-63bf44e44fb8/$accept?ac=e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24"]}
             """
@@ -199,25 +214,25 @@ final class ScannerDomainTests: XCTestCase {
         let store = testStore()
 
         // when scanning a code that is already in store
-        store.send(.analyse(scanOutput: [alreadySavedTaskInStore])) {
+        await store.send(.analyse(scanOutput: [alreadySavedTaskInStore])) {
             $0.scanState = .loading(nil)
             $0.acceptedTaskBatches = Set([])
         }
-        testScheduler.advance()
+        await testScheduler.advance()
         // then an error of type storeDuplicate should be returned
-        store.receive(.response(.analyseReceived(expectedScanState))) { state in
+        await store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = Set([])
         }
-        store.receive(.resetScannerState) { state in
+        await store.receive(.resetScannerState) { state in
             state.scanState = .idle
             state.acceptedTaskBatches = Set([])
         }
     }
 
-    func testScanStateToBeSuccessWhenScanningCodesWhereOneIsAlreadyInStore() {
+    func testScanStateToBeSuccessWhenScanningCodesWhereOneIsAlreadyInStore() async {
         // scan output with one task already saved in store and new tasks
-        let scanOutput = ScanOutput.erxCode(
+        let scanOutput = ScanOutput.text(
             """
             {"urls":["Task/0390f983-1e67-11b2-8555-63bf44e44fb8/$accept?ac=e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             	 "Task/4711/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea",
@@ -235,25 +250,25 @@ final class ScannerDomainTests: XCTestCase {
         let store = testStore()
 
         // when scanning a code that is already in store and one that is new
-        store.send(.analyse(scanOutput: [scanOutput])) {
+        await store.send(.analyse(scanOutput: [scanOutput])) {
             $0.scanState = .loading(nil)
             $0.acceptedTaskBatches = Set([])
         }
-        testScheduler.advance()
+        await testScheduler.advance()
         // then only the new one should be returned as successful scan
-        store.receive(.response(.analyseReceived(expectedScanState))) { state in
+        await store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = expectedAcceptedBatches
         }
-        store.receive(.resetScannerState) { state in
+        await store.receive(.resetScannerState) { state in
             state.scanState = .idle
             state.acceptedTaskBatches = expectedAcceptedBatches
         }
     }
 
-    func testScanStateToBeSuccessWhenScanningCodesWhereOneWasAlreadyScanned() {
+    func testScanStateToBeSuccessWhenScanningCodesWhereOneWasAlreadyScanned() async {
         // scan output with one task already saved in store and new tasks
-        let scanOutput = ScanOutput.erxCode(
+        let scanOutput = ScanOutput.text(
             """
             {"urls":["Task/4710/$accept?ac=e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             	 "Task/4711/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea",
@@ -274,23 +289,24 @@ final class ScannerDomainTests: XCTestCase {
         let store = testStore(with: initialState)
 
         // when scanning 3 codes where one was previously scanned
-        store.send(.analyse(scanOutput: [scanOutput])) {
+        await store.send(.analyse(scanOutput: [scanOutput])) {
             $0.scanState = .loading(nil)
             $0.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
-        testScheduler.advance()
+        await testScheduler.advance()
         // then only the new ones should be returned as successful scan and added as separate batch
-        store.receive(.response(.analyseReceived(expectedScanState))) { state in
+        await store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = expectedAcceptedBatches
         }
-        store.receive(.resetScannerState) { state in
+        await store.receive(.resetScannerState) { state in
             state.scanState = .idle
             state.acceptedTaskBatches = expectedAcceptedBatches
         }
     }
 
-    func testSuccessfulSavingAndClosingScannedErxTasks() {
+    @MainActor
+    func testSuccessfulSavingAndClosingScannedErxTasks() async {
         // given
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
         let saveErxTaskPublisher = Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
@@ -304,13 +320,14 @@ final class ScannerDomainTests: XCTestCase {
         store.dependencies.erxTaskRepository = repository
 
         // when
-        store.send(.saveAndClose(initialState.acceptedTaskBatches))
-        testScheduler.advance()
+        await store.send(.saveAndClose(initialState.acceptedTaskBatches))
+        await testScheduler.advance()
         // then
-        store.receive(.delegate(.close))
+        await store.receive(.response(.saveAndCloseReceived(.success(true))))
+        XCTAssertEqual(isDismissInvoked.value, true)
     }
 
-    func testFailureSavingAndClosingScannedErxTasks() {
+    func testFailureSavingAndClosingScannedErxTasks() async {
         // given
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
         let savingError: ErxRepositoryError = .local(.notImplemented)
@@ -326,21 +343,21 @@ final class ScannerDomainTests: XCTestCase {
         let expectedAlert = ScannerDomain.savingAlertState
 
         // when
-        store.send(.saveAndClose(initialState.acceptedTaskBatches))
-        testScheduler.advance()
+        await store.send(.saveAndClose(initialState.acceptedTaskBatches))
+        await testScheduler.advance()
         // then
-        store.receive(.response(.saveAndCloseReceived(savingError))) { state in
+        await store.receive(.response(.saveAndCloseReceived(.failure(savingError)))) { state in
             state.scanState = initialState.scanState
             state.acceptedTaskBatches = initialState.acceptedTaskBatches
-            state.alertState = expectedAlert
+            state.destination = .alert(expectedAlert)
             expect(repository.saveCalled).to(beTrue())
         }
-        store.send(.alertDismissButtonTapped) { state in
-            state.alertState = nil
+        await store.send(.destination(.dismiss)) { state in
+            state.destination = nil
         }
     }
 
-    func testClosingViewWithScannedErxTasks() {
+    func testClosingViewWithScannedErxTasks() async {
         // given
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
         let store = testStore(with: initialState)
@@ -349,21 +366,19 @@ final class ScannerDomainTests: XCTestCase {
         let expectedAlert = ScannerDomain.closeAlertState
 
         // when touching cancel while having scanned tasks
-        store.send(.closeWithoutSave) {
+        await store.send(.closeWithoutSave) {
             // then the expected alert should be display
             $0.scanState = .idle
-            $0.alertState = expectedAlert
+            $0.destination = .alert(expectedAlert)
             $0.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
         // when one of the two close buttons is tapped
-        store.send(.alertDismissButtonTapped) {
+        await store.send(.destination(.dismiss)) {
             $0.scanState = .idle
             // then the alert state should be nil again
-            $0.alertState = nil
+            $0.destination = nil
             $0.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
-        // when the ok button is tapped
-        store.send(.delegate(.close))
     }
 }
 

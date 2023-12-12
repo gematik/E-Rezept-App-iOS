@@ -24,16 +24,11 @@ import Nimble
 import Pharmacy
 import XCTest
 
+@MainActor
 class PharmacySearchDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        PharmacySearchDomain.State,
-        PharmacySearchDomain.Action,
-        PharmacySearchDomain.State,
-        PharmacySearchDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<PharmacySearchDomain>
 
     // For tests we can lower the delay for search start
     var delaySearchStart: DispatchQueue.SchedulerTimeType.Stride = 0.1
@@ -55,21 +50,19 @@ class PharmacySearchDomainTests: XCTestCase {
         for state: PharmacySearchDomain.State,
         pharmacyRepository: PharmacyRepository = MockPharmacyRepository()
     ) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: PharmacySearchDomain(
-                referenceDateForOpenHours: TestData.openHoursTestReferenceDate
-            )
-        ) { dependencies in
+        TestStore(initialState: state) {
+            PharmacySearchDomain(referenceDateForOpenHours: TestData.openHoursTestReferenceDate)
+        } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.pharmacyRepository = pharmacyRepository
-            dependencies.locationManager = .unimplemented()
+            dependencies.locationManager = .failing
             dependencies.searchHistory = searchHistoryMock
             dependencies.resourceHandler = resourceHandlerMock
+            dependencies.feedbackReceiver = MockFeedbackReceiver()
         }
     }
 
-    func testSearchForPharmacies() {
+    func testSearchForPharmacies() async {
         // given
         let mockPharmacyRepo = MockPharmacyRepository(
             searchRemote: Just(TestData.pharmacies)
@@ -83,24 +76,24 @@ class PharmacySearchDomainTests: XCTestCase {
         searchHistoryMock.historyItemsReturnValue = []
 
         // when search text changes to valid search term...
-        sut.send(.searchTextChanged(testSearchText)) { state in
+        await sut.send(.searchTextChanged(testSearchText)) { state in
             // ...expect it to be stored
             state.searchText = testSearchText
         }
         // when user hits Enter on keyboard start search...
-        sut.send(.performSearch) { state in
+        await sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
         }
-        testScheduler.advance()
+        await testScheduler.advance()
         // when search request is done...
-        sut.receive(.response(.pharmaciesReceived(expected))) { state in
+        await sut.receive(.response(.pharmaciesReceived(expected))) { state in
             // expect it to deliver successful & results...
             state.searchState = .searchResultOk
         }
     }
 
-    func testSearchForPharmaciesEmptyResult() {
+    func testSearchForPharmaciesEmptyResult() async {
         // given
         let mockPharmacyRepo = MockPharmacyRepository(
             searchRemote: Just([])
@@ -114,25 +107,25 @@ class PharmacySearchDomainTests: XCTestCase {
         searchHistoryMock.historyItemsReturnValue = []
 
         // when search text changes to valid search term...
-        sut.send(.searchTextChanged(testSearchText)) { state in
+        await sut.send(.searchTextChanged(testSearchText)) { state in
             // ...expect it to be stored
             state.searchText = testSearchText
         }
         // when user hits Enter on keyboard start search...
-        sut.send(.performSearch) { state in
+        await sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
         }
-        testScheduler.advance()
+        await testScheduler.advance()
         expect(self.searchHistoryMock.addHistoryItemReceivedItem).to(equal(testSearchText))
         // when search request is done...
-        sut.receive(.response(.pharmaciesReceived(expected))) { state in
+        await sut.receive(.response(.pharmaciesReceived(expected))) { state in
             // expect it to be empty...
             state.searchState = .searchResultEmpty
         }
     }
 
-    func testSearchForPharmaciesWithLocation() {
+    func testSearchForPharmaciesWithLocation() async {
         // given
         let mockPharmacyRepo = MockPharmacyRepository(
             searchRemote: Just(TestData.pharmaciesWithLocations)
@@ -145,34 +138,34 @@ class PharmacySearchDomainTests: XCTestCase {
         searchHistoryMock.historyItemsReturnValue = []
 
         // when user hits Location button start search...
-        sut.send(.performSearch) { state in
+        await sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
         }
-        testScheduler.advance()
+        await testScheduler.advance()
         // when search request is done...
-        sut.receive(.response(.pharmaciesReceived(expected))) { state in
+        await sut.receive(.response(.pharmaciesReceived(expected))) { state in
             // expect it to deliver successful & results...
             state.searchState = .searchResultOk
         }
     }
 
-    func testStartView_loadLocalPharmacies_onAppear_Success() {
+    func testStartView_loadLocalPharmacies_task_Success() async {
         let state = TestData.stateWithStartView
         let storedPharmacies = TestData.pharmacies
         let mockPharmacyRepo = MockPharmacyRepository(stored: storedPharmacies)
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
-        sut.send(.onAppear)
-        testScheduler.advance()
-        sut.receive(.response(.loadLocalPharmaciesReceived(.success(storedPharmacies)))) {
+        await sut.send(.task)
+        await testScheduler.advance()
+        await sut.receive(.response(.loadLocalPharmaciesReceived(.success(storedPharmacies)))) {
             $0.localPharmacies = storedPharmacies
                 .map { PharmacyLocationViewModel(pharmacy: $0, referenceDate: TestData.openHoursTestReferenceDate) }
         }
     }
 
-    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_Success() {
+    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_Success() async {
         let state = TestData.stateWithStartView
         let selectedPharmacy = PharmacyLocation.Fixtures.pharmacyA
         let mockPharmacyRepo = MockPharmacyRepository(
@@ -182,12 +175,12 @@ class PharmacySearchDomainTests: XCTestCase {
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
-        sut.send(.loadAndNavigateToPharmacy(selectedPharmacy)) {
+        await sut.send(.loadAndNavigateToPharmacy(selectedPharmacy)) {
             $0.searchState = .startView(loading: true)
             $0.selectedPharmacy = selectedPharmacy
         }
-        testScheduler.advance()
-        sut.receive(.response(.loadAndNavigateToPharmacyReceived(.success(selectedPharmacy)))) {
+        await testScheduler.advance()
+        await sut.receive(.response(.loadAndNavigateToPharmacyReceived(.success(selectedPharmacy)))) {
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
             $0.destination = .pharmacy(PharmacyDetailDomain.State(
@@ -200,7 +193,7 @@ class PharmacySearchDomainTests: XCTestCase {
         }
     }
 
-    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_Failure() {
+    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_Failure() async {
         let state = TestData.stateWithStartView
         let selectedPharmacy = PharmacyLocation.Fixtures.pharmacyA
         let expectedError = PharmacyRepositoryError.remote(.fhirClient(.inconsistentResponse))
@@ -210,19 +203,19 @@ class PharmacySearchDomainTests: XCTestCase {
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
-        sut.send(.loadAndNavigateToPharmacy(selectedPharmacy)) {
+        await sut.send(.loadAndNavigateToPharmacy(selectedPharmacy)) {
             $0.searchState = .startView(loading: true)
             $0.selectedPharmacy = selectedPharmacy
         }
-        testScheduler.advance()
-        sut.receive(.response(.loadAndNavigateToPharmacyReceived(.failure(expectedError)))) {
+        await testScheduler.advance()
+        await sut.receive(.response(.loadAndNavigateToPharmacyReceived(.failure(expectedError)))) {
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
             $0.destination = .alert(.init(for: expectedError))
         }
     }
 
-    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_NotFound() {
+    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_NotFound() async {
         let pharmacyViewModels = TestData.pharmacies.map { pharmacies in
             PharmacyLocationViewModel(
                 pharmacy: pharmacies,
@@ -246,18 +239,109 @@ class PharmacySearchDomainTests: XCTestCase {
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
-        sut.send(.loadAndNavigateToPharmacy(selectedPharmacy.pharmacyLocation)) {
+        await sut.send(.loadAndNavigateToPharmacy(selectedPharmacy.pharmacyLocation)) {
             $0.searchState = .startView(loading: true)
             $0.selectedPharmacy = selectedPharmacy.pharmacyLocation
         }
-        testScheduler.advance()
-        sut.receive(.response(.loadAndNavigateToPharmacyReceived(.failure(expectedError)))) {
+        await testScheduler.advance()
+        await sut.receive(.response(.loadAndNavigateToPharmacyReceived(.failure(expectedError)))) {
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
             $0.localPharmacies = pharmacyViewModels.dropLast()
             $0.destination = .alert(.init(for: expectedError))
         }
         expect(mockPharmacyRepo.deleteCallsCount) == 1
+    }
+
+    func test_requestAuthorization_WhenInUse() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository(
+            searchRemote: Just(TestData.pharmacies)
+                .setFailureType(to: PharmacyRepositoryError.self)
+                .eraseToAnyPublisher()
+        )
+        let sut = testStore(for: TestData.stateWithStartView, pharmacyRepository: mockPharmacyRepo)
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .notDetermined }
+        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
+        // when
+        await sut.send(.onAppear)
+        await sut.send(.requestLocation)
+        locationManagerSubject.send(.didChangeAuthorization(.authorizedWhenInUse))
+        // then
+        await sut.receive(.locationManager(.didChangeAuthorization(.authorizedWhenInUse)))
+        locationManagerSubject.send(completion: .finished)
+    }
+
+    func test_requestAuthorization_Denied() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository(
+            searchRemote: Just(TestData.pharmacies)
+                .setFailureType(to: PharmacyRepositoryError.self)
+                .eraseToAnyPublisher()
+        )
+        let sut = testStore(for: TestData.stateWithStartView, pharmacyRepository: mockPharmacyRepo)
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .denied }
+        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
+        // when
+        await sut.send(.onAppear)
+        await sut.send(.requestLocation) { state in
+            state.destination = .alert(PharmacySearchDomain.locationPermissionAlertState)
+        }
+        locationManagerSubject.send(.didChangeAuthorization(.denied))
+        // then
+        await sut.receive(.locationManager(.didChangeAuthorization(.denied)))
+        locationManagerSubject.send(completion: .finished)
+    }
+
+    func testUniversalLink() async {
+        let mockPharmacyRepo = MockPharmacyRepository()
+        let pharmacy = PharmacyLocation(id: "123.456.789", telematikID: "123.456.789", types: [])
+        mockPharmacyRepo.loadCachedPublisher = Just(pharmacy)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockPharmacyRepo.savePublisher = Just(false)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+        let sut = testStore(for: PharmacySearchDomain.State(
+            erxTasks: [],
+            searchText: "",
+            pharmacies: []
+        ), pharmacyRepository: mockPharmacyRepo)
+
+        let url = URL(string: "https://erezept.gematik.de/pharmacies/#tiid=123.456.789")!
+        await sut.send(.universalLink(url)) { state in
+            state.searchState = .startView(loading: true)
+        }
+        var locationViewModel = PharmacyLocationViewModel(pharmacy: pharmacy)
+        await sut.receive(.response(.loadAndNavigateToPharmacyReceived(.success(pharmacy)))) { state in
+            state.searchState = .startView(loading: false)
+
+            state
+                .destination = .pharmacy(PharmacyDetailDomain.State(erxTasks: [], pharmacyViewModel: locationViewModel))
+        }
+
+        await testScheduler.run()
+
+        await sut.receive(.destination(.presented(.pharmacyDetailView(action: .setIsFavorite(true)))))
+
+        await testScheduler.run()
+        locationViewModel.pharmacyLocation.isFavorite = true
+        await sut
+            .receive(
+                .destination(
+                    .presented(
+                        .pharmacyDetailView(action: .response(.toggleIsFavoriteReceived(.success(locationViewModel))))
+                    )
+                )
+            ) { state in
+                state
+                    .destination = .pharmacy(PharmacyDetailDomain
+                        .State(erxTasks: [], pharmacyViewModel: locationViewModel))
+            }
     }
 }
 

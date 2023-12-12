@@ -287,12 +287,33 @@ import ComposableCoreLocation
 extension LocationManager: DependencyKey {
     public static var liveValue: LocationManager = .live
     public static var previewValue: LocationManager = .live
-    public static var testValue: LocationManager = unimplemented()
+    public static var testValue: LocationManager = .failing
 }
 
 extension DependencyValues {
     var locationManager: LocationManager {
         get { self[LocationManager.self] }
         set { self[LocationManager.self] = newValue }
+    }
+}
+
+import FHIRClient
+
+struct PharmacyServiceFactory {
+    let construct: (FHIRClient) -> PharmacyRemoteDataStore
+
+    init(construct: @escaping (FHIRClient) -> PharmacyRemoteDataStore) {
+        self.construct = construct
+    }
+}
+
+extension PharmacyServiceFactory: DependencyKey {
+    static var liveValue = PharmacyServiceFactory(construct: PharmacyFHIRDataSource.init)
+}
+
+extension DependencyValues {
+    var pharmacyServiceFactory: PharmacyServiceFactory {
+        get { self[PharmacyServiceFactory.self] }
+        set { self[PharmacyServiceFactory.self] = newValue }
     }
 }

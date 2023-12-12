@@ -23,7 +23,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class CameraViewSnapshotTests: XCTestCase {
+final class CameraViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"

@@ -32,7 +32,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB")
+        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB_ProfileCoreDataStoreTests")
     }
 
     override func tearDown() {
@@ -338,18 +338,6 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         expect(receivedListAllErxTasksValues.count).to(equal(1))
         // and no erxTasks
         expect(receivedListAllErxTasksValues.first?.count) == 0
-
-        var receivedListAllAuditEventsValues = [[ErxAuditEvent]]()
-        _ = erxTaskStore.listAllAuditEvents(for: nil)
-            .sink(receiveCompletion: { _ in
-                fail("did not expect to complete")
-            }, receiveValue: { erxAuditEvents in
-                receivedListAllAuditEventsValues.append(erxAuditEvents)
-            })
-
-        expect(receivedListAllAuditEventsValues.count).to(equal(1))
-        // and no erxAuditEvents
-        expect(receivedListAllAuditEventsValues.first?.count) == 0
     }
 
     func testFetchProfileByIdSuccess() throws {

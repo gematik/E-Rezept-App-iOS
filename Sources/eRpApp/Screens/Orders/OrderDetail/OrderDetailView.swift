@@ -26,7 +26,7 @@ struct OrderDetailView: View {
 
     init(store: OrderDetailDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     var body: some View {
@@ -74,22 +74,14 @@ struct OrderDetailView: View {
 
             // prescription details
 
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /OrderDetailDomain.Destinations.State.prescriptionDetail,
-                        action: OrderDetailDomain.Destinations.Action.prescriptionDetail(action:)
-                    ),
-                    then: PrescriptionDetailView.init(store:)
-                ),
-                tag: OrderDetailDomain.Destinations.State.Tag.prescriptionDetail,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: OrderDetailDomain.Action.setNavigation
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: OrderDetailDomain.Action.destination),
+                state: /OrderDetailDomain.Destinations.State.prescriptionDetail,
+                action: OrderDetailDomain.Destinations.Action.prescriptionDetail(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .prescriptionDetail)) },
+                destination: PrescriptionDetailView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
 
             // pickup code
 
@@ -102,10 +94,9 @@ struct OrderDetailView: View {
                     }
                 )) {
                     IfLetStore(
-                        store.destinationsScope(
-                            state: /OrderDetailDomain.Destinations.State.pickupCode,
-                            action: OrderDetailDomain.Destinations.Action.pickupCode(action:)
-                        ),
+                        store.scope(state: \.$destination, action: OrderDetailDomain.Action.destination),
+                        state: /OrderDetailDomain.Destinations.State.pickupCode,
+                        action: OrderDetailDomain.Destinations.Action.pickupCode(action:),
                         then: PickupCodeView.init(store:)
                     )
                 }
@@ -132,12 +123,12 @@ struct OrderDetailView: View {
         .navigationBarTitle(L10n.ordDetailTxtTitle, displayMode: .inline)
         .accessibility(identifier: A11y.orderDetail.list.ordDetailTitle)
         .alert(
-            store.destinationsScope(state: /OrderDetailDomain.Destinations.State.alert),
-            dismiss: .setNavigation(tag: .none)
+            store.scope(state: \.$destination, action: OrderDetailDomain.Action.destination),
+            state: /OrderDetailDomain.Destinations.State.alert,
+            action: OrderDetailDomain.Destinations.Action.alert
         )
-        .onAppear {
-            viewStore.send(.didReadCommunications)
-            viewStore.send(.loadTasks)
+        .task {
+            await viewStore.send(.task).finish()
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -211,7 +202,7 @@ struct OrderDetailView: View {
 
         init(store: OrderDetailDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {

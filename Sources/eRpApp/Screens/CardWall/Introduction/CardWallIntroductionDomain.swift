@@ -24,11 +24,6 @@ import IDP
 struct CardWallIntroductionDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .cancel(id: CardWallReadCardDomain.Token.self)
-    }
-
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = cardWall_CAN
@@ -62,7 +57,7 @@ struct CardWallIntroductionDomain: ReducerProtocol {
         /// App is only usable with NFC for now
         let isNFCReady: Bool
         let profileId: UUID
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     indirect enum Action: Equatable {
@@ -72,7 +67,7 @@ struct CardWallIntroductionDomain: ReducerProtocol {
         case delegate(Delegate)
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         enum Delegate: Equatable {
             case close
@@ -85,7 +80,7 @@ struct CardWallIntroductionDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -93,10 +88,12 @@ struct CardWallIntroductionDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .advance:
-            return userSessionProvider.userSession(for: state.profileId).secureUserStore.can
-                .first()
-                .map(Action.advanceCAN)
-                .eraseToEffect()
+            return .publisher(
+                userSessionProvider.userSession(for: state.profileId).secureUserStore.can
+                    .first()
+                    .map(Action.advanceCAN)
+                    .eraseToAnyPublisher
+            )
         case let .advanceCAN(can):
             state.destination = .can(CardWallCANDomain.State(
                 isDemoModus: userSession.isDemoMode,
@@ -110,23 +107,20 @@ struct CardWallIntroductionDomain: ReducerProtocol {
             state.destination = .egk(.init())
             return .none
         case .setNavigation(tag: .none),
-             .destination(.egkAction(action: .delegate(.close))):
+             .destination(.presented(.egkAction(action: .delegate(.close)))):
             state.destination = nil
             return .none
-        case .destination(.canAction(.delegate(.navigateToIntro))),
+        case .destination(.presented(.canAction(.delegate(.navigateToIntro)))),
              .setNavigation(tag: .fasttrack):
             state.destination = .fasttrack(CardWallExtAuthSelectionDomain.State())
             return .none
-        case .destination(.canAction(.delegate(.close))),
-             .destination(.fasttrack(action: .delegate(.close))):
+        case .destination(.presented(.canAction(.delegate(.close)))),
+             .destination(.presented(.fasttrack(action: .delegate(.close)))):
             state.destination = nil
-            return .concatenate(
-                Self.cleanup(),
-                EffectTask(value: .delegate(.close))
-                    // Delay for closing all views, Workaround for TCA pullback problem
-                    .delay(for: 0.05, scheduler: schedulers.main)
-                    .eraseToEffect()
-            )
+            return .run { send in
+                try await schedulers.main.sleep(for: 0.05)
+                await send(.delegate(.close))
+            }
         case .setNavigation,
              .destination:
             return .none
@@ -138,6 +132,8 @@ extension CardWallIntroductionDomain {
     enum Dummies {
         static let state = State(isNFCReady: true, profileId: UUID())
 
-        static let store = Store(initialState: state, reducer: CardWallIntroductionDomain())
+        static let store = Store(initialState: state) {
+            CardWallIntroductionDomain()
+        }
     }
 }

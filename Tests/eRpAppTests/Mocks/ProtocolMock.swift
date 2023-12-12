@@ -62,4 +62,6 @@ extension UserDataStore {}
 extension UserProfileService {}
 extension UsersSessionContainer {}
 extension UserSessionProvider {}
+extension PagedAuditEventsController {}
+extension AuditEventsService {}
 // sourcery:end

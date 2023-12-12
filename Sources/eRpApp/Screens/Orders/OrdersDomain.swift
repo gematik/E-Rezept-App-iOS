@@ -26,35 +26,17 @@ import UIKit
 struct OrdersDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            cleanupSubDomains(),
-            EffectTask<T>.cancel(ids: Token.allCases)
-        )
-    }
-
-    static func cleanupSubDomains<T>() -> EffectTask<T> {
-        OrderDetailDomain.cleanup()
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case loadCommunications
-        case loadPharmacies
-    }
-
     struct State: Equatable {
         var orders: IdentifiedArrayOf<OrderCommunications> = []
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
         case subscribeToCommunicationChanges
-        case removeSubscription
         case didSelect(String)
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case response(Response)
 
@@ -90,7 +72,7 @@ struct OrdersDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -98,12 +80,13 @@ struct OrdersDomain: ReducerProtocol {
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .subscribeToCommunicationChanges:
-            return ordersRepository.loadLocalCommunications(for: .all)
-                .catch { _ in Just([ErxTask.Communication]()) }
-                .map { .response(.communicationChangeReceived($0)) }
-                .receive(on: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.loadCommunications, cancelInFlight: true)
+            return .publisher(
+                ordersRepository.loadLocalCommunications(for: .all)
+                    .catch { _ in Just([ErxTask.Communication]()) }
+                    .map { .response(.communicationChangeReceived($0)) }
+                    .receive(on: schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
         case let .response(.communicationChangeReceived(communications)):
             state.orders = IdentifiedArray(
                 uniqueElements: Dictionary(grouping: communications, by: { $0.orderId })
@@ -121,15 +104,12 @@ struct OrdersDomain: ReducerProtocol {
             return loadPharmacies(
                 state.orders.filter { $0.pharmacy == nil }
             )
-            .cancellable(id: Token.loadPharmacies)
         case let .response(.pharmaciesReceived(pharmacies)):
             state.orders.forEach { order in
                 guard order.pharmacy == nil else { return }
                 state.orders[id: order.id]?.pharmacy = pharmacies.first(where: { $0.telematikID == order.telematikId })
             }
             return .none
-        case .removeSubscription:
-            return Self.cleanup()
         case let .didSelect(orderId):
             if let order = state.orders[id: orderId] {
                 state.destination = .orderDetail(
@@ -139,7 +119,7 @@ struct OrdersDomain: ReducerProtocol {
             return .none
         case .setNavigation(tag: .none):
             state.destination = nil
-            return Self.cleanupSubDomains()
+            return .none
         case .setNavigation,
              .destination:
             return .none
@@ -156,11 +136,13 @@ extension OrdersDomain {
                 .eraseToAnyPublisher()
         }
 
-        return Publishers.MergeMany(publishers)
-            .collect(publishers.count)
-            .map { .response(.pharmaciesReceived($0.compactMap { $0 })) }
-            .receive(on: schedulers.main.animation())
-            .eraseToEffect()
+        return .publisher(
+            Publishers.MergeMany(publishers)
+                .collect(publishers.count)
+                .map { .response(.pharmaciesReceived($0.compactMap { $0 })) }
+                .receive(on: schedulers.main.animation())
+                .eraseToAnyPublisher
+        )
     }
 }
 
@@ -169,12 +151,18 @@ extension OrdersDomain {
         static let state =
             State(orders: IdentifiedArray(uniqueElements: OrderCommunications.Dummies.multipleOrderCommunications))
 
-        static let store = Store(initialState: state,
-                                 reducer: OrdersDomain())
+        static let store = Store(
+            initialState: state
+        ) {
+            OrdersDomain()
+        }
 
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: OrdersDomain())
+            Store(
+                initialState: state
+            ) {
+                OrdersDomain()
+            }
         }
     }
 }

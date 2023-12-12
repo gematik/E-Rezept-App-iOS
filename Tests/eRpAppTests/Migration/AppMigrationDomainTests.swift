@@ -24,6 +24,7 @@ import eRpLocalStorage
 import Nimble
 import XCTest
 
+@MainActor
 final class AppMigrationDomainTests: XCTestCase {
     private var mockMigrationManager = MockModelMigrating()
     private var mockUserDataStore = MockUserDataStore()
@@ -58,25 +59,18 @@ final class AppMigrationDomainTests: XCTestCase {
         super.tearDown()
     }
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        AppMigrationDomain.State,
-        AppMigrationDomain.Action,
-        AppMigrationDomain.State,
-        AppMigrationDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<AppMigrationDomain>
 
 //    let testScheduler = DispatchQueue.test
-    private func testStore(with state: AppMigrationDomain.State = .none) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: AppMigrationDomain(
+    private func testStore(with state: AppMigrationDomain.State = .init(migration: .none)) -> TestStore {
+        TestStore(initialState: state) {
+            AppMigrationDomain(
                 fileManager: fileManager,
                 finishedMigration: { [weak self] in
                     self?.finishedMigrationCalledCount += 1
                 }
             )
-        ) { dependencies in
+        } withDependencies: { dependencies in
             dependencies.schedulers = Schedulers(
                 uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler()
             )
@@ -106,7 +100,7 @@ final class AppMigrationDomainTests: XCTestCase {
         return factory
     }
 
-    func testMigrationWithMigratingOneStepHappyPath_short() {
+    func testMigrationWithMigratingOneStepHappyPath_short() async {
         let store = testStore()
         let startVersion: ModelVersion = .auditEventsInProfile
         let endVersion: ModelVersion = .pKV
@@ -115,29 +109,30 @@ final class AppMigrationDomainTests: XCTestCase {
             .eraseToAnyPublisher()
 
         mockUserDataStore.underlyingLatestCompatibleModelVersion = startVersion
-        store.send(.loadCurrentModelVersion)
+        await store.send(.loadCurrentModelVersion)
         expect(self.mockMigrationManager.startModelMigrationFromCallsCount) == 1
-        store.receive(.startMigration(from: startVersion)) { state in
-            state = .inProgress
+        await store.receive(.startMigration(from: startVersion)) { state in
+            state.migration = .inProgress
         }
-        store.receive(.startMigrationReceived(.success(endVersion))) { state in
-            state = .finished
+        await store.receive(.startMigrationReceived(.success(endVersion))) { state in
+            state.migration = .finished
         }
         expect(self.mockUserDataStore.latestCompatibleModelVersion) == endVersion
         expect(self.finishedMigrationCalledCount) == 1
     }
 
-    func testMigratingWithErrorAndRetry() {
+    func testMigratingWithErrorAndRetry() async {
         let store = testStore()
         let expectedError = MigrationError.initialization(error: LocalStoreError.notImplemented)
         mockMigrationManager.startModelMigrationFromReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
         mockUserDataStore.underlyingLatestCompatibleModelVersion = .taskStatus
 
-        store.send(.startMigration(from: .taskStatus)) { state in
-            state = .inProgress
+        await store.send(.startMigration(from: .taskStatus)) { state in
+            state.migration = .inProgress
         }
-        store.receive(.startMigrationReceived(.failure(expectedError))) { state in
-            state = .failed(
+        await store.receive(.startMigrationReceived(.failure(expectedError))) { state in
+            state.migration = .failed
+            state.destination = .alert(
                 AppMigrationDomain.alertState(
                     title: L10n.amgBtnAlertTitle.text,
                     message: expectedError.localizedDescription
@@ -145,12 +140,13 @@ final class AppMigrationDomainTests: XCTestCase {
             )
         }
         // retry after error
-        store.send(.loadCurrentModelVersion)
-        store.receive(.startMigration(from: .taskStatus)) { state in
-            state = .inProgress
+        await store.send(.loadCurrentModelVersion)
+        await store.receive(.startMigration(from: .taskStatus)) { state in
+            state.migration = .inProgress
         }
-        store.receive(.startMigrationReceived(.failure(expectedError))) { state in
-            state = .failed(
+        await store.receive(.startMigrationReceived(.failure(expectedError))) { state in
+            state.migration = .failed
+            state.destination = .alert(
                 AppMigrationDomain.alertState(
                     title: L10n.amgBtnAlertTitle.text,
                     message: expectedError.localizedDescription
@@ -159,22 +155,28 @@ final class AppMigrationDomainTests: XCTestCase {
         }
     }
 
-    func testDeleteDatabaseWithError() {
-        let store = testStore()
+    func testDeleteDatabaseWithError() async {
+        let store =
+            testStore(with: .init(migration: .failed,
+                                  destination: .alert(AppMigrationDomain.alertState(title: "Error", message: "Error"))))
 
-        store.send(.deleteDatabase) { state in
-            state = .failed(AppMigrationDomain.deleteDatabaseAlertState())
+        await store.send(.destination(.presented(.alert(.deleteDatabase)))) { state in
+            state.migration = .failed
+            state.destination = .alert(AppMigrationDomain.deleteDatabaseAlertState())
         }
     }
 
-    func testDeleteDatabaseSuccess() throws {
-        let store = testStore(with: .failed(AppMigrationDomain.alertState(title: "Error", message: "Error")))
+    func testDeleteDatabaseSuccess() async throws {
+        let store =
+            testStore(with: .init(migration: .failed,
+                                  destination: .alert(AppMigrationDomain.alertState(title: "Error", message: "Error"))))
 
         // when creating a core data base
         _ = try loadFactory().loadCoreDataController()
 
-        store.send(.deleteDatabase) { state in
-            state = .finished
+        await store.send(.destination(.presented(.alert(.deleteDatabase)))) { state in
+            state.migration = .finished
+            state.destination = nil
         }
     }
 }

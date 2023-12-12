@@ -21,61 +21,59 @@ import eRpStyleKit
 import SwiftUI
 
 struct ReadCardHelpCardView: View {
-    let store: Store<Void, CardWallReadCardDomain.Action>
+    let store: Store<ReadCardHelpDomain.State, ReadCardHelpDomain.Action>
 
     var body: some View {
-        WithViewStore(store) { viewStore in
-            VStack {
-                ScrollView {
-                    VStack(alignment: .leading) {
-                        Text(L10n.cdwTxtRcTipOne)
-                            .foregroundColor(Colors.systemGray)
-                            .padding()
-                            .overlay(
-                                Rectangle()
-                                    .foregroundColor(Colors.systemGray5)
-                                    .opacity(0.4)
-                                    .cornerRadius(8)
-                            )
-                            .padding(.top)
-
-                        Text(L10n.cdwTxtRcCardHeader)
-                            .font(.system(size: 30))
-                            .bold()
-                            .padding(.top)
-
-                        Text(L10n.cdwTxtRcCard)
-                            .padding(.top)
-                    }
-
-                    Image(Asset.CardReader.cardReading.name)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading) {
+                    Text(L10n.cdwTxtRcTipOne)
+                        .foregroundColor(Colors.systemGray)
                         .padding()
+                        .overlay(
+                            Rectangle()
+                                .foregroundColor(Colors.systemGray5)
+                                .opacity(0.4)
+                                .cornerRadius(8)
+                        )
+                        .padding(.top)
+
+                    Text(L10n.cdwTxtRcCardHeader)
+                        .font(.system(size: 30))
+                        .bold()
+                        .padding(.top)
+
+                    Text(L10n.cdwTxtRcCard)
+                        .padding(.top)
                 }
+
+                Image(Asset.CardReader.cardReading.name)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding()
             }
-            .navigationBarItems(
-                leading: Button(action: {
-                    viewStore.send(.setNavigation(tag: nil))
-                }, label: {
-                    HStack {
-                        Image(systemName: SFSymbolName.back).padding(0)
-                            .foregroundColor(Colors.primary700)
-                        Text(L10n.cdwBtnRcHelpBack)
-                            .font(.body)
-                            .foregroundColor(Colors.primary700)
-                            .padding(0)
-                    }
-                }),
-                trailing: Button(L10n.cdwBtnRcNextTip) {
-                    viewStore.send(.updatePageIndex(page: .second))
-                }
-                .accessibility(label: Text(L10n.cdwBtnRcNextTip))
-                .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcHelpNextTip)
-            )
-            .padding()
-            .navigationBarTitleDisplayMode(.inline)
         }
+        .navigationBarItems(
+            leading: Button(action: {
+                store.send(.delegate(.close))
+            }, label: {
+                HStack {
+                    Image(systemName: SFSymbolName.back).padding(0)
+                        .foregroundColor(Colors.primary700)
+                    Text(L10n.cdwBtnRcHelpBack)
+                        .font(.body)
+                        .foregroundColor(Colors.primary700)
+                        .padding(0)
+                }
+            }),
+            trailing: Button(L10n.cdwBtnRcNextTip) {
+                store.send(.delegate(.updatePageIndex(.second)))
+            }
+            .accessibility(label: Text(L10n.cdwBtnRcNextTip))
+            .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcHelpNextTip)
+        )
+        .padding()
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -83,7 +81,7 @@ struct ReadCardHelpCardView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView<ReadCardHelpCardView> {
             ReadCardHelpCardView(
-                store: CardWallReadCardDomain.Dummies.store.stateless
+                store: ReadCardHelpDomain.Dummies.store
             )
         }
         .previewDevice("iPhone 11")

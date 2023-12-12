@@ -20,11 +20,11 @@ import ComposableArchitecture
 import SwiftUI
 
 struct OnboardingLegalInfoView: View {
+    @Binding<Bool> var isAllAccepted: Bool
     var action: () -> Void
 
     @State private var showTermsOfUse = false
     @State private var showTermsOfPrivacy = false
-    @State private var isAllAccepted = false
 
     var body: some View {
         VStack {
@@ -96,7 +96,7 @@ extension OnboardingLegalInfoView {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
-                    Image(decorative: Asset.Onboarding.paragraph)
+                    Image(decorative: Asset.Onboarding.paragraphCircle)
                         .accessibilityHidden(true)
                     Spacer()
                 }
@@ -193,10 +193,10 @@ extension OnboardingLegalInfoView {
 struct OnboardingLegalInfoView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            OnboardingLegalInfoView {}
-            OnboardingLegalInfoView {}
+            OnboardingLegalInfoView(isAllAccepted: .constant(false)) {}
+            OnboardingLegalInfoView(isAllAccepted: .constant(false)) {}
                 .preferredColorScheme(.dark)
-            OnboardingLegalInfoView {}
+            OnboardingLegalInfoView(isAllAccepted: .constant(false)) {}
                 .previewDevice("iPod touch (7th generation)")
         }
     }

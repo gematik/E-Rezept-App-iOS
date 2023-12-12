@@ -27,15 +27,16 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
 
     struct State: Equatable {
         let isDemoModus: Bool
+        let profileId: UUID
         var pin: String = ""
         var selectedLoginOption = LoginOption.notSelected
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<CardWallLoginOptionDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
             // sourcery: AnalyticsScreen = cardWall_readCard
             case readcard(CardWallReadCardDomain.State)
             // sourcery: AnalyticsScreen = cardWall_saveLoginSecurityInfo
@@ -44,6 +45,12 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
 
         enum Action: Equatable {
             case readcardAction(action: CardWallReadCardDomain.Action)
+            case alert(Alert)
+
+            public enum Alert: Equatable {
+                case dismiss
+                case openAppSpecificSettings
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -61,10 +68,9 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
         case advance
         case presentSecurityWarning
         case acceptSecurityWarning
-        case openAppSpecificSettings
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case delegate(Delegate)
 
@@ -89,7 +95,7 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -117,18 +123,18 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
                     return .none
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
-                return EffectTask(value: .presentSecurityWarning)
+                return EffectTask.send(.presentSecurityWarning)
             }
             state.selectedLoginOption = option
             return .none
-        case .openAppSpecificSettings:
+        case .destination(.presented(.alert(.openAppSpecificSettings))):
             if let url = URL(string: UIApplication.openSettingsURLString) {
                 resourceHandler.open(url)
             }
             return .none
         case .advance:
             state.destination = .readcard(.init(isDemoModus: state.isDemoModus,
-                                                profileId: userSession.profileId,
+                                                profileId: state.profileId,
                                                 pin: state.pin,
                                                 loginOption: state.isDemoModus ? .withoutBiometry : state
                                                     .selectedLoginOption,
@@ -144,28 +150,31 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
         case .setNavigation(tag: .none):
             state.destination = nil
             return .none
-        case let .destination(.readcardAction(.delegate(destinationAction))):
+        case let .destination(.presented(.readcardAction(.delegate(destinationAction)))):
             switch destinationAction {
             case .close:
-                return EffectTask(value: .delegate(.close))
+                return .run { send in
                     // Delay for waiting the close animation Workaround for TCA pullback problem
-                    .delay(for: 0.5, scheduler: schedulers.main)
-                    .eraseToEffect()
+                    try await schedulers.main.sleep(for: 0.5)
+                    await send(.delegate(.close))
+                }
             case .singleClose:
                 state.destination = nil
                 return .none
             case .wrongCAN:
-                return EffectTask(value: .delegate(.wrongCanClose))
+                return .run { send in
                     // Delay for waiting the close animation Workaround for TCA pullback problem
-                    .delay(for: 0.1, scheduler: schedulers.main)
-                    .eraseToEffect()
+                    try await schedulers.main.sleep(for: 0.1)
+                    await send(.delegate(.wrongCanClose))
+                }
             case .wrongPIN:
-                return EffectTask(value: .delegate(.wrongPinClose))
+                return EffectTask.send(.delegate(.wrongPinClose))
             case .navigateToIntro:
-                return EffectTask(value: .delegate(.navigateToIntro))
+                return .run { send in
                     // Delay for waiting the close animation Workaround for TCA pullback problem
-                    .delay(for: 1.1, scheduler: schedulers.main)
-                    .eraseToEffect()
+                    try await schedulers.main.sleep(for: 1.1)
+                    await send(.delegate(.navigateToIntro))
+                }
             }
         case .setNavigation,
              .destination,
@@ -195,13 +204,14 @@ enum LoginOption {
 
 extension CardWallLoginOptionDomain {
     enum Dummies {
-        static let state = State(isDemoModus: false)
+        static let state = State(isDemoModus: false, profileId: UUID())
 
         static let store = storeFor(state)
 
         static func storeFor(_ state: State) -> StoreOf<CardWallLoginOptionDomain> {
-            Store(initialState: state,
-                  reducer: CardWallLoginOptionDomain())
+            Store(initialState: state) {
+                CardWallLoginOptionDomain()
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ extension PrescriptionDetailView {
 
         init(store: PrescriptionDetailDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -57,9 +57,11 @@ extension PrescriptionDetailView {
                     }
                 )) {
                     IfLetStore(
-                        store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.sharePrescription)
+                        store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                        state: /PrescriptionDetailDomain.Destinations.State.sharePrescription,
+                        action: PrescriptionDetailDomain.Destinations.Action.sharePrescription
                     ) { scopedStore in
-                        WithViewStore(scopedStore) { routeState in
+                        WithViewStore(scopedStore) { $0 } content: { routeState in
                             ShareViewController(
                                 itemsToShare: [
                                     "E-Rezept-App",
@@ -78,7 +80,7 @@ extension PrescriptionDetailView {
             @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
 
             init(store: PrescriptionDetailDomain.Store) {
-                viewStore = ViewStore(store.scope(state: ViewState.init))
+                viewStore = ViewStore(store, observe: ViewState.init)
             }
 
             struct ViewState: Equatable {

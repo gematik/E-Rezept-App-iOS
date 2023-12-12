@@ -37,7 +37,7 @@ struct AppAuthenticationPasswordView: View {
 
     init(store: AppAuthenticationPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     var password: Binding<String> {

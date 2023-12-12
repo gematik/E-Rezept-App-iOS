@@ -19,6 +19,13 @@
 import Combine
 
 extension Publisher {
+    /// Transforms the values/failure emitted by `self` to an `Result`.
+    func catchToPublisher() -> AnyPublisher<Result<Self.Output, Self.Failure>, Never> {
+        map(Result.success)
+            .catch { Just(Result.failure($0)) }
+            .eraseToAnyPublisher()
+    }
+
     func onSubscribe(_ onSubscription: @escaping (Subscription) -> Void) -> AnyPublisher<Output, Failure> {
         handleEvents(receiveSubscription: onSubscription).eraseToAnyPublisher()
     }

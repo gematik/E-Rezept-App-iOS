@@ -21,7 +21,13 @@ import Foundation
 import ModelsR4
 
 extension ErxTaskOrder {
-    func asCommunicationResource(encoder: JSONEncoder = JSONEncoder()) throws -> Data {
+    func asCommunicationResource(
+        encoder: JSONEncoder = {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .sortedKeys
+            return encoder
+        }()
+    ) throws -> Data {
         let communication = try createFHIRCommunication()
         return try encoder.encode(communication)
     }
@@ -31,27 +37,18 @@ extension ErxTaskOrder {
     }
 
     private func createFHIRCommunication() throws -> Communication {
-        #warning(
-            "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
-        )
-        guard let communicationDispReq = Workflow.Key.communicationDispReq[.v1_1_1]?
-            .asFHIRCanonicalPrimitive() else {
+        guard let communicationDispReq = Workflow.Key.communicationDispReq[.v1_2_0]?
+            .asFHIRCanonicalPrimitive(for: "1.2") else {
             throw ErxTaskOrder.Error.unableToConstructCommunicationRequest
         }
         let meta = Meta(profile: [communicationDispReq])
         let reference = Reference(reference: taskIdAndAccessCode.asFHIRStringPrimitive())
         let payloadString = payload.asJsonString().asFHIRStringPrimitive()
         let payload = CommunicationPayload(content: .string(payloadString))
-        #warning(
-            "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
-        )
-        let telematikUri = Workflow.Key.telematikIdKeys[.v1_1_1]?.asFHIRURIPrimitive()
+        let telematikUri = Workflow.Key.telematikIdKeys[.v1_2_0]?.asFHIRURIPrimitive()
         let telematikId = Identifier(system: telematikUri,
                                      value: pharmacyTelematikId.asFHIRStringPrimitive())
-        #warning(
-            "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
-        )
-        let orderUri = Workflow.Key.orderIdKeys[.v1_1_1]?.asFHIRURIPrimitive()
+        let orderUri = Workflow.Key.orderIdKeys[.v1_2_0]?.asFHIRURIPrimitive()
         let orderId = Identifier(system: orderUri,
                                  value: identifier.asFHIRStringPrimitive())
         let recipient = Reference(identifier: telematikId)
@@ -67,7 +64,13 @@ extension ErxTaskOrder {
 }
 
 extension ErxTaskOrder.Payload {
-    func asJsonString(encoder: JSONEncoder = JSONEncoder()) -> String {
+    func asJsonString(
+        encoder: JSONEncoder = {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .sortedKeys
+            return encoder
+        }()
+    ) -> String {
         guard let data = try? encoder.encode(self) else {
             return ""
         }

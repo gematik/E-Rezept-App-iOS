@@ -27,6 +27,8 @@ final class AppStoreSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
+
+        SnapshotHelper.fixOffsetProblem()
     }
 
     func test01Onboarding() {

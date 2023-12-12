@@ -45,6 +45,16 @@ struct DummyErxTaskRepository: ErxTaskRepository {
         Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     }
 
+    func loadRemoteLatestAuditEvents(for _: String?)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, eRpKit.ErxRepositoryError> {
+        Just(PagedContent(content: [], next: nil)).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func loadRemoteAuditEventsPage(from _: URL, locale _: String?)
+        -> AnyPublisher<eRpKit.PagedContent<[eRpKit.ErxAuditEvent]>, eRpKit.ErxRepositoryError> {
+        Just(PagedContent(content: [], next: nil)).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+    }
+
     func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, ErxRepositoryError> {
         Just(order).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     }

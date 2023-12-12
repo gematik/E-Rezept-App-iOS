@@ -36,7 +36,7 @@ struct DebugQRCodeImporter<ContentType: Codable>: View {
                 guard scan else { return }
 
                 if let output = outputs.first {
-                    if case let .erxCode(input) = output,
+                    if case let .text(input) = output,
                        let data = input?.data(using: .utf8) {
                         do {
                             let newContent = try JSONDecoder().decode(ContentType.self, from: data)

@@ -28,7 +28,7 @@ struct PharmacyRedeemView: View {
 
     init(store: PharmacyRedeemDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     var body: some View {
@@ -62,14 +62,14 @@ struct PharmacyRedeemView: View {
             Spacer()
 
             RedeemButton(viewStore: viewStore)
-                .alert(
-                    store.destinationsScope(state: /PharmacyRedeemDomain.Destinations.State.alert),
-                    dismiss: .setNavigation(tag: .none)
-                )
         }
-        .onAppear {
-            viewStore.send(.registerSelectedShipmentInfoListener)
-            viewStore.send(.registerSelectedProfileListener)
+        .alert(
+            store.scope(state: \.$destination, action: PharmacyRedeemDomain.Action.destination),
+            state: /PharmacyRedeemDomain.Destinations.State.alert,
+            action: PharmacyRedeemDomain.Destinations.Action.alert
+        )
+        .task {
+            await viewStore.send(.task).finish()
         }
         .navigationTitle(L10n.phaRedeemTitle)
         .navigationBarItems(
@@ -298,7 +298,7 @@ extension PharmacyRedeemView {
 
         init(store: PharmacyRedeemDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -314,19 +314,16 @@ extension PharmacyRedeemView {
             Group {
                 content
 
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /PharmacyRedeemDomain.Destinations.State.redeemSuccess,
-                            action: PharmacyRedeemDomain.Destinations.Action.redeemSuccessView(action:)
-                        ),
-                        then: RedeemSuccessView.init(store:)
-                    ),
-                    tag: PharmacyRedeemDomain.Destinations.State.Tag.redeemSuccess,
-                    selection: viewStore.binding(get: \.destinationTag) { .setNavigation(tag: $0) }
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: PharmacyRedeemDomain.Action.destination),
+                    state: /PharmacyRedeemDomain.Destinations.State.redeemSuccess,
+                    action: PharmacyRedeemDomain.Destinations.Action.redeemSuccessView(action:),
+                    onTap: { viewStore.send(.setNavigation(tag: .redeemSuccess)) },
+                    destination: RedeemSuccessView.init(store:),
+                    label: {}
+                )
+                .hidden()
+                .accessibility(hidden: true)
 
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
@@ -342,10 +339,9 @@ extension PharmacyRedeemView {
                         onDismiss: {},
                         content: {
                             IfLetStore(
-                                store.destinationsScope(
-                                    state: /PharmacyRedeemDomain.Destinations.State.cardWall,
-                                    action: PharmacyRedeemDomain.Destinations.Action.cardWall(action:)
-                                ),
+                                store.scope(state: \.$destination, action: PharmacyRedeemDomain.Action.destination),
+                                state: /PharmacyRedeemDomain.Destinations.State.cardWall,
+                                action: PharmacyRedeemDomain.Destinations.Action.cardWall(action:),
                                 then: CardWallIntroductionView.init(store:)
                             )
                         }
@@ -365,10 +361,9 @@ extension PharmacyRedeemView {
                 onDismiss: {},
                 content: {
                     IfLetStore(
-                        store.destinationsScope(
-                            state: /PharmacyRedeemDomain.Destinations.State.contact,
-                            action: PharmacyRedeemDomain.Destinations.Action.pharmacyContact(action:)
-                        ),
+                        store.scope(state: \.$destination, action: PharmacyRedeemDomain.Action.destination),
+                        state: /PharmacyRedeemDomain.Destinations.State.contact,
+                        action: PharmacyRedeemDomain.Destinations.Action.pharmacyContact(action:),
                         then: PharmacyContactView.init(store:)
                     )
                 }

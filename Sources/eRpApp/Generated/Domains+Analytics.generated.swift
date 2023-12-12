@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -44,6 +44,18 @@ extension AppDomain.State {
     }
 }
 
+extension AppMigrationDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
 extension AppSecurityDomain.State {
     func routeName() -> String? {
         guard let destination = destination else {
@@ -58,7 +70,15 @@ extension AppSecurityDomain.State {
 
 extension AuditEventsDomain.State {
     func routeName() -> String? {
+        guard let destination = destination else {
             return nil
+        }
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case let .cardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
     }
 }
 
@@ -168,6 +188,8 @@ extension ChargeItemDomain.State {
                 return destination.tag.analyticsName
             case let .idpCardWall(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case let .alterChargeItem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
         }
@@ -252,8 +274,23 @@ extension EditProfilePictureDomain.State {
     }
 }
 
+extension ExtAuthPendingDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case .extAuthAlert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
 extension HealthCardPasswordDomain.State {
     func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
         switch destination {
             case .introduction:
                 return destination.tag.analyticsName
@@ -268,6 +305,8 @@ extension HealthCardPasswordDomain.State {
             case let .readCard(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case .scanner:
+                return destination.tag.analyticsName
+            case .pinAlert:
                 return destination.tag.analyticsName
         }
     }
@@ -292,6 +331,12 @@ extension HorizontalProfileSelectionDomain.State {
 }
 
 extension IDPCardWallDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
+extension IngredientDomain.State {
     func routeName() -> String? {
             return nil
     }
@@ -329,14 +374,20 @@ extension MainDomain.State {
     }
 }
 
+extension MatrixCodeDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
 extension MedicationDomain.State {
     func routeName() -> String? {
         guard let destination = destination else {
             return nil
         }
         switch destination {
-            case .ingredient:
-                return destination.tag.analyticsName
+            case let .ingredient(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -361,6 +412,8 @@ extension NewProfileDomain.State {
         switch destination {
             case let .editProfilePicture(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -561,12 +614,6 @@ extension ProfilesDomain.State {
     }
 }
 
-extension RedeemMatrixCodeDomain.State {
-    func routeName() -> String? {
-            return nil
-    }
-}
-
 extension RedeemMethodsDomain.State {
     func routeName() -> String? {
         guard let destination = destination else {
@@ -599,7 +646,7 @@ extension RegisteredDevicesDomain.State {
             return nil
         }
         switch destination {
-            case let .idpCardWall(state: state):
+            case let .cardWallCAN(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
@@ -616,6 +663,10 @@ extension ScannerDomain.State {
             case .imageGallery:
                 return destination.tag.analyticsName
             case .documentImporter:
+                return destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+            case .sheet:
                 return destination.tag.analyticsName
         }
     }
@@ -660,22 +711,6 @@ extension SettingsDomain.State {
 }
 
 
-extension AppMigrationDomain.State {
-    func routeName() -> String? {
-        let destination = self
-        switch destination {
-            case .none:
-                return destination.tag.analyticsName
-            case .inProgress:
-                return destination.tag.analyticsName
-            case .finished:
-                return destination.tag.analyticsName
-            case .failed:
-                return destination.tag.analyticsName
-        }
-    }
-}
-
 extension AppStartDomain.State {
     func routeName() -> String? {
         let destination = self
@@ -690,7 +725,7 @@ extension AppStartDomain.State {
     }
 }
 
-extension CardWallReadCardHelpDomain.State {
+extension ReadCardHelpDomain.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
@@ -700,37 +735,41 @@ extension CardWallReadCardHelpDomain.State {
                 return destination.tag.analyticsName
             case .third:
                 return destination.tag.analyticsName
+            case .fourth:
+                return destination.tag.analyticsName
         }
     }
 }
 
-extension ExtAuthPendingDomain.State {
+
+
+extension AppMigrationDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
-            case .empty:
-                return destination.tag.analyticsName
-            case .pendingExtAuth:
-                return destination.tag.analyticsName
-            case .extAuthReceived:
-                return destination.tag.analyticsName
-            case .extAuthSuccessful:
-                return destination.tag.analyticsName
-            case let .extAuthFailed(.error(error, _)): 
-                return error.analyticsName
-            case .extAuthFailed:
+            case .alert:
                 return destination.tag.analyticsName
         }
     }
 }
-
-
 
 extension AppSecurityDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
             case let .appPassword(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension AuditEventsDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case let .cardWall(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -822,6 +861,8 @@ extension ChargeItemDomain.Destinations.State {
                 return destination.tag.analyticsName
             case let .idpCardWall(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case let .alterChargeItem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
         }
@@ -876,6 +917,16 @@ extension EditProfilePictureDomain.Destinations.State {
     }
 }
 
+extension ExtAuthPendingDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .extAuthAlert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
 extension HealthCardPasswordDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
@@ -893,6 +944,8 @@ extension HealthCardPasswordDomain.Destinations.State {
             case let .readCard(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case .scanner:
+                return destination.tag.analyticsName
+            case .pinAlert:
                 return destination.tag.analyticsName
         }
     }
@@ -942,8 +995,8 @@ extension MedicationDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
-            case .ingredient:
-                return destination.tag.analyticsName
+            case let .ingredient(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -964,6 +1017,8 @@ extension NewProfileDomain.Destinations.State {
         switch destination {
             case let .editProfilePicture(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -1126,7 +1181,7 @@ extension RegisteredDevicesDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
-            case let .idpCardWall(state: state):
+            case let .cardWallCAN(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
@@ -1141,6 +1196,10 @@ extension ScannerDomain.Destinations.State {
             case .imageGallery:
                 return destination.tag.analyticsName
             case .documentImporter:
+                return destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+            case .sheet:
                 return destination.tag.analyticsName
         }
     }
@@ -1198,11 +1257,29 @@ extension AppDomain.Destinations.State.Tag {
         }
     }
 }
+extension AppMigrationDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .alert: 
+                return "alert"
+        }
+    }
+}
 extension AppSecurityDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .appPassword: 
                 return "appPassword"
+        }
+    }
+}
+extension AuditEventsDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .alert: 
+                return Analytics.Screens.errorAlert.name
+            case .cardWall: 
+                return Analytics.Screens.cardWall.name
         }
     }
 }
@@ -1279,6 +1356,8 @@ extension ChargeItemDomain.Destinations.State.Tag {
                 return "shareSheet"
             case .idpCardWall: 
                 return "idpCardWall"
+            case .alterChargeItem: 
+                return "alterChargeItem"
             case .alert: 
                 return "alert"
         }
@@ -1326,6 +1405,14 @@ extension EditProfilePictureDomain.Destinations.State.Tag {
         }
     }
 }
+extension ExtAuthPendingDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .extAuthAlert: 
+                return "extAuthAlert"
+        }
+    }
+}
 extension HealthCardPasswordDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
@@ -1343,6 +1430,8 @@ extension HealthCardPasswordDomain.Destinations.State.Tag {
                 return Analytics.Screens.healthCardPassword_readCard.name
             case .scanner: 
                 return Analytics.Screens.healthCardPassword_scanner.name
+            case .pinAlert: 
+                return Analytics.Screens.healthCardPassword_pin_alert.name
         }
     }
 }
@@ -1403,6 +1492,8 @@ extension NewProfileDomain.Destinations.State.Tag {
         switch self {
             case .editProfilePicture: 
                 return "editProfilePicture"
+            case .alert: 
+                return "alert"
         }
     }
 }
@@ -1543,7 +1634,7 @@ extension RedeemMethodsDomain.Destinations.State.Tag {
 extension RegisteredDevicesDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
-            case .idpCardWall: 
+            case .cardWallCAN: 
                 return Analytics.Screens.cardWall.name
             case .alert: 
                 return Analytics.Screens.alert.name
@@ -1557,6 +1648,10 @@ extension ScannerDomain.Destinations.State.Tag {
                 return Analytics.Screens.scanner_imageGallery.name
             case .documentImporter: 
                 return Analytics.Screens.scanner_documentImporter.name
+            case .alert: 
+                return "alert"
+            case .sheet: 
+                return "sheet"
         }
     }
 }
@@ -1596,20 +1691,6 @@ extension SettingsDomain.Destinations.State.Tag {
 }
 
 
-extension AppMigrationDomain.State.Tag {
-    var analyticsName: String {
-        switch self {
-            case .none: 
-                return "none"
-            case .inProgress: 
-                return "inProgress"
-            case .finished: 
-                return "finished"
-            case .failed: 
-                return "failed"
-        }
-    }
-}
 extension AppStartDomain.State.Tag {
     var analyticsName: String {
         switch self {
@@ -1622,7 +1703,7 @@ extension AppStartDomain.State.Tag {
         }
     }
 }
-extension CardWallReadCardHelpDomain.State.Tag {
+extension ReadCardHelpDomain.State.Tag {
     var analyticsName: String {
         switch self {
             case .first: 
@@ -1631,22 +1712,8 @@ extension CardWallReadCardHelpDomain.State.Tag {
                 return Analytics.Screens.troubleShooting_readCardHelp2.name
             case .third: 
                 return Analytics.Screens.troubleShooting_readCardHelp3.name
-        }
-    }
-}
-extension ExtAuthPendingDomain.State.Tag {
-    var analyticsName: String {
-        switch self {
-            case .empty: 
-                return "empty"
-            case .pendingExtAuth: 
-                return "pendingExtAuth"
-            case .extAuthReceived: 
-                return "extAuthReceived"
-            case .extAuthSuccessful: 
-                return "extAuthSuccessful"
-            case .extAuthFailed: 
-                return "extAuthFailed"
+            case .fourth: 
+                return Analytics.Screens.troubleShooting_readCardHelp4.name
         }
     }
 }

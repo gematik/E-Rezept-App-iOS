@@ -16,19 +16,13 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
 import IDP
 import UIKit
 
 struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
-
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {}
+    typealias Store = StoreOf<Self>
 
     struct State: Equatable {
         let selectedKK: KKAppDirectory.Entry
@@ -37,7 +31,7 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
 
         var error: Error?
 
-        var contactActionSheet: ConfirmationDialogState<Action>?
+        @PresentationState var contactActionSheet: ConfirmationDialogState<Action.ContactSheet>?
     }
 
     // sourcery: CodedError = "012"
@@ -53,13 +47,15 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
         case error(Error)
         case openURL(URL)
         case openContactSheet
-        case closeContactSheet
 
-        case contactByTelephone
-        case contactByMail
-
+        case contactSheet(PresentationAction<ContactSheet>)
         case response(Response)
         case delegate(Delegate)
+
+        enum ContactSheet: Equatable {
+            case contactByTelephone
+            case contactByMail
+        }
 
         enum Response: Equatable {
             case openURL(Bool)
@@ -96,35 +92,37 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
             state.loading = true
             // [REQ:gemSpec_IDP_Sek:A_22294] Start login with KK
             // [REQ:BSI-eRp-ePA:O.Auth_3#2,O.Plat_10#2] Start login with KK
-            return environment.idpSession.startExtAuth(entry: state.selectedKK)
-                .first()
-                .map(Action.openURL)
-                .catch { error in
-                    EffectTask(value: Action.error(Error.idpError(error)))
-                }
-                .receive(on: environment.schedulers.main)
-                .eraseToEffect()
+            return .publisher(
+                environment.idpSession.startExtAuth(entry: state.selectedKK)
+                    .first()
+                    .map(Action.openURL)
+                    .catch { error in
+                        Just(Action.error(Error.idpError(error)))
+                    }
+                    .receive(on: environment.schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .openURL(url):
-            return .future { completion in
+            return Effect.run { send in
+                let action = await withCheckedContinuation { continuation in
+                    // [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
+                    // [REQ:BSI-eRp-ePA:O.Plat_10#3] Follow redirect
+                    guard environment.resourceHandler.canOpenURL(url) else {
+                        continuation.resume(returning: Action.response(.openURL(false)))
+                        return
+                    }
 
-                // [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
-                // [REQ:BSI-eRp-ePA:O.Plat_10#3] Follow redirect
-                guard environment.resourceHandler.canOpenURL(url) else {
-                    completion(.success(Action.response(.openURL(false))))
-                    return
+                    // [REQ:gemSpec_IDP_Sek:A_22313] Remember State parameter for later verification
+                    environment.resourceHandler.open(url, options: [:]) { result in
+                        continuation.resume(returning: Action.response(.openURL(result)))
+                    }
                 }
-
-                // [REQ:gemSpec_IDP_Sek:A_22313] Remember State parameter for later verification
-                environment.resourceHandler.open(url, options: [:]) { result in
-                    completion(.success(Action.response(.openURL(result))))
-                }
+                await send(action)
             }
-            .receive(on: environment.schedulers.main)
-            .eraseToEffect()
         case let .response(.openURL(successful)):
             state.loading = false
             if successful {
-                return EffectTask(value: .delegate(.close))
+                return EffectTask.send(.delegate(.close))
             } else {
                 state.error = Error.universalLinkFailed
             }
@@ -134,7 +132,7 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
             state.error = error
             return .none
         case .openContactSheet:
-            state.contactActionSheet = ConfirmationDialogState(
+            state.contactActionSheet = ConfirmationDialogState<Action.ContactSheet>(
                 title: TextState(L10n.cdwTxtExtauthConfirmContactsheetTitle),
                 buttons: [
                     .default(
@@ -142,22 +140,20 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
                         action: .send(.contactByTelephone)
                     ),
                     .default(TextState(L10n.cdwTxtExtauthConfirmContactsheetMail), action: .send(.contactByMail)),
-                    .cancel(TextState(L10n.alertBtnClose), action: .send(.closeContactSheet)),
+                    .cancel(TextState(L10n.alertBtnClose), action: .send(.none)),
                 ]
             )
             return .none
-        case .closeContactSheet:
-            state.contactActionSheet = nil
-            return .none
-        case .contactByTelephone:
+        case .contactSheet(.presented(.contactByTelephone)):
             guard let url = URL(string: "tel:+498002773777") else { return .none }
             environment.resourceHandler.open(url, options: [:]) { _ in }
             return .none
-        case .contactByMail:
+        case .contactSheet(.presented(.contactByMail)):
             guard let url = URL(string: "mailto:app-feedback@gematik.de") else { return .none }
             environment.resourceHandler.open(url, options: [:]) { _ in }
             return .none
-        case .delegate:
+        case .delegate,
+             .contactSheet:
             return .none // Handled by parent domain
         }
     }
@@ -179,11 +175,14 @@ extension CardWallExtAuthConfirmationDomain {
         static let state = State(selectedKK: .init(name: "Dummy KK", identifier: "identifier"),
                                  error: nil)
 
-        static let store = Store(initialState: state,
-                                 reducer: CardWallExtAuthConfirmationDomain())
+        static let store = Store(initialState: state) {
+            CardWallExtAuthConfirmationDomain()
+        }
 
         static func store(for state: State) -> Store {
-            Store(initialState: state, reducer: CardWallExtAuthConfirmationDomain())
+            Store(initialState: state) {
+                CardWallExtAuthConfirmationDomain()
+            }
         }
     }
 }

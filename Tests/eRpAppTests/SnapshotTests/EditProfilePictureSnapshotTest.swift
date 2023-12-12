@@ -33,9 +33,10 @@ final class EditProfilePictureSnapshotTest: XCTestCase {
     func testEditProfilePictureViewEmpty() {
         let sut = EditProfilePictureView(
             store: .init(
-                initialState: .init(profile: Fixtures.noImageProfile),
-                reducer: EmptyReducer()
-            )
+                initialState: .init(profileId: nil)
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -46,36 +47,14 @@ final class EditProfilePictureSnapshotTest: XCTestCase {
     func testEditProfilePictureViewImage() {
         let sut = EditProfilePictureView(
             store: .init(
-                initialState: .init(profile: Fixtures.noImageProfile),
-                reducer: EmptyReducer()
-            )
+                initialState: .init(profileId: nil, color: .green, picture: ProfilePicture.baby)
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-}
-
-extension EditProfilePictureSnapshotTest {
-    enum Fixtures {
-        static let ImageProfile = UserProfile(
-            profile: Profile(
-                name: "Lazy Niklas",
-                color: .green,
-                image: .baby
-            ),
-            connectionStatus: .connected,
-            activityIndicating: false
-        )
-
-        static let noImageProfile = UserProfile(
-            profile: Profile(
-                name: "Teo Test",
-                color: .blue
-            ),
-            connectionStatus: .connected,
-            activityIndicating: false
-        )
     }
 }

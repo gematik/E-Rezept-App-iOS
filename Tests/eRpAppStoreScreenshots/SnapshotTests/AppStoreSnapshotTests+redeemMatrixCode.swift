@@ -25,14 +25,16 @@ import XCTest
 
 extension AppStoreSnapshotTests {
     func redeemMatrixCode() -> some View {
-        let sut = RedeemMatrixCodeView(
-            store: RedeemMatrixCodeDomain.Store(
+        let sut = MatrixCodeView(
+            store: MatrixCodeDomain.Store(
                 initialState: .init(
+                    type: .erxTask,
                     erxTasks: ErxTask.Demo.erxTasks,
                     loadingState: .value(UIImage(testBundleNamed: "qrcode")!)
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
         return sut
     }

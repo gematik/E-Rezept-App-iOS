@@ -27,18 +27,20 @@ struct OnboardingContainer: View, KeyboardReadable {
 
     init(store: Store<OnboardingDomain.State, OnboardingDomain.Action>) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
         let composition: OnboardingDomain.Composition
         let isShowingNextButton: Bool
         let hasValidAuthenticationSelection: Bool
+        let legalConfirmed: Bool
 
         init(state: OnboardingDomain.State) {
             composition = state.composition
             isShowingNextButton = state.isShowingNextButton
             hasValidAuthenticationSelection = state.registerAuthenticationState.hasValidSelection
+            legalConfirmed = state.legalConfirmed
         }
     }
 
@@ -50,37 +52,30 @@ struct OnboardingContainer: View, KeyboardReadable {
                     send: OnboardingDomain.Action.setPage(index:)
                 )
             ) {
-                if viewStore.composition.pages.contains(.altRegisterAuthentication) {
-                    // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
-                    OnboardingAltRegisterAuthenticationView(
-                        store: store.scope(state: { $0.registerAuthenticationState },
-                                           action: { .registerAuthentication(action: $0) })
-                    )
+                OnboardingStartView()
                     .tag(0)
 
-                } else {
-                    OnboardingStartView()
-                        .tag(0)
-
-                    OnboardingLegalInfoView {
+                if viewStore.composition.pages.contains(.legalInfo) {
+                    OnboardingLegalInfoView(isAllAccepted: viewStore.binding(get: \.legalConfirmed,
+                                                                             send: OnboardingDomain.Action
+                                                                                 .setConfirmLegal)) {
                         viewStore.send(.nextPage, animation: .default)
                     }
                     .tag(1)
-                    .contentShape(Rectangle())
-                    .highPriorityGesture(DragGesture())
+                }
 
-                    // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
+                if viewStore.composition.pages.contains(.registerAuthentication) {
                     OnboardingRegisterAuthenticationView(
                         store: store.scope(state: { $0.registerAuthenticationState },
                                            action: { .registerAuthentication(action: $0) })
                     )
-                    .contentShape(Rectangle())
-                    .gesture(viewStore.hasValidAuthenticationSelection ? nil : DragGesture())
                     .tag(2)
+                }
 
+                if viewStore.composition.pages.contains(.analytics) {
                     OnboardingAnalyticsView {
                         // [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
-                        viewStore.send(.showTrackingAlert)
+                        viewStore.send(.showTracking)
                     }
                     .tag(3)
                 }
@@ -88,27 +83,17 @@ struct OnboardingContainer: View, KeyboardReadable {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
             .background(Colors.systemBackground)
-            .alert(store.scope(state: \.alertState), dismiss: .dismissAlert)
+            .alert(store: store.scope(state: \.$alertState, action: OnboardingDomain.Action.alert))
 
             ZStack {
                 if viewStore.isShowingNextButton {
                     OnboardingNextButton(isEnabled: true) {
-                        // Due to a bug in iOS < 14.5 the keyboard animation somehow breaks
-                        // the page animation. For that we close the keyboard on first touch and
-                        // animate to the next page only if there is no keyboard on screen
-                        if isKeyboardVisible {
-                            UIApplication.shared.dismissKeyboard()
-                        } else {
-                            viewStore.send(
-                                .nextPage,
-                                animation: Animation.default
-                            )
-                        }
+                        viewStore.send(
+                            .nextPage,
+                            animation: .default
+                        )
                     }
                 }
-            }
-            .onReceive(keyboardPublisher) { isKeyboardVisible in
-                self.isKeyboardVisible = isKeyboardVisible
             }
         }
     }
@@ -117,15 +102,22 @@ struct OnboardingContainer: View, KeyboardReadable {
 struct OnboardingContainerView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            OnboardingContainer(store: .init(
-                initialState: OnboardingDomain.Dummies.state,
-                reducer: OnboardingDomain()
-            ))
-            OnboardingContainer(store: .init(
-                initialState: OnboardingDomain.Dummies.state,
-                reducer: OnboardingDomain()
-            ))
-                .preferredColorScheme(.dark)
+            OnboardingContainer(
+                store: .init(
+                    initialState: OnboardingDomain.Dummies.state
+                ) {
+                    OnboardingDomain()
+                }
+            )
+
+            OnboardingContainer(
+                store: .init(
+                    initialState: OnboardingDomain.Dummies.state
+                ) {
+                    OnboardingDomain()
+                }
+            )
+            .preferredColorScheme(.dark)
         }
     }
 }

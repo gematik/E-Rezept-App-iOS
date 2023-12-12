@@ -21,36 +21,38 @@ import ComposableArchitecture
 import Nimble
 import XCTest
 
+@MainActor
 final class CardWallLoginDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        CardWallLoginOptionDomain.State,
-        CardWallLoginOptionDomain.Action,
-        CardWallLoginOptionDomain.State,
-        CardWallLoginOptionDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<CardWallLoginOptionDomain>
 
     func testStore() -> TestStore {
         testStore(for: CardWallLoginOptionDomain.Dummies.state)
     }
 
     func testStore(for state: CardWallLoginOptionDomain.State) -> TestStore {
-        TestStore(initialState: state, reducer: CardWallLoginOptionDomain()) { dependencies in
+        TestStore(initialState: state) {
+            CardWallLoginOptionDomain()
+        } withDependencies: { dependencies in
             dependencies.userSession = MockUserSession()
             dependencies.schedulers = Schedulers()
             dependencies.resourceHandler = MockResourceHandler()
         }
     }
 
-    func testLoginOptionProceedWithBiometrie() {
+    func testLoginOptionProceedWithBiometrie() async {
         let store = testStore(for: CardWallLoginOptionDomain
-            .State(isDemoModus: false, pin: "", selectedLoginOption: .withBiometry, destination: .none))
+            .State(
+                isDemoModus: false,
+                profileId: UUID(),
+                pin: "",
+                selectedLoginOption: .withBiometry,
+                destination: .none
+            ))
 
-        store.send(.advance) { state in
+        await store.send(.advance) { state in
             state.destination = .readcard(CardWallReadCardDomain.State(
                 isDemoModus: false,
-                profileId: store.dependencies.userSession
-                    .profileId,
+                profileId: state.profileId,
                 pin: "",
                 loginOption: .withBiometry,
                 output: .idle
@@ -58,15 +60,20 @@ final class CardWallLoginDomainTests: XCTestCase {
         }
     }
 
-    func testLoginOptionProceedWithBiometrieButDemoMode() {
+    func testLoginOptionProceedWithBiometrieButDemoMode() async {
         let store = testStore(for: CardWallLoginOptionDomain
-            .State(isDemoModus: true, pin: "", selectedLoginOption: .withBiometry, destination: .none))
+            .State(
+                isDemoModus: true,
+                profileId: UUID(),
+                pin: "",
+                selectedLoginOption: .withBiometry,
+                destination: .none
+            ))
 
-        store.send(.advance) { state in
+        await store.send(.advance) { state in
             state.destination = .readcard(CardWallReadCardDomain.State(
                 isDemoModus: true,
-                profileId: store.dependencies.userSession
-                    .profileId,
+                profileId: state.profileId,
                 pin: "",
                 loginOption: .withoutBiometry,
                 output: .idle
@@ -74,15 +81,20 @@ final class CardWallLoginDomainTests: XCTestCase {
         }
     }
 
-    func testLoginOptionProceedWithoutBiometrie() {
+    func testLoginOptionProceedWithoutBiometrie() async {
         let store = testStore(for: CardWallLoginOptionDomain
-            .State(isDemoModus: false, pin: "", selectedLoginOption: .withoutBiometry, destination: .none))
+            .State(
+                isDemoModus: false,
+                profileId: UUID(),
+                pin: "",
+                selectedLoginOption: .withoutBiometry,
+                destination: .none
+            ))
 
-        store.send(.advance) { state in
+        await store.send(.advance) { state in
             state.destination = .readcard(CardWallReadCardDomain.State(
                 isDemoModus: false,
-                profileId: store.dependencies.userSession
-                    .profileId,
+                profileId: state.profileId,
                 pin: "",
                 loginOption: .withoutBiometry,
                 output: .idle

@@ -83,6 +83,20 @@ public protocol ErxTaskRepository {
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<Int, ErxRepositoryError>
 
+    /// Load all AuditEvent's from a remote (server)
+    ///
+    /// - Returns: AnyPublisher that emits true if loading and sing the audit events was successful.
+    ///            Raises a `DefaultErxTaskRepository.Error` if not
+    func loadRemoteLatestAuditEvents(for locale: String?)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError>
+
+    /// Load one page of audit events from a remote (server) from an url previously provided by the server
+    /// - Parameters:
+    ///   - url: destination of the request
+    ///   - locale: Location type of the language in which the result should be returned
+    func loadRemoteAuditEventsPage(from url: URL, locale: String?)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError>
+
     /// Load all ErxChargeItem's from a remote (server).
     ///
     /// - Returns: AnyPublisher that emits an array of all `ErxChargeItems`s or `DefaultErxTaskRepository.Error`

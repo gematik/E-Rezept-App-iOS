@@ -80,8 +80,8 @@ extension UserMode: UserSession {
         sessionContainer.extAuthRequestStorage
     }
 
-    var biometrieIdpSession: IDPSession {
-        sessionContainer.biometrieIdpSession
+    var pairingIdpSession: IDPSession {
+        sessionContainer.pairingIdpSession
     }
 
     var nfcSessionProvider: NFCSignatureProvider {
@@ -136,8 +136,8 @@ extension UserMode: UserSession {
         sessionContainer.idpSessionLoginHandler
     }
 
-    var biometricsIdpSessionLoginHandler: LoginHandler {
-        sessionContainer.biometricsIdpSessionLoginHandler
+    var pairingIdpSessionLoginHandler: LoginHandler {
+        sessionContainer.pairingIdpSessionLoginHandler
     }
 
     var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {

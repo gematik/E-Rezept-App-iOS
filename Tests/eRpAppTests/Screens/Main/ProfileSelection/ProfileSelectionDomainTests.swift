@@ -23,14 +23,9 @@ import eRpKit
 import Nimble
 import XCTest
 
+@MainActor
 final class ProfileSelectionDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        ProfileSelectionDomain.State,
-        ProfileSelectionDomain.Action,
-        ProfileSelectionDomain.State,
-        ProfileSelectionDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<ProfileSelectionDomain>
 
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
@@ -46,17 +41,16 @@ final class ProfileSelectionDomainTests: XCTestCase {
     }
 
     private func testStore(for state: ProfileSelectionDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: ProfileSelectionDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            ProfileSelectionDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.userProfileService = mockUserProfileService
             dependencies.router = mockRouting
         }
     }
 
-    func testSelectProfile() {
+    func testSelectProfile() async {
         let store = testStore(
             for: .init(
                 profiles: [
@@ -68,15 +62,15 @@ final class ProfileSelectionDomainTests: XCTestCase {
         )
 
         expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beFalse())
-        store.send(.selectProfile(Fixtures.profileA)) { state in
+        await store.send(.selectProfile(Fixtures.profileA)) { state in
             state.selectedProfileId = Fixtures.profileA.id
         }
         expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beTrue())
 
-        store.receive(.close)
+        await store.receive(.close)
     }
 
-    func testUpdatedProfilesUpdateTheState() {
+    func testUpdatedProfilesUpdateTheState() async {
         let store = testStore(
             for: .init(
                 profiles: []
@@ -95,20 +89,20 @@ final class ProfileSelectionDomainTests: XCTestCase {
 
         mockUserProfileService.selectedProfileId = Just(Fixtures.profileA.id).eraseToAnyPublisher()
 
-        store.send(.registerListener)
+        await store.send(.registerListener)
 
-        testScheduler.run()
+        await testScheduler.run()
 
-        store.receive(.loadReceived(.success(expectedProfiles))) { state in
+        await store.receive(.loadReceived(.success(expectedProfiles))) { state in
             state.profiles = expectedProfiles
         }
 
-        store.receive(.selectedProfileReceived(Fixtures.profileA.id)) { state in
+        await store.receive(.selectedProfileReceived(Fixtures.profileA.id)) { state in
             state.selectedProfileId = Fixtures.profileA.id
         }
     }
 
-    func testEditProfiles() {
+    func testEditProfiles() async {
         let store = testStore(
             for: .init(
                 profiles: [
@@ -119,21 +113,21 @@ final class ProfileSelectionDomainTests: XCTestCase {
             )
         )
 
-        store.send(.editProfiles)
+        await store.send(.editProfiles)
 
         expect(self.mockRouting.routeToReceivedEndpoint).to(equal(Endpoint.settings))
 
-        store.receive(.close)
+        await store.receive(.close)
     }
 
-    func testLoadingFailure() {
+    func testLoadingFailure() async {
         let store = testStore(
             for: .init(
                 profiles: []
             )
         )
 
-        store.send(.loadReceived(.failure(.localStoreError(.notImplemented)))) { state in
+        await store.send(.loadReceived(.failure(.localStoreError(.notImplemented)))) { state in
             state.destination = .alert(
                 .init(
                     for: UserProfileServiceError.localStoreError(.notImplemented),

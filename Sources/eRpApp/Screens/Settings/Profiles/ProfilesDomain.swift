@@ -25,18 +25,6 @@ import IDP
 struct ProfilesDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            EditProfileDomain.cleanup(),
-            EffectTask<T>.cancel(ids: Token.allCases)
-        )
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case loadProfiles
-        case loadProfileId
-    }
-
     struct State: Equatable {
         var profiles: [UserProfile]
         var selectedProfileId: UUID?
@@ -44,8 +32,6 @@ struct ProfilesDomain: ReducerProtocol {
 
     enum Action: Equatable {
         case registerListener
-        case unregisterListener
-
         case addNewProfile
         case editProfile(UserProfile)
 
@@ -75,25 +61,23 @@ struct ProfilesDomain: ReducerProtocol {
         switch action {
         case .registerListener:
             return .merge(
-                userProfileService.userProfilesPublisher()
-                    .catchToEffect()
-                    .map(Action.Response.loadReceived)
-                    .map(Action.response)
-                    .receive(on: schedulers.main.animation())
-                    .eraseToEffect()
-                    .cancellable(id: Token.loadProfiles, cancelInFlight: true),
-                userProfileService.selectedProfileId
-                    .compactMap {
-                        $0
-                    }
-                    .map(Action.Response.selectedProfileReceived)
-                    .map(Action.response)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
-                    .cancellable(id: Token.loadProfileId, cancelInFlight: true)
+                .publisher(
+                    userProfileService.userProfilesPublisher()
+                        .catchToPublisher()
+                        .map(Action.Response.loadReceived)
+                        .map(Action.response)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                ),
+                .publisher(
+                    userProfileService.selectedProfileId
+                        .compactMap { $0 }
+                        .map(Action.Response.selectedProfileReceived)
+                        .map(Action.response)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                )
             )
-        case .unregisterListener:
-            return .cancel(id: Token.loadProfiles)
         case let .response(.loadReceived(.failure(error))):
             return .send(.delegate(.alert(.init(for: error, title: L10n.errTxtDatabaseAccess))))
         case let .response(.loadReceived(.success(profiles))):
@@ -176,8 +160,9 @@ extension ProfilesDomain {
         )
 
         static let store = Store(
-            initialState: state,
-            reducer: ProfilesDomain()
-        )
+            initialState: state
+        ) {
+            ProfilesDomain()
+        }
     }
 }

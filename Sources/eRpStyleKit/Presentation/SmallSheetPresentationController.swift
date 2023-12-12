@@ -92,7 +92,7 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
         }
     }
 
-    private class HeightCalculatingHostingController<Content: View>: UIHostingController<Content> {
+    private class HeightCalculatingHostingController<T: View>: UIHostingController<T> {
         override func viewDidLayoutSubviews() {
             super.viewDidLayoutSubviews()
 

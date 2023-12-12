@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class ChargeItemListViewSnapshotTests: XCTestCase {
+final class ChargeItemListViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
@@ -39,11 +39,13 @@ final class ChargeItemListViewSnapshotTests: XCTestCase {
                 store: .init(
                     initialState: .init(
                         profileId: testProfileId,
-                        chargeItemGroups: [],
+                        chargeItemGroups: [ChargeItemListDomain.ChargeItemGroup](),
                         bottomBannerState: nil
-                    ),
-                    reducer: EmptyReducer()
-                )
+                    )
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -58,11 +60,13 @@ final class ChargeItemListViewSnapshotTests: XCTestCase {
                 store: .init(
                     initialState: .init(
                         profileId: testProfileId,
-                        chargeItemGroups: [],
+                        chargeItemGroups: [ChargeItemListDomain.ChargeItemGroup](),
                         bottomBannerState: .grantConsent
-                    ),
-                    reducer: EmptyReducer()
-                )
+                    )
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -82,9 +86,11 @@ final class ChargeItemListViewSnapshotTests: XCTestCase {
                             ChargeItemListDomain.ChargeItemGroup.Fixtures.chargeItemGroup2,
                         ],
                         bottomBannerState: .grantConsent
-                    ),
-                    reducer: EmptyReducer()
-                )
+                    )
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 

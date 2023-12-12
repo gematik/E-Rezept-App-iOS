@@ -26,15 +26,10 @@ import Vision
 struct ScannerDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil.
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
+    private enum CancelID {
         case saveErxTasks
-        case resetScanState
         case loadErxTask
+        case resetScanState
     }
 
     struct State: Equatable {
@@ -42,14 +37,10 @@ struct ScannerDomain: ReducerProtocol {
         var scanState: LoadingState<[ScannedErxTask], ScannerDomain.Error> = .idle
         /// Array of all accepted tasks which are ready for saving
         var acceptedTaskBatches = Set<[ScannedErxTask]>()
-        /// Used to present an alert
-        var alertState: AlertState<Action>?
         /// Bool to handle the flashlight state
         var isFlashOn = false
 
-        var galleryActionSheet: ConfirmationDialogState<Action>?
-
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
@@ -61,42 +52,26 @@ struct ScannerDomain: ReducerProtocol {
         case analyse(scanOutput: [ScanOutput])
         /// Changes the `scanState` to `idle`
         case resetScannerState
-        /// Sets the `alertState` back to nil (which hides the alert)
-        case alertDismissButtonTapped
-        /// Delegates the parent to close the scanner view
-        case closeAlertCancelButtonTapped
         /// Toggles the flashlight
         case toggleFlashLight
         /// set isFlashOn to false
         case flashLightOff
         /// Opens an action sheet with options to open photo or document files
         case importButtonTapped
-        /// Opens the nativ image gallery
-        case openImageGallery
-        /// Opens the nativ document importer
-        case openDocumentImporter
 
-        case closeImportActionSheet
-
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case setNavigation(tag: Destinations.State.Tag?)
         case response(Response)
-        case delegate(Delegate)
 
         enum Response: Equatable {
             /// Called if an error during save occurs
-            case saveAndCloseReceived(ErxRepositoryError)
+            case saveAndCloseReceived(Result<Bool, ErxRepositoryError>)
             /// Mutates the `scanState` after successful scan
             /// and calls `resetScannerState` after `messageInterval` passed
             case analyseReceived(LoadingState<[ScannedErxTask], ScannerDomain.Error>)
 
             case galleryImageReceived(UIImage?)
             case documentFileReceived(Result<[URL], Error>)
-        }
-
-        enum Delegate: Equatable {
-            /// Closes the scanner view
-            case close
         }
     }
 
@@ -106,9 +81,27 @@ struct ScannerDomain: ReducerProtocol {
             case imageGallery
             // sourcery: AnalyticsScreen = scanner_documentImporter
             case documentImporter
+            /// Used to present an alert
+            case alert(AlertState<Action.Alert>?)
+            /// Present confirmation dialog
+            case sheet(ConfirmationDialogState<Action.Sheet>?)
         }
 
-        enum Action: Equatable {}
+        enum Action: Equatable {
+            case alert(Alert)
+            case sheet(Sheet)
+
+            enum Alert: Equatable {
+                case closeAlertCancel
+            }
+
+            enum Sheet: Equatable {
+                /// Opens the native image gallery
+                case openImageGallery
+                /// Opens the native document importer
+                case openDocumentImporter
+            }
+        }
 
         var body: some ReducerProtocolOf<Self> {
             EmptyReducer()
@@ -121,6 +114,8 @@ struct ScannerDomain: ReducerProtocol {
     @Dependency(\.fhirDateFormatter) var dateFormatter: FHIRDateFormatter
     @Dependency(\.schedulers) var scheduler: Schedulers
     @Dependency(\.barcodeDetection) var barcodeDetection: BarcodeDetection
+    @Dependency(\.dismiss) var dismiss
+    @Dependency(\.router) var router
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
@@ -129,56 +124,67 @@ struct ScannerDomain: ReducerProtocol {
             let authoredOn = dateFormatter.stringWithLongUTCTimeZone(from: Date())
             let erxTasks = scannedBatches.flatMap { $0 }.asErxTasks(status: .ready, with: authoredOn)
 
-            return repository.save(erxTasks: erxTasks)
-                .first()
-                .receive(on: scheduler.main)
-                .map { _ in Action.delegate(.close) }
-                .catch { error in
-                    Just(Action.response(.saveAndCloseReceived(error)))
-                }
-                .eraseToEffect()
-                .cancellable(id: Token.saveErxTasks)
-        case .response(.saveAndCloseReceived):
-            state.alertState = Self.savingAlertState
+            return .publisher(
+                repository.save(erxTasks: erxTasks)
+                    .first()
+                    .receive(on: scheduler.main)
+                    .map { .response(.saveAndCloseReceived(.success($0))) }
+                    .catch { error in
+                        Just(Action.response(.saveAndCloseReceived(.failure(error))))
+                    }
+                    .eraseToAnyPublisher
+            )
+            .cancellable(id: CancelID.saveErxTasks)
+        case .response(.saveAndCloseReceived(.failure)):
+            state.destination = .alert(Self.savingAlertState)
             return .none
+        case .response(.saveAndCloseReceived(.success)):
+            return .run { _ in await dismiss() }
         case let .analyse(scanOutput):
             state.scanState = .loading(nil)
             do {
                 // [REQ:BSI-eRp-ePA:O.Source_1#2] analyse the input
-                let scannedTasks = try CodeAnalyser.analyse(scanOutput: scanOutput, with: state.acceptedTaskBatches)
-                return checkForTaskDuplicatesInStore(scannedTasks)
-                    .cancellable(id: Token.loadErxTask)
+                let result = try CodeAnalyser.analyse(scanOutput: scanOutput, with: state.acceptedTaskBatches)
+                switch result {
+                case let .tasks(scannedTasks):
+                    return checkForTaskDuplicatesInStore(scannedTasks)
+                        .cancellable(id: CancelID.loadErxTask)
+                case let .url(universalLink):
+                    return .run { _ in
+                        @Dependency(\.dismiss) var dismiss
+
+                        await dismiss()
+
+                        router.routeTo(.universalLink(universalLink))
+                    }
+                }
             } catch let error as ScannerDomain.Error {
-                return EffectTask(value: .response(.analyseReceived(.error(error))))
+                return EffectTask.send(.response(.analyseReceived(.error(error))))
             } catch let error as ScannedErxTask.Error {
-                return EffectTask(value: .response(.analyseReceived(.error(.scannedErxTask(error)))))
+                return EffectTask.send(.response(.analyseReceived(.error(.scannedErxTask(error)))))
             } catch {
-                return EffectTask(value: .response(.analyseReceived(.error(.unknown))))
+                return EffectTask.send(.response(.analyseReceived(.error(.unknown))))
             }
         case let .response(.analyseReceived(loadingState)):
             if case let .value(scannedErxTask) = loadingState {
                 state.acceptedTaskBatches.insert(scannedErxTask)
             }
             state.scanState = loadingState
-            return EffectTask(value: .resetScannerState)
-                .delay(for: messageInterval, scheduler: scheduler.main)
-                .receive(on: scheduler.main)
-                .eraseToEffect()
-                .cancellable(id: Token.resetScanState, cancelInFlight: true)
+            return .run { send in
+                try await scheduler.main.sleep(for: messageInterval)
+                await send(.resetScannerState)
+            }
+            .cancellable(id: CancelID.resetScanState)
         case .resetScannerState:
             state.scanState = .idle
             return .none
-        case .alertDismissButtonTapped:
-            state.alertState = nil
-            return .none
-        case .closeAlertCancelButtonTapped:
-            state.alertState = nil
-            return EffectTask(value: .delegate(.close))
+        case .destination(.presented(.alert(.closeAlertCancel))):
+            return .run { _ in await dismiss() }
         case .closeWithoutSave:
             if state.acceptedTaskBatches.isEmpty {
-                return EffectTask(value: .delegate(.close))
+                return .run { _ in await dismiss() }
             } else {
-                state.alertState = Self.closeAlertState
+                state.destination = .alert(Self.closeAlertState)
                 return .none
             }
         case .toggleFlashLight:
@@ -188,36 +194,30 @@ struct ScannerDomain: ReducerProtocol {
             state.isFlashOn = false
             return .none
         case .importButtonTapped:
-            state.galleryActionSheet = Self.confirmationDialogState
+            state.destination = .sheet(Self.confirmationDialogState)
             return .none
-        case .openImageGallery:
+        case .destination(.presented(.sheet(.openImageGallery))):
             state.destination = .imageGallery
             return .none
-        case .openDocumentImporter:
+        case .destination(.presented(.sheet(.openDocumentImporter))):
             state.destination = .documentImporter
-            return .none
-        case .closeImportActionSheet:
-            state.galleryActionSheet = nil
             return .none
         case let .response(.galleryImageReceived(image)):
             guard let image else { return .none }
-            return .task {
-                .analyse(scanOutput:
-                    try await barcodeDetection.detectImage(image))
+            return .run { send in
+                await send(.analyse(scanOutput: try await barcodeDetection.detectImage(image)))
             }
         case let .response(.documentFileReceived(.success(result))):
             guard let documentURL = result.first else {
                 return .none
             }
-            return .task {
-                .analyse(scanOutput: try await barcodeDetection.detectDocument(documentURL))
+            return .run { send in
+                await send(.analyse(scanOutput: try await barcodeDetection.detectDocument(documentURL)))
             }
         case .response(.documentFileReceived(.failure)):
             return .none
         case .setNavigation(tag: .none):
             state.destination = nil
-            return .none
-        case .delegate:
             return .none
         case .destination,
              .setNavigation:
@@ -227,16 +227,16 @@ struct ScannerDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
 
-    static let closeAlertState: AlertState<Action> = {
+    static let closeAlertState: AlertState<Destinations.Action.Alert> = {
         AlertState {
             TextState(L10n.camTxtWarnCancelTitle)
         } actions: {
-            ButtonState(role: .destructive, action: .send(.closeAlertCancelButtonTapped)) {
+            ButtonState(role: .destructive, action: .send(.closeAlertCancel)) {
                 TextState(L10n.camTxtWarnContinue)
             }
             ButtonState(role: .cancel, action: .send(.none)) {
@@ -245,11 +245,11 @@ struct ScannerDomain: ReducerProtocol {
         }
     }()
 
-    static let savingAlertState: AlertState<Action> = {
+    static let savingAlertState: AlertState<Destinations.Action.Alert> = {
         AlertState {
             TextState(L10n.alertErrorTitle)
         } actions: {
-            ButtonState(role: .cancel, action: .send(.alertDismissButtonTapped)) {
+            ButtonState(role: .cancel, action: .send(.none)) {
                 TextState(L10n.alertBtnOk)
             }
         } message: {
@@ -257,7 +257,7 @@ struct ScannerDomain: ReducerProtocol {
         }
     }()
 
-    static let confirmationDialogState: ConfirmationDialogState<Action> = {
+    static let confirmationDialogState: ConfirmationDialogState<Destinations.Action.Sheet> = {
         ConfirmationDialogState(
             titleVisibility: .visible,
             title: {
@@ -269,7 +269,7 @@ struct ScannerDomain: ReducerProtocol {
                 ButtonState(action: .send(.openDocumentImporter)) {
                     TextState(L10n.camBtnGallerySheetDocument)
                 }
-                ButtonState(role: .cancel, action: .send(.closeImportActionSheet)) {
+                ButtonState(role: .cancel, action: .send(.none)) {
                     TextState(L10n.camBtnGallerySheetCancel)
                 }
             }
@@ -292,18 +292,20 @@ extension ScannerDomain {
                 .eraseToAnyPublisher()
         }
 
-        return Publishers.MergeMany(findPublishers)
-            .collect(findPublishers.count)
-            .map { optionalTasks in
-                let tasks = optionalTasks.compactMap { $0 }
-                if tasks.isEmpty {
-                    return .response(.analyseReceived(.error(.storeDuplicate)))
-                } else {
-                    return .response(.analyseReceived(.value(tasks)))
+        return .publisher(
+            Publishers.MergeMany(findPublishers)
+                .collect(findPublishers.count)
+                .map { optionalTasks in
+                    let tasks = optionalTasks.compactMap { $0 }
+                    if tasks.isEmpty {
+                        return .response(.analyseReceived(.error(.storeDuplicate)))
+                    } else {
+                        return .response(.analyseReceived(.value(tasks)))
+                    }
                 }
-            }
-            .receive(on: scheduler.main)
-            .eraseToEffect()
+                .receive(on: scheduler.main)
+                .eraseToAnyPublisher
+        )
     }
 }
 
@@ -331,12 +333,12 @@ extension Sequence where Element == ScannedErxTask {
 
 extension ScannerDomain {
     enum Dummies {
-        static let store = Store(initialState: Dummies.state,
-                                 reducer: ScannerDomain())
+        static let store = Store(initialState: Dummies.state) { ScannerDomain() }
 
         static func store(with state: State) -> StoreOf<ScannerDomain> {
-            Store(initialState: state,
-                  reducer: ScannerDomain())
+            Store(initialState: state) {
+                ScannerDomain()
+            }
         }
 
         static let state = State()

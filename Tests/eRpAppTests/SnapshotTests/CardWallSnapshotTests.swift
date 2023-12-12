@@ -25,7 +25,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class CardWallSnapshotTests: XCTestCase {
+final class CardWallSnapshotTests: ERPSnapshotTestCase {
     override class func setUp() {
         super.setUp()
         diffTool = "open"
@@ -37,9 +37,10 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: .init(
                     isNFCReady: true,
                     profileId: UUID()
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         // This snapshots are subject to feature flags.
@@ -74,9 +75,10 @@ final class CardWallSnapshotTests: XCTestCase {
                     .State(
                         isNFCReady: false,
                         profileId: UUID()
-                    ),
-                reducer: EmptyReducer()
-            )
+                    )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -91,9 +93,10 @@ final class CardWallSnapshotTests: XCTestCase {
                     isDemoModus: false,
                     profileId: UUID(),
                     can: ""
-                ),
-                reducer: CardWallCANDomain()
-            )
+                )
+            ) {
+                CardWallCANDomain()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -108,9 +111,10 @@ final class CardWallSnapshotTests: XCTestCase {
                     isDemoModus: true,
                     profileId: UUID(),
                     can: ""
-                ),
-                reducer: CardWallCANDomain()
-            )
+                )
+            ) {
+                CardWallCANDomain()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -124,9 +128,10 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: CardWallCANDomain.State(isDemoModus: false,
                                                       profileId: UUID(),
                                                       can: "",
-                                                      wrongCANEntered: true),
-                reducer: CardWallCANDomain()
-            )
+                                                      wrongCANEntered: true)
+            ) {
+                CardWallCANDomain()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -137,9 +142,15 @@ final class CardWallSnapshotTests: XCTestCase {
     func testPINInputView() {
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(
-                initialState: CardWallPINDomain.State(isDemoModus: false, pin: "", transition: .fullScreenCover),
-                reducer: CardWallPINDomain()
-            )
+                initialState: CardWallPINDomain.State(
+                    isDemoModus: false,
+                    profileId: UUID(),
+                    pin: "",
+                    transition: .fullScreenCover
+                )
+            ) {
+                CardWallPINDomain()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -150,9 +161,15 @@ final class CardWallSnapshotTests: XCTestCase {
     func testPINInputViewInDemoMode() {
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(
-                initialState: CardWallPINDomain.State(isDemoModus: true, pin: "123", transition: .fullScreenCover),
-                reducer: CardWallPINDomain()
-            )
+                initialState: CardWallPINDomain.State(
+                    isDemoModus: true,
+                    profileId: UUID(),
+                    pin: "123",
+                    transition: .fullScreenCover
+                )
+            ) {
+                CardWallPINDomain()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -162,14 +179,16 @@ final class CardWallSnapshotTests: XCTestCase {
 
     func testPINInputWrongPINEnteredView() {
         var state = CardWallPINDomain.State(isDemoModus: false,
+                                            profileId: UUID(),
                                             pin: "",
                                             transition: .fullScreenCover)
         state.wrongPinEntered = true
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(
-                initialState: state,
-                reducer: CardWallPINDomain()
-            )
+                initialState: state
+            ) {
+                CardWallPINDomain()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -181,9 +200,12 @@ final class CardWallSnapshotTests: XCTestCase {
         let sut = CardWallLoginOptionView(
             store: CardWallLoginOptionDomain.Store(
                 initialState: CardWallLoginOptionDomain.State(isDemoModus: false,
-                                                              selectedLoginOption: .withoutBiometry),
-                reducer: EmptyReducer()
-            )
+                                                              profileId: UUID(),
+                                                              selectedLoginOption: .withoutBiometry)
+
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -195,9 +217,12 @@ final class CardWallSnapshotTests: XCTestCase {
         let sut = CardWallLoginOptionView(
             store: CardWallLoginOptionDomain.Store(
                 initialState: CardWallLoginOptionDomain.State(isDemoModus: true,
-                                                              selectedLoginOption: .withoutBiometry),
-                reducer: EmptyReducer()
-            )
+                                                              profileId: UUID(),
+                                                              selectedLoginOption: .withoutBiometry)
+
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -215,9 +240,11 @@ final class CardWallSnapshotTests: XCTestCase {
         mockCurrentProfile = CurrentValueSubject(testProfile).eraseToAnyPublisher()
 
         return Store(
-            initialState: state,
-            reducer: EmptyReducer()
-        )
+            initialState: state
+
+        ) {
+            EmptyReducer()
+        }
     }
 
     private func readCardStore(for output: CardWallReadCardDomain.State.Output) -> StoreOf<CardWallReadCardDomain> {
@@ -286,23 +313,34 @@ final class CardWallSnapshotTests: XCTestCase {
 
     func testReadCardHelpCardView() {
         let sut =
-            ReadCardHelpView(store: .init(initialState: .first,
-                                          reducer: EmptyReducer()))
+            ReadCardHelpView(store: .init(initialState: .first) {
+                EmptyReducer()
+            })
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+    }
+
+    func testReadCardHelpPositionView() {
+        let sut = ReadCardHelpView(store: .init(initialState: .second) {
+            EmptyReducer()
+        })
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardHelpListView() {
         let sut =
-            ReadCardHelpView(store: .init(initialState: .second,
-                                          reducer: EmptyReducer()))
+            ReadCardHelpView(store: .init(initialState: .fourth) {
+                EmptyReducer()
+            })
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardHelpVideoView() {
-        let sut = ReadCardHelpView(store: .init(initialState: .third,
-                                                reducer: EmptyReducer()))
+        let sut = ReadCardHelpView(store: .init(initialState: .third) {
+            EmptyReducer()
+        })
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }

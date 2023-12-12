@@ -59,7 +59,7 @@ struct DebugLogsView: View {
     }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store) { $0 } content: { viewStore in
             List {
                 Section(header: Text("Sort/Filter")) {
                     Toggle(

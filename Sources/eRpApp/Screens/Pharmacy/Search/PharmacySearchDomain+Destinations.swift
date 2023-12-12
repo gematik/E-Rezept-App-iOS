@@ -27,12 +27,19 @@ extension PharmacySearchDomain {
             // sourcery: AnalyticsScreen = pharmacySearch_filter
             case filter(PharmacySearchFilterDomain.State)
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<PharmacySearchDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
         }
 
         enum Action: Equatable {
             case pharmacyDetailView(action: PharmacyDetailDomain.Action)
             case pharmacyFilterView(action: PharmacySearchFilterDomain.Action)
+
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case removeFilterCurrentLocation
+                case openAppSpecificSettings
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {

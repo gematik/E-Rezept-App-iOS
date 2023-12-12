@@ -793,9 +793,9 @@
   },
   {
     "name": "energie - Betriebskrankenkasse",
-    "healthCardAndPinPhone": "",
-    "healthCardAndPinMail": "",
-    "healthCardAndPinUrl": "",
+    "healthCardAndPinPhone": "+4951191110911",
+    "healthCardAndPinMail": "info@energie-bkk.de",
+    "healthCardAndPinUrl": "https://www.energie-bkk.de/das-erezept-8979.html",
     "pinUrl": "",
     "subjectCardAndPinMail": "",
     "bodyCardAndPinMail": "",

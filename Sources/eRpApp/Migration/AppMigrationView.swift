@@ -25,18 +25,20 @@ struct AppMigrationView: View {
 
     init(store: AppMigrationDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
         HStack {
-            if viewStore.state == .inProgress {
+            if viewStore.state.migration == .inProgress {
                 ProgressView(L10n.amgTxtInProgress)
                     .progressViewStyle(CircularProgressViewStyle())
                     .accessibility(identifier: A11y.migration.amgTxtAndSpinner)
             }
         }
-        .alert(store.scope(state: \.failedValue), dismiss: .nothing)
+        .alert(store: store.scope(state: \.$destination, action: AppMigrationDomain.Action.destination),
+               state: /AppMigrationDomain.Destinations.State.alert,
+               action: AppMigrationDomain.Destinations.Action.alert)
         .onAppear {
             viewStore.send(.loadCurrentModelVersion)
         }
@@ -46,7 +48,7 @@ struct AppMigrationView: View {
 struct AppMigrationView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            AppMigrationView(store: AppMigrationDomain.Dummies.store(for: .inProgress))
+            AppMigrationView(store: AppMigrationDomain.Dummies.store(for: .init(migration: .inProgress)))
         }
     }
 }

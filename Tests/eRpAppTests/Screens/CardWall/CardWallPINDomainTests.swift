@@ -21,21 +21,15 @@ import ComposableArchitecture
 import Nimble
 import XCTest
 
+@MainActor
 final class CardWallPINDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        CardWallPINDomain.State,
-        CardWallPINDomain.Action,
-        CardWallPINDomain.State,
-        CardWallPINDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<CardWallPINDomain>
 
     func testStore(for state: CardWallPINDomain.State)
         -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: CardWallPINDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            CardWallPINDomain()
+        } withDependencies: { dependencies in
             dependencies.userSession = MockUserSession()
             dependencies.schedulers = Schedulers()
             // TODO: use mock dependencies // swiftlint:disable:this todo
@@ -46,15 +40,15 @@ final class CardWallPINDomainTests: XCTestCase {
 
     func testStore(for pin: String)
         -> TestStore {
-        testStore(for: CardWallPINDomain.State(isDemoModus: false, pin: pin, transition: .push))
+        testStore(for: CardWallPINDomain.State(isDemoModus: false, profileId: UUID(), pin: pin, transition: .push))
     }
 
     override func setUp() {
         super.setUp()
     }
 
-    func testStateHelper_enteredPINNotNumeric() {
-        let sut = CardWallPINDomain.State(isDemoModus: false, pin: "123456a", transition: .push)
+    func testStateHelper_enteredPINNotNumeric() async {
+        let sut = CardWallPINDomain.State(isDemoModus: false, profileId: UUID(), pin: "123456a", transition: .push)
 
         expect(sut.enteredPINNotNumeric).to(beTrue())
         expect(sut.enteredPINTooShort).to(beFalse())
@@ -62,8 +56,8 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut.enteredPINValid).to(beFalse())
     }
 
-    func testStateHelper_enteredPINTooShort() {
-        let sut = CardWallPINDomain.State(isDemoModus: false, pin: "123", transition: .push)
+    func testStateHelper_enteredPINTooShort() async {
+        let sut = CardWallPINDomain.State(isDemoModus: false, profileId: UUID(), pin: "123", transition: .push)
 
         expect(sut.enteredPINNotNumeric).to(beFalse())
         expect(sut.enteredPINTooShort).to(beTrue())
@@ -79,8 +73,8 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut2.enteredPINValid).to(beFalse())
     }
 
-    func testStateHelper_enteredPINTooLong() {
-        let sut = CardWallPINDomain.State(isDemoModus: false, pin: "123456789", transition: .push)
+    func testStateHelper_enteredPINTooLong() async {
+        let sut = CardWallPINDomain.State(isDemoModus: false, profileId: UUID(), pin: "123456789", transition: .push)
 
         expect(sut.enteredPINNotNumeric).to(beFalse())
         expect(sut.enteredPINTooShort).to(beFalse())
@@ -88,8 +82,8 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut.enteredPINValid).to(beFalse())
     }
 
-    func testStateHelper_enteredPINValid() {
-        let sut = CardWallPINDomain.State(isDemoModus: false, pin: "123456", transition: .push)
+    func testStateHelper_enteredPINValid() async {
+        let sut = CardWallPINDomain.State(isDemoModus: false, profileId: UUID(), pin: "123456", transition: .push)
 
         expect(sut.enteredPINNotNumeric).to(beFalse())
         expect(sut.enteredPINTooShort).to(beFalse())
@@ -97,18 +91,20 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut.enteredPINValid).to(beTrue())
     }
 
-    func testPINValid() {
+    func testPINValid() async {
         // given
         let store = testStore(for: "1234567")
 
         // when
-        store.send(.advance(.push)) { sut in
+        await store.send(.advance(.push)) { sut in
             // then
-            sut.destination = .login(CardWallLoginOptionDomain.State(isDemoModus: false, pin: "1234567"))
+            sut
+                .destination = .login(CardWallLoginOptionDomain
+                    .State(isDemoModus: false, profileId: sut.profileId, pin: "1234567"))
         }
     }
 
-    func testPINTooShort() {
+    func testPINTooShort() async {
         // given
         let store = testStore(for: "1234")
 
@@ -119,19 +115,19 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(accessibilityAnnouncementCallsCount) == 0
 
         // when
-        store.send(.advance(.push)) { sut in
+        await store.send(.advance(.push)) { sut in
             // then
             sut.destination = .none
             sut.doneButtonPressed = true
         }
         expect(accessibilityAnnouncementCallsCount) == 1
-        store.send(.update(pin: "12345")) { sut in
+        await store.send(.update(pin: "12345")) { sut in
             // then
             sut.pin = "12345"
             sut.doneButtonPressed = false
         }
         // when
-        store.send(.advance(.push)) { sut in
+        await store.send(.advance(.push)) { sut in
             // then
             sut.destination = .none
             sut.doneButtonPressed = true
@@ -139,19 +135,21 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(accessibilityAnnouncementCallsCount) == 2
 
         // when
-        store.send(.update(pin: "123456")) { sut in
+        await store.send(.update(pin: "123456")) { sut in
             // then
             sut.pin = "123456"
             sut.doneButtonPressed = false
         }
         // when
-        store.send(.advance(.push)) { sut in
+        await store.send(.advance(.push)) { sut in
             // then
-            sut.destination = .login(CardWallLoginOptionDomain.State(isDemoModus: false, pin: "123456"))
+            sut
+                .destination = .login(CardWallLoginOptionDomain
+                    .State(isDemoModus: false, profileId: sut.profileId, pin: "123456"))
         }
     }
 
-    func testPINTooLong() {
+    func testPINTooLong() async {
         // given
         let store = testStore(for: "123456789")
 
@@ -162,7 +160,7 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(accessibilityAnnouncementCallsCount) == 0
 
         // when
-        store.send(.advance(.push)) { sut in
+        await store.send(.advance(.push)) { sut in
             // then
             sut.destination = .none
             sut.doneButtonPressed = true
@@ -170,7 +168,7 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(accessibilityAnnouncementCallsCount) == 1
     }
 
-    func testPINNotNumeric() {
+    func testPINNotNumeric() async {
         // given
         let store = testStore(for: "123456a")
 
@@ -181,7 +179,7 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(accessibilityAnnouncementCallsCount) == 0
 
         // when
-        store.send(.advance(.push)) { sut in
+        await store.send(.advance(.push)) { sut in
             // then
             sut.destination = .none
             sut.doneButtonPressed = true

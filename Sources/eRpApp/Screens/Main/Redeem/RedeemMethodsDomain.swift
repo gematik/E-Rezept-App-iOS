@@ -26,31 +26,14 @@ import ZXingObjC
 struct RedeemMethodsDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        .concatenate(
-            cleanupSubDomains(),
-            EffectTask<T>.cancel(ids: Token.allCases)
-        )
-    }
-
-    static func cleanupSubDomains<T>() -> EffectTask<T> {
-        .concatenate(
-            RedeemMatrixCodeDomain.cleanup(),
-            PharmacySearchDomain.cleanup()
-        )
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     struct State: Equatable {
         var erxTasks: [ErxTask]
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
         case closeButtonTapped
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case setNavigation(tag: Destinations.State.Tag?)
         case delegate(Delegate)
 
@@ -62,13 +45,13 @@ struct RedeemMethodsDomain: ReducerProtocol {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = redeem_matrixCode
-            case matrixCode(RedeemMatrixCodeDomain.State)
+            case matrixCode(MatrixCodeDomain.State)
             // sourcery: AnalyticsScreen = pharmacySearch
             case pharmacySearch(PharmacySearchDomain.State)
         }
 
         enum Action: Equatable {
-            case redeemMatrixCodeAction(action: RedeemMatrixCodeDomain.Action)
+            case redeemMatrixCodeAction(action: MatrixCodeDomain.Action)
             case pharmacySearchAction(action: PharmacySearchDomain.Action)
         }
 
@@ -77,7 +60,7 @@ struct RedeemMethodsDomain: ReducerProtocol {
                 state: /State.matrixCode,
                 action: /Action.redeemMatrixCodeAction
             ) {
-                RedeemMatrixCodeDomain()
+                MatrixCodeDomain()
             }
             Scope(
                 state: /State.pharmacySearch,
@@ -96,39 +79,37 @@ struct RedeemMethodsDomain: ReducerProtocol {
         Reduce { state, action in
             switch action {
             case .closeButtonTapped:
-                return EffectTask(value: .delegate(.close))
-            case .destination(.redeemMatrixCodeAction(.closeButtonTapped)):
-                state.destination = nil
-                // Cleanup of child & running close action on parent reducer
-                return .concatenate(
-                    RedeemMatrixCodeDomain.cleanup(),
-                    EffectTask(value: .delegate(.close)).delay(for: 0.1, scheduler: schedulers.main).eraseToEffect()
-                )
-            case let .destination(.pharmacySearchAction(action: .delegate(action))):
+                return EffectTask.send(.delegate(.close))
+            case let .destination(.presented(.pharmacySearchAction(action: .delegate(action)))):
                 switch action {
                 case .close:
                     state.destination = nil
-                    return .concatenate(
-                        PharmacySearchDomain.cleanup(),
-                        EffectTask(value: .delegate(.close)).delay(for: 0.1, scheduler: schedulers.main).eraseToEffect()
-                    )
+                    return .run { send in
+                        try await schedulers.main.sleep(for: 0.1)
+                        await send(.delegate(.close))
+                    }
                 }
             case let .setNavigation(tag: tag):
                 switch tag {
                 case .matrixCode:
-                    state.destination = .matrixCode(RedeemMatrixCodeDomain.State(erxTasks: state.erxTasks))
+                    state.destination = .matrixCode(
+                        MatrixCodeDomain.State(
+                            type: .erxTask,
+                            erxTasks: state.erxTasks
+                        )
+                    )
                 case .pharmacySearch:
                     state.destination = .pharmacySearch(PharmacySearchDomain.State(erxTasks: state.erxTasks))
                 case .none:
                     state.destination = nil
-                    return Self.cleanupSubDomains()
+                    return .none
                 }
                 return .none
             case .destination, .delegate:
                 return .none
             }
         }
-        .ifLet(\.destination, action: /Action.destination) {
+        .ifLet(\.$destination, action: /Action.destination) {
             Destinations()
         }
     }
@@ -140,6 +121,10 @@ extension RedeemMethodsDomain {
             erxTasks: ErxTask.Demo.erxTasks
         )
 
-        static let store = Store(initialState: state, reducer: RedeemMethodsDomain())
+        static let store = Store(
+            initialState: state
+        ) {
+            RedeemMethodsDomain()
+        }
     }
 }

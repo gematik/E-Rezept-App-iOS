@@ -27,17 +27,6 @@ import SwiftUI
 struct PrescriptionDetailDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case cancelMatrixCodeGeneration
-        case deleteErxTask
-        case saveErxTask
-    }
-
     // sourcery: CodedError = "016"
     enum LoadingImageError: Error, Equatable, LocalizedError {
         // sourcery: errorCode = "01"
@@ -49,9 +38,14 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
         var isArchived: Bool
         var isDeleting = false
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
         // holdes the handoff feature in memory as long as the view is visible
         var userActivity: NSUserActivity?
+        @BindingState var focus: Field?
+
+        enum Field: Hashable {
+            case medicationName
+        }
     }
 
     enum Action: Equatable {
@@ -60,18 +54,19 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         case loadMatrixCodeImage(screenSize: CGSize)
         /// Initial delete action
         case delete
-        /// User has confirmed to delete task
-        case confirmedDelete
         /// Toggle medication redeem state
         case toggleRedeemPrescription
-        case openEmailClient(body: String)
         case openUrlGesundBundDe
+
+        case setName(String)
+        case pencilButtonTapped
+        case setFocus(PrescriptionDetailDomain.State.Field?)
 
         case response(Response)
         case delegate(Delegate)
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         enum Delegate: Equatable {
             /// Closes the details page
@@ -85,6 +80,8 @@ struct PrescriptionDetailDomain: ReducerProtocol {
             case taskDeletedReceived(Result<Bool, ErxRepositoryError>)
             /// Responds after save
             case redeemedOnSavedReceived(Bool)
+            /// Responds after update Medication.name
+            case changeNameReceived(Result<ErxTask, ErxRepositoryError>)
         }
     }
 
@@ -92,7 +89,7 @@ struct PrescriptionDetailDomain: ReducerProtocol {
     @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
     // [REQ:gemSpec_eRp_FdV:A_20603] Usages of matrixCodeGenerator for code generation. UserProfile is neither part of
     // the screen nor the state.
-    @Dependency(\.erxTaskMatrixCodeGenerator) var matrixCodeGenerator: ErxTaskMatrixCodeGenerator
+    @Dependency(\.erxMatrixCodeGenerator) var matrixCodeGenerator: ErxMatrixCodeGenerator
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.dateProvider) var dateProvider: () -> Date
     @Dependency(\.uiDateFormatter) var uiDateFormatter
@@ -100,7 +97,7 @@ struct PrescriptionDetailDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -115,18 +112,19 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         case let .loadMatrixCodeImage(screenSize):
             state.loadingState = .loading(nil)
 
-            return matrixCodeGenerator.publishedMatrixCode(
-                for: [state.prescription.erxTask],
-                with: calcMatrixCodeSize(screenSize: screenSize)
+            return .publisher(
+                matrixCodeGenerator.publishedMatrixCode(
+                    for: [state.prescription.erxTask],
+                    with: calcMatrixCodeSize(screenSize: screenSize)
+                )
+                .mapError { _ in
+                    LoadingImageError.matrixCodeGenerationFailed
+                }
+                .catchToLoadingStateEffect()
+                .map { Action.response(.matrixCodeImageReceived($0)) }
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
             )
-            .mapError { _ in
-                LoadingImageError.matrixCodeGenerationFailed
-            }
-            .catchToLoadingStateEffect()
-            .map { Action.response(.matrixCodeImageReceived($0)) }
-            .cancellable(id: Token.cancelMatrixCodeGeneration, cancelInFlight: true)
-            .receive(on: schedulers.main)
-            .eraseToEffect()
 
         case let .response(.matrixCodeImageReceived(loadingState)):
             state.loadingState = loadingState
@@ -145,15 +143,17 @@ struct PrescriptionDetailDomain: ReducerProtocol {
             }
             return .none
         // [REQ:gemSpec_eRp_FdV:A_19229]
-        case .confirmedDelete:
+        case .destination(.presented(.alert(.confirmedDelete))):
             state.destination = nil
             state.isDeleting = true
-            return erxTaskRepository.delete(erxTasks: [state.prescription.erxTask])
-                .first()
-                .receive(on: schedulers.main)
-                .catchToEffect()
-                .map { Action.response(.taskDeletedReceived($0)) }
-                .cancellable(id: Token.deleteErxTask)
+            return .publisher(
+                erxTaskRepository.delete(erxTasks: [state.prescription.erxTask])
+                    .first()
+                    .receive(on: schedulers.main)
+                    .catchToPublisher()
+                    .map { Action.response(.taskDeletedReceived($0)) }
+                    .eraseToAnyPublisher
+            )
         case let .response(.taskDeletedReceived(.failure(fail))):
             state.isDeleting = false
             if fail == .remote(.fhirClientError(IDPError.tokenUnavailable)) {
@@ -167,11 +167,11 @@ struct PrescriptionDetailDomain: ReducerProtocol {
                     .alert(Self
                         .deleteFailedAlertState(error: fail, localizedError: fail.localizedDescriptionWithErrorList))
             }
-            return Self.cleanup()
+            return .none
         case let .response(.taskDeletedReceived(.success(success))):
             state.isDeleting = false
             if success {
-                return EffectTask(value: .delegate(.close))
+                return EffectTask.send(.delegate(.close))
             }
             return .none
 
@@ -197,7 +197,7 @@ struct PrescriptionDetailDomain: ReducerProtocol {
                 state.isArchived.toggle()
             }
             return .none
-        case let .openEmailClient(body):
+        case let .destination(.presented(.alert(.openEmailClient(body)))):
             state.destination = nil
             guard let email = state.createReportEmail(body: body) else { return .none }
             if UIApplication.shared.canOpenURL(email) {
@@ -215,10 +215,13 @@ struct PrescriptionDetailDomain: ReducerProtocol {
             case .directAssignmentInfo:
                 state.destination = .directAssignmentInfo
             case .prescriptionValidityInfo:
+                let oneDay: TimeInterval = 60 * 60 * 24
+                // If acceptedUntil date is today, the acceptance period already expired --> display minus one day
                 let validity = Destinations.PrescriptionValidityState(
-                    authoredOnDate: uiDateFormatter.date(state.prescription.authoredOn),
-                    acceptUntilDate: uiDateFormatter.date(state.prescription.acceptedUntil),
-                    expiresOnDate: uiDateFormatter.date(state.prescription.expiresOn)
+                    acceptBeginDisplayDate: uiDateFormatter.date(state.prescription.authoredOn),
+                    acceptEndDisplayDate: uiDateFormatter.date(state.prescription.acceptedUntil, advancedBy: -oneDay),
+                    expiresBeginDisplayDate: uiDateFormatter.date(state.prescription.acceptedUntil),
+                    expiresEndDisplayDate: uiDateFormatter.date(state.prescription.expiresOn, advancedBy: -oneDay)
                 )
                 state.destination = .prescriptionValidityInfo(validity)
 
@@ -276,6 +279,36 @@ struct PrescriptionDetailDomain: ReducerProtocol {
 
             resourceHandler.open(url)
             return .none
+        case let .setName(newName):
+            let name = newName
+            guard
+                name.trimmed().lengthOfBytes(using: .utf8) > 0,
+                let erxMedication = state.prescription.erxTask.medication
+            else { return .none }
+            let newErxMedication = ErxMedication.lens.name.set(name)(erxMedication)
+            let newErxTask = ErxTask.lens.medication.set(newErxMedication)(state.prescription.erxTask)
+
+            return .publisher(
+                erxTaskRepository.save(erxTasks: [newErxTask])
+                    .first()
+                    .map { _ in newErxTask } // erxTaskRepository.save does only return `true` or Error
+                    .receive(on: schedulers.main)
+                    .catchToPublisher()
+                    .map { .response(.changeNameReceived($0)) }
+                    .eraseToAnyPublisher
+            )
+        case let .response(.changeNameReceived(.failure(error))):
+            state.destination = .alert(Self.changeNameReceivedAlertState(error: error))
+            return .none
+        case let .response(.changeNameReceived(.success(newErxTask))):
+            state.prescription = Prescription.lens.erxTask.set(newErxTask)(state.prescription)
+            return .none
+        case .pencilButtonTapped:
+            state.focus = .medicationName
+            return .none
+        case let .setFocus(field):
+            state.focus = field
+            return .none
         case .destination:
             return .none
         case .delegate:
@@ -313,14 +346,14 @@ extension PrescriptionDetailDomain {
         return activity
     }
 
-    static var confirmDeleteAlertState: ErpAlertState<Action> = {
+    static var confirmDeleteAlertState: ErpAlertState<Destinations.Action.Alert> = {
         .init(
             title: L10n.dtlTxtDeleteAlertTitle,
             actions: {
                 ButtonState(role: .destructive, action: .confirmedDelete) {
                     .init(L10n.dtlTxtDeleteYes)
                 }
-                ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                ButtonState(role: .cancel, action: .dismiss) {
                     .init(L10n.dtlTxtDeleteNo)
                 }
             },
@@ -328,7 +361,7 @@ extension PrescriptionDetailDomain {
         )
     }()
 
-    static func deletionNotAllowedAlertState(_ prescription: Prescription) -> ErpAlertState<Action> {
+    static func deletionNotAllowedAlertState(_ prescription: Prescription) -> ErpAlertState<Destinations.Action.Alert> {
         var title = L10n.prscDtlAlertTitleDeleteNotAllowed
         if prescription.type == .directAssignment {
             title = L10n.prscDeleteNoteDirectAssignment
@@ -339,13 +372,14 @@ extension PrescriptionDetailDomain {
         }
 
         return .init(title: title) {
-            ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+            ButtonState(role: .cancel, action: .dismiss) {
                 .init(L10n.alertBtnOk)
             }
         }
     }
 
-    static func deleteFailedAlertState(error: CodedError, localizedError: String) -> ErpAlertState<Action> {
+    static func deleteFailedAlertState(error: CodedError,
+                                       localizedError: String) -> ErpAlertState<Destinations.Action.Alert> {
         .init(
             for: error,
             title: L10n.dtlTxtDeleteMissingTokenAlertTitle
@@ -353,22 +387,31 @@ extension PrescriptionDetailDomain {
             ButtonState(action: .openEmailClient(body: localizedError)) {
                 .init(L10n.prscFdBtnErrorBanner)
             }
-            ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+            ButtonState(role: .cancel, action: .send(.dismiss)) {
                 .init(L10n.alertBtnOk)
             }
         }
     }
 
-    static func missingTokenAlertState() -> ErpAlertState<Action> {
+    static func missingTokenAlertState() -> ErpAlertState<Destinations.Action.Alert> {
         .init(
             title: L10n.dtlTxtDeleteMissingTokenAlertTitle,
             actions: {
-                ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                ButtonState(role: .cancel, action: .dismiss) {
                     .init(L10n.alertBtnOk)
                 }
             },
             message: L10n.dtlTxtDeleteMissingTokenAlertMessage
         )
+    }
+
+    static func changeNameReceivedAlertState(error: CodedError) -> ErpAlertState<Destinations.Action.Alert> {
+        // swiftlint:disable:next trailing_closure
+        .init(for: error, actions: {
+            ButtonState(role: .cancel, action: .dismiss) {
+                .init(L10n.alertBtnOk)
+            }
+        })
     }
 }
 
@@ -384,7 +427,7 @@ extension RemoteStoreError {
 }
 
 extension PrescriptionDetailDomain {
-    // TODO: Same func is in RedeemMatrixCodeDomain. swiftlint:disable:this todo
+    // TODO: Same func is in MatrixCodeDomain. swiftlint:disable:this todo
     // Maybe find a way to have only one implementation!
     /// Will calculate the size for the matrix code based on current screen size
     func calcMatrixCodeSize(screenSize: CGSize) -> CGSize {
@@ -396,13 +439,14 @@ extension PrescriptionDetailDomain {
 
     func saveErxTasks(erxTasks: [ErxTask])
         -> EffectTask<PrescriptionDetailDomain.Action> {
-        erxTaskRepository.save(erxTasks: erxTasks)
-            .first()
-            .receive(on: schedulers.main.animation())
-            .replaceError(with: false)
-            .map { PrescriptionDetailDomain.Action.response(.redeemedOnSavedReceived($0)) }
-            .eraseToEffect()
-            .cancellable(id: PrescriptionDetailDomain.Token.saveErxTask)
+        .publisher(
+            erxTaskRepository.save(erxTasks: erxTasks)
+                .first()
+                .receive(on: schedulers.main.animation())
+                .replaceError(with: false)
+                .map { PrescriptionDetailDomain.Action.response(.redeemedOnSavedReceived($0)) }
+                .eraseToAnyPublisher
+        )
     }
 }
 
@@ -427,12 +471,18 @@ extension PrescriptionDetailDomain {
             isArchived: false
         )
 
-        static let store = Store(initialState: state,
-                                 reducer: PrescriptionDetailDomain())
+        static let store = Store(
+            initialState: state
+        ) {
+            PrescriptionDetailDomain()
+        }
 
         static func storeFor(_ state: State) -> StoreOf<PrescriptionDetailDomain> {
-            Store(initialState: state,
-                  reducer: PrescriptionDetailDomain())
+            Store(
+                initialState: state
+            ) {
+                PrescriptionDetailDomain()
+            }
         }
     }
 }

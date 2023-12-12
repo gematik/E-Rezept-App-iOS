@@ -150,9 +150,9 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { taskIDs in
-                expect(taskIDs.count) == 2
-                expect(taskIDs[0]) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
-                expect(taskIDs[1]) == "5e00e907-1e4f-11b2-80be-b806a73c0cd0"
+                expect(taskIDs.content.count) == 2
+                expect(taskIDs.content[0]) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
+                expect(taskIDs.content[1]) == "5e00e907-1e4f-11b2-80be-b806a73c0cd0"
             }
         expect(counter) == 1
     }
@@ -178,7 +178,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { taskIDs in
-                expect(taskIDs.count) == 2
+                expect(taskIDs.content.count) == 2
             }
         expect(counter) == 1
     }
@@ -405,7 +405,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/MedicationDispense")
-            && containsQueryParams(["identifier": "\(Workflow.Key.prescriptionIdKeys[.v1_1_1] ?? "")|\(taskId)"])
+            && containsQueryParams(["identifier": "\(Workflow.Key.prescriptionIdKeys[.v1_2_0] ?? "")|\(taskId)"])
             && isMethodGET()) { _ in
                 counter += 1
                 return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
@@ -459,7 +459,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     // swiftlint:disable line_length
     private var expectedRequestBody: Data = {
         String(
-            "{\"status\":\"unknown\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"shipment\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"resourceType\":\"Communication\"}"
+            "{\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erp\\/StructureDefinition\\/GEM_ERP_PR_Communication_DispReq|1.2\"]},\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"shipment\\\",\\\"version\\\":1}\"}],\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/sid\\/telematik-id\",\"value\":\"606358757\"}}],\"resourceType\":\"Communication\",\"status\":\"unknown\"}"
         ).data(using: .utf8)!
     }()
 

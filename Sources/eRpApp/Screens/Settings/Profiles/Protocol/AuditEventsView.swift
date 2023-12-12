@@ -19,35 +19,108 @@
 import ComposableArchitecture
 import SwiftUI
 
-// [REQ:gemSpec_eRp_FdV:A_19177#1] View displaying the audit events
+// [REQ:gemSpec_eRp_FdV:A_19177#1,A_19185#2] View displaying the audit events
 // [REQ:BSI-eRp-ePA:O.Auth_5#3] View displaying the audit events
 struct AuditEventsView: View {
     let store: AuditEventsDomain.Store
-    @ObservedObject var viewStore: ViewStore<AuditEventsDomain.State, AuditEventsDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, AuditEventsDomain.Action>
 
     init(store: AuditEventsDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store, observe: ViewState.init)
+    }
+
+    struct ViewState: Equatable {
+        let hasMoreContent: Bool
+        let showBottomBanner: Bool
+        let listState: ListState
+
+        init(state: AuditEventsDomain.State) {
+            hasMoreContent = state.nextPageUrl != nil
+            showBottomBanner = state.needsAuthentication
+
+            if state.needsAuthentication {
+                listState = .needsAuthentication
+            } else {
+                if let entries = state.entries {
+                    if entries.isEmpty {
+                        listState = .emptyList
+                    } else {
+                        listState = .list(entries)
+                    }
+                } else {
+                    listState = .loading
+                }
+            }
+        }
+
+        enum ListState: Equatable {
+            case emptyList
+            case list(IdentifiedArrayOf<AuditEventsDomain.State.AuditEvent>)
+            case needsAuthentication
+            case loading
+        }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            if let entries = viewStore.entries,
-               !entries.isEmpty {
-                PageNavigationControl(viewStore: viewStore)
+            AuditEventsListView(viewStore: viewStore)
+            // Bottom banner
+            if viewStore.showBottomBanner {
+                HStack {
+                    Text(L10n.stgTxtAuditEventsBannerMessage)
+                        .font(Font.subheadline)
+                        .accessibilityIdentifier(A11y.settings.auditEvents.stgTxtAuditEventsBottomBannerMessage)
 
+                    Spacer()
+
+                    Button(
+                        action: {
+                            viewStore.send(.showCardWall)
+                        },
+                        label: {
+                            Text(L10n.stgTxtAuditEventsBannerConnect)
+                                .accessibilityIdentifier(A11y.settings.auditEvents
+                                    .stgBtnAuditEventsBottomBanner)
+                        }
+                    )
+                    .buttonStyle(.tertiaryFilled)
+                    .padding(.leading)
+                }
+
+                .padding(.horizontal, 16)
+                .padding(.vertical)
+                .background(Colors.primary100.ignoresSafeArea())
+                .topBorder(strokeWith: 0.5, color: Colors.separator)
+            }
+        }
+        .task {
+            await viewStore.send(.task).finish()
+        }
+        .alert(
+            store.scope(state: \.$destination, action: AuditEventsDomain.Action.destination),
+            state: /AuditEventsDomain.Destinations.State.alert,
+            action: AuditEventsDomain.Destinations.Action.alert
+        )
+        .fullScreenCover(
+            store: store.scope(state: \.$destination, action: AuditEventsDomain.Action.destination),
+            state: /AuditEventsDomain.Destinations.State.cardWall,
+            action: AuditEventsDomain.Destinations.Action.cardWall(action:),
+            content: CardWallIntroductionView.init(store:)
+        )
+        .navigationTitle(L10n.stgTxtAuditEventsTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .background(Color(.secondarySystemBackground).ignoresSafeArea())
+    }
+
+    struct AuditEventsListView: View {
+        @ObservedObject var viewStore: ViewStore<ViewState, AuditEventsDomain.Action>
+
+        var body: some View {
+            switch viewStore.listState {
+            case let .list(entries):
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {
-                        if let lastUpdated = viewStore.lastUpdated {
-                            Text(L10n.stgTxtAuditEventsLastUpdated(lastUpdated))
-                                .font(.footnote)
-                                .foregroundColor(Color(.secondaryLabel))
-                                .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsEvents)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.top, 16)
-                                .padding(.bottom, 8)
-                        }
-
                         Group {
                             ForEach(entries) { entry in
                                 VStack(alignment: .leading, spacing: 4) {
@@ -69,6 +142,13 @@ struct AuditEventsView: View {
                                         .multilineTextAlignment(.leading)
                                         .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsEventDate)
                                 }
+                                .task {
+                                    if entry.id == entries.last?.id {
+                                        viewStore.send(.loadNextPage)
+                                    }
+                                }
+                                .redacted(reason: entry.id == entries.last?.id && viewStore
+                                    .hasMoreContent ? .placeholder : .init())
                                 .padding(.horizontal)
                                 .padding(.vertical, 12)
                                 .accessibilityElement(children: .contain)
@@ -82,7 +162,7 @@ struct AuditEventsView: View {
                         .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsEvents)
                     }
                 }
-            } else if viewStore.entries != nil {
+            case .emptyList:
                 VStack(alignment: .center, spacing: 8) {
                     Spacer()
                     Text(L10n.stgTxtAuditEventsNoProtocolTitle)
@@ -98,7 +178,17 @@ struct AuditEventsView: View {
                 }
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .center)
-            } else {
+            case .needsAuthentication:
+                VStack(alignment: .center, spacing: 8) {
+                    Spacer()
+                    Text(L10n.stgTxtAuditEventsTitle)
+                        .multilineTextAlignment(.center)
+                        .accessibilityIdentifier(A11y.settings.auditEvents.stgTxtAuditEventsNoProtocolTitle)
+                    Spacer()
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .center)
+            case .loading:
                 VStack {
                     Spacer()
 
@@ -110,58 +200,6 @@ struct AuditEventsView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
             }
-        }
-        .onAppear {
-            viewStore.send(.loadPageList)
-        }
-        .navigationTitle(L10n.stgTxtAuditEventsTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .background(Color(.secondarySystemBackground).ignoresSafeArea())
-    }
-}
-
-extension AuditEventsView {
-    struct PageNavigationControl: View {
-        @ObservedObject var viewStore: ViewStore<AuditEventsDomain.State, AuditEventsDomain.Action>
-
-        var body: some View {
-            HStack {
-                Button {
-                    if let previousPage = viewStore.previousPage {
-                        viewStore.send(.loadPage(previousPage))
-                    }
-                } label: {
-                    Text(L10n.stgTxtAuditEventsPrevious)
-                }
-                .disabled(viewStore.state.previousPage == nil)
-                .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsNavigationPrevious)
-
-                Spacer()
-
-                Text(L10n.stgTxtAuditEventsPageSelectionOf(
-                    viewStore.selectedPage?.name ?? "",
-                    String(viewStore.state.pages?.count ?? 0)
-                ))
-                    .foregroundColor(Color(.secondaryLabel))
-                    .font(.subheadline)
-                    .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsNavigationPageIndicator)
-
-                Spacer()
-
-                Button {
-                    if let nextPage = viewStore.nextPage {
-                        viewStore.send(.loadPage(nextPage))
-                    }
-                } label: {
-                    Text(L10n.stgTxtAuditEventsNext)
-                }
-                .disabled(viewStore.state.nextPage == nil)
-                .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsNavigationNext)
-            }
-            .accessibilityElement(children: .contain)
-            .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsEvents)
-            .accentColor(Colors.primary600)
-            .padding()
         }
     }
 }

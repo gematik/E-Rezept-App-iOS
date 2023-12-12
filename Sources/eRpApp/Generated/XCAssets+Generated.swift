@@ -22,6 +22,8 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
   internal enum CardReader {
+    internal static let cardReadPosition1 = ImageAsset(name: "CardReadPosition1")
+    internal static let cardReadPosition2 = ImageAsset(name: "CardReadPosition2")
     internal static let cardReadVideo = ImageAsset(name: "CardReadVideo")
     internal static let cardReading = ImageAsset(name: "CardReading")
   }
@@ -87,10 +89,10 @@ internal enum Asset {
     internal static let girlRedCircle = ImageAsset(name: "Girl_RedCircle")
     internal static let girlRedCircleLarge = ImageAsset(name: "Girl_RedCircle_large")
     internal static let groupShot = ImageAsset(name: "GroupShot")
-    internal static let info = ImageAsset(name: "Info")
+    internal static let infoLogo = ImageAsset(name: "InfoLogo")
     internal static let ladyDeveloperBlueCircle = ImageAsset(name: "LadyDeveloper_BlueCircle")
     internal static let womanBlueCircle = ImageAsset(name: "Woman_BlueCircle")
-    internal static let boyCicrle = ImageAsset(name: "boy_Cicrle")
+    internal static let boyCircle = ImageAsset(name: "boy_circle")
     internal static let egkBlau = ImageAsset(name: "egkBlau")
     internal static let mannkarteCircle = ImageAsset(name: "mannkarte_circle")
     internal static let pharmacistArmRedCirle = ImageAsset(name: "pharmacistArm_RedCirle")
@@ -110,14 +112,14 @@ internal enum Asset {
     internal static let apotheker = ImageAsset(name: "Apotheker")
     internal static let appLogo = ImageAsset(name: "AppLogo")
     internal static let boyGrannyGrandpa = ImageAsset(name: "boyGrannyGrandpa")
-    internal static let developer = ImageAsset(name: "developer")
-    internal static let doctor = ImageAsset(name: "doctor")
-    internal static let handMitKarte = ImageAsset(name: "handMitKarte")
-    internal static let hands = ImageAsset(name: "hands")
+    internal static let developerCircle = ImageAsset(name: "developerCircle")
+    internal static let doctorCircle = ImageAsset(name: "doctorCircle")
+    internal static let handMitKarteCircle = ImageAsset(name: "handMitKarteCircle")
+    internal static let handsCircle = ImageAsset(name: "handsCircle")
     internal static let logoNeuFahne = ImageAsset(name: "logoNeuFahne")
     internal static let logoNeuGematik = ImageAsset(name: "logoNeuGematik")
-    internal static let paragraph = ImageAsset(name: "paragraph")
-    internal static let womanWithPhone = ImageAsset(name: "womanWithPhone")
+    internal static let paragraphCircle = ImageAsset(name: "paragraphCircle")
+    internal static let womanWithPhoneCircle = ImageAsset(name: "womanWithPhoneCircle")
   }
   internal enum OrderEGK {
     internal static let blueEGK = ImageAsset(name: "blueEGK")
@@ -148,6 +150,9 @@ internal enum Asset {
     internal static let pharmacist2 = ImageAsset(name: "Pharmacist2")
     internal static let wheelchair = ImageAsset(name: "Wheelchair")
     internal static let womanWithPhone = ImageAsset(name: "WomanWithPhone")
+  }
+  internal enum Redeem {
+    internal static let pharmacistBlue = ImageAsset(name: "pharmacistBlue")
   }
   internal enum Settings {
     internal enum LegalNotice {
@@ -207,7 +212,7 @@ internal final class ColorAsset {
 }
 
 internal extension ColorAsset.Color {
-  @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *)
+  @available(iOS 13.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *)
   init?(asset: ColorAsset) {
     let bundle = BundleToken.bundle
     #if os(iOS) || os(tvOS)

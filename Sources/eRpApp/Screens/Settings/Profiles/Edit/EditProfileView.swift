@@ -29,7 +29,7 @@ struct EditProfileView: View {
 
     init(store: EditProfileDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -95,22 +95,18 @@ struct EditProfileView: View {
                 }
                 .padding(.top, 24)
 
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /EditProfileDomain.Destinations.State.editProfilePicture,
-                            action: EditProfileDomain.Destinations.Action.editProfilePictureAction
-                        ),
-                        then: EditProfilePictureFullView.init(store:)
-                    ),
-                    tag: EditProfileDomain.Destinations.State.Tag.editProfilePicture,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: EditProfileDomain.Action.setNavigation
-                    )
-                ) {
-                    Text(L10n.stgBtnEditPicture)
-                }
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: EditProfileDomain.Action.destination),
+                    state: /EditProfileDomain.Destinations.State.editProfilePicture,
+                    action: EditProfileDomain.Destinations.Action.editProfilePictureAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .editProfilePicture)) },
+                    destination: { store in
+                        EditProfilePictureView(store: store)
+                            .navigationTitle(L10n.editPictureTxt)
+                            .navigationBarTitleDisplayMode(.inline)
+                    },
+                    label: { Text(L10n.stgBtnEditPicture) }
+                )
 
                 SingleElementSectionContainer(footer: {
                     if viewStore.showEmptyNameWarning {
@@ -154,11 +150,14 @@ struct EditProfileView: View {
         })
         .navigationTitle(L10n.stgTxtEditProfileTitle)
         .alert(
-            store.destinationsScope(state: /EditProfileDomain.Destinations.State.alert),
-            dismiss: EditProfileDomain.Action.dismissAlert
+            store.scope(state: \.$destination, action: EditProfileDomain.Action.destination),
+            state: /EditProfileDomain.Destinations.State.alert,
+            action: EditProfileDomain.Destinations.Action.alert
         )
+        .task {
+            await viewStore.send(.registerListener).finish()
+        }
         .onAppear {
-            viewStore.send(.registerListener)
             viewStore.send(.loadAvailableSecurityOptions)
         }
     }
@@ -277,7 +276,7 @@ extension EditProfileView {
 
         init(store: EditProfileDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -298,27 +297,21 @@ extension EditProfileView {
                 content: {
                     EmptyView()
 
-                    NavigationLink(
-                        destination: IfLetStore(
-                            store.destinationsScope(
-                                state: /EditProfileDomain.Destinations.State.chargeItemList,
-                                action: EditProfileDomain.Destinations.Action.chargeItemListAction
-                            ),
-                            then: ChargeItemListView.init(store:)
-                        ),
-                        tag: EditProfileDomain.Destinations.State.Tag.chargeItemList,
-                        selection: viewStore.binding(
-                            get: \.destinationTag,
-                            send: EditProfileDomain.Action.setNavigation
-                        )
-                    ) {
-                        Label(
-                            title: { Text(L10n.stgBtnEditProfileChargeItemList) },
-                            icon: {
-                                Image(systemName: SFSymbolName.euroSign)
-                            }
-                        )
-                    }
+                    NavigationLinkStore(
+                        store.scope(state: \.$destination, action: EditProfileDomain.Action.destination),
+                        state: /EditProfileDomain.Destinations.State.chargeItemList,
+                        action: EditProfileDomain.Destinations.Action.chargeItemListAction,
+                        onTap: { viewStore.send(.setNavigation(tag: .chargeItemList)) },
+                        destination: ChargeItemListView.init(store:),
+                        label: {
+                            Label(
+                                title: { Text(L10n.stgBtnEditProfileChargeItemList) },
+                                icon: {
+                                    Image(systemName: SFSymbolName.euroSign)
+                                }
+                            )
+                        }
+                    )
                     .buttonStyle(.navigation)
                     .accessibilityElement(children: .combine)
                     .accessibility(identifier: A11y.settings.editProfile
@@ -335,7 +328,7 @@ extension EditProfileView {
 
         init(store: EditProfileDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -401,24 +394,19 @@ extension EditProfileView {
                     identifier: A11y.settings.editProfile.stgTxtEditProfileLoginSectionActivate
                 )
 
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.destinationsScope(
-                            state: /EditProfileDomain.Destinations.State.registeredDevices,
-                            action: EditProfileDomain.Destinations.Action.registeredDevicesAction
-                        ),
-                        then: RegisteredDevicesView.init(store:)
-                    ),
-                    tag: EditProfileDomain.Destinations.State.Tag.registeredDevices,
-                    selection: viewStore.binding(
-                        get: \.destinationTag,
-                        send: EditProfileDomain.Action.setNavigation
-                    )
-                ) {
-                    Label(title: {
-                        Text(L10n.stgBtnEditProfileRegisteredDevices)
-                    }, icon: {})
-                }
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: EditProfileDomain.Action.destination),
+                    state: /EditProfileDomain.Destinations.State.registeredDevices,
+                    action: EditProfileDomain.Destinations.Action.registeredDevicesAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .registeredDevices)) },
+                    destination: RegisteredDevicesView.init(store:),
+                    label: {
+                        Label(
+                            title: { Text(L10n.stgBtnEditProfileRegisteredDevices) },
+                            icon: {}
+                        )
+                    }
+                )
                 .buttonStyle(.navigation)
                 .accessibilityElement(children: .combine)
                 .accessibility(
@@ -453,104 +441,114 @@ extension EditProfileView {
 
         init(store: EditProfileDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
-            let token: IDPToken?
-            let destinationTag: EditProfileDomain.Destinations.State.Tag?
             let isLoggedIn: Bool
 
             init(state: EditProfileDomain.State) {
-                token = state.token
-                destinationTag = state.destination?.tag
                 isLoggedIn = state.token != nil
             }
         }
 
         var body: some View {
-            SectionContainer(header: {
-                                 Text(L10n.stgTxtEditProfileSecuritySectionTitle)
-                                     .accessibilityIdentifier(A11y.settings.editProfile
-                                         .stgTxtEditProfileSecuritySectionTitle)
-                             },
-                             footer: {
-                                 footnote
-                             },
-                             content: {
-                                 NavigationLink(
-                                     destination: IfLetStore(tokenStore) { tokenStore in
-                                         WithViewStore(tokenStore) { scopedViewStore in
-                                             IDPTokenView(token: scopedViewStore.state)
-                                         }
-                                     },
-                                     tag: EditProfileDomain.Destinations.State.Tag.token,
-                                     selection: viewStore.binding(
-                                         get: \.destinationTag,
-                                         send: EditProfileDomain.Action.setNavigation
-                                     )
-                                 ) {
-                                     Label(title: {
-                                         SubTitle(title: L10n.stgTxtEditProfileSecurityShowTokensLabel,
-                                                  description: L10n.stgTxtEditProfileSecurityShowTokensDescription)
-                                     }, icon: {
-                                         Image(systemName: SFSymbolName.key)
-                                     })
-                                 }
-                                 .accessibilityElement(children: .combine)
-                                 .accessibility(identifier: A11y.settings.editProfile
-                                     .stgBtnEditProfileSecuritySectionShowTokens)
-                                 .buttonStyle(.navigation)
-                                 .disabled(viewStore.state.token == nil)
+            SingleElementSectionContainer(
+                header: {
+                    Text(L10n.stgTxtEditProfileSecuritySectionTitle)
+                        .accessibilityIdentifier(A11y.settings.editProfile
+                            .stgTxtEditProfileSecuritySectionTitle)
+                },
+                footer: {
+                    if !viewStore.isLoggedIn {
+                        FootnoteView(
+                            text: L10n.stgTxtEditProfileSecurityShowTokensHint,
+                            a11y: A11y.settings.editProfile
+                                .stgTxtEditProfileSecurityShowTokensHint
+                        )
+                    } else {
+                        EmptyView()
+                    }
+                },
+                content: {
+                    TokenSectionViewNavigation(store: store)
+                }
+            )
+        }
+    }
 
-                                 // [REQ:gemSpec_eRp_FdV:A_19177#2] Actual Button to open the audit events
-                                 // [REQ:BSI-eRp-ePA:O.Auth_5#2] Actual Button to open the audit events
-                                 NavigationLink(
-                                     destination: IfLetStore(
-                                         store.destinationsScope(
-                                             state: /EditProfileDomain.Destinations.State.auditEvents,
-                                             action: EditProfileDomain.Destinations.Action.auditEventsAction
-                                         ),
-                                         then: AuditEventsView.init(store:)
-                                     ),
-                                     tag: EditProfileDomain.Destinations.State.Tag.auditEvents,
-                                     selection: viewStore.binding(
-                                         get: \.destinationTag,
-                                         send: EditProfileDomain.Action.setNavigation
-                                     )
-                                 ) {
-                                     Label(title: {
-                                         SubTitle(title: L10n.stgTxtEditProfileSecurityShowAuditEventsLabel,
-                                                  description: L10n.stgTxtEditProfileSecurityShowAuditEventsDescription)
-                                     }, icon: {
-                                         Image(systemName: SFSymbolName.arrowUpArrowDown)
-                                     })
-                                 }
-                                 .buttonStyle(.navigation)
-                                 .accessibilityElement(children: .combine)
-                                 .accessibility(
-                                     identifier: A11y.settings.editProfile
-                                         .stgBtnEditProfileSecuritySectionShowAuditEvents
-                                 )
+    private struct TokenSectionViewNavigation: View {
+        let store: EditProfileDomain.Store
+        @ObservedObject var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
 
-                             })
+        init(store: EditProfileDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
-        @ViewBuilder var footnote: some View {
-            if !viewStore.isLoggedIn {
-                FootnoteView(text: L10n.stgTxtEditProfileSecurityShowTokensHint,
-                             a11y: A11y.settings.editProfile.stgTxtEditProfileSecurityShowTokensHint)
-            } else {
-                EmptyView()
+        struct ViewState: Equatable {
+            let token: IDPToken?
+            let destinationTag: EditProfileDomain.Destinations.State.Tag?
+
+            init(state: EditProfileDomain.State) {
+                destinationTag = state.destination?.tag
+                token = state.token
             }
         }
 
-        var highlightColor: Color {
-            viewStore.isLoggedIn ? Colors.systemLabel : Colors.systemLabelSecondary
-        }
+        var body: some View {
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: EditProfileDomain.Action.destination),
+                state: /EditProfileDomain.Destinations.State.token,
+                action: EditProfileDomain.Destinations.Action.token,
+                onTap: { viewStore.send(.setNavigation(tag: .token)) },
+                destination: { _ in
+                    IDPTokenView(token: viewStore.state.token)
+                },
+                label: {
+                    Label(
+                        title: {
+                            SubTitle(
+                                title: L10n.stgTxtEditProfileSecurityShowTokensLabel,
+                                description: L10n.stgTxtEditProfileSecurityShowTokensDescription
+                            )
+                        },
+                        icon: {
+                            Image(systemName: SFSymbolName.key)
+                        }
+                    )
+                }
+            )
+            .accessibilityElement(children: .combine)
+            .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowTokens)
+            .buttonStyle(.navigation)
+            .disabled(viewStore.state.token == nil)
 
-        private var tokenStore: Store<IDPToken?, EditProfileDomain.Action> {
-            store.destinationsScope(state: /EditProfileDomain.Destinations.State.token)
+            // [REQ:gemSpec_eRp_FdV:A_19177#2,A_19185#3] Actual Button to open the audit events
+            // [REQ:BSI-eRp-ePA:O.Auth_5#2] Actual Button to open the audit events
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: EditProfileDomain.Action.destination),
+                state: /EditProfileDomain.Destinations.State.auditEvents,
+                action: EditProfileDomain.Destinations.Action.auditEventsAction,
+                onTap: { viewStore.send(.setNavigation(tag: .auditEvents)) },
+                destination: AuditEventsView.init(store:),
+                label: {
+                    Label(
+                        title: {
+                            SubTitle(
+                                title: L10n.stgTxtEditProfileSecurityShowAuditEventsLabel,
+                                description: L10n.stgTxtEditProfileSecurityShowAuditEventsDescription
+                            )
+                        },
+                        icon: {
+                            Image(systemName: SFSymbolName.arrowUpArrowDown)
+                        }
+                    )
+                }
+            )
+            .buttonStyle(.navigation)
+            .accessibilityElement(children: .combine)
+            .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowAuditEvents)
         }
     }
 }
@@ -565,9 +563,10 @@ struct ProfileView_Preview: PreviewProvider {
                             var state: EditProfileDomain.State = .init(profile: UserProfile.Dummies.profileE)
                             state.token = IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "")
                             return state
-                        }(),
-                        reducer: EditProfileDomain()
-                    )
+                        }()
+                    ) {
+                        EditProfileDomain()
+                    }
                 )
             }
 

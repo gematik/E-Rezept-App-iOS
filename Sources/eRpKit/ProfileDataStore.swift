@@ -52,10 +52,6 @@ public protocol ProfileDataStore {
         profileId: UUID,
         mutating: @escaping (inout Profile) -> Void
     ) -> AnyPublisher<Bool, LocalStoreError>
-
-    /// Retrieve audit events controller for loading audit events (from disk)
-    /// - Returns: PagedAuditEventsController that can handle page based audit events access.
-    func pagedAuditEventsController(for profileId: UUID, with locale: String?) throws -> PagedAuditEventsController
 }
 
 extension ProfileDataStore {

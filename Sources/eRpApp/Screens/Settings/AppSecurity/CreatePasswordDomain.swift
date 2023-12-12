@@ -25,7 +25,7 @@ import Zxcvbn
 struct CreatePasswordDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    enum Token: CaseIterable, Hashable {
+    enum CancelID: CaseIterable, Hashable {
         case comparePasswords
     }
 
@@ -99,17 +99,21 @@ struct CreatePasswordDomain: ReducerProtocol {
         case let .setPasswordA(string):
             state.passwordStrength = passwordStrengthTester.passwordStrength(for: string)
             state.passwordA = string
-            return EffectTask(value: .comparePasswords)
-                .delay(for: Self.timeout, scheduler: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.comparePasswords, cancelInFlight: true)
+            return .run { send in
+                try await schedulers.main.sleep(for: Self.timeout)
+                await send(.comparePasswords)
+            }
+            .animation(.default)
+            .cancellable(id: CancelID.comparePasswords, cancelInFlight: true)
 
         case let .setPasswordB(string):
             state.passwordB = string
-            return EffectTask(value: .comparePasswords)
-                .delay(for: Self.timeout, scheduler: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.comparePasswords, cancelInFlight: true)
+            return .run { send in
+                try await schedulers.main.sleep(for: Self.timeout)
+                await send(.comparePasswords)
+            }
+            .animation(.default)
+            .cancellable(id: CancelID.comparePasswords, cancelInFlight: true)
 
         case .comparePasswords:
             if !state.passwordA.isEmpty {
@@ -120,10 +124,12 @@ struct CreatePasswordDomain: ReducerProtocol {
             return .none
 
         case .enterButtonTapped:
-            return EffectTask(value: .comparePasswords)
-                .delay(for: Self.timeout, scheduler: schedulers.main.animation())
-                .eraseToEffect()
-                .cancellable(id: Token.comparePasswords, cancelInFlight: true)
+            return .run { send in
+                try await schedulers.main.animation().sleep(for: Self.timeout)
+                await send(.comparePasswords)
+            }
+            .animation(.default)
+            .cancellable(id: CancelID.comparePasswords, cancelInFlight: true)
 
         case .saveButtonTapped:
             guard state.hasValidPasswordEntries else {
@@ -144,12 +150,12 @@ struct CreatePasswordDomain: ReducerProtocol {
                   state.hasValidPasswordEntries,
                   let success = try? appSecurityManager.save(password: state.passwordA),
                   success == true else {
-                return .cancel(id: Token.comparePasswords)
+                return .cancel(id: CancelID.comparePasswords)
             }
 
             return .concatenate(
-                .cancel(id: Token.comparePasswords),
-                EffectTask(value: .delegate(.closeAfterPasswordSaved))
+                .cancel(id: CancelID.comparePasswords),
+                EffectTask.send(.delegate(.closeAfterPasswordSaved))
             )
 
         case .delegate:
@@ -165,8 +171,9 @@ extension CreatePasswordDomain {
         static let state = State(mode: .update)
 
         static let store = Store(
-            initialState: state,
-            reducer: CreatePasswordDomain()
-        )
+            initialState: state
+        ) {
+            CreatePasswordDomain()
+        }
     }
 }

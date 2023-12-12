@@ -27,6 +27,10 @@ public enum RemoteStorageBundleParsingError: Swift.Error {
 }
 
 extension ModelsR4.Bundle {
+    func parseErxTasksIDsContainer() throws -> PagedContent<[String]> {
+        PagedContent(content: try parseErxTaskIDs(), next: parseNext())
+    }
+
     /// Parse and extract all found ErxTask IDs from `Self`
     ///
     /// - Returns: Array with all found task ID's

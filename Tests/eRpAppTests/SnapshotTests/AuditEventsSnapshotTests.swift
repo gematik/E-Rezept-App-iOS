@@ -25,7 +25,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class AuditEventsSnapshotTests: XCTestCase {
+final class AuditEventsSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
@@ -58,10 +58,11 @@ final class AuditEventsSnapshotTests: XCTestCase {
             AuditEventsView(
                 store: .init(
                     initialState: .init(profileUUID: UUID(),
-                                        entries: IdentifiedArrayOf(uniqueElements: elements),
-                                        lastUpdated: "Last Edited 2021-01-20, 16:21"),
-                    reducer: EmptyReducer()
-                )
+                                        entries: IdentifiedArrayOf(uniqueElements: elements))
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -74,9 +75,26 @@ final class AuditEventsSnapshotTests: XCTestCase {
         let sut = NavigationView {
             AuditEventsView(
                 store: .init(initialState: .init(profileUUID: UUID(),
-                                                 entries: [],
-                                                 lastUpdated: nil),
-                             reducer: EmptyReducer())
+                                                 entries: IdentifiedArrayOf<AuditEventsDomain.State.AuditEvent>())) {
+                    EmptyReducer()
+                }
+            )
+        }
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testAuditEventsListWhenAuthenticationNeeded() {
+        let sut = NavigationView {
+            AuditEventsView(
+                store: .init(
+                    initialState: .init(profileUUID: UUID(), entries: nil, needsAuthentication: true)
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 
@@ -89,11 +107,11 @@ final class AuditEventsSnapshotTests: XCTestCase {
         let sut = NavigationView {
             AuditEventsView(
                 store: .init(
-                    initialState: .init(profileUUID: UUID(),
-                                        entries: nil,
-                                        lastUpdated: nil),
-                    reducer: EmptyReducer()
-                )
+                    initialState: .init(profileUUID: UUID(), entries: nil)
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 

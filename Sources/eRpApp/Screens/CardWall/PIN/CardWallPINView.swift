@@ -38,7 +38,7 @@ struct CardWallPINView: View {
     }
 
     var body: some View {
-        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+        WithViewStore(store, observe: ViewState.init) { viewStore in
             VStack(alignment: .leading) {
                 // [REQ:BSI-eRp-ePA:O.Purp_2#3,O.Data_6#4] PIN is used for eGK Connection
                 PINView(store: store).padding()
@@ -71,10 +71,9 @@ struct CardWallPINView: View {
                 content: {
                     NavigationView {
                         IfLetStore(
-                            store.destinationsScope(
-                                state: /CardWallPINDomain.Destinations.State.login,
-                                action: CardWallPINDomain.Destinations.Action.login
-                            ),
+                            store.scope(state: \.$destination, action: CardWallPINDomain.Action.destination),
+                            state: /CardWallPINDomain.Destinations.State.login,
+                            action: CardWallPINDomain.Destinations.Action.login,
                             then: CardWallLoginOptionView.init(store:)
                         )
                     }
@@ -83,23 +82,16 @@ struct CardWallPINView: View {
                 })
 
                 if viewStore.transitionMode == .push {
-                    NavigationLink(
-                        destination: IfLetStore(
-                            store.destinationsScope(
-                                state: /CardWallPINDomain.Destinations.State.login,
-                                action: CardWallPINDomain.Destinations.Action.login
-                            ),
-                            then: CardWallLoginOptionView.init(store:)
-                        ),
-                        tag: CardWallPINDomain.Destinations.State.Tag.login,
-                        selection: viewStore.binding(
-                            get: \.routeTag
-                        ) {
-                            .setNavigation(tag: $0)
-                        }
-                    ) {}
-                        .hidden()
-                        .accessibility(hidden: true)
+                    NavigationLinkStore(
+                        store.scope(state: \.$destination, action: CardWallPINDomain.Action.destination),
+                        state: /CardWallPINDomain.Destinations.State.login,
+                        action: CardWallPINDomain.Destinations.Action.login,
+                        onTap: { viewStore.send(.setNavigation(tag: .login)) },
+                        destination: CardWallLoginOptionView.init(store:),
+                        label: {}
+                    )
+                    .hidden()
+                    .accessibility(hidden: true)
                 }
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
@@ -134,7 +126,7 @@ struct CardWallPINView: View {
         }
 
         var body: some View {
-            WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+            WithViewStore(store, observe: ViewState.init) { viewStore in
                 ScrollView(.vertical, showsIndicators: true) {
                     if viewStore.wrongPinEntered {
                         WorngPINEnteredWarningView().padding()
@@ -168,10 +160,9 @@ struct CardWallPINView: View {
                     content: {
                         NavigationView {
                             IfLetStore(
-                                store.destinationsScope(
-                                    state: /CardWallPINDomain.Destinations.State.egk,
-                                    action: CardWallPINDomain.Destinations.Action.egkAction(action:)
-                                ),
+                                store.scope(state: \.$destination, action: CardWallPINDomain.Action.destination),
+                                state: /CardWallPINDomain.Destinations.State.egk,
+                                action: CardWallPINDomain.Destinations.Action.egkAction(action:),
                                 then: OrderHealthCardListView.init(store:)
                             )
                         }
@@ -217,29 +208,34 @@ struct CardWallPINView: View {
 
     private struct PINFieldView: View {
         let store: CardWallPINDomain.Store
+        @ObservedObject var viewStore: ViewStoreOf<CardWallPINDomain>
+
+        init(store: CardWallPINDomain.Store, completion: @escaping () -> Void) {
+            self.store = store
+            viewStore = ViewStore(store) { $0 }
+            self.completion = completion
+        }
 
         let completion: () -> Void
 
         var body: some View {
             VStack(alignment: .leading) {
-                WithViewStore(store) { viewStore in
-                    SecureFieldWithReveal(
-                        titleKey: L10n.cdwEdtPinInput,
-                        accessibilityLabelKey: L10n.cdwTxtPinInputLabel,
-                        text: viewStore.binding(get: \.pin, send: CardWallPINDomain.Action.update(pin:)).animation(),
-                        textContentType: .password,
-                        backgroundColor: Colors.systemGray5
-                    ) {}
-                        .textContentType(.oneTimeCode)
-                        .multilineTextAlignment(.leading)
-                        .keyboardType(.numberPad)
-                        .padding()
-                        .font(Font.title3)
-                        .background(Colors.systemGray5)
-                        .cornerRadius(8)
-                        .textFieldKeepFirstResponder()
-                        .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
-                }
+                SecureFieldWithReveal(
+                    titleKey: L10n.cdwEdtPinInput,
+                    accessibilityLabelKey: L10n.cdwTxtPinInputLabel,
+                    text: viewStore.binding(get: \.pin, send: CardWallPINDomain.Action.update(pin:)).animation(),
+                    textContentType: .password,
+                    backgroundColor: Colors.systemGray5
+                ) {}
+                    .textContentType(.oneTimeCode)
+                    .multilineTextAlignment(.leading)
+                    .keyboardType(.numberPad)
+                    .padding()
+                    .font(Font.title3)
+                    .background(Colors.systemGray5)
+                    .cornerRadius(8)
+                    .textFieldKeepFirstResponder()
+                    .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
             }
         }
     }

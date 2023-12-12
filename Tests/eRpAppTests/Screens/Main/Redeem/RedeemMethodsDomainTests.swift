@@ -24,16 +24,11 @@ import IDP
 import Nimble
 import XCTest
 
+@MainActor
 final class RedeemMethodsDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        RedeemMethodsDomain.State,
-        RedeemMethodsDomain.Action,
-        RedeemMethodsDomain.State,
-        RedeemMethodsDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<RedeemMethodsDomain>
 
     var erxTask: ErxTask!
 
@@ -109,32 +104,30 @@ final class RedeemMethodsDomainTests: XCTestCase {
 
     func testStore() -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        return TestStore(
-            initialState: RedeemMethodsDomain.State(
-                erxTasks: [erxTask, scannedTask]
-            ),
-            reducer: RedeemMethodsDomain()
-        ) { dependencies in
+        return TestStore(initialState: RedeemMethodsDomain.State(erxTasks: [erxTask, scannedTask])) {
+            RedeemMethodsDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
         }
     }
 
     /// Tests to open the redeem matrix code view
-    func testOpenDataMatrixCodeRedeemScreen() {
+    func testOpenDataMatrixCodeRedeemScreen() async {
         let store = testStore()
 
-        let expectedState = RedeemMatrixCodeDomain.State(
+        let expectedState = MatrixCodeDomain.State(
+            type: .erxTask,
             erxTasks: [erxTask, scannedTask]
         )
 
         // when
-        store.send(.setNavigation(tag: .matrixCode)) { sut in
+        await store.send(.setNavigation(tag: .matrixCode)) { sut in
             // then
             sut.destination = .matrixCode(expectedState)
         }
     }
 
-    func testOpenPharmacySearchScreen() {
+    func testOpenPharmacySearchScreen() async {
         let store = testStore()
 
         let expectedState = PharmacySearchDomain.State(
@@ -142,7 +135,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
         )
 
         // when
-        store.send(.setNavigation(tag: .pharmacySearch)) { sut in
+        await store.send(.setNavigation(tag: .pharmacySearch)) { sut in
             // then
             sut.destination = .pharmacySearch(expectedState)
         }

@@ -28,18 +28,18 @@ struct HealthCardPasswordOldPinView: View {
 
     init(store: HealthCardPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
         let oldPin: String
         let oldPinMayAdvance: Bool
-        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag?
 
         init(state: HealthCardPasswordDomain.State) {
             oldPin = state.oldPin
             oldPinMayAdvance = state.oldPinMayAdvance
-            destinationTag = state.destination.tag
+            destinationTag = state.destination?.tag
         }
     }
 

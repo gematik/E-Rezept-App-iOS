@@ -35,6 +35,7 @@ public enum SFSymbolName {
     public static let bubbleLeft = "bubble.left"
     public static let magnifyingGlasCircle = "magnifyingglass.circle"
     public static let magnifyingGlas = "magnifyingglass"
+    public static let magnifyingGlasPlus = "plus.magnifyingglass"
     public static let bell = "bell"
     public static let ant = "ant"
     public static let bicycle = "bicycle"

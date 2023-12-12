@@ -27,7 +27,7 @@ struct SettingsLegalInfoView: View {
 
     init(store: SettingsDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -43,80 +43,48 @@ struct SettingsLegalInfoView: View {
             Label(title: { Text(L10n.stgTxtHeaderLegalInfo) }, icon: {})
                 .accessibilityIdentifier(A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo)
         }, content: {
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /SettingsDomain.Destinations.State.legalNotice
-                    )
-                ) { _ in
-                    LegalNoticeView()
-                },
-                tag: SettingsDomain.Destinations.State.Tag.legalNotice,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: SettingsDomain.Action.setNavigation
-                )
-            ) {
-                Label(L10n.stgLnoTxtLegalNotice, systemImage: SFSymbolName.info)
-            }
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                state: /SettingsDomain.Destinations.State.legalNotice,
+                action: SettingsDomain.Destinations.Action.legalNotice,
+                onTap: { viewStore.send(.setNavigation(tag: .legalNotice)) },
+                destination: { _ in LegalNoticeView() },
+                label: { Label(L10n.stgLnoTxtLegalNotice, systemImage: SFSymbolName.info) }
+            )
             .accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
             .buttonStyle(.navigation)
 
             // [REQ:BSI-eRp-ePA:O.Arch_9#3] DataPrivacy display within Settings
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /SettingsDomain.Destinations.State.dataProtection
-                    )
-                ) { _ in
-                    DataPrivacyView()
-                },
-                tag: SettingsDomain.Destinations.State.Tag.dataProtection,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: SettingsDomain.Action.setNavigation
-                )
-            ) {
-                Label(L10n.stgDpoTxtDataPrivacy, systemImage: SFSymbolName.shield)
-            }
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                state: /SettingsDomain.Destinations.State.dataProtection,
+                action: SettingsDomain.Destinations.Action.dataProtection,
+                onTap: { viewStore.send(.setNavigation(tag: .dataProtection)) },
+                destination: { _ in DataPrivacyView() },
+                label: { Label(L10n.stgDpoTxtDataPrivacy, systemImage: SFSymbolName.shield) }
+            )
             .accessibility(identifier: A18n.settings.dataPrivacy.stgDprTxtDataPrivacy)
             .buttonStyle(.navigation)
 
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /SettingsDomain.Destinations.State.openSourceLicence
-                    )
-                ) { _ in
-                    FOSSView()
-                },
-                tag: SettingsDomain.Destinations.State.Tag.openSourceLicence,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: SettingsDomain.Action.setNavigation
-                )
-            ) {
-                Label(L10n.stgDpoTxtFoss, systemImage: SFSymbolName.heartTextSquare)
-            }
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                state: /SettingsDomain.Destinations.State.openSourceLicence,
+                action: SettingsDomain.Destinations.Action.openSourceLicence,
+                onTap: { viewStore.send(.setNavigation(tag: .openSourceLicence)) },
+                destination: { _ in FOSSView() },
+                label: { Label(L10n.stgDpoTxtFoss, systemImage: SFSymbolName.heartTextSquare) }
+            )
             .accessibility(identifier: A18n.settings.foss.stgDprTxtFoss)
             .buttonStyle(.navigation)
 
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /SettingsDomain.Destinations.State.termsOfUse
-                    )
-                ) { _ in
-                    TermsOfUseView()
-                },
-                tag: SettingsDomain.Destinations.State.Tag.termsOfUse,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: SettingsDomain.Action.setNavigation
-                )
-            ) {
-                Label(L10n.stgDpoTxtTermsOfUse, systemImage: SFSymbolName.docPlaintext)
-            }
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
+                state: /SettingsDomain.Destinations.State.termsOfUse,
+                action: SettingsDomain.Destinations.Action.termsOfUse,
+                onTap: { viewStore.send(.setNavigation(tag: .termsOfUse)) },
+                destination: { _ in TermsOfUseView() },
+                label: { Label(L10n.stgDpoTxtTermsOfUse, systemImage: SFSymbolName.docPlaintext) }
+            )
             .accessibility(identifier: A18n.settings.termsOfUse.stgTouTxtTermsOfUse)
             .buttonStyle(.navigation)
         })

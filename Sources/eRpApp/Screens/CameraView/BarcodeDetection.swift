@@ -76,7 +76,7 @@ extension BarcodeDetection: DependencyKey {
                     guard let code = $0 as? VNBarcodeObservation else {
                         return .invalidCode
                     }
-                    return .erxCode(
+                    return .text(
                         code.payloadStringValue?.dropGS1Prefix()
                     )
                 }

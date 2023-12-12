@@ -42,22 +42,6 @@ extension ProfileEntity {
     @NSManaged public var chargeItems: NSSet?
 }
 
-// MARK: Generated accessors for auditEvents
-
-extension ProfileEntity {
-    @objc(addAuditEventsObject:)
-    @NSManaged public func addToAuditEvents(_ value: ErxAuditEventEntity)
-
-    @objc(removeAuditEventsObject:)
-    @NSManaged public func removeFromAuditEvents(_ value: ErxAuditEventEntity)
-
-    @objc(addAuditEvents:)
-    @NSManaged public func addToAuditEvents(_ values: NSSet)
-
-    @objc(removeAuditEvents:)
-    @NSManaged public func removeFromAuditEvents(_ values: NSSet)
-}
-
 // MARK: Generated accessors for erxTasks
 
 extension ProfileEntity {

@@ -51,7 +51,7 @@ public struct ErxTaskOrder: Equatable {
     }
 
     public struct Payload: Codable, Equatable {
-        public let version: String
+        public let version: Int
         public let supplyOptionsType: RedeemOption
         public let name: String
         public let address: [String]
@@ -59,7 +59,7 @@ public struct ErxTaskOrder: Equatable {
         public var phone: String
 
         public init(
-            version: String = "1",
+            version: Int = 1,
             supplyOptionsType: RedeemOption,
             name: String,
             address: [String],

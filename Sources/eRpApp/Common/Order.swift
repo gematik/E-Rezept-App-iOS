@@ -144,7 +144,7 @@ extension ErxTaskOrder {
         }
 
         let payload = ErxTaskOrder.Payload(
-            version: String(version),
+            version: version,
             supplyOptionsType: order.redeemType,
             name: order.name ?? "",
             address: order.address?.asArray() ?? [],

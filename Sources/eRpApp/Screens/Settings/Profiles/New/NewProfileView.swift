@@ -28,7 +28,7 @@ struct NewProfileView: View {
 
     init(store: NewProfileDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -62,22 +62,18 @@ struct NewProfileView: View {
                         viewStore.send(.setNavigation(tag: .editProfilePicture))
                     }
 
-                    NavigationLink(
-                        destination: IfLetStore(
-                            store.destinationsScope(
-                                state: /NewProfileDomain.Destinations.State.editProfilePicture,
-                                action: NewProfileDomain.Destinations.Action.editProfilePictureAction
-                            ),
-                            then: EditProfilePictureFullView.init(store:)
-                        ),
-                        tag: NewProfileDomain.Destinations.State.Tag.editProfilePicture,
-                        selection: viewStore.binding(
-                            get: \.destinationTag,
-                            send: NewProfileDomain.Action.setNavigation
-                        )
-                    ) {
-                        Text(L10n.stgBtnEditPicture)
-                    }
+                    NavigationLinkStore(
+                        store.scope(state: \.$destination, action: NewProfileDomain.Action.destination),
+                        state: /NewProfileDomain.Destinations.State.editProfilePicture,
+                        action: NewProfileDomain.Destinations.Action.editProfilePictureAction,
+                        onTap: { viewStore.send(.setNavigation(tag: .editProfilePicture)) },
+                        destination: { store in
+                            EditProfilePictureView(store: store)
+                                .navigationTitle(L10n.editPictureTxt)
+                                .navigationBarTitleDisplayMode(.inline)
+                        },
+                        label: { Text(L10n.stgBtnEditPicture) }
+                    )
 
                     SingleElementSectionContainer {
                         FormTextField(
@@ -113,7 +109,14 @@ struct NewProfileView: View {
                         .embedToolbarContent()
                 }
             }
-            .alert(store.scope(state: \.alertState), dismiss: NewProfileDomain.Action.dismissAlert)
+            .alert(
+                store: store.scope(
+                    state: \.$destination,
+                    action: NewProfileDomain.Action.destination
+                ),
+                state: /NewProfileDomain.Destinations.State.alert,
+                action: NewProfileDomain.Destinations.Action.alert
+            )
         }
         .accentColor(Colors.primary600)
     }

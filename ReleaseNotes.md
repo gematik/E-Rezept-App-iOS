@@ -1,3 +1,88 @@
+# Release 1.16.0
+
+## 1.16.0
+
+### added (3 changes)
+
+- Add toasts modifier for swiftui and swiftui + tca
+- Add support for universal links for pharmacies
+- Make change of scanned prescription name possible
+
+### fixed (2 changes)
+
+- Fix Title and Subtitle of ChargeItems-PDF
+- Fix Swiping can skip pages by removing the next button and adding timer for the welcome view
+
+### changed (1 change)
+
+- Changed cardwall read card screen
+
+### internal (4 changes)
+
+- Fix warnings related to Xcode 15 / Swift 6
+- Fix warnings from Xcode 15
+- Fix localization keys
+- Update to Xcode 15
+
+## 1.15.0
+
+### fixed (9 changes)
+
+- Fix deleting profile data if authentication with pairing scope is used
+- Fix CardWall to use correct profile Id in all views
+- Fix cardwall help not redirecting to insurance login
+- Fix prescriptions not loading in a paged manner
+- Fix onboarding is skippable by fast swiping
+- Fix deleting any pairing IDPToken after doing logout
+- Fix alert destination for deleting tasks
+- Fix async task for views with multiple actions on appear
+- Fix presenting authentication hint when user is already authenticated for RegisteredDevicesDomain and ashow results after successful login
+
+### changed (4 changes)
+
+- Change loading audit events to only load one page per trigger
+- Change UI of RedeemMethodsView
+- Change using FHIR workflow version 1.2 for all requests
+- Change presenting a better error and delete the pairing key when authorization with paired device fails
+
+### refactor (1 change)
+
+- Consolidate EditProfilePictureView and EditProfilePictureFullView
+
+### added (1 change)
+
+- Add UITests setup including SmartMocks to record/replay APIs
+
+### fix (1 change)
+
+- Fix format of tiles on redeem type selection screen
+
+### hotfix (1 change)
+
+- Fix blank screen in redeem process (TCA)
+
+## 1.14.0
+
+### fixed (3 changes)
+
+- Fix for no pharmacy location
+- Fix profile kvnr check
+- Fixed NSLocationAlwaysUsageDescription deprecation
+
+### internal (3 changes)
+
+- Add missing Package.resolved + FOSS for TCA 0.57
+- Use TCA-NavigationLinkStore when Links are ChildState-driven
+- Add fetching for subtree repositiory to prevent missing commit hashes while pushing the subtree
+
+### changed (1 change)
+
+- Update DataPrivacy.html
+
+### added (1 change)
+
+- Add explanations for latest audit feedback
+
 # Release 1.13.0
 
 ## changed (1 change)

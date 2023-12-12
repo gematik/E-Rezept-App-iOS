@@ -17,13 +17,19 @@
             <li><a href="#OpenStreetMaps">OpenStreetMaps</a></li>
       </ul>
 
-      <h2>Lizenzen</h2>
-
+      <h2>Licences</h2>
 
       <% dependencies.each do |dependency| %>
 
       <h4 id="<%= dependency[:name] %>"><%= dependency[:name] %> <%= dependency[:version] %></h4>
+
+      <h5>Usage:</h5>
+      <p><%= dependency[:purpose] %></p>
+
+      <h5>Source:</h5>
       <p><a href="<%= dependency[:url] %>"><%= dependency[:url] %></a></p>
+
+      <h5>Licence</h5>
       <section class="license"><%= dependency[:license] %></section>
 
       <% end %>

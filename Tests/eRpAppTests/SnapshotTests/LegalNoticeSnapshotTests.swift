@@ -22,7 +22,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class LegalNoticeSnapshotTests: XCTestCase {
+final class LegalNoticeSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
     }

@@ -28,16 +28,16 @@ struct HealthCardPasswordIntroductionView: View {
 
     init(store: HealthCardPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
         let mode: HealthCardPasswordDomain.Mode
-        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag?
 
         init(state: HealthCardPasswordDomain.State) {
             mode = state.mode
-            destinationTag = state.destination.tag
+            destinationTag = state.destination?.tag
         }
     }
 

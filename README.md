@@ -58,7 +58,7 @@ Documentation for setting up the entire system will be available at a later date
 
 ### Project setup
 
-Dependencies are a mix of SPM (Swift Package Manager) and Carthage right now. The Xcode-project is generated using `xcodegen`.
+The Xcode-project is generated using `xcodegen`.
 The more complex build configuration(s) is done with the help of Fastlane. See the `./fastlane` directory for full setup.
 
 The App uses Apple's `Combine.framework` for operation scheduling. The UI-Layer is built with [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) ♥️ and `SwiftUI` ♥️.

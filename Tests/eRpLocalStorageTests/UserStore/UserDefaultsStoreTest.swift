@@ -106,7 +106,7 @@ final class UserDefaultsStoreTest: XCTestCase {
 
         sut.wipeAll()
         expect(self.userDefaults.shouldHideOnboarding) == false
-        expect(self.userDefaults.onboardingVersion) == nil
-        expect(self.userDefaults.selectedProfileId) == nil
+        expect(self.userDefaults.onboardingVersion).to(beNil())
+        expect(self.userDefaults.selectedProfileId).to(beNil())
     }
 }

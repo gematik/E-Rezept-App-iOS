@@ -19,7 +19,7 @@
 /// All available core data modal versions that require a manual migration step in `MigrationManager`
 /// Add a new case every time you want to start a manual migration to a new `xcdatamodel`
 /// The `rawValue` represents the `xcdatamodel`version
-public enum ModelVersion: Int, CaseIterable {
+public enum ModelVersion: Int, Codable, CaseIterable {
     // Introduces status to `ErxTask`
     case taskStatus = 3
     // Introduces `Profile` entity

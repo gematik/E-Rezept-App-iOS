@@ -34,10 +34,9 @@ internal struct StringAsset {
     // swiftlint:enable discouraged_optional_collection
 
     internal var text: String {
-        guard let arguments = arguments, !arguments.isEmpty else {
-            return NSLocalizedString(rawKey, bundle: bundle, comment: "")
-        }
+        let arguments = self.arguments ?? []
 
+        // We still need to format, to correctly escape possible %%
         return String(format: NSLocalizedString(rawKey, bundle: bundle, comment: ""), arguments: arguments)
     }
 

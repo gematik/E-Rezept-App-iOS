@@ -52,7 +52,7 @@ struct Tile: View {
                             .foregroundColor(Colors.systemLabelSecondary)
                     }
                 }
-                .padding(.leading, 16)
+                .padding(.leading, (iconSystemName != nil || iconName != nil) ? 16 : 0)
 
                 Spacer(minLength: 0)
             }
@@ -73,6 +73,15 @@ struct CheckboxTile_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             VStack {
+                Tile(title: "Jetzt in Apotheke einlösen ",
+                     description: "Sie stehen in einer Apotheke und möchten Ihr Rezept einlösen.",
+                     discloseIcon: SFSymbolName.rightDisclosureIndicator)
+
+                Tile(iconSystemName: SFSymbolName.qrCode,
+                     title: "Jetzt in Apotheke einlösen ",
+                     description: "Sie stehen in einer Apotheke und möchten Ihr Rezept einlösen.",
+                     discloseIcon: SFSymbolName.rightDisclosureIndicator)
+
                 Tile(iconSystemName: SFSymbolName.qrCode,
                      title: "Jetzt in Apotheke einlösen ",
                      description: "Sie stehen in einer Apotheke und möchten Ihr Rezept einlösen.",

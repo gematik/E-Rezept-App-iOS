@@ -87,35 +87,6 @@ public protocol ErxLocalDataStore {
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], LocalStoreError>
 
-    // MARK: - AuditEvent interfaces
-
-    /// Fetch the ErxAuditEvent by its id when required by `Self`
-    ///
-    /// - Parameters:
-    ///   - id: the ErxAuditEvent ID
-    /// - Returns: Publisher for the fetch request
-    func fetchAuditEvent(by id: ErxAuditEvent.ID)
-        -> AnyPublisher<ErxAuditEvent?, LocalStoreError>
-
-    /// Fetches all audit events related to a specific task id.
-    /// - Parameters:
-    ///   - taskID: Identifier of the task to fetch the audit events for
-    ///   - locale: Location type of the language in which the result should be returned
-    func listAllAuditEvents(forTaskID taskID: ErxTask.ID,
-                            for locale: String?) -> AnyPublisher<[ErxAuditEvent], LocalStoreError>
-
-    /// Fetch the most recent `timestamp` of all `AuditEvent`s
-    func fetchLatestTimestampForAuditEvents() -> AnyPublisher<String?, LocalStoreError>
-
-    /// List all audit events with the given local contained in the store
-    /// - Parameter locale: Location type of the language in which the result should be returned
-    /// - Returns: Array of the fetched audit events or error
-    func listAllAuditEvents(for locale: String?) -> AnyPublisher<[ErxAuditEvent], LocalStoreError>
-
-    /// Creates or updates a sequence of audit events into the store
-    /// - Parameter auditEvents: Array of audit events that should be saved
-    func save(auditEvents: [ErxAuditEvent]) -> AnyPublisher<Bool, LocalStoreError>
-
     // MARK: - MedicationDispense interfaces
 
     /// List all medication dispenses contained in the store

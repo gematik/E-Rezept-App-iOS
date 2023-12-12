@@ -21,14 +21,9 @@ import ComposableArchitecture
 import Nimble
 import XCTest
 
+@MainActor
 final class IDPCardWallDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        IDPCardWallDomain.State,
-        IDPCardWallDomain.Action,
-        IDPCardWallDomain.State,
-        IDPCardWallDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<IDPCardWallDomain>
 
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
@@ -55,9 +50,10 @@ final class IDPCardWallDomainTests: XCTestCase {
 
     func testStore(for state: IDPCardWallDomain.State) -> TestStore {
         TestStore(
-            initialState: state,
-            reducer: IDPCardWallDomain()
-        ) { dependencies in
+            initialState: state
+        ) {
+            IDPCardWallDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.userSession = mockUserSession
         }
@@ -65,7 +61,7 @@ final class IDPCardWallDomainTests: XCTestCase {
 
     let testProfileId = UUID()
 
-    func testPinActionAdvanceFullscreenCover() {
+    func testPinActionAdvanceFullscreenCover() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
             pin: CardWallPINDomain.Dummies.state
@@ -77,7 +73,7 @@ final class IDPCardWallDomainTests: XCTestCase {
         }
 
         expect(accessibilityAnnouncementCallsCount) == 0
-        store.send(.pinAction(action: .advance(.fullScreenCover))) { state in
+        await store.send(.pinAction(action: .advance(.fullScreenCover))) { state in
             state.pin.doneButtonPressed = true
             state.readCard = CardWallReadCardDomain.State(
                 isDemoModus: false,
@@ -90,34 +86,36 @@ final class IDPCardWallDomainTests: XCTestCase {
         expect(accessibilityAnnouncementCallsCount) == 1
     }
 
-    func testReadCardActionWrongPIN() {
+    func testReadCardActionWrongPIN() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
             can: nil,
             pin: .init(
                 isDemoModus: false,
+                profileId: UUID(),
                 transition: .fullScreenCover
             ),
             readCard: CardWallReadCardDomain.Dummies.state
         ))
 
-        store.send(.readCard(action: .delegate(.wrongPIN))) { state in
+        await store.send(.readCard(action: .delegate(.wrongPIN))) { state in
             state.pin.wrongPinEntered = true
         }
     }
 
-    func testReadCardActionWrongCAN() {
+    func testReadCardActionWrongCAN() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
             can: nil,
             pin: .init(
                 isDemoModus: false,
+                profileId: UUID(),
                 transition: .fullScreenCover
             ),
             readCard: CardWallReadCardDomain.Dummies.state
         ))
 
-        store.send(.readCard(action: .delegate(.wrongCAN))) { state in
+        await store.send(.readCard(action: .delegate(.wrongCAN))) { state in
             state.can = CardWallCANDomain.State(
                 isDemoModus: false,
                 profileId: self.testProfileId,
@@ -130,18 +128,19 @@ final class IDPCardWallDomainTests: XCTestCase {
         }
     }
 
-    func testReadCardActionWrongCANWithEmptyCAN() {
+    func testReadCardActionWrongCANWithEmptyCAN() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
             can: nil,
             pin: .init(
                 isDemoModus: false,
+                profileId: UUID(),
                 transition: .fullScreenCover
             ),
             readCard: CardWallReadCardDomain.Dummies.state
         ))
 
-        store.send(.readCard(action: .delegate(.wrongCAN))) { state in
+        await store.send(.readCard(action: .delegate(.wrongCAN))) { state in
             state.can = CardWallCANDomain.State(
                 isDemoModus: false,
                 profileId: self.testProfileId,
@@ -151,54 +150,55 @@ final class IDPCardWallDomainTests: XCTestCase {
         }
     }
 
-    func testPINActionClose() {
+    func testPINActionClose() async {
         let store = testStore()
 
-        store.send(.canAction(action: .delegate(.close)))
-        testScheduler.run()
+        await store.send(.canAction(action: .delegate(.close)))
+        await testScheduler.run()
 
-        store.receive(.delegate(.close))
+        await store.receive(.delegate(.close))
     }
 
-    func testCANActionClose() {
+    func testCANActionClose() async {
         let store = testStore()
 
-        store.send(.canAction(action: .delegate(.close)))
-        testScheduler.run()
+        await store.send(.canAction(action: .delegate(.close)))
+        await testScheduler.run()
 
-        store.receive(.delegate(.close))
+        await store.receive(.delegate(.close))
     }
 
-    func testReadCardCloseAction() {
+    func testReadCardCloseAction() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
             can: nil,
             pin: .init(
                 isDemoModus: false,
+                profileId: UUID(),
                 transition: .fullScreenCover
             ),
             readCard: CardWallReadCardDomain.Dummies.state
         ))
 
-        store.send(.readCard(action: .delegate(.close)))
-        testScheduler.run()
+        await store.send(.readCard(action: .delegate(.close)))
+        await testScheduler.run()
 
-        store.receive(.delegate(.finished))
+        await store.receive(.delegate(.finished))
     }
 
-    func testActionsWithoutEffectOrStateChange() {
+    func testActionsWithoutEffectOrStateChange() async {
         let store = testStore()
 
-        store.send(.delegate(.close))
-        store.send(.delegate(.finished))
+        await store.send(.delegate(.close))
+        await store.send(.delegate(.finished))
     }
 
-    func testPinCloseActionShouldBeForwarded() {
+    func testPinCloseActionShouldBeForwarded() async {
         let store = testStore()
 
         // when
-        store.send(.pinAction(action: .delegate(.close)))
+        await store.send(.pinAction(action: .delegate(.close)))
         // then
-        store.receive(.delegate(.close))
+        await store.receive(.delegate(.close))
     }
 }

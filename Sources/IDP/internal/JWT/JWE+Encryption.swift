@@ -51,6 +51,7 @@ extension JWE {
 
     private static let defaultEncoder: JSONEncoder = {
         let jsonEncoder = JSONEncoder()
+        jsonEncoder.outputFormatting = .sortedKeys
         jsonEncoder.dataEncodingStrategy = .base64
         return jsonEncoder
     }()
@@ -64,6 +65,7 @@ extension JWE {
             switch self {
             case .a256gcm:
                 let jsonEncoder = JSONEncoder()
+                jsonEncoder.outputFormatting = .sortedKeys
                 jsonEncoder.dataEncodingStrategy = .base64
                 jsonEncoder.dateEncodingStrategy = .secondsSince1970
 

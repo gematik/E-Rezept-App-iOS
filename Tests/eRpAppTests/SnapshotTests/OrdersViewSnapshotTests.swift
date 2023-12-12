@@ -24,18 +24,22 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class OrdersViewSnapshotTests: XCTestCase {
+final class OrdersViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
+
+        SnapshotHelper.fixOffsetProblem()
     }
 
     func testEmptyOdersView() {
         let sut = OrdersView(
             store: OrdersDomain.Store(
-                initialState: OrdersDomain.State(orders: []),
-                reducer: EmptyReducer()
-            )
+                initialState: OrdersDomain.State(orders: [])
+
+            ) {
+                EmptyReducer()
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -45,9 +49,11 @@ final class OrdersViewSnapshotTests: XCTestCase {
     func testOdersView() {
         let sut = OrdersView(
             store: OrdersDomain.Store(
-                initialState: OrdersDomain.Dummies.state,
-                reducer: EmptyReducer()
-            )
+                initialState: OrdersDomain.Dummies.state
+
+            ) {
+                EmptyReducer()
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())

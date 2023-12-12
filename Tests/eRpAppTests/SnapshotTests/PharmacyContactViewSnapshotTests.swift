@@ -21,7 +21,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class PharmacyContactViewSnapshotTests: XCTestCase {
+final class PharmacyContactViewSnapshotTests: ERPSnapshotTestCase {
     override class func setUp() {
         super.setUp()
         diffTool = "open"

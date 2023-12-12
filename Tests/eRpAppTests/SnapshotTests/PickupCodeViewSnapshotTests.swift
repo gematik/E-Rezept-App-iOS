@@ -22,7 +22,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class PickupCodeViewSnapshotTests: XCTestCase {
+final class PickupCodeViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"

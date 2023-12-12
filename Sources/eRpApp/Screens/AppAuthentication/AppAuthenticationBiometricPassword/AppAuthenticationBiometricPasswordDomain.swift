@@ -56,17 +56,19 @@ struct AppAuthenticationBiometricPasswordDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .startAuthenticationChallenge:
-            return authenticationChallengeProvider
-                .startAuthenticationChallenge()
-                .first()
-                .map { Action.authenticationChallengeResponse($0) }
-                .receive(on: schedulers.main.animation())
-                .eraseToEffect()
+            return .publisher(
+                authenticationChallengeProvider
+                    .startAuthenticationChallenge()
+                    .first()
+                    .map { Action.authenticationChallengeResponse($0) }
+                    .receive(on: schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
         case let .authenticationChallengeResponse(response):
             state.authenticationResult = response
             if case let .failure(error) = response {
                 if error.isUserFallBack {
-                    return EffectTask(value: .switchToPassword(true))
+                    return EffectTask.send(.switchToPassword(true))
                 }
                 state.errorToDisplay = error
             }
@@ -76,9 +78,9 @@ struct AppAuthenticationBiometricPasswordDomain: ReducerProtocol {
             return .none
         case .loginButtonTapped:
             guard let success = try? appSecurityManager.matches(password: state.password) else {
-                return EffectTask(value: .passwordVerificationReceived(false))
+                return EffectTask.send(.passwordVerificationReceived(false))
             }
-            return EffectTask(value: .passwordVerificationReceived(success))
+            return EffectTask.send(.passwordVerificationReceived(success))
 
         case let .passwordVerificationReceived(isLoggedIn):
             state.lastMatchResultSuccessful = isLoggedIn
@@ -97,9 +99,8 @@ extension AppAuthenticationBiometricPasswordDomain {
     enum Dummies {
         static let state = State(biometryType: .faceID, startImmediateAuthenticationChallenge: false)
 
-        static let store = Store(
-            initialState: state,
-            reducer: AppAuthenticationBiometricPasswordDomain()
-        )
+        static let store = Store(initialState: state) {
+            AppAuthenticationBiometricPasswordDomain()
+        }
     }
 }

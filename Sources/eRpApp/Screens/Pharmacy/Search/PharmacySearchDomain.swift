@@ -29,16 +29,6 @@ import SwiftUI
 struct PharmacySearchDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanupSubDomains<T>() -> EffectTask<T> {
-        .concatenate(
-            PharmacyDetailDomain.cleanup()
-        )
-    }
-
-    // A unique identifier for our location manager, just in case we want to use
-    // more than one in our application.
-    struct LocationManagerId: Hashable {}
-
     struct State: Equatable {
         /// A storage for the prescriptions hat have been selected to be redeemed
         var erxTasks: [ErxTask]
@@ -69,7 +59,7 @@ struct PharmacySearchDomain: ReducerProtocol {
         /// The current state the search is at
         var searchState: SearchState = .startView(loading: false)
 
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
 
         var searchHistory: [String] = []
 
@@ -77,6 +67,7 @@ struct PharmacySearchDomain: ReducerProtocol {
     }
 
     enum Action: Equatable {
+        case task
         case onAppear
         // Search
         case searchTextChanged(String)
@@ -93,8 +84,7 @@ struct PharmacySearchDomain: ReducerProtocol {
         case locationManager(LocationManager.Action)
         case closeButtonTouched
 
-        case openAppSpecificSettings
-        case destination(PharmacySearchDomain.Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case setNavigation(tag: Destinations.State.Tag?)
         case delegate(Delegate)
         case response(Response)
@@ -108,6 +98,8 @@ struct PharmacySearchDomain: ReducerProtocol {
             case loadLocalPharmaciesReceived(Result<[PharmacyLocation], PharmacyRepositoryError>)
             case loadAndNavigateToPharmacyReceived(Result<PharmacyLocation, PharmacyRepositoryError>)
         }
+
+        case universalLink(URL)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
@@ -135,7 +127,7 @@ struct PharmacySearchDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -144,22 +136,27 @@ struct PharmacySearchDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .closeButtonTouched:
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
         case let .delegate(action):
             switch action {
             case .close:
                 state.destination = nil
-                return Self.cleanupSubDomains()
+                return .none
             }
-        case .onAppear:
+        case .task:
             state.searchHistory = searchHistory.historyItems()
-            return pharmacyRepository.loadLocal(count: 5)
-                .first()
-                .receive(on: schedulers.main.animation())
-                .catchToEffect()
-                .map { .response(.loadLocalPharmaciesReceived($0)) }
-                .cancellable(id: Token.loadLocalPharmacies, cancelInFlight: true)
-
+            return .publisher(
+                pharmacyRepository.loadLocal(count: 5)
+                    .first()
+                    .receive(on: schedulers.main.animation())
+                    .catchToPublisher()
+                    .map { .response(.loadLocalPharmaciesReceived($0)) }
+                    .eraseToAnyPublisher
+            )
+        case .onAppear:
+            return locationManager
+                .delegate()
+                .map(PharmacySearchDomain.Action.locationManager)
         case let .response(.loadLocalPharmaciesReceived(.success(pharmacies))):
             state.localPharmacies = pharmacies.map {
                 PharmacyLocationViewModel(
@@ -192,7 +189,6 @@ struct PharmacySearchDomain: ReducerProtocol {
                 location: state.currentLocation,
                 filter: state.pharmacyFilterOptions
             )
-            .cancellable(id: Token.search, cancelInFlight: true)
         case let .response(.pharmaciesReceived(result)):
             switch result {
             case let .success(pharmacies):
@@ -216,12 +212,14 @@ struct PharmacySearchDomain: ReducerProtocol {
         case let .loadAndNavigateToPharmacy(pharmacyLocation):
             state.searchState = .startView(loading: true)
             state.selectedPharmacy = pharmacyLocation
-            return pharmacyRepository.updateFromRemote(by: pharmacyLocation.telematikID)
-                .first()
-                .receive(on: schedulers.main)
-                .catchToEffect()
-                .map { .response(.loadAndNavigateToPharmacyReceived($0)) }
-                .cancellable(id: Token.updateLocalPharmacy, cancelInFlight: true)
+            return .publisher(
+                pharmacyRepository.updateFromRemote(by: pharmacyLocation.telematikID)
+                    .first()
+                    .receive(on: schedulers.main)
+                    .catchToPublisher()
+                    .map { .response(.loadAndNavigateToPharmacyReceived($0)) }
+                    .eraseToAnyPublisher
+            )
         case let .response(.loadAndNavigateToPharmacyReceived(result)):
             state.searchState = .startView(loading: false)
             switch result {
@@ -242,12 +240,10 @@ struct PharmacySearchDomain: ReducerProtocol {
                         state.localPharmacies.remove(at: index)
                     }
                     state.selectedPharmacy = nil
-                    return pharmacyRepository.delete(pharmacy: pharmacyLocation)
-                        .first()
-                        .receive(on: schedulers.main.animation())
-                        .eraseToEffect()
-                        .fireAndForget()
-                        .cancellable(id: Token.delete, cancelInFlight: true)
+                    return .run { _ in
+                        for try await _ in pharmacyRepository.delete(pharmacy: pharmacyLocation)
+                            .first().values {}
+                    }
                 }
             }
             state.selectedPharmacy = nil
@@ -259,22 +255,24 @@ struct PharmacySearchDomain: ReducerProtocol {
                 pharmacyViewModel: viewModel
             ))
             return .none
-        case let .destination(.pharmacyDetailView(action: .delegate(action))):
+        case let .destination(.presented(.pharmacyDetailView(action: .delegate(action)))):
             switch action {
             case .close:
                 state.destination = nil
-                return EffectTask(value: .delegate(.close))
+                return .run { send in
                     // swiftlint:disable:next todo
                     // TODO: this is workaround to avoid `onAppear` of the the child view getting called
-                    .delay(for: .seconds(0.1), scheduler: schedulers.main)
-                    .eraseToEffect()
+                    try await schedulers.main.sleep(for: 0.1)
+                    await send(.delegate(.close))
+                }
             }
+        case .destination(.presented(.alert(.removeFilterCurrentLocation))):
+            return .send(.removeFilterOption(.currentLocation))
         case let .removeFilterOption(filterOption):
             if let index = state.pharmacyFilterOptions.firstIndex(of: filterOption) {
                 state.pharmacyFilterOptions.remove(at: index)
             }
-            return .init(value: .performSearch)
-                .eraseToEffect()
+            return .send(.performSearch)
         case let .quickSearch(filterOptions):
             state.pharmacyFilterOptions = filterOptions
 
@@ -282,44 +280,46 @@ struct PharmacySearchDomain: ReducerProtocol {
             if filterOptions.contains(.currentLocation) {
                 state.searchState = .searchAfterLocalizationWasAuthorized
 
-                return .init(value: .requestLocation)
-                    .receive(on: schedulers.main.animation())
-                    .eraseToEffect()
+                return .send(.requestLocation)
+                    .animation()
             }
-            return .init(value: .performSearch)
-                .receive(on: schedulers.main.animation())
-                .eraseToEffect()
-        case .destination(.pharmacyFilterView(.delegate(.close))):
+            return .send(.performSearch)
+                .animation()
+        case .destination(.presented(.pharmacyFilterView(.delegate(.close)))):
             state.destination = nil
             return .none
-        case .destination(.pharmacyFilterView(.toggleFilter)):
+        case .destination(.presented(.pharmacyFilterView(.toggleFilter))):
             state.searchState = .searchRunning
 
             if let filterState = (/PharmacySearchDomain.Destinations.State.filter).extract(from: state.destination) {
-                return .init(value: .quickSearch(filters: filterState.pharmacyFilterOptions))
-                    .delay(for: 0.5, scheduler: schedulers.main.animation())
-                    .eraseToEffect()
+                return .run { send in
+                    try await schedulers.main.sleep(for: 0.5)
+                    await send(.quickSearch(filters: filterState.pharmacyFilterOptions))
+                }
+                .animation()
             }
 
             return .none
         // Location
         case .requestLocation:
-            return .merge(
-                locationManager
-                    .create(id: LocationManagerId())
-                    .map(PharmacySearchDomain.Action.locationManager),
-                locationManager
-                    .requestWhenInUseAuthorization(id: LocationManagerId())
+            switch locationManager.authorizationStatus() {
+            case .authorizedAlways,
+                 .authorizedWhenInUse:
+                return locationManager.startUpdatingLocation().fireAndForget()
+            case .notDetermined:
+                return locationManager.requestWhenInUseAuthorization()
                     .fireAndForget()
-            )
+            case .restricted, .denied:
+                state.currentLocation = nil
+                state.destination = .alert(Self.locationPermissionAlertState)
+                return .none
+            @unknown default:
+                return .none
+            }
         case .locationManager(.didChangeAuthorization(.authorizedAlways)),
              .locationManager(.didChangeAuthorization(.authorizedWhenInUse)):
             if state.searchState == .searchAfterLocalizationWasAuthorized {
-                if state.currentLocation != nil {
-                    return EffectTask(value: .performSearch)
-                } else {
-                    return locationManager.startUpdatingLocation(id: LocationManagerId()).fireAndForget()
-                }
+                return locationManager.startUpdatingLocation().fireAndForget()
             }
             return .none
         case .locationManager(.didChangeAuthorization(.notDetermined)):
@@ -333,9 +333,9 @@ struct PharmacySearchDomain: ReducerProtocol {
         case let .locationManager(.didUpdateLocations(locations)):
             state.currentLocation = locations.first
             return .concatenate(
-                locationManager.stopUpdatingLocation(id: LocationManagerId())
+                locationManager.stopUpdatingLocation()
                     .fireAndForget(),
-                EffectTask(value: .performSearch)
+                EffectTask.send(.performSearch)
             )
         case let .setNavigation(tag: tag):
             switch tag {
@@ -347,7 +347,33 @@ struct PharmacySearchDomain: ReducerProtocol {
                 state.destination = nil
             }
             return .none
-        case .openAppSpecificSettings:
+        case let .universalLink(url):
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+                  let identifier = components.fragmentAsQueryItems()["tiid"],
+                  identifier.lengthOfBytes(using: .utf8) > 0
+            else {
+                return .none
+            }
+
+            state.searchState = .startView(loading: true)
+            return .run(operation: { send in
+                for await value in pharmacyRepository.loadCached(by: identifier).first().catchToPublisher()
+                    .values {
+                    let value = value.flatMap { location -> Result<PharmacyLocation, PharmacyRepositoryError> in
+                        guard let location = location else {
+                            return .failure(.remote(.notFound))
+                        }
+                        return .success(location)
+                    }
+                    await send(.response(.loadAndNavigateToPharmacyReceived(value)))
+                }
+
+                // Let all transitions finish before toggling the favorite.
+                try? await schedulers.main.sleep(for: .seconds(1))
+
+                await send(.destination(.presented(.pharmacyDetailView(action: .setIsFavorite(true)))))
+            })
+        case .destination(.presented(.alert(.openAppSpecificSettings))):
             openSettings()
             return .none
         case .destination, .locationManager:
@@ -356,13 +382,40 @@ struct PharmacySearchDomain: ReducerProtocol {
     }
 }
 
+extension URLComponents {
+    /// Parses a urls fragment with the GET parameters syntax.
+    ///
+    /// E.g. parsing `https://erezept.gematik.de#keyA=valueA&keyB=valueB` would result in a dictionary
+    /// ["keyA": "valueA", "keyB": "valueB"]. Missing "=" or empty values are allowed and result in an empty dictionary
+    /// entry
+    /// - Returns: A dictionary with key value pairs for all parameters.
+    func fragmentAsQueryItems() -> [String: String] {
+        guard let fragment = fragment else { return [:] }
+        let fragmentPairs: [(String, String)] = fragment
+            .components(separatedBy: "&")
+            .compactMap { value -> (String, String)? in
+                let pair = value.components(separatedBy: "=")
+                guard let key = pair.first else {
+                    return nil
+                }
+                guard pair.count == 2 else {
+                    return (key, "")
+                }
+                return (key, pair.last ?? "")
+            }
+
+        return Dictionary(uniqueKeysWithValues: fragmentPairs)
+    }
+}
+
 extension PharmacySearchDomain {
-    func loadLocalPharmacies() -> EffectTask<PharmacySearchDomain.Action> {
+    func loadLocalPharmacies() -> AnyPublisher<PharmacySearchDomain.Action, Never> {
         pharmacyRepository.loadLocal(count: 5)
             .first()
             .receive(on: schedulers.main.animation())
-            .catchToEffect()
+            .catchToPublisher()
             .map { .response(.loadLocalPharmaciesReceived($0)) }
+            .eraseToAnyPublisher()
     }
 
     func openSettings() {
@@ -382,25 +435,27 @@ extension PharmacySearchDomain {
            let longitude = location?.coordinate.longitude {
             position = Position(lat: latitude, lon: longitude)
         }
-        return pharmacyRepository.searchRemote(
-            searchTerm: searchTerm,
-            position: position,
-            filter: filter.asPharmacyRepositoryFilters
+        return .publisher(
+            pharmacyRepository.searchRemote(
+                searchTerm: searchTerm,
+                position: position,
+                filter: filter.asPharmacyRepositoryFilters
+            )
+            .first()
+            .catchToPublisher()
+            .map { .response(.pharmaciesReceived($0)) }
+            .receive(on: schedulers.main.animation())
+            .eraseToAnyPublisher
         )
-        .first()
-        .catchToEffect()
-        .map { .response(.pharmaciesReceived($0)) }
-        .receive(on: schedulers.main.animation())
-        .eraseToEffect()
     }
 }
 
 extension PharmacySearchDomain {
-    static var locationPermissionAlertState: ErpAlertState<Action> = {
+    static var locationPermissionAlertState: ErpAlertState<Destinations.Action.Alert> = {
         .init(
             title: L10n.phaSearchTxtLocationAlertTitle,
             actions: {
-                ButtonState(action: .removeFilterOption(.currentLocation)) {
+                ButtonState(action: .removeFilterCurrentLocation) {
                     .init(L10n.alertBtnOk)
                 }
                 ButtonState(action: .openAppSpecificSettings) {

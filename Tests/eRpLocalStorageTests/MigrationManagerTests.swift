@@ -32,7 +32,7 @@ final class MigrationManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("database/\(UUID().uuidString)")
+        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("database/\(UUID().uuidString)/db")
     }
 
     override func tearDown() {
@@ -130,8 +130,6 @@ final class MigrationManagerTests: XCTestCase {
         try erxTaskStore.add(tasks: tasks)
         let communications = tasks.flatMap(\.communications)
         try erxTaskStore.add(communications: communications)
-        let auditEvents = ErxTask.Dummies.auditEvents(for: tasks.first!.id)
-        try erxTaskStore.add(auditEvents: auditEvents)
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
@@ -371,8 +369,6 @@ final class MigrationManagerTests: XCTestCase {
         )
         // pre fill database with tasks and auditEvents
         let tasks = tasksForPatientAnna + tasksForPatientLudger
-        let auditEvents = ErxTask.Dummies.auditEvents(for: tasks.first!.id)
-        try erxTaskStore.add(auditEvents: auditEvents)
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
@@ -386,18 +382,6 @@ final class MigrationManagerTests: XCTestCase {
 
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .auditEventsInProfile
-
-        // verify that audit events have been deleted
-        var receivedAuditEventCompletions = [Subscribers.Completion<LocalStoreError>]()
-        var receivedAuditEventsResults = [ErxAuditEvent]()
-        _ = erxTaskStore.listAllAuditEvents(for: nil)
-            .first()
-            .sink(receiveCompletion: { completion in
-                receivedAuditEventCompletions.append(completion)
-            }, receiveValue: { auditEvents in
-                receivedAuditEventsResults = auditEvents
-            })
-        expect(receivedAuditEventsResults.count).toEventually(equal(0))
 
         cancellable.cancel()
     }

@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import AVS
 import Combine
@@ -146,6 +146,48 @@ final class MockActivityIndicating: ActivityIndicating {
         set(value) { underlyingIsActive = value }
     }
     var underlyingIsActive: AnyPublisher<Bool, Never>!
+}
+
+
+// MARK: - MockAuditEventsService -
+
+final class MockAuditEventsService: AuditEventsService {
+    
+   // MARK: - loadAuditEvents
+
+    var loadAuditEventsForLocaleCallsCount = 0
+    var loadAuditEventsForLocaleCalled: Bool {
+        loadAuditEventsForLocaleCallsCount > 0
+    }
+    var loadAuditEventsForLocaleReceivedArguments: (profileId: UUID, locale: String?)?
+    var loadAuditEventsForLocaleReceivedInvocations: [(profileId: UUID, locale: String?)] = []
+    var loadAuditEventsForLocaleReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>!
+    var loadAuditEventsForLocaleClosure: ((UUID, String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>)?
+
+    func loadAuditEvents(for profileId: UUID, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError> {
+        loadAuditEventsForLocaleCallsCount += 1
+        loadAuditEventsForLocaleReceivedArguments = (profileId: profileId, locale: locale)
+        loadAuditEventsForLocaleReceivedInvocations.append((profileId: profileId, locale: locale))
+        return loadAuditEventsForLocaleClosure.map({ $0(profileId, locale) }) ?? loadAuditEventsForLocaleReturnValue
+    }
+    
+   // MARK: - loadNextAuditEvents
+
+    var loadNextAuditEventsForUrlLocaleCallsCount = 0
+    var loadNextAuditEventsForUrlLocaleCalled: Bool {
+        loadNextAuditEventsForUrlLocaleCallsCount > 0
+    }
+    var loadNextAuditEventsForUrlLocaleReceivedArguments: (profileId: UUID, url: URL, locale: String?)?
+    var loadNextAuditEventsForUrlLocaleReceivedInvocations: [(profileId: UUID, url: URL, locale: String?)] = []
+    var loadNextAuditEventsForUrlLocaleReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>!
+    var loadNextAuditEventsForUrlLocaleClosure: ((UUID, URL, String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>)?
+
+    func loadNextAuditEvents(for profileId: UUID, url: URL, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError> {
+        loadNextAuditEventsForUrlLocaleCallsCount += 1
+        loadNextAuditEventsForUrlLocaleReceivedArguments = (profileId: profileId, url: url, locale: locale)
+        loadNextAuditEventsForUrlLocaleReceivedInvocations.append((profileId: profileId, url: url, locale: locale))
+        return loadNextAuditEventsForUrlLocaleClosure.map({ $0(profileId, url, locale) }) ?? loadNextAuditEventsForUrlLocaleReturnValue
+    }
 }
 
 
@@ -778,6 +820,44 @@ final class MockNFCSignatureProvider: NFCSignatureProvider {
 }
 
 
+// MARK: - MockPagedAuditEventsController -
+
+final class MockPagedAuditEventsController: PagedAuditEventsController {
+    
+   // MARK: - getPageContainer
+
+    var getPageContainerCallsCount = 0
+    var getPageContainerCalled: Bool {
+        getPageContainerCallsCount > 0
+    }
+    var getPageContainerReturnValue: PageContainer?
+    var getPageContainerClosure: (() -> PageContainer?)?
+
+    func getPageContainer() -> PageContainer? {
+        getPageContainerCallsCount += 1
+        return getPageContainerClosure.map({ $0() }) ?? getPageContainerReturnValue
+    }
+    
+   // MARK: - getPage
+
+    var getPageCallsCount = 0
+    var getPageCalled: Bool {
+        getPageCallsCount > 0
+    }
+    var getPageReceivedPage: Page?
+    var getPageReceivedInvocations: [Page] = []
+    var getPageReturnValue: AnyPublisher<[ErxAuditEvent], LocalStoreError>!
+    var getPageClosure: ((Page) -> AnyPublisher<[ErxAuditEvent], LocalStoreError>)?
+
+    func getPage(_ page: Page) -> AnyPublisher<[ErxAuditEvent], LocalStoreError> {
+        getPageCallsCount += 1
+        getPageReceivedPage = page
+        getPageReceivedInvocations.append(page)
+        return getPageClosure.map({ $0(page) }) ?? getPageReturnValue
+    }
+}
+
+
 // MARK: - MockPasswordStrengthTester -
 
 final class MockPasswordStrengthTester: PasswordStrengthTester {
@@ -1025,28 +1105,6 @@ final class MockProfileDataStore: ProfileDataStore {
         updateProfileIdMutatingReceivedInvocations.append((profileId: profileId, mutating: mutating))
         return updateProfileIdMutatingClosure.map({ $0(profileId, mutating) }) ?? updateProfileIdMutatingReturnValue
     }
-    
-   // MARK: - pagedAuditEventsController
-
-    var pagedAuditEventsControllerForWithThrowableError: Error?
-    var pagedAuditEventsControllerForWithCallsCount = 0
-    var pagedAuditEventsControllerForWithCalled: Bool {
-        pagedAuditEventsControllerForWithCallsCount > 0
-    }
-    var pagedAuditEventsControllerForWithReceivedArguments: (profileId: UUID, locale: String?)?
-    var pagedAuditEventsControllerForWithReceivedInvocations: [(profileId: UUID, locale: String?)] = []
-    var pagedAuditEventsControllerForWithReturnValue: PagedAuditEventsController!
-    var pagedAuditEventsControllerForWithClosure: ((UUID, String?) throws -> PagedAuditEventsController)?
-
-    func pagedAuditEventsController(for profileId: UUID, with locale: String?) throws -> PagedAuditEventsController {
-        if let error = pagedAuditEventsControllerForWithThrowableError {
-            throw error
-        }
-        pagedAuditEventsControllerForWithCallsCount += 1
-        pagedAuditEventsControllerForWithReceivedArguments = (profileId: profileId, locale: locale)
-        pagedAuditEventsControllerForWithReceivedInvocations.append((profileId: profileId, locale: locale))
-        return try pagedAuditEventsControllerForWithClosure.map({ try $0(profileId, locale) }) ?? pagedAuditEventsControllerForWithReturnValue
-    }
 }
 
 
@@ -1224,10 +1282,10 @@ final class MockRegisteredDevicesService: RegisteredDevicesService {
     }
     var cardWallForReceivedProfileId: UUID?
     var cardWallForReceivedInvocations: [UUID] = []
-    var cardWallForReturnValue: AnyPublisher<IDPCardWallDomain.State, Never>!
-    var cardWallForClosure: ((UUID) -> AnyPublisher<IDPCardWallDomain.State, Never>)?
+    var cardWallForReturnValue: AnyPublisher<CardWallCANDomain.State, Never>!
+    var cardWallForClosure: ((UUID) -> AnyPublisher<CardWallCANDomain.State, Never>)?
 
-    func cardWall(for profileId: UUID) -> AnyPublisher<IDPCardWallDomain.State, Never> {
+    func cardWall(for profileId: UUID) -> AnyPublisher<CardWallCANDomain.State, Never> {
         cardWallForCallsCount += 1
         cardWallForReceivedProfileId = profileId
         cardWallForReceivedInvocations.append(profileId)

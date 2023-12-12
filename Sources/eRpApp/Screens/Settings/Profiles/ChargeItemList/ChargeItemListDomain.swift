@@ -26,18 +26,6 @@ import Foundation
 struct ChargeItemListDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case fetchChargeItemsLocal
-        case fetchChargeItemsRemote
-        case authenticate
-        case grantConsent
-        case revokeConsent
-    }
-
     struct State: Equatable {
         enum AuthenticationState: Equatable {
             /// When the user is authenticated
@@ -71,7 +59,7 @@ struct ChargeItemListDomain: ReducerProtocol {
         var grantConsentState: GrantConsentState = .unknown
 
         var bottomBannerState: BottomBannerState?
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
 
         var toolbarMenuState: ToolbarMenuState {
             let entries: [ToolbarMenuState.Entry]
@@ -104,7 +92,7 @@ struct ChargeItemListDomain: ReducerProtocol {
             // sourcery: AnalyticsScreen = cardWall
             case idpCardWall(IDPCardWallDomain.State)
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<ChargeItemListDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
             // sourcery: AnalyticsScreen = chargeItemDetails
             case chargeItem(ChargeItemDomain.State)
         }
@@ -112,6 +100,24 @@ struct ChargeItemListDomain: ReducerProtocol {
         enum Action: Equatable {
             case idpCardWallAction(IDPCardWallDomain.Action)
             case chargeItem(action: ChargeItemDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case fetchChargeItemsErrorRetry
+                case fetchChargeItemsErrorOkay
+                case authenticateErrorRetry
+                case authenticateErrorOkay
+                case grantConsent
+                case grantConsentDeny
+                case grantConsentErrorRetry
+                case grantConsentErrorOkay
+                case revokeConsent
+                case revokeConsentCancel
+                case revokeConsentErrorRetry
+                case revokeConsentErrorOkay
+                case deleteChargeItemsErrorRetry
+                case deleteChargeItemsErrorOkay
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -132,29 +138,13 @@ struct ChargeItemListDomain: ReducerProtocol {
     }
 
     enum Action: Equatable {
-        case onAppear
+        case task
 
-        // swiftlint:disable identifier_name
-        case fetchChargeItemsErrorAlertRetryButtonTapped
-        case fetchChargeItemsErrorAlertOkayButtonTapped
-        case authenticateErrorAlertRetryButtonTapped
-        case authenticateErrorAlertOkayButtonTapped
         case authenticateBottomBannerButtonTapped
-        case grantConsentAlertGrantButtonTapped
-        case grantConsentAlertDenyGrantButtonTapped
-        case grantConsentErrorAlertRetryButtonTapped
-        case grantConsentErrorAlertOkayButtonTapped
         case grantConsentBottomBannerButtonTapped
         case connectMenuButtonTapped
         case activateMenuButtonTapped
         case deactivateMenuButtonTapped
-        case revokeConsentAlertRevokeButtonTapped
-        case revokeConsentAlertCancelButtonTapped
-        case revokeConsentErrorAlertRetryButtonTapped
-        case revokeConsentErrorAlertOkayButtonTapped
-        case deleteChargeItemsErrorAlertRetryButtonTapped
-        case deleteChargeItemsErrorAlertOkayButtonTapped
-        // swiftlint:enable identifier_name
 
         case fetchChargeItems
         case authenticate
@@ -164,7 +154,7 @@ struct ChargeItemListDomain: ReducerProtocol {
         case select(ChargeItem)
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
         case nothing
 
         case response(Response)
@@ -190,7 +180,7 @@ struct ChargeItemListDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -198,66 +188,88 @@ struct ChargeItemListDomain: ReducerProtocol {
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .onAppear:
-            return .task { .fetchChargeItems }
-        case .fetchChargeItemsErrorAlertRetryButtonTapped:
+        case .task:
+            return .run { send in
+                await send(.fetchChargeItems)
+            }
+        case .destination(.presented(.alert(.fetchChargeItemsErrorRetry))):
             state.destination = nil
-            return .task { .fetchChargeItems }
-        case .fetchChargeItemsErrorAlertOkayButtonTapped:
+            return .run { send in
+                await send(.fetchChargeItems)
+            }
+        case .destination(.presented(.alert(.fetchChargeItemsErrorOkay))):
             state.destination = nil
             return .none
-        case .authenticateErrorAlertRetryButtonTapped:
+        case .destination(.presented(.alert(.authenticateErrorRetry))):
             state.destination = nil
-            return .task { .authenticate }
-        case .authenticateErrorAlertOkayButtonTapped:
+            return .run { send in
+                await send(.authenticate)
+            }
+        case .destination(.presented(.alert(.authenticateErrorOkay))):
             state.destination = nil
             state.bottomBannerState = .authenticate
             return .none
         case .authenticateBottomBannerButtonTapped:
             state.bottomBannerState = nil
-            return .task { .authenticate }
-        case .grantConsentAlertGrantButtonTapped:
+            return .run { send in
+                await send(.authenticate)
+            }
+        case .destination(.presented(.alert(.grantConsent))):
             state.destination = nil
-            return .task { .grantConsent }
-        case .grantConsentAlertDenyGrantButtonTapped:
+            return .run { send in
+                await send(.grantConsent)
+            }
+        case .destination(.presented(.alert(.grantConsentDeny))):
             state.grantConsentState = .userDeniedGrant
             state.destination = nil
             state.bottomBannerState = .grantConsent
             return .none
-        case .grantConsentErrorAlertRetryButtonTapped:
+        case .destination(.presented(.alert(.grantConsentErrorRetry))):
             state.destination = nil
-            return .task { .grantConsent }
-        case .grantConsentErrorAlertOkayButtonTapped:
+            return .run { send in
+                await send(.grantConsent)
+            }
+        case .destination(.presented(.alert(.grantConsentErrorOkay))):
             state.destination = nil
             state.bottomBannerState = .grantConsent
             return .none
         case .grantConsentBottomBannerButtonTapped:
             state.bottomBannerState = nil
-            return .task { .grantConsent }
+            return .run { send in
+                await send(.grantConsent)
+            }
         case .connectMenuButtonTapped:
             state.bottomBannerState = nil
-            return .task { .authenticate }
+            return .run { send in
+                await send(.authenticate)
+            }
         case .activateMenuButtonTapped:
             state.bottomBannerState = nil
-            return .task { .grantConsent }
+            return .run { send in
+                await send(.grantConsent)
+            }
         case .deactivateMenuButtonTapped:
             state.destination = .alert(AlertStates.revokeConsentRequest)
             return .none
-        case .revokeConsentAlertRevokeButtonTapped:
+        case .destination(.presented(.alert(.revokeConsent))):
             state.destination = nil
-            return .task { .revokeConsent }
-        case .revokeConsentAlertCancelButtonTapped:
-            state.destination = nil
-            return .none
-        case .revokeConsentErrorAlertRetryButtonTapped:
-            state.destination = nil
-            return .task { .revokeConsent }
-        case .revokeConsentErrorAlertOkayButtonTapped:
+            return .run { send in
+                await send(.revokeConsent)
+            }
+        case .destination(.presented(.alert(.revokeConsentCancel))):
             state.destination = nil
             return .none
-        case .deleteChargeItemsErrorAlertRetryButtonTapped:
+        case .destination(.presented(.alert(.revokeConsentErrorRetry))):
+            state.destination = nil
+            return .run { send in
+                await send(.revokeConsent)
+            }
+        case .destination(.presented(.alert(.revokeConsentErrorOkay))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.alert(.deleteChargeItemsErrorRetry))):
             return .none // to-do: implement later
-        case .deleteChargeItemsErrorAlertOkayButtonTapped:
+        case .destination(.presented(.alert(.deleteChargeItemsErrorOkay))):
             return .none
         case let .select(chargeItem):
             guard let fatChargeItem = chargeItem.original.chargeItem
@@ -271,18 +283,20 @@ struct ChargeItemListDomain: ReducerProtocol {
             return .none
         case .fetchChargeItems:
             return .concatenate(
-                chargeItemsService.fetchLocalChargeItems(for: state.profileId)
-                    .first()
-                    .receive(on: schedulers.main)
-                    .eraseToEffect(Action.Response.fetchChargeItemsLocal)
-                    .map(Action.response)
-                    .cancellable(id: Token.fetchChargeItemsLocal),
-                chargeItemsService.fetchRemoteChargeItemsAndSave(for: state.profileId)
-                    .first()
-                    .receive(on: schedulers.main)
-                    .eraseToEffect(Action.Response.fetchChargeItemsRemote)
-                    .map(Action.response)
-                    .cancellable(id: Token.fetchChargeItemsRemote)
+                .publisher(
+                    chargeItemsService.fetchLocalChargeItems(for: state.profileId)
+                        .first()
+                        .receive(on: schedulers.main)
+                        .map { Action.response(Action.Response.fetchChargeItemsLocal($0)) }
+                        .eraseToAnyPublisher
+                ),
+                .publisher(
+                    chargeItemsService.fetchRemoteChargeItemsAndSave(for: state.profileId)
+                        .first()
+                        .receive(on: schedulers.main)
+                        .map { Action.response(Action.Response.fetchChargeItemsRemote($0)) }
+                        .eraseToAnyPublisher
+                )
             )
         case let .response(.fetchChargeItemsLocal(result)):
             switch result {
@@ -318,22 +332,24 @@ struct ChargeItemListDomain: ReducerProtocol {
             }
         case .authenticate:
             state.authenticationState = .loading
-            return chargeItemsService.authenticate(for: state.profileId)
-                .eraseToEffect()
-                .map(Action.Response.authenticate)
-                .map(Action.response)
-                .receive(on: schedulers.main)
-                .eraseToEffect()
-                .cancellable(id: Token.authenticate)
+            return .publisher(
+                chargeItemsService.authenticate(for: state.profileId)
+                    .map(Action.Response.authenticate)
+                    .map(Action.response)
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.authenticate(result)):
             switch result {
             case .success:
                 state.authenticationState = .authenticated
-                return chargeItemsService.fetchRemoteChargeItemsAndSave(for: state.profileId)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect(Action.Response.fetchChargeItemsRemote)
-                    .map(Action.response)
-                    .cancellable(id: Token.fetchChargeItemsRemote)
+                return .publisher(
+                    chargeItemsService.fetchRemoteChargeItemsAndSave(for: state.profileId)
+                        .receive(on: schedulers.main)
+                        .map(Action.Response.fetchChargeItemsRemote)
+                        .map(Action.response)
+                        .eraseToAnyPublisher
+                )
             case .furtherAuthenticationRequired:
                 state.authenticationState = .notAuthenticated
                 state.grantConsentState = .unknown
@@ -347,6 +363,7 @@ struct ChargeItemListDomain: ReducerProtocol {
                         ),
                         pin: .init(
                             isDemoModus: userSession.isDemoMode,
+                            profileId: state.profileId,
                             pin: "",
                             transition: .fullScreenCover
                         )
@@ -362,25 +379,26 @@ struct ChargeItemListDomain: ReducerProtocol {
 
         case .grantConsent:
             state.grantConsentState = .loading
-            return chargeItemsService.grantChargeItemsConsent(for: state.profileId)
-                .first()
-                .eraseToEffect()
-                .map(Action.Response.grantConsent)
-                .map(Action.response)
-                .receive(on: schedulers.main)
-                .eraseToEffect()
-                .cancellable(id: Token.grantConsent)
+            return .publisher(
+                chargeItemsService.grantChargeItemsConsent(for: state.profileId)
+                    .first()
+                    .map(Action.Response.grantConsent)
+                    .map(Action.response)
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.grantConsent(result)):
             switch result {
             case .success:
                 state.authenticationState = .authenticated
                 state.grantConsentState = .granted
-                return chargeItemsService.fetchChargeItemsAssumingConsentGranted(for: state.profileId)
-                    .eraseToEffect(Action.Response.fetchChargeItemsRemote)
-                    .map(Action.response)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
-                    .cancellable(id: Token.fetchChargeItemsRemote)
+                return .publisher(
+                    chargeItemsService.fetchChargeItemsAssumingConsentGranted(for: state.profileId)
+                        .map(Action.Response.fetchChargeItemsRemote)
+                        .map(Action.response)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                )
             case .notAuthenticated:
                 state.authenticationState = .notAuthenticated
                 state.grantConsentState = .unknown
@@ -394,14 +412,14 @@ struct ChargeItemListDomain: ReducerProtocol {
             }
 
         case .revokeConsent:
-            return chargeItemsService.revokeChargeItemsConsent(for: state.profileId)
-                .first()
-                .eraseToEffect()
-                .map(Action.Response.revokeConsent)
-                .map(Action.response)
-                .receive(on: schedulers.main)
-                .eraseToEffect()
-                .cancellable(id: Token.revokeConsent)
+            return .publisher(
+                chargeItemsService.revokeChargeItemsConsent(for: state.profileId)
+                    .first()
+                    .map(Action.Response.revokeConsent)
+                    .map(Action.response)
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.revokeConsent(remoteResult)):
             switch remoteResult {
             case let .success(deleteLocalChargeItemsResult):
@@ -428,14 +446,11 @@ struct ChargeItemListDomain: ReducerProtocol {
                 return .none
             }
 
-        case .destination(.chargeItem(action: .delegate(.close))):
+        case .destination(.presented(.idpCardWallAction(.delegate(.close)))):
             state.destination = nil
-            return .none
-        case .destination(.idpCardWallAction(.delegate(.close))):
-            state.destination = nil
-            return CardWallIntroductionDomain.cleanup()
-        case .destination(.idpCardWallAction),
-             .destination(.chargeItem):
+            return .send(.fetchChargeItems)
+        case .destination(.presented(.idpCardWallAction)),
+             .destination(.presented(.chargeItem)):
             return .none
 
         case .setNavigation(tag: .none):
@@ -444,6 +459,7 @@ struct ChargeItemListDomain: ReducerProtocol {
 
         case .setNavigation,
              .delegate,
+             .destination,
              .nothing:
             return .none
         }
@@ -458,9 +474,10 @@ extension ChargeItemListDomain {
 
         static func storeFor(_ state: State) -> Store {
             Store(
-                initialState: state,
-                reducer: ChargeItemListDomain()
-            )
+                initialState: state
+            ) {
+                ChargeItemListDomain()
+            }
         }
     }
 }

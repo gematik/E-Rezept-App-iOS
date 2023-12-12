@@ -27,6 +27,8 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     case capabilityStatement(handler: Handler)
     /// Request all tasks from the service in a certain format
     case allTasks(referenceDate: String?, handler: Handler)
+    /// Request tasks next page from the service in a certain format
+    case tasksNextPage(url: URL, handler: Handler)
     /// Request a specific task from the service in a certain format
     case taskBy(id: ErxTask.ID, accessCode: String?, handler: Handler)
     /// Delete(/Abort) a specific task by it's taskID and accessCode
@@ -56,14 +58,15 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     /// Delete the `ErxConsent` for the given `ErxConsent.Category`
     case revokeConsent(category: ErxConsent.Category, handler: Handler)
     /// Loads content for a given url. Used for paging.
-    case next(url: URL, handler: Handler, locale: String?)
+    case auditEventsNextPage(url: URL, handler: Handler, locale: String?)
 }
 
 extension ErxTaskFHIROperation: FHIRClientOperation {
     public func handle(response: FHIRClient.Response) throws -> Value {
         switch self {
         case let .capabilityStatement(handler),
-             let .allTasks(_, handler),
+             let .allTasks(referenceDate: _, handler: handler),
+             let .tasksNextPage(_, handler),
              let .taskBy(_, _, handler),
              let .deleteTask(_, _, handler),
              let .auditEventBy(_, handler),
@@ -78,7 +81,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .consents(handler),
              let .grant(_, handler),
              let .revokeConsent(_, handler),
-             let .next(url: _, handler: handler, locale: _):
+             let .auditEventsNextPage(url: _, handler: handler, locale: _):
             return try handler.handle(response: response)
         }
     }
@@ -103,7 +106,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
         case let .deleteTask(taskId, _, _): return "Task/\(taskId)/$abort"
         case let .auditEventBy(auditEventId, _): return "AuditEvent/\(auditEventId)"
         case let .auditEvents(referenceDate, _, _):
-            var queryItems: [URLQueryItem] = [URLQueryItem(name: "_sort", value: "date")]
+            var queryItems: [URLQueryItem] = [URLQueryItem(name: "_sort", value: "-date")]
             if let referenceDate = referenceDate,
                let fhirDate = FHIRDateFormatter.shared.date(from: referenceDate) {
                 let dateItem = URLQueryItem(
@@ -129,10 +132,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
             return components?.string
         case let .medicationDispenses(taskId, handler: _):
             var components = URLComponents(string: "MedicationDispense")
-            #warning(
-                "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
-            )
-            guard let key = Workflow.Key.prescriptionIdKeys[.v1_1_1] else {
+            guard let key = Workflow.Key.prescriptionIdKeys[.v1_2_0] else {
                 assertionFailure("Missing FHIR resource key")
                 return components?.string
             }
@@ -177,7 +177,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
                 ),
             ]
             return components?.string
-        case let .next(url: url, handler: _, locale: _):
+        case let .auditEventsNextPage(url: url, handler: _, locale: _),
+             let .tasksNextPage(url: url, handler: _):
             return url.absoluteString
         }
     }
@@ -191,7 +192,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .deleteTask(_, accessCode, _):
             headers["X-AccessCode"] = accessCode
         case let .auditEvents(_, language, _),
-             let .next(url: _, _, language):
+             let .auditEventsNextPage(url: _, _, language):
             headers["Accept-Language"] = language
         case let .redeem(order, _):
             headers["Content-Type"] = acceptFormat.httpHeaderValue
@@ -232,6 +233,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
         switch self {
         case .capabilityStatement,
              .allTasks,
+             .tasksNextPage,
              .taskBy,
              .deleteTask,
              .auditEvents,
@@ -244,7 +246,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              .deleteChargeItem,
              .consents,
              .revokeConsent,
-             .next:
+             .auditEventsNextPage:
             return nil
         case let .redeem(order: order, _):
             return try? order.asCommunicationResource()
@@ -258,6 +260,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
         case let .capabilityStatement(handler),
              let .allTasks(_, handler),
              let .taskBy(_, _, handler),
+             let .tasksNextPage(_, handler),
              let .deleteTask(_, _, handler),
              let .auditEventBy(_, handler),
              let .auditEvents(_, _, handler),
@@ -271,7 +274,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .consents(handler: handler),
              let .grant(_, handler: handler),
              let .revokeConsent(_, handler: handler),
-             let .next(url: _, handler: handler, locale: _):
+             let .auditEventsNextPage(url: _, handler: handler, locale: _):
             return handler.acceptFormat
         }
     }

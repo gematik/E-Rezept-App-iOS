@@ -1,0 +1,293 @@
+{% macro methodArguments method %}
+    {% typed method as Method %}
+    {% for parameter in method.parameters %}
+                    {% if parameter.argumentLabel %}{{ parameter.argumentLabel }}: {% endif %}{{ parameter.name }}{{ ',' if not forloop.last }}
+    {% endfor %}
+{% endmacro %}
+
+{% macro methods type %}
+    {% typed type as Type %}
+    {% for method in type.methods %}
+        {% if not method.returnTypeName.isVoid %}
+    {% if method.returnTypeName.generic.name == "AnyPublisher" %}
+    var {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ method.returnTypeName.generic.typeParameters.first.typeName|replace:"X509","SerializableX509" }}>
+    {% else %}
+    var {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ method.returnTypeName|replace:"X509","SerializableX509" }}>
+    {% endif %}
+
+    func {{ method.name }}{% if method.throws %} throws{% endif %} -> {{ method.returnTypeName }} {
+        guard !isRecording else {
+            let result = wrapped.{{ method.callName }}(
+                {% call methodArguments method %}
+            )
+            {% if method.returnTypeName.generic.name == "AnyPublisher" %}
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.{{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings.record({{ "SerializableX509.from(" if method.returnTypeName|contains:"X509" }}value{{ ")" if method.returnTypeName|contains:"X509" }})
+                })
+                .eraseToAnyPublisher()
+            {% else %}
+            {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings.record({{ "SerializableX509.from(" if method.returnTypeName|contains:"X509" }}value{{ ")" if method.returnTypeName|contains:"X509" }})
+            {% endif %}
+            return result
+        }
+        if let value = {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings.next() {
+            {% if method.returnTypeName.generic.name == "AnyPublisher" %}
+            return Just(value{{ ".unwrap" if method.returnTypeName|contains:"X509" }})
+                .setFailureType(to: {{ method.returnTypeName.generic.typeParameters[1].typeName }}.self)
+                .eraseToAnyPublisher()
+            {% else %}
+            return value{{ ".unwrap" if method.returnTypeName|contains:"X509" }}
+            {% endif %}
+        } else {
+            return wrapped.{{ method.callName }}(
+                {% call methodArguments method %}
+            )
+        }
+    }
+        {% else %}
+    func {{ method.name }} {
+        wrapped.{{ method.callName }}({% call methodArguments method %}
+            )
+    }
+        {% endif %}
+
+    {% endfor %}
+{% endmacro %}
+
+{% macro properties type %}
+    {% typed type as Type %}
+    {% for property in type.variables where not property.isComputed %}
+        {% if property.typeName.generic.name == "AnyPublisher" %}
+    var {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ property.typeName.generic.typeParameters.first.typeName }}>
+
+    var {{property.name}}: {{property.typeName}} {
+        guard !isRecording else {
+            return wrapped.{{property.name}}
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.{{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings.record(value)
+                })
+                .eraseToAnyPublisher()
+        }
+        if let value = {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings.next() {
+            return Just(value)
+                .setFailureType(to: {{ property.typeName.generic.typeParameters[1].typeName }}.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.{{property.name}}
+        }
+    }
+        {% else %}
+    var {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ property.typeName }}>
+    {% if not property.isMutable %}
+    var {{ property.name }}: {{property.typeName}} {
+        guard !isRecording else {
+            let result = wrapped.{{ property.name }}
+            {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings.record(result)
+            return result
+        }
+        if let first = {{property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter}}Recordings.next() {
+            return first
+        }
+        return wrapped.{{ property.name }}
+    }
+    {% else %}
+    {% if not property.isComputed and not property.isMutable %}private(set) {% endif %}{% if not property.isComputed %}var {{ property.name }}: {{property.typeName}}{% endif %}{% if property.isMutable %} {
+        set {
+            if isRecording {
+                {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings.record(newValue)
+            }
+            wrapped.{{ property.name }} = newValue }
+        get {
+            guard !isRecording else {
+                let result = wrapped.{{ property.name }}
+                {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings.record(result)
+                return result
+            }
+
+            if let first = {{property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter}}Recordings.next() {
+                return first
+            }
+            return wrapped.{{ property.name }}
+        }
+    }
+{% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro methodsInitializer type %}
+    {% typed type as Type %}
+    {% for method in type.methods %}
+        {% if not method.returnTypeName.isVoid %}
+        {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings = mocks?.{{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings ?? .delegate
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro propertiesInitializer type %}
+    {% typed type as Type %}
+    {% for variable in type.allVariables where not variable.isComputed %}
+        {% if not variable.typeName.isVoid %}
+        {{ variable.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings = mocks?.{{ variable.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings ?? .delegate
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro serializationProperties type %}
+    {% typed type as Type %}
+    {% for property in type.variables where not property.isComputed %}
+        {% if property.typeName.generic.name == "AnyPublisher" %}
+        var {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ property.typeName.generic.typeParameters.first.typeName }}>? = .delegate
+        {% else %}
+        var {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ property.typeName }}>? = .delegate
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro serializationMethods type %}
+    {% typed type as Type %}
+    {% for method in type.methods %}
+        {% if not method.returnTypeName.isVoid %}
+    {% if method.returnTypeName.generic.name == "AnyPublisher" %}
+        {% if method.returnTypeName.generic.typeParameters.first.typeName.name|contains:"X509" %}
+        var {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ method.returnTypeName.generic.typeParameters.first.typeName.name|replace:"X509","SerializableX509" }}>? = .delegate
+        {% else %}
+        var {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ method.returnTypeName.generic.typeParameters.first.typeName }}>? = .delegate
+        {% endif %}
+    {% else %}
+        var {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ method.returnTypeName }}>? = .delegate
+    {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro serializationPropertiesArguments type %}
+    {% typed type as Type %}
+    {% for property in type.variables where not property.isComputed %}
+        {% if property.typeName.generic.name == "AnyPublisher" %}
+                {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings:{{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings{% if not forloop.last %},{% endif %}
+        {% else %}
+                {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings{% if not forloop.last %},{% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro serializationMethodsArguments type %}
+    {% typed type as Type %}
+    {% for method in type.methods %}
+        {% if not method.returnTypeName.isVoid %}
+    {% if method.returnTypeName.generic.name == "AnyPublisher" %}
+                {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings{% if not forloop.last %},{% endif %}
+    {% else %}
+                {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings{% if not forloop.last %},{% endif %}
+    {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro serialization type %}
+    {% typed type as Type %}
+    struct Mocks: Codable {
+    {% call serializationMethods type %}
+    {% call serializationProperties type %}
+    }
+    
+    func recordedData() throws -> CodableMock {
+        return try CodableMock(
+            "{{ type.name }}",
+            Mocks(
+                {% set methodscount %}{%for method in type.methods where not method.returnTypeName.isVoid %}1{% endfor %}{% endset %}
+                {% typed methodscount as String %}
+                {% call serializationMethodsArguments type %}{% if methodscount.count != 0 and type.variables.count != 0 %},{% endif %}
+                {% call serializationPropertiesArguments type %}
+            )
+        )
+    }
+{% endmacro %}
+
+{% macro wrap type %}
+    {% typed type as Type %}
+class SmartMock{{ type.name }}: {{ type.name }}, SmartMock {
+    private var wrapped: {{type.name}}
+    private var isRecording: Bool
+
+    init(wrapped: {{ type.name }}, mocks: Mocks?, isRecording: Bool = false) {
+        self.wrapped = wrapped
+        self.isRecording = isRecording
+
+    {% call methodsInitializer type %}
+    {% call propertiesInitializer type %}
+    }
+
+    {% call properties type %}
+    
+    {% call methods type %}
+    
+    {% for inheritedType in type.inheritedTypes %}
+    /// {{ inheritedType }}
+        {% for subtype in types.protocols where subtype.name == inheritedType %}
+            {% call properties subtype %}
+            {% call methods subtype %}
+        {% endfor %}
+    {% endfor %}
+    
+    {% call serialization type %}
+}
+
+{% endmacro %}
+
+// sourcery:file:eRpApp/UITestScenarios/SmartMock
+/// Use sourcery to update this file.
+
+import Pharmacy
+import eRpKit
+import Combine
+import OpenSSL
+import Foundation
+{% for type in types.protocols where type.based.SmartMock or type|annotated:"SmartMock" %}
+{% if type.name != "SmartMock" %}
+
+// MARK: - SmartMock{{ type.name }} -
+
+{% call wrap type %}
+{% endif %}
+{% endfor %}
+
+struct SerializableX509: Codable {
+    let payload: X509
+    
+    init(with payload: X509) {
+        self.payload = payload
+    }
+    
+    static func from(_ list: Array<X509>) -> Array<SerializableX509> {
+        list.map { SerializableX509(with: $0) }
+    }
+
+    static func from(_ value: X509) -> SerializableX509 {
+        SerializableX509(with: value)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(payload.derBytes ?? nil)
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let x509Data = try container.decode(Data.self)
+        payload = try X509(der: x509Data)
+    }
+    
+    var unwrap: X509 {
+        return payload
+    }
+}
+
+extension Array where Element == SerializableX509 {
+    var unwrap: [X509] {
+        map(\.payload)
+    }
+}
+// sourcery:end

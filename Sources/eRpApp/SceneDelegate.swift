@@ -24,6 +24,26 @@ import IDP
 import SwiftUI
 import UIKit
 
+extension View {
+    func prepareUITestsEnvironment() -> some View {
+        #if DEBUG
+        setupUITests()
+        #else
+        self
+        #endif
+    }
+}
+
+extension ReducerProtocol {
+    func prepareUITestsDependencies() -> some ReducerProtocol<Self.State, Self.Action> {
+        #if DEBUG
+        setupUITests()
+        #else
+        self
+        #endif
+    }
+}
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     var mainWindow: UIWindow?
     var authenticationWindow: UIWindow?
@@ -36,7 +56,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         RouterStore(
             initialState: .init(),
             // [REQ:BSI-eRp-ePA:O.Auth_8#5] Concat the user interaction reducer to the normal application reducer
-            reducer: AppStartDomain().analytics().notifyUserInteraction(),
+            reducer: AppStartDomain().analytics().notifyUserInteraction().prepareUITestsDependencies(),
             router: AppStartDomain.router
         )
 
@@ -44,6 +64,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     // Timer that counts down until the app will be locked
     var appLockTimer: Timer?
+
+    var universalLinkAfterAuthentication: URL?
 
     private struct MigrationCoordinator {
         let userDataStore: UserDataStore
@@ -55,6 +77,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
         func set(latestCompatibleModel version: ModelVersion) {
             userDataStore.latestCompatibleModelVersion = version
+        }
+    }
+
+    func parseUserActivities(_ activities: Set<NSUserActivity>) {
+        for userActivity in activities {
+            switch userActivity.activityType {
+            case NSUserActivityTypeBrowsingWeb:
+                guard let url = userActivity.webpageURL else { return }
+                universalLinkAfterAuthentication = url
+            default:
+                break
+            }
         }
     }
 
@@ -71,6 +105,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         if let windowScene = scene as? UIWindowScene {
             mainWindow = UIWindow(windowScene: windowScene)
         }
+        parseUserActivities(connectionOptions.userActivities)
+
+        #if DEBUG
+        setupUITests()
+        #endif
 
         do {
             try sanitizeDatabases(store: profileCoreDataStore)
@@ -84,7 +123,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 guard let self = self else { return }
                 self.migrationCoordinator.isMigrating = false
                 self.mainWindow?.rootViewController = UIHostingController(
-                    rootView: AppStartView(store: self.routerStore.wrappedStore)
+                    rootView: AppStartView(store: self.routerStore.wrappedStore).prepareUITestsEnvironment()
                 )
                 self.mainWindow?.makeKeyAndVisible()
                 self.presentAppAuthenticationDomain(scene: scene)
@@ -94,6 +133,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             migrationCoordinator.set(latestCompatibleModel: .latestVersion)
             mainWindow?.rootViewController = UIHostingController(
                 rootView: AppStartView(store: routerStore.wrappedStore)
+                    .prepareUITestsEnvironment()
             )
             mainWindow?.makeKeyAndVisible()
             setupNotifications(scene: scene)
@@ -122,6 +162,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             return
         }
         #endif
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["UITEST.DISABLE_AUTHENTICATION"] == "YES" {
+            return
+        }
+        #endif
 
         // [REQ:BSI-eRp-ePA:O.Data_13#3,O.Plat_12#3] Moving the application to the foreground removes the blur.
         removeBlurOverlayFromWindow()
@@ -137,12 +182,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     func presentAppMigrationDomain(completion: @escaping () -> Void) {
         let migrationStore = Store(
-            initialState: AppMigrationDomain.State.none,
-            reducer: AppMigrationDomain(
+            initialState: .init(migration: .none)
+        ) {
+            AppMigrationDomain(
                 fileManager: FileManager.default,
                 finishedMigration: completion
             )
-        )
+        }
 
         mainWindow?.rootViewController = UIHostingController(
             rootView: AppMigrationView(store: migrationStore)
@@ -159,8 +205,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         invalidateTimer()
 
         let appAuthenticationStore = Store(
-            initialState: AppAuthenticationDomain.State(),
-            reducer: AppAuthenticationDomain { [weak self, weak scene] in
+            initialState: AppAuthenticationDomain.State()
+        ) {
+            AppAuthenticationDomain { [weak self, weak scene] in
                 guard let self = self else { return }
                 self.mainWindow?.accessibilityElementsHidden = false
                 self.mainWindow?.makeKeyAndVisible()
@@ -169,13 +216,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 self.authenticationWindow?.rootViewController = nil
                 self.authenticationWindow = nil
                 self.setupNotifications(scene: scene)
+
+                // Fire delayed universal links after timeout, to allow transitions to complete
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                    if let url = self.universalLinkAfterAuthentication {
+                        self.routeTo(.universalLink(url))
+                    }
+                    self.universalLinkAfterAuthentication = nil
+                }
             }
-        )
+        }
 
         mainWindow?.accessibilityElementsHidden = true
         authenticationWindow = UIWindow(windowScene: windowScene)
         authenticationWindow?.rootViewController = UIHostingController(
-            // [REQ:gemSpec_BSI_FdV:A_20834] mandatory app authentication
             rootView: AppAuthenticationView(store: appAuthenticationStore)
         )
         authenticationWindow?.makeKeyAndVisible()

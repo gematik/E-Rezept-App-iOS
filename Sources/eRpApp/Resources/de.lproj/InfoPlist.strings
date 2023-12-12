@@ -1,4 +1,4 @@
 "CFBundleDisplayName" = "E-Rezept";
-"NFCReaderUsageDescription" = "Ermöglicht es Ihnen, sich mithilfe Ihrer elektronische Gesundheitskarte zu identifizieren und zu authentifizieren";
-"NSCameraUsageDescription" = "Die Kamera wird benötigt um Rezepte zu erfassen oder Fotos aufzunehmen.";
+"NFCReaderUsageDescription" = "Ermöglicht es Ihnen, sich mithilfe Ihrer elektronische Gesundheitskarte zu identifizieren und zu authentisieren";
+"NSCameraUsageDescription" = "Die Kamera wird benötigt, um Rezepte zu erfassen oder Fotos aufzunehmen.";
 "NSFaceIDUsageDescription" = "E-Rezept benötigt FaceID, um die App vor unerlaubtem Zugriff zu schützen.";

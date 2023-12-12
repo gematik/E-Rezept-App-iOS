@@ -23,13 +23,6 @@ import HealthCardControl
 struct HealthCardPasswordReadCardDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     enum Mode: Equatable {
         case healthCardResetPinCounterNoNewSecret(can: String, puk: String)
         case healthCardResetPinCounterWithNewSecret(can: String, puk: String, newPin: String)
@@ -39,25 +32,18 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
     struct State: Equatable {
         let mode: HealthCardPasswordReadCardDomain.Mode
 
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
         case readCard
-
         case backButtonTapped
-        case alertOkButtonTapped
-        case alertCancelButtonTapped
-        case alertAmendCanButtonTapped
-        case alertAmendPinButtonTapped
-        case alertAmendPukButtonTapped
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case response(Response)
         case delegate(Delegate)
-        case nothing
 
         enum Response: Equatable {
             // swiftlint:disable identifier_name
@@ -78,10 +64,20 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = errorAlert
-            case alert(ErpAlertState<HealthCardPasswordReadCardDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
         }
 
-        enum Action: Equatable {}
+        enum Action: Equatable {
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case dismiss
+                case settings
+                case amendPin
+                case amendPuk
+                case amendCan
+            }
+        }
 
         var body: some ReducerProtocol<State, Action> {
             EmptyReducer()
@@ -93,7 +89,7 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -104,19 +100,25 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
         case .readCard:
             switch state.mode {
             case let .healthCardResetPinCounterNoNewSecret(can: can, puk: puk):
-                return environment.resetEgkMrPinRetryCounterExt(can: can, puk: puk)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
+                return .publisher(
+                    environment.resetEgkMrPinRetryCounterExt(can: can, puk: puk)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                )
 
             case let .healthCardResetPinCounterWithNewSecret(can: can, puk: puk, newPin: newPin):
-                return environment.resetEgkMrPinRetryCounterExt(can: can, puk: puk, newPin: newPin)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
+                return .publisher(
+                    environment.resetEgkMrPinRetryCounterExt(can: can, puk: puk, newPin: newPin)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                )
 
             case let .healthCardSetNewPinSecret(can: can, oldPin: oldPin, newPin: newPin):
-                return environment.changeEgkMrPinReferenceDataExt(can: can, oldPin: oldPin, pin: newPin)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
+                return .publisher(
+                    environment.changeEgkMrPinReferenceDataExt(can: can, oldPin: oldPin, pin: newPin)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                )
             }
 
         case let .response(.nfcHealthCardPasswordControllerResponseReceived(nfcHealthCardPasswordControllerResponse)):
@@ -171,28 +173,26 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
 
         case .backButtonTapped:
             state.destination = nil
-            return .init(value: .delegate(.close))
-        case .alertOkButtonTapped:
+            return .send(.delegate(.close))
+        case .destination(.presented(.alert(.settings))):
             state.destination = nil
-            return .init(value: .delegate(.navigateToSettings))
-        case .alertCancelButtonTapped:
-            return .init(value: .setNavigation(tag: .none))
-        case .alertAmendCanButtonTapped:
+            return .send(.delegate(.navigateToSettings))
+        case .destination(.presented(.alert(.amendCan))):
             state.destination = nil
-            return .init(value: .delegate(.navigateToCanScreen))
-        case .alertAmendPinButtonTapped:
+            return .send(.delegate(.navigateToCanScreen))
+        case .destination(.presented(.alert(.amendPin))):
             state.destination = nil
-            return .init(value: .delegate(.navigateToOldPinScreen))
-        case .alertAmendPukButtonTapped:
+            return .send(.delegate(.navigateToOldPinScreen))
+        case .destination(.presented(.alert(.amendPuk))):
             state.destination = nil
-            return .init(value: .delegate(.navigateToPukScreen))
+            return .send(.delegate(.navigateToPukScreen))
         case .setNavigation(tag: .none):
             state.destination = nil
             return .none
         case .setNavigation:
             return .none
         case .delegate,
-             .nothing:
+             .destination:
             return .none
         }
     }
@@ -211,50 +211,46 @@ extension HealthCardPasswordReadCardDomain {
             can: String,
             puk: String,
             newPin: String? = nil
-        ) -> EffectTask<HealthCardPasswordReadCardDomain.Action> {
-            .run { subscriber -> Cancellable in
-                let mode: NFCResetRetryCounterMode
-                if let newPin = newPin {
-                    mode = .resetEgkMrPinRetryCountWithNewSecret(newPin)
-                } else {
-                    mode = .resetEgkMrPinRetryCountWithoutNewSecret
-                }
-                return nfcSessionController
-                    .resetEgkMrPinRetryCounter(can: can, puk: puk, mode: mode)
-                    .sink(
-                        receiveCompletion: { completion in
-                            if case let .failure(error) = completion {
-                                subscriber.send(.response(.nfcHealthCardPasswordControllerErrorReceived(error)))
-                            }
-                            subscriber.send(completion: .finished)
-                        },
-                        receiveValue: { value in
-                            subscriber.send(.response(.nfcHealthCardPasswordControllerResponseReceived(value)))
-                        }
-                    )
+        ) -> AnyPublisher<HealthCardPasswordReadCardDomain.Action, Never> {
+            let mode: NFCResetRetryCounterMode
+            if let newPin = newPin {
+                mode = .resetEgkMrPinRetryCountWithNewSecret(newPin)
+            } else {
+                mode = .resetEgkMrPinRetryCountWithoutNewSecret
             }
+            return nfcSessionController
+                .resetEgkMrPinRetryCounter(can: can, puk: puk, mode: mode)
+                .map {
+                    HealthCardPasswordReadCardDomain.Action.response(
+                        .nfcHealthCardPasswordControllerResponseReceived($0)
+                    )
+                }
+                .catch {
+                    Just(
+                        HealthCardPasswordReadCardDomain.Action.response(
+                            .nfcHealthCardPasswordControllerErrorReceived($0)
+                        )
+                    )
+                    .eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher()
         }
 
         func changeEgkMrPinReferenceDataExt(
             can: String,
             oldPin: String,
             pin: String
-        ) -> EffectTask<HealthCardPasswordReadCardDomain.Action> {
-            .run { subscriber -> Cancellable in
-                nfcSessionController
-                    .changeReferenceData(can: can, old: oldPin, new: pin, mode: .changeEgkMrPinSecret)
-                    .sink(
-                        receiveCompletion: { completion in
-                            if case let .failure(error) = completion {
-                                subscriber.send(.response(.nfcHealthCardPasswordControllerErrorReceived(error)))
-                            }
-                            subscriber.send(completion: .finished)
-                        },
-                        receiveValue: { value in
-                            subscriber.send(.response(.nfcHealthCardPasswordControllerResponseReceived(value)))
-                        }
-                    )
-            }
+        ) -> AnyPublisher<HealthCardPasswordReadCardDomain.Action, Never> {
+            nfcSessionController
+                .changeReferenceData(can: can, old: oldPin, new: pin, mode: .changeEgkMrPinSecret)
+                .map {
+                    Action.response(.nfcHealthCardPasswordControllerResponseReceived($0))
+                }
+                .catch {
+                    Just(Action.response(.nfcHealthCardPasswordControllerErrorReceived($0)))
+                        .eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher()
         }
     }
 }
@@ -264,8 +260,9 @@ extension HealthCardPasswordReadCardDomain {
         static let state = State(mode: .healthCardResetPinCounterNoNewSecret(can: "", puk: ""))
 
         static let store = Store(
-            initialState: state,
-            reducer: HealthCardPasswordReadCardDomain()
-        )
+            initialState: state
+        ) {
+            HealthCardPasswordReadCardDomain()
+        }
     }
 }

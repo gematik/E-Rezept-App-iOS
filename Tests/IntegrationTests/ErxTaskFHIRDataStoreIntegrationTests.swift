@@ -299,10 +299,10 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                     finished = true
                 },
                 expectations: { tasks in
-                    receivedErxTasks = tasks
+                    receivedErxTasks = tasks.content
                     success = true
                     finished = true
-                    Swift.print("✅ Loaded \(tasks.count) erxTasks!")
+                    Swift.print("✅ Loaded \(tasks.content.count) erxTasks!")
                 },
                 subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
             )

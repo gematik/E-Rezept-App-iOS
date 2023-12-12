@@ -23,7 +23,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class TokensViewSnapshotTests: XCTestCase {
+final class TokensViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
 

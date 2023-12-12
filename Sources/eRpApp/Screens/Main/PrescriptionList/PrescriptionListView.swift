@@ -29,7 +29,7 @@ struct PrescriptionListView<StickyHeader: View>: View {
     init(store: PrescriptionListDomain.Store, @ViewBuilder header: @escaping () -> StickyHeader) {
         self.store = store
         self.header = header()
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -95,7 +95,7 @@ struct PrescriptionListView<StickyHeader: View>: View {
 
         init(store: PrescriptionListDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -155,7 +155,7 @@ struct PrescriptionListView<StickyHeader: View>: View {
 
         init(store: PrescriptionListDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -209,9 +209,10 @@ struct PrescriptionListView_Previews: PreviewProvider {
             VStack {
                 PrescriptionListView(
                     store: PrescriptionListDomain.Store(
-                        initialState: PrescriptionListDomain.Dummies.stateWithPrescriptions,
-                        reducer: PrescriptionListDomain()
-                    )
+                        initialState: PrescriptionListDomain.Dummies.stateWithPrescriptions
+                    ) {
+                        PrescriptionListDomain()
+                    }
                 ) {
                     Text("Header")
                 }
@@ -220,9 +221,9 @@ struct PrescriptionListView_Previews: PreviewProvider {
             VStack {
                 PrescriptionListView(
                     store: PrescriptionListDomain.Store(
-                        initialState: PrescriptionListDomain.Dummies.state,
-                        reducer: PrescriptionListDomain()
-                    )
+                        initialState: PrescriptionListDomain.Dummies.state
+                    ) { PrescriptionListDomain()
+                    }
                 ) {
                     Text("Header")
                 }

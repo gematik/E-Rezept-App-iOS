@@ -24,6 +24,7 @@ import eRpKit
 import Nimble
 import XCTest
 
+@MainActor
 final class PickupCodeDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
     var matrixCodeGenerator: MockMatrixCodeGenerator!
@@ -34,36 +35,29 @@ final class PickupCodeDomainTests: XCTestCase {
         super.setUp()
 
         matrixCodeGenerator = MockMatrixCodeGenerator()
-        let uiImage = UIImage(testBundleNamed: MockErxTaskMatrixCodeGenerator.testBundleName)!
+        let uiImage = UIImage(testBundleNamed: MockErxMatrixCodeGenerator.testBundleName)!
         let cgImage = uiImage.cgImage!
         matrixCodeGenerator.generateImageForWidthHeightReturnValue = cgImage
     }
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        PickupCodeDomain.State,
-        PickupCodeDomain.Action,
-        PickupCodeDomain.State,
-        PickupCodeDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<PickupCodeDomain>
 
     private func testStore(for state: PickupCodeDomain.State) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
 
-        return TestStore(
-            initialState: state,
-            reducer: PickupCodeDomain()
-        ) { dependencies in
+        return TestStore(initialState: state) {
+            PickupCodeDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.matrixCodeGenerator = matrixCodeGenerator
         }
     }
 
-    func testWithHRCodeOnly() {
+    func testWithHRCodeOnly() async {
         let size = CGSize(width: 200, height: 200)
         let store = testStore(for: PickupCodeDomain.State(pickupCodeHR: "4711"))
 
-        store.send(.loadMatrixCodeImage(screenSize: size))
+        await store.send(.loadMatrixCodeImage(screenSize: size))
     }
 
     /// Use DMC publisher to generate an exact same image
@@ -82,14 +76,14 @@ final class PickupCodeDomainTests: XCTestCase {
         return generatedImage!
     }
 
-    func testWithDMCCodeOnly() {
+    func testWithDMCCodeOnly() async {
         let expectedImage = generateMockDMCImage()
         let size = CGSize(width: 200, height: 200)
         let store = testStore(for: PickupCodeDomain.State(pickupCodeDMC: "Data Matrix Code Content", dmcImage: nil))
 
-        store.send(.loadMatrixCodeImage(screenSize: size))
-        testScheduler.advance()
-        store.receive(.response(.matrixCodeImageReceived(expectedImage))) {
+        await store.send(.loadMatrixCodeImage(screenSize: size))
+        await testScheduler.advance()
+        await store.receive(.response(.matrixCodeImageReceived(expectedImage))) {
             $0.pickupCodeHR = nil
             $0.pickupCodeDMC = "Data Matrix Code Content"
             $0.dmcImage = expectedImage
@@ -97,7 +91,7 @@ final class PickupCodeDomainTests: XCTestCase {
         }
     }
 
-    func testWithHRCodeAndDMCCode() {
+    func testWithHRCodeAndDMCCode() async {
         let expectedImage = generateMockDMCImage()
         let size = CGSize(width: 200, height: 200)
         let store = testStore(for: PickupCodeDomain.State(
@@ -105,14 +99,14 @@ final class PickupCodeDomainTests: XCTestCase {
             pickupCodeDMC: "Data Matrix Code Content",
             dmcImage: nil
         ))
-        store.send(.loadMatrixCodeImage(screenSize: size))
-        testScheduler.advance()
-        store.receive(.response(.matrixCodeImageReceived(expectedImage))) {
+        await store.send(.loadMatrixCodeImage(screenSize: size))
+        await testScheduler.advance()
+        await store.receive(.response(.matrixCodeImageReceived(expectedImage))) {
             $0.pickupCodeHR = "4711"
             $0.pickupCodeDMC = "Data Matrix Code Content"
             $0.dmcImage = expectedImage
             expect(self.matrixCodeGenerator.generateImageForWidthHeightCallsCount) == 2
         }
-        store.send(.loadMatrixCodeImage(screenSize: size))
+        await store.send(.loadMatrixCodeImage(screenSize: size))
     }
 }

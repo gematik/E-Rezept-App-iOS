@@ -26,7 +26,7 @@ struct PharmacySearchFilterView: View {
 
     init(store: PharmacySearchFilterDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     struct FilterView: View {

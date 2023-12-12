@@ -23,19 +23,14 @@ import LocalAuthentication
 import Nimble
 import XCTest
 
+@MainActor
 final class RegisterAuthenticationDomainTests: XCTestCase {
     var mockAppSecurityManager: MockAppSecurityManager!
     var mockPasswordStrengthTester: MockPasswordStrengthTester!
     var mockAuthenticationChallengeProvider: MockAuthenticationChallengeProvider!
     var mockFeedbackReceiver: MockFeedbackReceiver!
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        RegisterAuthenticationDomain.State,
-        RegisterAuthenticationDomain.Action,
-        RegisterAuthenticationDomain.State,
-        RegisterAuthenticationDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<RegisterAuthenticationDomain>
 
     override func setUp() {
         super.setUp()
@@ -50,10 +45,9 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         with state: RegisterAuthenticationDomain.State,
         passwordStrengthTester: PasswordStrengthTester = DefaultPasswordStrengthTester()
     ) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: RegisterAuthenticationDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            RegisterAuthenticationDomain()
+        } withDependencies: { dependencies in
             dependencies.appSecurityManager = mockAppSecurityManager
             dependencies.userDataStore = MockUserDataStore()
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
@@ -65,19 +59,19 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
     let testScheduler = DispatchQueue.test
 
-    func testLoadingSecurityOptions() {
+    func testLoadingSecurityOptions() async {
         mockAppSecurityManager.availableSecurityOptionsReturnValue = (options: [.password, .biometry(.faceID)],
                                                                       error: nil)
         let store = testStore(with: RegisterAuthenticationDomain.State(availableSecurityOptions: []))
 
-        store.send(.loadAvailableSecurityOptions) { state in
+        await store.send(.loadAvailableSecurityOptions) { state in
             state.availableSecurityOptions = [.password, .biometry(.faceID)]
             state.selectedSecurityOption = .biometry(.faceID)
         }
         expect(self.mockAppSecurityManager.availableSecurityOptionsCallsCount) == 1
     }
 
-    func testLoadingSecurityOptionsWithoutBiometry() {
+    func testLoadingSecurityOptionsWithoutBiometry() async {
         let expectedLoadingError = AppSecurityManagerError.localAuthenticationContext(
             NSError(domain: "", code: LAError.Code.biometryNotEnrolled.rawValue)
         )
@@ -85,7 +79,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             (options: [.password], error: expectedLoadingError)
         let store = testStore(with: RegisterAuthenticationDomain.State(availableSecurityOptions: []))
 
-        store.send(.loadAvailableSecurityOptions) { state in
+        await store.send(.loadAvailableSecurityOptions) { state in
             state.availableSecurityOptions = [.password]
             state.selectedSecurityOption = .password
             state.securityOptionsError = expectedLoadingError
@@ -93,14 +87,14 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         expect(self.mockAppSecurityManager.availableSecurityOptionsCallsCount) == 1
     }
 
-    func testSelectingWeakPassword() {
+    func testSelectingWeakPassword() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.faceID)]
             )
         )
 
-        store.send(.select(.password)) { state in
+        await store.send(.select(.password)) { state in
             state.availableSecurityOptions = [.password, .biometry(.faceID)]
             state.selectedSecurityOption = .password
             state.passwordA = ""
@@ -109,7 +103,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
-        store.send(.setPasswordA("Strong")) { state in
+        await store.send(.setPasswordA("Strong")) { state in
             state.selectedSecurityOption = .password
             state.passwordA = "Strong"
             state.passwordB = ""
@@ -118,8 +112,8 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
-        testScheduler.run()
-        store.receive(.comparePasswords) { state in
+        await testScheduler.run()
+        await store.receive(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
             state.selectedSecurityOption = .password
             state.passwordA = "Strong"
@@ -128,7 +122,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message) == L10n.onbAuthTxtPasswordStrengthInsufficient.text
         }
-        store.send(.setPasswordA("Secure Pass word")) { state in
+        await store.send(.setPasswordA("Secure Pass word")) { state in
             state.selectedSecurityOption = .password
             state.passwordA = "Secure Pass word"
             state.passwordB = ""
@@ -137,8 +131,8 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
-        testScheduler.run()
-        store.receive(.comparePasswords) { state in
+        await testScheduler.run()
+        await store.receive(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
             state.selectedSecurityOption = .password
             state.passwordA = "Secure Pass word"
@@ -149,7 +143,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         }
     }
 
-    func testSelectingStrongAndEqualPasswords() {
+    func testSelectingStrongAndEqualPasswords() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.faceID)],
@@ -159,7 +153,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        store.send(.setPasswordA("Secure Pass word")) { state in
+        await store.send(.setPasswordA("Secure Pass word")) { state in
             state.selectedSecurityOption = .password
             state.passwordA = "Secure Pass word"
             state.passwordB = "ABC"
@@ -168,8 +162,8 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
-        testScheduler.run()
-        store.receive(.comparePasswords) { state in
+        await testScheduler.run()
+        await store.receive(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
             state.selectedSecurityOption = .password
             state.passwordA = "Secure Pass word"
@@ -178,7 +172,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message) == L10n.onbAuthTxtPasswordsDontMatch.text
         }
-        store.send(.setPasswordB("Secure Pass word")) { state in
+        await store.send(.setPasswordB("Secure Pass word")) { state in
             state.selectedSecurityOption = .password
             state.passwordA = "Secure Pass word"
             state.passwordB = "Secure Pass word"
@@ -187,11 +181,11 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
-        testScheduler.run()
-        store.receive(.comparePasswords)
+        await testScheduler.run()
+        await store.receive(.comparePasswords)
     }
 
-    func testSelectingFaceIDWithPreviousPasswordSelection() {
+    func testSelectingFaceIDWithPreviousPasswordSelection() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.faceID)],
@@ -204,25 +198,25 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
             .eraseToAnyPublisher()
 
-        store.send(.select(.biometry(.faceID))) { state in
+        await store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
-        store.send(.startBiometry) { state in
+        await store.send(.startBiometry) { state in
             state.passwordA = ""
             state.passwordB = ""
         }
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.success(true))) { state in
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.success(true))) { state in
             state.biometrySuccessful = true
         }
-        testScheduler.advance(by: 1)
-        store.receive(.continueBiometry)
+        await testScheduler.advance(by: 1)
+        await store.receive(.continueBiometry)
 
         expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCalled).to(beTrue())
         expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCallsCount) == 1
     }
 
-    func testSelectingFaceIDWithCancelation() {
+    func testSelectingFaceIDWithCancelation() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.faceID)],
@@ -233,9 +227,9 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(false))
             .eraseToAnyPublisher()
 
-        store.send(.startBiometry)
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.success(false)))
+        await store.send(.startBiometry)
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.success(false)))
     }
 
     struct MockError: Error, LocalizedError {
@@ -244,7 +238,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         }
     }
 
-    func testSelectingTouchIDWithErrorResponse() {
+    func testSelectingTouchIDWithErrorResponse() async {
         let expectedResponse: AuthenticationChallengeProviderResult =
             .failure(.cannotEvaluatePolicy(MockError() as NSError))
         let store = testStore(
@@ -257,22 +251,22 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(expectedResponse)
             .eraseToAnyPublisher()
 
-        store.send(.startBiometry)
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(expectedResponse)) { state in
+        await store.send(.startBiometry)
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(expectedResponse)) { state in
             state.biometrySuccessful = false
             state.alertState = AlertState(
                 title: TextState(L10n.alertErrorTitle),
                 message: TextState("my error message"),
-                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+                dismissButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.none))
             )
         }
-        store.send(.alertDismissButtonTapped) { state in
+        await store.send(.alert(.dismiss)) { state in
             state.alertState = nil
         }
     }
 
-    func testAlternatingSelection() {
+    func testAlternatingSelection() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.faceID)],
@@ -283,32 +277,33 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
             .eraseToAnyPublisher()
 
-        store.send(.select(.biometry(.faceID))) { state in
+        await store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
         }
-        store.send(.startBiometry)
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.success(true))) { state in
+        await store.send(.startBiometry)
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.success(true))) { state in
             state.biometrySuccessful = true
             state.showNoSelectionMessage = false
         }
-        store.send(.select(.password)) { state in
+        await store.send(.select(.password)) { state in
             state.selectedSecurityOption = .password
             state.showNoSelectionMessage = false
         }
-        store.send(.select(.biometry(.faceID))) { state in
+        await store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
         }
-        store.send(.startBiometry)
-        testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.success(true)))
-        testScheduler.advance(by: 1)
-        store.receive(.continueBiometry)
+        await store.send(.startBiometry)
+        await testScheduler.advance()
+        await store.receive(.authenticationChallengeResponse(.success(true)))
+        await testScheduler.advance(by: 1)
+        await store.receive(.continueBiometry)
+        await store.receive(.continueBiometry)
     }
 
-    func testSaveSelectionPasswordNoEntry() {
+    func testSaveSelectionPasswordNoEntry() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password],
@@ -321,12 +316,12 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        store.send(.saveSelection) { state in
+        await store.send(.saveSelection) { state in
             state.showNoSelectionMessage = true
         }
     }
 
-    func testSaveSelectionPasswordNotEqual() {
+    func testSaveSelectionPasswordNotEqual() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password],
@@ -340,12 +335,12 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        store.send(.saveSelection) { state in
+        await store.send(.saveSelection) { state in
             state.showPasswordErrorMessage = true
         }
     }
 
-    func testSaveSelectionPasswordEqual() {
+    func testSaveSelectionPasswordEqual() async {
         mockAppSecurityManager.savePasswordReturnValue = true
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
@@ -360,12 +355,12 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        store.send(.saveSelection)
-        testScheduler.advance()
-        store.receive(.saveSelectionSuccess)
+        await store.send(.saveSelection)
+        await testScheduler.advance()
+        await store.receive(.saveSelectionSuccess)
     }
 
-    func testSaveBiometrics() {
+    func testSaveBiometrics() async {
         mockAppSecurityManager.savePasswordReturnValue = true
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
@@ -381,11 +376,11 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        store.send(.saveSelection)
-        store.receive(.saveSelectionSuccess)
+        await store.send(.saveSelection)
+        await store.receive(.saveSelectionSuccess)
     }
 
-    func testSelectBiometricsSucceeds() {
+    func testSelectBiometricsSucceeds() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.biometry(.faceID)],
@@ -399,12 +394,12 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        store.send(.select(.biometry(.faceID))) { state in
+        await store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
     }
 
-    func testSelectBiometricsFails() {
+    func testSelectBiometricsFails() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.biometry(.faceID)],
@@ -421,12 +416,12 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(false))
             .eraseToAnyPublisher()
 
-        store.send(.startBiometry)
-        testScheduler.run()
-        store.receive(.authenticationChallengeResponse(.success(false)))
+        await store.send(.startBiometry)
+        await testScheduler.run()
+        await store.receive(.authenticationChallengeResponse(.success(false)))
     }
 
-    func testSetPasswordACalculatesStrength() {
+    func testSetPasswordACalculatesStrength() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.biometry(.faceID)],
@@ -443,7 +438,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = .veryWeak
 
-        store.send(.setPasswordA("ABC")) { state in
+        await store.send(.setPasswordA("ABC")) { state in
             state.passwordA = "ABC"
             state.passwordB = ""
             state.passwordStrength = .veryWeak
@@ -452,22 +447,24 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = .medium
 
-        store.send(.setPasswordA("ABCD")) { state in
+        await store.send(.setPasswordA("ABCD")) { state in
             state.passwordA = "ABCD"
             state.passwordStrength = .medium
             state.showPasswordErrorMessage = false
         }
 
-        testScheduler.run()
+        await testScheduler.run()
 
-        store.receive(.comparePasswords) { state in
+        await store.receive(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
+
+        await store.receive(.comparePasswords)
     }
 
-    func testWeakPasswordFailsSave() {
+    func testWeakPasswordFailsSave() async {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password],
@@ -480,7 +477,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = .weak
 
-        store.send(.saveSelection) { state in
+        await store.send(.saveSelection) { state in
             state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
             expect(message) == L10n.onbAuthTxtPasswordStrengthInsufficient.text

@@ -23,7 +23,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class AppAuthenticationViewSnapshotTests: XCTestCase {
+final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
@@ -37,9 +37,10 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     biometrics: nil,
                     password: AppAuthenticationPasswordDomain.State(),
                     failedAuthenticationsCount: 0
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -55,9 +56,10 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     biometrics: nil,
                     password: AppAuthenticationPasswordDomain.State(),
                     failedAuthenticationsCount: 1
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -76,9 +78,10 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     ),
                     password: nil,
                     failedAuthenticationsCount: 0
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -97,9 +100,10 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     ),
                     password: nil,
                     failedAuthenticationsCount: 0
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -118,9 +122,10 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     ),
                     password: nil,
                     failedAuthenticationsCount: 1
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -141,9 +146,10 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                         authenticationResult: .success(true)
                     ),
                     failedAuthenticationsCount: 0
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -160,9 +166,10 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     password: nil,
                     biometricAndPassword: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false),
                     failedAuthenticationsCount: 1
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -183,9 +190,10 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                         showPassword: true
                     ),
                     failedAuthenticationsCount: 0
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

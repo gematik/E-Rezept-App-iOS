@@ -28,18 +28,18 @@ struct HealthCardPasswordPukView: View {
 
     init(store: HealthCardPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
         let mode: HealthCardPasswordDomain.Mode
         let pukMayAdvance: Bool
-        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag?
 
         init(state: HealthCardPasswordDomain.State) {
             mode = state.mode
             pukMayAdvance = state.pukMayAdvance
-            destinationTag = state.destination.tag
+            destinationTag = state.destination?.tag
         }
     }
 
@@ -116,27 +116,32 @@ struct HealthCardPasswordPukView: View {
     private struct PUKFieldView: View {
         let store: HealthCardPasswordDomain.Store
 
+        @ObservedObject var viewStore: ViewStoreOf<HealthCardPasswordDomain>
+
+        init(store: HealthCardPasswordDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store) { $0 }
+        }
+
         var body: some View {
             VStack(alignment: .leading) {
-                WithViewStore(store) { viewStore in
-                    SecureFieldWithReveal(
-                        titleKey: L10n.stgEdtCardResetPukInput,
-                        accessibilityLabelKey: L10n.stgEdtCardResetPukInputLabel,
-                        text: viewStore.binding(get: \.puk, send: HealthCardPasswordDomain.Action.pukUpdatePuk)
-                            .animation(),
-                        textContentType: .password,
-                        backgroundColor: Colors.systemGray5
-                    ) {}
-                        .textContentType(.oneTimeCode)
-                        .multilineTextAlignment(.leading)
-                        .keyboardType(.numberPad)
-                        .padding()
-                        .font(Font.title3)
-                        .background(Colors.systemGray5)
-                        .cornerRadius(8)
-                        .textFieldKeepFirstResponder()
-                        .accessibility(identifier: A11y.settings.card.stgEdtCardResetPukInput)
-                }
+                SecureFieldWithReveal(
+                    titleKey: L10n.stgEdtCardResetPukInput,
+                    accessibilityLabelKey: L10n.stgEdtCardResetPukInputLabel,
+                    text: viewStore.binding(get: \.puk, send: HealthCardPasswordDomain.Action.pukUpdatePuk)
+                        .animation(),
+                    textContentType: .password,
+                    backgroundColor: Colors.systemGray5
+                ) {}
+                    .textContentType(.oneTimeCode)
+                    .multilineTextAlignment(.leading)
+                    .keyboardType(.numberPad)
+                    .padding()
+                    .font(Font.title3)
+                    .background(Colors.systemGray5)
+                    .cornerRadius(8)
+                    .textFieldKeepFirstResponder()
+                    .accessibility(identifier: A11y.settings.card.stgEdtCardResetPukInput)
             }
         }
     }

@@ -25,16 +25,19 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class SettingsViewSnapshotTests: XCTestCase {
+final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
+
+        SnapshotHelper.fixOffsetProblem()
     }
 
     let debugStore = DebugDomain.Store(
-        initialState: DebugDomain.State(trackingOptIn: true),
-        reducer: DebugDomain()
-    )
+        initialState: DebugDomain.State(trackingOptIn: true)
+    ) {
+        DebugDomain()
+    }
 
     let appVersion = AppVersion(productVersion: "1.0", buildNumber: "LOCAL BUILD", buildHash: "LOCAL BUILD")
 
@@ -74,10 +77,12 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 andSelectedSecurityOption: .biometry(.faceID),
                 appVersion: AppVersion(productVersion: "1.0.1", buildNumber: "12", buildHash: "3130b2e"),
                 trackerOptIn: true
-            ),
-            reducer: EmptyReducer()
-        ))
-            .frame(width: 375, height: 2589, alignment: .center)
+            )
+
+        ) {
+            EmptyReducer()
+        })
+            .frame(width: 375, height: 2589, alignment: .top)
 
         assertSnapshots(matching: sut, as: figmaReference())
     }
@@ -101,10 +106,12 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 andSelectedSecurityOption: .biometry(.faceID),
                 appVersion: AppVersion(productVersion: "1.0.1", buildNumber: "12", buildHash: "3130b2e"),
                 trackerOptIn: true
-            ),
-            reducer: EmptyReducer()
-        ))
-            .frame(width: 375, height: 2589, alignment: .center)
+            )
+
+        ) {
+            EmptyReducer()
+        })
+            .frame(width: 375, height: 2589, alignment: .top)
 
         assertSnapshots(matching: sut, as: figmaReference())
     }
@@ -114,9 +121,11 @@ final class SettingsViewSnapshotTests: XCTestCase {
             initialState: configuredSettingsDomainState(
                 withAvailableSecurityOptions: [.biometry(.faceID), .password],
                 andSelectedSecurityOption: nil
-            ),
-            reducer: EmptyReducer()
-        ))
+            )
+
+        ) {
+            EmptyReducer()
+        })
             .frame(width: 320, height: 2000)
 
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -125,9 +134,11 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_DemoMode_Enabled() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: SettingsDomain.State(isDemoMode: true,
-                                               appVersion: appVersion),
-            reducer: EmptyReducer()
-        ))
+                                               appVersion: appVersion)
+
+        ) {
+            EmptyReducer()
+        })
             .frame(width: 320, height: 2000)
 
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -138,9 +149,11 @@ final class SettingsViewSnapshotTests: XCTestCase {
             initialState: SettingsDomain.State(
                 isDemoMode: false,
                 destination: .complyTracking
-            ),
-            reducer: EmptyReducer()
-        ))
+            )
+
+        ) {
+            EmptyReducer()
+        })
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 

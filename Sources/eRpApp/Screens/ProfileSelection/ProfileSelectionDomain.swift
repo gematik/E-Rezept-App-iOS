@@ -26,20 +26,11 @@ import IDP
 struct ProfileSelectionDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case loadProfiles
-        case loadSelectedProfile
-    }
-
     struct State: Equatable {
         var profiles: [UserProfile] = []
         var selectedProfileId: UUID?
 
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
     }
 
     struct Destinations: ReducerProtocol {
@@ -56,7 +47,6 @@ struct ProfileSelectionDomain: ReducerProtocol {
 
     enum Action: Equatable {
         case registerListener
-        case unregisterListener
         case loadReceived(Result<[UserProfile], UserProfileServiceError>)
         case selectedProfileReceived(UUID)
         case selectProfile(UserProfile)
@@ -64,7 +54,7 @@ struct ProfileSelectionDomain: ReducerProtocol {
 
         case editProfiles
 
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
@@ -73,7 +63,7 @@ struct ProfileSelectionDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -82,18 +72,20 @@ struct ProfileSelectionDomain: ReducerProtocol {
         switch action {
         case .registerListener:
             return .merge(
-                userProfileService.userProfilesPublisher()
-                    .catchToEffect()
-                    .map(Action.loadReceived)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
-                    .cancellable(id: Token.loadProfiles, cancelInFlight: true),
-                userProfileService.selectedProfileId
-                    .compactMap { $0 }
-                    .map(Action.selectedProfileReceived)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
-                    .cancellable(id: Token.loadSelectedProfile, cancelInFlight: true)
+                .publisher(
+                    userProfileService.userProfilesPublisher()
+                        .catchToPublisher()
+                        .map(Action.loadReceived)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                ),
+                .publisher(
+                    userProfileService.selectedProfileId
+                        .compactMap { $0 }
+                        .map(Action.selectedProfileReceived)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                )
             )
         case let .loadReceived(.failure(error)):
             state.destination = .alert(.init(for: error, title: L10n.errTxtDatabaseAccess))
@@ -107,13 +99,11 @@ struct ProfileSelectionDomain: ReducerProtocol {
         case let .selectProfile(profile):
             state.selectedProfileId = profile.id
             userProfileService.set(selectedProfileId: profile.id)
-            return .init(value: .close)
+            return .send(.close)
         case .editProfiles:
             router.routeTo(.settings)
-            return .init(value: .close)
-        case .close, .unregisterListener:
-            return Self.cleanup()
-        case .destination:
+            return .send(.close)
+        case .destination, .close:
             return .none
         }
     }
@@ -130,7 +120,10 @@ extension ProfileSelectionDomain {
             selectedProfileId: UserProfile.Dummies.profileA.id
         )
 
-        static let store = Store(initialState: state,
-                                 reducer: EmptyReducer())
+        static let store = Store(
+            initialState: state
+        ) {
+            EmptyReducer()
+        }
     }
 }

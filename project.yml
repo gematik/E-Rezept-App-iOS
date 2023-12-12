@@ -5,9 +5,29 @@ options:
   developmentLanguage: en-GB
   useBaseInternationalization: false
   deploymentTarget:
-    macOS: 11
+    macOS: 11.0
     iOS: 15.0
 schemes:
+  UITests_iOS:
+    build:
+      targets:
+        eRpApp: all
+    run:
+      environmentVariables:
+        - variable: UITEST.RECORD_MOCKS
+          value: 1
+          isEnabled: false
+    test:
+      language: de
+      region: DE
+      gatherCoverageData: true
+      coverageTargets:
+        - eRpApp
+      targets:
+        - eRpAppUITests
+      testPlans:
+        - path: Tests/eRpAppUITests/Support/UITests_iOS.xctestplan
+          defaultPlan: true
   AllTests_iOS:
     build:
       targets:
@@ -72,6 +92,21 @@ schemes:
       targets:
         - eRpAppStoreScreenshots
 packages:
+  OpenHealthCardKit:
+    url: https://github.com/gematik/ref-OpenHealthCardKit/
+    majorVersion: 5.3.0
+  ASN1Kit:
+    url: https://github.com/gematik/ASN1Kit
+    majorVersion: 1.2.0
+  DataKit:
+    url: https://github.com/SwiftCommon/DataKit
+    majorVersion: 1.1.0
+  GemCommonsKit:
+    url: https://github.com/gematik/ref-GemCommonsKit.git
+    majorVersion: 1.3.0
+  OpenSSL-Swift:
+   url: https://github.com/gematik/OpenSSL-Swift
+   majorVersion: 4.1.0
   BundleKit:
     url: https://github.com/SwiftCommon/BundleKit
     majorVersion: 0.0.2
@@ -83,10 +118,10 @@ packages:
     majorVersion: 0.5.3  
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
-    minorVersion: 0.52.0
+    minorVersion: 0.59.0
   ComposableCoreLocation:
     url: https://github.com/pointfreeco/composable-core-location
-    minorVersion: 0.1.0
+    minorVersion: 0.3.0
   ContentSquare:
     url:  https://github.com/ContentSquare/CS_iOS_SDK.git
     majorVersion: 4.16.0
@@ -95,7 +130,8 @@ packages:
     version: 0.4.0
   Nimble:
     url: https://github.com/Quick/Nimble
-    majorVersion: 10.0.0
+    majorVersion: 9.2.0
+    # majorVersion: 10.0.0
   OHHTTPStubs:
     url: https://github.com/AliSoftware/OHHTTPStubs
     majorVersion: 9.1.0
@@ -135,6 +171,7 @@ targets:
   eRpApp:
     type: application
     platform: iOS
+        # basedOnDependencyAnalysis: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ${GEM_PRODUCT_BUNDLE_IDENTIFIER}
@@ -156,16 +193,21 @@ targets:
       - target: TrustStore_iOS
       - target: VAUClient_iOS
       - target: AVS_iOS
-      - framework: Carthage/Build/OpenSSL.xcframework
-      - framework: Carthage/Build/DataKit.xcframework
-      - framework: Carthage/Build/GemCommonsKit.xcframework
-      - framework: Carthage/Build/CardReaderProviderApi.xcframework
-      - framework: Carthage/Build/CardReaderAccess.xcframework
-      - framework: Carthage/Build/NFCCardReaderProvider.xcframework
-      - framework: Carthage/Build/ASN1Kit.xcframework
-      - framework: Carthage/Build/HealthCardAccess.xcframework
-      - framework: Carthage/Build/HealthCardControl.xcframework
-      - framework: Carthage/Build/Helper.xcframework
+      - package: OpenSSL-Swift
+      - package: DataKit
+      - package: GemCommonsKit
+        product: GemCommonsKit
+      - package: OpenHealthCardKit
+        product: CardReaderProviderApi
+      - package: OpenHealthCardKit
+        product: NFCCardReaderProvider
+      - package: ASN1Kit
+      - package: OpenHealthCardKit
+        product: HealthCardAccess
+      - package: OpenHealthCardKit
+        product: HealthCardControl
+      - package: OpenHealthCardKit
+        product: Helper
       - sdk: CoreNFC.framework
       - sdk: Combine.framework
       - sdk: SwiftUI.framework
@@ -184,6 +226,8 @@ targets:
       - package: GemPDFKit
         product: GemPDFKit
     scheme:
+      language: de
+      region: DE
       testTargets:
         - eRpAppTests
       gatherCoverageData: false
@@ -197,10 +241,11 @@ targets:
       - Sources/AVS
     dependencies:
       - target: HTTPClient_${platform}
-      - framework: Carthage/Build/ASN1Kit.xcframework
-      - framework: Carthage/Build/GemCommonsKit.xcframework
-      - framework: Carthage/Build/DataKit.xcframework
-      - framework: Carthage/Build/OpenSSL.xcframework
+      - package: ASN1Kit
+      - package: GemCommonsKit
+        product: GemCommonsKit
+      - package: DataKit
+      - package: OpenSSL-Swift
     scheme:
       testTargets:
         - AVSTests_${platform}
@@ -252,7 +297,8 @@ targets:
       - Sources/eRpLocalStorage
     dependencies:
       - sdk: CoreData.framework
-      - framework: Carthage/Build/GemCommonsKit.xcframework
+      - package: GemCommonsKit
+        product: GemCommonsKit
       - target: eRpKit_${platform}
       - package: FHIRModels
         product: ModelsR4
@@ -307,10 +353,11 @@ targets:
     dependencies:
       - target: HTTPClient_${platform}
       - target: TrustStore_${platform}
-      - framework: Carthage/Build/ASN1Kit.xcframework
-      - framework: Carthage/Build/DataKit.xcframework
-      - framework: Carthage/Build/GemCommonsKit.xcframework
-      - framework: Carthage/Build/OpenSSL.xcframework
+      - package: ASN1Kit
+      - package: DataKit
+      - package: GemCommonsKit
+        product: GemCommonsKit
+      - package: OpenSSL-Swift
       - package: CombineSchedulers
     scheme:
       testTargets:
@@ -325,7 +372,8 @@ targets:
     sources:
       - Sources/HTTPClient
     dependencies:
-      - framework: Carthage/Build/GemCommonsKit.xcframework
+      - package: GemCommonsKit
+        product: GemCommonsKit
     scheme:
       testTargets:
         - HTTPClientTests_${platform}
@@ -343,7 +391,8 @@ targets:
       - package: FHIRModels
         product: ModelsR4
       - package: CombineSchedulers
-      - framework: Carthage/Build/GemCommonsKit.xcframework
+      - package: GemCommonsKit
+        product: GemCommonsKit
     scheme:
       testTargets:
         - FHIRClientTests_${platform}
@@ -373,9 +422,10 @@ targets:
       - Sources/TrustStore
     dependencies:
       - target: HTTPClient_${platform}
-      - framework: Carthage/Build/GemCommonsKit.xcframework
-      - framework: Carthage/Build/DataKit.xcframework
-      - framework: Carthage/Build/OpenSSL.xcframework
+      - package: GemCommonsKit
+        product: GemCommonsKit
+      - package: DataKit
+      - package: OpenSSL-Swift
     scheme:
       testTargets:
         - TrustStoreTests_${platform}
@@ -383,16 +433,16 @@ targets:
   VAUClient:
     settings:
       PRODUCT_NAME: VAUClient
-      INFOPLIST_FILE: Sources/VAU/Resources/Info.plist
+      INFOPLIST_FILE: Sources/VAUClient/Resources/Info.plist
     type: framework
     platform: [iOS,macOS]
     sources:
-      - Sources/VAU
+      - Sources/VAUClient
     dependencies:
       - target: HTTPClient_${platform}
       - target: TrustStore_${platform}
-      - framework: Carthage/Build/OpenSSL.xcframework
-      - framework: Carthage/Build/DataKit.xcframework
+      - package: OpenSSL-Swift
+      - package: DataKit
     scheme:
       testTargets:
         - TrustStoreTests_${platform}
@@ -407,12 +457,36 @@ targets:
     dependencies:
       - target: AVS_${platform}
       - target: TestUtils_${platform}
-      - framework: Carthage/Build/DataKit.xcframework
-      - framework: Carthage/Build/GemCommonsKit.xcframework
+      - package: DataKit
+      - package: GemCommonsKit
+        product: GemCommonsKit
       - package: Nimble
       - package: BundleKit
       - package: OHHTTPStubs
         product: OHHTTPStubsSwift
+  eRpAppUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    settings:
+      INFOPLIST_FILE: Tests/eRpAppUITests/Support/Info.plist
+      PRODUCT_BUNDLE_IDENTIFIER: de.gematik.eRpAppUITests
+      DEVELOPMENT_TEAM: A9FL89PFFL
+      CODE_SIGN_STYLE: Automatic
+      CODE_SIGN_IDENTITY: Apple Development
+    sources:
+      - path: Tests/eRpAppUITests/Support/empty.xcappdata
+        buildPhase: none
+        type: file
+      - path: Tests/eRpAppUITests/Support/UITests_iOS.xctestplan
+        buildPhase: none
+      - path: Tests/eRpAppUITests/Support/Info.plist
+        buildPhase: none
+      - path: Tests/eRpAppUITests/Tests
+      - path: Sources/eRpApp/Generated/Accessibility+Generated.swift
+    dependencies:
+      - target: eRpApp
+      - package: Nimble
+      - package: SnapshotTesting
   eRpAppTests:
     type: bundle.unit-test
     platform: iOS
@@ -556,8 +630,9 @@ targets:
     dependencies:
       - target: TrustStore_${platform}
       - target: TestUtils_${platform}
-      - framework: Carthage/Build/DataKit.xcframework
-      - framework: Carthage/Build/GemCommonsKit.xcframework
+      - package: DataKit
+      - package: GemCommonsKit
+        product: GemCommonsKit
       - package: Nimble
       - package: BundleKit
       - package: OHHTTPStubs
@@ -566,15 +641,16 @@ targets:
     type: bundle.unit-test
     platform: [iOS,macOS]
     settings:
-      INFOPLIST_FILE: Tests/VAUTests/Resources/Info.plist
+      INFOPLIST_FILE: Tests/VAUClientTests/Resources/Info.plist
     sources:
-      - Tests/VAUTests
+      - Tests/VAUClientTests
     dependencies:
       - target: VAUClient_${platform}
       - target: TestUtils_${platform}
-      - framework: Carthage/Build/ASN1Kit.xcframework
-      - framework: Carthage/Build/DataKit.xcframework
-      - framework: Carthage/Build/GemCommonsKit.xcframework
+      - package: ASN1Kit
+      - package: DataKit
+      - package: GemCommonsKit
+        product: GemCommonsKit
       - package: Nimble
       - package: BundleKit
       - package: OHHTTPStubs

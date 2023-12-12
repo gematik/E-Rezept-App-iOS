@@ -121,8 +121,9 @@ extension ErxTaskScannerView {
                 }
             }
             .confirmationDialog(
-                store.scope(state: \.galleryActionSheet),
-                dismiss: ScannerDomain.Action.closeImportActionSheet
+                store: store.scope(state: \.$destination, action: ScannerDomain.Action.destination),
+                state: /ScannerDomain.Destinations.State.sheet,
+                action: ScannerDomain.Destinations.Action.sheet
             )
             .fileImporter(
                 isPresented: Binding<Bool>(

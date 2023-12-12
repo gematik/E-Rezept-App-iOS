@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -102,6 +102,16 @@ struct UnimplementedCoreDataControllerFactory: CoreDataControllerFactory {
         fatalError("loadCoreDataController has not been implemented")
     }
 }
+struct UnimplementedAuditEventsService: AuditEventsService {
+    init() {}
+
+    func loadAuditEvents(for profileId: UUID, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError> {
+        fatalError("loadAuditEvents(for:locale:) has not been implemented")
+    }
+    func loadNextAuditEvents(for profileId: UUID, url: URL, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError> {
+        fatalError("loadNextAuditEvents(for:url:locale:) has not been implemented")
+    }
+}
 struct UnimplementedDeviceSecurityManager: DeviceSecurityManager {
     init() {}
 
@@ -128,7 +138,7 @@ struct UnimplementedDeviceSecurityManager: DeviceSecurityManager {
         fatalError("set(ignoreRootedDeviceWarningForSession:) has not been implemented")
     }
 }
-struct UnimplementedErxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
+struct UnimplementedErxMatrixCodeGenerator: ErxMatrixCodeGenerator {
     init() {}
 
     func matrixCode(for tasks: [ErxTask], with size: CGSize) throws -> CGImage {
@@ -137,7 +147,16 @@ struct UnimplementedErxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
     func matrixCodePublisher(for tasks: [ErxTask], with size: CGSize, scale: CGFloat, orientation: UIImage.Orientation) -> AnyPublisher<UIImage, Error> {
         fatalError("matrixCodePublisher(for:with:scale:orientation:) has not been implemented")
     }
+    func matrixCode(for chargeItem: ErxChargeItem, with size: CGSize) throws -> CGImage {
+        fatalError("matrixCode(for:with:) has not been implemented")
+    }
+    func matrixCodePublisher(for chargeItem: ErxChargeItem, with size: CGSize, scale: CGFloat, orientation: UIImage.Orientation) -> AnyPublisher<UIImage, Error> {
+        fatalError("matrixCodePublisher(for:with:scale:orientation:) has not been implemented")
+    }
     func publishedMatrixCode(for tasks: [ErxTask], with size: CGSize) -> AnyPublisher<UIImage, Error> {
+        fatalError("publishedMatrixCode(for:with:) has not been implemented")
+    }
+    func publishedMatrixCode(for chargeItem: ErxChargeItem, with size: CGSize) -> AnyPublisher<UIImage, Error> {
         fatalError("publishedMatrixCode(for:with:) has not been implemented")
     }
 }
@@ -173,6 +192,12 @@ struct UnimplementedErxTaskRepository: ErxTaskRepository {
     }
     func countAllUnreadCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
         fatalError("countAllUnreadCommunications(for:) has not been implemented")
+    }
+    func loadRemoteLatestAuditEvents(for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> {
+        fatalError("loadRemoteLatestAuditEvents(for:) has not been implemented")
+    }
+    func loadRemoteAuditEventsPage(from url: URL, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> {
+        fatalError("loadRemoteAuditEventsPage(from:locale:) has not been implemented")
     }
     func loadRemoteChargeItems() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
         fatalError("loadRemoteChargeItems has not been implemented")
@@ -411,9 +436,6 @@ struct UnimplementedProfileDataStore: ProfileDataStore {
     func update(profileId: UUID, mutating: @escaping (inout Profile) -> Void) -> AnyPublisher<Bool, LocalStoreError> {
         fatalError("update(profileId:mutating:) has not been implemented")
     }
-    func pagedAuditEventsController(for profileId: UUID, with locale: String?) throws -> PagedAuditEventsController {
-        fatalError("pagedAuditEventsController(for:with:) has not been implemented")
-    }
     func save(profile: Profile) -> AnyPublisher<Bool, LocalStoreError> {
         fatalError("save(profile:) has not been implemented")
     }
@@ -511,7 +533,7 @@ struct UnimplementedRegisteredDevicesService: RegisteredDevicesService {
     func deleteDevice(_ device: String, of profileId: UUID) -> AnyPublisher<Bool, RegisteredDevicesServiceError> {
         fatalError("deleteDevice(_:of:) has not been implemented")
     }
-    func cardWall(for profileId: UUID) -> AnyPublisher<IDPCardWallDomain.State, Never> {
+    func cardWall(for profileId: UUID) -> AnyPublisher<CardWallCANDomain.State, Never> {
         fatalError("cardWall(for:) has not been implemented")
     }
 }
@@ -822,7 +844,7 @@ struct UnimplementedUserSession: UserSession {
         set(value) { fatalError("") }
     }
 
-    var biometrieIdpSession: IDPSession {
+    var pairingIdpSession: IDPSession {
         get { fatalError("") }
         set(value) { fatalError("") }
     }
@@ -877,7 +899,7 @@ struct UnimplementedUserSession: UserSession {
         set(value) { fatalError("") }
     }
 
-    var biometricsIdpSessionLoginHandler: LoginHandler {
+    var pairingIdpSessionLoginHandler: LoginHandler {
         get { fatalError("") }
         set(value) { fatalError("") }
     }

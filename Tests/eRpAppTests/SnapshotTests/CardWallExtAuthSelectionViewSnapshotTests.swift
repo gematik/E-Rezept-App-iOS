@@ -25,7 +25,7 @@ import SwiftUI
 import TestUtils
 import XCTest
 
-final class CardWallExtAuthSelectionViewSnapshotTests: XCTestCase {
+final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
@@ -33,8 +33,9 @@ final class CardWallExtAuthSelectionViewSnapshotTests: XCTestCase {
     }
 
     func store(for state: CardWallExtAuthSelectionDomain.State) -> CardWallExtAuthSelectionDomain.Store {
-        .init(initialState: state,
-              reducer: EmptyReducer())
+        .init(initialState: state) {
+            EmptyReducer()
+        }
     }
 
     func testList() {

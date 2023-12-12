@@ -28,7 +28,7 @@ struct RegisteredDevicesView: View {
 
     init(store: RegisteredDevicesDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -150,33 +150,28 @@ struct RegisteredDevicesView: View {
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
-
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .sheet(isPresented: Binding<Bool>(get: {
-                    viewStore.destinationTag == .idpCardWall
-                }, set: { show in
-                    if !show {
-                        viewStore.send(.setNavigation(tag: nil))
-                    }
-                }),
-                onDismiss: {},
-                content: {
-                    IfLetStore(
-                        store.destinationsScope(
-                            state: /RegisteredDevicesDomain.Destinations.State.idpCardWall,
-                            action: RegisteredDevicesDomain.Destinations.Action.idpCardWallAction
-                        ),
-                        then: IDPCardWallView.init(store:)
-                    )
-                })
-                .hidden()
-                .accessibility(hidden: true)
+        }
+        .task {
+            await viewStore.send(.task).finish()
+        }
+        .fullScreenCover(
+            store: store.scope(state: \.$destination, action: RegisteredDevicesDomain.Action.destination),
+            state: /RegisteredDevicesDomain.Destinations.State.cardWallCAN,
+            action: RegisteredDevicesDomain.Destinations.Action.cardWallCAN
+        ) { store in
+            NavigationView {
+                CardWallCANView(store: store)
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
         }
         .subTitleStyle(PlainSectionContainerSubTitleStyle())
         .alert(
-            store.destinationsScope(state: /RegisteredDevicesDomain.Destinations.State.alert),
-            dismiss: RegisteredDevicesDomain.Action.setNavigation(tag: nil)
+            store.scope(
+                state: \.$destination,
+                action: RegisteredDevicesDomain.Action.destination
+            ),
+            state: /RegisteredDevicesDomain.Destinations.State.alert,
+            action: RegisteredDevicesDomain.Destinations.Action.alert
         )
         .navigationTitle(L10n.stgTxtRegDevicesTitle)
         .navigationBarTitleDisplayMode(.inline)

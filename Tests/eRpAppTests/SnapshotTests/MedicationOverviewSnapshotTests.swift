@@ -24,7 +24,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class MedicationOverviewSnapshotTests: XCTestCase {
+final class MedicationOverviewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
@@ -37,9 +37,11 @@ final class MedicationOverviewSnapshotTests: XCTestCase {
                     initialState: .init(
                         subscribed: ErxTask.Fixtures.ingredientMedication,
                         dispensed: ErxTask.Fixtures.medicationDispenses
-                    ),
-                    reducer: EmptyReducer()
-                )
+                    )
+
+                ) {
+                    EmptyReducer()
+                }
             )
         }
 

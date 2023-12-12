@@ -25,29 +25,23 @@ import IDP
 import Nimble
 import XCTest
 
+@MainActor
 final class MedicationDomainTests: XCTestCase {
     let stateWithIngredientMedication = MedicationDomain.State(subscribed: ErxTask.Fixtures.ingredientMedication)
 
-    typealias TestStore = ComposableArchitecture.TestStore<
-        MedicationDomain.State,
-        MedicationDomain.Action,
-        MedicationDomain.State,
-        MedicationDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<MedicationDomain>
 
     func testStore(_ state: MedicationDomain.State? = nil) -> TestStore {
-        TestStore(
-            initialState: state ?? stateWithIngredientMedication,
-            reducer: MedicationDomain()
-        )
+        TestStore(initialState: state ?? stateWithIngredientMedication) {
+            MedicationDomain()
+        }
     }
 
-    func testShowIngredient() {
+    func testShowIngredient() async {
         let expectedIngredient = stateWithIngredientMedication.medication!.ingredients.first!
         let sut = testStore()
 
-        sut.send(.showIngredient(expectedIngredient)) {
+        await sut.send(.showIngredient(expectedIngredient)) {
             $0.destination = .ingredient(
                 .init(
                     text: expectedIngredient.text,

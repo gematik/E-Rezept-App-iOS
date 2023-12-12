@@ -25,13 +25,7 @@ import XCTest
 
 @MainActor
 final class ChargeItemListDomainTests: XCTestCase {
-    typealias TestStore = ComposableArchitecture.TestStore<
-        ChargeItemListDomain.State,
-        ChargeItemListDomain.Action,
-        ChargeItemListDomain.State,
-        ChargeItemListDomain.Action,
-        Void
-    >
+    typealias TestStore = TestStoreOf<ChargeItemListDomain>
 
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
@@ -45,10 +39,9 @@ final class ChargeItemListDomainTests: XCTestCase {
     }
 
     private func testStore(for state: ChargeItemListDomain.State) -> TestStore {
-        TestStore(
-            initialState: state,
-            reducer: ChargeItemListDomain()
-        ) { dependencies in
+        TestStore(initialState: state) {
+            ChargeItemListDomain()
+        } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.chargeItemsDomainService = mockChargeItemListDomainService
         }
@@ -108,7 +101,7 @@ final class ChargeItemListDomainTests: XCTestCase {
         mockChargeItemListDomainService
             .fetchChargeItemsAssumingConsentGrantedForReturnValue = Just(.success(twoChargeItems))
             .eraseToAnyPublisher()
-        await store.send(.grantConsentAlertGrantButtonTapped) { state in
+        await store.send(.destination(.presented(.alert(.grantConsent)))) { state in
             state.destination = nil
         }
         await testScheduler.run()
@@ -140,7 +133,7 @@ final class ChargeItemListDomainTests: XCTestCase {
         }
 
         // Deny to grant the consent
-        await store.send(.grantConsentAlertDenyGrantButtonTapped) { state in
+        await store.send(.destination(.presented(.alert(.grantConsentDeny)))) { state in
             state.grantConsentState = .userDeniedGrant
             state.bottomBannerState = .grantConsent
             state.destination = nil
@@ -163,7 +156,7 @@ final class ChargeItemListDomainTests: XCTestCase {
         }
 
         // Retry to give permission through the alert, receive the unexpected error again
-        await store.send(.grantConsentErrorAlertRetryButtonTapped) { state in
+        await store.send(.destination(.presented(.alert(.grantConsentErrorRetry)))) { state in
             state.destination = nil
         }
         await testScheduler.run()
@@ -176,7 +169,7 @@ final class ChargeItemListDomainTests: XCTestCase {
         }
 
         // Discard the alert
-        await store.send(.grantConsentErrorAlertOkayButtonTapped) { state in
+        await store.send(.destination(.presented(.alert(.grantConsentErrorOkay)))) { state in
             state.destination = nil
             state.bottomBannerState = .grantConsent
         }
@@ -199,7 +192,7 @@ final class ChargeItemListDomainTests: XCTestCase {
         // user confirms
         mockChargeItemListDomainService.revokeChargeItemsConsentForReturnValue = Just(.success(.success))
             .eraseToAnyPublisher()
-        await store.send(.revokeConsentAlertRevokeButtonTapped) { state in
+        await store.send(.destination(.presented(.alert(.revokeConsent)))) { state in
             state.destination = nil
         }
         await testScheduler.run()

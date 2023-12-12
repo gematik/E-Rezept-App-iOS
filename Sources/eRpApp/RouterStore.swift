@@ -53,18 +53,19 @@ class RouterStore<ContentReducer: ReducerProtocol>: Routing
         router: @escaping (Endpoint) -> EffectTask<ContentReducer.Action>
     ) {
         store = Store(
-            initialState: initialState,
-            reducer: RouterReducer(
+            initialState: initialState
+        ) { [routerInstance = routerInstance] in
+            RouterReducer(
                 contentReducer: reducer.dependency(\.router, routerInstance),
                 router: router
             )
-        )
+        }
 
         routerInstance.delegate = self
     }
 
     func routeTo(_ endpoint: Endpoint) {
-        let viewStore = ViewStore(store)
+        let viewStore = ViewStore(store) { $0 }
         viewStore.send(.routeTo(endpoint))
     }
 

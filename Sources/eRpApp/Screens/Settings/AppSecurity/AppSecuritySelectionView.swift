@@ -27,7 +27,7 @@ struct AppSecuritySelectionView: View {
 
     init(store: AppSecurityDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {
@@ -49,22 +49,16 @@ struct AppSecuritySelectionView: View {
 
             Spacer()
 
-            NavigationLink(
-                destination: IfLetStore(
-                    store.destinationsScope(
-                        state: /AppSecurityDomain.Destinations.State.appPassword,
-                        action: AppSecurityDomain.Destinations.Action.appPasswordAction
-                    ),
-                    then: CreatePasswordView.init(store:)
-                ),
-                tag: AppSecurityDomain.Destinations.State.Tag.appPassword,
-                selection: viewStore.binding(
-                    get: \.destinationTag,
-                    send: AppSecurityDomain.Action.setNavigation
-                )
-            ) {}
-                .hidden()
-                .accessibility(hidden: true)
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: AppSecurityDomain.Action.destination),
+                state: /AppSecurityDomain.Destinations.State.appPassword,
+                action: AppSecurityDomain.Destinations.Action.appPassword,
+                onTap: { viewStore.send(.setNavigation(tag: .appPassword)) },
+                destination: CreatePasswordView.init(store:),
+                label: {}
+            )
+            .hidden()
+            .accessibility(hidden: true)
 
         }.onAppear {
             viewStore.send(.loadSecurityOption)
@@ -80,7 +74,7 @@ struct AppSecuritySelectionView: View {
 
         init(store: AppSecurityDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
+            viewStore = ViewStore(store, observe: ViewState.init)
         }
 
         struct ViewState: Equatable {
@@ -133,7 +127,7 @@ struct SecuritySectionView: View {
 
     init(store: AppSecurityDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
     struct ViewState: Equatable {

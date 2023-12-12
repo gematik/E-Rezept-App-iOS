@@ -6,16 +6,17 @@
 
 
 <% details.each do |details| %>
+<% if details['source'] == "intro" %>
+<%= details['description'] %>
+<% else %>
+#### <%= "#{details['part']} " if details['part'] %>`<%= details['file'] %>:<%= details['line'] %>`
 
-#### <%= "#{details['part']} " if details['part'] %>`<%= details['file'] %>:<%= details['line'] %>`: <%= details['description'] %>
-
-<%= details['source'] %>
+<%= details['description'] %>
 
 ```
 <%= details['code'] %>
 ```
-
-<% end # afos details %>
+<% end %><% end # afos details %>
 
 <% end # afos %>
 <% end # specs %>

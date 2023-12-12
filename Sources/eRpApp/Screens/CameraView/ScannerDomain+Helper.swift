@@ -21,10 +21,24 @@ import Foundation
 
 extension ScannerDomain {
     enum CodeAnalyser {
+        enum Output {
+            case tasks([ScannedErxTask])
+            case url(URL)
+        }
+
         // [REQ:BSI-eRp-ePA:O.Source_1#3] validation
         static func analyse(scanOutput: [ScanOutput],
-                            with previousTaskBatches: Set<[ScannedErxTask]>) throws -> [ScannedErxTask] {
-            let scannedErxTasks = try createScannedErxTasks(from: scanOutput)
+                            with previousTaskBatches: Set<[ScannedErxTask]>) throws -> Output {
+            let scannedErxTasks: [ScannedErxTask]
+
+            do {
+                scannedErxTasks = try createScannedErxTasks(from: scanOutput)
+            } catch {
+                if let url = try? urlFromScanOutput(from: scanOutput) {
+                    return .url(url)
+                }
+                throw error
+            }
 
             if scannedErxTasks.isEmpty {
                 throw Error.empty
@@ -36,7 +50,7 @@ extension ScannerDomain {
                 throw Error.duplicate
             }
 
-            return deduplicatedTasks
+            return .tasks(deduplicatedTasks)
         }
 
         static func createScannedErxTasks(from scanOutput: [ScanOutput]) throws -> [ScannedErxTask] {
@@ -44,12 +58,26 @@ extension ScannerDomain {
                 throw Error.empty
             }
 
-            guard case let .erxCode(string) = firstCode,
+            guard case let .text(string) = firstCode,
                   let tasksString = string else {
                 throw Error.empty
             }
 
             return try ScannedErxTask.from(tasks: tasksString)
+        }
+
+        static func urlFromScanOutput(from scanOutput: [ScanOutput]) throws -> URL {
+            guard let firstCode = scanOutput.first else {
+                throw Error.empty
+            }
+
+            guard case let .text(string) = firstCode,
+                  let urlString = string,
+                  let url = URL(string: urlString) else {
+                throw Error.empty
+            }
+
+            return url
         }
 
         static func deduplicateTasks(codes: [ScannedErxTask], previous: Set<[ScannedErxTask]>) -> [ScannedErxTask] {

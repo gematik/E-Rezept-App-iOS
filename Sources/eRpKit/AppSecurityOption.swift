@@ -19,7 +19,7 @@
 import Foundation
 
 @frozen
-public enum AppSecurityOption: Identifiable, Equatable {
+public enum AppSecurityOption: Codable, Identifiable, Equatable {
     case unsecured
     case biometry(BiometryType)
     case password
@@ -65,6 +65,17 @@ public enum AppSecurityOption: Identifiable, Equatable {
         default:
             self = .unsecured
         }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        try container.encode(id)
+    }
+
+    public init(from decoder: Decoder) throws {
+        var container = try decoder.unkeyedContainer()
+        let id = try container.decode(Int.self)
+        self.init(fromId: id)
     }
 }
 

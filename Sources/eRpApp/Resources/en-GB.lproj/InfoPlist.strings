@@ -1,4 +1,4 @@
 "CFBundleDisplayName" = "E-Rezept";
-"NFCReaderUsageDescription" = "Allows you to identify and authenticate yourself by using your health insurance card";
-"NSCameraUsageDescription" = "E-Rezept needs access to your camera so that it can read your prescriptions";
+"NFCReaderUsageDescription" = "Allows you to identify and authenticate yourself using your electronic health card";
+"NSCameraUsageDescription" = "The camera is required to capture prescriptions or take photos.";
 "NSFaceIDUsageDescription" = "E-Rezept uses FaceID to protect your app from unauthorized access.";

@@ -23,19 +23,25 @@ import Foundation
 struct NewProfileDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
+    struct State: Equatable {
+        var name: String
+        var color: ProfileColor
+        var image: ProfilePicture?
+        var userImageData: Data?
+        @PresentationState var destination: Destinations.State?
     }
-
-    enum Token: CaseIterable, Hashable {}
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             case editProfilePicture(EditProfilePictureDomain.State)
+            case alert(AlertState<Action.Alert>)
         }
 
         enum Action: Equatable {
             case editProfilePictureAction(action: EditProfilePictureDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {}
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -48,24 +54,13 @@ struct NewProfileDomain: ReducerProtocol {
         }
     }
 
-    struct State: Equatable {
-        var name: String
-        var acronym: String
-        var color: ProfileColor
-        var image: ProfilePicture?
-        var userImageData: Data?
-        var destination: Destinations.State?
-        var alertState: AlertState<Action>?
-    }
-
     enum Action: Equatable {
         case setName(String)
-        case setColor(ProfileColor)
         case save
         case closeButtonTapped
-        case dismissAlert
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
+
         case response(Response)
         case delegate(Delegate)
 
@@ -83,8 +78,8 @@ struct NewProfileDomain: ReducerProtocol {
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
 
     var body: some ReducerProtocol<State, Action> {
-        Reduce(self.core)
-            .ifLet(\.destination, action: /Action.destination) {
+        Reduce(core)
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -93,16 +88,12 @@ struct NewProfileDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .setName(name):
-            state.acronym = name.acronym()
             state.name = name
-            return .none
-        case let .setColor(color):
-            state.color = color
             return .none
         case .save:
             let name = state.name.trimmed()
             guard name.lengthOfBytes(using: .utf8) > 0 else {
-                state.alertState = AlertStates.emptyName
+                state.destination = .alert(AlertStates.emptyName)
                 return .none
             }
             let profile = Profile(name: name,
@@ -113,49 +104,54 @@ struct NewProfileDomain: ReducerProtocol {
                                   userImageData: state.userImageData,
                                   lastAuthenticated: nil,
                                   erxTasks: [])
-            return profileDataStore.save(profiles: [profile])
-                .catchToEffect()
-                .map { result in
-                    switch result {
-                    case .success:
-                        return Action.response(.saveReceived(.success(profile.id)))
-                    case let .failure(error):
-                        return Action.response(.saveReceived(.failure(error)))
+            return .publisher(
+                profileDataStore.save(profiles: [profile])
+                    .catchToPublisher()
+                    .map { result in
+                        switch result {
+                        case .success:
+                            return Action.response(.saveReceived(.success(profile.id)))
+                        case let .failure(error):
+                            return Action.response(.saveReceived(.failure(error)))
+                        }
                     }
-                }
-                .receive(on: schedulers.main)
-                .eraseToEffect()
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .response(.saveReceived(.success(profileId))):
             userDataStore.set(selectedProfileId: profileId)
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
         case let .response(.saveReceived(.failure(error))):
-            state.alertState = AlertStates.for(error)
-            return .none
-        case .dismissAlert:
-            state.alertState = nil
+            state.destination = .alert(AlertStates.for(error))
             return .none
         case .closeButtonTapped:
-            return EffectTask(value: .delegate(.close))
+            return EffectTask.send(.delegate(.close))
+
         case .setNavigation(tag: .editProfilePicture):
-            state.destination = .editProfilePicture(.init(profile: UserProfile(
-                from: Profile(name: state.name,
-                              color: state.color.erxColor,
-                              image: (state.image ?? .none).erxPicture,
-                              userImageData: state.userImageData),
-                isAuthenticated: false
-            ), isNewProfile: true))
+            state.destination = .editProfilePicture(.init(
+                profileId: nil,
+                color: state.color,
+                picture: state.image,
+                userImageData: state.userImageData,
+                isFullScreenPresented: true
+            ))
             return .none
-        case let .destination(.editProfilePictureAction(action: .setNewUserValues(userValues))):
+        case let .destination(.presented(.editProfilePictureAction(action: .editColor(color)))):
+            state.color = color ?? .grey
+            return .none
+        case let .destination(.presented(.editProfilePictureAction(action: .editPicture(picture)))):
+            state.image = picture ?? ProfilePicture.none
+            return .none
+        case let .destination(.presented(.editProfilePictureAction(action: .setUserImageData(image)))):
+            state.userImageData = image
+            return .none
+        case .setNavigation(tag: .none):
             state.destination = nil
-            state.color = userValues.color.viewModelColor
-            state.userImageData = userValues.userImageData
-            state.image = userValues.image.viewModelPicture
             return .none
-        case .setNavigation:
-            return .none
-        case .destination(.editProfilePictureAction):
-            return .none
-        case .delegate:
+
+        case .setNavigation,
+             .delegate,
+             .destination:
             return .none
         }
     }
@@ -163,7 +159,7 @@ struct NewProfileDomain: ReducerProtocol {
 
 extension NewProfileDomain {
     enum AlertStates {
-        typealias Action = NewProfileDomain.Action
+        typealias Action = NewProfileDomain.Destinations.Action.Alert
 
         static var emptyName = AlertState<Action>(
             title: TextState(L10n.stgTxtNewProfileErrorMessageTitle),
@@ -185,13 +181,11 @@ extension NewProfileDomain {
     enum Dummies {
         static let state = State(
             name: "Anna Vetter",
-            acronym: "AV",
             color: .blue
         )
 
-        static let store = Store(
-            initialState: state,
-            reducer: NewProfileDomain()
-        )
+        static let store = Store(initialState: state) {
+            NewProfileDomain()
+        }
     }
 }

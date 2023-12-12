@@ -94,7 +94,7 @@ public class CoreDataController {
                 return
             }
 
-            // [REQ:BSI-eRp-ePA:O.Purp_8#4,O.Arch_2#4,O.Arch_4#2] Database backup exclusion
+            // [REQ:BSI-eRp-ePA:O.Purp_8#4,O.Arch_2#4,O.Arch_4#2,O.Data_15#1] Database backup exclusion
             if excludeFromBackup, let storeUrl = store.url {
                 do {
                     _ = try fileManager.excludeFileFromBackup(filePath: storeUrl).get()

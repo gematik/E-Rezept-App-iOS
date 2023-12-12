@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpStyleKit
 import SwiftUI
 
 #if ENABLE_DEBUG_VIEW
@@ -27,7 +28,7 @@ struct DebugView: View {
     let store: DebugDomain.Store
 
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store) { $0 } content: { viewStore in
             List {
                 EnvironmentSection(store: store)
                 LogSection(store: store)
@@ -56,7 +57,7 @@ extension DebugView {
         let store: DebugDomain.Store
 
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store) { $0 } content: { viewStore in
                 Section(header: Text("Onboarding")) {
                     VStack {
                         Toggle("Hide Onboarding", isOn: viewStore.binding(
@@ -82,7 +83,7 @@ extension DebugView {
         let store: DebugDomain.Store
 
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store) { $0 } content: { viewStore in
                 Section(header: Text("Cardwall")) {
                     VStack {
                         Toggle("Hide Intro",
@@ -135,7 +136,7 @@ extension DebugView {
         @ObservedObject private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
 
         init(store: DebugDomain.Store) {
-            viewStore = ViewStore(store)
+            viewStore = ViewStore(store) { $0 }
         }
 
         var body: some View {
@@ -164,13 +165,13 @@ extension DebugView {
 
         init(store: DebugDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store)
+            viewStore = ViewStore(store) { $0 }
         }
 
         @State var showScanVirtualEGK = false
 
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store) { $0 } content: { viewStore in
                 Section(
                     header: Text("Virtual eGK Login"),
                     footer: Text("""
@@ -247,7 +248,7 @@ extension DebugView {
         let store: DebugDomain.Store
 
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store) { $0 } content: { viewStore in
                 Section(header: Text("Active Profile")) {
                     if let profile = viewStore.profile {
                         HStack {
@@ -363,9 +364,13 @@ extension DebugView {
     private struct LogSection: View {
         let store: DebugDomain.Store
 
+        #if DEBUG
+        @Dependency(\.smartMockRegister) var smartMockRegister: SmartMockRegister
+        #endif
+
         var body: some View {
             Section(header: Text("Logging")) {
-                WithViewStore(store) { _ in
+                WithViewStore(store) { $0 } content: { _ in
                     NavigationLink("Logs", destination: DebugLogsView(
                         store: store.scope(
                             state: \.logState,
@@ -373,6 +378,14 @@ extension DebugView {
                         )
                     ))
                 }
+
+                #if DEBUG
+                Button {
+                    try? smartMockRegister.save()
+                } label: {
+                    SubTitle(title: "Save SmartMocks", description: "& copy mocks path to clipboard")
+                }
+                #endif
             }
         }
     }
@@ -407,7 +420,7 @@ extension DebugView {
         let store: DebugDomain.Store
 
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store) { $0 } content: { viewStore in
                 Section(header: Text("Environment")) {
                     Picker("Environment",
                            selection: viewStore.binding(get: {

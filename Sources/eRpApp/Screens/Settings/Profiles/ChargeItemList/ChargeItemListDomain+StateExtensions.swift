@@ -60,7 +60,6 @@ extension ChargeItemListDomain {
         let message: TextState
         let buttonText: TextState
         let action: Action
-        var loading = false
 
         static let authenticate: Self = .init(
             message: .init(L10n.stgTxtChargeItemListBottomBannerAuthenticateMessage),

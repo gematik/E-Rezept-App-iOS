@@ -122,7 +122,6 @@ struct DefaultDeviceSecurityManager: DeviceSecurityManager {
         userDataStore.set(ignoreDeviceNotSecuredWarningPermanently: ignoreDeviceSystemPinWarningPermanently)
     }
 
-    // [REQ:gemSpec_BSI_FdV:A_20937] Jailbreak detection
     // [REQ:BSI-eRp-ePA:O.Arch_6#4,O.Resi_2#4] Jailbreak detection
     func informJailbreakDetected() -> Bool {
         #if targetEnvironment(simulator)

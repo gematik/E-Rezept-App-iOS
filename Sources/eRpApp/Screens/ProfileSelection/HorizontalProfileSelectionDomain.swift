@@ -26,16 +26,6 @@ import IDP
 struct HorizontalProfileSelectionDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case loadProfiles
-        case loadSelectedProfile
-        case activeUserProfile
-    }
-
     struct State: Equatable {
         var profiles: [UserProfile] = []
         var selectedProfileId: UUID?
@@ -44,7 +34,6 @@ struct HorizontalProfileSelectionDomain: ReducerProtocol {
 
     enum Action: Equatable {
         case registerListener
-        case unregisterListener
         case selectProfile(UserProfile)
         case showAddProfileView
         case profileButtonLongPressed(UserProfile)
@@ -65,20 +54,22 @@ struct HorizontalProfileSelectionDomain: ReducerProtocol {
         switch action {
         case .registerListener:
             return .merge(
-                userProfileService.userProfilesPublisher()
-                    .catchToEffect()
-                    .map(Action.Response.loadReceived)
-                    .map(Action.response)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
-                    .cancellable(id: Token.loadProfiles, cancelInFlight: true),
-                userProfileService.selectedProfileId
-                    .compactMap { $0 }
-                    .map(Action.Response.selectedProfileReceived)
-                    .map(Action.response)
-                    .receive(on: schedulers.main)
-                    .eraseToEffect()
-                    .cancellable(id: Token.loadSelectedProfile, cancelInFlight: true)
+                .publisher(
+                    userProfileService.userProfilesPublisher()
+                        .catchToPublisher()
+                        .map(Action.Response.loadReceived)
+                        .map(Action.response)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                ),
+                .publisher(
+                    userProfileService.selectedProfileId
+                        .compactMap { $0 }
+                        .map(Action.Response.selectedProfileReceived)
+                        .map(Action.response)
+                        .receive(on: schedulers.main)
+                        .eraseToAnyPublisher
+                )
             )
         case .response(.loadReceived(.failure)):
             // Handled by parent domain
@@ -95,15 +86,13 @@ struct HorizontalProfileSelectionDomain: ReducerProtocol {
             return .none
         case let .profileButtonLongPressed(profile):
             return .concatenate(
-                EffectTask(value: .selectProfile(profile)),
-                EffectTask(value: .showEditProfileNameView(profile.id, profile.name))
+                EffectTask.send(.selectProfile(profile)),
+                EffectTask.send(.showEditProfileNameView(profile.id, profile.name))
             )
         case .showEditProfileNameView:
             return .none
         case .showAddProfileView:
             return .none
-        case .unregisterListener:
-            return Self.cleanup()
         }
     }
 }
@@ -120,8 +109,9 @@ extension HorizontalProfileSelectionDomain {
         )
 
         static let store = Store(
-            initialState: state,
-            reducer: EmptyReducer()
-        )
+            initialState: state
+        ) {
+            EmptyReducer()
+        }
     }
 }

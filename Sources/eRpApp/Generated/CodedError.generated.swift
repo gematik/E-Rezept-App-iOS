@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -122,6 +122,29 @@ extension AppSecurityManagerError: CodedError {
     }
 }
 
+extension AuditEventsServiceError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .missingAuthentication:
+                return "i-02801"
+            case .loginHandlerError:
+                return "i-02802"
+            case .erxRepositoryError:
+                return "i-02803"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .loginHandlerError(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .erxRepositoryError(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension AuthenticationChallengeProviderError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -227,6 +250,35 @@ extension CardWallReadCardDomain.State.Error.InputError: CodedError {
     }
 }
 
+extension ChargeItemConsentService.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .localStore:
+                return "i-03601"
+            case .loginHandler:
+                return "i-03602"
+            case .erxRepository:
+                return "i-03603"
+            case .unexpectedGrantConsentResponse:
+                return "i-03604"
+            case .unexpected:
+                return "i-03605"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .localStore(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .loginHandler(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension ChargeItemDomainServiceAuthenticateResult.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -284,6 +336,8 @@ extension ChargeItemDomainServiceFetchResult.Error: CodedError {
                 return "i-03003"
             case .unexpected:
                 return "i-03004"
+            case .chargeItemConsentService:
+                return "i-03005"
         }
     }
     var erpErrorCodeList: [String] {
@@ -293,6 +347,8 @@ extension ChargeItemDomainServiceFetchResult.Error: CodedError {
             case let .loginHandler(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .chargeItemConsentService(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
@@ -313,6 +369,8 @@ extension ChargeItemListDomainServiceGrantResult.Error: CodedError {
                 return "i-03204"
             case .unexpected:
                 return "i-03205"
+            case .chargeItemConsentService:
+                return "i-03206"
         }
     }
     var erpErrorCodeList: [String] {
@@ -322,6 +380,8 @@ extension ChargeItemListDomainServiceGrantResult.Error: CodedError {
             case let .loginHandler(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .chargeItemConsentService(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
@@ -426,11 +486,15 @@ extension DefaultDataMatrixStringEncoderError: CodedError {
         switch self {
             case .stringEncoding:
                 return "i-20201"
+            case .missingAccessCode:
+                return "i-20202"
         }
     }
     var erpErrorCodeList: [String] {
         switch self {
             case .stringEncoding:
+                return [erpErrorCode]
+            default:
                 return [erpErrorCode]
         }
     }
@@ -1058,6 +1122,21 @@ extension MainDomain.Error: CodedError {
     }
 }
 
+extension MatrixCodeDomain.LoadingImageError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .matrixCodeGenerationFailed:
+                return "i-02301"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension MigrationError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1415,21 +1494,6 @@ extension ProfileCoreDataStore.Error: CodedError {
                 return [erpErrorCode] + error.erpErrorCodeList
             case .initialization:
                 return [erpErrorCode]
-            default:
-                return [erpErrorCode]
-        }
-    }
-}
-
-extension RedeemMatrixCodeDomain.LoadingImageError: CodedError {
-    var erpErrorCode: String {
-        switch self {
-            case .matrixCodeGenerationFailed:
-                return "i-02301"
-        }
-    }
-    var erpErrorCodeList: [String] {
-        switch self {
             default:
                 return [erpErrorCode]
         }

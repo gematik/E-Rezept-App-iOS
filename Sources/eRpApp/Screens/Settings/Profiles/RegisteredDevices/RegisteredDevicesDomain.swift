@@ -27,16 +27,10 @@ import IDP
 struct RegisteredDevicesDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> EffectTask<T> {
-        EffectTask<T>.cancel(ids: Token.allCases)
-    }
-
-    enum Token: CaseIterable, Hashable {}
-
     struct State: Equatable {
         let profileId: UUID
 
-        var destination: Destinations.State?
+        @PresentationState var destination: Destinations.State?
 
         var thisDeviceKeyIdentifier: String?
 
@@ -75,37 +69,44 @@ struct RegisteredDevicesDomain: ReducerProtocol {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = cardWall
-            case idpCardWall(IDPCardWallDomain.State)
+            case cardWallCAN(CardWallCANDomain.State)
             // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<RegisteredDevicesDomain.Action>)
+            case alert(ErpAlertState<Action.Alert>)
         }
 
         enum Action: Equatable {
-            case idpCardWallAction(IDPCardWallDomain.Action)
+            case cardWallCAN(action: CardWallCANDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case dismiss
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
             Scope(
-                state: /State.idpCardWall,
-                action: /Action.idpCardWallAction
+                state: /State.cardWallCAN,
+                action: /Action.cardWallCAN
             ) {
-                IDPCardWallDomain()
+                CardWallCANDomain()
             }
         }
     }
 
     enum Action: Equatable {
+        case task
         case loadDevices
         case deleteDevice(String)
 
-        case showCardWall(IDPCardWallDomain.State)
+        case showCardWall(CardWallCANDomain.State)
 
         case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
+        case destination(PresentationAction<Destinations.Action>)
 
         case response(Response)
 
         enum Response: Equatable {
+            case taskReceived(Result<PairingEntries, RegisteredDevicesServiceError>)
             case loadDevicesReceived(Result<PairingEntries, RegisteredDevicesServiceError>)
             case deleteDeviceReceived(Result<Bool, RegisteredDevicesServiceError>)
             case deviceIdReceived(String?)
@@ -120,13 +121,7 @@ struct RegisteredDevicesDomain: ReducerProtocol {
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.registeredDevicesService) var registeredDevicesService: RegisteredDevicesService
-
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        return dateFormatter
-    }()
+    @Dependency(\.uiDateFormatter.compactDateAndTimeFormatter) var dateFormatter: DateFormatter
 
     private var environment: Environment {
         .init(
@@ -144,7 +139,7 @@ struct RegisteredDevicesDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(core)
-            .ifLet(\.destination, action: /Action.destination) {
+            .ifLet(\.$destination, action: /Action.destination) {
                 Destinations()
             }
     }
@@ -152,6 +147,26 @@ struct RegisteredDevicesDomain: ReducerProtocol {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
+        case .task:
+            let currentState = (/State.Content.loaded).extract(from: state.content) ?? []
+            state.content = .loading(currentState)
+            return .merge(
+                environment.getRegisteredDevicesWithSurpressedError(profileId: state.profileId),
+                environment.getDeviceId(for: state.profileId)
+            )
+        case let .response(.taskReceived(result)):
+            switch result {
+            case let .success(entries):
+                state.content = .loaded(
+                    entries.pairingEntries
+                        .map { ($0, dateFormatter) }
+                        .map(State.Entry.init)
+                )
+            case .failure:
+                state.content = .notLoaded
+            }
+            return .none
+
         case .loadDevices:
             let currentState = (/State.Content.loaded).extract(from: state.content) ?? []
             state.content = .loading(currentState)
@@ -167,13 +182,15 @@ struct RegisteredDevicesDomain: ReducerProtocol {
             )
             return .none
         case let .response(.loadDevicesReceived(.failure(error))):
+            state.content = .notLoaded
             state.destination = .alert(.init(for: error))
             return .none
         case let .response(.deviceIdReceived(keyIdentifier)):
             state.thisDeviceKeyIdentifier = keyIdentifier
             return .none
         case let .showCardWall(cardWallState):
-            state.destination = .idpCardWall(cardWallState)
+            state.content = .notLoaded
+            state.destination = .cardWallCAN(cardWallState)
             return .none
         case .setNavigation(tag: .none):
             state.destination = nil
@@ -181,64 +198,74 @@ struct RegisteredDevicesDomain: ReducerProtocol {
             return .none
         case .setNavigation:
             return .none
-        case let .destination(.idpCardWallAction(.delegate(idpCardWallDelegateAction))):
-            switch idpCardWallDelegateAction {
-            case .finished:
-                state.destination = nil
-                return .concatenate(
-                    IDPCardWallDomain.cleanup(),
-                    EffectTask(value: .loadDevices)
-                )
-            case .close:
-                state.destination = nil
-                return IDPCardWallDomain.cleanup()
-            }
-        case .destination(.idpCardWallAction):
-            return .none
+        case .destination(.presented(.cardWallCAN(action: .delegate(.close)))):
+            state.destination = nil
+            return .send(.task)
         case let .deleteDevice(device):
-            return environment.deleteDevice(device, of: state.profileId)
-                .eraseToEffect()
+            return .publisher(
+                environment.deleteDevice(device, of: state.profileId)
+                    .eraseToAnyPublisher
+            )
         case let .response(.deleteDeviceReceived(.failure(error))):
             state.destination = .alert(.init(for: error))
             return .none
         case .response(.deleteDeviceReceived(.success)):
             return environment.getRegisteredDevices(profileId: state.profileId)
+        case .destination:
+            return .none
         }
     }
 }
 
 extension RegisteredDevicesDomain.Environment {
-    func getRegisteredDevices(profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
-        registeredDevicesService.registeredDevices(for: profileId)
-            .map { RegisteredDevicesDomain.Action.response(.loadDevicesReceived(.success($0))) }
-            .catch { error -> AnyPublisher<RegisteredDevicesDomain.Action, Never> in
-                if RegisteredDevicesServiceError.missingAuthentication == error {
-                    return registeredDevicesService.cardWall(for: profileId)
-                        .map(RegisteredDevicesDomain.Action.showCardWall)
+    func getRegisteredDevicesWithSurpressedError(profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
+        .publisher(
+            registeredDevicesService.registeredDevices(for: profileId)
+                .map { RegisteredDevicesDomain.Action.response(.taskReceived(.success($0))) }
+                .catch { error -> AnyPublisher<RegisteredDevicesDomain.Action, Never> in
+                    Just(RegisteredDevicesDomain.Action.response(.taskReceived(.failure(error))))
                         .eraseToAnyPublisher()
                 }
-                return Just(RegisteredDevicesDomain.Action.response(.loadDevicesReceived(.failure(error))))
-                    .eraseToAnyPublisher()
-            }
-            .receive(on: schedulers.main)
-            .eraseToEffect()
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
+    }
+
+    func getRegisteredDevices(profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
+        .publisher(
+            registeredDevicesService.registeredDevices(for: profileId)
+                .map { RegisteredDevicesDomain.Action.response(.loadDevicesReceived(.success($0))) }
+                .catch { error -> AnyPublisher<RegisteredDevicesDomain.Action, Never> in
+                    if RegisteredDevicesServiceError.missingAuthentication == error {
+                        return registeredDevicesService.cardWall(for: profileId)
+                            .map(RegisteredDevicesDomain.Action.showCardWall)
+                            .eraseToAnyPublisher()
+                    }
+                    return Just(RegisteredDevicesDomain.Action.response(.loadDevicesReceived(.failure(error))))
+                        .eraseToAnyPublisher()
+                }
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
     }
 
     func getDeviceId(for profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
-        registeredDevicesService.deviceId(for: profileId)
-            .map(RegisteredDevicesDomain.Action.Response.deviceIdReceived)
-            .map(RegisteredDevicesDomain.Action.response)
-            .receive(on: schedulers.main)
-            .eraseToEffect()
+        .publisher(
+            registeredDevicesService.deviceId(for: profileId)
+                .map(RegisteredDevicesDomain.Action.Response.deviceIdReceived)
+                .map(RegisteredDevicesDomain.Action.response)
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
     }
 
-    func deleteDevice(_ deviceId: String, of profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
+    func deleteDevice(_ deviceId: String, of profileId: UUID) -> AnyPublisher<RegisteredDevicesDomain.Action, Never> {
         registeredDevicesService.deleteDevice(deviceId, of: profileId)
-            .catchToEffect()
+            .catchToPublisher()
             .map(RegisteredDevicesDomain.Action.Response.deleteDeviceReceived)
             .map(RegisteredDevicesDomain.Action.response)
             .receive(on: schedulers.main)
-            .eraseToEffect()
+            .eraseToAnyPublisher()
     }
 }
 
@@ -275,8 +302,7 @@ extension RegisteredDevicesDomain {
         )
         static let cardWallState = State(
             profileId: UUID(),
-            destination: .idpCardWall(.init(profileId: UUID(),
-                                            pin: .init(isDemoModus: false, transition: .fullScreenCover)))
+            destination: .cardWallCAN(.init(isDemoModus: false, profileId: UUID(), can: ""))
         )
 
         static let store = store(for: state)
@@ -284,7 +310,11 @@ extension RegisteredDevicesDomain {
         static func store(
             for state: State
         ) -> Store {
-            Store(initialState: state, reducer: EmptyReducer())
+            Store(
+                initialState: state
+            ) {
+                EmptyReducer()
+            }
         }
     }
 }

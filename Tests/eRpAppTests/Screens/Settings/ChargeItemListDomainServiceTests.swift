@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 @testable import eRpApp
 import eRpKit
 import IDP
@@ -48,16 +49,23 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
     }
 
     func testFetchLocalChargeItems_withSuccess() {
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        // given
+        var chargeItemConsentService = ChargeItemConsentService.testValue
+        chargeItemConsentService.checkForConsent = { _ in .granted }
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
+
         var runSuccess: Bool
 
-        // when
         runSuccess = false
         mockErxTaskRepository.loadLocalAllChargeItemsPublisher = Just([])
             .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
 
-        // then
+        // when
         sut.fetchLocalChargeItems(for: testProfileId)
+            // then
             .test(
                 expectations: { result in
                     runSuccess = true
@@ -69,27 +77,25 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
     func testFetchRemoteChargeItems_happyPath() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
-        var runSuccess: Bool
+        var chargeItemConsentService = ChargeItemConsentService.testValue
+        chargeItemConsentService.checkForConsent = { _ in .granted }
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
+
+        var runSuccess = false
+        let returnValue: [ErxSparseChargeItem] = []
+        mockErxTaskRepository.loadRemoteAndSaveChargeItemsPublisher = Just(returnValue)
+            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
 
         // when
-        runSuccess = false
-        mockUserSession.profileReturnValue = Just(.Fixtures.profileForChargeItemsService)
-            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
-        mockErxTaskRepository.fetchConsentsReturnValue = Just([.Fixtures.validChargeItemsServiceConsent])
-            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        mockErxTaskRepository.loadRemoteAndSavedPublisher = Just([])
-            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        mockErxTaskRepository.loadLocalAllChargeItemsPublisher = Just([])
-            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-
-        // then
         sut.fetchRemoteChargeItemsAndSave(for: testProfileId)
+            // then
             .test(
                 expectations: { result in
                     runSuccess = true
-                    expect(result) == ChargeItemDomainServiceFetchResult.success([])
+                    expect(result) == ChargeItemDomainServiceFetchResult.success(returnValue)
                 }
             )
         expect(runSuccess) == true
@@ -97,15 +103,18 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
     func testFetchRemoteChargeItems_notAuthenticated() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
-        var runSuccess: Bool
+        var chargeItemConsentService = ChargeItemConsentService.testValue
+        chargeItemConsentService.checkForConsent = { _ in .notAuthenticated }
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
+
+        var runSuccess = false
 
         // when
-        runSuccess = false
-        mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(false)).eraseToAnyPublisher()
-
-        // then
         sut.fetchRemoteChargeItemsAndSave(for: testProfileId)
+            // then
             .test(
                 expectations: { result in
                     runSuccess = true
@@ -117,16 +126,14 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
     func testFetchRemoteChargeItems_noValidConsentGiven() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
-        var runSuccess: Bool
+        var chargeItemConsentService = ChargeItemConsentService.testValue
+        chargeItemConsentService.checkForConsent = { _ in .notGranted }
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
 
-        // when no consent was returned from server
-        runSuccess = false
-        mockUserSession.profileReturnValue = Just(.Fixtures.profileForChargeItemsService)
-            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
-        mockErxTaskRepository.fetchConsentsReturnValue = Just([]).setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
+        var runSuccess = false
 
         // then
         sut.fetchRemoteChargeItemsAndSave(for: testProfileId)
@@ -141,12 +148,16 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
     func testDeleteChargeItem() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        let chargeItemConsentService = ChargeItemConsentService.testValue
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
         var runSuccess: Bool
 
         // when
         runSuccess = false
-        mockUserSession.profileReturnValue = Just(.Fixtures.profileForChargeItemsService)
+        mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsService)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
         mockErxTaskRepository.deleteChargeItemsPublisher = Just(true)
@@ -169,7 +180,11 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
     func testDeleteChargeItem_notAuthenticated() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        let chargeItemConsentService = ChargeItemConsentService.testValue
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
         var runSuccess: Bool
 
         // when
@@ -192,7 +207,11 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
     func testAuthenticate() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        let chargeItemConsentService = ChargeItemConsentService.testValue
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
         var runSuccess: Bool
 
         // when authentication is possible via LoginHandler (e.g. using biometrics)
@@ -238,36 +257,47 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
         expect(runSuccess) == true
     }
 
-    func testGrantConsent() {
+    func testGrantConsent_unexpectedResponse() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        var chargeItemConsentService = ChargeItemConsentService.testValue
+        chargeItemConsentService
+            .grantConsent = { _ in throw ChargeItemConsentService.Error.unexpectedGrantConsentResponse }
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
+
         var runSuccess: Bool
 
         // when no consent was returned from server
         runSuccess = false
-        mockUserSession.profileReturnValue = Just(.Fixtures.profileForChargeItemsService)
-            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
-        mockErxTaskRepository.grantConsentReturnValue = Just(nil)
-            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
 
         // then
         sut.grantChargeItemsConsent(for: testProfileId)
             .test(
                 expectations: { result in
                     runSuccess = true
-                    expect(result) == ChargeItemListDomainServiceGrantResult.error(.unexpectedGrantConsentResponse)
+                    expect(result) == ChargeItemListDomainServiceGrantResult
+                        .error(.chargeItemConsentService(.unexpectedGrantConsentResponse))
                 }
             )
         expect(runSuccess) == true
+    }
 
-        // when a valid consent was returned from server
-        runSuccess = false
-        mockErxTaskRepository.grantConsentReturnValue = Just(.Fixtures.validChargeItemsServiceConsent)
-            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+    func testGrantConsent_happyPath() {
+        // given
+        var chargeItemConsentService = ChargeItemConsentService.testValue
+        chargeItemConsentService.grantConsent = { _ in .success }
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
 
-        // then
+        var runSuccess = false
+
+        // when
         sut.grantChargeItemsConsent(for: testProfileId)
+            // then
             .test(
                 expectations: { result in
                     runSuccess = true
@@ -279,16 +309,16 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
     func testFetchRemoteChargeItemsAssumingConsentGranted() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        var chargeItemConsentService = ChargeItemConsentService.testValue
+        chargeItemConsentService.checkForConsent = { _ in .notAuthenticated }
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
         var runSuccess: Bool
 
         // when not authenticated
         runSuccess = false
-        mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(false)).eraseToAnyPublisher()
-        mockErxTaskRepository.loadRemoteAndSavedPublisher = Just([])
-            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-        mockErxTaskRepository.loadLocalAllChargeItemsPublisher = Just([])
-            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
 
         // then
         sut.fetchRemoteChargeItemsAndSave(for: testProfileId)
@@ -300,9 +330,11 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
             )
         expect(runSuccess) == true
 
-        // when
+        // when authenticated
         runSuccess = false
         mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
+        mockErxTaskRepository.loadLocalAllChargeItemsPublisher = Just([])
+            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
 
         // then
         sut.fetchChargeItemsAssumingConsentGranted(for: testProfileId)
@@ -317,12 +349,15 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
     func testRevokeConsent() {
         // given
-        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: ChargeItemConsentService.testValue
+        )
         var runSuccess: Bool
 
         // when the service returns an error
         runSuccess = false
-        mockUserSession.profileReturnValue = Just(.Fixtures.profileForChargeItemsService)
+        mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsService)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
         let erxTaskRepositoryError: ErxRepositoryError = .remote(.notImplemented)
@@ -357,50 +392,36 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
     }
 }
 
-extension ErxConsent {
-    enum Fixtures {}
-}
-
-extension Profile {
-    enum Fixtures {}
-}
-
-extension ErxSparseChargeItem {
-    enum Fixtures {}
-}
-
-extension Profile.Fixtures {
-    static let profileForChargeItemsService: Profile = .init(
-        name: "Gerrry with three \"r\"",
-        identifier: UUID(),
-        created: Date(),
-        insuranceId: "X114428530",
-        color: .green,
-        image: .pharmacist,
-        lastAuthenticated: nil,
-        erxTasks: []
-    )
-}
-
-extension ErxConsent.Fixtures {
-    static let validChargeItemsServiceConsent: ErxConsent = {
-        let kvnr = "X114428530"
-        let chargeItemsConsent = ErxConsent(
-            identifier: "\(ErxConsent.Category.chargcons.rawValue)-\(kvnr)",
-            insuranceId: kvnr,
-            timestamp: FHIRDateFormatter.shared.string(from: Date(), format: .yearMonthDay),
-            scope: .patientPrivacy,
-            category: .chargcons,
-            policyRule: .optIn
+extension ChargeItemListDomainServiceTests {
+    enum Fixtures {
+        static let profileForChargeItemsService: Profile = .init(
+            name: "Gerrry with three \"r\"",
+            identifier: UUID(),
+            created: Date(),
+            insuranceId: "X114428530",
+            color: .green,
+            image: .pharmacist,
+            lastAuthenticated: nil,
+            erxTasks: []
         )
-        return chargeItemsConsent
-    }()
-}
 
-extension ErxSparseChargeItem.Fixtures {
-    static let chargeItem = ErxSparseChargeItem(
-        identifier: UUID().uuidString,
-        fhirData: "testdata".data(using: .utf8)!,
-        enteredDate: "2022-09-14"
-    )
+        static let validChargeItemsServiceConsent: ErxConsent = {
+            let kvnr = "X114428530"
+            let chargeItemsConsent = ErxConsent(
+                identifier: "\(ErxConsent.Category.chargcons.rawValue)-\(kvnr)",
+                insuranceId: kvnr,
+                timestamp: FHIRDateFormatter.shared.string(from: Date(), format: .yearMonthDay),
+                scope: .patientPrivacy,
+                category: .chargcons,
+                policyRule: .optIn
+            )
+            return chargeItemsConsent
+        }()
+
+        static let chargeItem = ErxSparseChargeItem(
+            identifier: UUID().uuidString,
+            fhirData: "testdata".data(using: .utf8)!,
+            enteredDate: "2022-09-14"
+        )
+    }
 }

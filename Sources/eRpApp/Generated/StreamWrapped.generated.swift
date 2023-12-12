@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -192,6 +192,25 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
         stream
         	.map { $0.countAllUnreadCommunications(
 				for: profile
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadRemoteLatestAuditEvents(for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> {
+        stream
+        	.map { $0.loadRemoteLatestAuditEvents(
+				for: locale
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadRemoteAuditEventsPage(from url: URL, locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> {
+        stream
+        	.map { $0.loadRemoteAuditEventsPage(
+				from: url,
+				locale: locale
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -775,13 +794,6 @@ class StreamWrappedProfileDataStore: ProfileDataStore {
             )
 	}
 
-	func pagedAuditEventsController(for profileId: UUID, with locale: String?) throws -> PagedAuditEventsController {
-        try current.pagedAuditEventsController(
-				for: profileId,
-				with: locale
-            )
-	}
-
 	func save(profile: Profile) -> AnyPublisher<Bool, LocalStoreError> {
         current.save(
 				profile: profile
@@ -1161,8 +1173,8 @@ class StreamWrappedUserSession: UserSession {
 	lazy var extAuthRequestStorage: ExtAuthRequestStorage = {
 		StreamWrappedExtAuthRequestStorage(stream: stream.map{ $0.extAuthRequestStorage }.eraseToAnyPublisher(), current: current.extAuthRequestStorage )
 	}()
-	lazy var biometrieIdpSession: IDPSession = {
-		StreamWrappedIDPSession(stream: stream.map{ $0.biometrieIdpSession }.eraseToAnyPublisher(), current: current.biometrieIdpSession )
+	lazy var pairingIdpSession: IDPSession = {
+		StreamWrappedIDPSession(stream: stream.map{ $0.pairingIdpSession }.eraseToAnyPublisher(), current: current.pairingIdpSession )
 	}()
 	var vauStorage: VAUStorage { current.vauStorage }
 	var trustStoreSession: TrustStoreSession { current.trustStoreSession }
@@ -1176,7 +1188,7 @@ class StreamWrappedUserSession: UserSession {
 	var prescriptionRepository: PrescriptionRepository { current.prescriptionRepository }
 	var activityIndicating: ActivityIndicating { current.activityIndicating }
 	var idpSessionLoginHandler: LoginHandler { current.idpSessionLoginHandler }
-	var biometricsIdpSessionLoginHandler: LoginHandler { current.biometricsIdpSessionLoginHandler }
+	var pairingIdpSessionLoginHandler: LoginHandler { current.pairingIdpSessionLoginHandler }
 	var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider { current.secureEnclaveSignatureProvider }
 
 	func profile() -> AnyPublisher<Profile, LocalStoreError> {

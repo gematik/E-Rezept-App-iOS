@@ -22,14 +22,11 @@ import SwiftUI
 
 struct CardWallExtAuthConfirmationView: View {
     private let store: CardWallExtAuthConfirmationDomain.Store
-    @ObservedObject private var viewStore: ViewStore<
-        CardWallExtAuthConfirmationDomain.State,
-        CardWallExtAuthConfirmationDomain.Action
-    >
+    @ObservedObject private var viewStore: ViewStoreOf<CardWallExtAuthConfirmationDomain>
 
     init(store: CardWallExtAuthConfirmationDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
@@ -57,8 +54,10 @@ struct CardWallExtAuthConfirmationView: View {
                             Text(L10n.cdwBtnExtauthConfirmContact)
                         })
                             .accessibility(identifier: A11y.cardWall.extAuthConfirmation.cdwBtnExtauthConfirmContact)
-                            .confirmationDialog(store.scope(state: \.contactActionSheet),
-                                                dismiss: CardWallExtAuthConfirmationDomain.Action.closeContactSheet)
+                            .confirmationDialog(store: store.scope(
+                                state: \.$contactActionSheet,
+                                action: CardWallExtAuthConfirmationDomain.Action.contactSheet
+                            ))
                     }
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)

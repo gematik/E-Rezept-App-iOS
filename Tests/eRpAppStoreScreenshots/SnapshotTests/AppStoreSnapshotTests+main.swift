@@ -36,9 +36,10 @@ extension AppStoreSnapshotTests {
                     prescriptionListState: state,
                     horizontalProfileSelectionState: HorizontalProfileSelectionDomain
                         .State(profiles: [UserProfile.Fixtures.theo], selectedProfileId: UserProfile.Fixtures.theo.id)
-                ),
-                reducer: EmptyReducer()
-            )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
     }
 }
