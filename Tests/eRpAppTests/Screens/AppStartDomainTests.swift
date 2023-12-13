@@ -172,6 +172,27 @@ final class AppStartDomainTests: XCTestCase {
         let sortComparator = AppStartDomainActionComparator.forward
         expect(receivedActions.sorted(using: sortComparator)).to(equal(expectedActions.sorted(using: sortComparator)))
     }
+
+    func testRouterRouteToSettingsUnlockCard() async {
+        // given
+        let sut = AppStartDomain.router
+
+        let expected1 = AppStartDomain.Action.app(action: .setNavigation(.settings))
+        let expected2 = AppStartDomain.Action.app(action: .subdomains(
+            .settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))
+        ))
+        let expectedActions = [expected1, expected2]
+
+        // when
+        var receivedActions: [AppStartDomain.Action] = []
+        for await action in sut(Endpoint.settings(.unlockCard)).actions {
+            receivedActions.append(action)
+        }
+
+        // then
+        let sortComparator = AppStartDomainActionComparator.forward
+        expect(receivedActions.sorted(using: sortComparator)).to(equal(expectedActions.sorted(using: sortComparator)))
+    }
 }
 
 struct AppStartDomainActionComparator: SortComparator {

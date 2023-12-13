@@ -106,6 +106,7 @@
 "cdw_btn_rc_alert_close" = "Close";
 "cdw_btn_rc_alert_report" = "Report";
 "cdw_btn_rc_alert_save_profile" = "Close";
+"cdw_btn_rc_alert_unlockcard" = "Karte entsperren";
 "cdw_btn_rc_back" = "Back";
 "cdw_btn_rc_cancel_label" = "Close dialog";
 "cdw_btn_rc_close" = "Close";
@@ -217,7 +218,7 @@
 "cdw_txt_rc_demo_mode_info" = "You do not need a medical card in demo mode.";
 "cdw_txt_rc_description" = "Click Login and hold your card against the device as shown. Do not move the card once a connection has been established.";
 "cdw_txt_rc_error_card_locked_description" = "card blocked";
-"cdw_txt_rc_error_card_locked_recovery" = "The PIN was entered incorrectly three times. Your card has therefore been blocked for security reasons.";
+"cdw_txt_rc_error_card_locked_recovery" = "Die PIN wurde dreimal falsch eingegeben. Ihre Karte ist daher aus Sicherheitsgründen gesperrt.";
 "cdw_txt_rc_error_generic_card_description" = "Error reading the medical card";
 "cdw_txt_rc_error_generic_card_recovery" = "Please try again";
 "cdw_txt_rc_error_memory_failure_description" = "Write operation unsuccessful";

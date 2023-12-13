@@ -115,7 +115,7 @@ final class ProfileSelectionDomainTests: XCTestCase {
 
         await store.send(.editProfiles)
 
-        expect(self.mockRouting.routeToReceivedEndpoint).to(equal(Endpoint.settings))
+        expect(self.mockRouting.routeToReceivedEndpoint).to(equal(Endpoint.settings(nil)))
 
         await store.receive(.close)
     }

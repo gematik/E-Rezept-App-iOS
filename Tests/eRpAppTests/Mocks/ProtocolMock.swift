@@ -64,4 +64,5 @@ extension UsersSessionContainer {}
 extension UserSessionProvider {}
 extension PagedAuditEventsController {}
 extension AuditEventsService {}
+extension PharmacyRepository {}
 // sourcery:end

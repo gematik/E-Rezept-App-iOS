@@ -106,6 +106,7 @@
 "cdw_btn_rc_alert_close" = "Kapat";
 "cdw_btn_rc_alert_report" = "Bildir";
 "cdw_btn_rc_alert_save_profile" = "Kapat";
+"cdw_btn_rc_alert_unlockcard" = "Karte entsperren";
 "cdw_btn_rc_back" = "Geri";
 "cdw_btn_rc_cancel_label" = "İletişim kutusunu kapat";
 "cdw_btn_rc_close" = "Kapat";
@@ -217,7 +218,7 @@
 "cdw_txt_rc_demo_mode_info" = "Demo modunda sağlık kartına ihtiyacınız yoktur.";
 "cdw_txt_rc_description" = "Oturum aç'a tıklayın ve kartınızı gösterildiği gibi cihaza doğru tutun. Bağlandıktan sonra kartı hareket ettirmeyin.";
 "cdw_txt_rc_error_card_locked_description" = "kart bloke";
-"cdw_txt_rc_error_card_locked_recovery" = "PIN üç kez yanlış girildi. Bunun sonucunda kartınız güvenlik nedeniyle engellenmiştir.";
+"cdw_txt_rc_error_card_locked_recovery" = "Die PIN wurde dreimal falsch eingegeben. Ihre Karte ist daher aus Sicherheitsgründen gesperrt.";
 "cdw_txt_rc_error_generic_card_description" = "Sağlık kartını okurken bir hata oluştu";
 "cdw_txt_rc_error_generic_card_recovery" = "Lütfen tekrar deneyin";
 "cdw_txt_rc_error_memory_failure_description" = "Yazma işlemi başarısız";

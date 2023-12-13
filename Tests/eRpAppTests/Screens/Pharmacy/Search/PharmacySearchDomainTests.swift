@@ -64,11 +64,11 @@ class PharmacySearchDomainTests: XCTestCase {
 
     func testSearchForPharmacies() async {
         // given
-        let mockPharmacyRepo = MockPharmacyRepository(
-            searchRemote: Just(TestData.pharmacies)
-                .setFailureType(to: PharmacyRepositoryError.self)
-                .eraseToAnyPublisher()
-        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmacies)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
         let sut = testStore(for: TestData.stateWithStartView, pharmacyRepository: mockPharmacyRepo)
         let testSearchText = "Apo"
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmacies)
@@ -95,11 +95,11 @@ class PharmacySearchDomainTests: XCTestCase {
 
     func testSearchForPharmaciesEmptyResult() async {
         // given
-        let mockPharmacyRepo = MockPharmacyRepository(
-            searchRemote: Just([])
-                .setFailureType(to: PharmacyRepositoryError.self)
-                .eraseToAnyPublisher()
-        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just([])
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
         let sut = testStore(for: TestData.stateEmpty, pharmacyRepository: mockPharmacyRepo)
         let testSearchText = "Apodfdfd"
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success([])
@@ -127,11 +127,11 @@ class PharmacySearchDomainTests: XCTestCase {
 
     func testSearchForPharmaciesWithLocation() async {
         // given
-        let mockPharmacyRepo = MockPharmacyRepository(
-            searchRemote: Just(TestData.pharmaciesWithLocations)
-                .setFailureType(to: PharmacyRepositoryError.self)
-                .eraseToAnyPublisher()
-        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
         let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
 
@@ -153,7 +153,10 @@ class PharmacySearchDomainTests: XCTestCase {
     func testStartView_loadLocalPharmacies_task_Success() async {
         let state = TestData.stateWithStartView
         let storedPharmacies = TestData.pharmacies
-        let mockPharmacyRepo = MockPharmacyRepository(stored: storedPharmacies)
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.loadLocalCountReturnValue = Just(storedPharmacies)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
@@ -168,10 +171,10 @@ class PharmacySearchDomainTests: XCTestCase {
     func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_Success() async {
         let state = TestData.stateWithStartView
         let selectedPharmacy = PharmacyLocation.Fixtures.pharmacyA
-        let mockPharmacyRepo = MockPharmacyRepository(
-            loadRemoteAndSave: Just(selectedPharmacy).setFailureType(to: PharmacyRepositoryError.self)
-                .eraseToAnyPublisher()
-        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.updateFromRemoteByReturnValue = Just(selectedPharmacy)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
@@ -197,9 +200,8 @@ class PharmacySearchDomainTests: XCTestCase {
         let state = TestData.stateWithStartView
         let selectedPharmacy = PharmacyLocation.Fixtures.pharmacyA
         let expectedError = PharmacyRepositoryError.remote(.fhirClient(.inconsistentResponse))
-        let mockPharmacyRepo = MockPharmacyRepository(
-            loadRemoteAndSave: Fail(error: expectedError).eraseToAnyPublisher()
-        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.updateFromRemoteByReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
@@ -232,10 +234,11 @@ class PharmacySearchDomainTests: XCTestCase {
         )
         let selectedPharmacy = pharmacyViewModels.last!
         let expectedError = PharmacyRepositoryError.remote(.notFound)
-        let mockPharmacyRepo = MockPharmacyRepository(
-            loadRemoteAndSave: Fail(error: expectedError).eraseToAnyPublisher(),
-            deletePharmacies: Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
-        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.updateFromRemoteByReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
+        mockPharmacyRepo.deletePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
@@ -250,16 +253,16 @@ class PharmacySearchDomainTests: XCTestCase {
             $0.localPharmacies = pharmacyViewModels.dropLast()
             $0.destination = .alert(.init(for: expectedError))
         }
-        expect(mockPharmacyRepo.deleteCallsCount) == 1
+        expect(mockPharmacyRepo.deletePharmaciesCallsCount) == 1
     }
 
     func test_requestAuthorization_WhenInUse() async {
         // given
-        let mockPharmacyRepo = MockPharmacyRepository(
-            searchRemote: Just(TestData.pharmacies)
-                .setFailureType(to: PharmacyRepositoryError.self)
-                .eraseToAnyPublisher()
-        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmacies)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
         let sut = testStore(for: TestData.stateWithStartView, pharmacyRepository: mockPharmacyRepo)
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .notDetermined }
@@ -276,11 +279,11 @@ class PharmacySearchDomainTests: XCTestCase {
 
     func test_requestAuthorization_Denied() async {
         // given
-        let mockPharmacyRepo = MockPharmacyRepository(
-            searchRemote: Just(TestData.pharmacies)
-                .setFailureType(to: PharmacyRepositoryError.self)
-                .eraseToAnyPublisher()
-        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmacies)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
         let sut = testStore(for: TestData.stateWithStartView, pharmacyRepository: mockPharmacyRepo)
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .denied }
@@ -300,10 +303,10 @@ class PharmacySearchDomainTests: XCTestCase {
     func testUniversalLink() async {
         let mockPharmacyRepo = MockPharmacyRepository()
         let pharmacy = PharmacyLocation(id: "123.456.789", telematikID: "123.456.789", types: [])
-        mockPharmacyRepo.loadCachedPublisher = Just(pharmacy)
+        mockPharmacyRepo.loadCachedByReturnValue = Just(pharmacy)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepo.savePublisher = Just(false)
+        mockPharmacyRepo.savePharmaciesReturnValue = Just(false)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
         let sut = testStore(for: PharmacySearchDomain.State(

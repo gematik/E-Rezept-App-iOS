@@ -119,7 +119,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         await sut.receive(.setNavigation(tag: .cardWall)) {
             $0.destination = PharmacyRedeemDomain.Destinations.State.cardWall(expectedCardWallState)
         }
-        expect(self.mockPharmacyRepository.saveCallsCount) == 0
+        expect(self.mockPharmacyRepository.savePharmaciesCallsCount) == 0
     }
 
     let shipmentInfo = ShipmentInfo(
@@ -149,7 +149,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockShipmentInfoDataStore.selectedShipmentInfo = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = true
-        mockPharmacyRepository.savePublisher = Just(true).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.savePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         var expectedOrderResponses = IdentifiedArrayOf<OrderResponse>()
@@ -191,7 +191,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 )
             }
         }
-        expect(self.mockPharmacyRepository.saveCallsCount) == 1
+        expect(self.mockPharmacyRepository.savePharmaciesCallsCount) == 1
     }
 
     func testRedeemWithPartialSuccess() async {
@@ -210,7 +210,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockShipmentInfoDataStore.selectedShipmentInfo = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = true
-        mockPharmacyRepository.savePublisher = Just(true).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.savePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         let expectedError = RedeemServiceError.eRxRepository(.remote(.notImplemented))
@@ -236,7 +236,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 .info(PharmacyRedeemDomain.AlertStates.failingRequest(count: expectedOrderResponses.failedCount))
             )
         }
-        expect(self.mockPharmacyRepository.saveCallsCount) == 1
+        expect(self.mockPharmacyRepository.savePharmaciesCallsCount) == 1
     }
 
     func testRedeemWithFailure() async {
@@ -257,7 +257,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockUserSession.isLoggedIn = true
         let expectedError = RedeemServiceError.internalError(.missingTelematikId)
         mockRedeemService.redeemReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
-        mockPharmacyRepository.savePublisher = Just(true).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.savePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         // when redeeming
@@ -265,7 +265,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         await sut.receive(.redeemReceived(.failure(expectedError))) {
             $0.destination = .alert(.init(for: expectedError))
         }
-        expect(self.mockPharmacyRepository.saveCallsCount) == 1
+        expect(self.mockPharmacyRepository.savePharmaciesCallsCount) == 1
     }
 
     func testLoadingProfile() async {

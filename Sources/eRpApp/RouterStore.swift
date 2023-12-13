@@ -20,7 +20,7 @@ import ComposableArchitecture
 import Foundation
 
 enum Endpoint: Equatable {
-    case settings
+    case settings(SettingsScreen?)
     case scanner
     case orders
     case mainScreen(MainScreen?)
@@ -28,6 +28,10 @@ enum Endpoint: Equatable {
 
     enum MainScreen: Equatable {
         case login
+    }
+
+    enum SettingsScreen: Equatable {
+        case unlockCard
     }
 }
 

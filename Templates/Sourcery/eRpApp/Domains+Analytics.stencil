@@ -71,25 +71,29 @@ extension {{ stateType.name }} {
 {% endmacro %}
 
 {% for type in types.structs %}
-    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Domain" and not type.parentName|contains:"Debug" %}
+    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Domain" and not type.parentName|contains:"Debug" and 
+    not type.parent.annotations.SkipSourcery %}
         {% call DomainRoute type %}
     {% endif %}
 {% endfor %}
 
 {% for type in types.enums %}
-    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Domain" and not type.parentName|contains:"Debug" %}
+    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Domain" and not type.parentName|contains:"Debug" and 
+    not type.parent.annotations.SkipSourcery %}
         {% call DomainRoute type %}
     {% endif %}
 {% endfor %}
 
 {% for type in types.structs %}
-    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Destinations" and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration %}
+    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Destinations" and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration and 
+    not type.parent.parent.annotations.SkipSourcery %}
         {% call DomainRoute type %}
     {% endif %}
 {% endfor %}
 
 {% for type in types.enums %}
-    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Destinations" and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration %}
+    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Destinations" and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration and 
+    not type.parent.parent.annotations.SkipSourcery %}
         {% call DomainRoute type %}
     {% endif %}
 {% endfor %}
@@ -112,19 +116,22 @@ extension {{ routeType.name }}.Tag {
 }
 {% endmacro %}
 
-{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Destinations" %}
+{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Destinations" and 
+not routeType.parent.parent.annotations.SkipSourcery %}
     {% if not routeType.parentName|contains:"Debug" %}
         {% call GenerateTags routeType %}
     {% endif %}
 {% endfor %}
 
-{% for routeType in types.enums where routeType.localName == "Route" and routeType.parentName|default:""|hasSuffix:"Domain" %}
+{% for routeType in types.enums where routeType.localName == "Route" and routeType.parentName|default:""|hasSuffix:"Domain" and 
+not routeType.parent.annotations.SkipSourcery %}
     {% if not routeType.parentName|contains:"Debug" %}
         {% call GenerateTags routeType %}
     {% endif %}
 {% endfor %}
 
-{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Domain" %}
+{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Domain" and 
+not routeType.parent.annotations.SkipSourcery %}
     {% if not routeType.parentName|contains:"Debug" %}
         {% call GenerateTags routeType %}
     {% endif %}

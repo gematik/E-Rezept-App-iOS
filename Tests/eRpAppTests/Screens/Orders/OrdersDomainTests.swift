@@ -77,10 +77,10 @@ final class OrdersDomainTests: XCTestCase {
         let savePublisher = Just(true)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
-        return MockPharmacyRepository(
-            loadCachedById: pharmacyPublisher,
-            savePharmacies: savePublisher
-        )
+        let mock = MockPharmacyRepository()
+        mock.loadCachedByReturnValue = pharmacyPublisher
+        mock.savePharmaciesReturnValue = savePublisher
+        return mock
     }
 
     func testOrdersDomainSubscriptionWithoutMessages() async {
@@ -117,8 +117,8 @@ final class OrdersDomainTests: XCTestCase {
         await store.receive(.response(.pharmaciesReceived([pharmacy]))) { state in
             expected.pharmacy = self.pharmacy
             state.orders = IdentifiedArray(uniqueElements: [expected])
-            expect(mockPharmacyRepoAccess.loadCachedCallsCount) == 1
-            expect(mockPharmacyRepoAccess.saveCallsCount) == 0
+            expect(mockPharmacyRepoAccess.loadCachedByCallsCount) == 1
+            expect(mockPharmacyRepoAccess.savePharmaciesCallsCount) == 0
         }
     }
 

@@ -21,11 +21,13 @@ extension {{ routeType.name }} {
 }
 {% endmacro %}
 
-{% for routeType in types.enums where routeType.localName == "Route" and routeType.parentName|default:""|hasSuffix:"Domain" %}
+{% for routeType in types.enums where routeType.localName == "Route" and routeType.parentName|default:""|hasSuffix:"Domain" and 
+    not routeType.parent.annotations.SkipSourcery %}
     {% call GenerateTags routeType %}
 {% endfor %}
 
-{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Domain" %}
+{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Domain" and 
+    not routeType.parent.annotations.SkipSourcery %}
     {% call GenerateTags routeType %}
 {% endfor %}
 

@@ -539,7 +539,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(stateError))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertBlockedCard(stateError))
         }
     }
 
@@ -560,7 +560,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(stateError))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertBlockedCard(stateError))
         }
     }
 }

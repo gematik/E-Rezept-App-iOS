@@ -127,11 +127,26 @@ struct AppStartDomain: ReducerProtocol {
 
     static let router: (Endpoint) -> EffectTask<Action> = { route in
         switch route {
-        case .settings:
-            return .concatenate(
-                EffectTask.send(.app(action: .subdomains(.settings(action: .popToRootView)))),
-                EffectTask.send(.app(action: .setNavigation(.settings)))
-            )
+        case let .settings(endpoint):
+            switch endpoint {
+            case .unlockCard:
+                return .merge(
+                    EffectTask
+                        .send(
+                            .app(
+                                action: .subdomains(
+                                    .settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))
+                                )
+                            )
+                        ),
+                    EffectTask.send(.app(action: .setNavigation(.settings)))
+                )
+            default:
+                return .concatenate(
+                    EffectTask.send(.app(action: .subdomains(.settings(action: .popToRootView)))),
+                    EffectTask.send(.app(action: .setNavigation(.settings)))
+                )
+            }
         case .scanner:
             return EffectTask.send(.app(action: .subdomains(.main(action: .showScannerView))))
         case .orders:

@@ -54,6 +54,8 @@ struct CardWallReadCardDomain: ReducerProtocol {
 
             enum Alert: Equatable {
                 case dismiss
+                case close
+                case unlockCard
                 case getChallenge
                 case wrongCAN
                 case wrongPIN
@@ -87,6 +89,7 @@ struct CardWallReadCardDomain: ReducerProtocol {
         enum Delegate: Equatable {
             case close
             case singleClose
+            case unlockCardClose
 
             case wrongCAN
             case wrongPIN
@@ -160,7 +163,7 @@ struct CardWallReadCardDomain: ReducerProtocol {
                 switch error {
                 case .signChallengeError(.verifyCardError(.passwordBlocked)),
                      .signChallengeError(.verifyCardError(.wrongSecretWarning(retryCount: 0))):
-                    state.destination = .alert(AlertStates.alertFor(error))
+                    state.destination = .alert(AlertStates.alertBlockedCard(error))
                 case .signChallengeError(.verifyCardError(.wrongSecretWarning)):
                     state.destination = .alert(AlertStates.wrongPIN(error))
                 case .signChallengeError(.wrongCAN):
@@ -253,6 +256,11 @@ struct CardWallReadCardDomain: ReducerProtocol {
             return .send(.delegate(.wrongPIN))
         case .destination(.presented(.alert(.wrongCAN))):
             return .send(.delegate(.wrongCAN))
+        case .destination(.presented(.alert(.close))):
+            return .send(.delegate(.close))
+        case .destination(.presented(.alert(.unlockCard))):
+            state.destination = nil
+            return .send(.delegate(.unlockCardClose))
         case let .destination(.presented(.help(action: .delegate(delegate)))):
             switch delegate {
             case .close:

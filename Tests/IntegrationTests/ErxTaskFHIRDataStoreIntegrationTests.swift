@@ -463,11 +463,11 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                let body = chain.request.httpBody,
                let bodyString = String(data: body, encoding: .utf8) {
                 expect(bodyString) == """
-                {"status":"unknown","basedOn":[{"reference":"Task\\/\(order.taskID)\\/$accept?ac=\(order
-                    .accessCode)"}],"payload":[{"contentString":"{\\"address\\":[\\"Intergation Test Str. 1\\",\\"Address Details\\",\\"12345\\",\\"Berlin\\"],\\"phone\\":\\"01772345674\\",\\"supplyOptionsType\\":\\"\(order
+                {"basedOn":[{"reference":"Task\\/\(order.taskID)\\/$accept?ac=\(order
+                    .accessCode)"}],"identifier":[{"system":"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID","value":"\(order
+                    .orderID)"}],"meta":{"profile":["https:\\/\\/gematik.de\\/fhir\\/erp\\/StructureDefinition\\/GEM_ERP_PR_Communication_DispReq|1.2"]},"payload":[{"contentString":"{\\"address\\":[\\"Intergation Test Str. 1\\",\\"Address Details\\",\\"12345\\",\\"Berlin\\"],\\"hint\\":\\"Please use the key\\",\\"name\\":\\"Integration Test\\",\\"phone\\":\\"01772345674\\",\\"supplyOptionsType\\":\\"\(order
                     .redeemType
-                    .rawValue)\\",\\"hint\\":\\"Please use the key\\",\\"name\\":\\"Integration Test\\",\\"version\\":\\"1\\"}"}],"meta":{"profile":["https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq"]},"recipient":[{"identifier":{"system":"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID","value":"3-SMC-B-Testkarte-883110000094055"}}],"identifier":[{"system":"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID","value":"\(order
-                    .orderID)"}],"resourceType":"Communication"}
+                    .rawValue)\\",\\"version\\":1}"}],"recipient":[{"identifier":{"system":"https:\\/\\/gematik.de\\/fhir\\/sid\\/telematik-id","value":"3-SMC-B-Testkarte-883110000094055"}}],"resourceType":"Communication","status":"unknown"}
                 """
             }
             return chain.proceed(request: chain.request)
@@ -478,7 +478,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                         expect(
                             dataString.contains(
                                 """
-                                "payload":[{"contentString":"{\\"address\\":[\\"Intergation Test Str. 1\\",\\"Address Details\\",\\"12345\\",\\"Berlin\\"],\\"phone\\":\\"01772345674\\",\\"supplyOptionsType\\":\\"shipment\\",\\"hint\\":\\"Please use the key\\",\\"name\\":\\"Integration Test\\",\\"version\\":\\"1\\"}"}]
+                                "payload":[{"contentString":"{\\"address\\":[\\"Intergation Test Str. 1\\",\\"Address Details\\",\\"12345\\",\\"Berlin\\"],\\"hint\\":\\"Please use the key\\",\\"name\\":\\"Integration Test\\",\\"phone\\":\\"01772345674\\",\\"supplyOptionsType\\":\\"shipment\\",\\"version\\":1}"}]
                                 """
                             )
                         ).to(beTrue())

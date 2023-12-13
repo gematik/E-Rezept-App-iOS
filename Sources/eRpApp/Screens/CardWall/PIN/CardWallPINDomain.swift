@@ -78,6 +78,7 @@ struct CardWallPINDomain: ReducerProtocol {
             case close
             case wrongCanClose
             case navigateToIntro
+            case unlockCardClose
         }
     }
 
@@ -143,6 +144,8 @@ struct CardWallPINDomain: ReducerProtocol {
                 return .none
             case .navigateToIntro:
                 return EffectTask.send(.delegate(.navigateToIntro))
+            case .unlockCardClose:
+                return EffectTask.send(.delegate(.unlockCardClose))
             }
         case .destination(.presented(.egkAction(action: .delegate(.close)))):
             state.destination = nil

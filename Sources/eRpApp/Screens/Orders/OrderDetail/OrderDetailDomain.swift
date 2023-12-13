@@ -130,7 +130,7 @@ struct OrderDetailDomain: ReducerProtocol {
         case .didReadCommunications:
             let communications = state.order.communications.elements
             return .run { _ in
-                for try await _ in self.setReadState(for: communications).values {}
+                _ = try await self.setReadState(for: communications).async()
             }
         case .loadTasks:
             let taskIds = Set(state.order.communications.map(\.taskId))

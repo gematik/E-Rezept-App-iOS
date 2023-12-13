@@ -106,6 +106,7 @@
 "cdw_btn_rc_alert_close" = "Schließen";
 "cdw_btn_rc_alert_report" = "Melden";
 "cdw_btn_rc_alert_save_profile" = "Schließen";
+"cdw_btn_rc_alert_unlockcard" = "Karte entsperren";
 "cdw_btn_rc_back" = "Zurück";
 "cdw_btn_rc_cancel_label" = "Dialog schließen";
 "cdw_btn_rc_close" = "Schließen";
@@ -217,7 +218,7 @@
 "cdw_txt_rc_demo_mode_info" = "Im Demo-Modus benötigen Sie keine Gesundheitskarte.";
 "cdw_txt_rc_description" = "Klicken Sie auf Anmelden und halten Sie Ihre Karte wie dargestellt an das Gerät. Bewegen Sie die Karte nicht, sobald eine Verbindung hergestellt wurde.";
 "cdw_txt_rc_error_card_locked_description" = "Karte gesperrt";
-"cdw_txt_rc_error_card_locked_recovery" = "Die PIN wurde dreimal falsch eingegeben. Ihre Karte wurde daher aus Sicherheitsgründen gesperrt.";
+"cdw_txt_rc_error_card_locked_recovery" = "Die PIN wurde dreimal falsch eingegeben. Ihre Karte ist daher aus Sicherheitsgründen gesperrt.";
 "cdw_txt_rc_error_generic_card_description" = "Fehler beim Lesen der Gesundheitskarte";
 "cdw_txt_rc_error_generic_card_recovery" = "Bitte versuchen Sie es erneut";
 "cdw_txt_rc_error_memory_failure_description" = "Schreibvorgang nicht erfolgreich";

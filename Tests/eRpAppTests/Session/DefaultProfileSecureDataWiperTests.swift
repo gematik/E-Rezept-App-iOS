@@ -36,7 +36,7 @@ final class DefaultProfileSecureDataWiperTests: XCTestCase {
 
         let sut = DefaultProfileSecureDataWiper(userSessionProvider: mockUserSessionProvider)
 
-        for await _ in sut.wipeSecureData(of: UUID()).values {}
+        try await sut.wipeSecureData(of: UUID()).async()
 
         expect(self.mockUserSessionProvider.userSessionForCalled).to(beTrue())
         expect(mockSecureUserStore.wipeCalled).to(beTrue())

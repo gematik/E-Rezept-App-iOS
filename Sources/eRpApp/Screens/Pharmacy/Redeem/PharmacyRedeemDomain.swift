@@ -138,7 +138,7 @@ struct PharmacyRedeemDomain: ReducerProtocol {
             }
             let pharmacy = state.pharmacy
             return .run { _ in
-                for try await _ in save(pharmacy: pharmacy).values {}
+                _ = try await save(pharmacy: pharmacy).async()
             }
         case let .redeemReceived(.failure(error)):
             state.destination = .alert(.init(for: error))

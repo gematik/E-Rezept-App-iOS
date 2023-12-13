@@ -55,7 +55,7 @@ extension {{ actionType.name }} {
 {% endmacro %}
 
 {% for type in types.enums %}
-    {% if type.name|hasSuffix:"Action" and type.parentName|default:"abc"|hasSuffix:"Domain" %}
+    {% if type.name|hasSuffix:"Action" and type.parentName|default:"abc"|hasSuffix:"Domain" and not type.parent.annotations.SkipSourcery %}
         {% call PrintAction type %}
     {% endif %}
 {% endfor %}

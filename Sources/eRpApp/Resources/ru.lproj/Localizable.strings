@@ -106,6 +106,7 @@
 "cdw_btn_rc_alert_close" = "Закрыть";
 "cdw_btn_rc_alert_report" = "Сообщить";
 "cdw_btn_rc_alert_save_profile" = "Закрыть";
+"cdw_btn_rc_alert_unlockcard" = "Karte entsperren";
 "cdw_btn_rc_back" = "Назад";
 "cdw_btn_rc_cancel_label" = "Закрыть диалоговое окно";
 "cdw_btn_rc_close" = "Закрыть";
@@ -217,7 +218,7 @@
 "cdw_txt_rc_demo_mode_info" = "В демонстрационном режиме медицинская карточка не нужна.";
 "cdw_txt_rc_description" = "Нажмите кнопку \"Войти\" и поднесите карточку к устройству так, как показано. Не перемещайте карту после установления соединения.";
 "cdw_txt_rc_error_card_locked_description" = "карта заблокирована";
-"cdw_txt_rc_error_card_locked_recovery" = "PIN-код был введен неверно три раза, поэтому ваша карточка заблокирована в целях безопасности.";
+"cdw_txt_rc_error_card_locked_recovery" = "Die PIN wurde dreimal falsch eingegeben. Ihre Karte ist daher aus Sicherheitsgründen gesperrt.";
 "cdw_txt_rc_error_generic_card_description" = "Ошибка при чтении медицинской карточки";
 "cdw_txt_rc_error_generic_card_recovery" = "Попробуйте еще раз";
 "cdw_txt_rc_error_memory_failure_description" = "Операция записи не удалась";

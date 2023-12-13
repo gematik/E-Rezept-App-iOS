@@ -106,6 +106,7 @@
 "cdw_btn_rc_alert_close" = "Закрити";
 "cdw_btn_rc_alert_report" = "Повідомити про порушення";
 "cdw_btn_rc_alert_save_profile" = "Закрити";
+"cdw_btn_rc_alert_unlockcard" = "Karte entsperren";
 "cdw_btn_rc_back" = "Назад";
 "cdw_btn_rc_cancel_label" = "Закрити діалогове вікно";
 "cdw_btn_rc_close" = "Закрити";
@@ -217,7 +218,7 @@
 "cdw_txt_rc_demo_mode_info" = "У демо-режимі медична картка здоров'я не потрібна.";
 "cdw_txt_rc_description" = "Натисніть \"Увійти\" та утримуйте картку на пристрої, як показано на малюнку. Не переміщуйте картку після встановлення з'єднання.";
 "cdw_txt_rc_error_card_locked_description" = "картку заблоковано";
-"cdw_txt_rc_error_card_locked_recovery" = "PIN-код тричі введено неправильно. Таким чином, ваша картка заблокована з міркувань безпеки.";
+"cdw_txt_rc_error_card_locked_recovery" = "Die PIN wurde dreimal falsch eingegeben. Ihre Karte ist daher aus Sicherheitsgründen gesperrt.";
 "cdw_txt_rc_error_generic_card_description" = "Помилка під час зчитування картки здоров’я";
 "cdw_txt_rc_error_generic_card_recovery" = "Повторіть спробу";
 "cdw_txt_rc_error_memory_failure_description" = "Операція запису не вдалася";

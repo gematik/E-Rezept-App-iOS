@@ -87,6 +87,17 @@ extension CardWallReadCardDomain {
             })
         }
 
+        static func alertBlockedCard(_ error: CodedError) -> ErpAlertState<Action> {
+            .init(for: error, actions: {
+                ButtonState(role: .cancel, action: .dismiss) {
+                    .init(L10n.cdwBtnRcAlertClose)
+                }
+                ButtonState(action: .unlockCard) {
+                    .init(L10n.cdwBtnRcAlertUnlockcard)
+                }
+            })
+        }
+
         static func alertWithReportButton(error: CodedError) -> ErpAlertState<Action> {
             let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
             return .init(for: error, actions: {

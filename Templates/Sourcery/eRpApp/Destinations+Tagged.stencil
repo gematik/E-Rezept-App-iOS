@@ -21,7 +21,7 @@ extension {{ destinationType.name }} {
 }
 {% endmacro %}
 
-{% for destinations in types.structs where destinations.localName == "Destinations" and destinations.parentName|default:""|hasSuffix:"Domain" %}
+{% for destinations in types.structs where destinations.localName == "Destinations" and destinations.parentName|default:""|hasSuffix:"Domain" and not destinations.parent.annotations.SkipSourcery %}
     {% for destinationType in destinations.containedTypes where destinationType.localName == "State" %}
         {% call GenerateTags destinationType %}
     {% endfor %}

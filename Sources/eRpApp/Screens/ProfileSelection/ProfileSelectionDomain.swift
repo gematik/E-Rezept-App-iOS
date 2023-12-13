@@ -101,7 +101,7 @@ struct ProfileSelectionDomain: ReducerProtocol {
             userProfileService.set(selectedProfileId: profile.id)
             return .send(.close)
         case .editProfiles:
-            router.routeTo(.settings)
+            router.routeTo(.settings(nil))
             return .send(.close)
         case .destination, .close:
             return .none

@@ -1,3 +1,12 @@
+# Release 1.17.0
+
+### fixed (4 changes)
+ 
+- Fix TabView not updating in iOS 15
+- Fix bug that disables AppSecurityOptions with no possibility for re-activation
+- Fix health insurance contact list
+- Fix routing to specific settings-views for eGK Unlock and EditProfileView
+
 # Release 1.16.0
 
 ## 1.16.0

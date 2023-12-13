@@ -83,6 +83,7 @@ extension View {
 
 struct TCAToast_PreviewProvider: PreviewProvider {
     // swiftlint:disable nesting
+    // sourcery: SkipSourcery
     struct Domain: Reducer {
         struct Destinations: ReducerProtocol {
             enum State: Equatable {

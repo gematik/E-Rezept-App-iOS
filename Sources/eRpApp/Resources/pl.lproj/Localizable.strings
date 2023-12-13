@@ -106,6 +106,7 @@
 "cdw_btn_rc_alert_close" = "Zamknij";
 "cdw_btn_rc_alert_report" = "Zgłoś";
 "cdw_btn_rc_alert_save_profile" = "Zamknij";
+"cdw_btn_rc_alert_unlockcard" = "Karte entsperren";
 "cdw_btn_rc_back" = "Powrót";
 "cdw_btn_rc_cancel_label" = "Zamknij okno dialogowe";
 "cdw_btn_rc_close" = "Zamknij";
@@ -217,7 +218,7 @@
 "cdw_txt_rc_demo_mode_info" = "W trybie demonstracyjnym nie potrzebujesz karty zdrowia.";
 "cdw_txt_rc_description" = "Kliknij przycisk Zaloguj i zbliż kartę do urządzenia, jak pokazano. Po nawiązaniu połączenia nie poruszaj kartą.";
 "cdw_txt_rc_error_card_locked_description" = "karta zablokowana";
-"cdw_txt_rc_error_card_locked_recovery" = "Kod PIN został wprowadzony niepoprawnie trzy razy. Dlatego Twoja karta została zablokowana ze względów bezpieczeństwa.";
+"cdw_txt_rc_error_card_locked_recovery" = "Die PIN wurde dreimal falsch eingegeben. Ihre Karte ist daher aus Sicherheitsgründen gesperrt.";
 "cdw_txt_rc_error_generic_card_description" = "Błąd podczas odczytu karty zdrowia";
 "cdw_txt_rc_error_generic_card_recovery" = "Spróbuj ponownie";
 "cdw_txt_rc_error_memory_failure_description" = "Operacja zapisu nie powiodła się";

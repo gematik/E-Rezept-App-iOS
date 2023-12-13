@@ -136,7 +136,7 @@ extension MainDomain {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .turnOffDemoMode:
-            environment.router.routeTo(.settings)
+            environment.router.routeTo(.settings(nil))
             return .none
         case let .prescriptionList(action: .profilePictureViewTapped(profile)):
             state.destination = .editProfilePicture(
@@ -223,7 +223,7 @@ extension MainDomain {
                 where response.code == IDPError.Code.pairingAuthorizationFailed.rawValue:
                 state.destination = .alert(AlertStates.devicePairingInvalid())
                 return .run { [profileId = environment.userSession.profileId] _ in
-                    for try await _ in environment.profileSecureDataWiper.wipeSecureData(of: profileId).values {}
+                    _ = try await environment.profileSecureDataWiper.wipeSecureData(of: profileId).async()
                 }
             case .idpError(.biometrics), .idpError(.serverError):
                 state.destination = .alert(AlertStates.loginNecessaryAlert(for: error))
@@ -331,6 +331,10 @@ extension MainDomain {
                 )
                 return .none
             }
+        case .destination(.presented(.cardWall(action: .delegate(.unlockCardClose)))):
+            state.destination = nil
+            environment.router.routeTo(.settings(.unlockCard))
+            return .none
         case .destination,
              .setNavigation,
              .prescriptionList,

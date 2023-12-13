@@ -245,6 +245,8 @@ import SwiftUI
     internal static let cdwBtnRcAlertReport = StringAsset("cdw_btn_rc_alert_report")
     /// Close
     internal static let cdwBtnRcAlertSaveProfile = StringAsset("cdw_btn_rc_alert_save_profile")
+    /// Karte entsperren
+    internal static let cdwBtnRcAlertUnlockcard = StringAsset("cdw_btn_rc_alert_unlockcard")
     /// Back
     internal static let cdwBtnRcBack = StringAsset("cdw_btn_rc_back")
     /// Close dialog
@@ -476,7 +478,7 @@ import SwiftUI
     internal static let cdwTxtRcDescription = StringAsset("cdw_txt_rc_description")
     /// card blocked
     internal static let cdwTxtRcErrorCardLockedDescription = StringAsset("cdw_txt_rc_error_card_locked_description")
-    /// The PIN was entered incorrectly three times. Your card has therefore been blocked for security reasons.
+    /// Die PIN wurde dreimal falsch eingegeben. Ihre Karte ist daher aus Sicherheitsgründen gesperrt.
     internal static let cdwTxtRcErrorCardLockedRecovery = StringAsset("cdw_txt_rc_error_card_locked_recovery")
     /// Error reading the medical card
     internal static let cdwTxtRcErrorGenericCardDescription = StringAsset("cdw_txt_rc_error_generic_card_description")

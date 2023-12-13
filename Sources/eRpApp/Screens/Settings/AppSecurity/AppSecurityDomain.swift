@@ -101,14 +101,18 @@ struct AppSecurityDomain: ReducerProtocol {
                     .eraseToAnyPublisher
             )
         case let .response(.loadSecurityOption(appSecurityOption)):
-            if !state.availableSecurityOptions.contains(appSecurityOption) {
+            if appSecurityOption == .biometryAndPassword(.faceID) || appSecurityOption ==
+                .biometryAndPassword(.touchID), !state.availableSecurityOptions.contains(appSecurityOption) {
+                userDataStore.set(appSecurityOption: .password)
+                state.selectedSecurityOption = .password
+            } else if !state.availableSecurityOptions.contains(appSecurityOption) {
                 userDataStore.set(appSecurityOption: .unsecured)
             } else {
                 state.selectedSecurityOption = appSecurityOption
             }
             return .none
         case .togglePasswordSelected:
-            if !state.isBiometricSelected {
+            if !state.isBiometricSelected, state.isPasswordSelected {
                 return .none
             }
             if !state.isPasswordSelected {
@@ -124,7 +128,7 @@ struct AppSecurityDomain: ReducerProtocol {
                 }
             }
         case let .toggleBiometricSelected(type):
-            if !state.isPasswordSelected {
+            if !state.isPasswordSelected, state.isBiometricSelected {
                 return .none
             }
             if state.isBiometricSelected {

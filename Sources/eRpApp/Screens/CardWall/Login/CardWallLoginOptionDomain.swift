@@ -79,6 +79,7 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
             case wrongCanClose
             case wrongPinClose
             case navigateToIntro
+            case unlockCardClose
         }
     }
 
@@ -174,6 +175,12 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
                     // Delay for waiting the close animation Workaround for TCA pullback problem
                     try await schedulers.main.sleep(for: 1.1)
                     await send(.delegate(.navigateToIntro))
+                }
+            case .unlockCardClose:
+                return .run { send in
+                    // Delay for waiting the close animation Workaround for TCA pullback problem
+                    try await schedulers.main.sleep(for: 0.1)
+                    await send(.delegate(.unlockCardClose))
                 }
             }
         case .setNavigation,

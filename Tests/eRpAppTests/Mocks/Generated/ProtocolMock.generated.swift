@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import AVS
 import Combine
@@ -878,6 +878,156 @@ final class MockPasswordStrengthTester: PasswordStrengthTester {
         passwordStrengthForReceivedPassword = password
         passwordStrengthForReceivedInvocations.append(password)
         return passwordStrengthForClosure.map({ $0(password) }) ?? passwordStrengthForReturnValue
+    }
+}
+
+
+// MARK: - MockPharmacyRepository -
+
+final class MockPharmacyRepository: PharmacyRepository {
+    
+   // MARK: - updateFromRemote
+
+    var updateFromRemoteByCallsCount = 0
+    var updateFromRemoteByCalled: Bool {
+        updateFromRemoteByCallsCount > 0
+    }
+    var updateFromRemoteByReceivedTelematikId: String?
+    var updateFromRemoteByReceivedInvocations: [String] = []
+    var updateFromRemoteByReturnValue: AnyPublisher<PharmacyLocation, PharmacyRepositoryError>!
+    var updateFromRemoteByClosure: ((String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError>)?
+
+    func updateFromRemote(by telematikId: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
+        updateFromRemoteByCallsCount += 1
+        updateFromRemoteByReceivedTelematikId = telematikId
+        updateFromRemoteByReceivedInvocations.append(telematikId)
+        return updateFromRemoteByClosure.map({ $0(telematikId) }) ?? updateFromRemoteByReturnValue
+    }
+    
+   // MARK: - loadCached
+
+    var loadCachedByCallsCount = 0
+    var loadCachedByCalled: Bool {
+        loadCachedByCallsCount > 0
+    }
+    var loadCachedByReceivedTelematikId: String?
+    var loadCachedByReceivedInvocations: [String] = []
+    var loadCachedByReturnValue: AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>!
+    var loadCachedByClosure: ((String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>)?
+
+    func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
+        loadCachedByCallsCount += 1
+        loadCachedByReceivedTelematikId = telematikId
+        loadCachedByReceivedInvocations.append(telematikId)
+        return loadCachedByClosure.map({ $0(telematikId) }) ?? loadCachedByReturnValue
+    }
+    
+   // MARK: - searchRemote
+
+    var searchRemoteSearchTermPositionFilterCallsCount = 0
+    var searchRemoteSearchTermPositionFilterCalled: Bool {
+        searchRemoteSearchTermPositionFilterCallsCount > 0
+    }
+    var searchRemoteSearchTermPositionFilterReceivedArguments: (searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter])?
+    var searchRemoteSearchTermPositionFilterReceivedInvocations: [(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter])] = []
+    var searchRemoteSearchTermPositionFilterReturnValue: AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>!
+    var searchRemoteSearchTermPositionFilterClosure: ((String, Position?, [PharmacyRepositoryFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>)?
+
+    func searchRemote(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        searchRemoteSearchTermPositionFilterCallsCount += 1
+        searchRemoteSearchTermPositionFilterReceivedArguments = (searchTerm: searchTerm, position: position, filter: filter)
+        searchRemoteSearchTermPositionFilterReceivedInvocations.append((searchTerm: searchTerm, position: position, filter: filter))
+        return searchRemoteSearchTermPositionFilterClosure.map({ $0(searchTerm, position, filter) }) ?? searchRemoteSearchTermPositionFilterReturnValue
+    }
+    
+   // MARK: - loadLocal
+
+    var loadLocalByCallsCount = 0
+    var loadLocalByCalled: Bool {
+        loadLocalByCallsCount > 0
+    }
+    var loadLocalByReceivedTelematikId: String?
+    var loadLocalByReceivedInvocations: [String] = []
+    var loadLocalByReturnValue: AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>!
+    var loadLocalByClosure: ((String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>)?
+
+    func loadLocal(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
+        loadLocalByCallsCount += 1
+        loadLocalByReceivedTelematikId = telematikId
+        loadLocalByReceivedInvocations.append(telematikId)
+        return loadLocalByClosure.map({ $0(telematikId) }) ?? loadLocalByReturnValue
+    }
+    
+   // MARK: - loadLocal
+
+    var loadLocalCountCallsCount = 0
+    var loadLocalCountCalled: Bool {
+        loadLocalCountCallsCount > 0
+    }
+    var loadLocalCountReceivedCount: Int?
+    var loadLocalCountReceivedInvocations: [Int?] = []
+    var loadLocalCountReturnValue: AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>!
+    var loadLocalCountClosure: ((Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>)?
+
+    func loadLocal(count: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        loadLocalCountCallsCount += 1
+        loadLocalCountReceivedCount = count
+        loadLocalCountReceivedInvocations.append(count)
+        return loadLocalCountClosure.map({ $0(count) }) ?? loadLocalCountReturnValue
+    }
+    
+   // MARK: - save
+
+    var savePharmaciesCallsCount = 0
+    var savePharmaciesCalled: Bool {
+        savePharmaciesCallsCount > 0
+    }
+    var savePharmaciesReceivedPharmacies: [PharmacyLocation]?
+    var savePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
+    var savePharmaciesReturnValue: AnyPublisher<Bool, PharmacyRepositoryError>!
+    var savePharmaciesClosure: (([PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError>)?
+
+    func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        savePharmaciesCallsCount += 1
+        savePharmaciesReceivedPharmacies = pharmacies
+        savePharmaciesReceivedInvocations.append(pharmacies)
+        return savePharmaciesClosure.map({ $0(pharmacies) }) ?? savePharmaciesReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deletePharmaciesCallsCount = 0
+    var deletePharmaciesCalled: Bool {
+        deletePharmaciesCallsCount > 0
+    }
+    var deletePharmaciesReceivedPharmacies: [PharmacyLocation]?
+    var deletePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
+    var deletePharmaciesReturnValue: AnyPublisher<Bool, PharmacyRepositoryError>!
+    var deletePharmaciesClosure: (([PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError>)?
+
+    func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        deletePharmaciesCallsCount += 1
+        deletePharmaciesReceivedPharmacies = pharmacies
+        deletePharmaciesReceivedInvocations.append(pharmacies)
+        return deletePharmaciesClosure.map({ $0(pharmacies) }) ?? deletePharmaciesReturnValue
+    }
+    
+   // MARK: - loadAvsCertificates
+
+    var loadAvsCertificatesForCallsCount = 0
+    var loadAvsCertificatesForCalled: Bool {
+        loadAvsCertificatesForCallsCount > 0
+    }
+    var loadAvsCertificatesForReceivedId: String?
+    var loadAvsCertificatesForReceivedInvocations: [String] = []
+    var loadAvsCertificatesForReturnValue: AnyPublisher<[X509], PharmacyRepositoryError>!
+    var loadAvsCertificatesForClosure: ((String) -> AnyPublisher<[X509], PharmacyRepositoryError>)?
+
+    func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError> {
+        loadAvsCertificatesForCallsCount += 1
+        loadAvsCertificatesForReceivedId = id
+        loadAvsCertificatesForReceivedInvocations.append(id)
+        return loadAvsCertificatesForClosure.map({ $0(id) }) ?? loadAvsCertificatesForReturnValue
     }
 }
 

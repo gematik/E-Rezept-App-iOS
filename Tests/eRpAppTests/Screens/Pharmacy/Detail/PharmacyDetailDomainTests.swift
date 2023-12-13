@@ -119,7 +119,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepository.loadAvsCertificatesPublisher = Just([]).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just([])
+            .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         // When loading the profile
@@ -159,7 +160,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let expectedCertResponse = [derCert]
-        mockPharmacyRepository.loadAvsCertificatesPublisher = Just(expectedCertResponse)
+        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just(expectedCertResponse)
             .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
 
         // When loading the profile
@@ -201,7 +202,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepository.loadAvsCertificatesPublisher = Just([]).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just([])
+            .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         // When loading the profile
@@ -325,7 +327,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let expectedCertResponse = [derCert]
-        mockPharmacyRepository.loadAvsCertificatesPublisher = Just(expectedCertResponse)
+        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just(expectedCertResponse)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
@@ -356,7 +358,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let expectedCertResponse = [derCert]
-        mockPharmacyRepository.loadAvsCertificatesPublisher = Just(expectedCertResponse)
+        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just(expectedCertResponse)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
@@ -384,7 +386,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepository.loadAvsCertificatesPublisher = Just([]).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just([])
+            .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         // When loading the profile
@@ -410,7 +413,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepository.loadAvsCertificatesPublisher = Just([]).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.loadAvsCertificatesForReturnValue = Just([])
+            .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         // When loading the profile
@@ -429,7 +433,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
         ))
 
-        mockPharmacyRepository.savePublisher = Just(true).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.savePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA
@@ -458,7 +462,7 @@ class PharmacyDetailDomainTests: XCTestCase {
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
         ))
 
-        mockPharmacyRepository.savePublisher = Just(true).setFailureType(to: PharmacyRepositoryError.self)
+        mockPharmacyRepository.savePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA
@@ -492,7 +496,7 @@ class PharmacyDetailDomainTests: XCTestCase {
         let expectedError = PharmacyRepositoryError
             .local(.write(error: PharmacyCoreDataStore.Error.noMatchingEntity))
         mockPharmacyRepository
-            .savePublisher = Fail(error: PharmacyRepositoryError
+            .savePharmaciesReturnValue = Fail(error: PharmacyRepositoryError
                 .local(.write(error: PharmacyCoreDataStore.Error.noMatchingEntity))).eraseToAnyPublisher()
 
         var expectedResult = PharmacyLocationViewModel.Fixtures.pharmacyA

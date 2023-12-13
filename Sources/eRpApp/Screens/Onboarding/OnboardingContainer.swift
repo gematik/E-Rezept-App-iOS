@@ -52,32 +52,31 @@ struct OnboardingContainer: View, KeyboardReadable {
                     send: OnboardingDomain.Action.setPage(index:)
                 )
             ) {
-                OnboardingStartView()
-                    .tag(0)
-
-                if viewStore.composition.pages.contains(.legalInfo) {
-                    OnboardingLegalInfoView(isAllAccepted: viewStore.binding(get: \.legalConfirmed,
-                                                                             send: OnboardingDomain.Action
-                                                                                 .setConfirmLegal)) {
-                        viewStore.send(.nextPage, animation: .default)
+                ForEach(viewStore.composition.pages, id: \.self) { page in
+                    switch page {
+                    case .start:
+                        OnboardingStartView()
+                            .tag(0)
+                    case .legalInfo:
+                        OnboardingLegalInfoView(isAllAccepted: viewStore.binding(get: \.legalConfirmed,
+                                                                                 send: OnboardingDomain.Action
+                                                                                     .setConfirmLegal)) {
+                            viewStore.send(.nextPage, animation: .default)
+                        }
+                        .tag(1)
+                    case .registerAuthentication:
+                        OnboardingRegisterAuthenticationView(
+                            store: store.scope(state: { $0.registerAuthenticationState },
+                                               action: { .registerAuthentication(action: $0) })
+                        )
+                        .tag(2)
+                    case .analytics:
+                        OnboardingAnalyticsView {
+                            // [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
+                            viewStore.send(.showTracking)
+                        }
+                        .tag(3)
                     }
-                    .tag(1)
-                }
-
-                if viewStore.composition.pages.contains(.registerAuthentication) {
-                    OnboardingRegisterAuthenticationView(
-                        store: store.scope(state: { $0.registerAuthenticationState },
-                                           action: { .registerAuthentication(action: $0) })
-                    )
-                    .tag(2)
-                }
-
-                if viewStore.composition.pages.contains(.analytics) {
-                    OnboardingAnalyticsView {
-                        // [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
-                        viewStore.send(.showTracking)
-                    }
-                    .tag(3)
                 }
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))

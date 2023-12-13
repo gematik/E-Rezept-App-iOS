@@ -106,6 +106,7 @@
 "cdw_btn_rc_alert_close" = "إغلاق";
 "cdw_btn_rc_alert_report" = "الإبلاغ";
 "cdw_btn_rc_alert_save_profile" = "إغلاق";
+"cdw_btn_rc_alert_unlockcard" = "Karte entsperren";
 "cdw_btn_rc_back" = "تراجع";
 "cdw_btn_rc_cancel_label" = "إغلاق النافذة";
 "cdw_btn_rc_close" = "إغلاق";
@@ -217,7 +218,7 @@
 "cdw_txt_rc_demo_mode_info" = "لا تحتاج إلى بطاقة صحية في الوضع التجريبي.";
 "cdw_txt_rc_description" = "انقر على تسجيل الدخول وقم بتثبيت بطاقتك على الجهاز كما هو موضح. لا تحرك البطاقة بمجرد حدوت اتصال.";
 "cdw_txt_rc_error_card_locked_description" = "بطاقة محظورة";
-"cdw_txt_rc_error_card_locked_recovery" = "تم إدخال رقم تعريف شخصي خاطيء ثلاث مرات. لذلك تم حظر بطاقتك لأسباب أمنية.";
+"cdw_txt_rc_error_card_locked_recovery" = "Die PIN wurde dreimal falsch eingegeben. Ihre Karte ist daher aus Sicherheitsgründen gesperrt.";
 "cdw_txt_rc_error_generic_card_description" = "خطأ عند قراءة البطاقة الصحية";
 "cdw_txt_rc_error_generic_card_recovery" = "الرجاء المحاولة مرة أخرى";
 "cdw_txt_rc_error_memory_failure_description" = "عملية الكتابة غير ناجحة";

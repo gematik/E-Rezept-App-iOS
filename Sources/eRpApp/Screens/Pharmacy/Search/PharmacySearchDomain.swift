@@ -241,8 +241,7 @@ struct PharmacySearchDomain: ReducerProtocol {
                     }
                     state.selectedPharmacy = nil
                     return .run { _ in
-                        for try await _ in pharmacyRepository.delete(pharmacy: pharmacyLocation)
-                            .first().values {}
+                        _ = try await pharmacyRepository.delete(pharmacy: pharmacyLocation).async()
                     }
                 }
             }
@@ -357,16 +356,18 @@ struct PharmacySearchDomain: ReducerProtocol {
 
             state.searchState = .startView(loading: true)
             return .run(operation: { send in
-                for await value in pharmacyRepository.loadCached(by: identifier).first().catchToPublisher()
-                    .values {
-                    let value = value.flatMap { location -> Result<PharmacyLocation, PharmacyRepositoryError> in
-                        guard let location = location else {
-                            return .failure(.remote(.notFound))
-                        }
-                        return .success(location)
+                let pharmacy = try await pharmacyRepository.loadCached(by: identifier)
+                    .first()
+                    .catchToPublisher()
+                    .async()
+
+                let value = pharmacy.flatMap { location -> Result<PharmacyLocation, PharmacyRepositoryError> in
+                    guard let location = location else {
+                        return .failure(.remote(.notFound))
                     }
-                    await send(.response(.loadAndNavigateToPharmacyReceived(value)))
+                    return .success(location)
                 }
+                await send(.response(.loadAndNavigateToPharmacyReceived(value)))
 
                 // Let all transitions finish before toggling the favorite.
                 try? await schedulers.main.sleep(for: .seconds(1))

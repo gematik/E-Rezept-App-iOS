@@ -282,7 +282,7 @@ struct EditProfileDomain: ReducerProtocol {
             // [REQ:gemSpec_IDP_Frontend:A_20499-01#1] Call the SSO_TOKEN removal upon manual logout
             // [REQ:BSI-eRp-ePA:O.Tokn_6#3] Call the token removal upon manual logout
             return .run { [profileId = state.profileId] _ in
-                for await _ in profileSecureDataWiper.wipeSecureData(of: profileId).values {}
+                try await profileSecureDataWiper.wipeSecureData(of: profileId).async()
             }
         case .login:
             userDataStore.set(selectedProfileId: state.profileId)
@@ -291,7 +291,7 @@ struct EditProfileDomain: ReducerProtocol {
         case .relogin:
             state.token = nil
             return .run { [profileId = state.profileId, environment = environment] _ in
-                for await _ in environment.profileSecureDataWiper.wipeSecureData(of: profileId).values {}
+                try await environment.profileSecureDataWiper.wipeSecureData(of: profileId).async()
 
                 environment.userDataStore.set(selectedProfileId: profileId)
                 environment.router.routeTo(.mainScreen(.login))
@@ -344,7 +344,7 @@ struct EditProfileDomain: ReducerProtocol {
                 state.destination = nil
                 let profileId = state.profileId
                 return .run { _ in
-                    for await _ in environment.profileSecureDataWiper.wipeSecureData(of: profileId).values {}
+                    try await environment.profileSecureDataWiper.wipeSecureData(of: profileId).async()
                 }
             case let .failure(error):
                 state.destination = .alert(AlertStates.deleteBiometricPairingFailed(with: error))

@@ -127,6 +127,37 @@ final class AppSecurityDomainTests: XCTestCase {
         }
     }
 
+    func testLoadingAvailableSecurityOptions_BiometricAndPassword_Selected() async {
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured, .password,
+                                                             .biometryAndPassword(.faceID)]
+        let preSelectedSecurityOption: AppSecurityOption = .biometryAndPassword(.faceID)
+
+        let store = testStore(for: availableSecurityOptions, selectedSecurityOption: preSelectedSecurityOption)
+
+        await store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        await testScheduler.advance()
+        await store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+    }
+
+    func testLoadingAvailableSecurityOptions_BiometricAndPassword_Selected_And_Biometric_Not_Enrolled() async {
+        let availableSecurityOptions: [AppSecurityOption] = [.password, .unsecured]
+        let preSelectedSecurityOption: AppSecurityOption = .biometryAndPassword(.faceID)
+
+        let store = testStore(for: availableSecurityOptions, selectedSecurityOption: preSelectedSecurityOption)
+
+        await store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        await testScheduler.advance()
+        await store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
+            $0.selectedSecurityOption = .password
+        }
+    }
+
     func testSelectingAppSecurityOption_From_Biometry_To_BiometryAndPassword() async {
         let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured, .password,
                                                              .biometryAndPassword(.faceID)]

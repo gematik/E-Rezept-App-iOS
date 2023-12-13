@@ -71,6 +71,7 @@ struct CardWallIntroductionDomain: ReducerProtocol {
 
         enum Delegate: Equatable {
             case close
+            case unlockCardClose
         }
     }
 
@@ -121,8 +122,16 @@ struct CardWallIntroductionDomain: ReducerProtocol {
                 try await schedulers.main.sleep(for: 0.05)
                 await send(.delegate(.close))
             }
+        case .destination(.presented(.canAction(action: .delegate(.unlockCardClose)))):
+            state.destination = nil
+            return .run { send in
+                try await schedulers.main.sleep(for: 0.05)
+                await send(.delegate(.unlockCardClose))
+            }
         case .setNavigation,
              .destination:
+            return .none
+        case .delegate(.unlockCardClose):
             return .none
         }
     }

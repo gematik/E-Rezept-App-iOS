@@ -400,11 +400,12 @@ extension DebugDomain {
         let userProfileService = self.userProfileService
 
         return .run { _ in
-            for try await _ in userProfileService
-                .update(profileId: profileId, mutating: { profile in
+            _ = try await userProfileService
+                .update(profileId: profileId) { profile in
                     profile.insuranceType = .pKV
                     profile.insurance = "Dummy pKV"
-                }).values {}
+                }
+                .async()
         }
     }
 }
