@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.16.0 Docs
+           1.17.0 Docs
         </a>
          (100% documented)
       </p>
@@ -633,7 +633,7 @@ NavigationLinkStore(
 // [REQ:BSI-eRp-ePA:O.Auth_3#2,O.Plat_10#2] Start login with KK
 return .publisher(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-184-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:184</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-187-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:187</code></h4>
 
 <p>Implementation of eGK connection</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_3#2] Implementation of eGK connection
@@ -1398,7 +1398,7 @@ struct TermsOfUseView: View {
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_3#3] User acceptance
 OnboardingLegalInfoCheckmarkView(isAccepted: $isAllAccepted)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardingcontainer-swift-64-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingContainer.swift:64</code></h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingcontainer-swift-62-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingContainer.swift:62</code></h4>
 
 <p>Callback triggers tracking alert</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
@@ -1738,7 +1738,7 @@ erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_1#5] External application calls via Universal Linking
 func scene(_: UIScene, continue userActivity: NSUserActivity) {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-appstartdomain-swift-136-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:136</code></h4>
+<h4 id='code-sources-erpapp-screens-appstartdomain-swift-151-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:151</code></h4>
 
 <p>External application calls via Universal Linking</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
@@ -2292,14 +2292,14 @@ func isValid(on date: Date) -&gt; Bool {
 
 <p>Not applicable as authenticator module is within FdV. Consent is given by using the app.</p>
 <h3 id='a_20526-01' class='heading'>A_20526-01</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-399-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:399</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-407-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:407</code></h4>
 
 <p>sign and verify with idp</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-433-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:433</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-441-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:441</code></h4>
 
 <p>verify with idp</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
@@ -2733,7 +2733,7 @@ guard let tokenJWT = try? JWT(from: token.accessToken),
 guard let tokenJWT = try? JWT(from: token.accessToken),
 </code></pre>
 <h3 id='a_21574' class='heading'>A_21574</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptiondomain-swift-112-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionDomain.swift:112</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptiondomain-swift-113-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionDomain.swift:113</code></h4>
 
 <p>Present user information</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
@@ -3779,7 +3779,7 @@ let cms = try CMSContentInfo.encryptPartial(data: data)
 <p>We use the recommended NSURLSession for best network security <a href="https://developer.apple.com/documentation/security/preventing_insecure_network_connections">Preventing insecure network connections</a></p>
 <h2 id='gemspec_erp_apovzd' class='heading'>gemSpec_eRp_APOVZD</h2>
 <h3 id='a_21154' class='heading'>A_21154</h3>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-266-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:266</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-265-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:265</code></h4>
 
 <p>If user defined filters contain location element, ask for permission</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_APOVZD:A_21154] If user defined filters contain location element, ask for permission
@@ -4263,16 +4263,16 @@ if Result.success(false) == authenticated {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-373-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:373</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-381-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:381</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 func idpChallengePublisher(for profileID: UUID) -&gt; AsyncStream&lt;CardWallReadCardDomain.Action&gt; {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-398-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:398</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-406-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:406</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-432-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:432</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-440-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:440</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
