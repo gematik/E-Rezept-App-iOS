@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,7 +26,7 @@ import XCTest
 final class AVSMessageFromOrderTests: XCTestCase {
     func testMinimalExample() throws {
         // given
-        let order = Order(
+        let order = OrderRequest(
             version: "1",
             redeemType: .onPremise,
             taskID: "taskID",
@@ -89,7 +89,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
             )
         ) == .invalid(L10n.rivAvsInvalidName(String(AVSMessage.Validator.maxNameLength)).text)
 
-        let order = Order(
+        let order = OrderRequest(
             version: String(validExample.version),
             redeemType: validExample.supplyOptionsType.asRedeemOption,
             name: longName,
@@ -105,7 +105,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
     func testIfDeliveryOrShipmentThenNonEmptyPhoneOrNonEmptyMail() throws {
         // given
         let validExample = AVSMessage.Fixtures.completeExample
-        let order1 = Order(
+        let order1 = OrderRequest(
             version: String(validExample.version),
             redeemType: .delivery,
             name: validExample.name,
@@ -119,7 +119,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
         // then
         expect(try AVSMessage(order1)).to(throwError(AVSError.invalidAVSMessageInput))
 
-        let order2 = Order(
+        let order2 = OrderRequest(
             version: String(validExample.version),
             redeemType: .delivery,
             name: validExample.name,
@@ -131,7 +131,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
         )
         expect(try AVSMessage(order2)).toNot(throwError())
 
-        let order3 = Order(
+        let order3 = OrderRequest(
             version: String(validExample.version),
             redeemType: .shipment,
             name: validExample.name,

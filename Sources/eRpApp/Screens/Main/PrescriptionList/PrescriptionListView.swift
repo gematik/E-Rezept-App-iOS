@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -73,20 +73,21 @@ struct PrescriptionListView<StickyHeader: View>: View {
             viewStore.send(.unregisterSelectedProfileIDListener)
         }
         .alert(
+            L10n.alertErrorTitle.key,
             isPresented: viewStore.binding(
                 get: \.showError,
                 send: PrescriptionListDomain.Action.alertDismissButtonTapped
-            )
-        ) {
-            Alert(
-                title: Text(L10n.alertErrorTitle),
-                message: Text(viewStore.error?
-                    .localizedDescriptionWithErrorList ?? "alert_error_message_unknown"),
-                dismissButton: .default(Text(L10n.alertBtnOk)) {
+            ),
+            actions: {
+                Button(L10n.alertBtnOk) {
                     viewStore.send(.alertDismissButtonTapped)
                 }
-            )
-        }
+            },
+            message: {
+                Text(viewStore.error?
+                    .localizedDescriptionWithErrorList ?? "alert_error_message_unknown")
+            }
+        )
     }
 
     private struct ListView: View {

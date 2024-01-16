@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -285,7 +285,9 @@ final class EditProfileDomainTests: XCTestCase {
         mockUserSession.secureUserStore = mockSecureUserStore
         mockUserSessionProvider.userSessionForReturnValue = mockUserSession
 
-        await sut.send(.registerListener)
+        await sut.send(.task) {
+            $0.availableSecurityOptions = [.password]
+        }
 
         await sut.receive(.response(.tokenReceived(Fixtures.token)))
 

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -54,6 +54,7 @@ enum ChargeItemDomainServiceFetchResult: Equatable {
     case success([ErxSparseChargeItem])
     case notAuthenticated
     case consentNotGranted
+
     case error(Error)
 
     // sourcery: CodedError = "030"
@@ -87,8 +88,13 @@ enum ChargeItemDomainServiceAuthenticateResult: Equatable {
 }
 
 enum ChargeItemListDomainServiceGrantResult: Equatable {
-    case success
+    // successful
+    case success // 201
+    case conflict // 409 the user's consent has already been given
+
+    // login handler
     case notAuthenticated
+
     case error(Error)
 
     // sourcery: CodedError = "032"
@@ -190,11 +196,12 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
                     }
                     .eraseToAnyPublisher()
             case .notGranted:
-                return Just(ChargeItemDomainServiceFetchResult.consentNotGranted)
-                    .eraseToAnyPublisher()
+                return Just(ChargeItemDomainServiceFetchResult.consentNotGranted).eraseToAnyPublisher()
             case .notAuthenticated:
-                return Just(ChargeItemDomainServiceFetchResult.notAuthenticated)
-                    .eraseToAnyPublisher()
+                return Just(ChargeItemDomainServiceFetchResult.notAuthenticated).eraseToAnyPublisher()
+
+            case let .error(error):
+                return Just(.error(.chargeItemConsentService(error))).eraseToAnyPublisher()
             }
         }
         .catch { error -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> in
@@ -276,7 +283,10 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
         .map { chargeItemConsentServiceResult -> ChargeItemListDomainServiceGrantResult in
             switch chargeItemConsentServiceResult {
             case .success: return .success
+            case .conflict: return .conflict
             case .notAuthenticated: return .notAuthenticated
+            case let .error(error):
+                return ChargeItemListDomainServiceGrantResult.error(.chargeItemConsentService(error))
             }
         }
         .catch { error -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> in

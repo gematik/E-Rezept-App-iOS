@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,12 +26,18 @@ public struct PrimaryButtonStyle: ButtonStyle {
     private var isDestructive: Bool
 
     var isEnabled: Bool
-    var isHuggingContent: Bool
+    var width: Width
 
-    public init(enabled: Bool = true, destructive: Bool = false, hugging: Bool = false) {
+    public enum Width {
+        case infinite
+        case narrowHugging
+        case wideHugging
+    }
+
+    public init(enabled: Bool = true, destructive: Bool = false, width: Width = .infinite) {
         isEnabled = enabled
         isDestructive = destructive
-        isHuggingContent = hugging
+        self.width = width
     }
 
     var backgroundColor: Color {
@@ -52,11 +58,11 @@ public struct PrimaryButtonStyle: ButtonStyle {
             .font(.body.weight(.semibold))
             .foregroundColor(isEnabled ? Color.white : Color(.systemGray))
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .padding(.horizontal, 32)
-            .frame(maxWidth: isHuggingContent ? nil : .infinity, minHeight: 52, alignment: .center)
+            .padding(.horizontal, (width == .narrowHugging) ? 32 : 64)
+            .frame(maxWidth: (width == .infinite) ? .infinity : nil, minHeight: 52, alignment: .center)
             .background(backgroundColor)
             .cornerRadius(16)
-            .padding(isHuggingContent ? [] : .horizontal)
+            .padding((width == .infinite) ? .horizontal : [])
     }
 }
 
@@ -79,7 +85,15 @@ extension ButtonStyle where Self == PrimaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primaryHugging)`` modifier.
-    public static var primaryHugging: PrimaryButtonStyle { PrimaryButtonStyle(hugging: true) }
+    public static var primaryHugging: PrimaryButtonStyle { PrimaryButtonStyle(width: .wideHugging) }
+
+    /// A button style that applies fg and bg color, as well as border radius, hugging its contents.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.primaryHuggingNarrowly)`` modifier.
+    public static var primaryHuggingNarrowly: PrimaryButtonStyle {
+        PrimaryButtonStyle(width: .narrowHugging)
+    }
 }
 
 struct PrimaryButtonStyle_Preview: PreviewProvider {
@@ -113,18 +127,35 @@ struct PrimaryButtonStyle_Preview: PreviewProvider {
                             .padding(.horizontal)
 
                         Button(action: {}, label: { Text("Simple") })
-                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false, hugging: true))
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false, width: .wideHugging))
                             .disabled(true)
 
                         Button(action: {}, label: { Text("Simple") })
                             .environment(\.isEnabled, false)
-                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false, hugging: true))
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false, width: .wideHugging))
+
+                        Button(action: {}, label: { Text("Narrowly padded") })
+                            .buttonStyle(PrimaryButtonStyle(
+                                enabled: true,
+                                destructive: false,
+                                width: .narrowHugging
+                            ))
+                            .disabled(true)
+
+                        Button(action: {}, label: { Text("Narrowly padded") })
+                            .environment(\.isEnabled, false)
+                            .buttonStyle(PrimaryButtonStyle(
+                                enabled: false,
+                                destructive: false,
+                                width: .narrowHugging
+                            ))
+                            .disabled(true)
 
                         Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
-                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false, hugging: true))
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false, width: .wideHugging))
 
                         Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
-                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false, hugging: true))
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false, width: .wideHugging))
                     }
 
                     Group {

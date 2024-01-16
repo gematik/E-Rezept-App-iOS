@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -34,7 +34,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
     var idpMock: TestUtils.IDPSessionMock!
     var mockUserSession: MockUserSession!
-    let idpError = IDPError.network(error: HTTPError.networkError("generic network error"))
+    let idpError = IDPError.network(error: HTTPClientError.networkError("generic network error"))
     var mockNFCSessionProvider: MockNFCSignatureProvider!
     lazy var testProfile = { Profile(name: "TestProfile") }()
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!

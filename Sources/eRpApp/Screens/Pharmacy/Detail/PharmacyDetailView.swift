@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -18,6 +18,7 @@
 
 import ComposableArchitecture
 import eRpKit
+import Introspect
 import MapKit
 import SwiftUI
 

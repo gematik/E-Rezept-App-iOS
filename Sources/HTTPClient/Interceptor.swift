@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,5 +27,5 @@ public protocol Interceptor {
     /// - Parameter chain: request chain to be intercepted
     /// - Note: A call to `chain.proceed(request:)` is critical when implementing this protocol function.
     /// - Returns: `AnyPublisher` that emits the response as `HTTPClient.Response`
-    func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPError>
+    func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError>
 }

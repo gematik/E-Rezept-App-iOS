@@ -1,6 +1,6 @@
 // swiftlint:disable:this file_name
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -44,6 +44,23 @@ extension Publisher {
             return try await _async()
         } catch let error as Self.Failure {
             throw transformError.embed(error)
+        } catch {
+            throw error
+        }
+    }
+
+    /// Bridges from AnyPublisher to structured concurrent code.
+    /// Use for awaiting exactly one value (as with `Publisher.first()`)
+    ///
+    /// - Parameter: use `transformError` to try to embed the thrown error into another one
+    /// - Returns: Result type of output and transformed error or throws if unable to transform the error
+    func asyncResult<E2: Swift.Error>(_ transformError: CasePath<E2, Self.Failure>) async throws
+        -> Result<Self.Output, E2> {
+        do {
+            let result = try await _async()
+            return .success(result)
+        } catch let error as Self.Failure {
+            return .failure(transformError.embed(error))
         } catch {
             throw error
         }

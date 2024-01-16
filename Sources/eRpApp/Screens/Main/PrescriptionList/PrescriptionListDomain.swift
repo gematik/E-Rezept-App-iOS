@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -281,7 +281,8 @@ extension Publisher where Output == PrescriptionRepositoryLoadRemoteResult, Fail
             PrescriptionRepositoryError
         > in
         if case let PrescriptionRepositoryError
-            .erxRepository(.remote(.fhirClientError(FHIRClient.Error.httpError(.httpError(urlError))))) = error,
+            .erxRepository(.remote(.fhirClient(FHIRClient.Error.http(fhirClientHttpError)))) = error,
+            case let .httpError(urlError) = fhirClientHttpError.httpClientError,
             urlError.code.rawValue == HTTPStatusCode.forbidden.rawValue ||
             urlError.code.rawValue == HTTPStatusCode.unauthorized.rawValue {
             return Just(PrescriptionRepositoryLoadRemoteResult.authenticationRequired)

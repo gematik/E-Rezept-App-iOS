@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22G91" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23B92" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AVSTransactionEntity" representedClassName="AVSTransactionEntity" syncable="YES">
         <attribute name="groupedRedeemID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="groupedRedeemTime" attributeType="Date" usesScalarValueType="NO"/>
@@ -21,7 +21,9 @@
         <attribute name="fhirData" optional="YES" attributeType="Binary"/>
         <attribute name="identifier" attributeType="String"/>
         <attribute name="invoice" optional="YES" attributeType="Binary"/>
+        <attribute name="isRead" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="medication" optional="YES" attributeType="Binary"/>
+        <attribute name="taskId" optional="YES" attributeType="String"/>
         <relationship name="profile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProfileEntity" inverseName="chargeItems" inverseEntity="ProfileEntity"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
@@ -83,6 +85,7 @@
         <relationship name="patient" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskPatientEntity" inverseName="task" inverseEntity="ErxTaskPatientEntity"/>
         <relationship name="practitioner" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskPractitionerEntity" inverseName="task" inverseEntity="ErxTaskPractitionerEntity"/>
         <relationship name="profile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProfileEntity" inverseName="erxTasks" inverseEntity="ProfileEntity"/>
+        <relationship name="quantity" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="quantityTask" inverseEntity="ErxTaskQuantityEntity"/>
         <fetchIndex name="byObjectIdIndex">
             <fetchIndexElement property="identifier" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -177,6 +180,7 @@
         <relationship name="denominatorRatio" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskRatioEntity" inverseName="denominator" inverseEntity="ErxTaskRatioEntity"/>
         <relationship name="numeratorRatio" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskRatioEntity" inverseName="numerator" inverseEntity="ErxTaskRatioEntity"/>
         <relationship name="quantityMedicationDispense" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationDispenseEntity" inverseName="quantity" inverseEntity="ErxTaskMedicationDispenseEntity"/>
+        <relationship name="quantityTask" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="quantity" inverseEntity="ErxTaskEntity"/>
     </entity>
     <entity name="ErxTaskRatioEntity" representedClassName="ErxTaskRatioEntity" syncable="YES">
         <relationship name="denominator" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="denominatorRatio" inverseEntity="ErxTaskQuantityEntity"/>
@@ -214,6 +218,7 @@
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="familyName" optional="YES" attributeType="String"/>
         <attribute name="givenName" optional="YES" attributeType="String"/>
+        <attribute name="hidePkvConsentDrawerOnMainView" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="image" optional="YES" attributeType="String"/>
         <attribute name="insurance" optional="YES" attributeType="String"/>

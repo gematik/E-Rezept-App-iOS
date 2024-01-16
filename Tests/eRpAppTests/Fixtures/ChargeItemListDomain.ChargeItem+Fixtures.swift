@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -55,7 +55,12 @@ extension ChargeItemListDomain.ChargeItem {
             flags: [
                 "Eingereicht",
             ],
-            original: ErxSparseChargeItem(identifier: "Ibuprofen", fhirData: Data(), enteredDate: "123")
+            original: ErxSparseChargeItem(
+                identifier: "Ibuprofen",
+                taskId: "task id",
+                fhirData: Data(),
+                enteredDate: "123"
+            )
         )
         static let chargeItem2 = ChargeItemListDomain.ChargeItem(
             id: UUID().uuidString,
@@ -64,7 +69,12 @@ extension ChargeItemListDomain.ChargeItem {
             date: Date(timeIntervalSinceNow: 5),
             flags: [
             ],
-            original: ErxSparseChargeItem(identifier: "Acnatac", fhirData: Data(), enteredDate: "123")
+            original: ErxSparseChargeItem(
+                identifier: "Acnatac",
+                taskId: "task id",
+                fhirData: Data(),
+                enteredDate: "123"
+            )
         )
         static let chargeItem3 = ChargeItemListDomain.ChargeItem(
             id: UUID().uuidString,
@@ -73,7 +83,12 @@ extension ChargeItemListDomain.ChargeItem {
             date: Date(timeIntervalSinceNow: 10),
             flags: [
             ],
-            original: ErxSparseChargeItem(identifier: "Candesartan", fhirData: Data(), enteredDate: "123")
+            original: ErxSparseChargeItem(
+                identifier: "Candesartan",
+                taskId: "task id",
+                fhirData: Data(),
+                enteredDate: "123"
+            )
         )
         static let chargeItem4 = ChargeItemListDomain.ChargeItem(
             id: UUID().uuidString,
@@ -85,7 +100,9 @@ extension ChargeItemListDomain.ChargeItem {
             ],
             original: ErxSparseChargeItem(
                 identifier: "Ramipril, Acanatc, 0,5 M-Calciumchlorid-Lösung DELTAMEDICA,"
-                    + " Konzentrat zur Herstellung einer Infusionslösung, 100ml", fhirData: Data(),
+                    + " Konzentrat zur Herstellung einer Infusionslösung, 100ml",
+                taskId: "task id",
+                fhirData: Data(),
                 enteredDate: "123"
             )
         )
@@ -96,7 +113,12 @@ extension ChargeItemListDomain.ChargeItem {
             date: Date(timeIntervalSinceNow: 20),
             flags: [
             ],
-            original: ErxSparseChargeItem(identifier: "Acnatac", fhirData: Data(), enteredDate: "123")
+            original: ErxSparseChargeItem(
+                identifier: "Acnatac",
+                taskId: "task id",
+                fhirData: Data(),
+                enteredDate: "123"
+            )
         )
         static let chargeItem6 = ChargeItemListDomain.ChargeItem(
             id: UUID().uuidString,
@@ -105,7 +127,12 @@ extension ChargeItemListDomain.ChargeItem {
             date: Date(timeIntervalSinceNow: 25),
             flags: [
             ],
-            original: ErxSparseChargeItem(identifier: "Candesartan", fhirData: Data(), enteredDate: "123")
+            original: ErxSparseChargeItem(
+                identifier: "Candesartan",
+                taskId: "task id",
+                fhirData: Data(),
+                enteredDate: "123"
+            )
         )
     }
 }

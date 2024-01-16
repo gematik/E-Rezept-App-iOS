@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -22,9 +22,15 @@ import eRpStyleKit
 import Pharmacy
 import SwiftUI
 
+// swiftlint:disable file_length
 struct PharmacyRedeemView: View {
     let store: PharmacyRedeemDomain.Store
     @ObservedObject var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
+    static let height: CGFloat = {
+        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
+        // 245 is the standard height for the gif Display
+        245 * UIScreen.main.scale / UIScreen.main.nativeScale
+    }()
 
     init(store: PharmacyRedeemDomain.Store) {
         self.store = store
@@ -32,14 +38,28 @@ struct PharmacyRedeemView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView(.vertical) {
+        VStack {
+            ScrollView {
+                HStack(alignment: .top, spacing: 0) {
+                    if let url = videoURLforSource(.onPremise) {
+                        LoopingVideoPlayerContainerView(withURL: url)
+                            .frame(maxWidth: nil, maxHeight: Self.height)
+                            .scaledToFill()
+                    }
+                }
+                .cornerRadius(32, corners: [.bottomLeft, .bottomRight])
+
                 VStack {
-                    Text(L10n.phaRedeemTxtSubtitle("**\(viewStore.pharmacy.name ?? "")**"))
-                        .padding([.horizontal, .top])
-                        .font(Font.subheadline)
-                        .multilineTextAlignment(.center)
-                        .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtSubtitle)
+                    Text(L10n.phaRedeemTxtHeader)
+                        .font(Font.title.bold())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                        .padding(.top)
+                        .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtTitle)
+
+                    PharmacyView(pharmacy: viewStore.pharmacy) {
+                        viewStore.send(.changePharmacy(viewStore.pharmacyState))
+                    }
 
                     if let shipmentInfo = viewStore.shipmentInfo {
                         AddressView(
@@ -71,19 +91,29 @@ struct PharmacyRedeemView: View {
         .task {
             await viewStore.send(.task).finish()
         }
-        .navigationTitle(L10n.phaRedeemTitle)
-        .navigationBarItems(
-            trailing: NavigationBarCloseItem { viewStore.send(.close) }
-        )
         .navigationBarTitleDisplayMode(.inline)
-        .introspectNavigationController { navigationController in
-            let navigationBar = navigationController.navigationBar
-            navigationBar.barTintColor = UIColor(Colors.systemBackground)
-            let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-            navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-            navigationBar.standardAppearance = navigationBarAppearance
+        // Because of issues with Introspect only change the color when iOS 16 is available
+        .backport.navigationBarToolBarBackground(color: Colors.gifBackground)
+    }
+
+    private func videoURLforSource(_ option: RedeemOption) -> URL? {
+        var videoName = ""
+
+        switch option {
+        case .onPremise:
+            videoName = "animation_reservierung"
+        case .delivery:
+            videoName = "animation_botendienst"
+        case .shipment:
+            videoName = "animation_versand"
         }
+
+        guard let bundle = Bundle.main.path(forResource: videoName,
+                                            ofType: "mp4") else {
+            return nil
+        }
+
+        return URL(fileURLWithPath: bundle)
     }
 }
 
@@ -98,7 +128,7 @@ extension PharmacyRedeemView {
             }, content: {
                 VStack(spacing: 16) {
                     HStack(alignment: .top, spacing: 0) {
-                        ProfileIcon(profile: profile)
+                        PharmacyRedeemView.ProfileIcon(profile: profile)
                             .padding(.trailing)
                         Text(L10n.phaRedeemTxtMissingAddress)
                             .accessibilityIdentifier(A11y.pharmacyRedeem.phaRedeemTxtMissingAddress)
@@ -130,6 +160,60 @@ extension PharmacyRedeemView {
         }
     }
 
+    struct PharmacyView: View {
+        let pharmacy: PharmacyLocation?
+        let action: () -> Void
+
+        var body: some View {
+            SingleElementSectionContainer(header: {
+                Text(L10n.phaRedeemTxtPharmacyHeader)
+            }, content: {
+                if let pharmacy = pharmacy {
+                    Button(action: action) {
+                        HStack(spacing: 0) {
+                            VStack(alignment: .leading, spacing: 0) {
+                                if let name = pharmacy.name {
+                                    Text(name)
+                                        .padding(.bottom, 4)
+                                        .font(Font.body)
+                                        .foregroundColor(Colors.systemLabel)
+                                        .accessibilityIdentifier(A11y.pharmacyRedeem.phaRedeemTxtEditPharmacyName)
+                                }
+                                if let address = pharmacy.address?.fullAddressBreak {
+                                    Text(address)
+                                        .font(Font.subheadline)
+                                        .foregroundColor(Colors.systemLabelSecondary)
+                                        .accessibilityIdentifier(A11y.pharmacyRedeem.phaRedeemTxtEditPharmacyAdress)
+                                }
+                            }
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                            Text(L10n.phaRedeemBtnChangePharmacy)
+                                .font(Font.subheadline.weight(.semibold))
+                                .padding(.leading)
+                                .multilineTextAlignment(.trailing)
+                                .fixedSize(horizontal: true, vertical: false)
+                                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtEditPharmacy)
+                        }.padding()
+                    }
+                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnEditPharmacy)
+                } else {
+                    VStack(spacing: 16) {
+                        Text(L10n.phaRedeemTxtSelectPharamcy)
+                            .padding(.top)
+                            .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtAddPharmacy)
+
+                        Button(L10n.phaRedeemBtnSelectPharmacy, action: action)
+                            .buttonStyle(.secondaryAlt)
+                            .padding(.bottom)
+                            .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnAddPharmacy)
+                    }
+                }
+            }).sectionContainerStyle(.bordered)
+        }
+    }
+
     struct AddressView: View {
         let shipmentInfo: ShipmentInfo
         let redeemOption: RedeemOption
@@ -145,7 +229,7 @@ extension PharmacyRedeemView {
                     Button(action: action) {
                         VStack(spacing: 16) {
                             HStack(alignment: .top, spacing: 16) {
-                                ProfileIcon(profile: profile)
+                                PharmacyRedeemView.ProfileIcon(profile: profile)
                                 VStack(alignment: .leading) {
                                     HStack(spacing: 0) {
                                         if let name = shipmentInfo.name {
@@ -224,8 +308,8 @@ extension PharmacyRedeemView {
                             }
                         }
                     }
-                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnEditAddress)
                     .buttonStyle(.plain)
+                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnEditAddress)
                     .padding()
                 }
             )
@@ -242,16 +326,48 @@ extension PharmacyRedeemView {
                         .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
                 },
                 content: {
-                    ForEach(viewStore.prescriptions.indices, id: \.self) { index in
-                        Button(action: { viewStore.send(.didSelect(viewStore.prescriptions[index].taskID)) },
-                               label: {
-                                   TitleWithSubtitleCellView(
-                                       title: viewStore.prescriptions[index].title,
-                                       subtitle: viewStore.prescriptions[index].subtitle,
-                                       isSelected: viewStore.prescriptions[index].isSelected
-                                   )
-                               })
-                            .sectionContainerIsLastElement(index == viewStore.prescriptions.count - 1)
+                    if !viewStore.prescriptions.isEmpty {
+                        Button(action: {
+                            viewStore.send(.setNavigation(tag: .prescriptionSelection))
+                        }, label: {
+                            HStack(spacing: 0) {
+                                VStack(alignment: .leading) {
+                                    Text("\(viewStore.prescriptions.count) " + L10n.phaRedeemTxtPrescription.text)
+                                        .font(Font.body)
+                                        .padding(.bottom)
+                                        .foregroundColor(Colors.systemLabel)
+
+                                    Text(viewStore.prescriptions.map(\.title).joined(separator: ", "))
+                                        .font(Font.subheadline)
+                                        .foregroundColor(Colors.systemLabelSecondary)
+                                        .lineLimit(1)
+                                }
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+
+                                Text(L10n.phaRedeemBtnChangePrescription)
+                                    .font(Font.subheadline.weight(.semibold))
+                                    .multilineTextAlignment(.trailing)
+                                    .fixedSize(horizontal: true, vertical: false)
+                                    .padding(.leading)
+                                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtEditPrescription)
+                            }
+                            .padding()
+                        })
+                            .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnEditPrescription)
+                    } else {
+                        VStack(spacing: 16) {
+                            Text(L10n.phaRedeemTxtSelectPrescription)
+                                .padding(.top)
+                                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtAddPrescription)
+
+                            Button(L10n.phaRedeemBtnSelectPrescription) {
+                                viewStore.send(.setNavigation(tag: .prescriptionSelection))
+                            }
+                            .buttonStyle(.secondaryAlt)
+                            .padding(.bottom)
+                            .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnAddPrescription)
+                        }
                     }
                 }
             )
@@ -272,6 +388,7 @@ extension PharmacyRedeemView {
                         viewStore.send(.redeem)
                     }
                     .padding(.horizontal)
+                    .padding(.bottom)
                 } else {
                     LoadingPrimaryButton(text: L10n.phaRedeemBtnRedeem,
                                          isLoading: viewStore.requests.inProgress) {
@@ -279,15 +396,8 @@ extension PharmacyRedeemView {
                     }
                     .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
                     .padding(.horizontal)
-                }
-
-                Text(L10n.phaRedeemBtnRedeemFootnote)
-                    .font(.footnote)
-                    .foregroundColor(Colors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeemFootnote)
-                    .padding(.horizontal)
                     .padding(.bottom)
+                }
             }
         }
     }
@@ -320,6 +430,17 @@ extension PharmacyRedeemView {
                     action: PharmacyRedeemDomain.Destinations.Action.redeemSuccessView(action:),
                     onTap: { viewStore.send(.setNavigation(tag: .redeemSuccess)) },
                     destination: RedeemSuccessView.init(store:),
+                    label: {}
+                )
+                .hidden()
+                .accessibility(hidden: true)
+
+                NavigationLinkStore(
+                    store.scope(state: \.$destination, action: PharmacyRedeemDomain.Action.destination),
+                    state: /PharmacyRedeemDomain.Destinations.State.prescriptionSelection,
+                    action: PharmacyRedeemDomain.Destinations.Action.prescriptionSelection(action:),
+                    onTap: { viewStore.send(.setNavigation(tag: .prescriptionSelection)) },
+                    destination: PharmacyPrescriptionSelectionView.init(store:),
                     label: {}
                 )
                 .hidden()
@@ -388,36 +509,30 @@ extension PharmacyRedeemView {
         let shipmentInfo: ShipmentInfo?
         let requests: IdentifiedArrayOf<OrderResponse>
         let profile: Profile?
+        let pharmacyState: PharmacyRedeemDomain.State
 
         init(state: PharmacyRedeemDomain.State) {
             redeemType = state.redeemOption
             pharmacy = state.pharmacy
-            prescriptions = state.erxTasks.map {
-                let isSelected = state.selectedErxTasks.contains($0)
-                return Prescription($0, isSelected: isSelected)
-            }
+            prescriptions = state.selectedErxTasks.map { Prescription($0) }
             shipmentInfo = state.selectedShipmentInfo
             requests = state.orderResponses
             profile = state.profile
+            pharmacyState = state
         }
 
         var isRedeemButtonEnabled: Bool {
-            prescriptions.first { $0.isSelected == true } != nil
+            prescriptions != []
         }
 
         struct Prescription: Equatable, Identifiable {
             var id: String { taskID }
             let taskID: String
             let title: String
-            let subtitle: String
-            var isSelected = false
 
-            init(_ task: ErxTask, isSelected: Bool) {
+            init(_ task: ErxTask) {
                 taskID = task.id
                 title = task.medication?.displayName ?? L10n.prscFdTxtNa.text
-                subtitle = task
-                    .medicationRequest.substitutionAllowed ? L10n.phaRedeemTxtPrescriptionSub.text : ""
-                self.isSelected = isSelected
             }
         }
     }

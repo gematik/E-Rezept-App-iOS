@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -31,21 +31,21 @@ import XCTest
 final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     let mockRepository = MockErxTaskRepository()
 
-    lazy var order1 = Order(
+    lazy var order1 = OrderRequest(
         redeemType: .onPremise,
         taskID: "task_id_1",
         accessCode: "access_code_1",
         telematikId: "telematik_id_1"
     )
 
-    lazy var order2 = Order(
+    lazy var order2 = OrderRequest(
         redeemType: .shipment,
         phone: "1234567",
         taskID: "task_id_2",
         accessCode: "access_code_2",
         telematikId: "telematik_id_2"
     )
-    lazy var order3 = Order(
+    lazy var order3 = OrderRequest(
         redeemType: .delivery,
         phone: "1234567",
         taskID: "task_id_3",
@@ -269,7 +269,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
 
-        let orderWithMissingTelematikId = Order(
+        let orderWithMissingTelematikId = OrderRequest(
             redeemType: .shipment,
             taskID: "task_id_3",
             accessCode: "access_code_3"

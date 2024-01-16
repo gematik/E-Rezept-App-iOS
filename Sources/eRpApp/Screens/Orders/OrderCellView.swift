@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,7 +19,7 @@
 import SwiftUI
 
 struct OrderCellView: View {
-    let title: String?
+    let title: String
     let subtitle: String
 
     var isNew: Bool
@@ -27,7 +27,7 @@ struct OrderCellView: View {
 
     let action: () -> Void
 
-    init(title: String?,
+    init(title: String,
          subtitle: String,
          isNew: Bool = false,
          prescriptionCount: Int = 0,
@@ -44,7 +44,7 @@ struct OrderCellView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(title ?? L10n.ordTxtNoPharmacyName.text)
+                        Text(title)
                             .font(Font.body.weight(.semibold))
                             .multilineTextAlignment(.leading)
                             .foregroundColor(Colors.systemLabel)

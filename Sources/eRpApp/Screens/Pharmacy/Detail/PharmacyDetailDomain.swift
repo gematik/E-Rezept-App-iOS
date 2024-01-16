@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -80,6 +80,7 @@ struct PharmacyDetailDomain: ReducerProtocol {
             pharmacyViewModel.pharmacyLocation
         }
 
+        var pharmacyRedeemState: PharmacyRedeemDomain.State?
         // If there was a login before the profile is locked to that
         var wasProfileAuthenticatedBefore = false
         var reservationService: RedeemServiceOption = .noService
@@ -123,6 +124,8 @@ struct PharmacyDetailDomain: ReducerProtocol {
         }
 
         enum Delegate: Equatable {
+            /// Closes and stores the PharmacyRedeemDomain.State
+            case changePharmacy(PharmacyRedeemDomain.State)
             /// Closes the details page
             case close
         }
@@ -241,9 +244,9 @@ struct PharmacyDetailDomain: ReducerProtocol {
         case let .showPharmacyRedeemOption(option):
             let redeemState = PharmacyRedeemDomain.State(
                 redeemOption: option,
-                erxTasks: state.erxTasks,
+                erxTasks: state.pharmacyRedeemState?.erxTasks ?? state.erxTasks,
                 pharmacy: state.pharmacy,
-                selectedErxTasks: Set(state.erxTasks)
+                selectedErxTasks: state.pharmacyRedeemState?.selectedErxTasks ?? Set(state.erxTasks)
             )
             switch option {
             case .onPremise:
@@ -253,6 +256,7 @@ struct PharmacyDetailDomain: ReducerProtocol {
             case .shipment:
                 state.destination = state.shipmentService.destination(with: redeemState)
             }
+            state.pharmacyRedeemState = nil
             return .none
         case .destination(.presented(.pharmacyRedeemViaErxTaskRepository(action: .close))),
              .destination(.presented(.pharmacyRedeemViaAVS(action: .close))):
@@ -263,9 +267,10 @@ struct PharmacyDetailDomain: ReducerProtocol {
                 try await schedulers.main.sleep(for: 0.1)
                 await send(.delegate(.close))
             }
-        case .setNavigation(tag: .none):
+        case let .destination(.presented(.pharmacyRedeemViaAVS(action: .changePharmacy(saveState)))),
+             let .destination(.presented(.pharmacyRedeemViaErxTaskRepository(action: .changePharmacy(saveState)))):
             state.destination = nil
-            return .none
+            return .send(.delegate(.changePharmacy(saveState)))
         case .toggleIsFavorite:
             var pharmacyViewModel = state.pharmacyViewModel
             pharmacyViewModel.pharmacyLocation.isFavorite.toggle()

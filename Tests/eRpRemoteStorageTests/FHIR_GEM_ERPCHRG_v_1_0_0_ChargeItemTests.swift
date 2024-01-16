@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -68,6 +68,7 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
         expect(chargeItem.medicationRequest.multiplePrescription?.startPeriod).to(beNil())
         expect(chargeItem.medicationRequest.multiplePrescription?.endPeriod).to(beNil())
         expect(chargeItem.medicationRequest.accidentInfo).to(beNil())
+        expect(chargeItem.medicationRequest.quantity).to(equal(.init(value: "1", unit: "{Package}")))
         // patient
         expect(chargeItem.patient?.name) == "Günther Angermänn"
         expect(chargeItem.patient?.address) == "Driescher Hecke 56\n67130 Neu Eladorf"

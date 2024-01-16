@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -21,7 +21,7 @@ import ComposableArchitecture
 import eRpKit
 import eRpLocalStorage
 import Foundation
-
+// swiftlint:disable file_length
 // swiftlint:disable:next type_body_length
 struct ChargeItemListDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
@@ -95,12 +95,15 @@ struct ChargeItemListDomain: ReducerProtocol {
             case alert(ErpAlertState<Action.Alert>)
             // sourcery: AnalyticsScreen = chargeItemDetails
             case chargeItem(ChargeItemDomain.State)
+            // sourcery: AnalyticsScreen = chargeItemList_toast
+            case toast(ToastState<Action.Toast>)
         }
 
         enum Action: Equatable {
             case idpCardWallAction(IDPCardWallDomain.Action)
             case chargeItem(action: ChargeItemDomain.Action)
             case alert(Alert)
+            case toast(Toast)
 
             enum Alert: Equatable {
                 case fetchChargeItemsErrorRetry
@@ -117,7 +120,12 @@ struct ChargeItemListDomain: ReducerProtocol {
                 case revokeConsentErrorOkay
                 case deleteChargeItemsErrorRetry
                 case deleteChargeItemsErrorOkay
+                case consentServiceErrorOkay
+                case consentServiceErrorAuthenticate
+                case consentServiceErrorRetry
             }
+
+            enum Toast: Equatable {}
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -271,6 +279,19 @@ struct ChargeItemListDomain: ReducerProtocol {
             return .none // to-do: implement later
         case .destination(.presented(.alert(.deleteChargeItemsErrorOkay))):
             return .none
+        case .destination(.presented(.alert(.consentServiceErrorOkay))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.alert(.consentServiceErrorRetry))):
+            state.bottomBannerState = nil
+            return .run { send in
+                await send(.grantConsent)
+            }
+        case .destination(.presented(.alert(.consentServiceErrorAuthenticate))):
+            state.bottomBannerState = nil
+            return .run { send in
+                await send(.authenticate)
+            }
         case let .select(chargeItem):
             guard let fatChargeItem = chargeItem.original.chargeItem
             else { return .none }
@@ -306,7 +327,9 @@ struct ChargeItemListDomain: ReducerProtocol {
             case let .error(error):
                 state.destination = .alert(AlertStates.fetchChargeItemsErrorFor(error: error))
                 return .none
-            case .consentNotGranted, .notAuthenticated: // not required for local response
+            case .consentNotGranted, // not required for local response
+                 .notAuthenticated:
+
                 return .none
             }
         case let .response(.fetchChargeItemsRemote(result)):
@@ -327,7 +350,23 @@ struct ChargeItemListDomain: ReducerProtocol {
                 state.destination = .alert(AlertStates.grantConsentRequest)
                 return .none
             case let .error(error):
-                state.destination = .alert(AlertStates.fetchChargeItemsErrorFor(error: error))
+                state.grantConsentState = .error
+                if case let .chargeItemConsentService(chargeItemConsentServiceError) = error {
+                    if case .loginHandler = chargeItemConsentServiceError {
+                        state.authenticationState = .error
+                        state.bottomBannerState = .authenticate
+                        state.destination = nil
+                    } else if let alertState = chargeItemConsentServiceError.alertState {
+                        // in case of an expected (specified) http error
+                        state.authenticationState = .authenticated
+                        state.destination = .alert(alertState.chargeItemListDomainErpAlertState)
+                    }
+                } else {
+                    // in case of an unexpected (not specified) error
+                    state.authenticationState = .notAuthenticated
+                    state.bottomBannerState = .authenticate
+                    state.destination = .alert(AlertStates.grantConsentErrorFor(error: error))
+                }
                 return .none
             }
         case .authenticate:
@@ -399,15 +438,34 @@ struct ChargeItemListDomain: ReducerProtocol {
                         .receive(on: schedulers.main)
                         .eraseToAnyPublisher
                 )
+            case .conflict:
+                state.authenticationState = .authenticated
+                state.grantConsentState = .granted
+                state.destination = .toast(ToastStates.conflictToast)
+                return .none
             case .notAuthenticated:
                 state.authenticationState = .notAuthenticated
                 state.grantConsentState = .unknown
                 state.bottomBannerState = .authenticate
                 return .none
             case let .error(error):
-                state.authenticationState = .authenticated
                 state.grantConsentState = .error
-                state.destination = .alert(AlertStates.grantConsentErrorFor(error: error))
+                if case let .chargeItemConsentService(chargeItemConsentServiceError) = error {
+                    if case .loginHandler = chargeItemConsentServiceError {
+                        state.authenticationState = .error
+                        state.bottomBannerState = .authenticate
+                        state.destination = nil
+                    } else if let alertState = chargeItemConsentServiceError.alertState {
+                        // in case of an expected (specified) http error
+                        state.authenticationState = .authenticated
+                        state.destination = .alert(alertState.chargeItemListDomainErpAlertState)
+                    }
+                } else {
+                    // in case of an unexpected (not specified) error
+                    state.authenticationState = .notAuthenticated
+                    state.bottomBannerState = .authenticate
+                    state.destination = .alert(AlertStates.grantConsentErrorFor(error: error))
+                }
                 return .none
             }
 

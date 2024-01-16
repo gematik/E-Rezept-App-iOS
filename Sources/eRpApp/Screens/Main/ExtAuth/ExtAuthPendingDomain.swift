@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -177,27 +177,25 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         case let .externalLogin(url),
              let .destination(.presented(.alert(.externalLogin(url)))):
             let environment = environment
-            let entry: KKAppDirectory.Entry?
 
-            // If we have multiple pending requests, use the correct one
-            if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-               let state = components.queryItemWithName("state")?.value,
-               let newEntry = environment.extAuthRequestStorage.getExtAuthRequest(for: state)?.entry {
-                entry = newEntry
-            } else {
-                // this should never happen, but do not throw the error here, let IDPSession decide
-                entry = state.extAuthState.entry
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+            // gID only includes state and code, fasttrack uses kk_app_redirect_uri
+            let isGidFlow = components?.queryItemWithName("kk_app_redirect_uri") == nil
+
+            if let entry = state.extAuthState.entry {
+                state.extAuthState = .extAuthReceived(entry)
             }
 
-            guard let entry = entry else { return .none }
-
-            state.extAuthState = .extAuthReceived(entry)
             return .publisher(
                 environment.idTokenValidator
                     .mapError(Error.profileValidation)
                     .flatMap { idTokenValidator -> AnyPublisher<IDPToken, Error> in
                         environment.idpSession
-                            .extAuthVerifyAndExchange(url, idTokenValidator: idTokenValidator.validate(idToken:))
+                            .extAuthVerifyAndExchange(
+                                url,
+                                idTokenValidator: idTokenValidator.validate(idToken:),
+                                isGidFlow: isGidFlow
+                            )
                             .mapError { error in
                                 if case let .unspecified(error) = error,
                                    let validationError = error as? IDTokenValidatorError {
@@ -266,33 +264,43 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         }
     }
 
-    static func alertState(title: String, message: String, url: URL) -> ErpAlertState<Destinations.Action.Alert> {
-        ErpAlertState(.init(
-            title: TextState(L10n.mainTxtPendingextauthFailed(title)),
-            message: TextState(message),
-            primaryButton: .default(TextState(L10n.mainTxtPendingextauthRetry),
-                                    action: .send(.externalLogin(url))),
-            secondaryButton: .cancel(TextState(L10n.mainTxtPendingextauthCancel),
-                                     action: .send(.cancelAllPendingRequests))
-        ))
+    static func alertState(title: String, message _: String, url: URL) -> ErpAlertState<Destinations.Action.Alert> {
+        ErpAlertState(
+            title: { TextState(L10n.mainTxtPendingextauthFailed(title)) },
+            actions: {
+                ButtonState(action: .send(.externalLogin(url))) {
+                    TextState(L10n.mainTxtPendingextauthRetry)
+                }
+                ButtonState(role: .cancel, action: .send(.cancelAllPendingRequests)) {
+                    TextState(L10n.mainTxtPendingextauthCancel)
+                }
+            },
+            message: { TextState(L10n.cdwTxtRcAlertMessageSaveProfile) }
+        )
     }
 
     static func alertState(title: String, message: String) -> ErpAlertState<Destinations.Action.Alert> {
-        ErpAlertState(.init(
-            title: TextState(title),
-            message: TextState(message),
-            dismissButton: .cancel(TextState(L10n.mainTxtPendingextauthCancel),
-                                   action: .send(.cancelAllPendingRequests))
-        ))
+        ErpAlertState(
+            title: { TextState(title) },
+            actions: {
+                ButtonState(role: .cancel, action: .send(.cancelAllPendingRequests)) {
+                    TextState(L10n.mainTxtPendingextauthCancel)
+                }
+            },
+            message: { TextState(message) }
+        )
     }
 
     static var saveProfileAlert: ErpAlertState<Destinations.Action.Alert> = {
-        ErpAlertState(.init(
-            title: TextState(L10n.cdwTxtExtauthAlertTitleSaveProfile),
-            message: TextState(L10n.cdwTxtExtauthAlertMessageSaveProfile),
-            dismissButton: .cancel(TextState(L10n.cdwBtnExtauthAlertSaveProfile),
-                                   action: .send(.cancelAllPendingRequests))
-        ))
+        ErpAlertState(
+            title: { TextState(L10n.cdwTxtExtauthAlertTitleSaveProfile) },
+            actions: {
+                ButtonState(role: .cancel, action: .send(.cancelAllPendingRequests)) {
+                    TextState(L10n.cdwBtnExtauthAlertSaveProfile)
+                }
+            },
+            message: { TextState(L10n.cdwTxtExtauthAlertMessageSaveProfile) }
+        )
     }()
 }
 

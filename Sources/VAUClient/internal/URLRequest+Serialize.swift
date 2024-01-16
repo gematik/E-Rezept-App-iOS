@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -114,7 +114,7 @@ extension String {
         }
 
         guard let status = HTTPStatusCode(rawValue: statusCode) else {
-            throw HTTPError.internalError("Unknown status code")
+            throw HTTPClientError.internalError("Unknown status code")
         }
 
         return HTTPResponse(data: data, response: httpURLResponse, status: status)

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -55,7 +55,7 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleNext))
         sut = CardWallReadCardDomain.State.Output.retrievingChallenge(.error(.idpError(
-            IDPError.network(error: HTTPError.networkError("timeout"))
+            IDPError.network(error: HTTPClientError.networkError("timeout"))
         )))
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleRetry))
@@ -64,7 +64,7 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
         expect(sut.nextButtonEnabled).to(beFalse())
         expect(sut.buttonTitle).to(equal(titleLoading))
         sut = CardWallReadCardDomain.State.Output.signingChallenge(.error(.idpError(
-            IDPError.network(error: HTTPError.networkError("timeout"))
+            IDPError.network(error: HTTPClientError.networkError("timeout"))
         )))
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleRetry))
@@ -83,7 +83,7 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
         expect(sut.nextButtonEnabled).to(beFalse())
         expect(sut.buttonTitle).to(equal(titleLoading))
         sut = CardWallReadCardDomain.State.Output.verifying(.error(.idpError(
-            IDPError.network(error: HTTPError.networkError("timeout"))
+            IDPError.network(error: HTTPClientError.networkError("timeout"))
         )))
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleRetry))

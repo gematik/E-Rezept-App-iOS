@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -307,6 +307,29 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
         expect(runSuccess) == true
     }
 
+    func testGrantConsent_conflictConsentAlreadyGranted() {
+        // given
+        var chargeItemConsentService = ChargeItemConsentService.testValue
+        chargeItemConsentService.grantConsent = { _ in .conflict }
+        let sut = DefaultChargeItemListDomainService(
+            userSessionProvider: mockUserSessionProvider,
+            chargeItemConsentService: chargeItemConsentService
+        )
+
+        var runSuccess = false
+
+        // when
+        sut.grantChargeItemsConsent(for: testProfileId)
+            // then
+            .test(
+                expectations: { result in
+                    runSuccess = true
+                    expect(result) == ChargeItemListDomainServiceGrantResult.conflict
+                }
+            )
+        expect(runSuccess) == true
+    }
+
     func testFetchRemoteChargeItemsAssumingConsentGranted() {
         // given
         var chargeItemConsentService = ChargeItemConsentService.testValue
@@ -420,6 +443,7 @@ extension ChargeItemListDomainServiceTests {
 
         static let chargeItem = ErxSparseChargeItem(
             identifier: UUID().uuidString,
+            taskId: "task id",
             fhirData: "testdata".data(using: .utf8)!,
             enteredDate: "2022-09-14"
         )

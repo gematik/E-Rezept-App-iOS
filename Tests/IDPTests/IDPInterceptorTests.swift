@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -237,7 +237,7 @@ class NoTokenStorage: IDPStorage {
     }
 }
 
-extension HTTPError {
+extension HTTPClientError {
     var isIDPTokenUnavailable: Bool {
         guard case let .authentication(err) = self, let idpError = err as? IDPError,
               case IDPError.tokenUnavailable = idpError else {

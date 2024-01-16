@@ -48,8 +48,8 @@ extension HeadernoteView {
     }
 }
 extension Hint {
-    init(id: String, title: String? = nil, message: String? = nil, actionText: StringAsset, action: Action? = nil, image: AccessibilityImage, closeAction: Action? = nil, style: Style = .neutral, buttonStyle: ButtonStyle = .quaternary, imageStyle: ImageStyle = .topAligned) {
-        self.init(id: id, title: title, message: message, actionText: actionText.key, action: action, image: image, closeAction: closeAction, style: style, buttonStyle: buttonStyle, imageStyle: imageStyle)
+    init(id: String, title: String? = nil, message: String? = nil, actionText: StringAsset, actionImageName: String? = nil, action: Action? = nil, image: AccessibilityImage, closeAction: Action? = nil, style: Style = .neutral, buttonStyle: ButtonStyle = .quaternary, imageStyle: ImageStyle = .topAligned) {
+        self.init(id: id, title: title, message: message, actionText: actionText.key, actionImageName: actionImageName, action: action, image: image, closeAction: closeAction, style: style, buttonStyle: buttonStyle, imageStyle: imageStyle)
     }
 }
 extension IDPTokenView.TokenCell {

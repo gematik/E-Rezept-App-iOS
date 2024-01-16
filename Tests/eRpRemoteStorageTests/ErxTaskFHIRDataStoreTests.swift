@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -197,8 +197,9 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         sut.delete(tasks: [erxTask])
             .test(failure: { error in
-                let expectedError = RemoteStoreError.fhirClientError(
-                    FHIRClient.Error.httpError(HTTPError.httpError(URLError(URLError.Code(rawValue: -1))))
+                let expectedError = RemoteStoreError.fhirClient(
+                    .http(.init(httpClientError: .httpError(URLError(URLError.Code(rawValue: -1))),
+                                operationOutcome: nil))
                 )
                 expect(error.self) == expectedError.self
             })
@@ -286,7 +287,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.redeem(order: shipmentOrder)
             .test { error in
                 expect(counter) == 1
-                expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
+                expect(error) ==
+                    .fhirClient(.http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil)))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
@@ -332,7 +334,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.listAllCommunications(after: nil, for: .reply)
             .test { error in
                 expect(counter) == 1
-                expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
+                expect(error) ==
+                    .fhirClient(.http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil)))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
@@ -378,7 +381,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.listMedicationDispenses(for: "160.000.000.014.285.76")
             .test { error in
                 expect(counter) == 1
-                expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
+                expect(error) ==
+                    .fhirClient(.http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil)))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
@@ -421,8 +425,9 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         sut.delete(chargeItems: [chargeItem])
             .test(failure: { error in
-                let expectedError = RemoteStoreError.fhirClientError(
-                    FHIRClient.Error.httpError(HTTPError.httpError(URLError(URLError.Code(rawValue: -1))))
+                let expectedError = RemoteStoreError.fhirClient(
+                    .http(.init(httpClientError: .httpError(URLError(URLError.Code(rawValue: -1))),
+                                operationOutcome: nil))
                 )
                 expect(error.self) == expectedError.self
             })
@@ -466,7 +471,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.fetchConsents()
             .test { error in
                 expect(counter) == 1
-                expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
+                expect(error) ==
+                    .fhirClient(.http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil)))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
@@ -507,7 +513,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.revokeConsent(.chargcons)
             .test(failure: { error in
                 expect(error.localizedDescription)
-                    .to(equal("error: Could not find any consent for given KVNR , code: not-found"))
+                    .to(contain("error: Could not find any consent for given KVNR , code: not-found"))
             }, expectations: { _ in
                 fail()
             })
@@ -554,7 +560,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.grantConsent(chargeConsent)
             .test(failure: { error in
                 expect(error.localizedDescription)
-                    .to(equal("error: Charging consent already exists for this kvnr, code: conflict"))
+                    .to(contain("error: Charging consent already exists for this kvnr, code: conflict"))
             }, expectations: { _ in
                 fail()
             })

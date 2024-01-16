@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -35,11 +35,12 @@ struct ChargeItemView: View {
 
     struct ViewState: Equatable {
         let chargeItem: ErxChargeItem
+        let showRoutingButton: Bool
         let destinationTag: ChargeItemDomain.Destinations.State.Tag?
 
         init(state: ChargeItemDomain.State) {
             chargeItem = state.chargeItem
-
+            showRoutingButton = state.showRouteToChargeItemListButton
             destinationTag = state.destination?.tag
         }
     }
@@ -57,13 +58,21 @@ struct ChargeItemView: View {
                             .padding()
                     },
                     footer: {
-                        Button {
-                            // TODO: do something swiftlint:disable:this todo
-                        } label: {
-                            Label(L10n.stgBtnChargeItemMore)
+                        if viewStore.showRoutingButton {
+                            Button {
+                                viewStore.send(.routeToChargeItemList)
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text(L10n.stgBtnChargeItemRouteToList)
+                                        .font(Font.subheadline)
+                                    Image(systemName: SFSymbolName.chevronRight)
+                                        .font(Font.subheadline.weight(.semibold))
+                                }
+                            }
+                            .buttonStyle(TertiaryButtonStyle())
+                            .foregroundColor(Colors.primary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .buttonStyle(.quartary)
-                        .frame(maxWidth: .infinity, alignment: .center)
                     },
                     content: {
                         SubTitle(
@@ -82,13 +91,9 @@ struct ChargeItemView: View {
                             title: dateFormatter.relativeDateAndTime(viewStore.chargeItem.enteredDate) ?? "-",
                             description: L10n.stgTxtChargeItemRedeemedOn
                         )
-
-                        HStack {
-                            // TODO: placeholder swiftlint:disable:this todo
-                            Flag(title: "Versicherung")
-                        }
                     }
                 )
+                .sectionContainerStyle(.inline)
             }
 
             HStack {
@@ -108,12 +113,13 @@ struct ChargeItemView: View {
                 } label: {
                     Text(L10n.stgBtnChargeItemShare)
                 }
-                .buttonStyle(.primaryHugging)
+                .buttonStyle(.primaryHuggingNarrowly)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
         }
+        .background(Colors.systemBackground.ignoresSafeArea())
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Menu {
@@ -240,7 +246,8 @@ extension ErxChargeItem {
                 hasEmergencyServiceFee: false,
                 bvg: false,
                 coPaymentStatus: .subjectToCharge,
-                multiplePrescription: .init(mark: false)
+                multiplePrescription: .init(mark: false),
+                quantity: .init(value: "17", unit: "Packungen")
             ),
             patient: .init(
                 name: "Günther Angermänn",

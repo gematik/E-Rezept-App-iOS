@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,7 +19,7 @@
 import Foundation
 
 /// Represents audit events related to Erx Tasks.
-public struct ErxAuditEvent: Identifiable, Hashable {
+public struct ErxAuditEvent: Identifiable, Hashable, Codable {
     /// ErxAuditEvent default initializer
     public init(
         identifier: String,

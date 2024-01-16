@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,7 +27,7 @@ import OpenSSL
 import Pharmacy
 
 protocol RedeemService {
-    func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
+    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
 }
 
 struct RedeemServiceDependency: DependencyKey {
@@ -51,7 +51,7 @@ struct AVSRedeemService: RedeemService {
     let groupedRedeemTimeProvider: () -> Date = { Date() }
 
     // swiftlint:disable:next function_body_length
-    func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         guard orders.allSatisfy({ $0.endpoint != nil }),
               let endpoint = orders.first?.endpoint else {
             return Fail(error: RedeemServiceError.internalError(.missingAVSEndpoint)).eraseToAnyPublisher()
@@ -62,7 +62,7 @@ struct AVSRedeemService: RedeemService {
         }
 
         var responses: IdentifiedArrayOf<OrderResponse> = []
-        var orderAndMessages = [(Order, AVSMessage)]()
+        var orderAndMessages = [(OrderRequest, AVSMessage)]()
         for order in orders {
             do {
                 let message = try AVSMessage(order)
@@ -149,7 +149,7 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
     let erxTaskRepository: ErxTaskRepository
     let loginHandler: LoginHandler
 
-    func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         loginHandler
             .isAuthenticatedOrAuthenticate()
             .first()
@@ -170,9 +170,9 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
     }
 
     func redeemViaRepository(
-        orders: [Order]
+        orders: [OrderRequest]
     ) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, Swift.Error> {
-        var erxTaskOrders = [(ErxTaskOrder, Order)]()
+        var erxTaskOrders = [(ErxTaskOrder, OrderRequest)]()
         var responses: IdentifiedArrayOf<OrderResponse> = []
         for order in orders {
             do {
@@ -236,7 +236,7 @@ extension DependencyValues {
 }
 
 struct DemoRedeemService: RedeemService {
-    func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         var responses = IdentifiedArrayOf<OrderResponse>()
         for order in orders {
             responses.append(OrderResponse(requested: order, result: .success(true)))

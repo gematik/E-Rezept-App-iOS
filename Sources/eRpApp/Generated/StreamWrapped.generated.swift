@@ -188,10 +188,10 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
 	}
 
-	func countAllUnreadCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
+	func countAllUnreadCommunicationsAndChargeItems(for fhirProfile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
         stream
-        	.map { $0.countAllUnreadCommunications(
-				for: profile
+        	.map { $0.countAllUnreadCommunicationsAndChargeItems(
+				for: fhirProfile
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -459,11 +459,12 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
-	func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
+	func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.extAuthVerifyAndExchange(
 				url,
-				idTokenValidator: idTokenValidator
+				idTokenValidator: idTokenValidator,
+				isGidFlow: isGidFlow
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -1144,9 +1145,10 @@ class StreamWrappedUserSession: UserSession {
 	lazy var erxTaskRepository: ErxTaskRepository = {
 		StreamWrappedErxTaskRepository(stream: stream.map{ $0.erxTaskRepository }.eraseToAnyPublisher() )
 	}()
-	lazy var ordersRepository: ErxTaskRepository = {
-		StreamWrappedErxTaskRepository(stream: stream.map{ $0.ordersRepository }.eraseToAnyPublisher() )
+	lazy var entireErxTaskRepository: ErxTaskRepository = {
+		StreamWrappedErxTaskRepository(stream: stream.map{ $0.entireErxTaskRepository }.eraseToAnyPublisher() )
 	}()
+	var ordersRepository: OrdersRepository { current.ordersRepository }
 	lazy var profileDataStore: ProfileDataStore = {
 		StreamWrappedProfileDataStore(stream: stream.map{ $0.profileDataStore }.eraseToAnyPublisher(), current: current.profileDataStore )
 	}()

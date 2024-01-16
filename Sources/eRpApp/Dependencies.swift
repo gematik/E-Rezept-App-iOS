@@ -1,6 +1,6 @@
 // swiftlint:disable:this file_name
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -53,8 +53,7 @@ extension DependencyValues {
     }
 }
 
-// sourcery: skipUnimplmented
-public struct OrdersRepositoryDependency: DependencyKey {
+public struct EntireErxTaskRepositoryDependency: DependencyKey {
     public static let liveValue: ErxTaskRepository? = nil
 
     public static var previewValue: ErxTaskRepository? = DummyErxTaskRepository()
@@ -63,7 +62,25 @@ public struct OrdersRepositoryDependency: DependencyKey {
 }
 
 extension DependencyValues {
-    var ordersRepository: ErxTaskRepository {
+    var entireErxTaskRepository: ErxTaskRepository {
+        get {
+            self[EntireErxTaskRepositoryDependency.self] ?? changeableUserSessionContainer.userSession
+                .entireErxTaskRepository
+        }
+        set { self[EntireErxTaskRepositoryDependency.self] = newValue }
+    }
+}
+
+struct OrdersRepositoryDependency: DependencyKey {
+    static let liveValue: OrdersRepository? = nil
+
+    static var previewValue: OrdersRepository? = DummyOrdersRepository()
+
+    static var testValue: OrdersRepository? = UnimplementedOrdersRepository()
+}
+
+extension DependencyValues {
+    var ordersRepository: OrdersRepository {
         get { self[OrdersRepositoryDependency.self] ?? changeableUserSessionContainer.userSession.ordersRepository }
         set { self[OrdersRepositoryDependency.self] = newValue }
     }
@@ -125,7 +142,7 @@ struct ModelMigratingDependency: DependencyKey {
         let coreDataFactory = CoreDataControllerFactoryDependency.liveValue
         return MigrationManager(
             factory: coreDataFactory,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(
+            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(
                 profileId: nil,
                 coreDataControllerFactory: coreDataFactory
             ),
@@ -297,6 +314,8 @@ extension DependencyValues {
     }
 }
 
+// MARK: factories
+
 import FHIRClient
 
 struct PharmacyServiceFactory {
@@ -315,5 +334,45 @@ extension DependencyValues {
     var pharmacyServiceFactory: PharmacyServiceFactory {
         get { self[PharmacyServiceFactory.self] }
         set { self[PharmacyServiceFactory.self] = newValue }
+    }
+}
+
+struct ErxTaskCoreDataStoreFactory {
+    let construct: (UUID?, CoreDataControllerFactory) -> ErxTaskCoreDataStore
+
+    init(construct: @escaping (UUID?, CoreDataControllerFactory) -> ErxTaskCoreDataStore) {
+        self.construct = construct
+    }
+}
+
+extension ErxTaskCoreDataStoreFactory: DependencyKey {
+    static var liveValue = ErxTaskCoreDataStoreFactory(construct: DefaultErxTaskCoreDataStore.init)
+}
+
+extension DependencyValues {
+    var erxTaskCoreDataStoreFactory: ErxTaskCoreDataStoreFactory {
+        get { self[ErxTaskCoreDataStoreFactory.self] }
+        set { self[ErxTaskCoreDataStoreFactory.self] = newValue }
+    }
+}
+
+import eRpRemoteStorage
+
+struct ErxRemoteDataStoreFactory {
+    let construct: (FHIRClient) -> ErxRemoteDataStore
+
+    init(construct: @escaping (FHIRClient) -> ErxRemoteDataStore) {
+        self.construct = construct
+    }
+}
+
+extension ErxRemoteDataStoreFactory: DependencyKey {
+    static var liveValue = ErxRemoteDataStoreFactory(construct: ErxTaskFHIRDataStore.init)
+}
+
+extension DependencyValues {
+    var erxRemoteDataStoreFactory: ErxRemoteDataStoreFactory {
+        get { self[ErxRemoteDataStoreFactory.self] }
+        set { self[ErxRemoteDataStoreFactory.self] = newValue }
     }
 }

@@ -83,6 +83,10 @@ typealias AnalyticsEvent = String
     struct ChargeItemList: AnalyticsScreen {
       let name = "chargeItemList"
     }
+    static let chargeItemList_toast = ChargeItemList_toast()
+    struct ChargeItemList_toast: AnalyticsScreen {
+      let name = "chargeItemList:toast"
+    }
     static let contactInsuranceCompany = ContactInsuranceCompany()
     struct ContactInsuranceCompany: AnalyticsScreen {
       let name = "contactInsuranceCompany"
@@ -150,6 +154,10 @@ typealias AnalyticsEvent = String
     static let main = Main()
     struct Main: AnalyticsScreen {
       let name = "main"
+    }
+    static let main_consentDrawer = Main_consentDrawer()
+    struct Main_consentDrawer: AnalyticsScreen {
+      let name = "main:consentDrawer"
     }
     static let main_createProfile = Main_createProfile()
     struct Main_createProfile: AnalyticsScreen {
@@ -279,6 +287,10 @@ typealias AnalyticsEvent = String
     struct PrescriptionDetail_technicalInfo: AnalyticsScreen {
       let name = "prescriptionDetail:technicalInfo"
     }
+    static let prescriptionDetail_toast = PrescriptionDetail_toast()
+    struct PrescriptionDetail_toast: AnalyticsScreen {
+      let name = "prescriptionDetail:toast"
+    }
     static let profile = Profile()
     struct Profile: AnalyticsScreen {
       let name = "profile"
@@ -318,6 +330,10 @@ typealias AnalyticsEvent = String
     static let redeem_prescriptionChooseSubset = Redeem_prescriptionChooseSubset()
     struct Redeem_prescriptionChooseSubset: AnalyticsScreen {
       let name = "redeem:prescriptionChooseSubset"
+    }
+    static let redeem_prescriptionSelection = Redeem_prescriptionSelection()
+    struct Redeem_prescriptionSelection: AnalyticsScreen {
+      let name = "redeem:prescriptionSelection"
     }
     static let redeem_success = Redeem_success()
     struct Redeem_success: AnalyticsScreen {

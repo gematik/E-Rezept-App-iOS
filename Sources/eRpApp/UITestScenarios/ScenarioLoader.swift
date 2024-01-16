@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,6 +20,7 @@ import ComposableArchitecture
 import Dependencies
 import eRpKit
 import eRpLocalStorage
+import eRpRemoteStorage
 import eRpStyleKit
 import FHIRClient
 import Foundation
@@ -86,23 +87,17 @@ extension ReducerProtocol {
             dependencies.pharmacyServiceFactory = PharmacyServiceFactory { fhirClient in
                 SmartMocks.shared.smartMockPharmacyService(fhirClient: fhirClient, scenario, isRecording)
             }
-
-            mockPharmacyService(scenario, isRecording, dependencies: &dependencies)
-        }
-    }
-
-    private func mockPharmacyService(_ scenario: Scenario?, _ isRecording: Bool, dependencies: inout DependencyValues) {
-        dependencies.pharmacyServiceFactory = PharmacyServiceFactory { fhirClient in
-            @Dependency(\.smartMockRegister) var smartMockRegister: SmartMockRegister
-
-            let mock = SmartMockPharmacyRemoteDataStore(
-                wrapped: PharmacyFHIRDataSource(fhirClient: fhirClient),
-                mocks: scenario?.pharmacyRemoteDataStore,
-                isRecording: isRecording
-            )
-
-            smartMockRegister.register(mock)
-            return mock
+            dependencies.erxTaskCoreDataStoreFactory = ErxTaskCoreDataStoreFactory { uuid, coreDataControllerFactory in
+                SmartMocks.shared.smartMockErxTaskCoreDataStore(
+                    uuid: uuid,
+                    coreDataControllerFactory: coreDataControllerFactory,
+                    scenario,
+                    isRecording
+                )
+            }
+            dependencies.erxRemoteDataStoreFactory = ErxRemoteDataStoreFactory { fhirClient in
+                SmartMocks.shared.smartMockErxRemoteDataStore(fhirClient: fhirClient, scenario, isRecording)
+            }
         }
     }
 }
@@ -146,11 +141,59 @@ struct SmartMocks {
         smartMockPharmacyService = mock
         return mock
     }
+
+    private var smartMockErxTaskCoreDataStore: SmartMockErxTaskCoreDataStore?
+    mutating func smartMockErxTaskCoreDataStore(
+        uuid: UUID?,
+        coreDataControllerFactory: CoreDataControllerFactory,
+        _ scenario: Scenario?,
+        _ isRecording: Bool
+    ) -> ErxTaskCoreDataStore {
+        if let existingMock = smartMockErxTaskCoreDataStore {
+            return existingMock
+        }
+        let erxTaskCoreDataStore = DefaultErxTaskCoreDataStore(
+            profileId: uuid,
+            coreDataControllerFactory: coreDataControllerFactory
+        )
+
+        let mock = SmartMockErxTaskCoreDataStore(
+            wrapped: erxTaskCoreDataStore,
+            mocks: scenario?.erxTaskCoreDataStore,
+            isRecording: isRecording
+        )
+        smartMockRegister.register(mock)
+        smartMockErxTaskCoreDataStore = mock
+        return mock
+    }
+
+    private var smartMockErxRemoteDataStore: SmartMockErxRemoteDataStore?
+    mutating func smartMockErxRemoteDataStore(
+        fhirClient: FHIRClient,
+        _ scenario: Scenario?,
+        _ isRecording: Bool
+    ) -> ErxRemoteDataStore {
+        if let existingMock = smartMockErxRemoteDataStore {
+            return existingMock
+        }
+        let erxTaskFHIRDataStore = ErxTaskFHIRDataStore(fhirClient: fhirClient)
+
+        let mock = SmartMockErxRemoteDataStore(
+            wrapped: erxTaskFHIRDataStore,
+            mocks: scenario?.erxRemoteDataStore,
+            isRecording: isRecording
+        )
+        smartMockRegister.register(mock)
+        smartMockErxRemoteDataStore = mock
+        return mock
+    }
 }
 
 struct Scenario {
     var userDataStore: SmartMockUserDataStore.Mocks?
     var pharmacyRemoteDataStore: SmartMockPharmacyRemoteDataStore.Mocks?
+    var erxTaskCoreDataStore: SmartMockErxTaskCoreDataStore.Mocks?
+    var erxRemoteDataStore: SmartMockErxRemoteDataStore.Mocks?
 }
 
 struct ScenarioLoader {
@@ -168,16 +211,29 @@ struct ScenarioLoader {
             return nil
         }
 
-        let pharmacyMock: SmartMockPharmacyRemoteDataStore.Mocks? = loadMockData(
-            scenarioUrl: scenarioPath,
-            with: "PharmacyRemoteDataStore"
-        )
         let userDataStoreMock: SmartMockUserDataStore.Mocks? = loadMockData(
             scenarioUrl: scenarioPath,
             with: "UserDataStore"
         )
+        let pharmacyMock: SmartMockPharmacyRemoteDataStore.Mocks? = loadMockData(
+            scenarioUrl: scenarioPath,
+            with: "PharmacyRemoteDataStore"
+        )
+        let erxTaskCoreDataStore: SmartMockErxTaskCoreDataStore.Mocks? = loadMockData(
+            scenarioUrl: scenarioPath,
+            with: "ErxTaskCoreDataStore"
+        )
+        let erxRemoteDataStore: SmartMockErxRemoteDataStore.Mocks? = loadMockData(
+            scenarioUrl: scenarioPath,
+            with: "ErxRemoteDataStore"
+        )
 
-        return Scenario(userDataStore: userDataStoreMock, pharmacyRemoteDataStore: pharmacyMock)
+        return Scenario(
+            userDataStore: userDataStoreMock,
+            pharmacyRemoteDataStore: pharmacyMock,
+            erxTaskCoreDataStore: erxTaskCoreDataStore,
+            erxRemoteDataStore: erxRemoteDataStore
+        )
     }
 
     private func loadMockData<T>(scenarioUrl: URL, with name: String) -> T? where T: Codable {
@@ -192,4 +248,6 @@ struct ScenarioLoader {
 // sourcery:begin: SmartMock
 extension UserDataStore {}
 extension PharmacyRemoteDataStore {}
+extension ErxTaskCoreDataStore {}
+extension ErxRemoteDataStore {}
 // sourcery:end

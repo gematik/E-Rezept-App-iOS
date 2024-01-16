@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -341,10 +341,39 @@ class PharmacyRedeemDomainTests: XCTestCase {
         expect(sut?.mail).to(beNil())
         expect(sut?.deliveryInfo).to(beNil())
     }
+
+    func testRedeemNoPrescriptionsSelected() async {
+        let inputTasks = [ErxTask.Fixtures.erxTask1, ErxTask.Fixtures.erxTask2, ErxTask.Fixtures.erxTask3]
+        let sut = testStore(
+            for: PharmacyRedeemDomain.State(
+                redeemOption: .shipment,
+                erxTasks: inputTasks,
+                pharmacy: pharmacy,
+                selectedErxTasks: Set(inputTasks)
+            )
+        )
+        let selectionPrescriptionState = PharmacyPrescriptionSelectionDomain.State(
+            erxTasks: sut.state.erxTasks,
+            selectedErxTasks: sut.state.selectedErxTasks
+        )
+
+        await sut.send(.setNavigation(tag: .prescriptionSelection)) { sut in
+            sut.destination = .prescriptionSelection(selectionPrescriptionState)
+        }
+
+        await sut
+            .send(.destination(.presented(.prescriptionSelection(action: .saveSelection(Set<ErxTask>()))))) { sut in
+                sut.destination = nil
+                sut.selectedErxTasks = Set<ErxTask>()
+            }
+
+        await sut.send(.redeem)
+        expect(self.mockPharmacyRepository.savePharmaciesCalled).to(beFalse())
+    }
 }
 
-extension Order {
-    static var fixture: Order = {
-        Order(redeemType: .shipment, taskID: "task_id_0", accessCode: "access_code_0", telematikId: "k123456789")
+extension OrderRequest {
+    static var fixture: OrderRequest = {
+        OrderRequest(redeemType: .shipment, taskID: "task_id_0", accessCode: "access_code_0", telematikId: "k123456789")
     }()
 }

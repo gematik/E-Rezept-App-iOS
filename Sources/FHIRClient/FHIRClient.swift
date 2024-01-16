@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,10 +28,6 @@ extension FHIRClient {
     public enum Error: Swift.Error, Equatable, CustomStringConvertible, LocalizedError {
         // sourcery: errorCode = "01"
         case internalError(String)
-        // sourcery: errorCode = "02"
-        case httpError(HTTPError)
-        // sourcery: errorCode = "03"
-        case operationOutcome(OperationOutcome)
         // sourcery: errorCode = "04"
         /// When the server returned a successful response with inconsistent response data.
         /// E.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.
@@ -40,43 +36,48 @@ extension FHIRClient {
         case decoding(Swift.Error)
         // sourcery: errorCode = "06"
         case unknown(Swift.Error)
+        // sourcery: errorCode = "07"
+        case http(FHIRClientHttpError)
 
         public var description: String {
             switch self {
             case let .internalError(error): return error
-            case let .httpError(error): return error.localizedDescription
             case .inconsistentResponse: return "inconsistent response error"
             case let .decoding(error): return error.localizedDescription
             case let .unknown(error): return error.localizedDescription
-            case let .operationOutcome(outcome):
-                guard let issue = outcome.issue.first else { return "missing error type" }
-                let code = issue.code.value?.rawValue ?? "missing code"
-                let text = issue.details?.text?.value?.string ?? "missing text"
-                let severity = issue.severity.value?.rawValue ?? "missing severity"
-                return "\(severity): \(text), code: \(code)"
+            case let .http(httpError):
+                guard case let .httpError(urlError) = httpError.httpClientError
+                else { return httpError.httpClientError.localizedDescription }
+                var message = "urlError: \(urlError.localizedDescription)"
+                if let issue = httpError.operationOutcome?.issue.first {
+                    message += "\n operationOutcome: \(issue.localizedDescription)"
+                }
+                return message
             }
         }
 
         public var errorDescription: String? {
             switch self {
             case let .internalError(error): return error
-            case let .httpError(error): return error.localizedDescription
             case .inconsistentResponse: return "inconsistent response error"
             case let .decoding(error): return error.localizedDescription
             case let .unknown(error): return error.localizedDescription
-            case let .operationOutcome(outcome):
-                guard let issue = outcome.issue.first else { return "missing error type" }
-                let code = issue.code.value?.rawValue ?? "missing code"
-                let text = issue.details?.text?.value?.string ?? "missing text"
-                let severity = issue.severity.value?.rawValue ?? "missing severity"
-                return "\(severity): \(text), code: \(code)"
+            case let .http(httpError):
+                guard case let .httpError(urlError) = httpError.httpClientError
+                else { return httpError.httpClientError.localizedDescription }
+                var message = "urlError: \(urlError.localizedDescription)"
+                if let issue = httpError.operationOutcome?.issue.first {
+                    message += "\n operationOutcome: \(issue.localizedDescription)"
+                }
+                return message
             }
         }
 
         public static func ==(lhs: FHIRClient.Error, rhs: FHIRClient.Error) -> Bool {
             switch (lhs, rhs) {
             case let (internalError(lhsString), internalError(rhsString)): return lhsString == rhsString
-            case let (httpError(lhsError), httpError(rhsError)): return lhsError == rhsError
+            case let (http(lhsError), http(rhsError)):
+                return lhsError.httpClientError == rhsError.httpClientError
             case (inconsistentResponse, inconsistentResponse): return true
             default: return false
             }
@@ -122,13 +123,15 @@ public class FHIRClient {
                 let response = FHIRClient.Response.from(response: urlResponse, status: status, data: data)
 
                 guard response.status.isSuccessful else {
-                    if let outcome = try? JSONDecoder().decode(ModelsR4.OperationOutcome.self, from: response.body) {
-                        throw Error.operationOutcome(outcome)
-                    } else {
-                        let urlError = URLError(URLError.Code(rawValue: response.status.rawValue),
-                                                userInfo: ["body": response.body])
-                        throw Error.httpError(.httpError(urlError))
-                    }
+                    let urlError = URLError(
+                        URLError.Code(rawValue: response.status.rawValue),
+                        userInfo: ["body": response.body]
+                    )
+                    let outcome = try? JSONDecoder().decode(ModelsR4.OperationOutcome.self, from: response.body)
+
+                    throw Error.http(
+                        FHIRClientHttpError(httpClientError: .httpError(urlError), operationOutcome: outcome)
+                    )
                 }
 
                 return try operation.handle(response: response)
@@ -158,13 +161,40 @@ extension FHIRClient {
     }
 }
 
+/// Error that wraps the the HTTP error along with an optional FHIR-OperationOutcome
+public struct FHIRClientHttpError {
+    // swiftlint:disable missing_docs
+    public let httpClientError: HTTPClientError
+    public let operationOutcome: OperationOutcome?
+
+    public init(httpClientError: HTTPClientError, operationOutcome: OperationOutcome?) {
+        self.httpClientError = httpClientError
+        self.operationOutcome = operationOutcome
+    }
+    // swiftlint:enable missing_docs
+}
+
+extension OperationOutcomeIssue {
+    var localizedDescription: String {
+        let code = code.value?.rawValue ?? "missing code"
+        let text = details?.text?.value?.string ?? "missing text"
+        let severity = severity.value?.rawValue ?? "missing severity"
+        return "\(severity): \(text), code: \(code)"
+    }
+}
+
 extension Swift.Error {
     func asFHIRClientError() -> FHIRClient.Error {
         if let fhirClientError = self as? FHIRClient.Error {
             return fhirClientError
         }
-        if let httpError = self as? HTTPError {
-            return .httpError(httpError)
+        if let httpClientError = self as? HTTPClientError {
+            return .http(
+                FHIRClientHttpError(
+                    httpClientError: httpClientError,
+                    operationOutcome: nil
+                )
+            )
         }
         return .unknown(self)
     }

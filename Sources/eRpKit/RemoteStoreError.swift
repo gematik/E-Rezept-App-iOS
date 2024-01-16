@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -16,6 +16,7 @@
 //  
 //
 
+import FHIRClient
 import Foundation
 
 // sourcery: CodedError = "204"
@@ -23,7 +24,7 @@ import Foundation
 public enum RemoteStoreError: Swift.Error, LocalizedError, Equatable {
     public static func ==(lhs: RemoteStoreError, rhs: RemoteStoreError) -> Bool {
         switch (lhs, rhs) {
-        case let (fhirClientError(lhsError), fhirClientError(rhsError)):
+        case let (fhirClient(lhsError), fhirClient(rhsError)):
             return lhsError.localizedDescription == rhsError.localizedDescription
         case (notImplemented, notImplemented): return true
         default: return false
@@ -31,13 +32,13 @@ public enum RemoteStoreError: Swift.Error, LocalizedError, Equatable {
     }
 
     // sourcery: errorCode = "01"
-    case fhirClientError(Error)
+    case fhirClient(FHIRClient.Error)
     // sourcery: errorCode = "02"
     case notImplemented
 
     public var errorDescription: String? {
         switch self {
-        case let .fhirClientError(error):
+        case let .fhirClient(error):
             return error.localizedDescription
         case .notImplemented:
             return "ErxTaskFHIRDataStore: missing interface implementation"

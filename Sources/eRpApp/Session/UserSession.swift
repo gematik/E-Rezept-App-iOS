@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -41,7 +41,9 @@ protocol UserSession {
 
     var erxTaskRepository: ErxTaskRepository { get }
 
-    var ordersRepository: ErxTaskRepository { get }
+    var entireErxTaskRepository: ErxTaskRepository { get }
+
+    var ordersRepository: OrdersRepository { get }
 
     var profileDataStore: ProfileDataStore { get }
 
@@ -110,17 +112,15 @@ struct UserSessionDependency: DependencyKey {
         // After sanitising the database there should be a profile available which is set as the selected profile
         let selectedProfileId = UserDefaults.standard.selectedProfileId ?? UUID()
 
+        @Dependency(\.erxTaskCoreDataStoreFactory) var erxTaskCoreDataStoreFactory: ErxTaskCoreDataStoreFactory
+        let erxTaskCoreDataStore = erxTaskCoreDataStoreFactory.construct(selectedProfileId, coreDataControllerFactory)
+        let entireCoreDataStore = erxTaskCoreDataStoreFactory.construct(nil, coreDataControllerFactory)
+
         return StandardSessionContainer(
             for: selectedProfileId,
             schedulers: Schedulers(),
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(
-                profileId: selectedProfileId,
-                coreDataControllerFactory: coreDataControllerFactory
-            ),
-            ordersCoreDataStore: ErxTaskCoreDataStore(
-                profileId: nil,
-                coreDataControllerFactory: coreDataControllerFactory
-            ),
+            erxTaskCoreDataStore: erxTaskCoreDataStore,
+            entireCoreDataStore: entireCoreDataStore,
             pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             profileDataStore: ProfileDataStoreDependency.initialValue,
             shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),

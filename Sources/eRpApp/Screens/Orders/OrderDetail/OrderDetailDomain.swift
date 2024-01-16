@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,9 +27,10 @@ struct OrderDetailDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
     struct State: Equatable {
-        var order: OrderCommunications
+        var order: Order
         var erxTasks: IdentifiedArrayOf<ErxTask> = []
         var openUrlSheetUrl: URL?
+        var timelineEntries: [TimelineEntry] = []
 
         @PresentationState var destination: Destinations.State?
     }
@@ -37,13 +38,15 @@ struct OrderDetailDomain: ReducerProtocol {
     enum Action: Equatable {
         case task
 
-        case didReadCommunications
+        case didDisplayTimelineEntries
         case loadTasks
+        case loadTimeline
         case tasksReceived([ErxTask])
         case didSelectMedication(ErxTask)
 
         case showPickupCode(dmcCode: String?, hrCode: String?)
 
+        case showChargeItem(ErxChargeItem)
         case showOpenUrlSheet(url: URL?)
         case openUrl(url: URL?)
         case openMail(message: String)
@@ -61,6 +64,8 @@ struct OrderDetailDomain: ReducerProtocol {
             case pickupCode(PickupCodeDomain.State)
             // sourcery: AnalyticsScreen = prescriptionDetail
             case prescriptionDetail(PrescriptionDetailDomain.State)
+            // sourcery: AnalyticsScreen = chargeItemDetails
+            case chargeItem(ChargeItemDomain.State)
             // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<Action.Alert>)
         }
@@ -68,6 +73,7 @@ struct OrderDetailDomain: ReducerProtocol {
         enum Action: Equatable {
             case prescriptionDetail(action: PrescriptionDetailDomain.Action)
             case pickupCode(action: PickupCodeDomain.Action)
+            case chargeItem(action: ChargeItemDomain.Action)
             case alert(Alert)
 
             enum Alert: Equatable {
@@ -88,6 +94,12 @@ struct OrderDetailDomain: ReducerProtocol {
                 action: /Action.pickupCode(action:)
             ) {
                 PickupCodeDomain()
+            }
+            Scope(
+                state: /State.chargeItem,
+                action: /Action.chargeItem(action:)
+            ) {
+                ChargeItemDomain()
             }
         }
     }
@@ -115,9 +127,13 @@ struct OrderDetailDomain: ReducerProtocol {
         switch action {
         case .task:
             return .merge(
-                .send(.didReadCommunications),
-                .send(.loadTasks)
+                .send(.didDisplayTimelineEntries),
+                .send(.loadTasks),
+                .send(.loadTimeline)
             )
+        case .loadTimeline:
+            state.timelineEntries = Self.loadTimeline(for: state.order)
+            return .none
         case let .didSelectMedication(erxTask):
             let prescription = Prescription(erxTask: erxTask, dateFormatter: uiDateFormatter)
             state.destination = .prescriptionDetail(
@@ -127,10 +143,12 @@ struct OrderDetailDomain: ReducerProtocol {
                 )
             )
             return .none
-        case .didReadCommunications:
+        case .didDisplayTimelineEntries:
             let communications = state.order.communications.elements
+            let chargeItems = state.order.chargeItems.elements
             return .run { _ in
                 _ = try await self.setReadState(for: communications).async()
+                _ = try await self.setReadState(for: chargeItems).async()
             }
         case .loadTasks:
             let taskIds = Set(state.order.communications.map(\.taskId))
@@ -147,6 +165,15 @@ struct OrderDetailDomain: ReducerProtocol {
                     pharmacyName: state.order.pharmacy?.name,
                     pickupCodeHR: hrCode,
                     pickupCodeDMC: dmcCode
+                )
+            )
+            return .none
+        case let .showChargeItem(chargeItem):
+            state.destination = .chargeItem(
+                .init(
+                    profileId: userSession.profileId,
+                    chargeItem: chargeItem,
+                    showRouteToChargeItemListButton: true
                 )
             )
             return .none
@@ -241,9 +268,141 @@ extension OrderDetailDomain {
                 readComm.isRead = true
                 return readComm
             }
+        guard !readCommunications.isEmpty else {
+            return Just(true)
+                .setFailureType(to: ErxRepositoryError.self)
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher()
+        }
         return erxTaskRepository.saveLocal(communications: readCommunications)
             .receive(on: schedulers.main)
             .eraseToAnyPublisher()
+    }
+
+    func setReadState(for chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        let readChargeItems = chargeItems.filter { !$0.isRead }
+            .map { chargeItem -> ErxChargeItem in
+                var readChargeItem = chargeItem
+                readChargeItem.isRead = true
+                return readChargeItem
+            }
+        guard !readChargeItems.isEmpty else {
+            return Just(true)
+                .setFailureType(to: ErxRepositoryError.self)
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher()
+        }
+        return erxTaskRepository.save(chargeItems: readChargeItems.map(\.sparseChargeItem))
+            .receive(on: schedulers.main)
+            .eraseToAnyPublisher()
+    }
+
+    static func loadTimeline(for order: Order) -> [State.TimelineEntry] {
+        let displayedCommunications = IdentifiedArray(uniqueElements: order.communications.filterUnique())
+        var timelineEntries: [State.TimelineEntry] = displayedCommunications.compactMap { communication in
+            switch communication.profile {
+            case .dispReq:
+                return .dispReq(communication, pharmacy: order.pharmacy)
+            case .reply:
+                return .reply(communication)
+            default:
+                return nil
+            }
+        }
+        timelineEntries.append(contentsOf: order.chargeItems.map { State.TimelineEntry.chargeItem($0) })
+        return timelineEntries.sorted { $0.lastUpdated > $1.lastUpdated }
+    }
+}
+
+extension OrderDetailDomain.State {
+    struct Timeline<T> {
+        let value: T
+        let name: String
+    }
+
+    enum TimelineEntry: Equatable, Identifiable {
+        case dispReq(ErxTask.Communication, pharmacy: PharmacyLocation?)
+        case reply(ErxTask.Communication)
+        case chargeItem(ErxChargeItem)
+
+        var id: String {
+            switch self {
+            case let .dispReq(communication, _):
+                return communication.identifier
+            case let .reply(communication):
+                return communication.identifier
+            case let .chargeItem(chargeItem):
+                return chargeItem.identifier
+            }
+        }
+
+        var lastUpdated: String {
+            switch self {
+            case let .dispReq(communication, _):
+                return communication.timestamp
+            case let .reply(communication):
+                return communication.timestamp
+            case let .chargeItem(chargeItem):
+                return chargeItem.enteredDate ?? ""
+            }
+        }
+
+        var isRead: Bool {
+            switch self {
+            case let .dispReq(communication, _):
+                return communication.isRead
+            case let .reply(communication):
+                return communication.isRead
+            case let .chargeItem(chargeItem):
+                return chargeItem.isRead
+            }
+        }
+
+        var text: String {
+            switch self {
+            case let .dispReq(_, pharmacy):
+                return L10n.ordDetailTxtSendTo(
+                    L10n.ordDetailTxtPresc(1).text,
+                    pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text
+                ).text
+            case let .reply(communication):
+                guard let payload = communication.payload else {
+                    return L10n.ordDetailTxtError.text
+                }
+
+                if let text = payload.infoText, !text.isEmpty {
+                    return text
+                } else {
+                    return L10n.ordDetailMsgsTxtEmpty.text
+                }
+            case let .chargeItem(chargeItem):
+                return L10n.ordDetailTxtChargeItem(chargeItem.medication?.name ?? "").text
+            }
+        }
+
+        var actions: [String: OrderDetailDomain.Action] {
+            switch self {
+            case .dispReq:
+                return [:]
+            case let .reply(communication):
+                guard let payload = communication.payload else {
+                    return [L10n.ordDetailBtnError.text: .openMail(message: communication.payloadJSON)]
+                }
+                var actions: [String: OrderDetailDomain.Action] = [:]
+                if !payload.isPickupCodeEmptyOrNil {
+                    actions[L10n.ordDetailBtnOnPremise.text] = .showPickupCode(dmcCode: payload.pickUpCodeDMC,
+                                                                               hrCode: payload.pickUpCodeHR)
+                }
+                if let urlString = payload.url,
+                   !urlString.isEmpty,
+                   let url = URL(string: urlString) {
+                    actions[L10n.ordDetailBtnLink.text] = .openUrl(url: url)
+                }
+                return actions
+            case let .chargeItem(chargeItem):
+                return [L10n.ordDetailBtnChargeItem.text: .showChargeItem(chargeItem)]
+            }
+        }
     }
 }
 
@@ -337,20 +496,16 @@ extension OrderDetailDomain {
 extension OrderDetailDomain {
     enum Dummies {
         static let state = State(
-            order: OrderCommunications.Dummies.orderCommunications1,
+            order: Order.Dummies.orderCommunications1,
             erxTasks: [ErxTask.Demo.erxTask1, ErxTask.Demo.erxTask13]
         )
 
-        static let store = Store(
-            initialState: state
-        ) {
+        static let store = Store(initialState: state) {
             OrderDetailDomain()
         }
 
         static func storeFor(_ state: State) -> Store {
-            Store(
-                initialState: state
-            ) {
+            Store(initialState: state) {
                 OrderDetailDomain()
             }
         }

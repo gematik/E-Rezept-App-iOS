@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,11 +30,20 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         diffTool = "open"
     }
 
-    func store(with erxTask: ErxTask) -> StoreOf<PrescriptionDetailDomain> {
+    func store(
+        with erxTask: ErxTask,
+        profile: UserProfile = UserProfile.Dummies.profileA,
+        chargeItem: ErxSparseChargeItem? = nil,
+        chargeItemConstentState: PrescriptionDetailDomain.ChargeItemConsentState = .notAuthenticated,
+        isArchived: Bool = false
+    ) -> StoreOf<PrescriptionDetailDomain> {
         Store(
             initialState: .init(
                 prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue),
-                isArchived: false
+                profile: profile,
+                chargeItemConsentState: chargeItemConstentState,
+                chargeItem: chargeItem,
+                isArchived: isArchived
             )
 
         ) {
@@ -73,6 +82,46 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_PkvWithoutChargeItem() {
+        let store = store(
+            with: ErxTask.Fixtures.erxTaskRedeemed,
+            profile: UserProfile.Dummies.profileE,
+            chargeItemConstentState: .granted,
+            isArchived: true
+        )
+        let sut = PrescriptionDetailView(store: store)
+            .frame(width: 320, height: 1100)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testPrescriptionDetail_PkvWithoutConsent() {
+        let store = store(
+            with: ErxTask.Fixtures.erxTaskRedeemed,
+            profile: UserProfile.Dummies.profileE,
+            chargeItemConstentState: .notGranted,
+            isArchived: true
+        )
+        let sut = PrescriptionDetailView(store: store)
+            .frame(width: 320, height: 1100)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testPrescriptionDetail_PkvWithChargeItem() {
+        let store = store(
+            with: ErxTask.Fixtures.erxTaskRedeemed,
+            profile: UserProfile.Dummies.profileE,
+            chargeItem: ErxChargeItem.Dummies.dummy.sparseChargeItem,
+            chargeItemConstentState: .granted,
+            isArchived: true
+        )
+        let sut = PrescriptionDetailView(store: store)
+            .frame(width: 320, height: 1100)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
     }
 
     func testPrescriptionDetail_TechnicalInformations() {

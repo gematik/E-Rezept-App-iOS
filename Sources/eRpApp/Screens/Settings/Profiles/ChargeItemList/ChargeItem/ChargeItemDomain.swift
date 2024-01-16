@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -37,8 +37,8 @@ struct ChargeItemDomain: ReducerProtocol {
         }
 
         let profileId: UUID
-
         let chargeItem: ErxChargeItem
+        var showRouteToChargeItemListButton = false
         var authenticationState: AuthenticationState = .notAuthenticated
 
         @PresentationState var destination: Destinations.State?
@@ -51,6 +51,7 @@ struct ChargeItemDomain: ReducerProtocol {
         case authenticate
         // Needs to be enhanced if chargeItem can be altered inApp
         case alterChargeItem
+        case routeToChargeItemList
 
         case setNavigation(tag: Destinations.State.Tag?)
         case destination(PresentationAction<Destinations.Action>)
@@ -111,6 +112,7 @@ struct ChargeItemDomain: ReducerProtocol {
     @Dependency(\.chargeItemsDomainService) var chargeItemsService: ChargeItemListDomainService
     @Dependency(\.chargeItemPDFService) var pdfService: ChargeItemPDFService
     @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
+    @Dependency(\.router) var router: Routing
     @Dependency(\.dismiss) var dismiss
 
     var body: some ReducerProtocol<State, Action> {
@@ -143,6 +145,12 @@ struct ChargeItemDomain: ReducerProtocol {
                 erxChargeItem: state.chargeItem
             ))
             return .none
+        case .routeToChargeItemList:
+            return .run { @MainActor [profileId = state.profileId] _ in
+
+                await dismiss()
+                router.routeTo(.settings(.editProfile(.chargeItemListFor(profileId))))
+            }
         case .destination(.presented(.alert(.deleteConfirm))):
             state.destination = nil
             return .publisher(chargeItemsService.delete(

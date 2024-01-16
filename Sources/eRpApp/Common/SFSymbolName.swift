@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -149,6 +149,8 @@ public enum SFSymbolName {
             return "eurosign.circle"
         }
     }
+
+    public static let noSign = "nosign"
 }
 
 public enum UnicodeCharacter {

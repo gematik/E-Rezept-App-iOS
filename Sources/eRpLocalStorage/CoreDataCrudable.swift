@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,6 +20,25 @@ import Combine
 import CombineSchedulers
 import CoreData
 import eRpKit
+
+class DefaultCoreDataCrudable: CoreDataCrudable {
+    /// Dispatch queue used for fetch operations
+    let foregroundQueue: AnySchedulerOf<DispatchQueue>
+    /// Dispatch queue used for create, update and delete operations
+    let backgroundQueue: AnySchedulerOf<DispatchQueue>
+    /// Factory that provides the underlying CoreDataController with a NSPersistentContainer
+    let coreDataControllerFactory: CoreDataControllerFactory
+
+    internal init(
+        foregroundQueue: AnySchedulerOf<DispatchQueue>,
+        backgroundQueue: AnySchedulerOf<DispatchQueue>,
+        coreDataControllerFactory: CoreDataControllerFactory
+    ) {
+        self.foregroundQueue = foregroundQueue
+        self.backgroundQueue = backgroundQueue
+        self.coreDataControllerFactory = coreDataControllerFactory
+    }
+}
 
 protocol CoreDataCrudable {
     /// Dispatch queue used for fetch operations

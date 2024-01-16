@@ -208,6 +208,8 @@ extension ChargeItemListDomain.State {
                 return destination.tag.analyticsName
             case let .chargeItem(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case .toast:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -368,7 +370,11 @@ extension MainDomain.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case .welcomeDrawer:
                 return destination.tag.analyticsName
+            case .grantChargeItemConsentDrawer:
+                return destination.tag.analyticsName
             case .alert:
+                return destination.tag.analyticsName
+            case .toast:
                 return destination.tag.analyticsName
         }
     }
@@ -434,6 +440,8 @@ extension OrderDetailDomain.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .prescriptionDetail(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case let .chargeItem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
         }
@@ -464,6 +472,8 @@ extension OrdersDomain.State {
         switch destination {
             case let .orderDetail(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -490,6 +500,12 @@ extension PharmacyDetailDomain.State {
     }
 }
 
+extension PharmacyPrescriptionSelectionDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
 extension PharmacyRedeemDomain.State {
     func routeName() -> String? {
         guard let destination = destination else {
@@ -501,6 +517,8 @@ extension PharmacyRedeemDomain.State {
             case let .contact(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .cardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .prescriptionSelection(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
@@ -554,6 +572,8 @@ extension PrescriptionDetailDomain.State {
             return nil
         }
         switch destination {
+            case let .chargeItem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case let .medicationOverview(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .medication(state: state):
@@ -585,6 +605,8 @@ extension PrescriptionDetailDomain.State {
             case .coPaymentInfo:
                 return destination.tag.analyticsName
             case .emergencyServiceFeeInfo:
+                return destination.tag.analyticsName
+            case .toast:
                 return destination.tag.analyticsName
         }
     }
@@ -879,6 +901,8 @@ extension ChargeItemListDomain.Destinations.State {
                 return destination.tag.analyticsName
             case let .chargeItem(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case .toast:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -985,7 +1009,11 @@ extension MainDomain.Destinations.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case .welcomeDrawer:
                 return destination.tag.analyticsName
+            case .grantChargeItemConsentDrawer:
+                return destination.tag.analyticsName
             case .alert:
+                return destination.tag.analyticsName
+            case .toast:
                 return destination.tag.analyticsName
         }
     }
@@ -1031,6 +1059,8 @@ extension OrderDetailDomain.Destinations.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .prescriptionDetail(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case let .chargeItem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
         }
@@ -1057,6 +1087,8 @@ extension OrdersDomain.Destinations.State {
         switch destination {
             case let .orderDetail(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -1084,6 +1116,8 @@ extension PharmacyRedeemDomain.Destinations.State {
             case let .contact(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .cardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .prescriptionSelection(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
@@ -1119,6 +1153,8 @@ extension PrescriptionDetailDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
+            case let .chargeItem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case let .medicationOverview(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .medication(state: state):
@@ -1150,6 +1186,8 @@ extension PrescriptionDetailDomain.Destinations.State {
             case .coPaymentInfo:
                 return destination.tag.analyticsName
             case .emergencyServiceFeeInfo:
+                return destination.tag.analyticsName
+            case .toast:
                 return destination.tag.analyticsName
         }
     }
@@ -1372,6 +1410,8 @@ extension ChargeItemListDomain.Destinations.State.Tag {
                 return Analytics.Screens.alert.name
             case .chargeItem: 
                 return Analytics.Screens.chargeItemDetails.name
+            case .toast: 
+                return Analytics.Screens.chargeItemList_toast.name
         }
     }
 }
@@ -1466,7 +1506,11 @@ extension MainDomain.Destinations.State.Tag {
                 return Analytics.Screens.redeem_methodSelection.name
             case .welcomeDrawer: 
                 return Analytics.Screens.main_welcomeDrawer.name
+            case .grantChargeItemConsentDrawer: 
+                return Analytics.Screens.main_consentDrawer.name
             case .alert: 
+                return Analytics.Screens.alert.name
+            case .toast: 
                 return Analytics.Screens.alert.name
         }
     }
@@ -1504,6 +1548,8 @@ extension OrderDetailDomain.Destinations.State.Tag {
                 return Analytics.Screens.orders_pickupCode.name
             case .prescriptionDetail: 
                 return Analytics.Screens.prescriptionDetail.name
+            case .chargeItem: 
+                return Analytics.Screens.chargeItemDetails.name
             case .alert: 
                 return Analytics.Screens.alert.name
         }
@@ -1526,6 +1572,8 @@ extension OrdersDomain.Destinations.State.Tag {
         switch self {
             case .orderDetail: 
                 return Analytics.Screens.orders_detail.name
+            case .alert: 
+                return Analytics.Screens.alert.name
         }
     }
 }
@@ -1550,6 +1598,8 @@ extension PharmacyRedeemDomain.Destinations.State.Tag {
                 return Analytics.Screens.redeem_editContactInformation.name
             case .cardWall: 
                 return Analytics.Screens.cardWall.name
+            case .prescriptionSelection: 
+                return Analytics.Screens.redeem_prescriptionSelection.name
             case .alert: 
                 return Analytics.Screens.alert.name
         }
@@ -1578,6 +1628,8 @@ extension PrescriptionArchiveDomain.Destinations.State.Tag {
 extension PrescriptionDetailDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
+            case .chargeItem: 
+                return Analytics.Screens.chargeItemDetails.name
             case .medicationOverview: 
                 return Analytics.Screens.prescriptionDetail_medicationOverview.name
             case .medication: 
@@ -1593,7 +1645,7 @@ extension PrescriptionDetailDomain.Destinations.State.Tag {
             case .technicalInformations: 
                 return Analytics.Screens.prescriptionDetail_technicalInfo.name
             case .alert: 
-                return Analytics.Screens.errorAlert.name
+                return Analytics.Screens.alert.name
             case .sharePrescription: 
                 return Analytics.Screens.prescriptionDetail_sharePrescription.name
             case .directAssignmentInfo: 
@@ -1610,6 +1662,8 @@ extension PrescriptionDetailDomain.Destinations.State.Tag {
                 return Analytics.Screens.prescriptionDetail_coPaymentInfo.name
             case .emergencyServiceFeeInfo: 
                 return Analytics.Screens.prescriptionDetail_emergencyServiceFeeInfo.name
+            case .toast: 
+                return Analytics.Screens.prescriptionDetail_toast.name
         }
     }
 }

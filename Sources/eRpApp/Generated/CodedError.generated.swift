@@ -500,6 +500,31 @@ extension DefaultDataMatrixStringEncoderError: CodedError {
     }
 }
 
+extension DefaultOrdersRepository.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .erxRepository:
+                return "i-03701"
+            case .pharmacyRepository:
+                return "i-03702"
+            case .unspecified:
+                return "i-03703"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .pharmacyRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .unspecified(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .unspecified:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension DemoError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -625,25 +650,19 @@ extension FHIRClient.Error: CodedError {
         switch self {
             case .internalError:
                 return "i-52001"
-            case .httpError:
-                return "i-52002"
-            case .operationOutcome:
-                return "i-52003"
             case .inconsistentResponse:
                 return "i-52004"
             case .decoding:
                 return "i-52005"
             case .unknown:
                 return "i-52006"
+            case .http:
+                return "i-52007"
         }
     }
     var erpErrorCodeList: [String] {
         switch self {
             case .internalError:
-                return [erpErrorCode]
-            case let .httpError(error):
-                return [erpErrorCode] + error.erpErrorCodeList
-            case .operationOutcome:
                 return [erpErrorCode]
             case let .decoding(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
@@ -652,6 +671,8 @@ extension FHIRClient.Error: CodedError {
             case let .unknown(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
             case .unknown:
+                return [erpErrorCode]
+            case .http:
                 return [erpErrorCode]
             default:
                 return [erpErrorCode]
@@ -678,7 +699,7 @@ extension FileManager.ExcludeFileError: CodedError {
     }
 }
 
-extension HTTPError: CodedError {
+extension HTTPClientError: CodedError {
     var erpErrorCode: String {
         switch self {
             case .internalError:
@@ -1626,7 +1647,7 @@ extension RemoteStorageBundleParsingError: CodedError {
 extension RemoteStoreError: CodedError {
     var erpErrorCode: String {
         switch self {
-            case .fhirClientError:
+            case .fhirClient:
                 return "i-20401"
             case .notImplemented:
                 return "i-20402"
@@ -1634,8 +1655,8 @@ extension RemoteStoreError: CodedError {
     }
     var erpErrorCodeList: [String] {
         switch self {
-            case .fhirClientError:
-                return [erpErrorCode]
+            case let .fhirClient(error):
+                return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
         }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -34,7 +34,7 @@ class StandardSessionContainer: UserSession {
     private var keychainStorage: KeychainStorage
     private let schedulers: Schedulers
     private var erxTaskCoreDataStore: ErxTaskCoreDataStore
-    private var ordersCoreDataStore: ErxTaskCoreDataStore
+    private var entireCoreDataStore: ErxTaskCoreDataStore
     private var pharmacyCoreDataStore: PharmacyCoreDataStore
     let appConfiguration: AppConfiguration
     var profileDataStore: ProfileDataStore
@@ -47,7 +47,7 @@ class StandardSessionContainer: UserSession {
         for profileId: UUID,
         schedulers: Schedulers,
         erxTaskCoreDataStore: ErxTaskCoreDataStore,
-        ordersCoreDataStore: ErxTaskCoreDataStore,
+        entireCoreDataStore: ErxTaskCoreDataStore,
         pharmacyCoreDataStore: PharmacyCoreDataStore,
         profileDataStore: ProfileDataStore,
         shipmentInfoDataStore: ShipmentInfoDataStore,
@@ -57,7 +57,7 @@ class StandardSessionContainer: UserSession {
         self.profileId = profileId
         self.schedulers = schedulers
         self.erxTaskCoreDataStore = erxTaskCoreDataStore
-        self.ordersCoreDataStore = ordersCoreDataStore
+        self.entireCoreDataStore = entireCoreDataStore
         self.pharmacyCoreDataStore = pharmacyCoreDataStore
         self.profileDataStore = profileDataStore
         self.shipmentInfoDataStore = shipmentInfoDataStore
@@ -197,6 +197,8 @@ class StandardSessionContainer: UserSession {
         )
     }()
 
+    @Dependency(\.erxRemoteDataStoreFactory) var erxRemoteDataStoreFactory: ErxRemoteDataStoreFactory
+
     private lazy var erxRemoteDataStore: ErxRemoteDataStore = {
         let vauSession = VAUSession(
             vauServer: appConfiguration.erp,
@@ -209,15 +211,33 @@ class StandardSessionContainer: UserSession {
             server: appConfiguration.base,
             httpClient: self.erpHttpClient(vau: vauSession)
         )
-        return ErxTaskFHIRDataStore(fhirClient: fhirClient)
+        return erxRemoteDataStoreFactory.construct(fhirClient)
     }()
 
+    // The local store only returns stored objects for the related profileId
     lazy var erxTaskRepository: ErxTaskRepository = {
-        DefaultErxTaskRepository(disk: erxTaskCoreDataStore, cloud: erxRemoteDataStore)
+        DefaultErxTaskRepository(
+            disk: erxTaskCoreDataStore,
+            cloud: erxRemoteDataStore,
+            profile: profile()
+        )
     }()
 
-    lazy var ordersRepository: ErxTaskRepository = {
-        DefaultErxTaskRepository(disk: ordersCoreDataStore, cloud: erxRemoteDataStore)
+    // the locale store returns all stored objects regardless from which profile they are
+    lazy var entireErxTaskRepository: ErxTaskRepository = {
+        DefaultErxTaskRepository(
+            disk: entireCoreDataStore,
+            cloud: erxRemoteDataStore,
+            profile: profile()
+        )
+    }()
+
+    // Orders are displayed for all profiles, so the local store is returning objects from all profiles
+    lazy var ordersRepository: OrdersRepository = {
+        DefaultOrdersRepository(
+            erxTaskRepository: entireErxTaskRepository,
+            pharmacyRepository: pharmacyRepository
+        )
     }()
 
     lazy var appSecurityManager: AppSecurityManager = {

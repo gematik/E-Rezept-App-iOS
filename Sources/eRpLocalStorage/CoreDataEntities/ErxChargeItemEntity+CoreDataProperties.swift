@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -31,6 +31,8 @@ extension ErxChargeItemEntity {
     @NSManaged public var medication: Data?
     @NSManaged public var invoice: Data?
     @NSManaged public var profile: ProfileEntity?
+    @NSManaged public var isRead: Bool
+    @NSManaged public var taskId: String?
 }
 
 extension ErxChargeItemEntity: Identifiable {}

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -18,5 +18,16 @@
 
 struct AccessibilityImage: Equatable {
     let name: String
+    let isSystemName: Bool
     var accessibilityName: String?
+
+    init(
+        name: String,
+        isSystemName: Bool = false,
+        accessibilityName: String? = nil
+    ) {
+        self.name = name
+        self.isSystemName = isSystemName
+        self.accessibilityName = accessibilityName
+    }
 }

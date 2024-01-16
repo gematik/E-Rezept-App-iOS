@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -22,18 +22,17 @@ import eRpKit
 import Foundation
 import GemCommonsKit
 
+public protocol ErxTaskCoreDataStore: ErxLocalDataStore {}
+
 // tag::ErxTaskCoreDataStoreDescription[]
 /// Store for fetching, creating, updating or deleting `ErxTask`s and it‘s underlying types. Access to most entities is
 /// tied to the given profileId.
 /// [REQ:BSI-eRp-ePA:O.Source_2#3] CoreDataStore adapter for `ErxTask`s
-public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
-    // end::ErxTaskCoreDataStoreDescription[]
-
-    let coreDataControllerFactory: CoreDataControllerFactory
-    let foregroundQueue: AnySchedulerOf<DispatchQueue>
-    let backgroundQueue: AnySchedulerOf<DispatchQueue>
+public class DefaultErxTaskCoreDataStore: ErxTaskCoreDataStore {
     let profileId: UUID?
+    let coreDataCrudable: CoreDataCrudable
     let dateProvider: () -> Date
+    // end::ErxTaskCoreDataStoreDescription[]
 
     /// Initialize an ErxTask Core Data Store
     /// - Parameters:
@@ -47,16 +46,32 @@ public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
     public init(
         profileId: UUID?,
         coreDataControllerFactory: CoreDataControllerFactory,
-        foregroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main,
-        backgroundQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue(label: "erx-task-data-source-queue",
-                                                                       qos: .userInitiated).eraseToAnyScheduler(),
-        dateProvider: @escaping () -> Date = { Date() }
+        foregroundQueue: AnySchedulerOf<DispatchQueue>,
+        backgroundQueue: AnySchedulerOf<DispatchQueue>,
+        dateProvider: @escaping () -> Date
     ) {
         self.profileId = profileId
-        self.coreDataControllerFactory = coreDataControllerFactory
-        self.foregroundQueue = foregroundQueue
-        self.backgroundQueue = backgroundQueue
+        coreDataCrudable = DefaultCoreDataCrudable(
+            foregroundQueue: foregroundQueue,
+            backgroundQueue: backgroundQueue,
+            coreDataControllerFactory: coreDataControllerFactory
+        )
         self.dateProvider = dateProvider
+    }
+
+    public convenience init(
+        profileId: UUID?,
+        coreDataControllerFactory: CoreDataControllerFactory
+    ) {
+        self.init(
+            profileId: profileId,
+            coreDataControllerFactory: coreDataControllerFactory,
+            foregroundQueue: AnyScheduler.main,
+            backgroundQueue: DispatchQueue(
+                label: "erx-task-data-source-queue",
+                qos: .userInitiated
+            ).eraseToAnyScheduler()
+        ) { Date() }
     }
 
     func fetchProfile(in context: NSManagedObjectContext) -> ProfileEntity? {
@@ -79,9 +94,9 @@ public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
     }
 }
 
-extension ErxTaskCoreDataStore {
+extension DefaultErxTaskCoreDataStore {
     /// Initializes an instance of `ErxTaskCoreDataStore`with a failing CoreDataController
-    public static let failing = ErxTaskCoreDataStore(
+    public static let failing = DefaultErxTaskCoreDataStore(
         profileId: nil,
         coreDataControllerFactory: LocalStoreFactory.failing
     )

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,35 +27,19 @@ extension ProfileEntity {
 
     @NSManaged public var color: String?
     @NSManaged public var created: Date?
-    @NSManaged public var image: String?
-    @NSManaged public var userImageData: Data?
     @NSManaged public var familyName: String?
     @NSManaged public var givenName: String?
     @NSManaged public var identifier: UUID?
+    @NSManaged public var image: String?
     @NSManaged public var insurance: String?
     @NSManaged public var insuranceId: String?
     @NSManaged public var insuranceType: String?
     @NSManaged public var lastAuthenticated: Date?
     @NSManaged public var name: String?
-    @NSManaged public var auditEvents: NSSet?
-    @NSManaged public var erxTasks: NSSet?
+    @NSManaged public var userImageData: Data?
+    @NSManaged public var hidePkvConsentDrawerOnMainView: Bool
     @NSManaged public var chargeItems: NSSet?
-}
-
-// MARK: Generated accessors for erxTasks
-
-extension ProfileEntity {
-    @objc(addErxTasksObject:)
-    @NSManaged public func addToErxTasks(_ value: ErxTaskEntity)
-
-    @objc(removeErxTasksObject:)
-    @NSManaged public func removeFromErxTasks(_ value: ErxTaskEntity)
-
-    @objc(addErxTasks:)
-    @NSManaged public func addToErxTasks(_ values: NSSet)
-
-    @objc(removeErxTasks:)
-    @NSManaged public func removeFromErxTasks(_ values: NSSet)
+    @NSManaged public var erxTasks: NSSet?
 }
 
 // MARK: Generated accessors for chargeItems
@@ -72,6 +56,22 @@ extension ProfileEntity {
 
     @objc(removeChargeItems:)
     @NSManaged public func removeFromChargeItems(_ values: NSSet)
+}
+
+// MARK: Generated accessors for erxTasks
+
+extension ProfileEntity {
+    @objc(addErxTasksObject:)
+    @NSManaged public func addToErxTasks(_ value: ErxTaskEntity)
+
+    @objc(removeErxTasksObject:)
+    @NSManaged public func removeFromErxTasks(_ value: ErxTaskEntity)
+
+    @objc(addErxTasks:)
+    @NSManaged public func addToErxTasks(_ values: NSSet)
+
+    @objc(removeErxTasks:)
+    @NSManaged public func removeFromErxTasks(_ values: NSSet)
 }
 
 extension ProfileEntity: Identifiable {}

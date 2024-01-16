@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -17,6 +17,7 @@
 //
 
 import Combine
+import CombineSchedulers
 import CoreData
 import eRpKit
 @testable import eRpLocalStorage
@@ -66,11 +67,12 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     }
 
     private func loadErxCoreDataStore(for profileId: UUID? = nil) -> ErxTaskCoreDataStore {
-        ErxTaskCoreDataStore(
+        DefaultErxTaskCoreDataStore(
             profileId: profileId,
             coreDataControllerFactory: loadFactory(),
             foregroundQueue: .immediate,
-            backgroundQueue: .main
+            backgroundQueue: .main,
+            dateProvider: { Date() }
         )
     }
 
@@ -173,10 +175,12 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testSaveTasksWithFailingLoadingDatabase() throws {
         let factory = MockCoreDataControllerFactory()
         factory.loadCoreDataControllerThrowableError = LocalStoreError.notImplemented
-        let store = ErxTaskCoreDataStore(
+        let store = DefaultErxTaskCoreDataStore(
             profileId: nil,
             coreDataControllerFactory: factory,
-            backgroundQueue: .main
+            foregroundQueue: AnyScheduler.main,
+            backgroundQueue: .main,
+            dateProvider: { Date() }
         )
 
         var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
@@ -959,6 +963,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let store = loadErxCoreDataStore()
         let item = ErxSparseChargeItem(
             identifier: "id_12345",
+            taskId: "task_id_12345",
             fhirData: Data(),
             enteredDate: "2023-01-12T14:42:32+00:00"
         )
@@ -982,6 +987,51 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // then
         expect(receivedFetchResult.first).toEventually(equal(chargeItemToFetch))
+
+        cancellable.cancel()
+    }
+
+    func testUpdatingChargeItemIsRead() throws {
+        let store = loadErxCoreDataStore()
+        let chargeItemInStore = ErxSparseChargeItem.Fixtures.chargeItem
+
+        // listen to any changes in store
+        var receivedValues = [[ErxSparseChargeItem]]()
+        let cancellable = store.listAllChargeItems()
+            .dropFirst() // remove the subscription call
+            .sink(receiveCompletion: { _ in
+                fail("did not expect to receive a completion")
+            }, receiveValue: { chargeItems in
+                receivedValues.append(chargeItems)
+            })
+
+        try store.add(chargeItems: [chargeItemInStore])
+
+        // when updating the chargeItem
+        let updatedChargeItem = ErxSparseChargeItem(
+            identifier: chargeItemInStore.identifier,
+            taskId: chargeItemInStore.taskId,
+            fhirData: chargeItemInStore.fhirData,
+            enteredDate: chargeItemInStore.enteredDate,
+            isRead: true,
+            medication: chargeItemInStore.medication,
+            invoice: chargeItemInStore.invoice
+        )
+
+        try store.add(chargeItems: [updatedChargeItem])
+
+        expect(receivedValues.count) == 2
+        expect(receivedValues[0].count) == 1
+        expect(receivedValues[0].first) == chargeItemInStore
+        expect(receivedValues[1].count) == 1 // must be 1 otherwise update failed
+        // then verify that only `isRead` has been updated
+        expect(receivedValues[1].first?.isRead) == true
+        expect(receivedValues[1].first?.taskId) == chargeItemInStore.taskId
+        expect(receivedValues[1].first?.identifier) == chargeItemInStore.identifier
+        expect(receivedValues[1].first?.fhirData) == chargeItemInStore.fhirData
+        expect(receivedValues[1].first?.enteredDate) == chargeItemInStore.enteredDate
+        expect(receivedValues[1].first?.medication) == chargeItemInStore.medication
+        expect(receivedValues[1].first?.invoice) == chargeItemInStore.invoice
 
         cancellable.cancel()
     }

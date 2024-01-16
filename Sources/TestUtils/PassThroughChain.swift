@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -34,11 +34,11 @@ public class PassThroughChain: Chain {
     /// if set this response is used in favor of individual properties
     public var httpResponse: HTTPResponse?
 
-    public func proceed(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPError> {
+    public func proceed(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         incomingProceedRequests.append(request)
         let fallback = HTTPResponse(data: responseData, response: response, status: statusCode)
         return Just(httpResponse ?? fallback)
-            .setFailureType(to: HTTPError.self)
+            .setFailureType(to: HTTPClientError.self)
             .eraseToAnyPublisher()
     }
 }

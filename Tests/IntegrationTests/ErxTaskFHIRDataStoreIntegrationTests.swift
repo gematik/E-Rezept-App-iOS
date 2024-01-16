@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -220,7 +220,8 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
 
         let erxTaskRepository = DefaultErxTaskRepository(
             disk: MockErxLocalDataStore(),
-            cloud: cloud
+            cloud: cloud,
+            profile: Just(Profile(name: "Test User")).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         )
 
         let redeemService = ErxTaskRepositoryRedeemService(
@@ -452,13 +453,13 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
 
     // swiftlint:disable line_length
     class ExceptionInterceptor: Interceptor {
-        let order: Order
+        let order: OrderRequest
 
-        init(order: Order) {
+        init(order: OrderRequest) {
             self.order = order
         }
 
-        func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPError> {
+        func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
             if chain.request.url!.absoluteString.contains("Communication"),
                let body = chain.request.httpBody,
                let bodyString = String(data: body, encoding: .utf8) {

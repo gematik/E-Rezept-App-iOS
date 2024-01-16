@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -393,7 +393,7 @@ class RealIDPClient: IDPClient {
     }
 
     func loadDirectoryKKApps(using document: DiscoveryDocument) -> AnyPublisher<IDPDirectoryKKApps, IDPError> {
-        guard let url = document.directoryKKApps?.url else {
+        guard let url = document.directoryKKAppsgId?.url ?? document.directoryKKApps?.url else {
             return Fail(error: Self.missingFeature).eraseToAnyPublisher()
         }
         // load complete kk_apps directory
@@ -420,17 +420,27 @@ class RealIDPClient: IDPClient {
             .eraseToAnyPublisher()
     }
 
+    // will be simplified when fasttrack is no longer available
+    // swiftlint:disable:next function_body_length
     func startExtAuth(_ app: IDPExtAuth, using document: DiscoveryDocument) -> AnyPublisher<URL, IDPError> {
-        guard let url = document.thirdPartyAuth?.url else {
+        let endpoint: URL?
+        let appIdParameterName: String
+        switch app.authType {
+        case .fasttrack:
+            appIdParameterName = "kk_app_id"
+            endpoint = document.thirdPartyAuth?.url
+        case .gid:
+            appIdParameterName = "idp_iss"
+            endpoint = document.federationAuth?.url
+        }
+
+        guard let url = endpoint else {
             return Fail(error: Self.missingFeature).eraseToAnyPublisher()
         }
-        var components = URLComponents(
-            url: url,
-            resolvingAgainstBaseURL: false
-        )
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         let queryItems = [
-            URLQueryItem(name: "kk_app_id", value: app.kkAppId),
+            URLQueryItem(name: appIdParameterName, value: app.kkAppId.urlPercentEscapedString()),
             URLQueryItem(name: "response_type", value: "code"),
             URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
             URLQueryItem(name: "state", value: app.state),
@@ -454,8 +464,12 @@ class RealIDPClient: IDPClient {
         }
         .tryMap { data, httpResponse, status -> URL in
             if status.isRedirect {
-                guard let redirect = httpResponse.locationComponents()?.url else {
+                guard let components = httpResponse.locationComponents(),
+                      let redirect = components.url else {
                     throw Self.fallbackServerResponse
+                }
+                if components.queryItemWithName("error") != nil {
+                    throw Self.responseError(for: components)
                 }
                 return redirect
             } else {
@@ -468,18 +482,22 @@ class RealIDPClient: IDPClient {
 
     func extAuthVerify(_ verify: IDPExtAuthVerify,
                        using document: DiscoveryDocument) -> AnyPublisher<IDPExchangeToken, IDPError> {
-        guard let url = document.thirdPartyAuth?.url else {
+        guard let url = verify.isGid ? document.federationAuth?.url : document.thirdPartyAuth?.url else {
             return Fail(error: Self.missingFeature).eraseToAnyPublisher()
         }
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
         request.httpMethod = "POST"
 
-        request.setFormUrlEncodedHeader()
-        request.setFormUrlEncodedBody(parameters: [
+        var formUrlParameters = [
             "state": verify.state,
             "code": verify.code,
-            "kk_app_redirect_uri": verify.kkAppRedirectURI,
-        ])
+        ]
+        if !verify.isGid {
+            formUrlParameters["kk_app_redirect_uri"] = verify.kkAppRedirectURI
+        }
+
+        request.setFormUrlEncodedHeader()
+        request.setFormUrlEncodedBody(parameters: formUrlParameters)
 
         return httpClient.send(request: request, interceptors: []) { _, _, completion in
             completion(nil) // Don't follow the redirect, but handle it
@@ -515,6 +533,22 @@ extension RealIDPClient {
             return Self.fallbackServerResponse
         }
         return IDPError.serverError(responseError)
+    }
+
+    private static func responseError(for urlComponents: URLComponents) -> IDPError {
+        .serverError(
+            .init(
+                error: urlComponents.queryItemWithName("error")?.value ?? "Unable to decode error.",
+                errorText: urlComponents
+                    .queryItemWithName("gematik_error_text")?
+                    .value?
+                    .replacingOccurrences(of: "+", with: " ")
+                    .removingPercentEncoding ?? "Unable to decode error text.",
+                timestamp: Int(urlComponents.queryItemWithName("gematik_timestamp")?.value ?? "0") ?? 0,
+                uuid: urlComponents.queryItemWithName("gematik_uuid")?.value ?? "Unable to decode uuid.",
+                code: urlComponents.queryItemWithName("gematik_code")?.value ?? "Unable to decode code."
+            )
+        )
     }
 
     private static var fallbackServerResponse: IDPError {
@@ -572,7 +606,7 @@ extension RealIDPClient {
 extension Swift.Error {
     /// Map any Error to an IDPError
     public func asIDPError() -> IDPError {
-        if let error = self as? HTTPError {
+        if let error = self as? HTTPClientError {
             return IDPError.network(error: error)
         } else if let error = self as? IDPError {
             return error

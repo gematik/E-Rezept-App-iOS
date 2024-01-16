@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -65,6 +65,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(task.medicationRequest.multiplePrescription?.endPeriod) == "2021-03-30"
         expect(task.medicationRequest.hasEmergencyServiceFee) == false
         expect(task.medicationRequest.substitutionAllowed) == true
+        expect(task.medicationRequest.quantity) == .init(value: "1", unit: "{Package}")
         expect(task.source) == .server
         expect(task.patient?.name) == "Ludger Ludger Königsstein"
         expect(task.patient?.address) == "Musterstr. 1\n10623 Berlin"
@@ -143,6 +144,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         )
         expect(task.medicationRequest.coPaymentStatus) == .noSubjectToCharge
         expect(task.medicationRequest.bvg) == true
+        expect(task.medicationRequest.quantity) == .init(value: "1", unit: "{Package}")
         // patient
         expect(task.patient?.name) == "Prof. Dr. Karl-Friederich Graf Freiherr von Schaumberg"
         expect(task.patient?.address) == "Siegburger Str. 155\n51105 Köln"

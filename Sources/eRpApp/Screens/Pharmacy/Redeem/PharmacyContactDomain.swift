@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -100,9 +100,13 @@ struct PharmacyContactDomain: ReducerProtocol {
             return EffectTask.send(.delegate(.close))
         case let .response(.shipmentInfoSaved(.failure(error))):
             state.alertState = AlertState(
-                title: TextState(L10n.alertErrorTitle),
-                message: TextState(error.localizedDescriptionWithErrorList),
-                dismissButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.none))
+                title: { TextState(L10n.alertErrorTitle) },
+                actions: {
+                    ButtonState(role: .cancel, action: .send(.none)) {
+                        TextState(L10n.alertBtnOk)
+                    }
+                },
+                message: { TextState(error.localizedDescriptionWithErrorList) }
             )
             return .none
         case .closeButtonTapped:
@@ -157,9 +161,13 @@ struct PharmacyContactDomain: ReducerProtocol {
 
     static func invalidInputAlert(with message: String) -> AlertState<Action.Alert> {
         AlertState(
-            title: TextState(L10n.alertErrorTitle),
-            message: TextState(message),
-            dismissButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.none))
+            title: { TextState(L10n.alertErrorTitle) },
+            actions: {
+                ButtonState(role: .cancel, action: .send(.none)) {
+                    TextState(L10n.alertBtnOk)
+                }
+            },
+            message: { TextState(message) }
         )
     }
 }

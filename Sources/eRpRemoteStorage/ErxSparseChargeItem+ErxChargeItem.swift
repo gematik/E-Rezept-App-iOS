@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,9 +30,9 @@ extension ErxSparseChargeItem {
     func parseErxChargeItem(
         decoder: JSONDecoder = JSONDecoder()
     ) throws -> ErxChargeItem? {
-        let decoder = JSONDecoder()
         let bundle = try decoder.decode(ModelsR4.Bundle.self, from: fhirData)
-        let chargeItem = try bundle.parseErxChargeItem(id: id, with: fhirData)
+        var chargeItem = try bundle.parseErxChargeItem(id: id, with: fhirData)
+        chargeItem?.isRead = isRead
 
         return chargeItem
     }

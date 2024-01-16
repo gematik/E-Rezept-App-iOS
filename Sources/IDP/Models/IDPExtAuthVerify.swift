@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,4 +26,6 @@ public struct IDPExtAuthVerify {
     public let state: String
     /// Redirect URI for the sektoral idp
     public let kkAppRedirectURI: String
+    /// True, if the external authentication is done via "Gesundheits ID", false otherwise.
+    public let isGid: Bool
 }

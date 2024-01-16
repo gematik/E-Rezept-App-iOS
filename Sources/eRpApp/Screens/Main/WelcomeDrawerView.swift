@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -31,65 +31,47 @@ struct WelcomeDrawerView: View {
     }
 
     var body: some View {
-        VStack {
-            Section(header: HeaderView()) {
-                Button(action: {
+        VStack(alignment: .center, spacing: 24) {
+            Capsule()
+                .foregroundColor(Colors.systemLabelQuarternary)
+                .frame(width: 32, height: 8, alignment: .center)
+
+            Image(decorative: Asset.Illustrations.mannkarteCircleBlue)
+
+            VStack(alignment: .center, spacing: 8) {
+                Text(L10n.wlcdTxtHeader)
+                    .fontWeight(.semibold)
+
+                Text(L10n.wlcdTxtFooter)
+                    .foregroundColor(Colors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(alignment: .center, spacing: 16) {
+                Button {
                     store.send(.setNavigation(tag: .cardWall), animation: .easeInOut)
-                }, label: {
-                    HStack {
-                        Spacer()
-                        Text(L10n.wlcdBtnLogin)
-                            .foregroundColor(Colors.primary600)
-                            .bold()
-                            .padding(.horizontal)
-                            .padding()
-                        Spacer()
-                    }
-                })
-                    .background(Colors.primary100)
-                    .cornerRadius(16)
-                    .padding([.leading, .trailing])
-                    .accessibility(identifier: A11y.welcomedrawer.wlcdBtnLogin)
+                } label: {
+                    Text(L10n.wlcdBtnLogin)
+                }
+                .buttonStyle(.primaryHugging)
+                .accessibility(identifier: A11y.welcomedrawer.wlcdBtnLogin)
 
                 Button(action: {
                     store.send(.setNavigation(tag: .none), animation: .easeInOut)
                 }, label: {
-                    HStack {
-                        Spacer()
-                        Text(L10n.wlcdBtnDecline)
-                            .foregroundColor(Colors.primary600)
-                            .bold()
-                            .padding()
-                            .padding(.horizontal)
-                        Spacer()
-                    }
+                    Text(L10n.wlcdBtnDecline)
+                        .foregroundColor(Colors.primary600)
+                        .fontWeight(.semibold)
                 })
-                    .cornerRadius(16)
-                    .padding([.leading, .trailing])
+                    .frame(minHeight: 52, alignment: .center) // quaternary button minHeight
                     .accessibility(identifier: A11y.welcomedrawer.wlcdBtnDecline)
             }
-        }.background(Colors.systemBackground.ignoresSafeArea())
-    }
-
-    struct HeaderView: View {
-        var body: some View {
-            VStack(alignment: .center, spacing: 8) {
-                Capsule()
-                    .foregroundColor(Colors.systemLabelQuarternary)
-                    .frame(width: 32, height: 8, alignment: .center)
-                    .padding()
-
-                Text(L10n.wlcdTxtHeader)
-                    .bold()
-
-                Text(L10n.wlcdTxtFooter)
-                    .padding()
-                    .foregroundColor(Colors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding([.trailing, .leading])
-            }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 8) // capsule padding
+        .padding(.horizontal)
+        .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
     }
 }
 

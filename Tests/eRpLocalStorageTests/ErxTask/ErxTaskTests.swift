@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -29,7 +29,7 @@ final class ErxTaskTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        let bundle = Bundle(for: ErxTaskCoreDataStore.self)
+        let bundle = Bundle(for: DefaultErxTaskCoreDataStore.self)
         // swiftlint:disable force_unwrapping
         let modelUrl = bundle.url(forResource: "ErxTask", withExtension: "momd")!
         let mom = NSManagedObjectModel(contentsOf: modelUrl)!

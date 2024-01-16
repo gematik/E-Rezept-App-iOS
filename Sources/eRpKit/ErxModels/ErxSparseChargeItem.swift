@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,18 +19,22 @@
 import Foundation
 
 /// A sparsed version of ErxChargeItem
-public struct ErxSparseChargeItem: Identifiable, Hashable {
+public struct ErxSparseChargeItem: Identifiable, Hashable, Codable {
     /// ErxChargeItem default initializer
     public init(
         identifier: String,
+        taskId: String?,
         fhirData: Data,
         enteredDate: String? = nil,
+        isRead: Bool = false,
         medication: ErxMedication? = nil,
         invoice: DavInvoice? = nil
     ) {
         self.identifier = identifier
+        self.taskId = taskId
         self.fhirData = fhirData
         self.enteredDate = enteredDate
+        self.isRead = isRead
         self.medication = medication
         self.invoice = invoice
     }
@@ -41,10 +45,14 @@ public struct ErxSparseChargeItem: Identifiable, Hashable {
     public var id: String { identifier }
     /// Identifier of the charge item
     public let identifier: String
+    /// Identifier of the related ErxTask
+    public var taskId: String?
     /// Complete FHIR bundle as json encoded data
     public let fhirData: Data
     /// Date the charge item was entered
     public let enteredDate: String?
+    /// Indicates if the message about the ChargeItem in the order section has been opened by the user
+    public let isRead: Bool
 
     // MARK: KBV profiled FHIR resources
 

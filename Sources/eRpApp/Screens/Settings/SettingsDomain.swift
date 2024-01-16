@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -61,7 +61,6 @@ struct SettingsDomain: ReducerProtocol {
             case termsOfUse
             // sourcery: AnalyticsScreen = contactInsuranceCompany
             case egk(OrderHealthCardDomain.State)
-
             // sourcery: AnalyticsScreen = profile
             case editProfile(EditProfileDomain.State)
             // sourcery: AnalyticsScreen = settings_newProfile
@@ -138,19 +137,27 @@ struct SettingsDomain: ReducerProtocol {
     enum Action: Equatable {
         case close
         case task
-        case trackerStatusReceived(Bool)
-        case demoModeStatusReceived(Bool)
         case toggleTrackingTapped(Bool)
         case confirmedOptInTracking
         case toggleDemoModeSwitch
         case profiles(action: ProfilesDomain.Action)
+        case showChargeItemListFor(profileId: UserProfile.ID)
         case popToRootView
+        case response(Response)
         case setNavigation(tag: Destinations.State.Tag?)
         case destination(PresentationAction<Destinations.Action>)
+
+        enum Response: Equatable {
+            case trackerStatusReceived(Bool)
+            case demoModeStatusReceived(Bool)
+            case showChargeItemListReceived(UserProfile)
+        }
     }
 
     @Dependency(\.changeableUserSessionContainer) var changeableUserSessionContainer: UsersSessionContainer
+    @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.tracker) var tracker: Tracker
+    @Dependency(\.router) var router: Routing
 
     var body: some ReducerProtocol<State, Action> {
         Scope(state: \State.profiles, action: /SettingsDomain.Action.profiles(action:)) {
@@ -170,19 +177,19 @@ struct SettingsDomain: ReducerProtocol {
             return .merge(
                 .publisher(
                     tracker.optInPublisher
-                        .map(Action.trackerStatusReceived)
+                        .map { .response(.trackerStatusReceived($0)) }
                         .eraseToAnyPublisher
                 ),
                 .publisher(
                     changeableUserSessionContainer.isDemoMode
-                        .map(Action.demoModeStatusReceived)
+                        .map { .response(.demoModeStatusReceived($0)) }
                         .eraseToAnyPublisher
                 )
             )
-        case let .demoModeStatusReceived(isDemo):
+        case let .response(.demoModeStatusReceived(isDemo)):
             state.isDemoMode = isDemo
             return .none
-        case let .trackerStatusReceived(value):
+        case let .response(.trackerStatusReceived(value)):
             state.trackerOptIn = value
             return .none
         case .close:
@@ -290,6 +297,20 @@ struct SettingsDomain: ReducerProtocol {
                 )
             }
             return .none
+        case let .showChargeItemListFor(profileId):
+            return .run { send in
+                guard let profile = try await userProfileService.userProfilesPublisher()
+                    .async(/UserProfileServiceError.self)
+                    .first(where: { $0.id == profileId })
+                else { return }
+                await send(.response(.showChargeItemListReceived(profile)))
+            }
+        case let .response(.showChargeItemListReceived(profile)):
+            state.destination = .editProfile(.init(
+                profile: profile,
+                routeToChargeItemList: true
+            ))
+            return .none
         case let .destination(.presented(.editProfileAction(.delegate(action)))):
             switch action {
             case .logout:
@@ -315,17 +336,25 @@ struct SettingsDomain: ReducerProtocol {
 
     static var demoModeOnAlertState: AlertState<Destinations.Action.Alert> = {
         AlertState(
-            title: TextState(L10n.stgTxtAlertTitleDemoMode),
-            message: TextState(L10n.stgTxtAlertMessageDemoModeOn),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.dismiss))
+            title: { TextState(L10n.stgTxtAlertTitleDemoMode) },
+            actions: {
+                ButtonState(role: .cancel, action: .send(.dismiss)) {
+                    TextState(L10n.alertBtnOk)
+                }
+            },
+            message: { TextState(L10n.stgTxtAlertMessageDemoModeOn) }
         )
     }()
 
     static var demoModeOffAlertState: AlertState<Destinations.Action.Alert> = {
         AlertState(
-            title: TextState(L10n.stgTxtAlertTitleDemoModeOff),
-            message: TextState(L10n.stgTxtAlertMessageDemoModeOff),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.dismiss))
+            title: { TextState(L10n.stgTxtAlertTitleDemoModeOff) },
+            actions: {
+                ButtonState(role: .cancel, action: .send(.dismiss)) {
+                    TextState(L10n.alertBtnOk)
+                }
+            },
+            message: { TextState(L10n.stgTxtAlertMessageDemoModeOff) }
         )
     }()
 }

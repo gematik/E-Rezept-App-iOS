@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -37,8 +37,9 @@ final class OrderDetailDomainTests: XCTestCase {
     private func testStore(
         for repository: MockErxTaskRepository
     ) -> TestStore {
-        TestStore(initialState: OrderDetailDomain.State(order: .init(orderId: "765432", communications: []))) {
-            OrderDetailDomain()
+        TestStore(initialState: OrderDetailDomain
+            .State(order: .init(orderId: "765432", communications: [], chargeItems: []))) {
+                OrderDetailDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.userSession = DummySessionContainer()
@@ -48,7 +49,7 @@ final class OrderDetailDomainTests: XCTestCase {
     }
 
     private func testStore(
-        for order: OrderCommunications,
+        for order: Order,
         resourceHandler: ResourceHandler = UnimplementedResourceHandler()
     ) -> TestStore {
         TestStore(initialState: OrderDetailDomain.State(order: order)) {
@@ -74,22 +75,44 @@ final class OrderDetailDomainTests: XCTestCase {
 
     func testMarkCommunicationsRead() async {
         let orderId = "12343-1236-432"
-        let input = [OrderDetailDomainTests.communicationShipmentUnread]
+        let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentUnread])
+        mockRepository.saveCommunicationsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockRepository.saveChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
         let store = testStore(
-            for: .init(orderId: orderId, communications: input),
+            for: .init(orderId: orderId, communications: input, chargeItems: []),
             resourceHandler: mockApplication
         )
 
-        await store.send(.didReadCommunications)
+        await store.send(.didDisplayTimelineEntries)
         expect(self.mockRepository.saveCommunicationsCallsCount) == 1
+        expect(self.mockRepository.saveChargeItemsCalled).to(beFalse())
+    }
+
+    func testMarkCommunicationsAndChargeItemRead() async {
+        let orderId = "12343-1236-432"
+        let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentUnread])
+        mockRepository.saveCommunicationsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockRepository.saveChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        let store = testStore(
+            for: .init(orderId: orderId, communications: input, chargeItems: [ErxChargeItem.Fixtures.chargeItem]),
+            resourceHandler: mockApplication
+        )
+
+        await store.send(.didDisplayTimelineEntries)
+        expect(self.mockRepository.saveCommunicationsCallsCount) == 1
+        expect(self.mockRepository.saveChargeItemsCallsCount) == 1
     }
 
     func testLoadTasks() async {
         let orderId = "12343-1236-432"
-        let input = [OrderDetailDomainTests.communicationShipment]
+        let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipment])
         let tasks = [ErxTask.Demo.erxTask1]
         let store = testStore(
-            for: .init(orderId: orderId, communications: input),
+            for: .init(orderId: orderId, communications: input, chargeItems: []),
             resourceHandler: mockApplication
         )
 
@@ -105,6 +128,7 @@ final class OrderDetailDomainTests: XCTestCase {
             for: .init(
                 orderId: "123",
                 communications: [],
+                chargeItems: [],
                 pharmacy: pharmacy
             ),
             resourceHandler: mockApplication
@@ -125,6 +149,7 @@ final class OrderDetailDomainTests: XCTestCase {
             for: .init(
                 orderId: "123",
                 communications: [],
+                chargeItems: [],
                 pharmacy: pharmacy
             ),
             resourceHandler: mockApplication
@@ -141,7 +166,7 @@ final class OrderDetailDomainTests: XCTestCase {
 
     func testSelectingMedication() async {
         let input = ErxTask.Demo.erxTask1
-        let store = testStore(for: .init(orderId: "123", communications: []))
+        let store = testStore(for: .init(orderId: "123", communications: [], chargeItems: []))
 
         await store.send(.didSelectMedication(input)) { state in
             state.destination = .prescriptionDetail(
@@ -154,9 +179,10 @@ final class OrderDetailDomainTests: XCTestCase {
     }
 
     func testSelectingPickupCode() async {
-        let input = OrderCommunications(
+        let input = Order(
             orderId: "123",
-            communications: [OrderDetailDomainTests.communicationOnPremise]
+            communications: [OrderDetailDomainTests.communicationOnPremise],
+            chargeItems: []
         )
         let store = testStore(for: input)
 
@@ -178,9 +204,9 @@ final class OrderDetailDomainTests: XCTestCase {
 
     func testSelectingValidUrl() async {
         let orderId = "12343-1236-432"
-        let input = [OrderDetailDomainTests.communicationShipment]
+        let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipment])
         let store = testStore(
-            for: .init(orderId: orderId, communications: input),
+            for: .init(orderId: orderId, communications: input, chargeItems: []),
             resourceHandler: mockApplication
         )
 
@@ -199,10 +225,10 @@ final class OrderDetailDomainTests: XCTestCase {
     func testSelectingInvalidUrl() async {
         let orderId = "12343-1236-432"
         let expectedUrl = URL(string: "www.invalid-url.de")!
-        let input = [OrderDetailDomainTests.communicationShipmentInvalidUrl]
+        let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentInvalidUrl])
         mockApplication.canOpenURLReturnValue = false
         let store = testStore(
-            for: .init(orderId: orderId, communications: input),
+            for: .init(orderId: orderId, communications: input, chargeItems: []),
             resourceHandler: mockApplication
         )
 
@@ -233,9 +259,10 @@ final class OrderDetailDomainTests: XCTestCase {
         // swiftlint:enable line_length
 
         let orderId = "12343-1236-432"
-        let input = [OrderDetailDomainTests.communicationWithWrongPayload]
+        let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationWithWrongPayload])
         let store = TestStore(
-            initialState: OrderDetailDomain.State(order: .init(orderId: orderId, communications: input))
+            initialState: OrderDetailDomain
+                .State(order: .init(orderId: orderId, communications: input, chargeItems: []))
         ) {
             OrderDetailDomain(deviceInfo: deviceInfo)
         } withDependencies: { dependencies in

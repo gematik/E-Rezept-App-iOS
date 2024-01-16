@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -76,7 +76,7 @@ final class RealAVSClientTests: XCTestCase {
         await sut.send(data: Data(), to: endPoint)
             .test(
                 failure: { error in
-                    expect(error) == .network(error: HTTPError.httpError(URLError(.init(rawValue: status))))
+                    expect(error) == .network(error: HTTPClientError.httpError(URLError(.init(rawValue: status))))
                 },
                 expectations: { _ in
                 }

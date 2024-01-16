@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -462,7 +462,8 @@ public class DefaultIDPSession: IDPSession {
                                          state: state,
                                          codeChallenge: codeChallenge,
                                          codeChallengeMethod: .sha256,
-                                         nonce: nonce)
+                                         nonce: nonce,
+                                         authType: entry.gId ? .gid : .fasttrack)
 
                 let challengeSession = ExtAuthChallengeSession(verifierCode: verifierCode, nonce: nonce, for: entry)
 
@@ -470,13 +471,19 @@ public class DefaultIDPSession: IDPSession {
                 return self.client.startExtAuth(extAuth, using: document)
                     .first()
                     .handleEvents(receiveOutput: { redirectUrl in
-                        // [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
-
-                        guard let components = URLComponents(url: redirectUrl, resolvingAgainstBaseURL: true),
-                              let state = components.queryItemWithName("state")?.value else {
-                            return
+                        let storageIdentifier: String
+                        if entry.gId {
+                            storageIdentifier = state
+                        } else {
+                            // [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
+                            guard let components = URLComponents(url: redirectUrl, resolvingAgainstBaseURL: true),
+                                  let returnState = components.queryItemWithName("state")?.value
+                            else {
+                                return
+                            }
+                            storageIdentifier = returnState
                         }
-                        self.extAuthRequestStorage.setExtAuthRequest(challengeSession, for: state)
+                        self.extAuthRequestStorage.setExtAuthRequest(challengeSession, for: storageIdentifier)
                     })
                     .mapError { $0.asIDPError() }
                     .eraseToAnyPublisher()
@@ -484,14 +491,22 @@ public class DefaultIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
+    // this can simplified after 01.01.2024
+    // swiftlint:disable:next function_body_length
     public func extAuthVerifyAndExchange(
         _ url: URL,
-        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
+        isGidFlow: Bool
     ) -> AnyPublisher<IDPToken, IDPError> {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let code = components.queryItemWithName("code")?.value,
-              let state = components.queryItemWithName("state")?.value,
-              let kkAppRedirectURI = components.queryItemWithName("kk_app_redirect_uri")?.value else {
+              let state = components.queryItemWithName("state")?.value else {
+            return Fail(
+                error: IDPError.internal(error: .extAuthVerifyAndExchangeMissingQueryItem)
+            ).eraseToAnyPublisher()
+        }
+        let kkAppRedirectURI = components.queryItemWithName("kk_app_redirect_uri")?.value
+        guard isGidFlow || kkAppRedirectURI != nil else {
             return Fail(
                 error: IDPError.internal(error: .extAuthVerifyAndExchangeMissingQueryItem)
             ).eraseToAnyPublisher()
@@ -499,16 +514,8 @@ public class DefaultIDPSession: IDPSession {
 
         let verify = IDPExtAuthVerify(code: code,
                                       state: state,
-                                      kkAppRedirectURI: kkAppRedirectURI)
-
-        // [REQ:gemSpec_IDP_Sek:A_22301] Match request with existing state
-        guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: state) else {
-            return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
-        }
-
-        // (Temporary) workaround to transport the information
-        // whether the token was specifically requested for a PKV and by using Fast Track
-        let isPkvFastTrackFlowInitiated = challengeSession.entry.identifier.hasSuffix("pkv")
+                                      kkAppRedirectURI: kkAppRedirectURI ?? "",
+                                      isGid: isGidFlow)
 
         // [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
         return extAuthVerify(verify)
@@ -518,6 +525,24 @@ public class DefaultIDPSession: IDPSession {
                         error: IDPError.internal(error: .extAuthVerifyAndExchangeUnexpectedNil)
                     ).eraseToAnyPublisher()
                 }
+
+                let challengeSession: ExtAuthChallengeSession
+                if isGidFlow {
+                    guard let fastTrackChallengeSession = extAuthRequestStorage.getExtAuthRequest(for: token.state)
+                    else {
+                        return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
+                    }
+                    challengeSession = fastTrackChallengeSession
+                } else {
+                    // [REQ:gemSpec_IDP_Sek:A_22301] Match request with existing state
+                    guard let fastTrackChallengeSession = extAuthRequestStorage.getExtAuthRequest(for: state) else {
+                        return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
+                    }
+                    challengeSession = fastTrackChallengeSession
+                    // (Temporary) workaround to transport the information
+                    // whether the token was specifically requested for a PKV and by using Fast Track
+                }
+                let isPkvFastTrackFlowInitiated = challengeSession.entry.identifier.hasSuffix("pkv")
                 // swiftlint:disable:next trailing_closure
                 return self.exchange(
                     token: token,
@@ -802,7 +827,7 @@ extension Publisher where Output == IDPToken?, Failure == Never {
                         // authentication
                         .tryCatch { error throws -> AnyPublisher<IDPToken?, IDPError> in
                             if case let IDPError.network(error: httpError) = error,
-                               case HTTPError.httpError = httpError {
+                               case HTTPClientError.httpError = httpError {
                                 throw error
                             }
                             return Just(nil)

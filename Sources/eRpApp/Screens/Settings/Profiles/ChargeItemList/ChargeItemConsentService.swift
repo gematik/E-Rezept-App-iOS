@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -17,7 +17,6 @@
 //
 
 import CasePaths
-import Combine
 import Dependencies
 import eRpKit
 import Foundation
@@ -28,38 +27,35 @@ struct ChargeItemConsentService {
     var revokeConsent: @Sendable (_ profileID: UUID) async throws -> RevokeResult
 
     enum CheckResult: Equatable {
-        case granted
-        case notGranted
+        // successful
+        case granted // 200
+        case notGranted // 200
+
+        // login handler
         case notAuthenticated
+
+        case error(ChargeItemConsentService.Error)
     }
 
     enum GrantResult: Equatable {
-        case success
+        // successful
+        case success // 201
+        case conflict // 409 the user's consent has already been given
+
+        // login handler
         case notAuthenticated
+
+        case error(ChargeItemConsentService.Error)
     }
 
     enum RevokeResult: Equatable {
         case success
         case notAuthenticated
     }
-
-    // sourcery: CodedError = "036"
-    enum Error: Equatable, Swift.Error {
-        // sourcery: errorCode = "01"
-        case localStore(LocalStoreError)
-        // sourcery: errorCode = "02"
-        case loginHandler(LoginHandlerError)
-        // sourcery: errorCode = "03"
-        case erxRepository(ErxRepositoryError)
-        // sourcery: errorCode = "04"
-        case unexpectedGrantConsentResponse
-        // sourcery: errorCode = "05"
-        case unexpected
-    }
 }
 
 extension ChargeItemConsentService {
-    // swiftlint:disable:next function_body_length
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     init(userSessionProvider: UserSessionProvider) {
         self.init(
             checkForConsent: { profileId in
@@ -113,8 +109,19 @@ extension ChargeItemConsentService {
                         throw Error.unexpected
                     }
                     let chargeItemsConsent = Self.createChargeItemsConsent(insuranceId: insuranceId)
-                    let receivedConsent = try await erxTaskRepository.grantConsent(chargeItemsConsent)
-                        .async(/ChargeItemConsentService.Error.erxRepository)
+                    let receivedConsent: ErxConsent?
+                    do {
+                        receivedConsent = try await erxTaskRepository.grantConsent(chargeItemsConsent)
+                            .async()
+                    } catch let error as ErxRepositoryError {
+                        // we handle the URL return code 409 (conflict) especially as it's not a serious outcome
+                        if case let .remote(.fhirClient(.http(fhirClientHttpError))) = error,
+                           case let .httpError(urlError) = fhirClientHttpError.httpClientError,
+                           urlError.code.rawValue == 409 {
+                            return .conflict
+                        }
+                        throw ChargeItemConsentService.Error.erxRepository(error)
+                    }
                     let receivedConsentCheck = Self.checkForValidChargeItemsConsent(receivedConsent, for: insuranceId)
                     if receivedConsentCheck {
                         return .success
@@ -156,8 +163,6 @@ extension ChargeItemConsentService {
         )
     }
 }
-
-// MARK: TCA Dependency
 
 extension ChargeItemConsentService: DependencyKey {
     static var liveValue: ChargeItemConsentService = .init(userSessionProvider: UserSessionProviderDependency.liveValue)

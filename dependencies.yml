@@ -1,23 +1,16 @@
 ---
-additional:
-  - :name: DataKit
-    :identity: datakit
-    :url: https://github.com/SwiftCommon/DataKit
-    :license_uri: https://raw.githubusercontent.com/SwiftCommon/DataKit/master/LICENSE
-    :version: 1.1.0
-  - :name: OpenSSL
-    :identity: openssl
-    :url: https://www.openssl.org/source
-    :license_uri: https://www.openssl.org/source/apache-license-2.0.txt
-    :version: 3.0.7
 purpose:
   generic: >
     This library contains convenience functions for creating the application ui.
   specific:
-    OpenSSL: >
+    openssl-swift: >
       OpenSSL is used for all cryptographics that cannot be achieved with iOS standard crypto libraries (e.g. Brainpool ECC, PKCS#7).
-    DataKit: >
+    datakit: >
       This library contains convenience functions for handling data and encoding e.g. from and to Base64 representation.
+    asn1kit: >
+      This library contains convenience functions for handling asn1 data structures.
+    ref-openhealthcardkit: >
+      This library contains convenience functions for using eGK via NFC.
     zxingify-objc: >
       This library is used to create data matrix codes for redeeming prescriptions at a local pharmacy.
     zxcvbn-ios: >
@@ -32,3 +25,5 @@ exclude_identities_from_package_resolved:
   - cwlpreconditiontesting
   - nimble
   - ohhttpstubs
+  - plcrashreporter
+  - commandant

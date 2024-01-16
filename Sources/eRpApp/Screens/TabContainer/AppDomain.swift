@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -118,7 +118,7 @@ struct AppDomain: ReducerProtocol {
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.changeableUserSessionContainer) var userSessionContainer: UsersSessionContainer
-    @Dependency(\.erxTaskRepository) var erxTaskRepository
+    @Dependency(\.entireErxTaskRepository) var entireErxTaskRepository
 
     var body: some ReducerProtocol<State, Action> {
         Scope(state: \.subdomains, action: /Action.subdomains) {
@@ -170,8 +170,8 @@ struct AppDomain: ReducerProtocol {
             )
         case .registerNewOrderMessageListener:
             return .publisher(
-                erxTaskRepository
-                    .countAllUnreadCommunications(for: .all)
+                entireErxTaskRepository
+                    .countAllUnreadCommunicationsAndChargeItems(for: .all)
                     .receive(on: schedulers.main.animation())
                     .map(AppDomain.Action.newOrderMessageReceived)
                     .catch { _ in Empty() }

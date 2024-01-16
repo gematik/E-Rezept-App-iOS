@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -144,6 +144,11 @@ struct ChargeItemListView: View {
             store.scope(state: \.$destination, action: ChargeItemListDomain.Action.destination),
             state: /ChargeItemListDomain.Destinations.State.alert,
             action: ChargeItemListDomain.Destinations.Action.alert
+        )
+        .toast(
+            store.scope(state: \.$destination, action: ChargeItemListDomain.Action.destination),
+            state: /ChargeItemListDomain.Destinations.State.toast,
+            action: ChargeItemListDomain.Destinations.Action.toast
         )
         .environment(\.editMode, $editMode)
         .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -46,6 +46,8 @@ extension ErxTaskEntity {
         coPaymentStatus = task.medicationRequest.coPaymentStatus?.rawValue
         noctuFeeWaiver = task.medicationRequest.hasEmergencyServiceFee
         substitutionAllowed = task.medicationRequest.substitutionAllowed
+        quantity = ErxTaskQuantityEntity(quantity: task.medicationRequest.quantity, in: context)
+
         accidentInfo = ErxTaskAccidentInfoEntity(
             accident: task.medicationRequest.accidentInfo,
             in: context
@@ -173,6 +175,11 @@ extension ErxTask {
             }
         }
 
+        var quantity: ErxMedication.Quantity?
+        if let value = entity.quantity?.value {
+            quantity = .init(value: value, unit: entity.quantity?.unit)
+        }
+
         self.init(
             identifier: identifier,
             status: erxTaskStatus,
@@ -197,7 +204,8 @@ extension ErxTask {
                 accidentInfo: AccidentInfo(entity: entity.accidentInfo),
                 bvg: entity.bvg,
                 coPaymentStatus: CoPaymentStatus(rawValue: entity.coPaymentStatus ?? "nil"),
-                multiplePrescription: MultiplePrescription(entity: entity.multiplePrescription)
+                multiplePrescription: MultiplePrescription(entity: entity.multiplePrescription),
+                quantity: quantity
             ),
             patient: ErxPatient(entity: entity.patient),
             practitioner: ErxPractitioner(entity: entity.practitioner),

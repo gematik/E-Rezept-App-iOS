@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,6 +24,8 @@ import UIKit
 extension PrescriptionDetailDomain {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = chargeItemDetails
+            case chargeItem(ChargeItemDomain.State)
             // sourcery: AnalyticsScreen = prescriptionDetail_medicationOverview
             case medicationOverview(MedicationOverviewDomain.State)
             // sourcery: AnalyticsScreen = prescriptionDetail_medication
@@ -38,7 +40,7 @@ extension PrescriptionDetailDomain {
             case accidentInfo(AccidentInfoState)
             // sourcery: AnalyticsScreen = prescriptionDetail_technicalInfo
             case technicalInformations(TechnicalInformationsState)
-            // sourcery: AnalyticsScreen = errorAlert
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<Action.Alert>)
             // sourcery: AnalyticsScreen = prescriptionDetail_sharePrescription
             case sharePrescription(ShareState)
@@ -56,9 +58,12 @@ extension PrescriptionDetailDomain {
             case coPaymentInfo(CoPaymentState)
             // sourcery: AnalyticsScreen = prescriptionDetail_emergencyServiceFeeInfo
             case emergencyServiceFeeInfo
+            // sourcery: AnalyticsScreen = prescriptionDetail_toast
+            case toast(ToastState<Action.Toast>)
         }
 
         enum Action: Equatable {
+            case chargeItem(action: ChargeItemDomain.Action)
             case medication(action: MedicationDomain.Action)
             case medicationOverview(action: MedicationOverviewDomain.Action)
 
@@ -77,6 +82,7 @@ extension PrescriptionDetailDomain {
             case emergencyServiceFeeInfo(None)
 
             case alert(Alert)
+            case toast(Toast)
 
             enum None: Equatable {}
 
@@ -85,10 +91,23 @@ extension PrescriptionDetailDomain {
                 /// User has confirmed to delete task
                 case confirmedDelete
                 case openEmailClient(body: String)
+                case grantConsent
+                case grantConsentDeny
+                case consentServiceErrorOkay
+                case consentServiceErrorAuthenticate
+                case consentServiceErrorRetry
             }
+
+            enum Toast: Equatable {}
         }
 
         var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.chargeItem,
+                action: /Action.chargeItem
+            ) {
+                ChargeItemDomain()
+            }
             Scope(
                 state: /State.medication,
                 action: /Action.medication

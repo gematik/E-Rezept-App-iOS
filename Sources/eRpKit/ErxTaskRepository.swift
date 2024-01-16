@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -79,8 +79,8 @@ public protocol ErxTaskRepository {
 
     /// Returns a count for all unread communications for the given profile
     /// - Parameter profile: profile for which you want to have the count
-    func countAllUnreadCommunications(
-        for profile: ErxTask.Communication.Profile
+    func countAllUnreadCommunicationsAndChargeItems(
+        for fhirProfile: ErxTask.Communication.Profile
     ) -> AnyPublisher<Int, ErxRepositoryError>
 
     /// Load all AuditEvent's from a remote (server)

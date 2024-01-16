@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -57,7 +57,7 @@ public class CoreDataController {
         excludeFromBackup: Bool,
         fileProtectionType: FileProtectionType
     ) throws -> NSPersistentContainer {
-        let bundle = Bundle(for: ErxTaskCoreDataStore.self)
+        let bundle = Bundle(for: DefaultErxTaskCoreDataStore.self)
         guard let modelUrl = bundle.url(forResource: "ErxTask", withExtension: "momd") else {
             preconditionFailure("Unable to locate ErxTask momd file in Bundle")
         }

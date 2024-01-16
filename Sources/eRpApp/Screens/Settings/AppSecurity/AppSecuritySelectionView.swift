@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -158,7 +158,7 @@ struct SecuritySectionView: View {
                         .padding([.leading, .trailing, .top])
                 case .touchID:
                     Toggle(isOn: viewStore.binding(get: \.isBiometricSelected,
-                                                   send: .toggleBiometricSelected(.faceID))) {
+                                                   send: .toggleBiometricSelected(.touchID))) {
                         Text(L10n.stgTxtSecurityOptionTouchidTitle)
                             .accessibility(identifier: A18n.settings.security.stgTxtSecurityTouchid)
                     }.toggleStyle(.switch)

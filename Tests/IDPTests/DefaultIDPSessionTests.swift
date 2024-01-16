@@ -1,6 +1,6 @@
 // swiftlint:disable file_length
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -1038,7 +1038,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     // [REQ:gemSpec_IDP_Sek:A_22301] Positive Test
-    func testExtAuthVerifyAndExchange() throws {
+    func testExtAuthVerifyAndExchangeFastTrack() throws {
         sut = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
@@ -1070,7 +1070,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234")
         )
 
-        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: false)
             .test(
                 failure: { error in
                     fail("Error: \(error)")
@@ -1098,8 +1098,76 @@ final class DefaultIDPSessionTests: XCTestCase {
         expect(receivedArguments.redirectURI).to(equal("https://das-e-rezept-fuer-deutschland.de"))
     }
 
+    func testExtAuthVerifyAndExchangeGID() throws {
+        sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: schedulers,
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: dateProvider,
+            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
+        )
+
+        let fixture = URL(string:
+            "https://das-e-rezept-fuer-deutschland.de?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
+        )!
+        idpClientMock.extAuthVerifyUsingReturnValue =
+            Just(IDPExchangeToken(code: "code",
+                                  sso: nil,
+                                  state: "state",
+                                  redirect: "https://das-e-rezept-fuer-deutschland.de"))
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        idpClientMock.exchange_Publisher = Just(encryptedTokenPayload)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = ExtAuthChallengeSession(
+            verifierCode: "verifier_code",
+            nonce: "5557577A7576615347",
+            for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234")
+        )
+
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: true)
+            .test(
+                failure: { error in
+                    fail("Error: \(error)")
+                },
+                expectations: { response in
+                    let expected = IDPToken(accessToken: self.decryptedTokenPayload.accessToken,
+                                            expires: self.dateProvider().addingTimeInterval(300),
+                                            idToken: self.decryptedTokenPayload.idToken,
+                                            ssoToken: self.decryptedTokenPayload.ssoToken,
+                                            tokenType: self.decryptedTokenPayload.tokenType,
+                                            redirect: "https://das-e-rezept-fuer-deutschland.de")
+                    expect(response).to(equal(expected))
+                }
+            )
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("state"))
+
+        expect(self.idpClientMock.exchange_Called).to(beTrue())
+        expect(self.idpClientMock.exchange_ReceivedArguments).toNot(beNil())
+        guard let receivedArguments = idpClientMock.exchange_ReceivedArguments else {
+            fail("received Arguments nil")
+            return
+        }
+
+        expect(receivedArguments.redirectURI).to(equal("https://das-e-rezept-fuer-deutschland.de"))
+    }
+
     // [REQ:gemSpec_IDP_Sek:A_22301] Negative Test
-    func testExtAuthVerifyAndExchangeFailesWithoutReferenceState() throws {
+    func testExtAuthVerifyAndExchangeFailesWithoutReferenceStateFastTrack() throws {
+        idpClientMock.extAuthVerifyUsingReturnValue =
+            Just(IDPExchangeToken(code: "code",
+                                  sso: nil,
+                                  state: "state",
+                                  redirect: "https://das-e-rezept-fuer-deutschland.de"))
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
         sut = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
@@ -1116,7 +1184,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
         extAuthRequestStorageMock.getExtAuthRequestForReturnValue = nil
 
-        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: false)
             .test(
                 failure: { error in
                     expect(error).to(equal(IDPError.extAuthOriginalRequestMissing))
@@ -1127,6 +1195,45 @@ final class DefaultIDPSessionTests: XCTestCase {
             )
         expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
         expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("mystate"))
+    }
+
+    // [REQ:gemSpec_IDP_Sek:A_22301] Negative Test
+    func testExtAuthVerifyAndExchangeFailesWithoutReferenceStateGID() throws {
+        idpClientMock.extAuthVerifyUsingReturnValue =
+            Just(IDPExchangeToken(code: "code",
+                                  sso: nil,
+                                  state: "state",
+                                  redirect: "https://das-e-rezept-fuer-deutschland.de"))
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: schedulers,
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: dateProvider,
+            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
+        )
+
+        let fixture = URL(string:
+            "https://das-e-rezept-fuer-deutschland.de/extauth?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
+        )!
+
+        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = nil
+
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: true)
+            .test(
+                failure: { error in
+                    expect(error).to(equal(IDPError.extAuthOriginalRequestMissing))
+                },
+                expectations: { _ in
+                    fail("Should not be called!")
+                }
+            )
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("state"))
     }
 
     func testExtAuthVerifyAndExchange_kkHasPkvIdentifierSuffix() throws {
@@ -1161,7 +1268,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234pkv")
         )
 
-        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: false)
             .test(
                 failure: { error in
                     fail("Error: \(error)")

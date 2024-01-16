@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -89,7 +89,9 @@ extension CardWallReadCardDomain.Environment {
                     .idpSession(for: profileID)
                     .requestChallenge()
                     .flatMap { (challenge: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> in
-                        signatureProvider.authenticationData(for: challenge)
+                        sessionProvider
+                            .signatureProvider(for: profileID)
+                            .authenticationData(for: challenge)
                             .first()
                             .mapError(IDPError.pairing)
                             .flatMap { (signedAuthenticationData: SignedAuthenticationData)
@@ -124,7 +126,7 @@ extension CardWallReadCardDomain.Environment {
             let pairingSession: PairingSession
             do {
                 // [REQ:BSI-eRp-ePA:O.Source_5#4] Creation of the pairing session
-                pairingSession = try signatureProvider.createPairingSession()
+                pairingSession = try sessionProvider.signatureProvider(for: profileID).createPairingSession()
             } catch {
                 continuation.yield(.response(.state(.retrievingChallenge(.error(.biometrieError(error))))))
                 return
@@ -155,7 +157,7 @@ extension CardWallReadCardDomain.Environment {
                             > in
                             healthCard
                                 .sign(
-                                    registerDataProvider: signatureProvider,
+                                    registerDataProvider: sessionProvider.signatureProvider(for: profileID),
                                     in: pairingSession,
                                     signedChallenge: signedChallenge
                                 )
@@ -217,7 +219,7 @@ extension CardWallReadCardDomain.Environment {
                             .yield(CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(error)))))
                         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
                         // [REQ:BSI-eRp-ePA:O.Source_5#5] Failure will delete paring data
-                        _ = try? signatureProvider.abort(pairingSession: pairingSession)
+                        _ = try? sessionProvider.signatureProvider(for: profileID).abort(pairingSession: pairingSession)
                     }
                     continuation.finish()
                 }, receiveValue: { value in

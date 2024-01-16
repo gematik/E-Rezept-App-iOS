@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -18,6 +18,16 @@
 
 import ComposableArchitecture
 import Foundation
+
+extension ChargeItemConsentService.AlertState {
+    var chargeItemListDomainErpAlertState: ErpAlertState<ChargeItemListDomain.Destinations.Action.Alert> {
+        erpAlertState(
+            actionForOkay: ChargeItemListDomain.Destinations.Action.Alert.consentServiceErrorOkay,
+            actionForRetry: ChargeItemListDomain.Destinations.Action.Alert.consentServiceErrorRetry,
+            actionForLogin: ChargeItemListDomain.Destinations.Action.Alert.consentServiceErrorAuthenticate
+        )
+    }
+}
 
 extension ChargeItemListDomain {
     enum AlertStates {
@@ -40,7 +50,7 @@ extension ChargeItemListDomain {
 
         static let revokeConsentRequest: ErpAlertState<Action> = {
             .init(
-                title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
+                title: L10n.stgTxtChargeItemListAlertRevokeConsentTitle,
                 actions: {
                     ButtonState(role: .destructive, action: .revokeConsentErrorRetry) {
                         .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonDeactivate)
@@ -49,7 +59,7 @@ extension ChargeItemListDomain {
                         .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonCancel)
                     }
                 },
-                message: L10n.stgTxtChargeItemListAlertGrantConsentMessage
+                message: L10n.stgTxtChargeItemListAlertRevokeConsentMessage
             )
         }()
 
@@ -61,7 +71,7 @@ extension ChargeItemListDomain {
                 ButtonState(action: .fetchChargeItemsErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .fetchChargeItemsErrorOkay) {
+                ButtonState(role: .cancel, action: .fetchChargeItemsErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -75,7 +85,7 @@ extension ChargeItemListDomain {
                 ButtonState(action: .authenticateErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .authenticateErrorOkay) {
+                ButtonState(role: .cancel, action: .authenticateErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -89,7 +99,7 @@ extension ChargeItemListDomain {
                 ButtonState(action: .grantConsentErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .grantConsentErrorOkay) {
+                ButtonState(role: .cancel, action: .grantConsentErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -103,7 +113,7 @@ extension ChargeItemListDomain {
                 ButtonState(action: .revokeConsentErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .revokeConsentErrorOkay) {
+                ButtonState(role: .cancel, action: .revokeConsentErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
@@ -118,10 +128,17 @@ extension ChargeItemListDomain {
                 ButtonState(action: .deleteChargeItemsErrorRetry) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
                 }
-                ButtonState(action: .deleteChargeItemsErrorOkay) {
+                ButtonState(role: .cancel, action: .deleteChargeItemsErrorOkay) {
                     .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
                 }
             }
         }
+    }
+
+    enum ToastStates {
+        typealias Action = ChargeItemListDomain.Destinations.Action.Toast
+
+        static let conflictToast: ToastState<Action> =
+            .init(style: .simple(ChargeItemConsentService.ToastState.conflict.message))
     }
 }

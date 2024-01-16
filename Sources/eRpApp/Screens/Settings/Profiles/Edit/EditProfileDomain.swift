@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -46,6 +46,7 @@ struct EditProfileDomain: ReducerProtocol {
         var securityOptionsError: AppSecurityManagerError?
         @PresentationState var destination: Destinations.State?
         var insuranceType: Profile.InsuranceType
+        var routeToChargeItemList = false
     }
 
     struct Destinations: ReducerProtocol {
@@ -120,15 +121,14 @@ struct EditProfileDomain: ReducerProtocol {
     }
 
     enum Action: Equatable {
+        case task
+        case onAppear
         case setName(String)
         case setColor(ProfileColor)
         case showDeleteProfileAlert
         case login
         case relogin
-
         case showDeleteBiometricPairingAlert
-        case loadAvailableSecurityOptions
-        case registerListener
 
         case setNavigation(tag: Destinations.State.Tag?)
         case destination(PresentationAction<Destinations.Action>)
@@ -191,12 +191,11 @@ struct EditProfileDomain: ReducerProtocol {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .loadAvailableSecurityOptions:
+        case .task:
             let availableOptions = appSecurityManager.availableSecurityOptions
             state.availableSecurityOptions = availableOptions.options
             state.securityOptionsError = availableOptions.error
-            return .none
-        case .registerListener:
+
             return .merge(
                 environment.subscribeToTokenUpdates(for: state.profileId),
                 environment.subscribeToBiometricKeyIDUpdates(for: state.profileId),
@@ -211,6 +210,17 @@ struct EditProfileDomain: ReducerProtocol {
                         .eraseToAnyPublisher
                 )
             )
+        case .onAppear:
+            // Routing needs to be split from EditProfileView on
+            // downwards the navigation tree and delayed to work properly
+            if state.routeToChargeItemList {
+                state.routeToChargeItemList = false
+                return .run { send in
+                    try await schedulers.main.sleep(for: 0.5)
+                    await send(.setNavigation(tag: .chargeItemList))
+                }
+            }
+            return .none
         case let .response(.tokenReceived(token)):
             state.token = token
             return .none
@@ -391,7 +401,10 @@ extension EditProfileDomain.State {
         self.insuranceType = insuranceType
     }
 
-    init(profile: UserProfile) {
+    init(
+        profile: UserProfile,
+        routeToChargeItemList: Bool = false
+    ) {
         profileId = profile.id
         name = profile.name
         acronym = profile.name.acronym()
@@ -402,6 +415,7 @@ extension EditProfileDomain.State {
         userImageData = profile.userImageData
         color = profile.color
         insuranceType = profile.profile.insuranceType
+        self.routeToChargeItemList = routeToChargeItemList
     }
 
     enum AuthenticationType: Equatable {

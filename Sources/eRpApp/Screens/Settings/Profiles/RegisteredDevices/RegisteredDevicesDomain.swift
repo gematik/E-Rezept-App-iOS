@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -159,6 +159,7 @@ struct RegisteredDevicesDomain: ReducerProtocol {
             case let .success(entries):
                 state.content = .loaded(
                     entries.pairingEntries
+                        .sorted(by: { $0.creationTime > $1.creationTime })
                         .map { ($0, dateFormatter) }
                         .map(State.Entry.init)
                 )
@@ -177,6 +178,7 @@ struct RegisteredDevicesDomain: ReducerProtocol {
         case let .response(.loadDevicesReceived(.success(entries))):
             state.content = .loaded(
                 entries.pairingEntries
+                    .sorted(by: { $0.creationTime > $1.creationTime })
                     .map { ($0, dateFormatter) }
                     .map(State.Entry.init)
             )

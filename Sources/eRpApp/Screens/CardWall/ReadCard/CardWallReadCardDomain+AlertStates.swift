@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -29,9 +29,13 @@ extension CardWallReadCardDomain {
 
         static var saveProfile: ErpAlertState<Action> = .info(
             AlertState(
-                title: TextState(L10n.cdwTxtRcAlertTitleSaveProfile),
-                message: TextState(L10n.cdwTxtRcAlertMessageSaveProfile),
-                dismissButton: .cancel(TextState(L10n.cdwBtnRcAlertSaveProfile))
+                title: { TextState(L10n.cdwTxtRcAlertTitleSaveProfile) },
+                actions: {
+                    ButtonState(role: .cancel, action: .send(.none)) {
+                        TextState(L10n.cdwBtnRcAlertSaveProfile)
+                    }
+                },
+                message: { TextState(L10n.cdwTxtRcAlertMessageSaveProfile) }
             )
         )
 

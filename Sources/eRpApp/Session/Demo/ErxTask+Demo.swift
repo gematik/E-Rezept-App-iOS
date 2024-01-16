@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -230,7 +230,8 @@ extension ErxTask {
             dispenseValidityEnd: "12.12.1936",
             accidentInfo: demoAccidentInfo,
             coPaymentStatus: .subjectToCharge,
-            multiplePrescription: demoMultiplePrescription
+            multiplePrescription: demoMultiplePrescription,
+            quantity: .init(value: "17", unit: "Packungen")
         )
 
         static let demoMultiplePrescription = MultiplePrescription(
@@ -255,7 +256,9 @@ extension ErxTask {
                 substitutionAllowed: true,
                 hasEmergencyServiceFee: true,
                 accidentInfo: demoAccidentInfo,
-                coPaymentStatus: .subjectToCharge
+                coPaymentStatus: .subjectToCharge,
+                quantity: .init(value: "2", unit: "Packungen")
+
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
@@ -274,7 +277,8 @@ extension ErxTask {
             medication: medication2,
             medicationRequest: .init(
                 substitutionAllowed: true,
-                accidentInfo: demoAccidentInfo
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
@@ -293,7 +297,9 @@ extension ErxTask {
             medication: medication3,
             medicationRequest: .init(
                 hasEmergencyServiceFee: true,
-                accidentInfo: demoAccidentInfo
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
@@ -313,7 +319,8 @@ extension ErxTask {
             medication: medication4,
             medicationRequest: .init(
                 accidentInfo: demoAccidentInfo,
-                coPaymentStatus: .noSubjectToCharge
+                coPaymentStatus: .noSubjectToCharge,
+                quantity: .init(value: "2", unit: "Packungen")
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
@@ -330,7 +337,10 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.yesterday),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication5,
-            medicationRequest: .init(accidentInfo: demoAccidentInfo),
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
@@ -348,7 +358,8 @@ extension ErxTask {
             medication: medication6,
             medicationRequest: .init(
                 hasEmergencyServiceFee: true,
-                accidentInfo: demoAccidentInfo
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
@@ -365,7 +376,10 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.twentyEightDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication7,
-            medicationRequest: .init(accidentInfo: demoAccidentInfo),
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
@@ -381,7 +395,10 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.dayBeforeYesterday),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication8,
-            medicationRequest: .init(accidentInfo: demoAccidentInfo),
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
@@ -397,7 +414,10 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.twelveDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication7,
-            medicationRequest: .init(accidentInfo: demoAccidentInfo),
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
@@ -414,7 +434,10 @@ extension ErxTask {
             redeemedOn: DemoDate.createDemoDate(.yesterday),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication1,
-            medicationRequest: .init(accidentInfo: demoAccidentInfo),
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
@@ -432,7 +455,8 @@ extension ErxTask {
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication2,
             medicationRequest: .init(
-                accidentInfo: demoAccidentInfo
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
@@ -450,7 +474,10 @@ extension ErxTask {
             redeemedOn: nil,
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication3,
-            medicationRequest: .init(accidentInfo: demoAccidentInfo),
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
@@ -467,7 +494,10 @@ extension ErxTask {
             redeemedOn: nil,
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication4,
-            medicationRequest: .init(accidentInfo: demoAccidentInfo),
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
@@ -486,7 +516,8 @@ extension ErxTask {
             medication: medication8,
             medicationRequest: .init(
                 accidentInfo: demoAccidentInfo,
-                multiplePrescription: demoMultiplePrescription
+                multiplePrescription: demoMultiplePrescription,
+                quantity: .init(value: "2", unit: "Packungen")
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,

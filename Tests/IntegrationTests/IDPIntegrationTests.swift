@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -558,7 +558,166 @@ final class IDPIntegrationTests: XCTestCase {
         // MARK: - STEP 9
 
         var token: IDPToken?
-        session.extAuthVerifyAndExchange(universalLink, idTokenValidator: { _ in .success(true) })
+        session.extAuthVerifyAndExchange(universalLink, idTokenValidator: { _ in .success(true) }, isGidFlow: false)
+            .test(
+                failure: { error in
+                    fail("\(error)")
+                },
+                expectations: { response in
+                    token = response
+                },
+                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
+        expect(token).toNot(beNil())
+    }
+
+    func testExternalAuthenticationLoginGid() throws {
+        guard let idpsekServer = environment.idpsekURLServer else {
+            throw XCTSkip("Skip test because no IDP Server was provided")
+        }
+
+        let storage = MemStorage()
+        let configuration = DefaultIDPSession.Configuration(
+            clientId: "eRezeptApp",
+            redirectURI: environment.appConfiguration.redirectUri,
+            extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
+            discoveryURL: environment.appConfiguration.idp,
+            scopes: environment.appConfiguration.idpDefaultScopes
+        )
+        let httpClient = DefaultHTTPClient(
+            urlSessionConfiguration: .ephemeral,
+            interceptors: [
+                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.idpAdditionalHeader),
+                LoggingInterceptor(log: .body),
+            ]
+        )
+
+        let trustStoreSession = MockTrustStoreSession()
+        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
+        let session = DefaultIDPSession(
+            config: configuration,
+            storage: storage,
+            schedulers: schedulers,
+            httpClient: httpClient,
+            trustStoreSession: trustStoreSession,
+            extAuthRequestStorage: PersistentExtAuthRequestStorage()
+        )
+
+        // Step: Download available KKs for external authentication (a.k.a. fasttrack), select the first named
+        // "*Gematik*"
+
+        var success = false
+        var selectedEntry: KKAppDirectory.Entry?
+
+        session.loadDirectoryKKApps()
+            .test(
+                timeout: 10,
+                failure: { error in
+                    fail("\(error)")
+                },
+                expectations: { list in
+                    success = true
+                    print("##########")
+                    print("\(list)")
+                    selectedEntry = list.apps.first { entry in
+                        print(entry.name)
+                        return entry.name.localizedCaseInsensitiveContains("gematik")
+                    }
+                }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
+
+        expect(success) == true
+        expect(selectedEntry).toNot(beNil())
+
+        guard let selectedEntry = selectedEntry else {
+            return
+        }
+
+        // MARK: - Step 1: Authentication Request
+
+        var redirectURL: URL?
+        success = false
+
+        session
+            .startExtAuth(entry: selectedEntry)
+            .test(
+                timeout: 100,
+                failure: { error in
+                    fail("\(error)")
+                },
+                expectations: { list in
+
+                    // MARK: - Step 2: Authentication Request Response
+
+                    success = true
+                    redirectURL = list
+                },
+                subscribeScheduler: DispatchQueue.global()
+                    .eraseToAnyScheduler()
+            )
+
+        expect(selectedEntry).toNot(beNil())
+        expect(selectedEntry.gId).to(beTrue())
+
+        // MARK: - Step 3: Universal Link - mocked by calling Step 4 - 7 within this test
+
+        guard let redirectURL2 = redirectURL,
+              var components = URLComponents(url: redirectURL2, resolvingAgainstBaseURL: true) else {
+            return
+        }
+
+        let idpsekURL = idpsekServer.url
+        components.scheme = idpsekURL.scheme
+        components.host = idpsekURL.host
+        components.port = idpsekURL.port
+        components.path = idpsekURL.path
+        components.queryItems?.append(.init(name: "user_id", value: "12345678"))
+
+        // MARK: - STEP 4 - 7
+
+        expect(components.url).toNot(beNil())
+        guard let urlStep4 = components.url else {
+            fail("Step 4 URL Creation failed")
+            return
+        }
+        let request = URLRequest(url: urlStep4)
+
+        var urlStep7RedirectVal: URL?
+        httpClient
+            .send(
+                request: request,
+                interceptors: [
+                    LoggingInterceptor(log: .url),
+                    AdditionalHeaderInterceptor(additionalHeader: idpsekServer.header),
+                ]
+            ) { _, redirect, completionHandler in
+                urlStep7RedirectVal = redirect.url
+                completionHandler(nil) // Handle redirect
+            }
+            .test(
+                timeout: 10,
+                failure: { error in
+                    fail("\(error)")
+                },
+                expectations: { result in
+                    print(result)
+                },
+                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
+
+        expect(urlStep7RedirectVal).toNot(beNil())
+        guard let urlStep7Redirect = urlStep7RedirectVal else {
+            return
+        }
+
+        // MARK: - STEP 8
+
+        let universalLink = urlStep7Redirect
+
+        // MARK: - STEP 9
+
+        var token: IDPToken?
+        session.extAuthVerifyAndExchange(universalLink, idTokenValidator: { _ in .success(true) }, isGidFlow: true)
             .test(
                 failure: { error in
                     fail("\(error)")

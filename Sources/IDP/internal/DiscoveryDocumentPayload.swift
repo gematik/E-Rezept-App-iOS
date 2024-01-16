@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -46,8 +46,12 @@ public struct DiscoveryDocumentPayload: Claims, Equatable {
     public let pukIdpSig: URL
     /// Endpoint for retrieving available kk apps for alternative authentication
     public let kkAppList: URL?
+    /// Endpoint for retrieving available kk apps for alternative authentication
+    public let kkAppListgId: URL?
     /// Endpoint for alternative authentication request as in `gemSpec_IDP_Sek`
     public let thirdPartyAuth: URL?
+    /// Endpoint for GID authentication
+    public let federationAuth: URL?
 
     public let subjectTypesSupported: [String]
 
@@ -79,7 +83,9 @@ public struct DiscoveryDocumentPayload: Claims, Equatable {
         case pukIdpEnc = "uri_puk_idp_enc"
         case pukIdpSig = "uri_puk_idp_sig"
         case kkAppList = "kk_app_list_uri"
+        case kkAppListgId = "fed_idp_list_uri"
         case thirdPartyAuth = "third_party_authorization_endpoint"
+        case federationAuth = "federation_authorization_endpoint"
         case subjectTypesSupported = "subject_types_supported"
         case supportedSigningAlgorithms = "id_token_signing_alg_values_supported"
         case supportedResponseTypes = "response_types_supported"

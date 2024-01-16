@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -38,12 +38,8 @@ struct OrderDetailView: View {
                 )
 
                 VStack(alignment: .leading, spacing: 0) {
-                    ForEach(viewStore.communications) { communication in
-                        OrderMessageView(
-                            store: store,
-                            communication: communication,
-                            style: style(for: communication)
-                        )
+                    ForEach(viewStore.timelineEntries) { entry in
+                        OrderMessageView(store: store, timelineEntry: entry, style: style(for: entry))
                     }
                     .accessibilityElement(children: .contain)
                     .accessibility(identifier: A11y.orderDetail.list.ordDetailTxtMsgList)
@@ -82,6 +78,28 @@ struct OrderDetailView: View {
                 destination: PrescriptionDetailView.init(store:),
                 label: { EmptyView() }
             ).accessibility(hidden: true)
+
+            // charge item detail
+
+            Rectangle()
+                .frame(width: 0, height: 0, alignment: .center)
+                .smallSheet(isPresented: Binding<Bool>(get: {
+                    viewStore.destinationTag == .chargeItem
+                }, set: { show in
+                    if !show {
+                        viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
+                    }
+                }),
+                onDismiss: {},
+                content: {
+                    IfLetStore(
+                        store.scope(state: \.$destination, action: OrderDetailDomain.Action.destination),
+                        state: /OrderDetailDomain.Destinations.State.chargeItem,
+                        action: OrderDetailDomain.Destinations.Action.chargeItem(action:),
+                        then: ChargeItemView.init(store:)
+                    )
+                })
+                .accessibility(hidden: true)
 
             // pickup code
 
@@ -166,14 +184,14 @@ struct OrderDetailView: View {
         }
     }
 
-    private func style(for communication: ErxTask.Communication) -> OrderMessageView.Indicator.Style {
-        switch communication {
-        case viewStore.communications.first:
-            if viewStore.communications.count == 1 {
+    private func style(for entry: OrderDetailDomain.State.TimelineEntry) -> OrderMessageView.Indicator.Style {
+        switch entry {
+        case viewStore.timelineEntries.first:
+            if viewStore.timelineEntries.count == 1 {
                 return .single
             }
             return .first
-        case viewStore.communications.last:
+        case viewStore.timelineEntries.last:
             return .last
         default:
             return .middle
@@ -249,7 +267,7 @@ extension OrderDetailView {
         let hasLocation: Bool
         let hasPhoneContact: Bool
         let hasEmailContact: Bool
-        let communications: IdentifiedArrayOf<ErxTask.Communication>
+        let timelineEntries: [OrderDetailDomain.State.TimelineEntry]
         let erxTasks: IdentifiedArrayOf<ErxTask>
 
         let destinationTag: OrderDetailDomain.Destinations.State.Tag?
@@ -260,7 +278,7 @@ extension OrderDetailView {
             hasLocation = state.order.pharmacy?.position != nil
             hasPhoneContact = state.order.pharmacy?.telecom?.phone != nil
             hasEmailContact = state.order.pharmacy?.telecom?.email != nil
-            communications = state.order.displayedCommunications
+            timelineEntries = state.timelineEntries
             erxTasks = state.erxTasks
             destinationTag = state.destination?.tag
             openUrlSheetVisible = state.openUrlSheetUrl != nil

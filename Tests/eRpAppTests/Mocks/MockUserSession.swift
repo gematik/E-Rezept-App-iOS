@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -97,12 +97,16 @@ class MockUserSession: UserSession {
         StreamWrappedErxTaskRepository(stream: Just(FakeErxTaskRepository()).eraseToAnyPublisher())
     }()
 
-    var ordersRepository: ErxTaskRepository {
+    lazy var entireErxTaskRepository: ErxTaskRepository = {
+        StreamWrappedErxTaskRepository(stream: Just(FakeErxTaskRepository()).eraseToAnyPublisher())
+    }()
+
+    var ordersRepository: OrdersRepository {
         get { underlyingOrdersTaskRepository }
         set(value) { underlyingOrdersTaskRepository = value }
     }
 
-    private var underlyingOrdersTaskRepository: ErxTaskRepository!
+    private var underlyingOrdersTaskRepository: OrdersRepository!
 
     lazy var mockProfileDataStore: MockProfileDataStore = {
         MockProfileDataStore()
@@ -328,7 +332,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
         Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
-    func countAllUnreadCommunications(for _: ErxTask.Communication
+    func countAllUnreadCommunicationsAndChargeItems(for _: ErxTask.Communication
         .Profile)
         -> AnyPublisher<Int, ErxRepositoryError> {
         Just(0).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
@@ -450,6 +454,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
         [
             "1": ErxSparseChargeItem(
                 identifier: "1390f983-1e67-11b2-8555-63bf44001234",
+                taskId: "task id",
                 fhirData: "afasf".data(using: .utf8)!,
                 enteredDate: "2022-11-22T14:07:47.809+00:00"
             ),

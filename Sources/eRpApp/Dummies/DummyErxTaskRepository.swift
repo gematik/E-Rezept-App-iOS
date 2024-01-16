@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -71,7 +71,8 @@ struct DummyErxTaskRepository: ErxTaskRepository {
         Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     }
 
-    func countAllUnreadCommunications(for _: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
+    func countAllUnreadCommunicationsAndChargeItems(for _: ErxTask.Communication
+        .Profile) -> AnyPublisher<Int, ErxRepositoryError> {
         Just(0).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     }
 

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -44,7 +44,7 @@ public protocol HTTPClient {
     /// - Parameter handler: handler that should be called in case of redirect.
     /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
     func send(request: URLRequest, interceptors: [Interceptor], redirect handler: RedirectHandler?)
-        -> AnyPublisher<HTTPResponse, HTTPError>
+        -> AnyPublisher<HTTPResponse, HTTPClientError>
 
     /// List of all active interceptors of the HTTP client.
     var interceptors: [Interceptor] { get }
@@ -56,7 +56,7 @@ extension HTTPClient {
     /// - Parameter request: The request to be (modified and) sent.
     /// - Parameter interceptors: per request interceptors.
     /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    public func send(request: URLRequest, interceptors: [Interceptor]) -> AnyPublisher<HTTPResponse, HTTPError> {
+    public func send(request: URLRequest, interceptors: [Interceptor]) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         send(request: request, interceptors: interceptors, redirect: nil)
     }
 
@@ -64,14 +64,14 @@ extension HTTPClient {
     ///
     /// - Parameter request: The request to be (modified and) sent.
     /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    public func send(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPError> {
+    public func send(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         send(request: request, interceptors: [])
     }
 }
 
 // sourcery: CodedError = "530"
 /// HTTP Error
-public enum HTTPError: Swift.Error, Equatable, LocalizedError {
+public enum HTTPClientError: Swift.Error, Equatable, LocalizedError {
     // sourcery: errorCode = "01"
     /// Internal error in the request/chain handling
     case internalError(String)
@@ -91,7 +91,7 @@ public enum HTTPError: Swift.Error, Equatable, LocalizedError {
     /// Unclassified error
     case unknown(Swift.Error)
 
-    public static func ==(lhs: HTTPError, rhs: HTTPError) -> Bool {
+    public static func ==(lhs: HTTPClientError, rhs: HTTPClientError) -> Bool {
         switch (lhs, rhs) {
         case let (.internalError(lhsInternal), .internalError(rhsInternal)): return lhsInternal == rhsInternal
         case let (.httpError(lhsError), .httpError(rhsError)): return lhsError.errorCode == rhsError.errorCode

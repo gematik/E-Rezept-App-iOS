@@ -190,8 +190,8 @@ struct UnimplementedErxTaskRepository: ErxTaskRepository {
     func saveLocal(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, ErxRepositoryError> {
         fatalError("saveLocal(communications:) has not been implemented")
     }
-    func countAllUnreadCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
-        fatalError("countAllUnreadCommunications(for:) has not been implemented")
+    func countAllUnreadCommunicationsAndChargeItems(for fhirProfile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
+        fatalError("countAllUnreadCommunicationsAndChargeItems(for:) has not been implemented")
     }
     func loadRemoteLatestAuditEvents(for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> {
         fatalError("loadRemoteLatestAuditEvents(for:) has not been implemented")
@@ -295,8 +295,8 @@ struct UnimplementedIDPSession: IDPSession {
     func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
         fatalError("startExtAuth(entry:) has not been implemented")
     }
-    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
-        fatalError("extAuthVerifyAndExchange(_:idTokenValidator:) has not been implemented")
+    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool) -> AnyPublisher<IDPToken, IDPError> {
+        fatalError("extAuthVerifyAndExchange(_:idTokenValidator:isGidFlow:) has not been implemented")
     }
     func verifyAndExchange(signedChallenge: SignedChallenge, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         fatalError("verifyAndExchange(signedChallenge:idTokenValidator:) has not been implemented")
@@ -346,6 +346,13 @@ struct UnimplementedNFCSignatureProvider: NFCSignatureProvider {
     }
     func sign(can: String, pin: String, challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
         fatalError("sign(can:pin:challenge:) has not been implemented")
+    }
+}
+struct UnimplementedOrdersRepository: OrdersRepository {
+    init() {}
+
+    func loadAllOrders() -> AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error> {
+        fatalError("loadAllOrders has not been implemented")
     }
 }
 struct UnimplementedPasswordStrengthTester: PasswordStrengthTester {
@@ -416,6 +423,9 @@ struct UnimplementedProfileBasedSessionProvider: ProfileBasedSessionProvider {
     }
     func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
         fatalError("idTokenValidator(for:) has not been implemented")
+    }
+    func signatureProvider(for profileId: UUID) -> SecureEnclaveSignatureProvider {
+        fatalError("signatureProvider(for:) has not been implemented")
     }
 }
 struct UnimplementedProfileDataStore: ProfileDataStore {
@@ -517,7 +527,7 @@ struct UnimplementedRedeemInputValidator: RedeemInputValidator {
 struct UnimplementedRedeemService: RedeemService {
     init() {}
 
-    func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         fatalError("redeem(_:) has not been implemented")
     }
 }
@@ -789,7 +799,12 @@ struct UnimplementedUserSession: UserSession {
         set(value) { fatalError("") }
     }
 
-    var ordersRepository: ErxTaskRepository {
+    var entireErxTaskRepository: ErxTaskRepository {
+        get { fatalError("") }
+        set(value) { fatalError("") }
+    }
+
+    var ordersRepository: OrdersRepository {
         get { fatalError("") }
         set(value) { fatalError("") }
     }

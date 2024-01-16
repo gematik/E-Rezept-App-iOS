@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -155,10 +155,10 @@ struct EditProfileView: View {
             action: EditProfileDomain.Destinations.Action.alert
         )
         .task {
-            await viewStore.send(.registerListener).finish()
+            await viewStore.send(.task).finish()
         }
         .onAppear {
-            viewStore.send(.loadAvailableSecurityOptions)
+            viewStore.send(.onAppear)
         }
     }
 }

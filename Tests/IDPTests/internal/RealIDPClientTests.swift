@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -131,7 +131,7 @@ final class RealIDPClientTests: XCTestCase {
             .test(failure: { error in
                 expect(counter) == 1
                 expect(error) == IDPError
-                    .network(error: HTTPError
+                    .network(error: HTTPClientError
                         .httpError(URLError(URLError.notConnectedToInternet, userInfo: notConnectedError.userInfo)))
             }, expectations: { _ in
                 fail()
@@ -773,13 +773,14 @@ final class RealIDPClientTests: XCTestCase {
         expect(counter) == 1
     }
 
-    func testStartExtAuth() throws {
+    func testStartExtAuthFastTrack() throws {
         let urlFixture = URL(string: "http://localhost/redirect")!
         let idpExtAuth = IDPExtAuth(kkAppId: "kk_app_id",
                                     state: "state",
                                     codeChallenge: "code_challenge",
                                     codeChallengeMethod: .sha256,
-                                    nonce: "nonce")
+                                    nonce: "nonce",
+                                    authType: .fasttrack)
         let parameters: [String: String] = [
             "kk_app_id": idpExtAuth.kkAppId,
             "state": idpExtAuth.state,
@@ -819,8 +820,124 @@ final class RealIDPClientTests: XCTestCase {
         expect(requestURL!).to(containsParameters(parameters))
     }
 
+    func testStartExtAuthGID() throws {
+        let urlFixture = URL(string: "http://localhost/redirect")!
+        let idpExtAuth = IDPExtAuth(kkAppId: "kk_app_id",
+                                    state: "state",
+                                    codeChallenge: "code_challenge",
+                                    codeChallengeMethod: .sha256,
+                                    nonce: "nonce",
+                                    authType: .gid)
+        let parameters: [String: String] = [
+            "idp_iss": idpExtAuth.kkAppId,
+            "state": idpExtAuth.state,
+            "code_challenge": idpExtAuth.codeChallenge,
+            "code_challenge_method": idpExtAuth.codeChallengeMethod.rawValue,
+            "nonce": idpExtAuth.nonce,
+            "redirect_uri": config.extAuthRedirectURI.absoluteString,
+            "client_id": config.clientId,
+        ]
+
+        var requestURL: URL?
+        var counter = 0
+        let endpoint = localDiscoveryDocument.federationAuth!.url
+        stub(condition: isHost("localhost")
+            && isPath(endpoint.path)
+            && isMethodGET()) { request in
+                requestURL = request.url
+                counter += 1
+                return HTTPStubsResponse(
+                    data: Data(),
+                    statusCode: 302,
+                    headers: ["Location": urlFixture.absoluteString]
+                )
+        }
+
+        var result: URL?
+
+        RealIDPClient(client: config)
+            .startExtAuth(idpExtAuth, using: localDiscoveryDocument)
+            .test(expectations: { redirectURL in
+                result = redirectURL
+            })
+
+        expect(result).toNot(beNil())
+        expect(result!).to(equal(urlFixture))
+        expect(requestURL).toNot(beNil())
+        expect(requestURL!).to(containsParameters(parameters))
+    }
+
+    func testStartExtAuthGIDErrorViaRedirect() throws {
+        let urlFixture =
+            URL(
+                string: "http://localhost/redirect?state=0A8436B61AB022CC84AD394D60AFAA68&error=invalid_request&gematik_code=7014&gematik_timestamp=1702630135&gematik_uuid=42ac5d7d-4c50-4d76-b551-45feb6f25bd4&gematik_error_text=some+error+text" // swiftlint:disable:this line_length
+            )!
+        let errorFixture = IDPError.serverError(
+            .init(
+                error: "invalid_request",
+                errorText: "some error text",
+                timestamp: 1_702_630_135,
+                uuid: "42ac5d7d-4c50-4d76-b551-45feb6f25bd4",
+                code: "7014"
+            )
+        )
+        let idpExtAuth = IDPExtAuth(kkAppId: "kk_app_id",
+                                    state: "state",
+                                    codeChallenge: "code_challenge",
+                                    codeChallengeMethod: .sha256,
+                                    nonce: "nonce",
+                                    authType: .gid)
+        let parameters: [String: String] = [
+            "idp_iss": idpExtAuth.kkAppId,
+            "state": idpExtAuth.state,
+            "code_challenge": idpExtAuth.codeChallenge,
+            "code_challenge_method": idpExtAuth.codeChallengeMethod.rawValue,
+            "nonce": idpExtAuth.nonce,
+            "redirect_uri": config.extAuthRedirectURI.absoluteString,
+            "client_id": config.clientId,
+        ]
+
+        var requestURL: URL?
+        var counter = 0
+        let endpoint = localDiscoveryDocument.federationAuth!.url
+        stub(condition: isHost("localhost")
+            && isPath(endpoint.path)
+            && isMethodGET()) { request in
+                requestURL = request.url
+                counter += 1
+                return HTTPStubsResponse(
+                    data: Data(),
+                    statusCode: 302,
+                    headers: ["Location": urlFixture.absoluteString]
+                )
+        }
+
+        var result: IDPError?
+
+        RealIDPClient(client: config)
+            .startExtAuth(idpExtAuth, using: localDiscoveryDocument)
+            .test(
+                failure: { error in
+                    result = error
+                },
+                expectations: { redirect in
+                    XCTFail("Received redirect '\(redirect)' instead of error")
+                }
+            )
+
+        expect(result).toNot(beNil())
+        expect(result).to(equal(errorFixture))
+        expect(requestURL).toNot(beNil())
+        expect(requestURL!).to(containsParameters(parameters))
+    }
+
     func testExtAuthVerify() throws {
-        let idpExtAuthVerify = IDPExtAuthVerify(code: "code", state: "state", kkAppRedirectURI: "kkAppRedirectURI")
+        let idpExtAuthVerify = IDPExtAuthVerify(
+            code: "code",
+            state: "state",
+            kkAppRedirectURI: "kkAppRedirectURI",
+            isGid: false
+        )
 
         var actualToken: IDPExchangeToken?
         let parameters = [

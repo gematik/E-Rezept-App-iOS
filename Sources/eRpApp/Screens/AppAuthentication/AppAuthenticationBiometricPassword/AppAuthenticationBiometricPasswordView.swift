@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -108,16 +108,17 @@ struct AppAuthenticationBiometricPasswordView: View {
                     .font(.body.weight(.semibold))
                     .accessibility(identifier: A11y.auth.authBtnBapChange)
             }
-            .alert(isPresented: viewStore.binding(
-                get: { $0.error != nil },
-                send: AppAuthenticationBiometricPasswordDomain.Action.dismissError
-            )) {
-                Alert(
-                    title: Text(L10n.alertErrorTitle),
-                    message: Text(viewStore.error?.errorDescription ?? ""),
-                    dismissButton: .default(Text(L10n.alertBtnOk))
-                )
-            }
+            .alert(
+                L10n.alertErrorTitle.key,
+                isPresented: viewStore.binding(
+                    get: { $0.error != nil },
+                    send: AppAuthenticationBiometricPasswordDomain.Action.dismissError
+                ),
+                actions: { Button(L10n.alertBtnOk) {} },
+                message: {
+                    Text(viewStore.error?.errorDescription ?? "")
+                }
+            )
         } else {
             PasswordView(store: store)
         }

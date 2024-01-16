@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -219,13 +219,16 @@ struct OnboardingDomain: ReducerProtocol {
     // [REQ:gemSpec_eRp_FdV:A_19184] Alert for the user to choose.
     static let trackingAlertState: AlertState<Action.Alert> = {
         AlertState(
-            title: TextState(L10n.onbAnaAlertTitle),
-            message: TextState(L10n.onbAnaAlertMessage),
-            primaryButton: .cancel(TextState(L10n.onbAnaAlertDeny), action: .send(.none)),
-            secondaryButton: .default(
-                TextState(L10n.onbAnaAlertAccept),
-                action: .send(.allowTracking, animation: .default)
-            )
+            title: { TextState(L10n.onbAnaAlertTitle) },
+            actions: {
+                ButtonState(role: .cancel, action: .send(.none)) {
+                    TextState(L10n.onbAnaAlertDeny)
+                }
+                ButtonState(action: .send(.allowTracking, animation: .default)) {
+                    TextState(L10n.onbAnaAlertAccept)
+                }
+            },
+            message: { TextState(L10n.onbAnaAlertMessage) }
         )
     }()
 }

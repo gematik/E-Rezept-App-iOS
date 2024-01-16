@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -71,7 +71,8 @@ final class FHIRClientTests: XCTestCase {
             .test(failure: { error in
                 expect(counter) == 1
                 expect(mockOperation.handleResponse_Called).to(beFalse())
-                expect(error) == FHIRClient.Error.httpError(.httpError(expectedError))
+                expect(error) == FHIRClient.Error
+                    .http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil))
             }, expectations: { _ in
                 fail()
             })
@@ -122,7 +123,9 @@ final class FHIRClientTests: XCTestCase {
 
         let responseData = try! Data(contentsOf: url)
         let outcome = try! JSONDecoder().decode(ModelsR4.OperationOutcome.self, from: responseData)
-        let expectedError = FHIRClient.Error.operationOutcome(outcome)
+        let urlError = URLError(.init(rawValue: HTTPStatusCode.badRequest.rawValue))
+        let expectedError = FHIRClient.Error
+            .http(.init(httpClientError: .httpError(urlError), operationOutcome: outcome))
         var counter = 0
         stub(condition: isHost(host)
             && isPath(mockOperation.relativeUrlString!)

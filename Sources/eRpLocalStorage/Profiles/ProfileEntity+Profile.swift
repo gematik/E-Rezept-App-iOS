@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -40,6 +40,7 @@ extension ProfileEntity {
         userImageData = profile.userImageData
         lastAuthenticated = profile.lastAuthenticated
         // Note: update of erxTasks is set when saving tasks in `save(tasks:)`
+        hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
     }
 }
 
@@ -80,6 +81,8 @@ extension Profile {
             tasks = []
         }
 
+        let hidePkvConsentDrawerOnMainView = entity.hidePkvConsentDrawerOnMainView
+
         self.init(
             name: name,
             identifier: identifier,
@@ -93,7 +96,8 @@ extension Profile {
             image: profilePicture,
             userImageData: entity.userImageData,
             lastAuthenticated: entity.lastAuthenticated,
-            erxTasks: tasks
+            erxTasks: tasks,
+            hidePkvConsentDrawerOnMainView: hidePkvConsentDrawerOnMainView
         )
     }
 }

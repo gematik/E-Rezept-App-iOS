@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -23,7 +23,7 @@ import HTTPClient
 public enum TrustStoreError: Swift.Error {
     // sourcery: errorCode = "01"
     /// In case of HTTP/Connection error
-    case network(error: HTTPError)
+    case network(error: HTTPClientError)
     // sourcery: errorCode = "02"
     /// When failed to extract a certificate from the CertList
     case noCertificateFound
@@ -62,7 +62,7 @@ public enum TrustStoreError: Swift.Error {
 extension Swift.Error {
     /// Map any Error to an VAUError
     public func asTrustStoreError() -> TrustStoreError {
-        if let error = self as? HTTPError {
+        if let error = self as? HTTPClientError {
             return TrustStoreError.network(error: error)
         } else if let error = self as? TrustStoreError {
             return error

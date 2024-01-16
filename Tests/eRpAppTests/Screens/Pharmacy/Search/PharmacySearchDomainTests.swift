@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -346,6 +346,159 @@ class PharmacySearchDomainTests: XCTestCase {
                         .State(erxTasks: [], pharmacyViewModel: locationViewModel))
             }
     }
+
+    func testUpdatePharmacyFavoriteInSearch() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.savePharmaciesReturnValue = Just(true).setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+        let testPharmacy = PharmacyLocationViewModel(
+            pharmacy: TestData.pharmacy3,
+            referenceDate: TestData.openHoursTestReferenceDate
+        )
+        let expectedPharmacy = PharmacyLocationViewModel(
+            pharmacy: PharmacyLocation(
+                id: TestData.pharmacy3.id,
+                status: TestData.pharmacy3.status,
+                telematikID: TestData.pharmacy3.telematikID,
+                created: TestData.pharmacy3.created,
+                name: TestData.pharmacy3.name,
+                types: TestData.pharmacy3.types,
+                address: TestData.pharmacy3.address,
+                telecom: TestData.pharmacy3.telecom,
+                isFavorite: true,
+                hoursOfOperation: []
+            ),
+            referenceDate: TestData.openHoursTestReferenceDate
+        )
+        let expectedPharmacies = [TestData.pharmacy1, TestData.pharmacy2, expectedPharmacy.pharmacyLocation]
+        let testPharmacies = [TestData.pharmacy1, TestData.pharmacy2, TestData.pharmacy3]
+
+        let sut = testStore(for: .init(erxTasks: [ErxTask.Fixtures.erxTaskReady],
+                                       searchText: "",
+                                       currentLocation: TestData.testLocation,
+                                       pharmacies: testPharmacies.map { pharmacies in
+                                           PharmacyLocationViewModel(
+                                               pharmacy: pharmacies,
+                                               referenceLocation: TestData.testLocation,
+                                               referenceDate: TestData.openHoursTestReferenceDate
+                                           )
+                                       }),
+                            pharmacyRepository: mockPharmacyRepo)
+
+        await sut.send(.showDetails(testPharmacy)) { state in
+            state.destination = .pharmacy(.init(erxTasks: [ErxTask.Fixtures.erxTask1], pharmacyViewModel: testPharmacy))
+        }
+
+        await sut.send(.destination(.presented(.pharmacyDetailView(action: .toggleIsFavorite))))
+
+        await testScheduler.run()
+
+        await sut.receive(.destination(.presented(
+            .pharmacyDetailView(action: .response(.toggleIsFavoriteReceived(.success(expectedPharmacy))))
+        ))) { state in
+            state.pharmacies = expectedPharmacies.map { pharmacies in
+                PharmacyLocationViewModel(
+                    pharmacy: pharmacies,
+                    referenceLocation: TestData.testLocation,
+                    referenceDate: TestData.openHoursTestReferenceDate
+                )
+            }
+            state.selectedPharmacy?.isFavorite = true
+            state
+                .destination =
+                .pharmacy(.init(erxTasks: [ErxTask.Fixtures.erxTaskReady], pharmacyViewModel: expectedPharmacy))
+        }
+    }
+
+    func testRedeemPharmacyChangePharmacy() async {
+        let inputTask = TestData.stateWithStartView.erxTasks
+        let oldPharmacy = PharmacyLocationViewModel(
+            pharmacy: TestData.pharmacy1,
+            referenceDate: TestData.openHoursTestReferenceDate
+        )
+        let newPharmacy = PharmacyLocationViewModel(
+            pharmacy: TestData.pharmacy2,
+            referenceDate: TestData.openHoursTestReferenceDate
+        )
+        let oldPharmacyRedeemState = PharmacyRedeemDomain.State(
+            redeemOption: .onPremise,
+            erxTasks: inputTask,
+            pharmacy: oldPharmacy.pharmacyLocation
+        )
+        let newPharmacyRedeemState = PharmacyRedeemDomain.State(
+            redeemOption: .onPremise,
+            erxTasks: inputTask,
+            pharmacy: newPharmacy.pharmacyLocation
+        )
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.updateFromRemoteByReturnValue = Just(newPharmacy.pharmacyLocation)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockPharmacyRepo.loadAvsCertificatesForReturnValue = Just([])
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let sut = testStore(for: PharmacySearchDomain.State(
+            erxTasks: [ErxTask.Fixtures.erxTaskReady],
+            searchText: "",
+            pharmacies: TestData.pharmacies.map { pharmacies in
+                PharmacyLocationViewModel(
+                    pharmacy: pharmacies,
+                    referenceLocation: nil,
+                    referenceDate: TestData.openHoursTestReferenceDate
+                )
+            },
+            searchState: .startView(loading: false)
+        ), pharmacyRepository: mockPharmacyRepo)
+
+        await sut.send(.showDetails(oldPharmacy)) {
+            $0.destination = .pharmacy(PharmacyDetailDomain.State(
+                erxTasks: inputTask,
+                pharmacyViewModel: oldPharmacy
+            ))
+        }
+
+        await sut
+            .send(
+                .destination(
+                    .presented(.pharmacyDetailView(action: .delegate(.changePharmacy(oldPharmacyRedeemState))))
+                )
+            ) {
+                $0.destination = nil
+                $0.pharmacyRedeemState = oldPharmacyRedeemState
+            }
+
+        await sut.send(.showDetails(newPharmacy)) {
+            $0.destination = .pharmacy(PharmacyDetailDomain.State(
+                erxTasks: inputTask,
+                pharmacyViewModel: newPharmacy,
+                pharmacyRedeemState: oldPharmacyRedeemState
+            ))
+        }
+
+        await sut
+            .send(
+                .destination(.presented(.pharmacyDetailView(action: .response(.avsCertificatesReceived(.success([]))))))
+            ) {
+                $0.destination = .pharmacy(PharmacyDetailDomain.State(
+                    erxTasks: inputTask,
+                    pharmacyViewModel: newPharmacy,
+                    pharmacyRedeemState: oldPharmacyRedeemState,
+                    reservationService: .erxTaskRepositoryAvailable
+                ))
+            }
+
+        await sut.send(.destination(.presented(.pharmacyDetailView(action: .showPharmacyRedeemOption(.onPremise))))) {
+            $0.destination = .pharmacy(PharmacyDetailDomain.State(
+                erxTasks: inputTask,
+                pharmacyViewModel: newPharmacy,
+                pharmacyRedeemState: nil,
+                reservationService: .erxTaskRepositoryAvailable,
+                destination: .redeemViaErxTaskRepository(newPharmacyRedeemState)
+            ))
+        }
+    }
 }
 
 extension PharmacySearchDomainTests {
@@ -486,6 +639,7 @@ extension PharmacySearchDomainTests {
             types: [PharmacyLocation.PharmacyType.outpharm],
             address: address2,
             telecom: telecom,
+            isFavorite: false,
             hoursOfOperation: [
                 PharmacyLocation.HoursOfOperation(
                     daysOfWeek: ["fri"],

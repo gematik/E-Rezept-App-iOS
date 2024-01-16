@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -54,7 +54,7 @@ extension RealTrustStoreClient: TrustStoreClient {
     }
 }
 
-extension Publisher where Output == HTTPResponse, Failure == HTTPError {
+extension Publisher where Output == HTTPResponse, Failure == HTTPClientError {
     func processCertListResponse() -> AnyPublisher<CertList, TrustStoreError> {
         tryMap { httpResponse -> CertList in
             try RealTrustStoreClient.processCertListResponse(httpResponse: httpResponse)
@@ -76,7 +76,7 @@ extension RealTrustStoreClient {
     static func processCertListResponse(httpResponse: HTTPResponse) throws -> CertList {
         guard httpResponse.status == .ok else {
             let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
-            throw HTTPError.httpError(urlError)
+            throw HTTPClientError.httpError(urlError)
         }
         return try CertList.from(data: httpResponse.data)
     }
@@ -84,7 +84,7 @@ extension RealTrustStoreClient {
     static func processOCSPListResponse(httpResponse: HTTPResponse) throws -> OCSPList {
         guard httpResponse.status == .ok else {
             let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
-            throw HTTPError.httpError(urlError)
+            throw HTTPClientError.httpError(urlError)
         }
         return try OCSPList.from(data: httpResponse.data)
     }

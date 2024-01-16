@@ -632,20 +632,20 @@ final class MockIDPSession: IDPSession {
     
    // MARK: - extAuthVerifyAndExchange
 
-    var extAuthVerifyAndExchangeIdTokenValidatorCallsCount = 0
-    var extAuthVerifyAndExchangeIdTokenValidatorCalled: Bool {
-        extAuthVerifyAndExchangeIdTokenValidatorCallsCount > 0
+    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowCallsCount = 0
+    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowCalled: Bool {
+        extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowCallsCount > 0
     }
-    var extAuthVerifyAndExchangeIdTokenValidatorReceivedArguments: (url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)?
-    var extAuthVerifyAndExchangeIdTokenValidatorReceivedInvocations: [(url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)] = []
-    var extAuthVerifyAndExchangeIdTokenValidatorReturnValue: AnyPublisher<IDPToken, IDPError>!
-    var extAuthVerifyAndExchangeIdTokenValidatorClosure: ((URL, @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError>)?
+    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReceivedArguments: (url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool)?
+    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReceivedInvocations: [(url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool)] = []
+    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReturnValue: AnyPublisher<IDPToken, IDPError>!
+    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowClosure: ((URL, @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, Bool) -> AnyPublisher<IDPToken, IDPError>)?
 
-    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
-        extAuthVerifyAndExchangeIdTokenValidatorCallsCount += 1
-        extAuthVerifyAndExchangeIdTokenValidatorReceivedArguments = (url: url, idTokenValidator: idTokenValidator)
-        extAuthVerifyAndExchangeIdTokenValidatorReceivedInvocations.append((url: url, idTokenValidator: idTokenValidator))
-        return extAuthVerifyAndExchangeIdTokenValidatorClosure.map({ $0(url, idTokenValidator) }) ?? extAuthVerifyAndExchangeIdTokenValidatorReturnValue
+    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool) -> AnyPublisher<IDPToken, IDPError> {
+        extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowCallsCount += 1
+        extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReceivedArguments = (url: url, idTokenValidator: idTokenValidator, isGidFlow: isGidFlow)
+        extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReceivedInvocations.append((url: url, idTokenValidator: idTokenValidator, isGidFlow: isGidFlow))
+        return extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowClosure.map({ $0(url, idTokenValidator, isGidFlow) }) ?? extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReturnValue
     }
 }
 
@@ -816,6 +816,26 @@ final class MockNFCSignatureProvider: NFCSignatureProvider {
         signCanPinChallengeReceivedArguments = (can: can, pin: pin, challenge: challenge)
         signCanPinChallengeReceivedInvocations.append((can: can, pin: pin, challenge: challenge))
         return signCanPinChallengeClosure.map({ $0(can, pin, challenge) }) ?? signCanPinChallengeReturnValue
+    }
+}
+
+
+// MARK: - MockOrdersRepository -
+
+final class MockOrdersRepository: OrdersRepository {
+    
+   // MARK: - loadAllOrders
+
+    var loadAllOrdersCallsCount = 0
+    var loadAllOrdersCalled: Bool {
+        loadAllOrdersCallsCount > 0
+    }
+    var loadAllOrdersReturnValue: AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error>!
+    var loadAllOrdersClosure: (() -> AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error>)?
+
+    func loadAllOrders() -> AsyncThrowingStream<IdentifiedArray<String, Order>, Swift.Error> {
+        loadAllOrdersCallsCount += 1
+        return loadAllOrdersClosure.map({ $0() }) ?? loadAllOrdersReturnValue
     }
 }
 
@@ -1163,6 +1183,24 @@ final class MockProfileBasedSessionProvider: ProfileBasedSessionProvider {
         idTokenValidatorForReceivedInvocations.append(profileId)
         return idTokenValidatorForClosure.map({ $0(profileId) }) ?? idTokenValidatorForReturnValue
     }
+    
+   // MARK: - signatureProvider
+
+    var signatureProviderForCallsCount = 0
+    var signatureProviderForCalled: Bool {
+        signatureProviderForCallsCount > 0
+    }
+    var signatureProviderForReceivedProfileId: UUID?
+    var signatureProviderForReceivedInvocations: [UUID] = []
+    var signatureProviderForReturnValue: SecureEnclaveSignatureProvider!
+    var signatureProviderForClosure: ((UUID) -> SecureEnclaveSignatureProvider)?
+
+    func signatureProvider(for profileId: UUID) -> SecureEnclaveSignatureProvider {
+        signatureProviderForCallsCount += 1
+        signatureProviderForReceivedProfileId = profileId
+        signatureProviderForReceivedInvocations.append(profileId)
+        return signatureProviderForClosure.map({ $0(profileId) }) ?? signatureProviderForReturnValue
+    }
 }
 
 
@@ -1352,12 +1390,12 @@ final class MockRedeemService: RedeemService {
     var redeemCalled: Bool {
         redeemCallsCount > 0
     }
-    var redeemReceivedOrders: [Order]?
-    var redeemReceivedInvocations: [[Order]] = []
+    var redeemReceivedOrders: [OrderRequest]?
+    var redeemReceivedInvocations: [[OrderRequest]] = []
     var redeemReturnValue: AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>!
-    var redeemClosure: (([Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>)?
+    var redeemClosure: (([OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>)?
 
-    func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         redeemCallsCount += 1
         redeemReceivedOrders = orders
         redeemReceivedInvocations.append(orders)

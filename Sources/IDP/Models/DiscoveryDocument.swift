@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -140,8 +140,22 @@ public struct DiscoveryDocument: Codable {
         return Endpoint(url: url.correct(), cert: signingCert)
     }
 
+    public var directoryKKAppsgId: IDPEndpoint? {
+        guard let url = payload.kkAppListgId else {
+            return nil
+        }
+        return Endpoint(url: url.correct(), cert: signingCert)
+    }
+
     public var thirdPartyAuth: IDPEndpoint? {
         guard let url = payload.thirdPartyAuth else {
+            return nil
+        }
+        return Endpoint(url: url.correct(), cert: signingCert)
+    }
+
+    public var federationAuth: IDPEndpoint? {
+        guard let url = payload.federationAuth else {
             return nil
         }
         return Endpoint(url: url.correct(), cert: signingCert)

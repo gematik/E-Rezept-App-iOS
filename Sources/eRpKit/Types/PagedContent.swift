@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,7 +19,7 @@
 import Foundation
 
 /// Container format for handling paged FHIR content.
-public struct PagedContent<Content>: Equatable where Content: Equatable {
+public struct PagedContent<Content>: Equatable, Codable where Content: Equatable, Content: Codable {
     /// Initializes a PagedContent with a given content and an optional next page link.
     /// - Parameters:
     ///   - content: Actual content of this page.

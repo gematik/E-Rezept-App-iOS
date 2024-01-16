@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -92,6 +92,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
             workPlaceIdentifier: "Arbeitsplatz",
             date: "2021-04-01"
         )
+        expect(task.medicationRequest.quantity) == .init(value: "17", unit: "{Package}")
         // patient
         expect(task.patient?.name) == "Prof. Dr. Dr. med Eva Kluge"
         expect(task.patient?.address) == "Pflasterhofweg 111B\n50999 Köln"

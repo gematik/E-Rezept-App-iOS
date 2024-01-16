@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -40,11 +40,12 @@ class VAUInterceptor: Interceptor {
         self.vauEndpointHandler = vauEndpointHandler
     }
 
-    func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPError> {
+    func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         let request = chain.request
         guard let originalUrl = request.url else {
-            return Fail(error: HTTPError.vauError(VAUError.internalError("Could not prepare request for VAU service")))
-                .eraseToAnyPublisher()
+            return Fail(error: HTTPClientError
+                .vauError(VAUError.internalError("Could not prepare request for VAU service")))
+                            .eraseToAnyPublisher()
         }
 
         // [REQ:gemSpec_eRp_FdV:A_19187] VAU Bearer must be set to trigger a request
@@ -57,7 +58,7 @@ class VAUInterceptor: Interceptor {
             // Prepare outer request (encrypt original request and embed it into a new one)
             // [REQ:gemSpec_Krypt:A_20161-01]
             .processToVauRequest(urlRequest: request, vauCryptoProvider: vauCryptoProvider)
-            .flatMap { vauCrypto, vauRequest -> AnyPublisher<HTTPResponse, HTTPError> in
+            .flatMap { vauCrypto, vauRequest -> AnyPublisher<HTTPResponse, HTTPClientError> in
                 chain.proceed(request: vauRequest)
                     // Process VAU server response (validate and extract+decrypt inner FHIR service response)
                     // [REQ:gemSpec_Krypt:A_20174]
@@ -75,7 +76,7 @@ extension Publisher where Output == (BearerToken, VAUCertificate, URL), Failure 
     func processToVauRequest(
         urlRequest: URLRequest,
         vauCryptoProvider: VAUCryptoProvider
-    ) -> AnyPublisher<(VAUCrypto, URLRequest), HTTPError> {
+    ) -> AnyPublisher<(VAUCrypto, URLRequest), HTTPClientError> {
         tryMap { bearerToken, vauCertificate, vauEndPoint in
             try VAUInterceptor.processToVauRequest(
                 urlRequest: urlRequest,
@@ -113,8 +114,8 @@ extension VAUInterceptor {
     }
 }
 
-extension Publisher where Output == HTTPResponse, Failure == HTTPError {
-    func handleUserPseudonym(vauEndpointHandler: VAUEndpointHandler) -> AnyPublisher<HTTPResponse, HTTPError> {
+extension Publisher where Output == HTTPResponse, Failure == HTTPClientError {
+    func handleUserPseudonym(vauEndpointHandler: VAUEndpointHandler) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         handleEvents( // swiftlint:disable:this trailing_closure
             receiveOutput: { httpResponse in
                 vauEndpointHandler.didReceiveUserPseudonym(in: httpResponse)
@@ -123,7 +124,7 @@ extension Publisher where Output == HTTPResponse, Failure == HTTPError {
         .eraseToAnyPublisher()
     }
 
-    func processVauResponse(vauCrypto: VAUCrypto, originalUrl: URL) -> AnyPublisher<HTTPResponse, HTTPError> {
+    func processVauResponse(vauCrypto: VAUCrypto, originalUrl: URL) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         tryMap { httpResponse in
             try VAUInterceptor.processVauResponse(
                 httpResponse: httpResponse,

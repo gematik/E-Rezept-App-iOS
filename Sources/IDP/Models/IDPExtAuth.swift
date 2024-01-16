@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -34,4 +34,15 @@ public struct IDPExtAuth {
 
     /// OpenID parameter nonce of high entropy.
     public let nonce: String
+
+    /// Authentication type
+    public let authType: AuthType
+
+    /// Authentication type stating the method of authentication
+    public enum AuthType {
+        /// Using fasttrack
+        case fasttrack
+        /// Using "Gesundheits ID"
+        case gid
+    }
 }

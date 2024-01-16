@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -162,16 +162,24 @@ extension NewProfileDomain {
         typealias Action = NewProfileDomain.Destinations.Action.Alert
 
         static var emptyName = AlertState<Action>(
-            title: TextState(L10n.stgTxtNewProfileErrorMessageTitle),
-            message: TextState(L10n.stgTxtNewProfileMissingNameError),
-            dismissButton: .default(TextState(L10n.alertBtnOk))
+            title: { TextState(L10n.stgTxtNewProfileErrorMessageTitle) },
+            actions: {
+                ButtonState(role: .cancel, action: .send(.none)) {
+                    TextState(L10n.alertBtnOk)
+                }
+            },
+            message: { TextState(L10n.stgTxtNewProfileMissingNameError) }
         )
 
         static func `for`(_ error: LocalStoreError) -> AlertState<Action> {
             AlertState(
-                title: TextState(L10n.stgTxtNewProfileErrorMessageTitle),
-                message: TextState(error.localizedDescriptionWithErrorList),
-                dismissButton: .default(TextState(L10n.alertBtnOk))
+                title: { TextState(L10n.stgTxtNewProfileErrorMessageTitle) },
+                actions: {
+                    ButtonState(role: .cancel, action: .send(.none)) {
+                        TextState(L10n.alertBtnOk)
+                    }
+                },
+                message: { TextState(error.localizedDescriptionWithErrorList) }
             )
         }
     }

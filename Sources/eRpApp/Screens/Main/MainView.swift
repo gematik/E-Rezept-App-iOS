@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -80,6 +80,27 @@ struct MainView: View {
             .demoBanner(isPresented: viewStore.isDemoModeEnabled) {
                 viewStore.send(MainDomain.Action.turnOffDemoMode)
             }
+            .smallSheet(
+                isPresented: Binding<Bool>(
+                    get: { viewStore.destinationTag == .grantChargeItemConsentDrawer },
+                    set: { show in
+                        if !show,
+                           // this distinction is necessary or else .toast state would be nilled out unwantedly
+                           viewStore.destinationTag == .grantChargeItemConsentDrawer {
+                            viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
+                        }
+                    }
+                ),
+                onDismiss: {},
+                content: {
+                    GrantChargeItemConsentDrawerView(store: store)
+                }
+            )
+            .toast(
+                store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                state: /MainDomain.Destinations.State.toast,
+                action: MainDomain.Destinations.Action.toast
+            )
 
             .navigationTitle(Text(L10n.erxTitle))
             .navigationBarTitleDisplayMode(.automatic)
@@ -113,7 +134,7 @@ struct MainView: View {
                 viewStore.send(.loadDeviceSecurityView)
                 // Delay sheet animation to not interfere with Onboarding navigation
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    viewStore.send(.showWelcomeDrawer)
+                    viewStore.send(.showDrawer)
                 }
             }
             .alert(

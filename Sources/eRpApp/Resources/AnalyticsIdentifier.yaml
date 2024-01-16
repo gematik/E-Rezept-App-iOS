@@ -15,6 +15,8 @@ screens:
     name: "main:prescriptionArchive"
   main_welcomeDrawer:
     name: "main:welcomeDrawer"
+  main_consentDrawer:
+    name: "main:consentDrawer" 
   prescriptionDetail:
     name: "prescriptionDetail"
   prescriptionDetail_medication:
@@ -49,6 +51,8 @@ screens:
     name: "prescriptionDetail:medicationOverview"
   prescriptionDetail_medication_ingredients:
     name: "prescriptionDetail:medication_ingredients"
+  prescriptionDetail_toast:
+    name: "prescriptionDetail:toast"
   redeem_methodSelection:
     name: "redeem:methodSelection"
   redeem_prescriptionAllOrSelection:
@@ -65,6 +69,8 @@ screens:
     name: "redeem:success"
   redeem_editContactInformation:
     name: "redeem:editContactInformation"
+  redeem_prescriptionSelection:
+    name: "redeem:prescriptionSelection"
   pharmacySearch:
     name: "pharmacySearch"
   pharmacySearch_detail:
@@ -185,6 +191,8 @@ screens:
     name: "chargeItemList"
   chargeItemDetails:
     name: "chargeItemDetails"
+  chargeItemList_toast:
+    name: "chargeItemList:toast"  
   mlKit: # not used in iOS
     name: "mlKit"
   mlKit_information: # not used in iOS

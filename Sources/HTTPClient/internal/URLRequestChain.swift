@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,7 +30,7 @@ class URLRequestChain: Chain {
         self.interceptors = interceptors
     }
 
-    func proceed(request newRequest: URLRequest) -> AnyPublisher<HTTPResponse, HTTPError> {
+    func proceed(request newRequest: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         guard let interceptor = interceptors.first else {
             // interceptors is empty
             request = newRequest
@@ -43,13 +43,13 @@ class URLRequestChain: Chain {
 }
 
 extension Publisher where Output == (data: Data, response: URLResponse), Failure == URLError {
-    func mapToHTTPResponse() -> AnyPublisher<HTTPResponse, HTTPError> {
+    func mapToHTTPResponse() -> AnyPublisher<HTTPResponse, HTTPClientError> {
         tryMap { data, response in
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw HTTPError.internalError("URLResponse is not a HTTPURLResponse")
+                throw HTTPClientError.internalError("URLResponse is not a HTTPURLResponse")
             }
             guard let statusCode = HTTPStatusCode(rawValue: httpResponse.statusCode) else {
-                throw HTTPError.internalError("Unsupported http status code [\(httpResponse.statusCode)]")
+                throw HTTPClientError.internalError("Unsupported http status code [\(httpResponse.statusCode)]")
             }
             return (data: data, response: httpResponse, status: statusCode)
         }

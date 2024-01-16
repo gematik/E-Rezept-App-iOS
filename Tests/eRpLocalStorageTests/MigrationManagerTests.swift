@@ -1,6 +1,6 @@
 // swiftlint:disable file_length
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -117,14 +117,15 @@ final class MigrationManagerTests: XCTestCase {
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil,
-                                                       coreDataControllerFactory: factory,
-                                                       foregroundQueue: foregroundQueue,
-                                                       backgroundQueue: backgroundQueue),
+            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(profileId: nil,
+                                                              coreDataControllerFactory: factory,
+                                                              foregroundQueue: foregroundQueue,
+                                                              backgroundQueue: backgroundQueue,
+                                                              dateProvider: { Date() }),
             userDataStore: userDataStore
         )
         // pre fill database with tasks from two different patients and a scanned task
-        let erxTaskStore = ErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory)
+        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory)
         var tasks = tasksForPatientAnna + tasksForPatientLudger
         tasks.append(scannedTask)
         try erxTaskStore.add(tasks: tasks)
@@ -209,11 +210,12 @@ final class MigrationManagerTests: XCTestCase {
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(
+            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(
                 profileId: nil,
                 coreDataControllerFactory: factory,
                 foregroundQueue: foregroundQueue,
-                backgroundQueue: backgroundQueue
+                backgroundQueue: backgroundQueue,
+                dateProvider: { Date() }
             ),
             userDataStore: userDataStore
         )
@@ -233,7 +235,8 @@ final class MigrationManagerTests: XCTestCase {
 
         let profileStore = ProfileCoreDataStore(coreDataControllerFactory: factory,
                                                 foregroundQueue: foregroundQueue,
-                                                backgroundQueue: backgroundQueue)
+                                                backgroundQueue: backgroundQueue,
+                                                dateProvider: { Date() })
 
         var receivedProfileCompletions = [Subscribers.Completion<LocalStoreError>]()
         var receivedProfileResults = [[Profile]]()
@@ -268,17 +271,18 @@ final class MigrationManagerTests: XCTestCase {
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(
+            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(
                 profileId: nil,
                 coreDataControllerFactory: factory,
                 foregroundQueue: foregroundQueue,
-                backgroundQueue: backgroundQueue
+                backgroundQueue: backgroundQueue,
+                dateProvider: { Date() }
             ),
             userDataStore: userDataStore
         )
 
         // pre fill database with tasks from two different patients and a scanned task
-        let erxTaskStore = ErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory)
+        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory)
         try erxTaskStore.add(tasks: [scannedTask])
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
@@ -331,10 +335,11 @@ final class MigrationManagerTests: XCTestCase {
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil,
-                                                       coreDataControllerFactory: factory,
-                                                       foregroundQueue: foregroundQueue,
-                                                       backgroundQueue: backgroundQueue),
+            erxTaskCoreDataStore: DefaultErxTaskCoreDataStore(profileId: nil,
+                                                              coreDataControllerFactory: factory,
+                                                              foregroundQueue: foregroundQueue,
+                                                              backgroundQueue: backgroundQueue,
+                                                              dateProvider: { Date() }),
             userDataStore: userDataStore
         )
 
@@ -358,10 +363,11 @@ final class MigrationManagerTests: XCTestCase {
         let userDataStore = MockUserDataStore()
         let factory = MockCoreDataControllerFactory()
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
-        let erxTaskStore = ErxTaskCoreDataStore(profileId: UUID(),
-                                                coreDataControllerFactory: factory,
-                                                foregroundQueue: foregroundQueue,
-                                                backgroundQueue: backgroundQueue)
+        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: UUID(),
+                                                       coreDataControllerFactory: factory,
+                                                       foregroundQueue: foregroundQueue,
+                                                       backgroundQueue: backgroundQueue,
+                                                       dateProvider: { Date() })
         let sut = MigrationManager(
             factory: factory,
             erxTaskCoreDataStore: erxTaskStore,
@@ -390,10 +396,11 @@ final class MigrationManagerTests: XCTestCase {
         let userDataStore = MockUserDataStore()
         let factory = MockCoreDataControllerFactory()
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
-        let erxTaskStore = ErxTaskCoreDataStore(profileId: UUID(),
-                                                coreDataControllerFactory: factory,
-                                                foregroundQueue: foregroundQueue,
-                                                backgroundQueue: backgroundQueue)
+        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: UUID(),
+                                                       coreDataControllerFactory: factory,
+                                                       foregroundQueue: foregroundQueue,
+                                                       backgroundQueue: backgroundQueue,
+                                                       dateProvider: { Date() })
 
         let sut = MigrationManager(
             factory: factory,

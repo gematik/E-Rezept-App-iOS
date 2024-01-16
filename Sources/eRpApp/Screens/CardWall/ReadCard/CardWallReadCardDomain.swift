@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -99,7 +99,6 @@ struct CardWallReadCardDomain: ReducerProtocol {
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
-    @Dependency(\.secureEnclaveSignatureProvider) var signatureProvider: SecureEnclaveSignatureProvider
     @Dependency(\.profileBasedSessionProvider) var profileBasedSessionProvider: ProfileBasedSessionProvider
     @Dependency(\.nfcSessionProvider) var nfcSessionProvider: NFCSignatureProvider
     @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
@@ -112,7 +111,6 @@ struct CardWallReadCardDomain: ReducerProtocol {
         .init(
             schedulers: schedulers,
             profileDataStore: profileDataStore,
-            signatureProvider: signatureProvider,
             sessionProvider: profileBasedSessionProvider,
             nfcSessionProvider: nfcSessionProvider,
             application: resourceHandler
@@ -122,7 +120,6 @@ struct CardWallReadCardDomain: ReducerProtocol {
     struct Environment {
         let schedulers: Schedulers
         let profileDataStore: ProfileDataStore
-        let signatureProvider: SecureEnclaveSignatureProvider
         let sessionProvider: ProfileBasedSessionProvider
         let nfcSessionProvider: NFCSignatureProvider
         let application: ResourceHandler
@@ -261,6 +258,9 @@ struct CardWallReadCardDomain: ReducerProtocol {
         case .destination(.presented(.alert(.unlockCard))):
             state.destination = nil
             return .send(.delegate(.unlockCardClose))
+        case .destination(.presented(.alert(.dismiss))):
+            state.destination = nil
+            return .none
         case let .destination(.presented(.help(action: .delegate(delegate)))):
             switch delegate {
             case .close:

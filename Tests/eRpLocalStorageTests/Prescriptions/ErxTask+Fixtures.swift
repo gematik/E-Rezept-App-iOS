@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -56,7 +56,8 @@ extension ErxTask {
                         totalNumber: 5,
                         startPeriod: "2021-07-16T10:55:04+02:00",
                         endPeriod: "2021-09-16T10:55:04+02:00"
-                    )
+                    ),
+                    quantity: .init(value: "2", unit: "Packungen")
                 ),
                 patient: .init(
                     name: "Tohmas Krank",

@@ -159,6 +159,10 @@ internal enum A11y {
       static let erxTxtTooltipsAddProfile = "erx_txt_tooltips_add_profile"
       static let erxTxtTooltipsProfileRename = "erx_txt_tooltips_profile_rename"
       static let erxTxtTooltipsScan = "erx_txt_tooltips_scan"
+      static let erxBtnConsentDrawerActivate = "erx_btn_consent_drawer_activate"
+      static let erxBtnConsentDrawerCancel = "erx_btn_consent_drawer_cancel"
+      static let erxTxtConsentDrawerTitle = "erx_txt_consent_drawer_title"
+      static let erxTxtConsentDrawerMessage = "erx_txt_consent_drawer_message"
   }
     internal enum matrixCode {
       static let dmcTxtTitle = "dmc_txt_title"
@@ -297,6 +301,18 @@ internal enum A11y {
       static let phaRedeemTxtMissingPhone = "pha_redeem_txt_missing_phone"
       static let phaRedeemBtnRedeem = "pha_redeem_btn_redeem"
       static let phaRedeemBtnRedeemFootnote = "pha_redeem_btn_redeem_footnote"
+      static let phaRedeemTxtHeader = "pha_redeem_txt_header"
+      static let phaRedeemTxtEditPrescriptionCount = "pha_redeem_txt_edit_prescription_count"
+      static let phaRedeemTxtEditPrescription = "pha_redeem_txt_edit_prescription"
+      static let phaRedeemBtnEditPrescription = "pha_redeem_btn_edit_prescription"
+      static let phaRedeemTxtAddPrescription = "pha_redeem_txt_add_prescription"
+      static let phaRedeemBtnAddPrescription = "pha_redeem_btn_add_prescription"
+      static let phaRedeemTxtEditPharmacy = "pha_redeem_txt_edit_pharmacy"
+      static let phaRedeemTxtEditPharmacyName = "pha_redeem_txt_edit_pharmacy_name"
+      static let phaRedeemTxtEditPharmacyAdress = "pha_redeem_txt_edit_pharmacy_adress"
+      static let phaRedeemBtnEditPharmacy = "pha_redeem_btn_edit_pharmacy"
+      static let phaRedeemTxtAddPharmacy = "pha_redeem_txt_add_pharmacy"
+      static let phaRedeemBtnAddPharmacy = "pha_redeem_btn_add_pharmacy"
   }
     internal enum pharmacySearch {
       static let phaSearchTxtResultList = "pha_search_txt_result_list"
@@ -357,6 +373,7 @@ internal enum A11y {
       static let prscDtlTxtBvg = "prsc_dtl_txt_bvg"
       static let prscDtlTxtMultiPrescription = "prsc_dtl_txt_multi_prescription"
       static let prscDtlTxtDosageInstructions = "prsc_dtl_txt_dosage_instructions"
+      static let prscDtlTxtQuantity = "prsc_dtl_txt_quantity"
       static let prscDtlTiAccessCode = "prsc_dtl_ti_access_code"
       static let prscDtlTiTaskId = "prsc_dtl_ti_task_id"
       static let prscDtlPaName = "prsc_dtl_pa_name"
@@ -402,6 +419,11 @@ internal enum A11y {
       static let prscDtlMedOvBtnSubscribedMedication = "prsc_dtl_med_ov_btn_subscribed_medication"
       static let prscDtlMedOvDispensedHeader = "prsc_dtl_med_ov_dispensed_header"
       static let prscDtlMedOvBtnDispensedMedication = "prsc_dtl_med_ov_btn_dispensed_medication"
+      static let prscDtlHintPkvActivate = "prsc_dtl_hint_pkv_activate"
+      static let prscDtlHintPkvNoInvoice = "prsc_dtl_hint_pkv_no_invoice"
+      static let prscDtlImgHintPkvActivate = "prsc_dtl_img_hint_pkv_activate"
+      static let prscDtlImgHintPkvNoInvoice = "prsc_dtl_img_hint_pkv_no_invoice"
+      static let prscDtlBtnPkvInvoice = "prsc_dtl_btn_pkv_invoice"
   }
     internal enum profileSelection {
       static let proTxtSelectionProfileList = "pro_txt_selection_profile_list"

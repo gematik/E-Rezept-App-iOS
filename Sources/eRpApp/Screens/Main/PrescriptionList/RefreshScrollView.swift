@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -83,15 +83,18 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
             )
 
             if viewStore.isReedemable {
-                Button {
-                    action()
-                } label: {
-                    Text(L10n.mainBtnRedeem)
+                HStack {
+                    Spacer()
+                    Button {
+                        action()
+                    } label: {
+                        Text(L10n.mainBtnRedeem)
+                    }
+                    .buttonStyle(.primaryHugging)
+                    .padding(.vertical)
+                    .accessibilityIdentifier(A11y.mainScreen.erxBtnRedeemPrescriptions)
+                    Spacer()
                 }
-                .buttonStyle(.primary)
-                .padding(.horizontal, 64)
-                .padding(.vertical)
-                .accessibilityIdentifier(A11y.mainScreen.erxBtnRedeemPrescriptions)
             }
         }
     }

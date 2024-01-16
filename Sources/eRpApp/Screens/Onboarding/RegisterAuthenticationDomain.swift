@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -152,9 +152,13 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
                 state.biometrySuccessful = false
                 if let errorMessage = error.errorDescription {
                     state.alertState = AlertState(
-                        title: TextState(L10n.alertErrorTitle),
-                        message: TextState(errorMessage),
-                        dismissButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.none))
+                        title: { TextState(L10n.alertErrorTitle) },
+                        actions: {
+                            ButtonState(role: .cancel, action: .send(.none)) {
+                                TextState(L10n.alertBtnOk)
+                            }
+                        },
+                        message: { TextState(errorMessage) }
                     )
                 }
             case .success(true):

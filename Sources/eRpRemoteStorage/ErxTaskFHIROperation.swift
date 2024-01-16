@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -47,7 +47,7 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     case allMedicationDispenses(referenceDate: String?, handler: Handler)
     /// Load all charge items since reference date
     case allChargeItems(referenceDate: String?, handler: Handler)
-    /// Request a specific charge item from the service in a certain format
+    /// Request a specific charge item from the service with the given ChargeItem id
     case chargeItemBy(id: String, handler: Handler)
     /// Delete a specific charge item by it's ID
     case deleteChargeItem(id: ErxChargeItem.ID, accessCode: String?, handler: Handler)

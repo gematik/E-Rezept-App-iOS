@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -162,15 +162,4 @@ final class ChargeItemDomainTests: XCTestCase {
             $0.authenticationState = .authenticated
         }
     }
-}
-
-extension ErxChargeItem {
-    enum Fixtures {}
-}
-
-extension ErxChargeItem.Fixtures {
-    static let chargeItem = ErxChargeItem(
-        identifier: UUID().uuidString,
-        fhirData: "testData".data(using: .utf8)!
-    )
 }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,6 +28,8 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
     override class func setUp() {
         super.setUp()
         diffTool = "open"
+
+        SnapshotHelper.fixOffsetProblem()
     }
 
     func testPharmacyRedeemViewMissingAddress() {
@@ -45,14 +47,12 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             ) {
                 EmptyReducer()
             })
-        }
+        }.frame(width: 375, height: 1200, alignment: .top)
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    func xtestPharmacyRedeemViewFullAddress() {
+    func testPharmacyRedeemViewFullAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
             erxTasks: ErxTask.Fixtures.erxTasks,
@@ -77,14 +77,12 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             ) {
                 EmptyReducer()
             })
-        }
+        }.frame(width: 375, height: 1210, alignment: .top)
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    func xtestPharmacyRedeemViewTypeShipmentMissingPhone() {
+    func testPharmacyRedeemViewTypeShipmentMissingPhone() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
             erxTasks: ErxTask.Fixtures.erxTasks,
@@ -106,10 +104,8 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             ) {
                 EmptyReducer()
             })
-        }
+        }.frame(width: 375, height: 1200, alignment: .top)
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(matching: sut, as: snapshotModi())
     }
 }

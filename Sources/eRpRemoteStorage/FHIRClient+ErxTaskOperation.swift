@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -151,8 +151,9 @@ extension FHIRClient {
                 // available at the origin server and that this condition is likely to be permanent.
                 // The response code 404 indicates that server does not know the task which means we can
                 // safely delete it locally as well. Also see comments in ticket ERA-800.
-                if case let FHIRClient.Error.operationOutcome(outcome) = error,
-                   let type = outcome.issue.first?.code,
+                if case let FHIRClient.Error.http(fhirClientHttpError) = error,
+                   let operationOutcome = fhirClientHttpError.operationOutcome,
+                   let type = operationOutcome.issue.first?.code,
                    type == IssueType.processing || type == IssueType.notFound {
                     return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
                 }
@@ -364,8 +365,9 @@ extension FHIRClient {
                         // available at the origin server and that this condition is likely to be permanent.
                         // The response code 404 indicates that server does not know the task which means we can
                         // safely delete it locally as well. Also see comments in ticket ERA-800.
-                        if case let FHIRClient.Error.operationOutcome(outcome) = error,
-                           let type = outcome.issue.first?.code,
+                        if case let FHIRClient.Error.http(fhirClientHttpError) = error,
+                           let operationOutcome = fhirClientHttpError.operationOutcome,
+                           let type = operationOutcome.issue.first?.code,
                            type == IssueType.processing || type == IssueType.notFound {
                             return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
                         }

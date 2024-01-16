@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -179,6 +179,18 @@ extension ModelsR4.MedicationRequest {
                 return ErxTask.CoPaymentStatus(rawValue: value)
             }
             return nil
+        }
+    }
+
+    var erxTaskQuantity: ErxMedication.Quantity? {
+        guard let valueString = dispenseRequest?.quantity?.value?.value?.decimal.description else {
+            return nil
+        }
+
+        if dispenseRequest?.quantity?.code?.value?.string == "{Package}" {
+            return .init(value: valueString, unit: "{Package}")
+        } else {
+            return .init(value: valueString, unit: dispenseRequest?.quantity?.unit?.value?.string)
         }
     }
 }

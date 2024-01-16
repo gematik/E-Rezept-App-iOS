@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 gematik GmbH
+# Copyright (c) 2024 gematik GmbH
 # 
 # Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 # the European Commission - subsequent versions of the EUPL (the Licence);
@@ -756,9 +756,6 @@ desc ""
 lane :compile_foss do
   dependencies_yaml = YAML.load_file("../dependencies.yml")
 
-  # Dependencies that we maintain manually
-  dependencies_additional = dependencies_yaml["additional"]
- 
   # Dependencies from /eRp-App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
   dependencies_package_resolved = dependencies_package_resolved()
   exclude_identities_from_package_resolved = dependencies_yaml["exclude_identities_from_package_resolved"]
@@ -767,7 +764,7 @@ lane :compile_foss do
   }
 
   # Merge all dependency arrays before proceeding
-  dependencies = dependencies_additional | dependencies_package_resolved
+  dependencies = dependencies_package_resolved
 
   # Load license texts from respective repo URIs
   dependencies.each { |entry|

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -69,17 +69,16 @@ class DefaultUserSessionProvider: UserSessionProvider, UserSessionProviderContro
         if let session = userSessions[uuid] {
             return session
         }
+
+        @Dependency(\.erxTaskCoreDataStoreFactory) var erxTaskCoreDataStoreFactory: ErxTaskCoreDataStoreFactory
+        let erxTaskCoreDataStore = erxTaskCoreDataStoreFactory.construct(uuid, coreDataControllerFactory)
+        let entireCoreDataStore = erxTaskCoreDataStoreFactory.construct(nil, coreDataControllerFactory)
+
         let session = StandardSessionContainer(
             for: uuid,
             schedulers: schedulers,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(
-                profileId: uuid,
-                coreDataControllerFactory: coreDataControllerFactory
-            ),
-            ordersCoreDataStore: ErxTaskCoreDataStore(
-                profileId: nil,
-                coreDataControllerFactory: coreDataControllerFactory
-            ),
+            erxTaskCoreDataStore: erxTaskCoreDataStore,
+            entireCoreDataStore: entireCoreDataStore,
             pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             profileDataStore: profileDataStore,
             shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),

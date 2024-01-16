@@ -189,6 +189,7 @@ extension ChargeItemListDomain.Destinations.State {
         case idpCardWall
         case alert
         case chargeItem
+        case toast
     }
 
     var tag: Tag {
@@ -199,6 +200,8 @@ extension ChargeItemListDomain.Destinations.State {
                 return .alert
             case .chargeItem:
                 return .chargeItem
+            case .toast:
+                return .toast
         }
     }
 }
@@ -316,7 +319,9 @@ extension MainDomain.Destinations.State {
         case prescriptionDetail
         case redeem
         case welcomeDrawer
+        case grantChargeItemConsentDrawer
         case alert
+        case toast
     }
 
     var tag: Tag {
@@ -341,8 +346,12 @@ extension MainDomain.Destinations.State {
                 return .redeem
             case .welcomeDrawer:
                 return .welcomeDrawer
+            case .grantChargeItemConsentDrawer:
+                return .grantChargeItemConsentDrawer
             case .alert:
                 return .alert
+            case .toast:
+                return .toast
         }
     }
 }
@@ -389,6 +398,7 @@ extension OrderDetailDomain.Destinations.State {
     enum Tag: Int {
         case pickupCode
         case prescriptionDetail
+        case chargeItem
         case alert
     }
 
@@ -398,6 +408,8 @@ extension OrderDetailDomain.Destinations.State {
                 return .pickupCode
             case .prescriptionDetail:
                 return .prescriptionDetail
+            case .chargeItem:
+                return .chargeItem
             case .alert:
                 return .alert
         }
@@ -424,12 +436,15 @@ extension OrderHealthCardDomain.Destinations.State {
 extension OrdersDomain.Destinations.State {
     enum Tag: Int {
         case orderDetail
+        case alert
     }
 
     var tag: Tag {
         switch self {
             case .orderDetail:
                 return .orderDetail
+            case .alert:
+                return .alert
         }
     }
 }
@@ -456,6 +471,7 @@ extension PharmacyRedeemDomain.Destinations.State {
         case redeemSuccess
         case contact
         case cardWall
+        case prescriptionSelection
         case alert
     }
 
@@ -467,6 +483,8 @@ extension PharmacyRedeemDomain.Destinations.State {
                 return .contact
             case .cardWall:
                 return .cardWall
+            case .prescriptionSelection:
+                return .prescriptionSelection
             case .alert:
                 return .alert
         }
@@ -504,6 +522,7 @@ extension PrescriptionArchiveDomain.Destinations.State {
 }
 extension PrescriptionDetailDomain.Destinations.State {
     enum Tag: Int {
+        case chargeItem
         case medicationOverview
         case medication
         case patient
@@ -520,10 +539,13 @@ extension PrescriptionDetailDomain.Destinations.State {
         case errorInfo
         case coPaymentInfo
         case emergencyServiceFeeInfo
+        case toast
     }
 
     var tag: Tag {
         switch self {
+            case .chargeItem:
+                return .chargeItem
             case .medicationOverview:
                 return .medicationOverview
             case .medication:
@@ -556,6 +578,8 @@ extension PrescriptionDetailDomain.Destinations.State {
                 return .coPaymentInfo
             case .emergencyServiceFeeInfo:
                 return .emergencyServiceFeeInfo
+            case .toast:
+                return .toast
         }
     }
 }

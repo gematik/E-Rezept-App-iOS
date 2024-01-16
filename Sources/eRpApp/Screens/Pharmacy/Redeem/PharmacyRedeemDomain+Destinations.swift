@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,6 +27,8 @@ extension PharmacyRedeemDomain {
             case contact(PharmacyContactDomain.State)
             // sourcery: AnalyticsScreen = cardWall
             case cardWall(CardWallIntroductionDomain.State)
+            // sourcery: AnalyticsScreen = redeem_prescriptionSelection
+            case prescriptionSelection(PharmacyPrescriptionSelectionDomain.State)
             // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<Action.Alert>)
         }
@@ -35,6 +37,7 @@ extension PharmacyRedeemDomain {
             case redeemSuccessView(action: RedeemSuccessDomain.Action)
             case pharmacyContact(action: PharmacyContactDomain.Action)
             case cardWall(action: CardWallIntroductionDomain.Action)
+            case prescriptionSelection(action: PharmacyPrescriptionSelectionDomain.Action)
             case alert(Alert)
 
             enum Alert: Equatable {
@@ -61,6 +64,12 @@ extension PharmacyRedeemDomain {
                 action: /Action.cardWall
             ) {
                 CardWallIntroductionDomain()
+            }
+            Scope(
+                state: /State.prescriptionSelection,
+                action: /Action.prescriptionSelection
+            ) {
+                PharmacyPrescriptionSelectionDomain()
             }
         }
     }

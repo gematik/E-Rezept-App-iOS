@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -36,6 +36,7 @@ final class MainDomainTests: XCTestCase {
     var mockDeviceSecurityManager: MockDeviceSecurityManager!
     var mockPrescriptionRepository: MockPrescriptionRepository!
     var mockProfileDataWiper: MockProfileSecureDataWiper!
+    var mockProfileDataStore: MockProfileDataStore!
 
     override func setUp() {
         super.setUp()
@@ -47,6 +48,7 @@ final class MainDomainTests: XCTestCase {
         mockDeviceSecurityManager = MockDeviceSecurityManager()
         mockPrescriptionRepository = MockPrescriptionRepository()
         mockProfileDataWiper = MockProfileSecureDataWiper()
+        mockProfileDataStore = MockProfileDataStore()
     }
 
     func testStore() -> TestStore {
@@ -68,6 +70,7 @@ final class MainDomainTests: XCTestCase {
             dependencies.prescriptionRepository = mockPrescriptionRepository
             dependencies.serviceLocator = ServiceLocator()
             dependencies.profileSecureDataWiper = mockProfileDataWiper
+            dependencies.profileDataStore = mockProfileDataStore
         }
     }
 
@@ -155,14 +158,16 @@ final class MainDomainTests: XCTestCase {
                                        horizontalProfileSelectionState: .init()))
         // when
         mockUserDataStore.underlyingHideWelcomeDrawer = false
-        await sut.send(.showWelcomeDrawer) { state in
-            // then
+        await sut.send(.showDrawer)
+
+        // then
+        await sut.receive(.response(.showDrawer(.welcomeDrawer))) { state in
             state.destination = .welcomeDrawer
         }
         expect(self.mockUserDataStore.hideWelcomeDrawer).to(beTrue())
 
         // when
-        await sut.send(.showWelcomeDrawer)
+        await sut.send(.showDrawer)
         // then
         expect(self.mockUserDataStore.hideWelcomeDrawer).to(beTrue())
     }
@@ -177,9 +182,62 @@ final class MainDomainTests: XCTestCase {
         // when
         mockUserDataStore.underlyingHideWelcomeDrawer = false
 
-        await sut.send(.showWelcomeDrawer)
+        await sut.send(.showDrawer)
         // then
         expect(self.mockUserDataStore.hideWelcomeDrawer).to(beFalse())
+    }
+
+    func testConsentDrawerRoute_consentHasNotBeenGranted() async {
+        // given
+        let sut = testStore(for: .init(
+            prescriptionListState: .init(),
+            horizontalProfileSelectionState: .init()
+        ))
+        mockUserDataStore.underlyingHideWelcomeDrawer = true
+        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        // when profile has already seen the drawer before
+        mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfileHideConsentDrawer)
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .notGranted }
+        await sut.send(.showDrawer)
+
+        // then nothing happens
+        await sut.receive(.response(.showDrawer(.none)))
+        expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == false
+
+        // when profile hasn't seen the drawer before
+        mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfile).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .notGranted }
+        await sut.send(.showDrawer)
+
+        // then
+        await sut.receive(.response(.showDrawer(.consentDrawer))) { state in
+            state.destination = .grantChargeItemConsentDrawer
+        }
+
+        expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == true
+        expect(self.mockProfileDataStore.updateProfileIdMutatingCallsCount) == 1
+    }
+
+    func testConsentDrawerRoute_consentHasAlreadyBeenGranted() async {
+        // given
+        let sut = testStore(for: .init(
+            prescriptionListState: .init(),
+            horizontalProfileSelectionState: .init()
+        ))
+        mockUserDataStore.underlyingHideWelcomeDrawer = true
+        mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfile).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        // when
+        sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .granted }
+        await sut.send(.showDrawer)
+
+        // then
+        await sut.receive(.response(.showDrawer(.none)))
     }
 
     func testShowingLoginNecessaryAlertAfterIDPErrorServerResponse() async {
@@ -269,5 +327,88 @@ final class MainDomainTests: XCTestCase {
                     [expectedPrescription]))) { state in
                     state.destination = .redeem(RedeemMethodsDomain.State(erxTasks: [expectedPrescription.erxTask]))
             }
+    }
+
+    func testGrantChargeItemConsentActivate_happyPath() async {
+        // given
+        let sut = testStore(
+            for: .init(
+                isDemoMode: false,
+                destination: .grantChargeItemConsentDrawer,
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )
+        )
+        sut.dependencies.chargeItemConsentService.grantConsent = { _ in .success }
+
+        // when
+        await sut.send(.grantChargeItemsConsentActivate) { state in
+            state.destination = nil
+        }
+
+        // then
+        await sut.receive(.response(.grantChargeItemsConsentActivate(.success))) { state in
+            state.destination = .toast(MainDomain.ToastStates.grantConsentSuccess)
+        }
+    }
+
+    func testGrantChargeItemConsentActivate_error() async {
+        // given
+        let sut = testStore(
+            for: .init(
+                isDemoMode: false,
+                destination: .grantChargeItemConsentDrawer,
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )
+        )
+        let error = ChargeItemConsentService.Error.unexpectedGrantConsentResponse
+        sut.dependencies.chargeItemConsentService
+            .grantConsent = { _ in ChargeItemConsentService.GrantResult.error(error)
+            }
+
+        // when
+        await sut.send(.grantChargeItemsConsentActivate) { state in
+            state.destination = nil
+        }
+
+        // then
+        await sut
+            .receive(.response(.grantChargeItemsConsentActivate(.error(.unexpectedGrantConsentResponse)))) { state in
+                state.destination = .alert(MainDomain.AlertStates.grantConsentErrorFor(error: error))
+            }
+    }
+
+    func testGrantChargeItemConsentDismiss() async {
+        // given
+        let sut = testStore(
+            for: .init(
+                isDemoMode: false,
+                destination: .grantChargeItemConsentDrawer,
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )
+        )
+
+        let profile: Profile = .init(name: "Profile Name")
+        mockUserSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        // when
+        await sut.send(.grantChargeItemsConsentDismiss) { state in
+            state.destination = nil
+        }
+    }
+}
+
+extension MainDomainTests {
+    enum Fixtures {
+        static let privateProfile: Profile = .init(name: "SomeName", insuranceType: .pKV)
+
+        static let privateProfileHideConsentDrawer: Profile = .init(
+            name: "SomeName",
+            insuranceType: .pKV,
+            hidePkvConsentDrawerOnMainView: true
+        )
     }
 }

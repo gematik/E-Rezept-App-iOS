@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -23,7 +23,7 @@ import Foundation
 /// MedicationDispenses are created by the pharmacy and can contain different medications from the prescription
 /// even when the `substitutionAllowed` flag is false
 /// Profile: https://simplifier.net/packages/de.gematik.erezept-workflow.r4/1.2.0/files/721016
-public struct ErxMedicationDispense: Hashable {
+public struct ErxMedicationDispense: Hashable, Codable {
     /// Default initializer for a MedicationDispense which represent a ModulesR4.MedicationDispense
     public init(
         identifier: String,

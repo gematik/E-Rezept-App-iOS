@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -67,9 +67,9 @@ final class AVSRedeemServiceTests: XCTestCase {
             avsTransactionDataStore: mockAVSTransactionDataStore
         )
 
-        let order1: Order = .Fixtures.order1
-        let order2: Order = .Fixtures.order2
-        let order3: Order = .Fixtures.order3
+        let order1: OrderRequest = .Fixtures.order1
+        let order2: OrderRequest = .Fixtures.order2
+        let order3: OrderRequest = .Fixtures.order3
 
         var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
         sut.redeem([order1, order2, order3])
@@ -147,9 +147,9 @@ final class AVSRedeemServiceTests: XCTestCase {
             }
         }
 
-        let order1: Order = .Fixtures.order1
-        let order2: Order = .Fixtures.order2
-        let order3: Order = .Fixtures.order3
+        let order1: OrderRequest = .Fixtures.order1
+        let order2: OrderRequest = .Fixtures.order2
+        let order3: OrderRequest = .Fixtures.order3
 
         var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
         sut.redeem([order1, order2, order3])
@@ -227,9 +227,9 @@ final class AVSRedeemServiceTests: XCTestCase {
                     .eraseToAnyPublisher()
             }
 
-            let order1: Order = .Fixtures.order1
-            let order2: Order = .Fixtures.order2
-            let order3: Order = .Fixtures.order3
+            let order1: OrderRequest = .Fixtures.order1
+            let order2: OrderRequest = .Fixtures.order2
+            let order3: OrderRequest = .Fixtures.order3
 
             var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
             sut.redeem([order1, order2, order3])
@@ -294,7 +294,7 @@ final class AVSRedeemServiceTests: XCTestCase {
             avsTransactionDataStore: mockAVSTransactionDataStore
         )
 
-        let order: Order = .Fixtures.orderNoEndpoint
+        let order: OrderRequest = .Fixtures.orderNoEndpoint
 
         sut.redeem([order])
             .test(failure: { error in
@@ -313,7 +313,7 @@ final class AVSRedeemServiceTests: XCTestCase {
         )
 
         let orderId = UUID()
-        let orders: [Order] = Order.Fixtures.orders(with: orderId)
+        let orders: [OrderRequest] = OrderRequest.Fixtures.orders(with: orderId)
 
         // redeem once
         sut.redeem(orders)

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -29,7 +29,7 @@ public struct ErxMedicationRequest: Hashable, Codable {
         bvg: Bool? = false,
         coPaymentStatus: ErxTask.CoPaymentStatus? = nil,
         multiplePrescription: MultiplePrescription? = nil,
-        quantity: Decimal? = nil
+        quantity: ErxMedication.Quantity? = nil
     ) {
         self.authoredOn = authoredOn
         self.dosageInstructions = dosageInstructions
@@ -42,8 +42,6 @@ public struct ErxMedicationRequest: Hashable, Codable {
         self.multiplePrescription = multiplePrescription
         self.quantity = quantity
     }
-
-    public let quantity: Decimal?
 
     public let authoredOn: String?
     /// Indicates how the medication is to be used by the patient.
@@ -63,4 +61,6 @@ public struct ErxMedicationRequest: Hashable, Codable {
     public let coPaymentStatus: ErxTask.CoPaymentStatus?
     /// Information about multiple tasks (e.g. prescription)
     public let multiplePrescription: MultiplePrescription?
+    /// Indicates the number of packages of the prescribed medication
+    public let quantity: ErxMedication.Quantity?
 }

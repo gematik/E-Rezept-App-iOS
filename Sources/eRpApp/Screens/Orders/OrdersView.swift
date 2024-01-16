@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -34,11 +34,13 @@ struct OrdersView: View {
     }
 
     struct ViewState: Equatable {
-        let orders: IdentifiedArrayOf<OrderCommunications>
+        let isLoading: Bool
+        let orders: IdentifiedArrayOf<Order>
 
         let destinationTag: OrdersDomain.Destinations.State.Tag?
 
         init(state: OrdersDomain.State) {
+            isLoading = state.isLoading
             orders = state.orders
             destinationTag = state.destination?.tag
         }
@@ -47,19 +49,20 @@ struct OrdersView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if !viewStore.state.orders.isEmpty {
+                if !viewStore.state.orders.isEmpty || viewStore.isLoading {
                     ScrollView(.vertical) {
                         VStack(alignment: .leading, spacing: 8) {
                             ForEach(viewStore.orders) { order in
                                 OrderCellView(
-                                    title: order.pharmacy?.name,
+                                    title: order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text,
                                     subtitle: uiDateFormatter.relativeDate(order.lastUpdated) ?? "",
-                                    isNew: order.hasNewCommunications,
-                                    prescriptionCount: order.prescriptionCount
+                                    isNew: order.hasUnreadEntries,
+                                    prescriptionCount: order.tasksCount
                                 ) {
                                     viewStore.send(.didSelect(order.orderId))
                                 }
                             }
+                            .redacted(reason: viewStore.isLoading ? .placeholder : .init())
                             .padding(.top)
                             .accessibilityElement(children: .contain)
                             .accessibility(identifier: A11y.orders.list.ordTxtList)
@@ -84,8 +87,13 @@ struct OrdersView: View {
             }
             .navigationBarTitle(L10n.ordTxtTitle, displayMode: .automatic)
             .accessibility(identifier: A11y.orders.list.ordTxtTitle)
+            .alert(
+                store.scope(state: \.$destination, action: OrdersDomain.Action.destination),
+                state: /OrdersDomain.Destinations.State.alert,
+                action: OrdersDomain.Destinations.Action.alert
+            )
             .task {
-                await viewStore.send(.subscribeToCommunicationChanges).finish()
+                await viewStore.send(.task).finish()
             }
             .toolbar {}
         }

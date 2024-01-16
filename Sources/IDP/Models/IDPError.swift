@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -25,7 +25,7 @@ import TrustStore
 public enum IDPError: Swift.Error {
     // sourcery: errorCode = "01"
     /// In case of HTTP/Connection error
-    case network(error: HTTPError)
+    case network(error: HTTPClientError)
     // sourcery: errorCode = "02"
     /// In case a response (or request) could not be (cryptographically) verified
     case validation(error: Swift.Error)

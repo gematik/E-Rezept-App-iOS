@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -44,6 +44,8 @@ struct PharmacySearchDomain: ReducerProtocol {
         var searchTextValid: Bool {
             searchText.count > 2
         }
+
+        var pharmacyRedeemState: PharmacyRedeemDomain.State?
 
         var isLoading: Bool {
             switch searchState {
@@ -229,7 +231,11 @@ struct PharmacySearchDomain: ReducerProtocol {
                                                           referenceDate: referenceDateForOpenHours,
                                                           timeOnlyFormatter: timeOnlyFormatter)
                 state.destination = .pharmacy(
-                    PharmacyDetailDomain.State(erxTasks: state.erxTasks, pharmacyViewModel: viewModel)
+                    PharmacyDetailDomain.State(
+                        erxTasks: state.erxTasks,
+                        pharmacyViewModel: viewModel,
+                        pharmacyRedeemState: state.pharmacyRedeemState
+                    )
                 )
             case let .failure(error):
                 state.destination = .alert(.init(for: error))
@@ -251,7 +257,8 @@ struct PharmacySearchDomain: ReducerProtocol {
         case let .showDetails(viewModel):
             state.destination = .pharmacy(PharmacyDetailDomain.State(
                 erxTasks: state.erxTasks,
-                pharmacyViewModel: viewModel
+                pharmacyViewModel: viewModel,
+                pharmacyRedeemState: state.pharmacyRedeemState
             ))
             return .none
         case let .destination(.presented(.pharmacyDetailView(action: .delegate(action)))):
@@ -264,7 +271,18 @@ struct PharmacySearchDomain: ReducerProtocol {
                     try await schedulers.main.sleep(for: 0.1)
                     await send(.delegate(.close))
                 }
+            case let .changePharmacy(saveState):
+                state.destination = nil
+                state.pharmacyRedeemState = saveState
+                return .none
             }
+        case let .destination(
+            .presented(.pharmacyDetailView(action: .response(.toggleIsFavoriteReceived(.success(pharmacy)))))
+        ):
+            if let index = state.pharmacies.firstIndex(where: { $0.telematikID == pharmacy.telematikID }) {
+                state.pharmacies[index] = pharmacy
+            }
+            return .none
         case .destination(.presented(.alert(.removeFilterCurrentLocation))):
             return .send(.removeFilterOption(.currentLocation))
         case let .removeFilterOption(filterOption):
@@ -456,7 +474,7 @@ extension PharmacySearchDomain {
         .init(
             title: L10n.phaSearchTxtLocationAlertTitle,
             actions: {
-                ButtonState(action: .removeFilterCurrentLocation) {
+                ButtonState(role: .cancel, action: .removeFilterCurrentLocation) {
                     .init(L10n.alertBtnOk)
                 }
                 ButtonState(action: .openAppSpecificSettings) {

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,9 +26,8 @@ struct HintView<Action: Equatable>: View {
 
     var body: some View {
         HStack(alignment: hint.isTopAligned ? .top : .bottom, spacing: 0) {
-            Image(hint.image.name)
+            HintImage(name: hint.image.name, isSystemName: hint.image.isSystemName)
                 .foregroundColor(hint.actionColor)
-                .font(.title3)
                 .padding(.leading)
                 .padding(.top, hint.isTopAligned ? 16 : 0)
                 .accessibility(label: Text(hint.image.accessibilityName ?? ""))
@@ -57,7 +56,11 @@ struct HintView<Action: Equatable>: View {
                             if hint.buttonStyle == Hint.ButtonStyle.quaternary {
                                 QuaternaryButton(text: actionText, action: action)
                             } else {
-                                TertiaryButton(text: actionText, action: action)
+                                if let image = hint.actionImageName {
+                                    TertiaryButton(text: actionText, imageName: image, action: action)
+                                } else {
+                                    TertiaryButton(text: actionText, action: action)
+                                }
                             }
                         } else {
                             Text(actionText)
@@ -87,5 +90,20 @@ struct HintView<Action: Equatable>: View {
         .accessibility(identifier: hint.id)
         .background(RoundedRectangle(cornerRadius: 16).fill(hint.fillColor))
         .border(hint.borderColor, width: 0.5, cornerRadius: 16)
+    }
+
+    struct HintImage: View {
+        let name: String
+        let isSystemName: Bool
+
+        var body: some View {
+            if isSystemName {
+                Image(systemName: name)
+                    .font(.title.weight(.semibold))
+            } else {
+                Image(name)
+                    .font(.title3)
+            }
+        }
     }
 }

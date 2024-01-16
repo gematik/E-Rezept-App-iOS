@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,12 +27,13 @@ struct OrdersDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
     struct State: Equatable {
-        var orders: IdentifiedArrayOf<OrderCommunications> = []
+        var isLoading = false
+        var orders: IdentifiedArrayOf<Order> = []
         @PresentationState var destination: Destinations.State?
     }
 
     enum Action: Equatable {
-        case subscribeToCommunicationChanges
+        case task
         case didSelect(String)
 
         case setNavigation(tag: Destinations.State.Tag?)
@@ -41,8 +42,7 @@ struct OrdersDomain: ReducerProtocol {
         case response(Response)
 
         enum Response: Equatable {
-            case communicationChangeReceived([ErxTask.Communication])
-            case pharmaciesReceived([PharmacyLocation])
+            case ordersReceived(Result<IdentifiedArrayOf<Order>, DefaultOrdersRepository.Error>)
         }
     }
 
@@ -50,10 +50,17 @@ struct OrdersDomain: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = orders_detail
             case orderDetail(OrderDetailDomain.State)
+            // sourcery: AnalyticsScreen = alert
+            case alert(ErpAlertState<Action.Alert>)
         }
 
         enum Action: Equatable {
             case orderDetail(action: OrderDetailDomain.Action)
+            case alert(Alert)
+
+            enum Alert: Equatable {
+                case dismiss
+            }
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -67,8 +74,7 @@ struct OrdersDomain: ReducerProtocol {
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
-    @Dependency(\.ordersRepository) var ordersRepository: ErxTaskRepository
-    @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
+    @Dependency(\.ordersRepository) var ordersRepository: OrdersRepository
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
@@ -79,35 +85,23 @@ struct OrdersDomain: ReducerProtocol {
 
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .subscribeToCommunicationChanges:
-            return .publisher(
-                ordersRepository.loadLocalCommunications(for: .all)
-                    .catch { _ in Just([ErxTask.Communication]()) }
-                    .map { .response(.communicationChangeReceived($0)) }
-                    .receive(on: schedulers.main.animation())
-                    .eraseToAnyPublisher
-            )
-        case let .response(.communicationChangeReceived(communications)):
-            state.orders = IdentifiedArray(
-                uniqueElements: Dictionary(grouping: communications, by: { $0.orderId })
-                    .compactMapValues { groupedCommunications -> OrderCommunications in
-                        let orderId = groupedCommunications.first?.orderId ?? OrderCommunications.unknownOderId
-                        return OrderCommunications(
-                            orderId: orderId,
-                            communications: groupedCommunications.sorted(),
-                            pharmacy: state.orders[id: orderId]?.pharmacy
-                        )
-                    }
-                    .values
-                    .sorted()
-            )
-            return loadPharmacies(
-                state.orders.filter { $0.pharmacy == nil }
-            )
-        case let .response(.pharmaciesReceived(pharmacies)):
-            state.orders.forEach { order in
-                guard order.pharmacy == nil else { return }
-                state.orders[id: order.id]?.pharmacy = pharmacies.first(where: { $0.telematikID == order.telematikId })
+        case .task:
+            state.isLoading = true
+            return .run { send in
+                for try await orders in ordersRepository.loadAllOrders() {
+                    await send(.response(.ordersReceived(.success(orders))))
+                }
+            }
+            catch: { error, send in
+                await send(.response(.ordersReceived(.failure(error.asOrdersError()))))
+            }
+        case let .response(.ordersReceived(result)):
+            state.isLoading = false
+            switch result {
+            case let .success(orders):
+                state.orders = orders
+            case let .failure(error):
+                state.destination = .alert(.init(for: error))
             }
             return .none
         case let .didSelect(orderId):
@@ -128,28 +122,9 @@ struct OrdersDomain: ReducerProtocol {
 }
 
 extension OrdersDomain {
-    func loadPharmacies(_ orders: IdentifiedArrayOf<OrderCommunications>) -> EffectTask<OrdersDomain.Action> {
-        let publishers: [AnyPublisher<PharmacyLocation?, Never>] = orders.map {
-            pharmacyRepository.loadCached(by: $0.telematikId)
-                .first()
-                .catch { _ in Just(.none) }
-                .eraseToAnyPublisher()
-        }
-
-        return .publisher(
-            Publishers.MergeMany(publishers)
-                .collect(publishers.count)
-                .map { .response(.pharmaciesReceived($0.compactMap { $0 })) }
-                .receive(on: schedulers.main.animation())
-                .eraseToAnyPublisher
-        )
-    }
-}
-
-extension OrdersDomain {
     enum Dummies {
         static let state =
-            State(orders: IdentifiedArray(uniqueElements: OrderCommunications.Dummies.multipleOrderCommunications))
+            State(orders: IdentifiedArray(uniqueElements: Order.Dummies.multipleOrderCommunications))
 
         static let store = Store(
             initialState: state

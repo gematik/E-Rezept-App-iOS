@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,15 +30,13 @@ final class OrdersDomainTests: XCTestCase {
     typealias TestStore = TestStoreOf<OrdersDomain>
 
     let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
-    var mockOrdersRepository: MockErxTaskRepository!
-    var mockPharmacyRepository: MockPharmacyRepository!
+    var mockOrdersRepository: MockOrdersRepository!
     var mockApplication: MockResourceHandler!
 
     override func setUp() {
         super.setUp()
 
-        mockOrdersRepository = MockErxTaskRepository()
-        mockPharmacyRepository = MockPharmacyRepository()
+        mockOrdersRepository = MockOrdersRepository()
         mockApplication = MockResourceHandler()
     }
 
@@ -48,13 +46,12 @@ final class OrdersDomainTests: XCTestCase {
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.ordersRepository = mockOrdersRepository
-            dependencies.pharmacyRepository = mockPharmacyRepository
             dependencies.resourceHandler = mockApplication
         }
     }
 
     private func testStore(
-        for orders: IdentifiedArrayOf<OrderCommunications>
+        for orders: IdentifiedArrayOf<Order>
     ) -> TestStore {
         testStore(for: .init(orders: orders))
     }
@@ -84,49 +81,78 @@ final class OrdersDomainTests: XCTestCase {
     }
 
     func testOrdersDomainSubscriptionWithoutMessages() async {
-        let mockErxTaskRepoAccess = erxTaskRepository(with: [])
-        let mockPharmacyRepoAccess = pharmacyRepository(with: [])
-        mockOrdersRepository = mockErxTaskRepoAccess
-        mockPharmacyRepository = mockPharmacyRepoAccess
         let store = testStore(for: OrdersDomain.State(orders: []))
 
-        await store.send(.subscribeToCommunicationChanges)
-        await store.receive(.response(.communicationChangeReceived([])))
-        expect(mockErxTaskRepoAccess.listCommunicationsCallsCount) == 1
+        mockOrdersRepository
+            .loadAllOrdersReturnValue = AsyncThrowingStream<IdentifiedArray<String, Order>, Error> { $0.yield([]) }
+
+        let task = await store.send(.task) {
+            $0.isLoading = true
+        }
+        await store.receive(.response(.ordersReceived(.success([])))) {
+            $0.isLoading = false
+        }
+        expect(self.mockOrdersRepository.loadAllOrdersCallsCount) == 1
+
+        await task.cancel()
     }
 
     func testOrdersDomainSubscriptionWithMessages() async {
         let orderId = "orderId"
-        var expected = OrderCommunications(
-            orderId: orderId,
-            communications: [communicationShipment, communicationOnPremise]
+        let expected = IdentifiedArray(
+            uniqueElements: [Order(
+                orderId: orderId,
+                communications: [communicationShipment, communicationOnPremise],
+                chargeItems: []
+            )]
         )
 
-        let mockErxTaskRepoAccess = erxTaskRepository(with: expected.communications.elements)
-        let mockPharmacyRepoAccess = pharmacyRepository(with: [pharmacy])
-        mockOrdersRepository = mockErxTaskRepoAccess
-        mockPharmacyRepository = mockPharmacyRepoAccess
+        mockOrdersRepository
+            .loadAllOrdersReturnValue = AsyncThrowingStream<IdentifiedArray<String, Order>, Error> { $0.yield(expected)
+            }
         let store = testStore(for: OrdersDomain.State(orders: []))
 
-        await store.send(.subscribeToCommunicationChanges)
-        await store.receive(.response(.communicationChangeReceived(expected.communications.elements))) { state in
-            state.orders = IdentifiedArray(uniqueElements: [expected])
-            expect(mockErxTaskRepoAccess.listCommunicationsCallsCount) == 1
-            expect(mockErxTaskRepoAccess.saveCommunicationsCallsCount) == 0
+        let task = await store.send(.task) {
+            $0.isLoading = true
         }
-        await store.receive(.response(.pharmaciesReceived([pharmacy]))) { state in
-            expected.pharmacy = self.pharmacy
-            state.orders = IdentifiedArray(uniqueElements: [expected])
-            expect(mockPharmacyRepoAccess.loadCachedByCallsCount) == 1
-            expect(mockPharmacyRepoAccess.savePharmaciesCallsCount) == 0
+        await store.receive(.response(.ordersReceived(.success(expected)))) { state in
+            state.isLoading = false
+            state.orders = expected
+            expect(self.mockOrdersRepository.loadAllOrdersCallsCount) == 1
         }
+
+        await task.cancel()
+    }
+
+    func testLoadOrdersWithError() async {
+        let orderId = "orderId"
+        let expected = DefaultOrdersRepository.Error.erxRepository(.local(.notImplemented))
+
+        mockOrdersRepository
+            .loadAllOrdersReturnValue = AsyncThrowingStream<IdentifiedArray<String, Order>, Error> {
+                $0.finish(throwing: expected)
+            }
+
+        let store = testStore(for: OrdersDomain.State(orders: []))
+
+        let task = await store.send(.task) {
+            $0.isLoading = true
+        }
+        await store.receive(.response(.ordersReceived(.failure(expected)))) { state in
+            state.isLoading = false
+            state.destination = .alert(.init(for: expected))
+            expect(self.mockOrdersRepository.loadAllOrdersCallsCount) == 1
+        }
+
+        await task.cancel()
     }
 
     func testSelectOrder() async {
         let orderId = "orderId"
-        let expected = OrderCommunications(
+        let expected = Order(
             orderId: orderId,
-            communications: [communicationOnPremise, communicationShipment]
+            communications: [communicationOnPremise, communicationShipment],
+            chargeItems: []
         )
         let store = testStore(for: IdentifiedArray(uniqueElements: [expected]))
 

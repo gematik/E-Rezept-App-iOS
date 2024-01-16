@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,8 +24,10 @@ extension ErxSparseChargeItem {
         // non realistic chargeItem as low detail
         static let chargeItem: ErxSparseChargeItem = .init(
             identifier: "chargeItem_id_12",
+            taskId: "chargeItem_task_id_12",
             fhirData: "Some placeholder data".data(using: .utf8)!,
             enteredDate: "2023-03-10T10:30:04+02:00",
+            isRead: false,
             medication: ErxTask.Fixtures.compoundingMedication,
             invoice: .init(
                 totalAdditionalFee: 5.0,
@@ -45,18 +47,21 @@ extension ErxSparseChargeItem {
 
         static let chargeItem1: ErxSparseChargeItem = .init(
             identifier: "charge_id_1",
+            taskId: "chargeItem_task_id_1",
             fhirData: "fhirData1".data(using: .utf8)!,
             enteredDate: "2023-02-19T14:07:47.809+00:00"
         )
 
         static let chargeItem2: ErxSparseChargeItem = .init(
             identifier: "charge_id_2",
+            taskId: "chargeItem_task_id_2",
             fhirData: "fhirData2".data(using: .utf8)!,
             enteredDate: "2023-02-23T14:07:47.809+00:00"
         )
 
         static let chargeItem3: ErxSparseChargeItem = .init(
             identifier: "charge_id_3",
+            taskId: "chargeItem_task_id_3",
             fhirData: "fhirData3".data(using: .utf8)!,
             enteredDate: "2023-02-17T14:07:47.809+00:00"
         )
@@ -94,7 +99,7 @@ extension ErxChargeItem {
                 bvg: false,
                 coPaymentStatus: .subjectToCharge,
                 multiplePrescription: .init(mark: false),
-                quantity: 1
+                quantity: .init(value: "1", unit: "{Package}")
             ),
             patient: .init(
                 name: "Günther Angermänn",

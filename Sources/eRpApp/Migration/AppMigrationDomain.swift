@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -170,19 +170,31 @@ struct AppMigrationDomain: ReducerProtocol {
 
     static func deleteDatabaseAlertState() -> AlertState<Destinations.Action.Alert> {
         AlertState(
-            title: TextState(L10n.amgTxtAlertTitleDeleteDatabase),
-            message: TextState(L10n.amgTxtAlertMessageDeleteDatabase),
-            primaryButton: .destructive(TextState(L10n.amgBtnAlertDeleteDatabase), action: .send(.deleteDatabase)),
-            secondaryButton: .cancel(TextState(L10n.amgBtnAlertCancel), action: .send(.close))
+            title: { TextState(L10n.amgTxtAlertTitleDeleteDatabase) },
+            actions: {
+                ButtonState(role: .destructive, action: .send(.deleteDatabase)) {
+                    TextState(L10n.amgBtnAlertDeleteDatabase)
+                }
+                ButtonState(role: .cancel, action: .send(.close)) {
+                    TextState(L10n.amgBtnAlertCancel)
+                }
+            },
+            message: { TextState(L10n.amgTxtAlertMessageDeleteDatabase) }
         )
     }
 
     static func alertState(title: String, message: String) -> AlertState<Destinations.Action.Alert> {
         AlertState(
-            title: TextState(title),
-            message: TextState(message),
-            primaryButton: .destructive(TextState(L10n.amgBtnAlertDeleteDatabase), action: .send(.deleteDatabase)),
-            secondaryButton: .default(TextState(L10n.amgBtnAlertRetry), action: .send(.loadCurrentModelVersion))
+            title: { TextState(title) },
+            actions: {
+                ButtonState(role: .destructive, action: .send(.deleteDatabase)) {
+                    TextState(L10n.amgBtnAlertDeleteDatabase)
+                }
+                ButtonState(action: .send(.loadCurrentModelVersion)) {
+                    TextState(L10n.amgBtnAlertRetry)
+                }
+            },
+            message: { TextState(message) }
         )
     }
 }
@@ -202,7 +214,7 @@ extension AppMigrationDomain {
 extension MigrationManager {
     static var failing = MigrationManager(
         factory: LocalStoreFactory.failing,
-        erxTaskCoreDataStore: .failing,
+        erxTaskCoreDataStore: DefaultErxTaskCoreDataStore.failing,
         userDataStore: DemoUserDefaultsStore()
     )
 }

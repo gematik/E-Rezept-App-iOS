@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -54,7 +54,7 @@ public class IDPInterceptor: Interceptor {
     ///
     /// - Parameter chain: the request chain to proceed authenticated hereafter
     /// - Returns: Publisher that continues the chain authenticated
-    public func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPError> {
+    public func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         var request = chain.request
         if let delegate = self.delegate, delegate.shouldAuthorize(request: request) == false {
             return chain.proceed(request: request)
@@ -74,7 +74,7 @@ public class IDPInterceptor: Interceptor {
                     // [REQ:gemSpec_eRp_FdV:A_20167] no token available, bailout
                     .authentication(error)
                 }
-                .flatMap { request -> AnyPublisher<HTTPResponse, HTTPError> in
+                .flatMap { request -> AnyPublisher<HTTPResponse, HTTPClientError> in
                     chain
                         // swiftlint:disable:previous trailing_closure
                         .proceed(request: request)

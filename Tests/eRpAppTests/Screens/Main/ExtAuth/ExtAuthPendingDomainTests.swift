@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -169,11 +169,11 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         let actualSessionResponse = ExtAuthChallengeSession(verifierCode: "code", nonce: "nonce", for: requestingKK)
         extAuthRequestStorageMock.getExtAuthRequestForReturnValue = actualSessionResponse
         await sut.send(.externalLogin(urlFixture)) { state in
-            state.extAuthState = .extAuthReceived(requestingKK)
+            state.extAuthState = .extAuthReceived(healthInsurance)
         }
         await uiScheduler.run()
         await sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
-            state.extAuthState = .extAuthSuccessful(requestingKK)
+            state.extAuthState = .extAuthSuccessful(healthInsurance)
         }
         await uiScheduler.advance(by: .seconds(2.1))
         await sut.receive(.hide) { state in

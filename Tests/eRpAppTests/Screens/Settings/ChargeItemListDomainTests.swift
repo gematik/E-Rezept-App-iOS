@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,6 +20,7 @@ import Combine
 import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
+import HTTPClient
 import Nimble
 import XCTest
 
@@ -87,11 +88,13 @@ final class ChargeItemListDomainTests: XCTestCase {
         let twoChargeItems: [ErxSparseChargeItem] = [
             ErxSparseChargeItem(
                 identifier: UUID().uuidString,
+                taskId: "task id",
                 fhirData: Data(),
                 enteredDate: "2022-05-01T11:13:00+00:00"
             ),
             ErxSparseChargeItem(
                 identifier: UUID().uuidString,
+                taskId: "task id",
                 fhirData: Data(),
                 enteredDate: "2021-06-01T07:13:00+05:00"
             ),
@@ -152,6 +155,8 @@ final class ChargeItemListDomainTests: XCTestCase {
         }
         await store.receive(.response(.grantConsent(.error(.unexpected)))) { state in
             state.grantConsentState = .error
+            state.authenticationState = .notAuthenticated
+            state.bottomBannerState = .authenticate
             state.destination = .alert(ChargeItemListDomain.AlertStates.grantConsentErrorFor(error: error))
         }
 
@@ -172,6 +177,69 @@ final class ChargeItemListDomainTests: XCTestCase {
         await store.send(.destination(.presented(.alert(.grantConsentErrorOkay)))) { state in
             state.destination = nil
             state.bottomBannerState = .grantConsent
+        }
+    }
+
+    func testGrantConsent_conflictConsentAlreadyGranted() async {
+        // given
+        let store = testStore(
+            for: .init(
+                profileId: testProfileId,
+                authenticationState: .authenticated,
+                grantConsentState: .unknown,
+                bottomBannerState: .grantConsent
+            )
+        )
+
+        mockChargeItemListDomainService.grantChargeItemsConsentForReturnValue = Just(.conflict).eraseToAnyPublisher()
+
+        // when user initiates the grant process
+        await store.send(.grantConsentBottomBannerButtonTapped) { state in
+            state.bottomBannerState = nil
+        }
+
+        // then
+        await store.receive(.grantConsent) { state in
+            state.grantConsentState = .loading
+        }
+        await testScheduler.run()
+        await store.receive(.response(.grantConsent(.conflict))) { state in
+            state.grantConsentState = .granted
+            state.destination = .toast(ChargeItemListDomain.ToastStates.conflictToast)
+        }
+    }
+
+    func testGrantConsent_requestTimeout() async {
+        // given
+        let store = testStore(
+            for: .init(
+                profileId: testProfileId,
+                authenticationState: .authenticated,
+                grantConsentState: .unknown,
+                bottomBannerState: .grantConsent
+            )
+        )
+
+        let httpClientError = HTTPClientError.httpError(.init(URLError.Code(rawValue: 408)))
+        let consentServiceError = ChargeItemConsentService.Error
+            .erxRepository(.remote(.fhirClient(.http(.init(httpClientError: httpClientError, operationOutcome: nil)))))
+        mockChargeItemListDomainService
+            .grantChargeItemsConsentForReturnValue =
+            Just(.error(.chargeItemConsentService(consentServiceError))).eraseToAnyPublisher()
+
+        // when user initiates the grant process
+        await store.send(.grantConsentBottomBannerButtonTapped) { state in
+            state.bottomBannerState = nil
+        }
+
+        // then
+        await store.receive(.grantConsent) { state in
+            state.grantConsentState = .loading
+        }
+        await testScheduler.run()
+        await store.receive(.response(.grantConsent(.error(.chargeItemConsentService(consentServiceError))))) { state in
+            state.grantConsentState = .error
+            state.destination = .alert(consentServiceError.alertState!.chargeItemListDomainErpAlertState)
         }
     }
 

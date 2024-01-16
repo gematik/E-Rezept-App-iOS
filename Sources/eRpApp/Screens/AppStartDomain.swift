@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -141,6 +141,16 @@ struct AppStartDomain: ReducerProtocol {
                         ),
                     EffectTask.send(.app(action: .setNavigation(.settings)))
                 )
+            case let .editProfile(editProfile):
+                switch editProfile {
+                case let .chargeItemListFor(profileId):
+                    return .run { send in
+                        await send(.app(action: .setNavigation(.settings)))
+                        await send(
+                            .app(action: .subdomains(.settings(action: .showChargeItemListFor(profileId: profileId))))
+                        )
+                    }
+                }
             default:
                 return .concatenate(
                     EffectTask.send(.app(action: .subdomains(.settings(action: .popToRootView)))),

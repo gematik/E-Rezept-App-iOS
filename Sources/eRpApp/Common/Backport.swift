@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -32,6 +32,18 @@ extension Backport where Content: View {
             content
                 .toolbarBackground(.visible, for: .tabBar)
                 .toolbarBackground(Asset.Colors.tabViewToolBarBackground.color, for: .tabBar)
+        } else {
+            content
+        }
+    }
+}
+
+extension Backport where Content: View {
+    @ViewBuilder func navigationBarToolBarBackground(color: Color) -> some View {
+        if #available(iOS 16, *) {
+            content
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarBackground(color, for: .navigationBar)
         } else {
             content
         }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -33,7 +33,8 @@ public struct Profile: Identifiable, Hashable, Equatable {
         image: ProfilePictureType = .none,
         userImageData: Data? = nil,
         lastAuthenticated: Date? = nil,
-        erxTasks: [ErxTask] = []
+        erxTasks: [ErxTask] = [],
+        hidePkvConsentDrawerOnMainView: Bool = false
     ) {
         self.name = name
         self.identifier = identifier
@@ -48,6 +49,7 @@ public struct Profile: Identifiable, Hashable, Equatable {
         self.userImageData = userImageData
         self.lastAuthenticated = lastAuthenticated
         self.erxTasks = erxTasks
+        self.hidePkvConsentDrawerOnMainView = hidePkvConsentDrawerOnMainView
     }
 
     public var id: UUID {
@@ -67,6 +69,8 @@ public struct Profile: Identifiable, Hashable, Equatable {
     public var userImageData: Data?
     public var lastAuthenticated: Date?
     public var erxTasks: [ErxTask]
+    // Note: When the list of preferences per Profile keeps growing, consider extracting them to separate struct.
+    public var hidePkvConsentDrawerOnMainView: Bool
 
     public var fullName: String? {
         [givenName, familyName]

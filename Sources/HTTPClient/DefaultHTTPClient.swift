@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -62,7 +62,7 @@ public class DefaultHTTPClient: HTTPClient {
         request: URLRequest,
         interceptors requestInterceptors: [Interceptor],
         redirect handler: RedirectHandler?
-    ) -> AnyPublisher<HTTPResponse, HTTPError> {
+    ) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         let requestID = UUID().uuidString
         let newRequest = request.add(requestID: requestID)
         return URLRequestChain(request: newRequest, session: urlSession, with: interceptors + requestInterceptors)

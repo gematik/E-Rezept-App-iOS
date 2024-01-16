@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,7 +19,7 @@
 import Foundation
 
 /// Represents all information needed by the Erx App to handle profiled Erx Tasks (e.g. Prescriptions).
-public struct ErxTask: Identifiable, Equatable, Hashable {
+public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
     /// ErxTask default initializer
     public init(
         identifier: String,
@@ -37,7 +37,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable {
         prescriptionId: String? = nil,
         source: Source = .server,
         medication: ErxMedication? = nil,
-        medicationRequest: ErxMedicationRequest = ErxMedicationRequest(),
+        medicationRequest: ErxMedicationRequest = ErxMedicationRequest(quantity: nil),
         patient: ErxPatient? = nil,
         practitioner: ErxPractitioner? = nil,
         organization: ErxOrganization? = nil,
@@ -153,7 +153,7 @@ extension ErxTask {
         case artificialInsemination = "2"
     }
 
-    public enum FlowType: Equatable, RawRepresentable {
+    public enum FlowType: Equatable, RawRepresentable, Codable {
         public enum Code {
             public static var kPharmacyOnly = "160"
             public static var kNarcotic = "165"

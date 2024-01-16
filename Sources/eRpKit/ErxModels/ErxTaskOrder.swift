@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,7 +19,7 @@
 import Foundation
 
 /// Data Model that holds all relevant informations for placing an order in a pharmacy
-public struct ErxTaskOrder: Equatable {
+public struct ErxTaskOrder: Equatable, Codable {
     /// `ErxTaskOrder` identifier
     public let identifier: String
     /// Task Id for the prescription

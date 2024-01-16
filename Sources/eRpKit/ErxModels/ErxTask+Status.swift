@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,7 +20,7 @@ import Foundation
 
 extension ErxTask {
     /// All defined states of a task (see `gemSysL_eRp` chapter 2.4.6 "Konzept Status E-Rezept")
-    public enum Status: Equatable, RawRepresentable {
+    public enum Status: Equatable, RawRepresentable, Codable {
         /// The task has been initialized but  is not yet ready to be acted upon.
         case draft
         /// The task is ready (open) to be performed, but no action has yet been taken.

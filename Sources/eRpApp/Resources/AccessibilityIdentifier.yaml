@@ -338,6 +338,10 @@ mainScreen:
   - erx_txt_tooltips_add_profile
   - erx_txt_tooltips_profile_rename
   - erx_txt_tooltips_scan
+  - erx_btn_consent_drawer_activate
+  - erx_btn_consent_drawer_cancel
+  - erx_txt_consent_drawer_title
+  - erx_txt_consent_drawer_message
 welcomedrawer:
   - wlcd_btn_login
   - wlcd_btn_decline
@@ -389,6 +393,7 @@ prescriptionDetails:
   - prsc_dtl_txt_bvg
   - prsc_dtl_txt_multi_prescription
   - prsc_dtl_txt_dosage_instructions
+  - prsc_dtl_txt_quantity
   - prsc_dtl_ti_access_code
   - prsc_dtl_ti_task_id
   - prsc_dtl_pa_name
@@ -434,6 +439,11 @@ prescriptionDetails:
   - prsc_dtl_med_ov_btn_subscribed_medication
   - prsc_dtl_med_ov_dispensed_header
   - prsc_dtl_med_ov_btn_dispensed_medication
+  - prsc_dtl_hint_pkv_activate
+  - prsc_dtl_hint_pkv_no_invoice
+  - prsc_dtl_img_hint_pkv_activate
+  - prsc_dtl_img_hint_pkv_no_invoice
+  - prsc_dtl_btn_pkv_invoice
 pharmacySearch:
   - pha_search_txt_result_list
   - pha_search_txt_result_list_entry
@@ -495,6 +505,18 @@ pharmacyRedeem:
   - pha_redeem_txt_missing_phone
   - pha_redeem_btn_redeem
   - pha_redeem_btn_redeem_footnote
+  - pha_redeem_txt_header
+  - pha_redeem_txt_edit_prescription_count
+  - pha_redeem_txt_edit_prescription
+  - pha_redeem_btn_edit_prescription
+  - pha_redeem_txt_add_prescription
+  - pha_redeem_btn_add_prescription
+  - pha_redeem_txt_edit_pharmacy
+  - pha_redeem_txt_edit_pharmacy_name
+  - pha_redeem_txt_edit_pharmacy_adress
+  - pha_redeem_btn_edit_pharmacy
+  - pha_redeem_txt_add_pharmacy
+  - pha_redeem_btn_add_pharmacy
 pharmacyContact:
   - pha_contact_address_name
   - pha_contact_address_street

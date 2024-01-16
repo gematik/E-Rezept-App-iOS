@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -115,7 +115,7 @@ public protocol ErxLocalDataStore {
     /// - Returns: Array of the fetched charge items or error
     func listAllChargeItems() -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError>
 
-    /// Creates or updates the passed sequence of `ErxChargeItem`s
+    /// Creates or updates the passed sequence of `ErxSparseChargeItem`s
     /// - Parameter chargeItems: Array of charge items that should be stored
     /// - Returns: `true` if save operation was successful
     func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError>

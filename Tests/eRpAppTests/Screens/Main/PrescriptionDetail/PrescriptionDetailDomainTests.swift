@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -63,7 +63,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         // when
         await store.send(.delete) { sut in
             // then
-            sut.destination = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
+            sut.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
         }
         await store.send(.setNavigation(tag: .none)) { sut in
             // then
@@ -80,7 +80,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         // when
         await store.send(.delete) { sut in
             // then
-            sut.destination = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
+            sut.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
         }
         await store.send(.destination(.presented(.alert(.confirmedDelete)))) { sut in
             // then
@@ -98,23 +98,24 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     /// Tests the case when delete was hit and deletion has failed when not being logged in
     func testDeleteWhenNotLoggedIn() async {
         let store = testStore()
-        let expectedError = ErxRepositoryError.remote(.fhirClientError(IDPError.tokenUnavailable))
+        let expectedError = ErxRepositoryError
+            .remote(.fhirClient(.http(.init(httpClientError: .authentication(IDPError.tokenUnavailable),
+                                            operationOutcome: nil))))
+
         mockErxTaskRepository.deletePublisher = Fail(error: expectedError).eraseToAnyPublisher()
         // when
         await store.send(.delete) { sut in
             // then
-            sut.destination = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
+            sut.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
         }
         await store.send(.destination(.presented(.alert(.confirmedDelete)))) { sut in
             // then
             sut.destination = nil
             sut.isDeleting = true
         }
-        await store.receive(.response(.taskDeletedReceived(
-            Result.failure(expectedError)
-        ))) { state in
+        await store.receive(.response(.taskDeletedReceived(Result.failure(expectedError)))) { state in
             // then
-            state.destination = .alert(PrescriptionDetailDomain.missingTokenAlertState())
+            state.destination = .alert(PrescriptionDetailDomain.Alerts.missingTokenAlertState())
             state.isDeleting = false
         }
         await store.send(.setNavigation(tag: .none)) { state in
@@ -133,7 +134,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         // when
         await store.send(.delete) { sut in
             // then
-            sut.destination = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
+            sut.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
         }
         await store.send(.destination(.presented(.alert(.confirmedDelete)))) { sut in
             // then
@@ -146,7 +147,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             // then
             state.isDeleting = false
             state.destination = .alert(
-                PrescriptionDetailDomain.deleteFailedAlertState(
+                PrescriptionDetailDomain.Alerts.deleteFailedAlertState(
                     error: ErxRepositoryError.local(.notImplemented),
                     localizedError: ErxRepositoryError.local(.notImplemented).localizedDescriptionWithErrorList
                 )
@@ -490,11 +491,17 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testUpdateMedicationName() async {
         let dateFormatter = UIDateFormatter.previewValue
+        let authoredOn = DemoDate.createDemoDate(.today)
+        let expiresOn = DemoDate.createDemoDate(.ninetyTwoDaysAhead)
+        let acceptedUntil = DemoDate.createDemoDate(.tomorrow)
         let sut = testStore(
             PrescriptionDetailDomain.State(
                 prescription: Prescription(
                     erxTask: Self.erxTaskFixtureWith(
-                        erxMedication: Self.medicationFixture
+                        erxMedication: Self.medicationFixture,
+                        authoredOn: authoredOn,
+                        expiresOn: expiresOn,
+                        acceptedUntil: acceptedUntil
                     ),
                     dateFormatter: dateFormatter
                 ),
@@ -525,17 +532,20 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 packaging: "Box",
                 manufacturingInstructions: "Anleitung beiliegend",
                 ingredients: []
-            )
+            ),
+            authoredOn: authoredOn,
+            expiresOn: expiresOn,
+            acceptedUntil: acceptedUntil
         )
 
-        await sut.send(.setName(validName))
-
-        await sut.receive(.response(.changeNameReceived(.success(expectedErxTask)))) { state in
+        await sut.send(.setName(validName)) { state in
             state.prescription = Prescription(
                 erxTask: expectedErxTask,
                 dateFormatter: dateFormatter
             )
         }
+
+        await sut.receive(.response(.changeNameReceived(.success(expectedErxTask))))
 
         expect(self.mockErxTaskRepository.saveCalled).to(beTrue())
         expect(self.mockErxTaskRepository.saveCallsCount).to(equal(1))
@@ -544,10 +554,35 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let error = ErxRepositoryError.remote(.notImplemented)
         mockErxTaskRepository.savePublisher = Fail(outputType: Bool.self, failure: error).eraseToAnyPublisher()
 
-        await sut.send(.setName("Hustenbonbonss"))
+        await sut.send(.setName("Hustenbonbonssss")) { state in
+            state.prescription = Prescription(
+                erxTask: Self.erxTaskFixtureWith(
+                    erxMedication: ErxMedication(
+                        name: "Hustenbonbonssss",
+                        pzn: "06876512",
+                        amount: ErxMedication.Ratio(
+                            numerator: ErxMedication.Quantity(value: "10", unit: "St.")
+                        ),
+                        dosageForm: "PUL",
+                        normSizeCode: "N1",
+                        batch: .init(
+                            lotNumber: "TOTO-5236-VL",
+                            expiresOn: "12.12.2024"
+                        ),
+                        packaging: "Box",
+                        manufacturingInstructions: "Anleitung beiliegend",
+                        ingredients: []
+                    ),
+                    authoredOn: authoredOn,
+                    expiresOn: expiresOn,
+                    acceptedUntil: acceptedUntil
+                ),
+                dateFormatter: dateFormatter
+            )
+        }
 
         await sut.receive(.response(.changeNameReceived(Result.failure(error)))) { state in
-            state.destination = .alert(PrescriptionDetailDomain.changeNameReceivedAlertState(error: error))
+            state.destination = .alert(PrescriptionDetailDomain.Alerts.changeNameReceivedAlertState(error: error))
         }
         expect(self.mockErxTaskRepository.saveCallsCount).to(equal(2))
     }
@@ -580,15 +615,20 @@ extension PrescriptionDetailDomainTests {
         ingredients: []
     )
 
-    static func erxTaskFixtureWith(erxMedication: ErxMedication) -> ErxTask {
+    static func erxTaskFixtureWith(
+        erxMedication: ErxMedication,
+        authoredOn: String?,
+        expiresOn: String?,
+        acceptedUntil: String?
+    ) -> ErxTask {
         ErxTask(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
-            authoredOn: DemoDate.createDemoDate(.today),
-            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
-            acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+            authoredOn: authoredOn,
+            expiresOn: expiresOn,
+            acceptedUntil: acceptedUntil,
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: erxMedication,
             medicationRequest: .init(

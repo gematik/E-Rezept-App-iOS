@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -210,7 +210,7 @@ struct Prescription: Equatable, Identifiable {
         return erxTask.communications.isEmpty && erxTask.avsTransactions.isEmpty
     }
 
-    var isDeleteable: Bool {
+    var isDeletable: Bool {
         // [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
         guard type != .directAssignment
         else { return erxTask.status == .completed }

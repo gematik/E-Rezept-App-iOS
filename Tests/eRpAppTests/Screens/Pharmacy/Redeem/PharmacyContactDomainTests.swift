@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -104,12 +104,13 @@ class PharmacyContactDomainTests: XCTestCase {
         expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
         await sut.receive(.response(.shipmentInfoSaved(.failure(expectedError)))) {
             $0.alertState = AlertState(
-                title: TextState("Fehler"),
-                message: TextState(LocalStoreError.write(error: DemoError.demo).localizedDescriptionWithErrorList),
-                dismissButton: ButtonState.cancel(
-                    TextState("Okay"),
-                    action: .send(.none)
-                )
+                title: { TextState("Fehler") },
+                actions: {
+                    ButtonState(role: .cancel, action: .send(.none)) {
+                        TextState("Okay")
+                    }
+                },
+                message: { TextState(LocalStoreError.write(error: DemoError.demo).localizedDescriptionWithErrorList) }
             )
         }
         expect(self.mockShipmentInfoDataStore.setSelectedShipmentInfoIdCallsCount).to(equal(0))

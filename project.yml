@@ -102,7 +102,7 @@ packages:
     url: https://github.com/SwiftCommon/DataKit
     majorVersion: 1.1.0
   GemCommonsKit:
-    url: https://github.com/gematik/ref-GemCommonsKit.git
+    url: https://github.com/gematik/ref-GemCommonsKit
     majorVersion: 1.3.0
   OpenSSL-Swift:
    url: https://github.com/gematik/OpenSSL-Swift
@@ -123,8 +123,8 @@ packages:
     url: https://github.com/pointfreeco/composable-core-location
     minorVersion: 0.3.0
   ContentSquare:
-    url:  https://github.com/ContentSquare/CS_iOS_SDK.git
-    majorVersion: 4.16.0
+    url:  https://github.com/ContentSquare/CS_iOS_SDK
+    majorVersion: 4.27.1
   FHIRModels:
     url: https://github.com/apple/FHIRModels
     version: 0.4.0
@@ -151,7 +151,7 @@ packages:
     url: https://github.com/zxingify/zxingify-objc
     majorVersion: 3.6.7
   GemPDFKit:
-    url: https://github.com/gematik/swift-gemPDFKit.git
+    url: https://github.com/gematik/swift-gemPDFKit
     majorVersion: 0.1.0
 settings:
   base:
@@ -279,6 +279,7 @@ targets:
       - Sources/eRpKit
     dependencies:
       - target: IDP_${platform}
+      - target: FHIRClient_${platform}
       - package: BundleKit
     scheme:
       testTargets:

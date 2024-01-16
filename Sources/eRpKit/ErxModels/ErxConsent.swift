@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -21,7 +21,7 @@ import Foundation
 /// Represents a record of a healthcare consumer’s choices, which permits or denies identified recipient(s) or
 /// recipient role(s) to perform one or more actions within a given policy context,
 /// for specific purposes and periods of time.
-public struct ErxConsent: Identifiable, Hashable {
+public struct ErxConsent: Identifiable, Hashable, Codable {
     /// ErxConsent default initializer
     public init(
         identifier: String,
@@ -54,12 +54,12 @@ public struct ErxConsent: Identifiable, Hashable {
 
     public let policyRule: Act
 
-    public enum Category: String, Equatable {
+    public enum Category: String, Equatable, Codable {
         /// Consent for saving electronic charge item
         case chargcons = "CHARGCONS"
     }
 
-    public enum Scope: String, Equatable {
+    public enum Scope: String, Equatable, Codable {
         /// Actions to be taken if they are no longer able to make decisions for themselves
         case adr
         /// Consent to participate in research protocol and information sharing required
@@ -71,7 +71,7 @@ public struct ErxConsent: Identifiable, Hashable {
     }
 
     /// A code specifying the particular kind of Act
-    public enum Act: String, Equatable {
+    public enum Act: String, Equatable, Codable {
         case optIn = "OPTIN"
     }
 }

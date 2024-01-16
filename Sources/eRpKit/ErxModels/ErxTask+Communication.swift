@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,7 +20,7 @@ import Foundation
 
 extension ErxTask {
     /// Acts as the intermediate data model from a communication resource response and the local store representation
-    public struct Communication: Equatable, Identifiable {
+    public struct Communication: Equatable, Identifiable, Codable {
         /// Identifier for this communication resource (e.g.:  "16d2cfc8-2023-11b2-81e1-783a425d8e87")
         public let identifier: String
         /// Profile of the communication resource (e.g.: "ErxCommunicationReply")

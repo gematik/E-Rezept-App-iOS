@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -82,6 +82,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                     .init(numerator: .init(value: "12", unit: "TAB"), denominator: .init(value: "1"))
                 expect(erxTaskBundle?.medication?.batch?.lotNumber) == "1234567890abcde"
                 expect(erxTaskBundle?.medication?.batch?.expiresOn) == "2020-02-03T00:00:00+00:00"
+                expect(erxTaskBundle?.medicationRequest.quantity) == .init(value: "1", unit: "{Package}")
                 expect(erxTaskBundle?.medicationRequest.dosageInstructions) == "1-0-1-0"
                 expect(erxTaskBundle?.medicationRequest.multiplePrescription?.mark) == true
                 expect(erxTaskBundle?.medicationRequest.multiplePrescription?.numbering) == 2
@@ -322,9 +323,9 @@ final class ErxTaskFHIRClientTests: XCTestCase {
         sut.redeem(order: inputOrder)
             .test { error in
                 expect(counter) == 1
-                expect(error) == .httpError(.httpError(expectedError))
+                expect(error) == .http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil))
             } expectations: { _ in
-                fail("this test should rase an error instead")
+                fail("this test should raise an error instead")
             }
     }
 
@@ -390,7 +391,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
         sut.communicationResources(after: nil)
             .test { error in
                 expect(counter) == 1
-                expect(error) == .httpError(.httpError(expectedError))
+                expect(error) == .http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
@@ -434,7 +435,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
         sut.fetchMedicationDispenses(for: "160.000.000.014.285.76")
             .test { error in
                 expect(counter) == 1
-                expect(error) == .httpError(.httpError(expectedError))
+                expect(error) == .http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }

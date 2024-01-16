@@ -118,7 +118,7 @@
 
 {% macro methodsInitializer type %}
     {% typed type as Type %}
-    {% for method in type.methods %}
+    {% for method in type.allMethods %}
         {% if not method.returnTypeName.isVoid %}
         {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings = mocks?.{{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings ?? .delegate
         {% endif %}
@@ -147,7 +147,7 @@
 
 {% macro serializationMethods type %}
     {% typed type as Type %}
-    {% for method in type.methods %}
+    {% for method in type.allMethods %}
         {% if not method.returnTypeName.isVoid %}
     {% if method.returnTypeName.generic.name == "AnyPublisher" %}
         {% if method.returnTypeName.generic.typeParameters.first.typeName.name|contains:"X509" %}
@@ -175,7 +175,7 @@
 
 {% macro serializationMethodsArguments type %}
     {% typed type as Type %}
-    {% for method in type.methods %}
+    {% for method in type.allMethods %}
         {% if not method.returnTypeName.isVoid %}
     {% if method.returnTypeName.generic.name == "AnyPublisher" %}
                 {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings{% if not forloop.last %},{% endif %}
@@ -197,7 +197,7 @@
         return try CodableMock(
             "{{ type.name }}",
             Mocks(
-                {% set methodscount %}{%for method in type.methods where not method.returnTypeName.isVoid %}1{% endfor %}{% endset %}
+                {% set methodscount %}{%for method in type.allMethods where not method.returnTypeName.isVoid %}1{% endfor %}{% endset %}
                 {% typed methodscount as String %}
                 {% call serializationMethodsArguments type %}{% if methodscount.count != 0 and type.variables.count != 0 %},{% endif %}
                 {% call serializationPropertiesArguments type %}
@@ -242,6 +242,8 @@ class SmartMock{{ type.name }}: {{ type.name }}, SmartMock {
 
 import Pharmacy
 import eRpKit
+import eRpLocalStorage
+import eRpRemoteStorage
 import Combine
 import OpenSSL
 import Foundation

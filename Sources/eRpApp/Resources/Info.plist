@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.17.0</string>
+	<string>1.18.0</string>
 	<key>CFBundleVersion</key>
 	<string>$(GEMATIK_BUNDLE_VERSION)</string>
 	<key>CSDisableAutostart</key>
@@ -76,6 +76,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>e0IRz5Tio3GA1Xs4fUVWmH1xHDiH2dMbVtCBSkOIdqM=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>qBRjZmOmkSNJL0p70zek7odSIzqs/muR4Jk9xYyCP+E=</string>
+                    </dict>
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
 						<string>RRM1dGqnDFsCJXBTHky16vi1obOlCgFFn/yOhI/y+ho=</string>
@@ -92,6 +96,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>e0IRz5Tio3GA1Xs4fUVWmH1xHDiH2dMbVtCBSkOIdqM=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>qBRjZmOmkSNJL0p70zek7odSIzqs/muR4Jk9xYyCP+E=</string>
+                    </dict>
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
 						<string>RRM1dGqnDFsCJXBTHky16vi1obOlCgFFn/yOhI/y+ho=</string>
@@ -108,6 +116,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>e0IRz5Tio3GA1Xs4fUVWmH1xHDiH2dMbVtCBSkOIdqM=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>qBRjZmOmkSNJL0p70zek7odSIzqs/muR4Jk9xYyCP+E=</string>
+                    </dict>
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
 						<string>RRM1dGqnDFsCJXBTHky16vi1obOlCgFFn/yOhI/y+ho=</string>
@@ -124,6 +136,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>e0IRz5Tio3GA1Xs4fUVWmH1xHDiH2dMbVtCBSkOIdqM=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>qBRjZmOmkSNJL0p70zek7odSIzqs/muR4Jk9xYyCP+E=</string>
+                    </dict>
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
 						<string>RRM1dGqnDFsCJXBTHky16vi1obOlCgFFn/yOhI/y+ho=</string>

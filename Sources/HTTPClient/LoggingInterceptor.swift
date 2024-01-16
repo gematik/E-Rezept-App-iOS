@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -77,7 +77,7 @@ public class LoggingInterceptor: Interceptor {
         self.level = level
     }
 
-    public func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPError> {
+    public func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         #if DEBUG
         let request = chain.request
         level.log(request: request)

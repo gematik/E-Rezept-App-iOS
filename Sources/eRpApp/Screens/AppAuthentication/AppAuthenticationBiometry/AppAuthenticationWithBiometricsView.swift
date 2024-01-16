@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -47,16 +47,17 @@ struct AppAuthenticationWithBiometricsView: View {
                 viewStore.send(.startAuthenticationChallenge)
             }
         }
-        .alert(isPresented: viewStore.binding(
-            get: { $0.errorToDisplay != nil },
-            send: AppAuthenticationBiometricsDomain.Action.dismissError
-        )) {
-            Alert(
-                title: Text(L10n.alertErrorTitle),
-                message: Text(viewStore.errorToDisplay?.errorDescription ?? ""),
-                dismissButton: .default(Text(L10n.alertBtnOk))
-            )
-        }
+        .alert(
+            L10n.alertErrorTitle.key,
+            isPresented: viewStore.binding(
+                get: { $0.errorToDisplay != nil },
+                send: AppAuthenticationBiometricsDomain.Action.dismissError
+            ),
+            actions: { Button(L10n.alertBtnOk) {} },
+            message: {
+                Text(viewStore.errorToDisplay?.errorDescription ?? "")
+            }
+        )
     }
 
     struct FaceIDView: View {

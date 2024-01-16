@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -34,6 +34,12 @@ struct PrescriptionDetailView: View {
     var body: some View {
         ScrollView(.vertical) {
             HeaderView(store: store)
+
+            if viewStore.isPKVInsured
+                && viewStore.hasChargeItem
+                || viewStore.chargeItemConstentState != .notAuthenticated {
+                ChargeItemHintView(store: store)
+            }
 
             if viewStore.isManualRedeemEnabled {
                 MedicationRedeemView(
@@ -75,6 +81,9 @@ struct PrescriptionDetailView: View {
                     SubTitle(title: viewStore.dosageInstructions, description: L10n.prscDtlTxtDosageInstructions)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtDosageInstructions)
 
+                    SubTitle(title: viewStore.quantity, description: L10n.prscDtlTxtQuantity)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtQuantity)
+
                     Button(action: { viewStore.send(.setNavigation(tag: .medication)) }, label: {
                         SubTitle(title: viewStore.medicationName, details: L10n.prscDtlTxtMedication)
                     })
@@ -111,14 +120,13 @@ struct PrescriptionDetailView: View {
                             .buttonStyle(.navigation)
                             .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnWorkRelatedAccident)
                     }
-
+                }, moreContent: {
                     SubTitle(
                         title: viewStore.bvg ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
                         description: L10n.prscDtlTxtBvg
                     )
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtBvg)
 
-                }, moreContent: {
                     SubTitle(title: viewStore.authoredOnDate, description: L10n.prscDtlTxtAuthoredOnDate)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtAuthoredOn)
 
@@ -146,6 +154,9 @@ struct PrescriptionDetailView: View {
         }
         .redacted(reason: viewStore.isDeleting ? .placeholder : .init())
         .prescriptionDetailToolbarItem(store: store)
+        .task {
+            await viewStore.send(.task).finish()
+        }
         .onAppear {
             viewStore.send(.startHandoffActivity)
         }
@@ -153,6 +164,11 @@ struct PrescriptionDetailView: View {
             store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
             state: /PrescriptionDetailDomain.Destinations.State.alert,
             action: PrescriptionDetailDomain.Destinations.Action.alert
+        )
+        .toast(
+            store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+            state: /PrescriptionDetailDomain.Destinations.State.toast,
+            action: PrescriptionDetailDomain.Destinations.Action.toast
         )
         .navigationBarTitle(Text(L10n.prscFdTxtNavigationTitle), displayMode: .inline)
     }
@@ -173,165 +189,6 @@ extension PrescriptionDetailView {
             .padding(.top, 20)
         }
     }
-
-    struct Navigations: View {
-        let store: StoreOf<PrescriptionDetailDomain>
-        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
-
-        init(store: PrescriptionDetailDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store, observe: ViewState.init)
-        }
-
-        struct ViewState: Equatable {
-            let destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
-
-            init(state: PrescriptionDetailDomain.State) {
-                destinationTag = state.destination?.tag
-            }
-        }
-
-        var body: some View {
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .coPaymentInfo },
-                    set: { if !$0 { viewStore.send(.setNavigation(tag: nil), animation: .easeInOut) } }
-                )) {
-                    IfLetStore(
-                        store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                        state: /PrescriptionDetailDomain.Destinations.State.coPaymentInfo,
-                        action: PrescriptionDetailDomain.Destinations.Action.coPaymentInfo,
-                        then: CoPaymentDrawerView.init(store:)
-                    )
-                }
-                .accessibility(hidden: true)
-
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .emergencyServiceFeeInfo },
-                    set: { if !$0 { viewStore.send(.setNavigation(tag: nil), animation: .easeInOut) } }
-                ), content: EmergencyServiceFeeDrawerView.init)
-                .accessibility(hidden: true)
-
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.technicalInformations,
-                action: PrescriptionDetailDomain.Destinations.Action.technicalInformations,
-                onTap: { viewStore.send(.setNavigation(tag: .technicalInformations)) },
-                destination: TechnicalInformationsView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.patient,
-                action: PrescriptionDetailDomain.Destinations.Action.patient,
-                onTap: { viewStore.send(.setNavigation(tag: .patient)) },
-                destination: PrescriptionDetailView.PatientView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // PractitionerView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.practitioner,
-                action: PrescriptionDetailDomain.Destinations.Action.practitioner,
-                onTap: { viewStore.send(.setNavigation(tag: .practitioner)) },
-                destination: PrescriptionDetailView.PractitionerView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // OrganisationView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.organization,
-                action: PrescriptionDetailDomain.Destinations.Action.organization,
-                onTap: { viewStore.send(.setNavigation(tag: .organization)) },
-                destination: PrescriptionDetailView.OrganizationView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // AccidentInfoView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.accidentInfo,
-                action: PrescriptionDetailDomain.Destinations.Action.accidentInfo,
-                onTap: { viewStore.send(.setNavigation(tag: .accidentInfo)) },
-                destination: PrescriptionDetailView.AccidentInfoView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // MedicationView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.medication,
-                action: PrescriptionDetailDomain.Destinations.Action.medication(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .medication)) },
-                destination: MedicationView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // MedicationOverview
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.medicationOverview,
-                action: PrescriptionDetailDomain.Destinations.Action.medicationOverview(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .medicationOverview)) },
-                destination: MedicationOverview.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-        }
-
-        struct CoPaymentDrawerView: View {
-            @ObservedObject var viewStore: ViewStore<
-                PrescriptionDetailDomain.Destinations.CoPaymentState,
-                PrescriptionDetailDomain.Destinations.Action.None
-            >
-
-            init(store: Store<
-                PrescriptionDetailDomain.Destinations.CoPaymentState,
-                PrescriptionDetailDomain.Destinations.Action.None
-            >) {
-                viewStore = ViewStore(store) { $0 }
-            }
-
-            var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(viewStore.title)
-                        .font(.headline)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfoTitle)
-
-                    Text(viewStore.description)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfoDescription)
-                    Spacer()
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Colors.systemBackground.ignoresSafeArea())
-                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo)
-            }
-        }
-
-        struct EmergencyServiceFeeDrawerView: View {
-            var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L10n.prscDtlDrEmergencyServiceFeeInfoTitle)
-                        .font(.headline)
-
-                    Text(L10n.prscDtlDrEmergencyServiceFeeInfoDescription)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                    Spacer()
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Colors.systemBackground.ignoresSafeArea())
-                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerEmergencyServiceFeeInfo)
-            }
-        }
-    }
 }
 
 extension PrescriptionDetailView {
@@ -339,7 +196,6 @@ extension PrescriptionDetailView {
         let isDeleting: Bool
         let hasEmergencyServiceFee: Bool
         let coPaymentStatusText: String
-        let showErrorBanner: Bool
         let isScannedPrescription: Bool
         let medicationName: String
         let patientName: String
@@ -353,14 +209,17 @@ extension PrescriptionDetailView {
         let bvg: Bool
         let multiplePrescriptionNumber: String?
         let accidentReason: String?
+        let hasChargeItem: Bool
+        let isPKVInsured: Bool
+        let chargeItemConstentState: PrescriptionDetailDomain.ChargeItemConsentState
         let destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
+        let quantity: String
 
         init(state: PrescriptionDetailDomain.State) {
             medicationName = state.prescription.title
             isDeleting = state.isDeleting
             hasEmergencyServiceFee = state.prescription.medicationRequest.hasEmergencyServiceFee
             coPaymentStatusText = state.prescription.coPaymentStatusText
-            showErrorBanner = state.prescription.viewStatus.isError
             isScannedPrescription = state.prescription.type == .scanned
             patientName = state.prescription.patient?.name ?? L10n.prscFdTxtNa.text
             practitionerName = state.prescription.practitioner?.name ?? L10n.prscFdTxtNa.text
@@ -371,9 +230,18 @@ extension PrescriptionDetailView {
             isRedeemable = state.prescription.isRedeemable
             destinationTag = state.destination?.tag
             authoredOnDate = state.prescription.authoredOnDate ?? L10n.prscFdTxtNa.text
-            dosageInstructions = state.prescription.medicationRequest.dosageInstructions ?? L10n.prscFdTxtNa.text
+            if let instructions = state.prescription.medicationRequest.dosageInstructions, !instructions.isEmpty {
+                dosageInstructions = instructions
+            } else {
+                dosageInstructions = L10n.prscFdTxtNa.text
+            }
             bvg = state.prescription.medicationRequest.bvg
             accidentReason = state.prescription.medicationRequest.accidentInfo?.localizedReason.text
+            if let quantity = state.prescription.medicationRequest.quantity {
+                self.quantity = quantity.value
+            } else {
+                quantity = L10n.prscFdTxtNa.text
+            }
             if state.prescription.medicationRequest.multiplePrescription?.mark == true,
                let number = state.prescription.medicationRequest.multiplePrescription?.numbering,
                let totalNumber = state.prescription.medicationRequest.multiplePrescription?.totalNumber {
@@ -381,6 +249,9 @@ extension PrescriptionDetailView {
             } else {
                 multiplePrescriptionNumber = nil
             }
+            hasChargeItem = state.chargeItem != nil
+            isPKVInsured = state.profile?.profile.insuranceType == .pKV
+            chargeItemConstentState = state.chargeItemConsentState
         }
     }
 }
@@ -421,7 +292,23 @@ struct PrescriptionDetailView_Previews: PreviewProvider {
                 PrescriptionDetailView(
                     store: PrescriptionDetailDomain.Dummies.storeFor(
                         PrescriptionDetailDomain.State(
-                            prescription: .Dummies.scanned, isArchived: false
+                            prescription: .Dummies.scanned,
+                            profile: UserProfile.Dummies.profileA,
+                            isArchived: false
+                        )
+                    )
+                )
+            }
+
+            // Prescription with pkv invoice
+            NavigationView {
+                PrescriptionDetailView(
+                    store: PrescriptionDetailDomain.Dummies.storeFor(
+                        PrescriptionDetailDomain.State(
+                            prescription: .Dummies.prescriptionReady,
+                            profile: UserProfile.Dummies.profileE,
+                            chargeItem: ErxChargeItem.Dummies.dummy.sparseChargeItem,
+                            isArchived: true
                         )
                     )
                 )

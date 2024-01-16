@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -40,14 +40,17 @@ struct DebugView: View {
                 LoginSection(store: store)
             }
             .onAppear { viewStore.send(.appear) }
-            .alert(isPresented: viewStore.binding(
-                get: \.showAlert,
-                send: DebugDomain.Action.showAlert
-            )) {
-                Alert(title: Text("Oh no!"),
-                      message: Text(viewStore.alertText ?? "Unknown"),
-                      dismissButton: .default(Text("Ok")))
-            }
+            .alert(
+                "Oh no!",
+                isPresented: viewStore.binding(
+                    get: \.showAlert,
+                    send: DebugDomain.Action.showAlert
+                ),
+                actions: { Button(L10n.alertBtnOk) {} },
+                message: {
+                    Text(viewStore.alertText ?? "Unknown")
+                }
+            )
         }.navigationTitle("Debug Settings")
     }
 }
@@ -277,6 +280,17 @@ extension DebugView {
                             // swiftlint:disable:previous line_length
                             a11y: ""
                         )
+
+                        VStack {
+                            Toggle("Hide ConsentDrawer On MainScreen", isOn: viewStore.binding(
+                                get: \.hidePkvConsentDrawerOnMainView,
+                                send: DebugDomain.Action.hidePkvConsentDrawerMainViewToggleTapped
+                            ))
+                            FootnoteView(
+                                text: "Drawer will only be shown when consent is currently not granted",
+                                a11y: "dummy_a11y_k"
+                            )
+                        }
                     } else {
                         Text("Loading current Profile...")
                     }

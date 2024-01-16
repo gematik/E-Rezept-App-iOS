@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -280,9 +280,9 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
         switch profile {
         case .freeText:
             return
-                "Freitextverordnung: \(request.quantity.map { "\($0.formatted())x" } ?? "") \(medication.displayName)"
+                "Freitextverordnung: \(request.quantity.map { "\($0.value)x" } ?? "") \(medication.displayName)"
         case .pzn:
-            let v26 = request.quantity.map { "\($0.formatted())x " } ?? ""
+            let v26 = request.quantity.map { "\($0.value)x " } ?? ""
             let v25 = "\(medication.displayName)/ "
             let v27 = medication.amount?.numerator.value.appending(" ") ?? ""
             let v28 = medication.amount?.numerator.unit?.appending(" ") ?? ""
@@ -290,7 +290,7 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
             let v24 = (medication.pzn as String?).map { "PZN: \($0)" } ?? ""
             return [v26, v25, v27, v28, v29, v24].compactMap { $0 }.joined()
         case .ingredient, .compounding:
-            let v26 = request.quantity.map { "\($0.formatted())x " } ?? ""
+            let v26 = request.quantity.map { "\($0.value)x " } ?? ""
             let v34 = ""
             let v35 = medication.amount?.numerator.value.appending(" ") ?? ""
             let v36 = medication.amount?.numerator.unit?.appending(" ") ?? ""

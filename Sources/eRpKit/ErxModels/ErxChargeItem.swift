@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -22,7 +22,7 @@ import Foundation
 /// therefore referring not only to the product, but containing in addition details of the provision,
 /// like date, time, amounts and participating organizations and persons.
 /// Main Usage of the ChargeItem is to enable the billing process and internal cost allocation.
-public struct ErxChargeItem: Identifiable, Hashable {
+public struct ErxChargeItem: Identifiable, Hashable, Codable {
     /// ErxChargeItem default initializer
     public init(
         identifier: String,
@@ -31,7 +31,7 @@ public struct ErxChargeItem: Identifiable, Hashable {
         enteredDate: String? = nil,
         accessCode: String? = nil,
         medication: ErxMedication? = nil,
-        medicationRequest: ErxMedicationRequest = ErxMedicationRequest(),
+        medicationRequest: ErxMedicationRequest = ErxMedicationRequest(quantity: nil),
         patient: ErxPatient? = nil,
         practitioner: ErxPractitioner? = nil,
         organization: ErxOrganization? = nil,
@@ -40,11 +40,12 @@ public struct ErxChargeItem: Identifiable, Hashable {
         medicationDispense: DavMedicationDispense? = nil,
         prescriptionSignature: ErxSignature? = nil,
         receiptSignature: ErxSignature? = nil,
-        dispenseSignature: ErxSignature? = nil
+        dispenseSignature: ErxSignature? = nil,
+        isRead: Bool = false
     ) {
         self.identifier = identifier
-        self.fhirData = fhirData
         self.taskId = taskId
+        self.fhirData = fhirData
         self.enteredDate = enteredDate
         self.accessCode = accessCode
         self.medication = medication
@@ -58,6 +59,7 @@ public struct ErxChargeItem: Identifiable, Hashable {
         self.prescriptionSignature = prescriptionSignature
         self.receiptSignature = receiptSignature
         self.dispenseSignature = dispenseSignature
+        self.isRead = isRead
     }
 
     // MARK: Meta Information
@@ -74,6 +76,8 @@ public struct ErxChargeItem: Identifiable, Hashable {
     public let enteredDate: String?
     /// Access code authorising for the charge item
     public let accessCode: String?
+    /// Indicates if the message about the ChargeItem in the order section has been opened by the user
+    public var isRead: Bool
 
     // MARK: KBV profiled FHIR resources
 
@@ -115,8 +119,10 @@ extension ErxChargeItem {
     public var sparseChargeItem: ErxSparseChargeItem {
         ErxSparseChargeItem(
             identifier: identifier,
+            taskId: taskId,
             fhirData: fhirData,
             enteredDate: enteredDate,
+            isRead: isRead,
             medication: medication,
             invoice: invoice
         )

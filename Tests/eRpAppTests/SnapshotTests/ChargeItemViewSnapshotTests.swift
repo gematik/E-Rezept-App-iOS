@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,21 +28,37 @@ final class ChargeItemViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
+//        isRecording = true
     }
 
-    var store: StoreOf<ChargeItemDomain> {
-        Store(
-            initialState: .init(
-                profileId: DummyUserProfileService.dummyProfile.id,
-                chargeItem: ErxChargeItem.Dummies.dummy
-            )
-        ) {
-            EmptyReducer()
-        }
+    override func tearDown() {
+        isRecording = false
+        super.tearDown()
+    }
+
+    func store(
+        with state: ChargeItemDomain.State = {
+            .init(profileId: DummyUserProfileService.dummyProfile.id,
+                  chargeItem: ErxChargeItem.Dummies.dummy)
+        }()
+    ) -> StoreOf<ChargeItemDomain> {
+        Store(initialState: state, reducer: EmptyReducer.init)
     }
 
     func testChargeItemView() {
-        let sut = ChargeItemView(store: store)
+        let sut = ChargeItemView(store: store())
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testChargeItemView_withRouting() {
+        let sut = ChargeItemView(store: store(with: .init(
+            profileId: DummyUserProfileService.dummyProfile.id,
+            chargeItem: ErxChargeItem.Dummies.dummy,
+            showRouteToChargeItemListButton: true
+        )))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -21,7 +21,7 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 import IDP
-
+// swiftlint:disable file_length
 struct MainDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
@@ -46,7 +46,9 @@ struct MainDomain: ReducerProtocol {
         case turnOffDemoMode
         case externalLogin(URL)
         case importTaskByUrl(URL)
-        case showWelcomeDrawer
+        case showDrawer
+        case grantChargeItemsConsentActivate
+        case grantChargeItemsConsentDismiss
         case refreshPrescription
         case destination(PresentationAction<Destinations.Action>)
         case setNavigation(tag: Destinations.State.Tag?)
@@ -61,6 +63,8 @@ struct MainDomain: ReducerProtocol {
             case loadDeviceSecurityViewReceived(DeviceSecurityDomain.State?)
             case demoModeChangeReceived(Bool)
             case importReceived(Result<[ErxTask], Error>)
+            case showDrawer(MainDomain.Environment.DrawerEvaluationResult)
+            case grantChargeItemsConsentActivate(ChargeItemConsentService.GrantResult)
         }
     }
     // sourcery: CodedError = "015"
@@ -85,6 +89,8 @@ struct MainDomain: ReducerProtocol {
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.deviceSecurityManager) var deviceSecurityManager
     @Dependency(\.profileSecureDataWiper) var profileSecureDataWiper: ProfileSecureDataWiper
+    @Dependency(\.chargeItemConsentService) var chargeItemConsentService: ChargeItemConsentService
+    @Dependency(\.profileDataStore) var profileDataStore
     @Dependency(\.router) var router: Routing
 
     var environment: Environment {
@@ -97,7 +103,9 @@ struct MainDomain: ReducerProtocol {
             fhirDateFormatter: fhirDateFormatter,
             userDataStore: userDataStore,
             deviceSecurityManager: deviceSecurityManager,
-            profileSecureDataWiper: profileSecureDataWiper
+            profileSecureDataWiper: profileSecureDataWiper,
+            profileDataStore: profileDataStore,
+            chargeItemConsentService: chargeItemConsentService
         )
     }
 
@@ -111,6 +119,8 @@ struct MainDomain: ReducerProtocol {
         var userDataStore: UserDataStore
         var deviceSecurityManager: DeviceSecurityManager
         var profileSecureDataWiper: ProfileSecureDataWiper
+        var profileDataStore: ProfileDataStore
+        var chargeItemConsentService: ChargeItemConsentService
     }
 
     var body: some ReducerProtocol<State, Action> {
@@ -272,6 +282,75 @@ extension MainDomain {
                 })
             )
             return .none
+        case .showDrawer:
+            guard state.destination == nil
+            else { return .none }
+            return .run { send in
+                await send(.response(.showDrawer(environment.showDrawerEvaluation())))
+            }
+
+        case let .response(.showDrawer(drawerEvaluationResult)):
+            switch drawerEvaluationResult {
+            case .welcomeDrawer:
+                state.destination = .welcomeDrawer
+                environment.userDataStore.hideWelcomeDrawer = true
+                return .none
+            case .consentDrawer:
+                state.destination = .grantChargeItemConsentDrawer
+                // memorise the fact that the consent drawer has been shown to this profile
+                return .run { _ in
+                    _ = try await environment.setHidePkvConsentDrawerOnMainViewToTrue()
+                }
+            case .none:
+                return .none
+            }
+
+        case .grantChargeItemsConsentActivate,
+             .destination(.presented(.alert(.retryGrantChargeItemConsent))):
+
+            state.destination = nil
+            let profileId = userSession.profileId
+            return .run { send in
+                let result = try await chargeItemConsentService.grantConsent(profileId)
+                await send(.response(.grantChargeItemsConsentActivate(result)))
+            }
+        case let .response(.grantChargeItemsConsentActivate(result)):
+            switch result {
+            case .success:
+                state.destination = .toast(ToastStates.grantConsentSuccess)
+            case .notAuthenticated:
+                state.destination = .alert(AlertStates.grantConsentServiceNotAuthenticated)
+            case .conflict:
+                state.destination = .toast(ToastStates.conflictToast)
+            case let .error(chargeItemConsentServiceError):
+                if let alertState = chargeItemConsentServiceError.alertState {
+                    // in case of an expected (specified) http error
+                    state.destination = .alert(alertState.mainDomainErpAlertState)
+                } else {
+                    // in case of an unexpected (not specified) error
+                    state.destination = .alert(AlertStates.grantConsentErrorFor(error: chargeItemConsentServiceError))
+                }
+            }
+            return .none
+        case .destination(.presented(.toast(.routeToChargeItemsList))):
+            environment.router.routeTo(.settings(.editProfile(.chargeItemListFor(environment.userSession.profileId))))
+            return .none
+        case .grantChargeItemsConsentDismiss,
+             .destination(.presented(.alert(.dismissGrantChargeItemConsent))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.alert(.consentServiceErrorOkay))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.alert(.consentServiceErrorRetry))):
+            state.destination = nil
+            return .run { send in
+                await send(.grantChargeItemsConsentActivate)
+            }
+        case .destination(.presented(.alert(.consentServiceErrorAuthenticate))):
+            state.destination = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
+            return .none
+
         case .refreshPrescription:
             return EffectTask.send(.prescriptionList(action: .refresh))
         case .horizontalProfileSelection(action: .showAddProfileView):
@@ -279,12 +358,6 @@ extension MainDomain {
             return .none
         case let .horizontalProfileSelection(action: .showEditProfileNameView(profileId, profileName)):
             state.destination = .editName(EditProfileNameDomain.State(profileName: profileName, profileId: profileId))
-            return .none
-        case .showWelcomeDrawer:
-            if state.destination == nil, !environment.userDataStore.hideWelcomeDrawer {
-                state.destination = .welcomeDrawer
-                environment.userDataStore.hideWelcomeDrawer = true
-            }
             return .none
         case let .destination(.presented(.createProfileAction(action: .delegate(delegateAction)))):
             switch delegateAction {
@@ -335,6 +408,7 @@ extension MainDomain {
             state.destination = nil
             environment.router.routeTo(.settings(.unlockCard))
             return .none
+
         case .destination,
              .setNavigation,
              .prescriptionList,
@@ -345,37 +419,36 @@ extension MainDomain {
     }
 }
 
-extension MainDomain {
-    enum AlertStates {
-        static func loginNecessaryAlert(for error: LoginHandlerError) -> ErpAlertState<Destinations.Action.Alert> {
-            .init(
-                for: error,
-                title: L10n.errTitleLoginNecessary
-            ) {
-                ButtonState(action: .cardWall) {
-                    .init(L10n.erxBtnAlertLogin)
-                }
-            }
-        }
-
-        static func devicePairingInvalid() -> ErpAlertState<Destinations.Action.Alert> {
-            .init(
-                title: L10n.errTitlePairingInvalid,
-                actions: {
-                    ButtonState(action: .dismiss) {
-                        .init(L10n.erxBtnAlertOk)
-                    }
-                    ButtonState(action: .cardWall) {
-                        .init(L10n.erxBtnAlertLogin)
-                    }
-                },
-                message: L10n.errMessagePairingInvalid
-            )
-        }
-    }
-}
-
 extension MainDomain.Environment {
+    enum DrawerEvaluationResult {
+        case welcomeDrawer
+        case consentDrawer
+        case none
+    }
+
+    func showDrawerEvaluation() async -> DrawerEvaluationResult {
+        // show welcome drawer?
+        if !userDataStore.hideWelcomeDrawer {
+            return .welcomeDrawer
+        }
+
+        // show consent drawer?
+        do {
+            let profile = try await userSession.profile().async(/MainDomain.Error.localStoreError)
+            if profile.insuranceType == .pKV,
+               profile.hidePkvConsentDrawerOnMainView == false,
+               // Only if the service responded successfully that the consent has not been granted yet
+               // (== .success(false)) we want to show the consent drawer. Otherwise we don't.
+               case .notGranted = try await chargeItemConsentService.checkForConsent(profile.id) {
+                return .consentDrawer
+            }
+        } catch {
+            // fall-through in case of any error
+        }
+
+        return .none
+    }
+
     func checkForTaskDuplicatesThenSave(_ sharedTasks: [SharedTask]) -> EffectTask<MainDomain.Action> {
         let authoredOn = fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
         let erxTaskRepository = self.erxTaskRepository
@@ -433,5 +506,13 @@ extension MainDomain.Environment {
             }
             .receive(on: schedulers.main)
             .eraseToAnyPublisher()
+    }
+
+    func setHidePkvConsentDrawerOnMainViewToTrue() async throws -> Bool {
+        let profileId = userSession.profileId
+        return try await profileDataStore.update(profileId: profileId) {
+            $0.hidePkvConsentDrawerOnMainView = true
+        }
+        .async(/MainDomain.Error.localStoreError)
     }
 }

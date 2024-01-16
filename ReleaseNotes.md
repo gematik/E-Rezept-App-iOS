@@ -1,3 +1,33 @@
+# Release 1.18.0
+
+fixed (7 changes)
+
+  - Fix biometrics registering FaceID instead of TouchID
+  - Fix usage of correct profile when storing key for biometrics
+  - Fix the favorite status of pharmacies within the list when update through the details
+  - Fix alerts with double cancel buttons
+  - Fix sorting of registered devices by date
+  - Fix TabView not Updating in iO15
+  - Fix Bug that disables AppSecurityOptions and wont let it activate it anymore
+
+changed (6 changes)
+
+  - Change UI of ChargeItemView
+  - Change Primary Button paddings
+  - Refine MainView drawers' UI
+  - Change OrdersDomain to use OrdersRepository as preperation for adding ChargeItems
+  - Change UI of PharmacyRedeemView
+  - Improve ChargeItemConsentService error handling
+
+added (6 changes)
+
+  - Add quantity of MedicationRequest to local store and present it in UI
+  - Add error handling for OrdersDomain
+  - Add ChargeItems to OrderDetail
+  - Add grant consent to receive ChargeItems on MainScreen after first login
+  - Add charge item and hints for prescription details
+  - Add GesundheitsID Implementation
+
 # Release 1.17.0
 
 ### fixed (4 changes)

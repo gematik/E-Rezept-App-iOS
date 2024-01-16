@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,6 +27,7 @@ protocol ProfileBasedSessionProvider {
     func biometrieIdpSession(for profileId: UUID) -> IDPSession
     func userDataStore(for profileId: UUID) -> SecureUserDataStore
     func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError>
+    func signatureProvider(for profileId: UUID) -> SecureEnclaveSignatureProvider
 }
 
 struct ProfileBasedSessionProviderDependency: DependencyKey {
@@ -58,6 +59,10 @@ struct DefaultSessionProvider: ProfileBasedSessionProvider {
 
     func idpSession(for profileId: UUID) -> IDPSession {
         userSession(for: profileId).idpSession
+    }
+
+    func signatureProvider(for profileId: UUID) -> IDP.SecureEnclaveSignatureProvider {
+        userSession(for: profileId).secureEnclaveSignatureProvider
     }
 
     func biometrieIdpSession(for profileId: UUID) -> IDPSession {
@@ -94,6 +99,10 @@ struct RegisterSessionProvider: ProfileBasedSessionProvider {
         userSession(for: profileId).pairingIdpSession
     }
 
+    func signatureProvider(for profileId: UUID) -> IDP.SecureEnclaveSignatureProvider {
+        userSession(for: profileId).secureEnclaveSignatureProvider
+    }
+
     func biometrieIdpSession(for profileId: UUID) -> IDPSession {
         idpSession(for: profileId)
     }
@@ -120,6 +129,10 @@ class DummyProfileBasedSessionProvider: ProfileBasedSessionProvider {
 
     func idpSession(for _: UUID) -> IDPSession {
         DemoIDPSession(storage: MemoryStorage())
+    }
+
+    func signatureProvider(for _: UUID) -> SecureEnclaveSignatureProvider {
+        DummySecureEnclaveSignatureProvider()
     }
 
     func biometrieIdpSession(for _: UUID) -> IDPSession {

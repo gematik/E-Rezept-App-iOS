@@ -324,7 +324,7 @@
                             ],
                             "dispenseRequest": {
                                 "quantity": {
-                                    "value": 1,
+                                    "value": 17,
                                     "system": "http://unitsofmeasure.org",
                                     "code": "{Package}"
                                 }

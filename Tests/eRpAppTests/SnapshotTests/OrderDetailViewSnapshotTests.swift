@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -95,13 +95,19 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
     )
 
     func testOderDetailViewWithOneCommunicationDispRequest() {
+        let order = Order(
+            orderId: "test",
+            communications: [communicationDispRequest],
+            chargeItems: []
+        )
+        let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(
             store: OrderDetailDomain.Store(
-                initialState: .init(order: OrderCommunications(
-                    orderId: "test",
-                    communications: [communicationDispRequest]
-                ))
-
+                initialState: .init(
+                    order: order,
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),
+                    timelineEntries: timeline
+                )
             ) {
                 EmptyReducer()
             }
@@ -111,16 +117,22 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    func testOderDetailViewWithExpectedCommunications() {
+    func testOderDetailViewWithExpectedCommunicationsAndChargeItem() {
+        let order = Order(
+            orderId: "test",
+            communications: [communicationOnPremise,
+                             communicationShipment,
+                             communicationDelivery],
+            chargeItems: [ErxChargeItem.Fixtures.chargeItem]
+        )
+        let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(
             store: OrderDetailDomain.Store(
-                initialState: .init(order: OrderCommunications(
-                    orderId: "test",
-                    communications: [communicationOnPremise,
-                                     communicationShipment,
-                                     communicationDelivery]
-                ))
-
+                initialState: .init(
+                    order: order,
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),
+                    timelineEntries: timeline
+                )
             ) {
                 EmptyReducer()
             }
@@ -131,14 +143,20 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testOderDetailViewWithUnexpectedCommunications() {
+        let order = Order(
+            orderId: "test",
+            communications: [communicationOnPremiseWithUrl,
+                             communicationWithoutPayload],
+            chargeItems: []
+        )
+        let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(store:
             OrderDetailDomain.Store(
-                initialState: .init(order: OrderCommunications(
-                    orderId: "test",
-                    communications: [communicationOnPremiseWithUrl,
-                                     communicationWithoutPayload]
-                ))
-
+                initialState: .init(
+                    order: order,
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),
+                    timelineEntries: timeline
+                )
             ) {
                 EmptyReducer()
             })

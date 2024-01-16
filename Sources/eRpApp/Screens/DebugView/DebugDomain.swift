@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -45,6 +45,7 @@ struct DebugDomain: ReducerProtocol {
             ""
         var lastIDPToken: IDPToken?
         var profile: Profile?
+        var hidePkvConsentDrawerOnMainView: Bool { profile?.hidePkvConsentDrawerOnMainView ?? false }
 
         var fakeTaskStatus = String(ErxTask.scannedTaskMinIntervalForCompletion)
 
@@ -102,6 +103,7 @@ struct DebugDomain: ReducerProtocol {
         case accessCodeTextReceived(String)
         case profileReceived(Result<UserProfile, UserProfileServiceError>)
         case setProfileInsuranceTypeToPKV
+        case hidePkvConsentDrawerMainViewToggleTapped
         case toggleVirtualLogin(Bool)
         case virtualPrkCHAutReceived(String)
         case virtualCCHAutReceived(String)
@@ -288,6 +290,13 @@ struct DebugDomain: ReducerProtocol {
             state.profile?.insuranceType = .pKV
 
             return setProfileInsuranceTypeToPKV(profileId: profile.id)
+        case .hidePkvConsentDrawerMainViewToggleTapped:
+            guard let profile = state.profile, profile.insuranceType == .pKV else {
+                return .none
+            }
+            let newValue = !profile.hidePkvConsentDrawerOnMainView
+            state.profile?.hidePkvConsentDrawerOnMainView = newValue
+            return setHidePkvConsentDrawerOnMainView(to: newValue, profileId: profile.id)
         case .resetTooltips:
             UserDefaults.standard.setValue([String: Any](), forKey: "TOOLTIPS")
             return .none
@@ -404,6 +413,18 @@ extension DebugDomain {
                 .update(profileId: profileId) { profile in
                     profile.insuranceType = .pKV
                     profile.insurance = "Dummy pKV"
+                }
+                .async()
+        }
+    }
+
+    func setHidePkvConsentDrawerOnMainView(to value: Bool, profileId: UUID) -> EffectTask<DebugDomain.Action> {
+        let userProfileService = self.userProfileService
+
+        return .run { _ in
+            _ = try await userProfileService
+                .update(profileId: profileId) { profile in
+                    profile.hidePkvConsentDrawerOnMainView = value
                 }
                 .async()
         }

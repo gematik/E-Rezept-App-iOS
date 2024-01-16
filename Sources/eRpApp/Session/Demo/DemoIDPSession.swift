@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -147,7 +147,8 @@ class DemoIDPSession: IDPSession {
 
     func extAuthVerifyAndExchange(
         _: URL,
-        idTokenValidator _: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+        idTokenValidator _: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
+        isGidFlow _: Bool
     ) -> AnyPublisher<IDPToken, IDPError> {
         Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()

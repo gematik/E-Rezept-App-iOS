@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -135,18 +135,20 @@ struct MatrixCodeView: View {
         )
         .accessibility(identifier: A18n.matrixCode.dmcBtnClose))
         .navigationBarBackButtonHidden(true)
-        .alert(isPresented: .constant(viewStore.isShowAlert)) {
-            Alert(
-                title: Text(L10n.rphTxtCloseAlertTitle),
-                message: Text(L10n.rphTxtCloseAlertMessage),
-                primaryButton: Alert.Button.cancel(Text(L10n.rphBtnCloseAlertKeep)) {
-                    viewStore.send(.closeButtonTapped)
-                },
-                secondaryButton: Alert.Button.destructive(Text(L10n.rphBtnCloseAlertMarkRedeemed)) {
+        .alert(
+            L10n.rphTxtCloseAlertTitle.key,
+            isPresented: .constant(viewStore.isShowAlert),
+            actions: {
+                Button(L10n.rphBtnCloseAlertKeep.key, role: .cancel) {
                     viewStore.send(.closeButtonTapped)
                 }
-            )
-        }
+                Button(L10n.rphBtnCloseAlertMarkRedeemed.key, role: .destructive) {
+                    viewStore.send(.closeButtonTapped)
+                }
+            }, message: {
+                Text(L10n.rphTxtCloseAlertMessage)
+            }
+        )
         .onAppear {
             viewStore.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size))
             originalBrightness = UIScreen.main.brightness

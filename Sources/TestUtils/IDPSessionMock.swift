@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -241,7 +241,11 @@ public class IDPSessionMock: IDPSession {
     }
 
     public var extAuthVerifyAndExchange_Publisher: AnyPublisher<IDPToken, IDPError>!
-    public var extAuthVerifyAndExchange_ReceivedArguments: (URL, (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)?
+    public var extAuthVerifyAndExchange_ReceivedArguments: (
+        URL,
+        (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
+        Bool
+    )?
     public var extAuthVerifyAndExchange_CallsCount = 0
     public var extAuthVerifyAndExchange_Called: Bool {
         extAuthVerifyAndExchange_CallsCount > 0
@@ -249,10 +253,11 @@ public class IDPSessionMock: IDPSession {
 
     public func extAuthVerifyAndExchange(
         _ url: URL,
-        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
+        isGidFlow: Bool
     ) -> AnyPublisher<IDPToken, IDPError> {
         extAuthVerifyAndExchange_CallsCount += 1
-        extAuthVerifyAndExchange_ReceivedArguments = (url, idTokenValidator)
+        extAuthVerifyAndExchange_ReceivedArguments = (url, idTokenValidator, isGidFlow)
         return extAuthVerifyAndExchange_Publisher
     }
 }

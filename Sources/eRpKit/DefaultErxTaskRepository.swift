@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,15 +27,21 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
 
     private let disk: ErxLocalDataStore
     private let cloud: ErxRemoteDataStore
+    private let profile: AnyPublisher<Profile, LocalStoreError>
 
     /// Initialize a new ErxTaskRepository as the gateway between Presentation layer and underlying data layer(s)
     ///
     /// - Parameters:
     ///   - disk: The data source that represents the disk/local storage
     ///   - cloud: The data source that represents the cloud/remote storage
-    public required init(disk: ErxLocalDataStore, cloud: ErxRemoteDataStore) {
+    public required init(
+        disk: ErxLocalDataStore,
+        cloud: ErxRemoteDataStore,
+        profile: AnyPublisher<Profile, LocalStoreError>
+    ) {
         self.disk = disk
         self.cloud = cloud
+        self.profile = profile
     }
 
     /// Get ErxTask by id from cloud (if possible)
@@ -94,6 +100,18 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
         loadRemoteLatestTasks()
             .flatMap { _ in
                 self.loadRemoteLatestCommunications()
+            }
+            .flatMap { _ in
+                self.profile
+                    .mapError { error in
+                        ErxRepositoryError.local(error)
+                    }
+                    .flatMap { profile in
+                        guard profile.insuranceType == Profile.InsuranceType.pKV else {
+                            return Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+                        }
+                        return self.loadRemoteLatestChargeItems()
+                    }
             }
             .flatMap { _ -> AnyPublisher<[ErxTask], ErrorType> in
                 self.disk.listAllTasks()
@@ -270,18 +288,35 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
-    /// Returns a count for all unread communications for the given profile
-    /// - Parameter profile: profile for which you want to have the count
-    public func countAllUnreadCommunications(
-        for profile: ErxTask.Communication.Profile
+    /// Returns a count for all unread communications for the given  communication profile
+    /// and for all unread ChargeItems
+    /// - Parameter profile: Communication profile for which you want to have the count
+    public func countAllUnreadCommunicationsAndChargeItems(
+        for fhirProfile: ErxTask.Communication.Profile
     ) -> AnyPublisher<Int, ErrorType> {
-        disk.listAllCommunications(for: profile)
+        disk.listAllCommunications(for: fhirProfile)
             .mapError(ErrorType.local)
-            .map { communications in
-                // filter for unique communications
-                communications.filterUnique()
+            .flatMap { communications -> AnyPublisher<([ErxTask.Communication], [ErxSparseChargeItem]), ErrorType> in
+                self.disk.listAllChargeItems()
+                    .mapError(ErrorType.local)
+                    .flatMap { chargeItems in
+                        Just((communications, chargeItems)).setFailureType(to: ErxRepositoryError.self)
+                            .eraseToAnyPublisher()
+                    }
+                    .eraseToAnyPublisher()
             }
-            .map { $0.filter { $0.isRead == false }.count }
+            .map { communications, chargeItems in
+                // filter for unique communications
+                let uniqueCommunications = communications.filterUnique()
+                // make sure there is a communication to an existing charge item
+                // since there can be chargeItems without orders
+                let taskIds = uniqueCommunications.map(\.taskId)
+                let relevantChargeItems = chargeItems.filter { taskIds.contains($0.identifier) }
+                var count = 0
+                count += uniqueCommunications.filter { $0.isRead == false }.count
+                count += relevantChargeItems.filter { $0.isRead == false }.count
+                return count
+            }
             .eraseToAnyPublisher()
     }
 

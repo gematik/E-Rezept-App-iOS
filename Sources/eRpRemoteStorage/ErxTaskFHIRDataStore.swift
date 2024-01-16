@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -35,13 +35,13 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
                           accessCode: String?)
         -> AnyPublisher<ErxTask?, RemoteStoreError> {
         fhirClient.fetchTask(by: id, accessCode: accessCode)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .eraseToAnyPublisher()
     }
 
     public func listAllTasks(after referenceDate: String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
         fhirClient.fetchAllTaskIDs(after: referenceDate)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .flatMap { self.collectAndCombineLatestTaskPublishers(taskIds: $0) }
             .eraseToAnyPublisher()
@@ -51,7 +51,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         .PagedContent<[eRpKit.ErxTask]>)
         -> AnyPublisher<eRpKit.PagedContent<[eRpKit.ErxTask]>, eRpKit.RemoteStoreError> {
         fhirClient.fetchTasksNextPage(of: previousPage)
-            .mapError(RemoteStoreError.fhirClientError)
+            .mapError(RemoteStoreError.fhirClient)
             .first()
             .flatMap { self.collectAndCombineLatestTaskPublishers(taskIds: $0) }
             .eraseToAnyPublisher()
@@ -66,7 +66,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
                     .fetchTask(by: taskId, accessCode: nil)
                     .first()
                     .compactMap { $0 }
-                    .mapError { RemoteStoreError.fhirClientError($0) }
+                    .mapError { RemoteStoreError.fhirClient($0) }
                     .eraseToAnyPublisher()
             }
 
@@ -102,7 +102,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
                     "Can't be deleted: ID is missing!"
                 )
             }
-            let localError = RemoteStoreError.fhirClientError(fhirClientError)
+            let localError = RemoteStoreError.fhirClient(fhirClientError)
 
             return Result<Bool, RemoteStoreError>.failure(localError).publisher.eraseToAnyPublisher()
         }
@@ -112,14 +112,14 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
 
         // In case of success...
         return fhirClient.deleteTask(by: id, accessCode: accessCode)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .eraseToAnyPublisher()
     }
 
     public func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
         fhirClient.redeem(order: order)
             .first()
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .eraseToAnyPublisher()
     }
 
@@ -128,7 +128,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
     public func fetchAuditEvent(by id: ErxAuditEvent.ID)
         -> AnyPublisher<ErxAuditEvent?, RemoteStoreError> {
         fhirClient.fetchAuditEvent(by: id)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .eraseToAnyPublisher()
     }
 
@@ -137,7 +137,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         for locale: String? = nil
     ) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
         fhirClient.fetchAllAuditEvents(after: referenceDate, for: locale)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .eraseToAnyPublisher()
     }
@@ -145,7 +145,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
     public func listAuditEventsNextPage(from url: URL, locale: String?)
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
         fhirClient.fetchAuditEventsNextPage(from: url, locale: locale)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .eraseToAnyPublisher()
     }
@@ -157,7 +157,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         for _: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError> {
         fhirClient.communicationResources(after: referenceDate)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .eraseToAnyPublisher()
     }
@@ -168,7 +168,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         for taskId: String
     ) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError> {
         fhirClient.fetchMedicationDispenses(for: taskId)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .eraseToAnyPublisher()
     }
@@ -178,14 +178,14 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
     public func fetchChargeItem(by id: ErxChargeItem.ID)
         -> AnyPublisher<ErxChargeItem?, RemoteStoreError> {
         fhirClient.fetchChargeItem(by: id)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .eraseToAnyPublisher()
     }
 
     public func listAllChargeItems(after referenceDate: String?)
         -> AnyPublisher<[ErxChargeItem], RemoteStoreError> {
         fhirClient.fetchAllChargeItemIDs(after: referenceDate)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .flatMap { self.collectAndCombineLatestChargeItemPublishers(chargeItemIds: $0) }
             .eraseToAnyPublisher()
@@ -200,7 +200,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
                     .fetchChargeItem(by: chargeItemId)
                     .first()
                     .compactMap { $0 }
-                    .mapError { RemoteStoreError.fhirClientError($0) }
+                    .mapError { RemoteStoreError.fhirClient($0) }
                     .eraseToAnyPublisher()
             }
 
@@ -234,14 +234,14 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
                     "Cannot delete: ID or accessCode missing?"
                 )
             }
-            let localError = RemoteStoreError.fhirClientError(fhirClientError)
+            let localError = RemoteStoreError.fhirClient(fhirClientError)
 
             return Result<Bool, RemoteStoreError>.failure(localError).publisher.eraseToAnyPublisher()
         }
 
         // In case of success...
         return fhirClient.deleteChargeItem(by: id, accessCode: accessCode)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .eraseToAnyPublisher()
     }
 
@@ -250,7 +250,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
     public func fetchConsents()
         -> AnyPublisher<[ErxConsent], RemoteStoreError> {
         fhirClient.fetchConsents()
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .eraseToAnyPublisher()
     }
@@ -259,7 +259,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         _ consent: ErxConsent
     ) -> AnyPublisher<ErxConsent?, RemoteStoreError> {
         fhirClient.grantConsent(consent)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .eraseToAnyPublisher()
     }
@@ -268,7 +268,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         _ category: ErxConsent.Category
     ) -> AnyPublisher<Bool, RemoteStoreError> {
         fhirClient.revokeConsent(category)
-            .mapError { RemoteStoreError.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClient($0) }
             .first()
             .eraseToAnyPublisher()
     }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -134,6 +134,18 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
     func testMainView_WelcomeDrawer() {
         let sut =
             WelcomeDrawerView(store: store(for: MainDomain.State(
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )))
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testMainView_GrantChargeItemConsentDrawer() {
+        let sut =
+            GrantChargeItemConsentDrawerView(store: store(for: MainDomain.State(
                 prescriptionListState: .init(),
                 horizontalProfileSelectionState: .init()
             )))

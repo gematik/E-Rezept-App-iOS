@@ -339,6 +339,13 @@ extension PharmacyDetailDomain.Action {
         }
     }
 }
+extension PharmacyPrescriptionSelectionDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
 extension PharmacyRedeemDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {

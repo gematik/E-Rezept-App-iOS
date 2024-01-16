@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2023 gematik GmbH
+//  Copyright (c) 2024 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -41,8 +41,12 @@ extension MainDomain {
             case redeem(RedeemMethodsDomain.State)
             // sourcery: AnalyticsScreen = main_welcomeDrawer
             case welcomeDrawer
+            // sourcery: AnalyticsScreen = main_consentDrawer
+            case grantChargeItemConsentDrawer
             // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<Action.Alert>)
+            // sourcery: AnalyticsScreen = alert
+            case toast(ToastState<Action.Toast>)
         }
 
         enum Action: Equatable {
@@ -56,10 +60,20 @@ extension MainDomain {
             case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
             case redeemMethods(action: RedeemMethodsDomain.Action)
             case alert(Alert)
+            case toast(Toast)
 
             enum Alert: Equatable {
                 case dismiss
                 case cardWall
+                case retryGrantChargeItemConsent
+                case dismissGrantChargeItemConsent
+                case consentServiceErrorOkay
+                case consentServiceErrorAuthenticate
+                case consentServiceErrorRetry
+            }
+
+            enum Toast: Equatable {
+                case routeToChargeItemsList
             }
         }
 
