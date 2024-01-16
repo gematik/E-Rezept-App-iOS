@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.17.0
+           1.18.0
  Docs
         </a>
          (100% documented)
@@ -438,7 +438,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ErxChargeItem</span> <span class="p">:</span> <span class="kt">Identifiable</span><span class="p">,</span> <span class="kt">Hashable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ErxChargeItem</span> <span class="p">:</span> <span class="kt">Identifiable</span><span class="p">,</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt">Codable</span></code></pre>
 
                 </div>
               </div>
@@ -457,9 +457,9 @@ Main Usage of the ChargeItem is to enable the billing process and internal cost 
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit13ErxChargeItemV10identifier8fhirData6taskId11enteredDate10accessCode10medication0O7Request7patient12practitioner12organization8pharmacy7invoice0O8Dispense21prescriptionSignature07receiptX008dispenseX0ACSS_10Foundation0H0VSSSgA2wA0C10MedicationVSgAA0c10MedicationP0VAA0C7PatientVSgAA0C12PractitionerVSgAA0C12OrganizationVSgAA15DavOrganizationVSgAA10DavInvoiceVSgAA013DavMedicationV0VSgAA0cX0VSgA21_A21_tcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(identifier:fhirData:taskId:enteredDate:accessCode:medication:medicationRequest:patient:practitioner:organization:pharmacy:invoice:medicationDispense:prescriptionSignature:receiptSignature:dispenseSignature:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit13ErxChargeItemV10identifier8fhirData6taskId11enteredDate10accessCode10medication0O7Request7patient12practitioner12organization8pharmacy7invoice0O8Dispense21prescriptionSignature07receiptX008dispenseX0ACSS_10Foundation0H0VSSSgA2wA0C10MedicationVSgAA0c10MedicationP0VAA0C7PatientVSgAA0C12PractitionerVSgAA0C12OrganizationVSgAA15DavOrganizationVSgAA10DavInvoiceVSgAA013DavMedicationV0VSgAA0cX0VSgA21_A21_tcfc">init(identifier:<wbr>fhirData:<wbr>taskId:<wbr>enteredDate:<wbr>accessCode:<wbr>medication:<wbr>medicationRequest:<wbr>patient:<wbr>practitioner:<wbr>organization:<wbr>pharmacy:<wbr>invoice:<wbr>medicationDispense:<wbr>prescriptionSignature:<wbr>receiptSignature:<wbr>dispenseSignature:<wbr>)</a>
+                    <a name="/s:6eRpKit13ErxChargeItemV10identifier8fhirData6taskId11enteredDate10accessCode10medication0O7Request7patient12practitioner12organization8pharmacy7invoice0O8Dispense21prescriptionSignature07receiptX008dispenseX06isReadACSS_10Foundation0H0VSSSgA2xA0C10MedicationVSgAA0c10MedicationP0VAA0C7PatientVSgAA0C12PractitionerVSgAA0C12OrganizationVSgAA15DavOrganizationVSgAA10DavInvoiceVSgAA013DavMedicationV0VSgAA0cX0VSgA22_A22_Sbtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(identifier:fhirData:taskId:enteredDate:accessCode:medication:medicationRequest:patient:practitioner:organization:pharmacy:invoice:medicationDispense:prescriptionSignature:receiptSignature:dispenseSignature:isRead:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit13ErxChargeItemV10identifier8fhirData6taskId11enteredDate10accessCode10medication0O7Request7patient12practitioner12organization8pharmacy7invoice0O8Dispense21prescriptionSignature07receiptX008dispenseX06isReadACSS_10Foundation0H0VSSSgA2xA0C10MedicationVSgAA0c10MedicationP0VAA0C7PatientVSgAA0C12PractitionerVSgAA0C12OrganizationVSgAA15DavOrganizationVSgAA10DavInvoiceVSgAA013DavMedicationV0VSgAA0cX0VSgA22_A22_Sbtcfc">init(identifier:<wbr>fhirData:<wbr>taskId:<wbr>enteredDate:<wbr>accessCode:<wbr>medication:<wbr>medicationRequest:<wbr>patient:<wbr>practitioner:<wbr>organization:<wbr>pharmacy:<wbr>invoice:<wbr>medicationDispense:<wbr>prescriptionSignature:<wbr>receiptSignature:<wbr>dispenseSignature:<wbr>isRead:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -481,7 +481,7 @@ Main Usage of the ChargeItem is to enable the billing process and internal cost 
     <span class="nv">enteredDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">medication</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxMedication.html">ErxMedication</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-    <span class="nv">medicationRequest</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxMedicationRequest.html">ErxMedicationRequest</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/ErxMedicationRequest.html">ErxMedicationRequest</a></span><span class="p">(),</span>
+    <span class="nv">medicationRequest</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxMedicationRequest.html">ErxMedicationRequest</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/ErxMedicationRequest.html">ErxMedicationRequest</a></span><span class="p">(</span><span class="nv">quantity</span><span class="p">:</span> <span class="kc">nil</span><span class="p">),</span>
     <span class="nv">patient</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxPatient.html">ErxPatient</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">practitioner</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxPractitioner.html">ErxPractitioner</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">organization</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxOrganization.html">ErxOrganization</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -490,7 +490,8 @@ Main Usage of the ChargeItem is to enable the billing process and internal cost 
     <span class="nv">medicationDispense</span><span class="p">:</span> <span class="kt"><a href="../Structs/DavMedicationDispense.html">DavMedicationDispense</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">prescriptionSignature</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxSignature.html">ErxSignature</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">receiptSignature</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxSignature.html">ErxSignature</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-    <span class="nv">dispenseSignature</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxSignature.html">ErxSignature</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+    <span class="nv">dispenseSignature</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxSignature.html">ErxSignature</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">isRead</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span>
 <span class="p">)</span></code></pre>
 
                         </div>
@@ -667,6 +668,33 @@ Main Usage of the ChargeItem is to enable the billing process and internal cost 
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit13ErxChargeItemV6isReadSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isRead" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit13ErxChargeItemV6isReadSbvp">isRead</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Indicates if the message about the ChargeItem in the order section has been opened by the user</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isRead</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -1047,7 +1075,7 @@ and can be extracted as a <code>ErxChargeItem</code></p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-12)</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-15)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

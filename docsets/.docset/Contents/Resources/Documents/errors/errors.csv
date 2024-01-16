@@ -1,5 +1,5 @@
 Error Code,Technical Name,Description/Reason,Referenced Error
-i-54001,"AVSError.network","In case of HTTP/Connection error",HTTPError
+i-54001,"AVSError.network","In case of HTTP/Connection error",HTTPClientError
 i-54002,"AVSError.invalidAVSMessageInput","When failed to create an AVSMessage",
 i-54003,"AVSError.invalidX509Input","When an X509 certificate was of unexpected format",
 i-54004,"AVSError.unspecified","Conversion error when trying to cast to `AVSError` but error type was different",
@@ -61,6 +61,9 @@ i-01503,"MainDomain.Error.importDuplicate","Import of shared Task failed due to 
 i-01504,"MainDomain.Error.repositoryError","Saving or retrieving data failed",ErxRepositoryError
 i-01601,"PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02301,"MatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
+i-03701,"DefaultOrdersRepository.Error.erxRepository","",ErxRepositoryError
+i-03702,"DefaultOrdersRepository.Error.pharmacyRepository","",PharmacyRepositoryError
+i-03703,"DefaultOrdersRepository.Error.unspecified","",
 i-02401,"RedeemServiceError.eRxRepository","When redeeming a task via Fachdienst",ErxRepositoryError
 i-02402,"RedeemServiceError.avs","When redeeming a task via AVS",AVSError
 i-02403,"RedeemServiceError.internalError","When an internal error occurs which most likely is a programming error",RedeemServiceError.InternalError
@@ -156,7 +159,7 @@ i-20302,"LocalStoreError.initialization","",
 i-20303,"LocalStoreError.write","",
 i-20304,"LocalStoreError.delete","",
 i-20305,"LocalStoreError.read","",
-i-20401,"RemoteStoreError.fhirClientError","",
+i-20401,"RemoteStoreError.fhirClient","",FHIRClient.Error
 i-20402,"RemoteStoreError.notImplemented","",
 i-20501,"ScannedErxTask.Error.format","",
 i-20502,"ScannedErxTask.Error.invalidID","",
@@ -185,17 +188,16 @@ i-50401,"ShipmentInfoCoreDataStore.Error.noMatchingEntity","",
 i-50402,"ShipmentInfoCoreDataStore.Error.internalError","",
 i-58001,"RemoteStorageBundleParsingError.parseError","",
 i-52001,"FHIRClient.Error.internalError","",
-i-52002,"FHIRClient.Error.httpError","",HTTPError
-i-52003,"FHIRClient.Error.operationOutcome","",
 i-52004,"FHIRClient.Error.inconsistentResponse","When the server returned a successful response with inconsistent response data.\nE.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.",
 i-52005,"FHIRClient.Error.decoding","",
 i-52006,"FHIRClient.Error.unknown","",
-i-53001,"HTTPError.internalError","Internal error in the request/chain handling",
-i-53002,"HTTPError.httpError","The server responded with an error",
-i-53003,"HTTPError.networkError","The connection to the server has gone bad",
-i-53004,"HTTPError.authentication","Authentication error",
-i-53005,"HTTPError.vauError","Error emitted by the VAU client",
-i-53006,"HTTPError.unknown","Unclassified error",
+i-52007,"FHIRClient.Error.http","",
+i-53001,"HTTPClientError.internalError","Internal error in the request/chain handling",
+i-53002,"HTTPClientError.httpError","The server responded with an error",
+i-53003,"HTTPClientError.networkError","The connection to the server has gone bad",
+i-53004,"HTTPClientError.authentication","Authentication error",
+i-53005,"HTTPClientError.vauError","Error emitted by the VAU client",
+i-53006,"HTTPClientError.unknown","Unclassified error",
 i-10201,"BiometricsSHA256Signer.Error.sessionClosed","",
 i-10202,"BiometricsSHA256Signer.Error.signatureFailed","",
 i-10301,"JWE.Error.invalidJWE","",
@@ -209,7 +211,7 @@ i-10501,"KeyVerifier.Error.stringConversion","",
 i-10601,"TokenPayload.Error.dataEncoding","",
 i-10602,"TokenPayload.Error.stringConversion","",
 i-10603,"TokenPayload.Error.decryption","",
-i-10001,"IDPError.network","In case of HTTP/Connection error",HTTPError
+i-10001,"IDPError.network","In case of HTTP/Connection error",HTTPClientError
 i-10002,"IDPError.validation","In case a response (or request) could not be (cryptographically) verified",
 i-10003,"IDPError.tokenUnavailable","When a token is being requested, but none can be found",
 i-10004,"IDPError.unspecified","Other error cases",
@@ -295,7 +297,7 @@ i-57002,"PharmacyFHIRDataSource.Error.notFound","",
 i-57101,"PharmacyRepositoryError.local","",LocalStoreError
 i-57102,"PharmacyRepositoryError.remote","",PharmacyFHIRDataSource.Error
 i-56201,"TrustAnchor.Error.invalidPEM","",
-i-56001,"TrustStoreError.network","In case of HTTP/Connection error",HTTPError
+i-56001,"TrustStoreError.network","In case of HTTP/Connection error",HTTPClientError
 i-56002,"TrustStoreError.noCertificateFound","When failed to extract a certificate from the CertList",
 i-56003,"TrustStoreError.invalidOCSPResponse","When one (or more) OCSP response(s) can not be parsed or do not meet expiry conditions",
 i-56004,"TrustStoreError.eeCertificateOCSPStatusVerification","When one (or more) end entity certificate cannot be status verified by given OCSP responses",
@@ -308,7 +310,7 @@ i-5614,"TrustStoreError.InternalError.trustStoreCertListUnexpectedNil","",
 i-5615,"TrustStoreError.InternalError.loadOCSPResponsesUnexpectedNil","",
 i-5616,"TrustStoreError.InternalError.missingSignerForEECertificate","",
 i-5617,"TrustStoreError.InternalError.notImplemented","",
-i-55001,"VAUError.network","In case of HTTP/Connection error",HTTPError
+i-55001,"VAUError.network","In case of HTTP/Connection error",HTTPClientError
 i-55002,"VAUError.certificateDecoding","When failed to extract a X.509 VAU certificate information",
 i-55003,"VAUError.internalCryptoError","When internal cryptographic operations fail",
 i-55004,"VAUError.responseValidation","In case a response (or request) could not be (cryptographically) verified",

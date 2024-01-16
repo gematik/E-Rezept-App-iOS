@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.17.0
+           1.18.0
  Docs
         </a>
          (100% documented)
@@ -481,9 +481,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit24DefaultErxTaskRepositoryC4disk5cloudAcA0D14LocalDataStore_p_AA0d6RemotejK0_ptcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(disk:cloud:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit24DefaultErxTaskRepositoryC4disk5cloudAcA0D14LocalDataStore_p_AA0d6RemotejK0_ptcfc">init(disk:<wbr>cloud:<wbr>)</a>
+                    <a name="/s:6eRpKit24DefaultErxTaskRepositoryC4disk5cloud7profileAcA0D14LocalDataStore_p_AA0d6RemotekL0_p7Combine12AnyPublisherVyAA7ProfileVAA0jL5ErrorOGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(disk:cloud:profile:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit24DefaultErxTaskRepositoryC4disk5cloud7profileAcA0D14LocalDataStore_p_AA0d6RemotekL0_p7Combine12AnyPublisherVyAA7ProfileVAA0jL5ErrorOGtcfc">init(disk:<wbr>cloud:<wbr>profile:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -498,7 +498,11 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">required</span> <span class="nf">init</span><span class="p">(</span><span class="nv">disk</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ErxLocalDataStore.html">ErxLocalDataStore</a></span><span class="p">,</span> <span class="nv">cloud</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ErxRemoteDataStore.html">ErxRemoteDataStore</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">required</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="nv">disk</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ErxLocalDataStore.html">ErxLocalDataStore</a></span><span class="p">,</span>
+    <span class="nv">cloud</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ErxRemoteDataStore.html">ErxRemoteDataStore</a></span><span class="p">,</span>
+    <span class="nv">profile</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/Profile.html">Profile</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/LocalStoreError.html">LocalStoreError</a></span><span class="o">&gt;</span>
+<span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1056,9 +1060,9 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit24DefaultErxTaskRepositoryC28countAllUnreadCommunications3for7Combine12AnyPublisherVySiAA0dF5ErrorOGAA0dE0V13CommunicationV7ProfileO_tF"></a>
-                    <a name="//apple_ref/swift/Method/countAllUnreadCommunications(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit24DefaultErxTaskRepositoryC28countAllUnreadCommunications3for7Combine12AnyPublisherVySiAA0dF5ErrorOGAA0dE0V13CommunicationV7ProfileO_tF">countAllUnreadCommunications(for:<wbr>)</a>
+                    <a name="/s:6eRpKit24DefaultErxTaskRepositoryC42countAllUnreadCommunicationsAndChargeItems3for7Combine12AnyPublisherVySiAA0dF5ErrorOGAA0dE0V13CommunicationV7ProfileO_tF"></a>
+                    <a name="//apple_ref/swift/Method/countAllUnreadCommunicationsAndChargeItems(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit24DefaultErxTaskRepositoryC42countAllUnreadCommunicationsAndChargeItems3for7Combine12AnyPublisherVySiAA0dF5ErrorOGAA0dE0V13CommunicationV7ProfileO_tF">countAllUnreadCommunicationsAndChargeItems(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1066,15 +1070,16 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Returns a count for all unread communications for the given profile</p>
+                        <p>Returns a count for all unread communications for the given  communication profile
+and for all unread ChargeItems</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">countAllUnreadCommunications</span><span class="p">(</span>
-    <span class="k">for</span> <span class="nv">profile</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">Communication</span><span class="o">.</span><span class="kt"><a href="../Structs/Profile.html">Profile</a></span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">countAllUnreadCommunicationsAndChargeItems</span><span class="p">(</span>
+    <span class="k">for</span> <span class="nv">fhirProfile</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">Communication</span><span class="o">.</span><span class="kt"><a href="../Structs/Profile.html">Profile</a></span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt"><a href="../Classes/DefaultErxTaskRepository.html#/s:6eRpKit24DefaultErxTaskRepositoryC9ErrorTypea">ErrorType</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -1091,7 +1096,7 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>profile for which you want to have the count</p>
+                                  <p>Communication profile for which you want to have the count</p>
                                 </div>
                               </td>
                             </tr>
@@ -1322,7 +1327,7 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-12)</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-15)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

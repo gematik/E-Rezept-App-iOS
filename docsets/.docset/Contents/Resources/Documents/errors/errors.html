@@ -65,6 +65,8 @@ id="toc-maindomain.error"><code>MainDomain.Error</code></a></li>
 id="toc-prescriptiondetaildomain.loadingimageerror"><code>PrescriptionDetailDomain.LoadingImageError</code></a></li>
 <li><a href="#matrixcodedomain.loadingimageerror"
 id="toc-matrixcodedomain.loadingimageerror"><code>MatrixCodeDomain.LoadingImageError</code></a></li>
+<li><a href="#defaultordersrepository.error"
+id="toc-defaultordersrepository.error"><code>DefaultOrdersRepository.Error</code></a></li>
 <li><a href="#redeemserviceerror"
 id="toc-redeemserviceerror"><code>RedeemServiceError</code></a></li>
 <li><a href="#redeemserviceerror.internalerror"
@@ -135,8 +137,8 @@ id="toc-shipmentinfocoredatastore.error"><code>ShipmentInfoCoreDataStore.Error</
 id="toc-remotestoragebundleparsingerror"><code>RemoteStorageBundleParsingError</code></a></li>
 <li><a href="#fhirclient.error"
 id="toc-fhirclient.error"><code>FHIRClient.Error</code></a></li>
-<li><a href="#httperror"
-id="toc-httperror"><code>HTTPError</code></a></li>
+<li><a href="#httpclienterror"
+id="toc-httpclienterror"><code>HTTPClientError</code></a></li>
 <li><a href="#biometricssha256signer.error"
 id="toc-biometricssha256signer.error"><code>BiometricsSHA256Signer.Error</code></a></li>
 <li><a href="#jwe.error"
@@ -179,7 +181,7 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><code>network</code> (i-54001): [In case of HTTP/Connection error]
 <ul>
-<li><a href="#httperror">HTTPError</a></li>
+<li><a href="#httpclienterror">HTTPClientError</a></li>
 </ul></li>
 <li><code>invalidAVSMessageInput</code> (i-54002): [When failed to
 create an AVSMessage]</li>
@@ -447,6 +449,24 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><code>matrixCodeGenerationFailed</code> (i-02301):</li>
 </ul>
+<h2
+id="defaultordersrepository.error"><code>DefaultOrdersRepository.Error</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Orders/OrdersRepository.swift">OrdersRepository.swift</a></p>
+<ul>
+<li><code>erxRepository</code> (i-03701):
+<ul>
+<li><a href="#erxrepositoryerror">ErxRepositoryError</a></li>
+</ul></li>
+<li><code>pharmacyRepository</code> (i-03702):
+<ul>
+<li><a href="#pharmacyrepositoryerror">PharmacyRepositoryError</a></li>
+</ul></li>
+<li><code>unspecified</code> (i-03703):
+<ul>
+<li><a href="#swift.error">Swift.Error</a></li>
+</ul></li>
+</ul>
 <h2 id="redeemserviceerror"><code>RedeemServiceError</code></h2>
 <p><em>Source:</em> <a
 href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
@@ -531,7 +551,7 @@ href="#nfctagreadersession.error">NFCTagReaderSession.Error</a></li>
 <h2
 id="chargeitemconsentservice.error"><code>ChargeItemConsentService.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemConsentService.swift">ChargeItemConsentService.swift</a></p>
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemConsentService+Error.swift">ChargeItemConsentService+Error.swift</a></p>
 <ul>
 <li><code>localStore</code> (i-03601):
 <ul>
@@ -833,9 +853,9 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <p><em>Source:</em> <a
 href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/RemoteStoreError.swift">RemoteStoreError.swift</a></p>
 <ul>
-<li><code>fhirClientError</code> (i-20401):
+<li><code>fhirClient</code> (i-20401):
 <ul>
-<li><a href="#error">Error</a></li>
+<li><a href="#fhirclient.error">FHIRClient.Error</a></li>
 </ul></li>
 <li><code>notImplemented</code> (i-20402):</li>
 </ul>
@@ -967,14 +987,6 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><a href="#string">String</a></li>
 </ul></li>
-<li><code>httpError</code> (i-52002):
-<ul>
-<li><a href="#httperror">HTTPError</a></li>
-</ul></li>
-<li><code>operationOutcome</code> (i-52003):
-<ul>
-<li><a href="#operationoutcome">OperationOutcome</a></li>
-</ul></li>
 <li><code>inconsistentResponse</code> (i-52004): [When the server
 returned a successful response with inconsistent response data., E.g. no
 task(s) found in a Fetch response where we normally would have expected
@@ -987,8 +999,12 @@ a HTTP 404 instead.]</li>
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
+<li><code>http</code> (i-52007):
+<ul>
+<li><a href="#fhirclienthttperror">FHIRClientHttpError</a></li>
+</ul></li>
 </ul>
-<h2 id="httperror"><code>HTTPError</code></h2>
+<h2 id="httpclienterror"><code>HTTPClientError</code></h2>
 <p><em>Source:</em> <a
 href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/HTTPClient/HTTPClient.swift">HTTPClient.swift</a></p>
 <ul>
@@ -1068,7 +1084,7 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><code>network</code> (i-10001): [In case of HTTP/Connection error]
 <ul>
-<li><a href="#httperror">HTTPError</a></li>
+<li><a href="#httpclienterror">HTTPClientError</a></li>
 </ul></li>
 <li><code>validation</code> (i-10002): [In case a response (or request)
 could not be (cryptographically) verified]
@@ -1298,7 +1314,7 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><code>network</code> (i-56001): [In case of HTTP/Connection error]
 <ul>
-<li><a href="#httperror">HTTPError</a></li>
+<li><a href="#httpclienterror">HTTPClientError</a></li>
 </ul></li>
 <li><code>noCertificateFound</code> (i-56002): [When failed to extract a
 certificate from the CertList]</li>
@@ -1335,7 +1351,7 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><code>network</code> (i-55001): [In case of HTTP/Connection error]
 <ul>
-<li><a href="#httperror">HTTPError</a></li>
+<li><a href="#httpclienterror">HTTPClientError</a></li>
 </ul></li>
 <li><code>certificateDecoding</code> (i-55002): [When failed to extract
 a X.509 VAU certificate information]</li>
