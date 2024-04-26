@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.20.0 Docs
+           1.21.0 Docs
         </a>
          (100% documented)
       </p>
@@ -78,16 +78,7 @@
             <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/Colors.html">Colors</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/ProfilePicture.html">ProfilePicture</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/SFSymbolName.html">SFSymbolName</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/UnicodeCharacter.html">UnicodeCharacter</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/Validity.html">Validity</a>
@@ -416,6 +407,9 @@
                 <a class="nav-group-task-link" href="Extensions/ProfileCoreDataStore.html">ProfileCoreDataStore</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp16ProgressResponseO">ProgressResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp18RedeemServiceErrorO">RedeemServiceError</a>
               </li>
               <li class="nav-group-task">
@@ -423,6 +417,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/Result.html">Result</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp15ReviewRequesterV">ReviewRequester</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/ScanCAN.html">ScanCAN</a>
@@ -537,13 +534,13 @@
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_8#2,O.Arch_2#2] CoreData databases are protected
 self.fileProtection = fileProtection
 </code></pre>
-<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-60-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:60</code></h4>
+<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-59-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:59</code></h4>
 
 <p>actual protection setting on file system level</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_8#3,O.Arch_2#3] actual protection setting on file system level
 protectedStoreDescription.setOption(
 </code></pre>
-<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-84-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:84</code></h4>
+<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-83-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:83</code></h4>
 
 <p>Database backup exclusion</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_8#4,O.Arch_2#4,O.Arch_4#2,O.Data_15#1] Database backup exclusion
@@ -574,7 +571,7 @@ public class UserDefaultsStore: UserDataStore {
 <h3 id='o-arch_4' class='heading'>O.Arch_4</h3>
 
 <p>All data is either stored encrypted within the keychain or excluded from system backup, which also excludes files from cloud backup.</p>
-<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-84-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:84</code></h4>
+<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-83-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:83</code></h4>
 
 <p>Database backup exclusion</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_8#4,O.Arch_2#4,O.Arch_4#2,O.Data_15#1] Database backup exclusion
@@ -598,7 +595,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <h3 id='o-arch_6' class='heading'>O.Arch_6</h3>
 
 <p>Apple already implements this with a signed binary delivered to customers. An altered application can only run on a jailbroken device. If a user is using a jailbroken device, may it be known or unknown, we display a security alert so a user can make an informed decision to use or not use the application.</p>
-<h4 id='code-sources-erpapp-screens-main-mainview-swift-123-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:123</code></h4>
+<h4 id='code-sources-erpapp-screens-main-mainview-swift-122-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:122</code></h4>
 
 <p>trigger device security check</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
@@ -616,7 +613,7 @@ var showSystemSecurityWarning: AnyPublisher&lt;DeviceSecurityWarningType, Never&
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#4,O.Resi_2#4] Jailbreak detection
 func informJailbreakDetected() -&gt; Bool {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-devicesecurity-devicesecurityrooteddevice-devicesecurityrooteddeviceview-swift-8-code' class='heading'><code>../Sources/eRpApp/Screens/Main/DeviceSecurity/DeviceSecurityRootedDevice/DeviceSecurityRootedDeviceView.swift:8</code></h4>
+<h4 id='code-sources-erpapp-screens-main-devicesecurity-devicesecurityrooteddevice-devicesecurityrooteddeviceview-swift-9-code' class='heading'><code>../Sources/eRpApp/Screens/Main/DeviceSecurity/DeviceSecurityRootedDevice/DeviceSecurityRootedDeviceView.swift:9</code></h4>
 
 <p>Jailbreak information view</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#5,O.Resi_2#5] Jailbreak information view
@@ -650,7 +647,7 @@ struct DataPrivacyView: View {
 <h3 id='o-arch_9' class='heading'>O.Arch_9</h3>
 
 <p>Link within DataPrivacy.html to <a href="https://www.gematik.de/datensicherheit">https://www.gematik.de/datensicherheit</a></p>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardinglegalinfoview-swift-162-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingLegalInfoView.swift:162</code></h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardinglegalinfoview-swift-163-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingLegalInfoView.swift:163</code></h4>
 
 <p>DataPrivacy display within Onboarding</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_9#2] DataPrivacy display within Onboarding
@@ -687,7 +684,7 @@ NavigationLinkStore(
 // [REQ:BSI-eRp-ePA:O.Auth_3#2,O.Plat_10#2] Start login with KK
 return .publisher(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-190-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:190</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-193-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:193</code></h4>
 
 <p>Implementation of eGK connection</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_3#2] Implementation of eGK connection
@@ -706,7 +703,7 @@ case let .signChallenge(challenge):
 // [REQ:BSI-eRp-ePA:O.Auth_5#2] Actual Button to open the audit events
 NavigationLinkStore(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-profiles-protocol-auditeventsview-swift-11-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsView.swift:11</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-profiles-protocol-auditeventsview-swift-12-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsView.swift:12</code></h4>
 
 <p>View displaying the audit events</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19177#1,A_19185#2] View displaying the audit events
@@ -1006,7 +1003,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <h3 id='o-data_6' class='heading'>O.Data_6</h3>
 
 <p>Collected data is sparse and use case related as required.</p>
-<h4 id='code-sources-erpapp-screens-cardwall-can-cardwallcanview-swift-162-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/CAN/CardWallCANView.swift:162</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-can-cardwallcanview-swift-163-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/CAN/CardWallCANView.swift:163</code></h4>
 
 <p>CAN is used for eGK connection</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_2#2,O.Data_6#2] CAN is used for eGK connection
@@ -1019,7 +1016,7 @@ CardWallCANInputView(
 // [REQ:BSI-eRp-ePA:O.Source_1#1] Scanning tasks starts with scanner callback
 viewStore.send(.analyse(scanOutput: $0))
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-pin-cardwallpinview-swift-30-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/PIN/CardWallPINView.swift:30</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-pin-cardwallpinview-swift-31-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/PIN/CardWallPINView.swift:31</code></h4>
 
 <p>PIN is used for eGK Connection</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_2#3,O.Data_6#4] PIN is used for eGK Connection
@@ -1062,13 +1059,13 @@ class AVScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
 <h3 id='o-data_10' class='heading'>O.Data_10</h3>
 
 <p>Password fields are marked as such and thus disallow autocorrections. Search for <code>SecureField</code> or <code>SecureFieldWithReveal</code> for all usages.</p>
-<h4 id='code-sources-erpapp-appdelegate-swift-36-code' class='heading'><code>../Sources/eRpApp/AppDelegate.swift:36</code></h4>
+<h4 id='code-sources-erpapp-appdelegate-swift-35-code' class='heading'><code>../Sources/eRpApp/AppDelegate.swift:35</code></h4>
 
 <p>Keyboard extensions are disallowed</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Data_10#2] Keyboard extensions are disallowed
 func application(
 </code></pre>
-<h4 id='code-sources-erpapp-components-controls-securefieldwithreveal-swift-35-code' class='heading'><code>../Sources/eRpApp/Components/Controls/SecureFieldWithReveal.swift:35</code></h4>
+<h4 id='code-sources-erpapp-components-controls-securefieldwithreveal-swift-36-code' class='heading'><code>../Sources/eRpApp/Components/Controls/SecureFieldWithReveal.swift:36</code></h4>
 
 <p><code>SecureFields</code> are used for password input.</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Data_10#3] `SecureFields` are used for password input.
@@ -1102,7 +1099,7 @@ removeBlurOverlayFromWindow()
 <h3 id='o-data_15' class='heading'>O.Data_15</h3>
 
 <p>Biometric keys are always bound to the device and cannot leave the secure enclave. Actual user data is excluded from backups and cannot be exported.</p>
-<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-84-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:84</code></h4>
+<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-83-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:83</code></h4>
 
 <p>Database backup exclusion</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_8#4,O.Arch_2#4,O.Arch_4#2,O.Data_15#1] Database backup exclusion
@@ -1244,7 +1241,7 @@ struct CreatePasswordView: View {
 <h3 id='o-plat_1' class='heading'>O.Plat_1</h3>
 
 <p>We test for device pincode at startup and show a dialog if no pin is set.</p>
-<h4 id='code-sources-erpapp-screens-main-mainview-swift-123-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:123</code></h4>
+<h4 id='code-sources-erpapp-screens-main-mainview-swift-122-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:122</code></h4>
 
 <p>trigger device security check</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
@@ -1380,7 +1377,7 @@ let navigationDelegate = DataPrivacyTermsOfUseNavigationDelegate()
 
 <p>During the onboarding process the user is forced to secure the access to the app either via a biometric trait or a strong password.</p>
 <h3 id='o-purp_1' class='heading'>O.Purp_1</h3>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardinglegalinfoview-swift-141-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingLegalInfoView.swift:141</code></h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardinglegalinfoview-swift-142-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingLegalInfoView.swift:142</code></h4>
 
 <p>Display as part of the onboarding</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_1#1] Display as part of the onboarding
@@ -1402,13 +1399,13 @@ struct DataPrivacyView: View {
 // [REQ:BSI-eRp-ePA:O.Source_1#1] Scanning tasks starts with scanner callback
 viewStore.send(.analyse(scanOutput: $0))
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-can-cardwallcanview-swift-162-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/CAN/CardWallCANView.swift:162</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-can-cardwallcanview-swift-163-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/CAN/CardWallCANView.swift:163</code></h4>
 
 <p>CAN is used for eGK connection</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_2#2,O.Data_6#2] CAN is used for eGK connection
 CardWallCANInputView(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-pin-cardwallpinview-swift-30-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/PIN/CardWallPINView.swift:30</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-pin-cardwallpinview-swift-31-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/PIN/CardWallPINView.swift:31</code></h4>
 
 <p>PIN is used for eGK Connection</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_2#3,O.Data_6#4] PIN is used for eGK Connection
@@ -1433,7 +1430,7 @@ if optIn {
 struct PharmacyContactView: View {
 </code></pre>
 <h3 id='o-purp_3' class='heading'>O.Purp_3</h3>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardinglegalinfoview-swift-103-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingLegalInfoView.swift:103</code></h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardinglegalinfoview-swift-104-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingLegalInfoView.swift:104</code></h4>
 
 <p>Terms of Use display is part of the onboarding</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
@@ -1446,13 +1443,13 @@ struct OnboardingTermsOfUseView: View {
 // [REQ:BSI-eRp-ePA:O.Arch_8#1] Webview containint local html without javascript
 struct TermsOfUseView: View {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardinglegalinfoview-swift-41-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingLegalInfoView.swift:41</code></h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardinglegalinfoview-swift-42-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingLegalInfoView.swift:42</code></h4>
 
 <p>User acceptance</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_3#3] User acceptance
 OnboardingLegalInfoCheckmarkView(isAccepted: $isAllAccepted)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardingcontainer-swift-62-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingContainer.swift:62</code></h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingcontainer-swift-63-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingContainer.swift:63</code></h4>
 
 <p>Callback triggers tracking alert</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
@@ -1561,20 +1558,20 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_8#2,O.Arch_2#2] CoreData databases are protected
 self.fileProtection = fileProtection
 </code></pre>
-<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-60-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:60</code></h4>
+<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-59-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:59</code></h4>
 
 <p>actual protection setting on file system level</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_8#3,O.Arch_2#3] actual protection setting on file system level
 protectedStoreDescription.setOption(
 </code></pre>
-<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-84-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:84</code></h4>
+<h4 id='code-sources-erplocalstorage-coredatacontroller-swift-83-code' class='heading'><code>../Sources/eRpLocalStorage/CoreDataController.swift:83</code></h4>
 
 <p>Database backup exclusion</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_8#4,O.Arch_2#4,O.Arch_4#2,O.Data_15#1] Database backup exclusion
 if excludeFromBackup, let storeUrl = store.url {
 </code></pre>
 <h3 id='o-purp_9' class='heading'>O.Purp_9</h3>
-<h4 id='code-sources-erpapp-screens-settings-idptokenview-idptokenview-swift-10-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/IDPTokenView/IDPTokenView.swift:10</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-idptokenview-idptokenview-swift-11-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/IDPTokenView/IDPTokenView.swift:11</code></h4>
 
 <p>Access and SSO Token display</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_9#1] Access and SSO Token display
@@ -1626,13 +1623,13 @@ static func generateSecureRandom(length: Int, randomizer: SecRandomRef? = kSecRa
 <h3 id='o-resi_1' class='heading'>O.Resi_1</h3>
 
 <p>The onboarding contains defaults that are best practices, such as using biometrics for authentication. While using the Cardwall, selecting the &ldquo;save login&rdquo; option results in an dialog with additional information, to let the user make informed decisions. A missing device passcode results in a dialog that is recommending the setup of a device passcode.</p>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardingregisterauthenticationview-swift-10-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingRegisterAuthenticationView.swift:10</code></h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingregisterauthenticationview-swift-11-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingRegisterAuthenticationView.swift:11</code></h4>
 
 <p>View containing onboarding authentication</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Resi_1#2] View containing onboarding authentication
 struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptionview-swift-118-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionView.swift:118</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptionview-swift-119-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionView.swift:119</code></h4>
 
 <p>View containing information regarding the login options.</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
@@ -1648,7 +1645,7 @@ struct DeviceSecuritySystemPinView: View {
 <h3 id='o-resi_2' class='heading'>O.Resi_2</h3>
 
 <p>Jailbreak detection is done on startup of the application after the app authentication. If a jailbreak is detected, a information dialog is presented to the user.</p>
-<h4 id='code-sources-erpapp-screens-main-mainview-swift-123-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:123</code></h4>
+<h4 id='code-sources-erpapp-screens-main-mainview-swift-122-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:122</code></h4>
 
 <p>trigger device security check</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
@@ -1666,7 +1663,7 @@ var showSystemSecurityWarning: AnyPublisher&lt;DeviceSecurityWarningType, Never&
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#4,O.Resi_2#4] Jailbreak detection
 func informJailbreakDetected() -&gt; Bool {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-devicesecurity-devicesecurityrooteddevice-devicesecurityrooteddeviceview-swift-8-code' class='heading'><code>../Sources/eRpApp/Screens/Main/DeviceSecurity/DeviceSecurityRootedDevice/DeviceSecurityRootedDeviceView.swift:8</code></h4>
+<h4 id='code-sources-erpapp-screens-main-devicesecurity-devicesecurityrooteddevice-devicesecurityrooteddeviceview-swift-9-code' class='heading'><code>../Sources/eRpApp/Screens/Main/DeviceSecurity/DeviceSecurityRootedDevice/DeviceSecurityRootedDeviceView.swift:9</code></h4>
 
 <p>Jailbreak information view</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#5,O.Resi_2#5] Jailbreak information view
@@ -1989,7 +1986,7 @@ self?.storage.set(token: token)
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Tokn_5#2] Section for Token display
 private struct TokenSectionView: View {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-idptokenview-idptokenview-swift-11-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/IDPTokenView/IDPTokenView.swift:11</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-idptokenview-idptokenview-swift-12-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/IDPTokenView/IDPTokenView.swift:12</code></h4>
 
 <p>Access and SSO Token display</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Purp_9#1] Access and SSO Token display
@@ -2101,13 +2098,21 @@ var request = URLRequest(url: document.authentication.url, cachePolicy: .reloadI
 // [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
 .sign(challengeSession: challengeSession)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-426-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:426</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-478-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:478</code></h4>
 
 <p>Smartcard signature</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 .readAutCertificate()
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-507-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:507</code></h4>
+
+<p>Smartcard signature</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
+// [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
+// [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
+let certificate: AutCertificateResponse
 </code></pre>
 <h3 id='a_20700-05' class='heading'>A_20700-05</h3>
 <h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-141-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:141</code></h4>
@@ -2127,20 +2132,29 @@ var request = URLRequest(url: document.authentication.url, cachePolicy: .reloadI
 // [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
 .sign(challengeSession: challengeSession)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-320-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:320</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-334-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:334</code></h4>
 
 <p>sign</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20526-01] sign
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
-func sign(can: String, pin: String, challenge: IDPChallengeSession)
+func sign( // swiftlint:disable:this function_body_length
+can: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-427-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:427</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-479-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:479</code></h4>
 
 <p>sign</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 .readAutCertificate()
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-508-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:508</code></h4>
+
+<p>sign</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
+// [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
+// [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
+let certificate: AutCertificateResponse
 </code></pre>
 <h3 id='a_21322' class='heading'>A_21322</h3>
 <h4 id='code-sources-erpapp-session-keychainstorage-swift-21-code' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:21</code></h4>
@@ -2157,28 +2171,28 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 </code></pre>
 <h2 id='gemspec_fd_erp' class='heading'>gemSpec_FD_eRp</h2>
 <h3 id='a_19145' class='heading'>A_19145</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-211-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:211</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-212-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:212</code></h4>
 
 <p>prevent deletion while task is in progress</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_19145] prevent deletion while task is in progress
 return erxTask.status != .inProgress
 </code></pre>
 <h3 id='a_21267' class='heading'>A_21267</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-29-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:29</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-30-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:30</code></h4>
 
 <p>direct assignment</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_21267] direct assignment
 var type: PrescriptionType = .regular
 </code></pre>
 <h3 id='a_21360' class='heading'>A_21360</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-175-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:175</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-176-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:176</code></h4>
 
 <p>no redeem informations available for flowtype 169</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_21360] no redeem informations available for flowtype 169
 guard type != .directAssignment
 </code></pre>
 <h3 id='a_22102' class='heading'>A_22102</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-203-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:203</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-204-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:204</code></h4>
 
 <p>prevent deletion of tasks with flowtype 169 while not completed</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
@@ -2346,26 +2360,27 @@ func isValid(on date: Date) -&gt; Bool {
 
 <p>Not applicable as authenticator module is within FdV. Consent is given by using the app.</p>
 <h3 id='a_20526-01' class='heading'>A_20526-01</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-413-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:413</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-411-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:411</code></h4>
 
 <p>sign and verify with idp</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
-func signChallengeWithNFCCard(can: String,
+func signChallengeWithNFCCard(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-447-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:447</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-448-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:448</code></h4>
 
 <p>verify with idp</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
-private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
+func verifyResultWithIDPAsync(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-319-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:319</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-333-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:333</code></h4>
 
 <p>sign</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20526-01] sign
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
-func sign(can: String, pin: String, challenge: IDPChallengeSession)
+func sign( // swiftlint:disable:this function_body_length
+can: String,
 </code></pre>
 <h3 id='a_20527' class='heading'>A_20527</h3>
 
@@ -2607,18 +2622,24 @@ guard let jwt = try? JWT(from: decrypted.idToken),
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
 return challengeSession.sign(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-435-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:435</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-487-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:487</code></h4>
 
 <p>sign with C.CH.AUT</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
 return session.sign(
 </code></pre>
-<h3 id='a_20700-07' class='heading'>A_20700-07</h3>
-<h4 id='code-sources-idp-defaultsecureenclavesignatureprovider-swift-127-code' class='heading'><code>../Sources/IDP/DefaultSecureEnclaveSignatureProvider.swift:127</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-520-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:520</code></h4>
 
-<p>Biometrics only, other modes currently not supported</p>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] Biometrics only, other modes currently not supported
-amr: [
+<p>sign with C.CH.AUT</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
+let signedChallenge = try await session.sign(
+</code></pre>
+<h3 id='a_20700-07' class='heading'>A_20700-07</h3>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-551-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:551</code></h4>
+
+<p>perform signature with OpenHealthCardKit</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] perform signature with OpenHealthCardKit
+card.sign(data: message)
 </code></pre>
 <h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-25-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:25</code></h4>
 
@@ -2634,7 +2655,7 @@ return challengeSession.sign(
 // [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
 .sign(challengeSession: challengeSession)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-425-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:425</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-477-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:477</code></h4>
 
 <p>C.CH.AUT</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
@@ -2642,17 +2663,31 @@ return challengeSession.sign(
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 .readAutCertificate()
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-435-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:435</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-487-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:487</code></h4>
 
 <p>sign with C.CH.AUT</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
 return session.sign(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-466-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:466</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-506-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:506</code></h4>
 
-<p>perform signature with OpenHealthCardKit</p>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] perform signature with OpenHealthCardKit
-card.sign(data: message)
+<p>C.CH.AUT</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
+// [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
+// [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
+let certificate: AutCertificateResponse
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-520-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:520</code></h4>
+
+<p>sign with C.CH.AUT</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
+let signedChallenge = try await session.sign(
+</code></pre>
+<h4 id='code-sources-idp-defaultsecureenclavesignatureprovider-swift-127-code' class='heading'><code>../Sources/IDP/DefaultSecureEnclaveSignatureProvider.swift:127</code></h4>
+
+<p>Biometrics only, other modes currently not supported</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] Biometrics only, other modes currently not supported
+amr: [
 </code></pre>
 <h3 id='a_20740' class='heading'>A_20740</h3>
 <h4 id='code-sources-idp-internal-realidpclient-swift-110-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:110</code></h4>
@@ -2793,7 +2828,7 @@ guard let tokenJWT = try? JWT(from: token.accessToken),
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
 return EffectTask.send(.presentSecurityWarning)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptionview-swift-117-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionView.swift:117</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptionview-swift-118-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionView.swift:118</code></h4>
 
 <p>Actual view</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
@@ -3137,7 +3172,7 @@ environment.resourceHandler.open(url, options: [:]) { result in
 
 <p>The app does not use the TSL. All TSL related parts are handled within the eRp-FD.</p>
 <h3 id='a_17207' class='heading'>A_17207</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-481-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:481</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-566-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:566</code></h4>
 
 <p>Assure only brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -3186,7 +3221,14 @@ guard let alg = certificate.info.algorithm.alg else {
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
 guard certificate.info.algorithm.alg == .bp256r1 else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-429-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:429</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-481-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:481</code></h4>
+
+<p>Assure only brainpoolP256r1 is used</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
+guard let alg = certificate.info.algorithm.alg else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-514-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:514</code></h4>
 
 <p>Assure only brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -3487,7 +3529,7 @@ case bpp256r1(BrainpoolP256r1.KeyExchange.PublicKey,
 let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey() }
 </code></pre>
 <h3 id='gs-a_4357-01' class='heading'>GS-A_4357-01</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-482-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:482</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-567-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:567</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -3528,7 +3570,14 @@ guard let alg = certificate.info.algorithm.alg else {
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
 guard certificate.info.algorithm.alg == .bp256r1 else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-430-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:430</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-482-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:482</code></h4>
+
+<p>Assure that brainpoolP256r1 is used</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
+guard let alg = certificate.info.algorithm.alg else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-515-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:515</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -3546,7 +3595,7 @@ guard let alg = certificate.info.algorithm.alg else {
 guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
 </code></pre>
 <h3 id='gs-a_4357-02' class='heading'>GS-A_4357-02</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-482-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:482</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-567-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:567</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -3587,7 +3636,14 @@ guard let alg = certificate.info.algorithm.alg else {
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
 guard certificate.info.algorithm.alg == .bp256r1 else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-430-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:430</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-482-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:482</code></h4>
+
+<p>Assure that brainpoolP256r1 is used</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
+guard let alg = certificate.info.algorithm.alg else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-515-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:515</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -3608,7 +3664,7 @@ guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? fa
 
 <p>no exceptions set in NSAppTransportSecurity, see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a> </p>
 <h3 id='gs-a_4361-02' class='heading'>GS-A_4361-02</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-482-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:482</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-567-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:567</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -3649,7 +3705,14 @@ guard let alg = certificate.info.algorithm.alg else {
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
 guard certificate.info.algorithm.alg == .bp256r1 else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-430-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:430</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-482-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:482</code></h4>
+
+<p>Assure that brainpoolP256r1 is used</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
+guard let alg = certificate.info.algorithm.alg else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-515-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:515</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -3827,13 +3890,13 @@ let cms = try CMSContentInfo.encryptPartial(data: data)
 <p>We use the recommended NSURLSession for best network security <a href="https://developer.apple.com/documentation/security/preventing_insecure_network_connections">Preventing insecure network connections</a></p>
 <h2 id='gemspec_erp_apovzd' class='heading'>gemSpec_eRp_APOVZD</h2>
 <h3 id='a_21154' class='heading'>A_21154</h3>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-321-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:321</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-324-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:324</code></h4>
 
 <p>If user defined filters contain location element, ask for permission</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_APOVZD:A_21154] If user defined filters contain location element, ask for permission
 if filterOptions.contains(.currentLocation) {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-232-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:232</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-252-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:252</code></h4>
 
 <p>If user defined filters contain location element, ask for permission</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_APOVZD:A_21154] If user defined filters contain location element, ask for permission
@@ -4005,7 +4068,7 @@ Contentsquare.start()
 Toggle(isOn: viewStore.binding(
 </code></pre>
 <h3 id='a_19177' class='heading'>A_19177</h3>
-<h4 id='code-sources-erpapp-screens-settings-profiles-protocol-auditeventsview-swift-10-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsView.swift:10</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-profiles-protocol-auditeventsview-swift-11-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsView.swift:11</code></h4>
 
 <p>View displaying the audit events</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19177#1,A_19185#2] View displaying the audit events
@@ -4074,7 +4137,7 @@ let secretKey = SymmetricKey(data: sharedSecret)
 
 <p>We have no implementation of any sharing mechanism of FD data. </p>
 <h3 id='a_19184' class='heading'>A_19184</h3>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardinganalyticsview-swift-19-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsView.swift:19</code></h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardinganalyticsview-swift-20-code' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingAnalyticsView.swift:20</code></h4>
 
 <p>Information for the user what is collected</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19184] Information for the user what is collected
@@ -4089,7 +4152,7 @@ static let trackingAlertState: AlertState&lt;Action.Alert&gt; = {
 <h3 id='a_19185' class='heading'>A_19185</h3>
 
 <p>Communication with the Fachdienst is protocoled via Audit Events. The user can revise them in the Settings menu (Profile Settings).</p>
-<h4 id='code-sources-erpapp-screens-settings-profiles-protocol-auditeventsview-swift-10-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsView.swift:10</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-profiles-protocol-auditeventsview-swift-11-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsView.swift:11</code></h4>
 
 <p>View displaying the audit events</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19177#1,A_19185#2] View displaying the audit events
@@ -4139,12 +4202,12 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <h3 id='a_19229' class='heading'>A_19229</h3>
 
 <p>Audit events will be deleted when the referencing task is deleted. Cascading relationship &ldquo;task -&gt; audit event&rdquo; is defined in Sources/eRpLocalStorage/Prescriptions/ErxTask.xcdatamodeld/ErxTask.xcdatamodel/contents</p>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-189-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:189</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-193-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:193</code></h4>
 <pre class="highlight plaintext"><code>// Delete
 // [REQ:gemSpec_eRp_FdV:A_19229]
 case .delete:
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-196-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:196</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-200-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:200</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19229]
 case .destination(.presented(.alert(.confirmedDelete))):
 </code></pre>
@@ -4304,7 +4367,7 @@ self.session.invalidateAccessToken()
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-144-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:144</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-146-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:146</code></h4>
 
 <p>no token/not authorized, show authenticator module</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
@@ -4317,21 +4380,21 @@ if Result.success(false) == authenticated {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-387-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:387</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-385-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:385</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 func idpChallengePublisher(for profileID: UUID) -&gt; AsyncStream&lt;CardWallReadCardDomain.Action&gt; {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-412-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:412</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-410-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:410</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
-func signChallengeWithNFCCard(can: String,
+func signChallengeWithNFCCard(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-446-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:446</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-447-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:447</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
-private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
+func verifyResultWithIDPAsync(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-144-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:144</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-146-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:146</code></h4>
 
 <p>no token/not authorized, show authenticator module</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
@@ -4340,7 +4403,7 @@ if Result.success(false) == authenticated {
 <h3 id='a_20181' class='heading'>A_20181</h3>
 
 <p>Screen that presents the DataMatrix code for redeeming a prescription only contains some static texts and the image of the code.</p>
-<h4 id='code-sources-erpapp-screens-matrixcode-matrixcodeview-swift-10-code' class='heading'><code>../Sources/eRpApp/Screens/MatrixCode/MatrixCodeView.swift:10</code></h4>
+<h4 id='code-sources-erpapp-screens-matrixcode-matrixcodeview-swift-11-code' class='heading'><code>../Sources/eRpApp/Screens/MatrixCode/MatrixCodeView.swift:11</code></h4>
 
 <p>Screen that presents the DataMatrix code for redeeming a prescription only contains</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20181#1] Screen that presents the DataMatrix code for redeeming a prescription only contains
@@ -4373,13 +4436,13 @@ public func searchPharmacies(by searchTerm: String,
 /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
 func searchPharmacies(by searchTerm: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-212-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:212</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-215-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:215</code></h4>
 
 <p>search results mirrored verbatim, no sorting, no highlighting</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
 state.searchState = .searchRunning
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-167-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:167</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-183-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:183</code></h4>
 
 <p>search results mirrored verbatim, no sorting, no highlighting</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
@@ -4459,27 +4522,27 @@ state.trackerOptIn = false
 case searchPharmacies(searchTerm: String, position: Position?, filter: [String: String], handler: Handler)
 </code></pre>
 <h3 id='a_20285' class='heading'>A_20285</h3>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-222-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:222</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-225-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:225</code></h4>
 
 <p>pharmacy order is resolved on server side</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20285] pharmacy order is resolved on server side
 state.pharmacies = pharmacies.map {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-176-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:176</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-192-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:192</code></h4>
 
 <p>pharmacy order is resolved on server side</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20285] pharmacy order is resolved on server side
 state.pharmacies = pharmacies.map {
 </code></pre>
 <h3 id='a_20603' class='heading'>A_20603</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-86-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:86</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-90-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:90</code></h4>
 
 <p>Usages of matrixCodeGenerator for code generation. UserProfile is neither part of</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20603] Usages of matrixCodeGenerator for code generation. UserProfile is neither part of
 // the screen nor the state.
 @Dependency(\.erxMatrixCodeGenerator) var matrixCodeGenerator: ErxMatrixCodeGenerator
 </code></pre>
-<h4 id='code-sources-erpapp-screens-matrixcode-matrixcodedomain-swift-51-code' class='heading'><code>../Sources/eRpApp/Screens/MatrixCode/MatrixCodeDomain.swift:51</code></h4>
+<h4 id='code-sources-erpapp-screens-matrixcode-matrixcodedomain-swift-72-code' class='heading'><code>../Sources/eRpApp/Screens/MatrixCode/MatrixCodeDomain.swift:72</code></h4>
 
 <p>Usages of matrixCodeGenerator for code generation. UserProfile is neither part of</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20603] Usages of matrixCodeGenerator for code generation. UserProfile is neither part of
@@ -4644,7 +4707,7 @@ func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -&gt; 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-02-07)</p>
+      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-02-21)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

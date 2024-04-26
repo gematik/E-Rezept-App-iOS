@@ -130,8 +130,6 @@ id="toc-coredatacontroller.error"><code>CoreDataController.Error</code></a></li>
 id="toc-migrationerror"><code>MigrationError</code></a></li>
 <li><a href="#pharmacycoredatastore.error"
 id="toc-pharmacycoredatastore.error"><code>PharmacyCoreDataStore.Error</code></a></li>
-<li><a href="#localstoragebundleparsingerror"
-id="toc-localstoragebundleparsingerror"><code>LocalStorageBundleParsingError</code></a></li>
 <li><a href="#profilecoredatastore.error"
 id="toc-profilecoredatastore.error"><code>ProfileCoreDataStore.Error</code></a></li>
 <li><a href="#shipmentinfocoredatastore.error"
@@ -344,39 +342,52 @@ id="nfcsignatureprovidererror"><code>NFCSignatureProviderError</code></h2>
 <p><em>Source:</em> <a
 href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift">NFCSignatureProvider.swift</a></p>
 <ul>
-<li><code>cardError</code> (i-00401):
+<li><code>cardError</code> (i-00401): [Error while establishing a
+connection to the card]
 <ul>
 <li><a
 href="#nfctagreadersession.error">NFCTagReaderSession.Error</a></li>
 </ul></li>
-<li><code>wrongCAN</code> (i-00403):
+<li><code>wrongCAN</code> (i-00403): [Error while verifying the CAN]
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
-<li><code>cardConnectionError</code> (i-00404):
+<li><code>cardConnectionError</code> (i-00404): [Error while
+establishing Secure channel or card connection]
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
-<li><code>verifyCardError</code> (i-00405):
+<li><code>verifyCardError</code> (i-00405): [Any error related to PIN
+verification]
 <ul>
 <li><a href="#verifypinerror">VerifyPINError</a></li>
 </ul></li>
-<li><code>signingFailure</code> (i-00406):
+<li><code>signingFailure</code> (i-00406): [ESIGN Failed]
 <ul>
 <li><a href="#signingerror">SigningError</a></li>
 </ul></li>
-<li><code>genericError</code> (i-00408):
+<li><code>genericError</code> (i-00408): [Generic error while trying to
+sign the challenge]
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
-<li><code>cardReadingError</code> (i-00409):
+<li><code>cardReadingError</code> (i-00409): [Generic error while
+reading something from the card]
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
-<li><code>secureEnclaveError</code> (i-00410):
+<li><code>secureEnclaveError</code> (i-00410): [Generic error while
+reading something from the card]
 <ul>
 <li><a
 href="#secureenclavesignatureprovidererror">SecureEnclaveSignatureProviderError</a></li>
+</ul></li>
+<li><code>nfcHealthCardSession</code> (i-00411): [Any error regarding
+the communication with the NFC health card itself, or sending/receiving
+data (operation execution)]
+<ul>
+<li><a
+href="#nfchealthcardsessionerror">NFCHealthCardSessionError</a></li>
 </ul></li>
 </ul>
 <h2
@@ -980,16 +991,6 @@ id="pharmacycoredatastore.error"><code>PharmacyCoreDataStore.Error</code></h2>
 href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Pharmacy/PharmacyCoreDataStore.swift">PharmacyCoreDataStore.swift</a></p>
 <ul>
 <li><code>noMatchingEntity</code> (i-50501):</li>
-</ul>
-<h2
-id="localstoragebundleparsingerror"><code>LocalStorageBundleParsingError</code></h2>
-<p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ParsingDuplicates/ModelsR4.Bundle+ErxChargeItem.swift">ModelsR4.Bundle+ErxChargeItem.swift</a></p>
-<ul>
-<li><code>parseError</code> (i-59001):
-<ul>
-<li><a href="#string">String</a></li>
-</ul></li>
 </ul>
 <h2
 id="profilecoredatastore.error"><code>ProfileCoreDataStore.Error</code></h2>
