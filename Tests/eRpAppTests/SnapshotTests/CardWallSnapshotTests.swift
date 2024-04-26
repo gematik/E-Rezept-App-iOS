@@ -50,7 +50,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    func testFastTrackFallbackView() {
+    func testExtAuthFallbackView() {
         let sut = CardWallExtAuthFallbackView(closeAction: {})
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

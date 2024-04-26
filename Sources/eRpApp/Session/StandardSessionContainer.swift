@@ -66,9 +66,7 @@ class StandardSessionContainer: UserSession {
         keychainStorage = KeychainStorage(profileId: profileId, schedulers: schedulers)
     }
 
-    var isDemoMode: Bool {
-        false
-    }
+    var isDemoMode: Bool { false }
 
     lazy var trustStoreSession: TrustStoreSession = {
         guard let trustStoreStorageFilePath = try? FileManager.default.url(
@@ -128,17 +126,9 @@ class StandardSessionContainer: UserSession {
         )
     }()
 
-    lazy var extAuthRequestStorage: ExtAuthRequestStorage = {
-        PersistentExtAuthRequestStorage()
-    }()
-
-    lazy var secureUserStore: SecureUserDataStore = {
-        keychainStorage
-    }()
-
-    lazy var localUserStore: UserDataStore = {
-        UserDefaultsStore()
-    }()
+    lazy var extAuthRequestStorage: ExtAuthRequestStorage = { PersistentExtAuthRequestStorage() }()
+    lazy var secureUserStore: SecureUserDataStore = { keychainStorage }()
+    lazy var localUserStore: UserDataStore = { UserDefaultsStore() }()
 
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = {
         idpSession.isLoggedIn
@@ -195,6 +185,19 @@ class StandardSessionContainer: UserSession {
                 )
             )
         )
+    }()
+
+    lazy var updateChecker: UpdateChecker = {
+        @Dependency(\.updateCheckerFactory) var factory
+
+        let interceptors: [Interceptor] = [
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
+            LoggingInterceptor(log: .body),
+            DebugLiveLogger.LogInterceptor(),
+        ]
+        let client = DefaultHTTPClient(urlSessionConfiguration: .ephemeral, interceptors: interceptors)
+
+        return factory.updateChecker(client, appConfiguration)
     }()
 
     @Dependency(\.erxRemoteDataStoreFactory) var erxRemoteDataStoreFactory: ErxRemoteDataStoreFactory
@@ -291,17 +294,19 @@ class StandardSessionContainer: UserSession {
         prescriptionRepositoryWithActivity
     }
 
+    @Dependency(\.loginHandlerServiceFactory) var loginHandlerServiceFactory: LoginHandlerServiceFactory
+
     lazy var idpSessionLoginHandler: LoginHandler = {
-        DefaultLoginHandler(
-            idpSession: idpSession,
-            signatureProvider: secureEnclaveSignatureProvider
+        loginHandlerServiceFactory.construct(
+            idpSession,
+            secureEnclaveSignatureProvider
         )
     }()
 
     lazy var pairingIdpSessionLoginHandler: LoginHandler = {
-        DefaultLoginHandler(
-            idpSession: pairingIdpSession,
-            signatureProvider: secureEnclaveSignatureProvider
+        loginHandlerServiceFactory.construct(
+            pairingIdpSession,
+            secureEnclaveSignatureProvider
         )
     }()
 

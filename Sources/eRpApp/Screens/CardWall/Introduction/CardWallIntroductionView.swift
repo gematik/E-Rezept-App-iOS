@@ -60,40 +60,15 @@ struct CardWallIntroductionView: View {
                         .font(.headline)
                         .foregroundColor(Colors.systemLabelSecondary)
 
-                    Group {
-                        Button(action: {
-                            viewStore.send(.setNavigation(tag: .fasttrack))
-                        }, label: {
-                            HStack {
-                                Text(L10n.cdwBtnIntroFasttrack)
-                                    .font(Font.body.weight(.medium))
-                                    .foregroundColor(Colors.systemLabel)
-                                    .multilineTextAlignment(.leading)
-                                    .accessibilityIdentifier(A11y.cardWall.intro.cdwBtnIntroLater)
-
-                                Spacer(minLength: 8)
-                                Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                                    .font(Font.headline.weight(.semibold))
-                                    .foregroundColor(Color(.tertiaryLabel))
-                                    .padding(8)
-                            }
-                            .padding()
-                        })
-                            .buttonStyle(DefaultButtonStyle())
-                            .background(Colors.systemBackgroundTertiary)
-                            .border(Colors.separator, width: 0.5, cornerRadius: 16)
-                            .padding()
-
-                        NavigationLinkStore(
-                            store.scope(state: \.$destination, action: CardWallIntroductionDomain.Action.destination),
-                            state: /CardWallIntroductionDomain.Destinations.State.can,
-                            action: CardWallIntroductionDomain.Destinations.Action.canAction(action:),
-                            onTap: { viewStore.send(.setNavigation(tag: .can)) },
-                            destination: CardWallCANView.init(store:),
-                            label: {}
-                        )
-                        .hidden()
-                        .accessibility(hidden: true)
+                    VStack(spacing: 0) {
+                        if viewStore.isNFCReady {
+                            Text(L10n.cdwBtnIntroRecommendation)
+                                .foregroundColor(Colors.primary)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal)
+                                .font(.body.bold())
+                        }
 
                         Button(action: {
                             viewStore.send(.advance)
@@ -113,6 +88,50 @@ struct CardWallIntroductionView: View {
                                 Spacer(minLength: 8)
                                 Image(systemName: SFSymbolName.rightDisclosureIndicator)
                                     .font(Font.headline.weight(.semibold))
+                                    .foregroundColor(viewStore.isNFCReady ? Colors.primary : Colors.systemLabelTertiary)
+                                    .padding(8)
+                            }
+                            .padding()
+                        })
+                            .buttonStyle(DefaultButtonStyle())
+                            .background(Colors.systemBackgroundTertiary)
+                            .border(viewStore.isNFCReady ? Colors.primary : Colors.separator,
+                                    width: viewStore.isNFCReady ? 2.0 : 0.5,
+                                    cornerRadius: 16)
+                            .padding(.bottom)
+                            .disabled(!viewStore.isNFCReady)
+
+                        NavigationLinkStore(
+                            store.scope(state: \.$destination, action: CardWallIntroductionDomain.Action.destination),
+                            state: /CardWallIntroductionDomain.Destinations.State.extauth,
+                            action: CardWallIntroductionDomain.Destinations.Action.extauth(action:),
+                            onTap: { viewStore.send(.setNavigation(tag: .extauth)) },
+                            destination: CardWallExtAuthSelectionView.init(store:),
+                            label: {}
+                        )
+                        .hidden()
+                        .accessibility(hidden: true)
+
+                        Button(action: {
+                            viewStore.send(.setNavigation(tag: .extauth))
+                        }, label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(L10n.cdwBtnIntroExtauth)
+                                        .font(Font.body.weight(.medium))
+                                        .foregroundColor(Colors.systemLabel)
+                                        .multilineTextAlignment(.leading)
+                                        .accessibilityIdentifier(A11y.cardWall.intro.cdwBtnIntroLater)
+
+                                    Text(L10n.cdwBtnIntroExtauthDescription)
+                                        .font(.subheadline)
+                                        .foregroundColor(Colors.systemLabelSecondary)
+                                }
+                                .multilineTextAlignment(.leading)
+
+                                Spacer(minLength: 8)
+                                Image(systemName: SFSymbolName.rightDisclosureIndicator)
+                                    .font(Font.headline.weight(.semibold))
                                     .foregroundColor(Color(.tertiaryLabel))
                                     .padding(8)
                             }
@@ -121,26 +140,26 @@ struct CardWallIntroductionView: View {
                             .buttonStyle(DefaultButtonStyle())
                             .background(Colors.systemBackgroundTertiary)
                             .border(Colors.separator, width: 0.5, cornerRadius: 16)
-                            .padding([.trailing, .leading, .bottom])
-                            .disabled(!viewStore.isNFCReady)
 
                         NavigationLinkStore(
                             store.scope(state: \.$destination, action: CardWallIntroductionDomain.Action.destination),
-                            state: /CardWallIntroductionDomain.Destinations.State.fasttrack,
-                            action: CardWallIntroductionDomain.Destinations.Action.fasttrack(action:),
-                            onTap: { viewStore.send(.setNavigation(tag: .fasttrack)) },
-                            destination: CardWallExtAuthSelectionView.init(store:),
+                            state: /CardWallIntroductionDomain.Destinations.State.can,
+                            action: CardWallIntroductionDomain.Destinations.Action.canAction(action:),
+                            onTap: { viewStore.send(.setNavigation(tag: .can)) },
+                            destination: CardWallCANView.init(store:),
                             label: {}
                         )
                         .hidden()
                         .accessibility(hidden: true)
                     }
+                    .padding()
                 }
+
                 VStack(alignment: .leading) {
                     Text(L10n.cdwTxtIntroFootnote)
                         .font(.subheadline)
                         .foregroundColor(Colors.systemLabelSecondary)
-                        .padding([.leading, .top, .trailing])
+                        .padding([.leading, .trailing])
 
                     Button(action: {
                         viewStore.send(.setNavigation(tag: .egk))

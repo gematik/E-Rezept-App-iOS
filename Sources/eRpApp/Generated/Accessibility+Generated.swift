@@ -180,6 +180,7 @@ internal enum A11y {
       static let medReminderBtnScheduleTimeDatePicker = "med_reminder_btn_schedule_time_date_picker"
       static let medReminderBtnScheduleTimeTextfieldAmount = "med_reminder_btn_schedule_time_textfield_amount"
       static let medReminderBtnScheduleTimeAddEntry = "med_reminder_btn_schedule_time_add_entry"
+      static let medReminderBtnScheduleTimeList = "med_reminder_btn_schedule_time_list"
       static let medReminderBtnSaveSchedule = "med_reminder_btn_save_schedule"
       static let medReminderDrawerDosageInstructionInfo = "med_reminder_drawer_dosage_instruction_info"
       static let medReminderDrawerDosageInstructionInfoTitle = "med_reminder_drawer_dosage_instruction_info_title"
@@ -190,6 +191,9 @@ internal enum A11y {
       static let medReminderBtnRepetitionDateEnd = "med_reminder_btn_repetition_date_end"
       static let medReminderBtnOneDaySummaryGoToRemindersOverviewButton = "med_reminder_btn_one_day_summary_go_to_reminders_overview_button"
       static let medReminderBtnOneDaySummaryCloseButton = "med_reminder_btn_one_day_summary_close_button"
+  }
+    internal enum medicationReminderList {
+      static let medReminderListCell = "med_reminder_list_cell"
   }
     internal enum migration {
       static let amgTxtAndSpinner = "amg_txt_and_spinner"
@@ -346,6 +350,13 @@ internal enum A11y {
       static let phaFilterOpenFilter = "pha_filter_open_filter"
       static let phaFilterFilterList = "pha_filter_filter_list"
   }
+    internal enum pharmacySearchMap {
+      static let phaSearchMapBtnFilter = "pha_search_map_btn_filter"
+      static let phaSearchMapBtnClose = "pha_search_map_btn_close"
+      static let phaSearchMapBtnGoToUser = "pha_search_map_btn_go_to_user"
+      static let phaSearchMapBtnSearchHere = "pha_search_map_btn_search_here"
+      static let phaSearchMapMap = "pha_search_map_map"
+  }
     internal enum pharmacySearchStart {
       static let phaSearchTxtQuickFilterTitle = "pha_search_txt_quick_filter_title"
       static let phaSearchBtnQuickFilterNearby = "pha_search_btn_quick_filter_nearby"
@@ -356,6 +367,8 @@ internal enum A11y {
       static let phaSearchTxtLocalPharmTitle = "pha_search_txt_local_pharm_title"
       static let phaSearchTxtLocalPharmEntry = "pha_search_txt_local_pharm_entry"
       static let phaSearchLocalPharmSection = "pha_search_local_pharm_section"
+      static let phaSearchTxtMapHeader = "pha_search_txt_map_header"
+      static let phaSearchMap = "pha_search_map"
   }
     internal enum prescriptionDetails {
       static let prscDtlTxtTitle = "prsc_dtl_txt_title"

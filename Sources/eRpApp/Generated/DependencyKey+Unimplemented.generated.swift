@@ -843,6 +843,11 @@ struct UnimplementedUserSession: UserSession {
         set(value) { fatalError("") }
     }
 
+    var updateChecker: UpdateChecker {
+        get { fatalError("") }
+        set(value) { fatalError("") }
+    }
+
     var localUserStore: UserDataStore {
         get { fatalError("") }
         set(value) { fatalError("") }

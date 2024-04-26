@@ -88,12 +88,12 @@ struct ReadCardHelpListView: View {
                             HStack(alignment: .top) {
                                 OnboardingFeatureCheckmarkView()
                                 VStack(alignment: .leading) {
-                                    Text(L10n.cdwTxtRcListFasttrack)
+                                    Text(L10n.cdwTxtRcListExtauth)
                                         .fixedSize(horizontal: false, vertical: true)
                                     Button(action: {
                                         store.send(.delegate(.navigateToIntro))
                                     }, label: {
-                                        Text(L10n.cdwTxtRcListFasttrackMore)
+                                        Text(L10n.cdwTxtRcListExtauthMore)
                                     })
                                 }
                             }

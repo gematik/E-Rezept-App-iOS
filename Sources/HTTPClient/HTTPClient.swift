@@ -95,8 +95,12 @@ public enum HTTPClientError: Swift.Error, Equatable, LocalizedError {
         case let (.internalError(lhsInternal), .internalError(rhsInternal)): return lhsInternal == rhsInternal
         case let (.httpError(lhsError), .httpError(rhsError)): return lhsError.errorCode == rhsError.errorCode
         case let (.networkError(lhsError), .networkError(rhsError)): return lhsError == rhsError
-        case let (.authentication(lhsError), .authentication(rhsError)): return lhsError
-            .localizedDescription == rhsError.localizedDescription
+        // We must compair the raw error in this context since the `LocalizedError` description
+        // can be part of a extension outside the scope of the HTTPClient package
+        case let (.authentication(lhsError), .authentication(rhsError)):
+            let lhsNSError = lhsError as NSError
+            let rhsNSError = rhsError as NSError
+            return lhsNSError.code == rhsNSError.code && lhsNSError.domain == rhsNSError.domain
         case let (.vauError(lhsError), .vauError(rhsError)): return lhsError.localizedDescription == rhsError
             .localizedDescription
         case let (.unknown(lhsError), .unknown(rhsError)): return lhsError.localizedDescription == rhsError

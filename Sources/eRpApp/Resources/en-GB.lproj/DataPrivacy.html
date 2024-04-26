@@ -1,183 +1,447 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-    <meta charset="UTF-8">
-    <title>Datenschutzerklaerung-E-Rezept-App</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, minimum-scale=1.0'>
-    <link rel="stylesheet" href="../styles.css" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Data protection</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../styles.css" />
+  
 </head>
 <body>
-<h1>Datenschutzerklärung</h1>
-
-<p>Die E-Rezept-App ist die offizielle App zum E-Rezept in Deutschland. Die gematik gibt die App als Nationale Agentur für Digitale Medizin im Auftrag des Gesetzgebers heraus. Die gematik ist auch für den Datenschutz der App verantwortlich.</p>
-
-<p><b>Weitere Informationen</b></p>
-
-<p>Das offizielle Informationsangebot der gematik zum E-Rezept in Deutschland finden Sie unter <a href="https://www.das-e-rezept-fuer-deutschland.de">www.das-e-rezept-fuer-deutschland.de</a>. Dort erhalten Sie verständlich aufbereitete Informationen und Antworten auf häufig gestellte Fragen zum E-Rezept.</p>
-
-<h2 id="1">1. Über diese Datenschutzerklärung</h2>
-
-<p>In dieser Datenschutzerklärung informieren wir Sie über die Datenverarbeitung durch die E-Rezept-App. Wir bemühen uns um eine verständliche Darstellung der technischen Abläufe. Sollte uns das einmal nicht gelungen sein, lassen Sie es uns bitte wissen. Unsere Kontaktdaten finden Sie unter <a href="#9">Ansprechpartner</a>.</p>
-
-<p>Diese Datenschutzerklärung gilt nicht für die Dienste von anderen Anbietern, die die zentralen Systeme des E-Rezepts bereitstellen. Zu diesen Diensten zählen der Rezeptdienst, der Identitätsdienst und das Apothekenverzeichnis. Informationen zu den verantwortlichen Anbietern dieser Dienste finden Sie unter <a href="#8">Weitere Verantwortliche</a>.</p>
-
-<h2 id="2">2. Wozu dient diese App?</h2>
-
-<p>Wenn Sie von Ihrem Arzt oder Ihrer Ärztin ein elektronisches Rezept bekommen, wird es verschlüsselt im Rezeptdienst gespeichert. Der Rezeptdienst ist der zentrale Rezeptspeicher im deutschen Gesundheitsnetz. Mit der E-Rezept-App können Sie sicher auf den Rezeptdienst zugreifen und E-Rezepte empfangen, verwalten und einlösen.</p>
-
-<h2 id="3">3. Ist die Nutzung der App freiwillig?</h2>
-
-<p>Ja, die Nutzung der E-Rezept-App ist freiwillig. Sie sind auch nicht verpflichtet, bestimmte Daten in der App anzugeben oder sich anzumelden. Wenn Sie sich nicht anmelden, können Sie jedoch nicht alle Funktionen der App nutzen.</p>
-
-<h2 id="4">4. Wie und wozu werden Ihre Daten verarbeitet?</h2>
-
-<h3 id="4.1">4.1 Profile einrichten</h3>
-
-<p>Sie müssen mindestens ein „Profil“ einrichten.</p>
-
+<header id="title-block-header">
+<h1 class="title">Data protection</h1>
+</header>
+<nav id="TOC" role="doc-toc">
 <ul>
-    <li>Die Daten zum Profil werden nur auf Ihrem Gerät gespeichert.</li>
-    <li>Der Profilname dient der übersichtlichen Anzeige. Er ist frei wählbar.</li>
-    <li>Sie können mehrere Profile einrichten, um E-Rezepte für Angehörige zu verwalten.</li>
-</ul>
-
-<h3 id="4.2">4.2 Anmelden am Rezeptdienst</h3>
-
-<p>Nur die Patientin/der Patient (bzw. eine Vertretungsperson), die verordnende Arztpraxis und die einlösende Apotheke dürfen auf die Daten im Rezeptdienst zugreifen. Für jeden Zugriff auf Ihre Daten im Rezeptdienst muss daher die Identität nachgewiesen werden, um die Zugriffsberechtigung zu überprüfen. Zuständig für diese Identitätsprüfung ist der <b>Identitätsdienst</b>. Informationen zum Anbieter dieses Dienstes finden Sie unter <a href="#8">Weitere Verantwortliche</a>.</p>
-
-<p>Sie können Ihre Identität mit Ihrer elektronischen Gesundheitskarte (eGK) und Ihrer ePA-App nachweisen:</p>
-
+<li><a href="#about-this-privacy-policy"
+id="toc-about-this-privacy-policy">About this privacy policy</a></li>
+<li><a href="#what-is-this-app-for" id="toc-what-is-this-app-for">What
+is this app for?</a></li>
+<li><a href="#is-using-the-app-voluntary"
+id="toc-is-using-the-app-voluntary">Is using the app voluntary?</a></li>
+<li><a href="#how-and-why-is-your-data-processed"
+id="toc-how-and-why-is-your-data-processed">How and why is your data
+processed?</a>
 <ul>
-    <li>Wenn Sie sich der eGK anmelden, wird das digitale Authentifizierungszertifikat auf dem Chip kontaktlos (per NFC) ausgelesen und an den Identitätsdienst übertragen. Ihre Einwilligung erteilen Sie durch die Eingabe der PIN. Das Authentifizierungszertifikat enthält Ihre Versichertenstammdaten (z. B. Name und Ihre Versichertennummer) und gilt als elektronischer Identitätsnachweis. Sobald der Identitätsdienst das Authentifizierungszertifikat geprüft und Ihre Identität bestätigt hat, stellt er der E-Rezept-App einen Zugangsschlüssel (Token) aus. Mit diesem kann sich die E-Rezept-App am Rezeptdienst anmelden.</li>
-    <li>Wenn Sie sich mit der ePA-App anmelden, müssen Sie zunächst Ihre Krankenkasse auswählen, damit die E-Rezept-App sich mit der „richtigen“ ePA-App verbinden kann. Die Liste der Krankenkassen ruft die E-Rezept-App vom Identitätsdienst ab. Nachdem Sie Ihre Identitätsdaten über Ihre ePA-App mit der E-Rezept-App geteilt haben, leitet diese die Daten an den Identitätsdienst zur Prüfung weiter. Wenn Ihre Identität bestätigt werden kann, stellt der Identitätsdienst der E-Rezept-App den Zugangsschlüssel (Token) zur Anmeldung am Rezeptdienst aus.</li>
-</ul>
-
-<p>Nach der Anmeldung werden Ihre im Rezeptdienst gespeicherten E-Rezepte und Abgabeinformationen heruntergeladen und zusätzlich auf Ihrem Gerät gespeichert.</p>
-
-<p>Wenn Sie Ihre E-Rezepte über die E-Rezept-App verwalten, werden Ihre Aktivitäten an den Rezeptdienst übertragen und dort umgesetzt. Zu diesen Aktivitäten gehören beispielsweise die Vergabe von Zugriffsrechten und das Löschen von E-Rezepten.</p>
-
-<h3 id="4.3">4.3 Zugangsdaten speichern</h3>
-
-<p>Wenn Sie angemeldet sind, können Sie für zukünftige Anmeldungen die Funktion „Zugangsdaten speichern“ aktivieren. In einem geschützten Bereich Ihres Geräts werden dann die Zugangsdaten – bestehend aus PIN, CAN, Authentifizierungszertifikat und Zugangsschlüssel (Token) – gespeichert, so dass sie erneut verwendet werden können. Diese Funktion kann nur aktiviert werden, wenn Ihr Smartphone über einen sicheren Mechanismus für den Zugriffsschutz von Apps verfügt. Diese Voraussetzung erfüllen aktuell Apple iPhones mit Touch ID oder Face ID und Android-Geräte mit „Strongbox Keymaster“-Sicherheitsmodul.</p>
-
-<h3 id="4.4">4.4 Rezeptcodes scannen und einlösen</h3>
-
-<p>Wenn Sie einen Rezeptcode speichern und über die App bei einer Apotheke einlösen wollen, müssen Sie ihn zunächst mit der Kamera scannen. Beim Scannen wird eine elektronische Kopie des Rezeptcodes erzeugt. Dieser Arbeitsschritt findet ausschließlich auf Ihrem Gerät statt, das heißt es wird keine Internetverbindung benötigt. Anschließend können Sie das E-Rezept per App bei einer Apotheke einlösen:</p>
-
+<li><a href="#set-up-profiles" id="toc-set-up-profiles">Set up
+profiles</a></li>
+<li><a href="#register-for-the-prescription-service"
+id="toc-register-for-the-prescription-service">Register for the
+prescription service</a></li>
+<li><a href="#save-login-data" id="toc-save-login-data">save login
+data</a></li>
+<li><a href="#scan-and-redeem-prescription-codes"
+id="toc-scan-and-redeem-prescription-codes">Scan and redeem prescription
+codes</a></li>
+<li><a href="#pharmacy-search" id="toc-pharmacy-search">Pharmacy
+search</a></li>
+<li><a href="#notifications-to-pharmacies"
+id="toc-notifications-to-pharmacies">Notifications to
+pharmacies</a></li>
+<li><a href="#digital-cost-receipts-for-privately-insured-people"
+id="toc-digital-cost-receipts-for-privately-insured-people">Digital cost
+receipts (for privately insured people)</a></li>
+<li><a href="#security-features" id="toc-security-features">Security
+features</a>
 <ul>
-    <li>Wenn Sie am Rezeptdienst angemeldet sind und das E-Rezept per App einer Apotheke zur Einlösung zuweisen, wird dies im Rezeptdienst dokumentiert und der Rezeptstatus auf „in Einlösung“ geändert. Die Apotheke erhält dann das Zugriffsrecht für das im Rezeptdienst gespeicherte E-Rezept. Eine direkte Kommunikation zwischen App und Apotheke erfolgt dabei nicht. Sie können den aktuellen Bearbeitungsstatus, der vom Rezeptdienst verwaltet wird, jederzeit in der App einsehen.</li>
-    <li>Wenn Sie nicht am Rezeptdienst angemeldet sind, können Sie den Rezeptcode zusammen mit Ihren weiteren Bestelldaten (etwa ob Sie das Medikament abholen oder geliefert bekommen möchten) direkt an die Apotheke übermitteln. Die App kommuniziert in diesem Fall direkt mit dem Kommunikationssystem Ihrer Apotheke. Der Rezeptdienst ist an dieser Kommunikation nicht beteiligt und wird daher nicht über die Bestellung informiert. Zu Ihrer Übersicht wird das übermittelte E-Rezept in der Bestellübersicht Ihrer App als „gesendet“ gekennzeichnet. Die Zugangsdaten für das Kommunikationssystem der Apotheke erhält die App vom Apotheken-Verzeichnis.</li>
+<li><a href="#connected-devices" id="toc-connected-devices">Connected
+devices</a></li>
+<li><a href="#integrity-checks" id="toc-integrity-checks">Integrity
+checks</a></li>
+<li><a href="#app-access-lock" id="toc-app-access-lock">App access
+lock</a></li>
+</ul></li>
+<li><a href="#push-notifications" id="toc-push-notifications">Push
+notifications</a></li>
+<li><a href="#usage-analysis" id="toc-usage-analysis">Usage
+analysis</a></li>
+</ul></li>
+<li><a href="#who-will-your-data-be-shared-with"
+id="toc-who-will-your-data-be-shared-with">Who will your data be shared
+with?</a></li>
+<li><a href="#when-will-your-data-be-deleted"
+id="toc-when-will-your-data-be-deleted">When will your data be
+deleted?</a></li>
+<li><a href="#your-privacy-rights" id="toc-your-privacy-rights">Your
+privacy rights</a></li>
+<li><a href="#other-responsible-persons"
+id="toc-other-responsible-persons">Other responsible persons</a></li>
+<li><a href="#contact-person" id="toc-contact-person">contact
+person</a></li>
 </ul>
-
-<u>Hinweis für Android-Geräte:</u>
-
-<p>Um Rezeptcodes auch unter ungünstigen Bedingungen (z. B. schlechte Kameraauflösung oder Lichtverhältnisse) fehlerfrei scannen zu können, nutzt die App mit Ihrer Zustimmung eine spezielle Schnittstelle (Barcode Scanning API von Google ML Kit). Diese Schnittstelle ist Bestandteil der Google Play Services, die auf Ihrem Gerät bereits installiert sind. Das Kamerabild wird dabei ausschließlich auf Ihrem Gerät analysiert. Wie bei allen Android-Geräten mit Google Play Services behält sich Google jedoch vor, bestimmte bei der Nutzung der Schnittstelle anfallende Nutzungs- und Gerätedaten (bei ML Kit z. B.: Hersteller, Gerätemodell, Betriebssystemversion, Hardware, Mobilfunkbetreiber, Zeitzone, Spracheinstellungen, IP-Adresse, App-Version, Konfiguration von ML Kit, Anzahl der Scanvorgänge, Fehlermeldungen) innerhalb des Betriebssystems zu protokollieren und zur Weiterentwicklung der Schnittstelle an einen Google-Server zu übermitteln. Dabei kann nicht ausgeschlossen werden, dass diese Daten in ein Drittland (z. B. USA) übermittelt werden, siehe <a href="#5">An wen werden Ihre Daten weitergegeben</a>. Sie können Ihre Zustimmung zu der Nutzung des Google ML Kit jederzeit widerrufen, indem Sie die Kamera-Berechtigung der E-Rezept-App in den Android-Einstellungen deaktivieren. Weitere Informationen finden Sie in den Hinweisen von Google zu <a href="https://developers.google.com/ml-kit/vision/barcode-scanning">ML Kit</a><Link > und in der <a href="https://policies.google.com/privacy?hl=de">Google Datenschutzerklärung</a>.</p>
-
-<h3 id="4.5">4.5 Apothekensuche</h3>
-
-<p>Bei Verwendung der Apothekensuche werden Ihre Suchkriterien (z. B. Adressen oder Standortdaten) an das <b>Apotheken-Verzeichnis</b> übermittelt. Das Apotheken-Verzeichnis stellt der App daraufhin eine Liste mit den zu den Suchkriterien passenden Apotheken bereit.</p>
-
-<h3 id="4.6">4.6 Mitteilungen an Apotheken</h3>
-
-<p>Die E-Rezept-App ermöglicht eine direkte verschlüsselte und vertrauliche Kommunikation zwischen Ihnen und Apotheken.</p>
-
-<p>Wenn Sie am Rezeptdienst angemeldet sind, läuft die Kommunikation mit der Apotheke über den Rezeptdienst, der die Mitteilungen auch archiviert. Die App lädt die Mitteilungen vom Rezeptdienst und speichert sie auf Ihrem Gerät, so dass Sie auch ohne Anmeldung den aktuellen Stand sehen können. Weder der Anbieter des Rezeptdienstes noch die gematik haben Einblick in die ausgetauschten Mitteilungen. </p>
-
-<p>Wenn Sie nicht am Rezeptdienst angemeldet sind, können Sie über die App Mitteilungen direkt an das Kommunikationssystem Ihrer Apotheke senden. Die Zugangsdaten für das Kommunikationssystem erhält die App vom Apotheken-Verzeichnis. Der Rezeptdienst ist an der Kommunikation nicht beteiligt. Bitte beachten Sie: Um Mitteilungen empfangen und Mitteilungsverläufe einsehen zu können, müssen Sie sich am Rezeptdienst anmelden.</p>
-
-<h3 id="4.7">4.7 Sicherheitsfunktionen</h3>
-
-<h4>(a) Verbundene Geräte</h4>
-
-<p>Die Funktion „Zugangsdaten speichern“ kann auf mehreren Geräten aktiviert werden. Jedes Gerät, auf dem Sie diese Funktion aktiviert ist, wird als „verbundenes Gerät“ bezeichnet. Alle verbundenen Geräte werden zentral auf dem Identitätsdienst verwaltet. Hierzu überträgt die E-Rezept-App Geräteinformationen zur eindeutigen Unterscheidbarkeit an den Identitätsdienst: Hersteller, Gerätemodell, Gerätename, Betriebssystemversion und Gerätename (z. B. „Annas iPhone“). Damit Sie den Überblick behalten, können Sie im Bereich „Einstellungen“ unter „Verbundene Geräte“ sehen, auf welchen Geräten Sie Ihre Zugangsdaten gespeichert haben.</p>
-
-<p>Wenn Sie ein verbundenes Gerät abmelden möchten, können Sie dies auf dem betreffenden oder einem anderen verbundenen Gerät erledigen. Die auf dem abgemeldeten Gerät gespeicherten Zugangsdaten und die auf dem Identitätsdienst erfassten Geräteinformationen werden dann gelöscht.</p>
-
-<p>Bitte beachten Sie: Wenn ein verbundenes Gerätemodell oder dessen Betriebsversion als unsicher eingestuft werden sollte, kann der Identitätsdienst das betreffende Gerät abmelden. Dabei werden die auf dem Identitätsdienst gespeicherten Geräteinformationen und der Zugangsschlüssel des Geräts gelöscht. Sie können sich auf dem abgemeldeten Gerät dann erneut am Rezeptdienst anmelden, sofern das Sicherheitsproblem durch ein Update des Betriebssystems beseitigt worden ist.</p>
-
-<h4>(b) Integritätsprüfungen</h4>
-
-<p>Smartphones können mit einem manipulierten Betriebssystem betrieben werden (sogenanntes „Jailbreaken“ oder „Rooten“). Nicht jeder betroffene Nutzer ist sich bewusst, dass sein Betriebssystem manipuliert worden ist (z. B. bei gebraucht gekauften Geräten) und welche Sicherheitsrisiken damit einhergehen. Bei jedem Start der E-Rezept-App wird daher eine technische Prüfung des Betriebssystems durchgeführt. Werden Hinweise auf eine Manipulation erkannt, wird eine Warnung angezeigt. Sie können die App anschließend auf eigenes Risiko ohne Einschränkungen weiternutzen.</p>
-
-<p>Für die Jailbreak-Erkennung auf Apple-Geräten prüft die E-Rezept-App den Gerätespeicher auf Hinweise von Apps, die nur auf Geräten mit Jailbreak installiert werden können (z. B. Cydia-App).</p>
-
-<p>Für die Root-Erkennung auf Android-Geräten wird eine Sicherheitsfunktion des Betriebssystems genutzt. Hierzu generiert die App eine Zufallszahl sowie Informationen zur E-Rezept-App (z. B. Version) und übergibt sie an eine spezielle Schnittstelle Ihres Betriebssystems (SafetyNet Attestation API). Diese Schnittstelle ist Bestandteil der Google Play Services, die auf Ihrem Gerät bereits installiert sind (siehe <a href="#4.4">Rezeptcodes scannen</a>). Google untersucht dann anhand der nur ihm zugänglichen Informationen zu Ihrem Gerät und der App, ob das Betriebssystem manipuliert wurde und teilt der E-Rezept-App das Prüfungsergebnis mit.</p>
-
-<p>Weiterhin wird vor jeder Anmeldung am Rezeptdienst die Echtheit der App geprüft. Die Echtheitsprüfung dient dazu, festzustellen, ob Ihre Version der E-Rezept-App manipuliert oder gefälscht worden („unecht“) ist. Wenn Hinweise auf eine unechte App gefunden werden, kann sie sich nicht am Rezeptdienst anmelden. Sofern die E-Rezept-App auf einem verbundenen Gerät läuft, wird dieses getrennt und die unechte App abgemeldet. Für die Echtheitsprüfung nutzt die E-Rezept-App die Sicherheitsfunktionen Ihres Betriebssystems. Dies sind auf Apple-Geräten der Apple App Attest Service und auf Android-Geräten der SafetyNet App Attestation Service.</p>
-
-<h4>(c) App-Zugriffssperre</h4>
-
-<p>Um unbefugte Zugriffe auf Ihre E-Rezept-App zu erschweren, kann sie nach jedem Schließen automatisch gesperrt werden. Bei jedem Öffnen muss sie dann zunächst entsperrt werden. Je nachdem, über welche Sicherheitsausstattung Ihr Smartphone verfügt, stehen Kennwort-basierte und biometrische Verfahren zur Verfügung.</p>
-
-<p>Bitte beachten Sie: Wenn Sie die Funktion „Zugangsdaten speichern“ aktivieren, wird automatisch auch die App-Sperre aktiviert.</p>
-
-<p>Wenn Sie den Kennwortschutz aktivieren, wird Ihr Kennwort während der Einrichtung lokal auf ausreichende Stärke geprüft. Das Kennwort wird nur auf Ihrem Gerät gespeichert.</p>
-
-<p>Bei Nutzung eines biometrischen Verfahrens werden die Sicherheitsfunktionen Ihres Smartphones verwendet. Die E-Rezept-App erhält dabei keine biometrischen Daten, sondern nur das Ergebnis der biometrischen Prüfung durch Ihr Betriebssystem.</p>
-
-<h3 id="4.8">4.8 Push-Benachrichtigungen</h3>
-
-<p>In künftigen Versionen der App können Sie sich per Push-Benachrichtigung über Mitteilungen von Apotheken oder neue E-Rezepte informieren lassen. Dazu registriert sich Ihr Smartphone bei dem Push-Dienst Ihres Betriebssystems. Folgende Push-Dienste werden genutzt: Firebase Cloud Messaging (Android), Apple Push Notification (Apple), Huawei Push Kit (Huawei).</p>
-
-<p>Der jeweilige Push-Dienst übergibt der E-Rezept-App eine Push-Kennung. Die Push-Kennung wird dann von der E-Rezept-App an den Rezeptdienst übermittelt. Soll eine Push-Nachricht an Sie versendet werden, schickt der Rezeptdienst einen Hinweis mit Ihrer Push-Kennung an den genutzten Push-Dienst, der diesen dann an Ihr Smartphone weiterleitet. Die Mitteilung der Apotheke bleibt dabei auf dem Rezeptdienst und wird erst geladen, wenn Sie die E-Rezept-App öffnen.</p>
-
-<h3 id="4.9">4.9 Nutzungsanalyse</h3>
-
-<p>Wenn Sie die Nutzungsanalyse erlauben, werden allgemeine Nutzungsdaten (z.B. Art und den Umfang der Nutzung und Bedienung der App-Funktionen) und Angaben zur verwendeten Hard - und Software (z.B. Art, Version und Hersteller des Gerätes und des Betriebssystems) sowie gewählte Einstellungen (z.B. Spracheinstellung) übermittelt.  Die Nutzungsdaten werden ausschließlich anonymisiert ausgewertet. Ihre Einwilligung können Sie jederzeit widerrufen, indem Sie die Nutzungsanalyse in den Einstellungen deaktivieren. Ihre Nutzungsdaten werden dann nicht mehr an die gematik übertragen. Weitere Hinweise erhalten Sie vor dem Aktivieren der Nutzungsanalyse in der E-Rezept-App.</p>
-
-<h2 id="5">5. An wen werden Ihre Daten weitergegeben?</h2>
-
-<p>Wenn Sie der Nutzungsanalyse zugestimmt haben, übermittelt die App Ihre Nutzungsdaten auf Basis Ihrer Einwilligung an den technischen Dienstleister der gematik für die Nutzungsanalyse (<a href="https://contentsquare.com/de-de/privacy-center/">Content Square GmbH</a>).</p>
-
-<p>Im Übrigen hat die gematik keinen Zugriff auf die auf Ihrem Gerät gespeicherten Daten. An andere Anbieter und sonstige Dritte gibt die App Ihre Daten nur im unter <a href="#4">Wie und wozu werden Ihre Daten verarbeitet?</a> beschriebenen Umfang weiter.</p>
-
-<p>Weder die E-Rezept-App noch die Anbieter des Rezeptdienstes, des Identitätsdienstes oder des Apotheken-Verzeichnisses übermitteln Ihre Daten in Länder, in denen kein angemessenes Datenschutzniveau besteht und europäische Datenschutzrechte eventuell nicht durchgesetzt werden (sogenannte Drittländer, z. B. USA). </p>
-
-<p>Wir weisen Sie jedoch darauf hin, dass durch die Nutzung der E-Rezept-App auf Seiten Ihres Betriebssystems Nutzungsdaten anfallen. Die Hersteller der Betriebssysteme behalten sich teilweise vor, diese Daten zu protokollieren und auszuwerten. Dabei kann es auch zu einer Übermittlung von Geräte- und Nutzungsdaten in die USA oder ein anderes Drittland kommen. Insoweit besteht die Möglichkeit, dass Sicherheitsbehörden im Drittland auf die übermittelten Daten beim Hersteller zugreifen und diese auswerten, beispielsweise indem sie Daten mit anderen Informationen über Sie verknüpfen.</p>
-
-<h2 id="6">6. Wann werden Ihre Daten gelöscht?</h2>
-
-<p>Die gematik speichert keine personenbezogenen Daten von Nutzern der E-Rezept-App. Seitens der gematik ist daher keine Löschung notwendig oder möglich.</p>
-
-<p>Die auf Ihrem Gerät gespeicherten Rezeptdaten, Rezeptcodes und Mitteilungen können Sie in der App selbst löschen. Bitte beachten Sie, dass gelöschte E-Rezepte erneut auf Ihrem Gerät gespeichert werden, sobald Sie die Rezeptansicht aktualisieren. Dies können Sie verhindern, indem Sie die E-Rezepte auch im Rezeptdienst löschen. Die E-Rezepte im Rezeptdienst werden automatisch nach 100 Tagen ab Ausstellung oder letzter Statusänderung gelöscht (§ 360 Abs. 11 SGB V).</p>
-
-<p>Zugriffsprotokolle im Rezeptdienst werden nicht auf Ihrem Gerät gespeichert und können nicht gelöscht werden. Sie werden nach drei Jahren automatisch im Rezeptdienst gelöscht (§ 309 SGB V).</p>
-
-<p>Wenn Sie ein Profil löschen, werden alle damit zusammenhängenden Daten einschließlich der vom Rezeptdienst heruntergeladenen Daten und der gespeicherten Zugangsdaten gelöscht. Die gespeicherten Zugangsdaten werden auch gelöscht, wenn Sie „Zugangsdaten speichern“ deaktivieren.</p>
-
-<p>Wenn Sie Push-Benachrichtigungen in der E-Rezept-App deaktivieren, wird die auf Ihrem Gerät gespeicherte Push-Kennung gelöscht.</p>
-
-<p>Die Deinstallation der E-Rezept-App bewirkt die Löschung sämtlicher von der E-Rezept-App auf Ihrem Gerät gespeicherten Daten.</p>
-
-<h2 id="7">7. Ihre Datenschutzrechte</h2>
-
-<p>Bezüglich der mit Ihrer Einwilligung an die gematik übermittelten Nutzungsdaten stehen Ihnen gegenüber der gematik die Rechte auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16 DSGVO), Löschung (Art. 17 DSGVO), Einschränkung der Verarbeitung (Art. 18 DSGVO) sowie Datenübertragbarkeit (Art. 20 DSGVO) zu. <b>Sie haben auch das Recht, Ihre Einwilligung zu widerrufen (siehe hierzu unter <a href="#4.9">Nutzungsanalyse</a>)</b>. Bitte beachten Sie, dass die gematik Ihre Nutzungsdaten in anonymisierter Form speichert. Eine Zuordnung dieser Daten zu Ihrer Person ist nicht mehr möglich, so dass die oben genannten Datenschutzrechte keine Anwendung mehr finden (Art. 11 Abs. 2 DSGVO, § 308 SGB V). Sie haben außerdem das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Die für die gematik zuständige Datenschutz-Aufsichtsbehörde ist der <a href="https://www.bfdi.bund.de">Bundesbeauftragte für den Datenschutz und die Informationsfreiheit</a>.</p>
-
-<h2 id="8">8. Weitere Verantwortliche</h2>
-
-<p>Für die folgenden Dienste sind gemäß § 307 Abs. 4 SGB V die jeweiligen Anbieter datenschutzrechtlich verantwortlich:</p>
-
+</nav>
+<p>The e-prescription app is the official app for e-prescriptions in
+Germany. gematik publishes the app as the National Agency for Digital
+Medicine on behalf of the legislature. gematik is also responsible for
+the data protection of the app.</p>
+<p><strong>Further information</strong></p>
+<p>Gematik's official information on e-prescriptions in Germany can be
+found at <a
+href="http://www.das-e-rezept-fuer-deutschland.de">www.das-e-rezept-fuer-deutschland.de</a>
+. There you will receive understandable information and answers to
+frequently asked questions about e-prescriptions.</p>
+<h1 id="about-this-privacy-policy">About this privacy policy</h1>
+<p>In this data protection declaration we inform you about data
+processing by the e-prescription app. We strive to provide an
+understandable presentation of the technical processes. If we haven't
+been able to do this, please let us know. You can find our contact
+details under contact person .</p>
+<p>This data protection declaration does not apply to the services of
+other providers who provide the central e-prescription systems. These
+services include the prescription service, the identity service and the
+pharmacy directory . Information about the responsible providers of
+these services can be found under Other responsible parties .</p>
+<h1 id="what-is-this-app-for">What is this app for?</h1>
+<p>If you receive an electronic prescription from your doctor, it will
+be stored encrypted in the prescription service. The prescription
+service is the central prescription storage in the German health
+network. The e-prescription app allows you to securely access the
+prescription service and receive, manage and redeem e-prescriptions.</p>
+<h1 id="is-using-the-app-voluntary">Is using the app voluntary?</h1>
+<p>Yes, using the e-prescription app is voluntary. You are also not
+obliged to provide specific data in the app or to register. However, if
+you do not log in, you will not be able to use all of the app's
+functions.</p>
+<h1 id="how-and-why-is-your-data-processed">How and why is your data
+processed?</h1>
+<h2 id="set-up-profiles">Set up profiles</h2>
+<p>You must set up at least one “profile”.</p>
 <ul>
-    <li><b>Rezeptdienst</b>: IBM Deutschland GmbH, IBM-Allee 1, 71139 Ehningen</li>
-    <li><b>Identitätsdienst</b>: Research Industrial Systems Engineering (RISE) Forschungs-, Entwicklungs- und Großprojektberatung GmbH, Concorde Business Park F, 2320 Schwechat, Österreich</li>
-    <li><b>Apothekenverzeichnis</b>: Deutscher Apothekerverband e.V., Heidestraße 7, 10557 Berlin</li>
+<li><p>The profile data is only saved on your device.</p></li>
+<li><p>The profile name is used for clear display. He is freely
+selectable.</p></li>
+<li><p>You can set up multiple profiles to manage e-prescriptions for
+relatives.</p></li>
 </ul>
-
-<h2 id="9">9. Ansprechpartner</h2>
-
-<p>Die Kontaktdaten der gematik können Sie dem Impressum entnehmen. Weitere Kontaktmöglichkeiten finden Sie in den Einstellungen unter „Kontakt“.</p>
-
-<p>Bei Fragen zum Datenschutz oder zu Ihren Datenschutzrechten im Zusammenhang mit dieser App können Sie sich an den Datenschutzbeauftragten der gematik wenden. Sie erreichen ihn </p>
-
+<h2 id="register-for-the-prescription-service">Register for the
+prescription service</h2>
+<p>Only the patient (or a representative), the prescribing doctor's
+office and the filling pharmacy may access the data in the prescription
+service. For every access to your data in the prescription service, your
+identity must therefore be proven in order to check the access
+authorization. The <strong>identity service</strong> is responsible for
+this identity check . Information about the provider of this service can
+be found under Other responsible persons .</p>
+<p>prove your identity with your electronic health card (eGK) and a
+suitable app from your health insurance company :</p>
 <ul>
-    <li>über das Kontaktformular: <a href="https://www.gematik.de/hilfe-kontakt/kontaktformular/">https://www.gematik.de/hilfe-kontakt/kontaktformular/</a> mit der Zuordnung des Anfragethemas „Datenschutz“</li>
-    <li>per Post: gematik GmbH, Datenschutzbeauftragter, Friedrichstraße 136, 10117 Berlin</li>
-    <li>per E-Mail: <a href="mailto:datenschutz@gematik.de">datenschutz@gematik.de</a></li>
+<li><p>When you log in with the eGK, the digital authentication
+certificate on the chip is read contactlessly (via NFC) and transmitted
+to the identity service. You give your consent by entering your PIN. The
+authentication certificate contains your insured person master data
+(e.g. your name and your insurance number) and is considered electronic
+proof of identity. Once the identity service has verified the
+authentication certificate and confirmed your identity, it issues an
+access key (token) to the e-prescription app. The e-prescription app can
+use this to log into the prescription service.</p></li>
+<li><p>When you sign up with an app, you must first select your health
+insurance so that the e-prescription app can connect to the “correct”
+app. The e-prescription app retrieves the list of health insurance apps
+available for this purpose from the identity service. After you share
+your identity data with the e-prescription app via your health insurance
+app, it forwards the data to the identity service for verification. If
+your identity can be confirmed, the identity service of the
+e-prescription app will issue the access key (token) for logging in to
+the prescription service.</p></li>
 </ul>
-
-<p>Bei Fragen zum Gesundheitsnetz (Telematikinfrastruktur) und insbesondere zu den datenschutzrechtlichen Verantwortlichkeiten der beteiligten Anbieter können Sie sich an den Datenschutzlotsen der gematik wenden: <a href="https://www.gematik.de/datensicherheit/datenschutzlotse">https://www.gematik.de/datensicherheit/datenschutzlotse</a></p>
-
-<p><em>Stand: Juni 2023</em></p>
-
+<p>After signing in, your e-prescriptions and dispensing information
+stored in the prescription service will be downloaded and additionally
+stored on your device.</p>
+<p>If you manage your e-prescriptions via the e-prescription app, your
+activities will be transferred to the prescription service and
+implemented there. These activities include, for example, granting
+access rights and deleting e-prescriptions.</p>
+<h2 id="save-login-data">save login data</h2>
+<p>If you are logged in, you can activate the “Save credentials”
+function for future logins. The access data - consisting of PIN, CAN,
+authentication certificate and access key (token) - are then stored in a
+protected area of your device so that they can be used again. This
+feature can only be activated if your smartphone has a secure app access
+protection mechanism. Apple iPhones with Touch ID or Face ID and Android
+devices with “Strongbox Keymaster” security module currently meet this
+requirement.</p>
+<h2 id="scan-and-redeem-prescription-codes">Scan and redeem prescription
+codes</h2>
+<p>If you want to save a prescription code and redeem it at a pharmacy
+via the app, you must first scan it with the camera. Scanning creates an
+electronic copy of the prescription code. This step takes place
+exclusively on your device, which means no internet connection is
+required. You can then redeem the e-prescription at a pharmacy using the
+app:</p>
+<ul>
+<li><p>If you are logged in to the prescription service and assign the
+e-prescription to a pharmacy for redemption via the app, this will be
+documented in the prescription service and the prescription status will
+be changed to “in redemption”. The pharmacy then receives access rights
+to the e-prescription stored in the prescription service. There is no
+direct communication between the app and the pharmacy. You can view the
+current processing status, which is managed by the recipe service, at
+any time in the app.</p></li>
+<li><p>send the prescription code directly to the pharmacy along with
+your other order details (e.g. whether you want to pick up the
+medication or have it delivered) . In this case, the app communicates
+directly with your pharmacy's communication system. The prescription
+service is not involved in this communication and is therefore not
+informed about the order. For your convenience, the transmitted
+e-prescription will be marked as “sent” in the order overview of your
+app. The app receives the access data for the pharmacy's communication
+system from the pharmacy directory.</p></li>
+</ul>
+<p><u>Note for Android devices:</u></p>
+<p>In order to be able to scan recipe codes error-free even under
+unfavorable conditions (e.g. poor camera resolution or lighting
+conditions), the app uses a special interface (Barcode Scanning API from
+Google ML Kit) with your consent. This interface is part of the Google
+Play Services, which is already installed on your device. The camera
+image is analyzed exclusively on your device. However, as with all
+Android devices with Google Play Services, Google reserves the right to
+collect certain usage and device data when using the interface (for ML
+Kit, for example: manufacturer, device model, operating system version,
+hardware, mobile operator, time zone, language settings , IP address,
+app version, configuration of ML Kit, number of scans, error messages)
+within the operating system and transmitted to a Google server for
+further development of the interface. It cannot be ruled out that this
+data will be transferred to a third country (e.g. USA), see Who will
+your data be passed on to ? You can revoke your consent to use the
+Google ML Kit at any time by deactivating the camera permission of the
+e-prescription app in the Android settings . Further information can be
+found in Google's notes on ML Kit <a
+href="https://developers.google.com/ml-kit/vision/barcode-scanning">https://developers.google.com/ml-kit/vision/barcode-scanning</a> and in the <a
+href="https://policies.google.com/privacy?hl=de">Google data protection
+declaration</a>.</p>
+<h2 id="pharmacy-search">Pharmacy search</h2>
+<p>When using the pharmacy search, your search criteria (e.g. addresses
+or location data) are transmitted to the <strong>pharmacy
+directory</strong> . The pharmacy directory then provides the app with a
+list of pharmacies that match the search criteria.</p>
+<p><u>Note for Android devices:</u></p>
+<p>With your consent, the app uses the map service Google Maps to view
+the map. The app then transfers your location (if you have approved it)
+and the locations of the pharmacies found to an interface in your
+operating system (Google Maps interface). This interface is part of the
+Google Play Services, which is already installed on your device. Please
+note the “Note for Android devices” under Scanning and redeeming
+prescription codes in connection with Google ML KIT, which also applies
+to the Google Maps interface. When using Google Maps, <u>Google's Terms
+of Use for Google Maps/Google Earth</u> and the <u>Google Privacy Policy
+apply</u> .</p>
+<h2 id="notifications-to-pharmacies">Notifications to pharmacies</h2>
+<p>The e-prescription app enables direct encrypted and confidential
+communication between you and pharmacies.</p>
+<p>If you are logged in to the prescription service, communication with
+the pharmacy takes place via the prescription service, which also
+archives the messages. The app loads the messages from the recipe
+service and saves them on your device so that you can see the current
+status even without registering. Neither the prescription service
+provider nor gematik have access to the messages exchanged.</p>
+<p>If you are not logged into the prescription service, you can use the
+app to send messages directly to your pharmacy's communication system.
+The app receives the access data for the communication system from the
+pharmacy directory. The prescription service is not involved in the
+communication. Please note: In order to receive messages and view
+message histories, you must log in to the prescription service.</p>
+<h2 id="digital-cost-receipts-for-privately-insured-people">Digital cost
+receipts (for privately insured people)</h2>
+<p>As a privately insured person, you can agree to receive digital cost
+receipts in the app. Your consent will be noted on the prescription
+service and can be revoked at any time in the app. If you have agreed,
+you will only receive cost receipts from pharmacies in digital form via
+the prescription service. You can use the app to manage your digital
+cost receipts stored on the prescription service and save them as PDF
+documents that can be submitted electronically. For easy electronic
+submission, you can also share the PDF documents directly with your
+health insurance provider's submission app.</p>
+<h2 id="security-features">Security features</h2>
+<h3 id="connected-devices">Connected devices</h3>
+<p>The “Save credentials” function can be activated on multiple devices.
+Any device on which you have this feature enabled is called a “connected
+device”. All connected devices are managed centrally on the identity
+service. To do this, the e-prescription app transfers device information
+to the identity service for clear differentiation: manufacturer, device
+model, device name, operating system version and device name (e.g.
+“Anna’s iPhone”). The identity service stores this information. To help
+you keep track, you can see on which devices you have saved your access
+data under “Connected devices” in the “Settings” area.</p>
+<p>If you want to deregister a connected device, you can do so on that
+device or another connected device. The identity service then deletes
+the device information and access keys it has stored. The access keys
+stored on the deregistered device will also be deleted.</p>
+<p>Please note: If a connected device model or its operating system
+version is deemed unsafe, the Identity Service may deregister the device
+in question. The identity service then deletes the device information
+and access keys it has stored. . You can then log in to the recipe
+service again on the deregistered device, provided the security problem
+has been resolved by an operating system update.</p>
+<h3 id="integrity-checks">Integrity checks</h3>
+<p>Smartphones can be operated with a manipulated operating system
+(so-called “jailbreaking” or “rooting”). Not every affected user is
+aware that their operating system has been manipulated (e.g. with
+devices purchased second-hand) and the security risks associated with
+this. A technical check of the operating system is carried out every
+time the e-prescription app is started. If evidence of manipulation is
+detected, a warning is displayed. You can then continue to use the app
+at your own risk without any restrictions.</p>
+<p>For jailbreak detection on Apple devices, the e-prescription app
+checks the device memory for evidence of apps that can only be installed
+on jailbroken devices (e.g. Cydia app).</p>
+<p>A security function of the operating system is used to detect root on
+Android devices. To do this, the app generates a random number and
+information about the e-prescription app (e.g. version) and transfers it
+to a special interface in your operating system (SafetyNet Attestation
+API). This interface is part of the Google Play Services, which is
+already installed on your device (see Scan recipe codes ). The SafetyNet
+Attestation API then evaluates information about your device and the app
+that is only accessible to Google Play Services. This evaluation
+provides conclusions about possible manipulation of the operating
+system. The result is communicated to the e-prescription app.</p>
+<h3 id="app-access-lock">App access lock</h3>
+<p>To make it more difficult for unauthorized access to your
+e-prescription app, it can be automatically locked every time you close
+it. Every time it is opened, it must first be unlocked. Depending on
+what security features your smartphone has, password-based and biometric
+methods are available.</p>
+<p>Please note: If you activate the “Save access data” function, the app
+lock is also automatically activated.</p>
+<p>If you enable password protection, your password will be checked
+locally during setup to ensure it is sufficiently strong. The password
+is only saved on your device.</p>
+<p>When using a biometric procedure, the security functions of your
+smartphone are used. The e-prescription app does not receive any
+biometric data, but only the result of the biometric check by your
+operating system.</p>
+<h2 id="push-notifications">Push notifications</h2>
+<p>In future versions of the app, you will be able to receive push
+notifications about communications from pharmacies or new
+e-prescriptions. To do this, your smartphone registers with the push
+service of your operating system. The following push services are used:
+Firebase Cloud Messaging (Android), Apple Push Notification (Apple),
+Huawei Push Kit (Huawei).</p>
+<p>The respective push service provides the e-prescription app with a
+push identifier. The push identifier is then transmitted from the
+e-prescription app to the prescription service. If a push message is to
+be sent to you, the recipe service sends a message with your push
+identifier to the push service used, which then forwards it to your
+smartphone. The pharmacy's message remains on the prescription service
+and is only loaded when you open the e-prescription app.</p>
+<h2 id="usage-analysis">Usage analysis</h2>
+<p>If you allow usage analysis, general usage data (e.g. type and extent
+of use and operation of the app functions) and information about the
+hardware and software used (e.g. type, version and manufacturer of the
+device and operating system) as well as selected settings (e.g. language
+setting) will be collected ) transmitted. The usage data is only
+evaluated anonymously. You can revoke your consent at any time by
+deactivating usage analysis in the settings. Your usage data will then
+no longer be transferred to gematik. You will receive further
+information before activating usage analysis in the e-prescription
+app.</p>
+<h1 id="who-will-your-data-be-shared-with">Who will your data be shared
+with?</h1>
+<p>If you have agreed to the usage analysis, the app will transmit your
+usage data to gematik's technical service provider for usage analysis
+(Content Square GmbH) based on your consent.</p>
+<p>Otherwise, gematik has no access to the data stored on your device.
+The app only shares your data with other providers and other third
+parties in accordance with How and why is your data processed? described
+scope further.</p>
+<p>Neither the e-prescription app nor the providers of the prescription
+service, the identity service or the pharmacy directory transfer your
+data to countries where an adequate level of data protection does not
+exist and European data protection laws may not be enforced (so-called
+third countries, e.g. USA).</p>
+<p>However, we would like to point out that using the e-prescription app
+generates usage data on your operating system. The manufacturers of the
+operating systems partially reserve the right to log and evaluate this
+data. This may also result in device and usage data being transferred to
+the USA or another third country. In this respect, it is possible that
+security authorities in a third country access the data transmitted to
+the manufacturer and evaluate it, for example by linking data with other
+information about you.</p>
+<h1 id="when-will-your-data-be-deleted">When will your data be
+deleted?</h1>
+<p>gematik does not store any personal data from users of the
+e-prescription app . Therefore, no deletion is necessary or possible on
+gematik’s part.</p>
+<p>You can delete the recipe data, recipe codes, cost receipts and
+messages stored on your device in the app itself. The e-prescriptions in
+the prescription service are automatically deleted after 100 days from
+issue or last change in status (Section 360 Paragraph 11 SGB V). Cost
+receipts are deleted from the prescription service after 10 years
+(Section 360 Paragraph 13 SGB V).</p>
+<p>Access logs in the recipe service are not stored on your device and
+cannot be deleted. They are automatically deleted from the prescription
+service after three years (§ 309 SGB V).</p>
+<p>If you delete a profile, all data associated with it, including data
+downloaded from the recipe service and stored access data, will be
+deleted. The saved access data will also be deleted if you deactivate
+“Save access data”.</p>
+<p>If you disable push notifications in the e-prescription app, the push
+identifier stored on your device will be deleted.</p>
+<p>Uninstalling the e-prescription app will delete all data stored by
+the e-prescription app on your device.</p>
+<h1 id="your-privacy-rights">Your privacy rights</h1>
+<p>With regard to the usage data transmitted to gematik with your
+consent, you have the right to information (Art. 15 GDPR), correction
+(Art. 16 GDPR), deletion (Art. 17 GDPR), and restriction of processing
+(Art. 18 GDPR). ) and data portability (Art. 20 GDPR). <strong>You also
+have the right to revoke your consent (see Usage Analysis</strong>
+<strong>).</strong> Please note that gematik stores your usage data in
+anonymized form. It is no longer possible to assign this data to you
+personally, so that the data protection rights mentioned above no longer
+apply (Art. 11 Para. 2 GDPR, Section 308 SGB V). You also have the right
+to complain to a data protection supervisory authority. The data
+protection supervisory authority responsible for gematik is the Federal
+Commissioner for Data Protection and Freedom of Information <a
+href="http://www.bfdi.bund.de/">http://www.bfdi.bund.de</a>.</p>
+<h1 id="other-responsible-persons">Other responsible persons</h1>
+<p>In accordance with Section 307 Paragraph 4 SGB V, the respective
+providers are responsible for the following services in terms of data
+protection:</p>
+<ul>
+<li><p><strong>Prescription service</strong> : IBM Deutschland GmbH,
+IBM-Allee 1, 71139 Ehningen</p></li>
+<li><p><strong>Identity service</strong> : Research Industrial Systems
+Engineering (RISE) Forschungs-, Entwicklung- und Großprojektberatung
+GmbH, Concorde Business Park F, 2320 Schwechat, Austria</p></li>
+<li><p><strong>Pharmacy directory</strong> : German Pharmacists
+Association eV, Heidestraße 7, 10557 Berlin</p></li>
+</ul>
+<h1 id="contact-person">contact person</h1>
+<p>You can find gematik's contact details in the legal notice. You can
+find further contact options in the settings under “Contact”.</p>
+<p>If you have any questions about data protection or your data
+protection rights in connection with this app, you can contact gematik's
+data protection officer. You reach him</p>
+<ul>
+<li><p>via the contact form <a
+href="https://www.gematik.de/hilfe-kontakt/kontaktformular/">https://www.gematik.de/hilfe-kontakt/kontaktformular/</a> with the assignment of the query topic “data protection”</p></li>
+<li><p>by post: gematik GmbH, data protection officer, Friedrichstraße
+136, 10117 Berlin</p></li>
+<li><p>by email: <a
+href="mailto:datenschutz@gematik.de">datenschutz@gematik.de</a></p></li>
+</ul>
+<p>If you have any questions about the health network (telematics
+infrastructure) and in particular about the data protection
+responsibilities of the providers involved, you can contact the gematik
+data protection pilot <a
+href="https://www.gematik.de/datensicherheit/datenschutzlotse">https://www.gematik.de/datensicherheit/datenschutzlotse</a> :</p>
+<p>As of: September 2023</p>
 </body>
 </html>

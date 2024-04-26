@@ -46,6 +46,15 @@ class DemoIDPSession: IDPSession {
 
     init(storage: IDPStorage) {
         self.storage = storage
+
+        let token = IDPToken(
+            accessToken: "SECRET ACCESSTOKEN",
+            expires: Date.distantFuture,
+            idToken: "IDP TOKEN",
+            ssoToken: "SSO TOKEN",
+            redirect: ""
+        )
+        self.storage.set(token: token)
     }
 
     func invalidateAccessToken() {

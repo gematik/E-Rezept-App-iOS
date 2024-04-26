@@ -1,3 +1,47 @@
+# Release 1.20.0
+
+### fixed (6 changes)
+
+ - Fix feedback and add tests
+ - Fix prescriptions that are still in progress but expired
+ - Fix accessibility and time sorting of MedicationReminders
+ - Fix Gesundheits ID bottom banner to reappear
+ - Fix chargeItem revoke consent
+ - Fix deleting scheduled notifications
+
+### added (11 changes)
+
+ - Add check for forced update upon app startup
+ - Add UITests for Prescription Status
+ - Add recommendation for eGK while selection login method
+ - Add UITests for MedicationReminder
+ - Add Map for searching pharmacies
+ - Add german dictionary for password strength tester
+ - Add LoginHandlerServiceFactory and SmartMockLoginHandler
+ - Add Medication Reminder
+ - Add new pinning of RSA Certificate for FD
+ - Add medication schedule to medication detail
+ - Medication plan for scheduling applications
+
+### changed (8 changes)
+
+ - Moved IDP TrustStore HTTPClient TestUtils and VAUClient to SPM
+ - Update Datenschutzerklärung
+ - Change the demo mode to be logged in immediately
+ - Change the 5 seconds forced delay for gID login in favor of just waiting for...
+ - Changed medication reminder finite name, default dosage and dosage instructions
+ - Fix buttons embedded in SwiftUI forms
+ - Fix crash with negative day count in medication reminder
+ - Changed MedicationReminder layout and options
+
+### internal (1 change)
+
+ - Removed Fasttrack name in favor of gID
+
+### removed (1 change)
+
+ - Remove Fasttrack implementation from IDPSession and IDPClient
+
 # Release 1.19.0
 
 ### changed (5 changes)

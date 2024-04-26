@@ -79,6 +79,11 @@ struct MedicationReminderSetupView: View {
                     .headerProminence(.increased)
 
                     if viewStore.medicationSchedule.isActive {
+                        let repetitionValue = viewStore.medicationSchedule.repetitionType == .infinite
+                            ? L10n.medReminderTxtRepetitionTypeInfinite
+                            : L10n.medReminderTxtRepetitionFiniteTill(
+                                dateFormatter.relativeDate(from: viewStore.medicationSchedule.end)
+                            )
                         Section {
                             Button {
                                 viewStore.send(.setNavigation(tag: .repetitionDetails))
@@ -88,20 +93,17 @@ struct MedicationReminderSetupView: View {
                                         .foregroundColor(Colors.text)
                                     Spacer()
 
-                                    Text(
-                                        viewStore.medicationSchedule.repetitionType == .infinite
-                                            ? L10n.medReminderTxtRepetitionTypeInfinite
-                                            : L10n.medReminderTxtRepetitionFiniteTill(
-                                                dateFormatter.relativeDate(from: viewStore.medicationSchedule.end)
-                                            )
-                                    )
-                                    .foregroundColor(Colors.textSecondary)
+                                    Text(repetitionValue)
+                                        .foregroundColor(Colors.textSecondary)
                                     Image(systemName: SFSymbolName.chevronForward)
                                         .foregroundColor(Color(.tertiaryLabel))
                                         .font(.body.weight(.semibold))
                                 }
                                 .contentShape(Rectangle()) // iOS15 workaround to fix button tap area
                             }
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel(L10n.medReminderTxtRepetitionTitle)
+                            .accessibilityValue(repetitionValue.text)
                             .buttonStyle(.plain) // iOS15 workaround to fix button embedded in forms
                             .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDetails)
                         } header: {
@@ -167,6 +169,8 @@ struct MedicationReminderSetupView: View {
                             .onDelete { indexSet in
                                 viewStore.send(.delete(indexSet))
                             }
+                            .accessibilityElement(children: .contain)
+                            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnScheduleTimeList)
 
                             Button {
                                 viewStore.send(.addButtonPressed, animation: .default)
@@ -241,6 +245,7 @@ extension MedicationReminderSetupView {
             .padding()
             .frame(maxWidth: .infinity)
             .background(Colors.systemBackground.ignoresSafeArea())
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier(A11y.medicationReminder.medReminderDrawerDosageInstructionInfo)
         }
     }

@@ -73,6 +73,7 @@ extension MainDomain {
                 case consentServiceErrorOkay
                 case consentServiceErrorAuthenticate
                 case consentServiceErrorRetry
+                case goToAppStore
             }
 
             enum Toast: Equatable {

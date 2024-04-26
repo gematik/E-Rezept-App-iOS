@@ -133,7 +133,9 @@ struct Prescription: Equatable, Identifiable {
                 return .open(until: L10n.erxTxtExpiresIn(remainingDays - 1).text)
             }
 
-            return .archived(message: L10n.erxTxtInvalid.text)
+            let formattedDate = ((erxTask.expiresOn as String?).map { uiDateFormatter.date($0) ?? "?" }) ?? "?"
+
+            return .archived(message: L10n.erxTxtExpiredOn(formattedDate).text)
 
         case .completed:
             let redeemedOnDate = uiDateFormatter.relativeDate(whenHandedOver) ?? L10n.prscFdTxtNa.text
@@ -297,8 +299,9 @@ extension Prescription {
 
         switch (erxTask.status, viewStatus) {
         case (.ready, .redeem): return L10n.prscStatusMultiplePrsc.key
-        case (.ready, .archived): return L10n.prscStatusExpired.key
+        case (.ready, .archived): return L10n.erxTxtInvalid.key
         case (.ready, _): return L10n.prscStatusReady.key
+        case (.inProgress, .archived): return L10n.erxTxtInvalid.key
         case (.inProgress, _): return L10n.prscStatusInProgress.key
         case (.completed, _): return L10n.prscStatusCompleted.key
         case (.cancelled, _): return L10n.prscStatusCanceled.key
@@ -324,6 +327,7 @@ extension Prescription {
         case (.ready, .redeem): return Image(systemName: SFSymbolName.calendarClock)
         case (.ready, .archived): return Image(systemName: SFSymbolName.clockWarning)
         case (.ready, _): return nil
+        case (.inProgress, .archived): return Image(systemName: SFSymbolName.clockWarning)
         case (.inProgress, _): return nil
         case (.computed(.sent), _): return Image(Asset.Prescriptions.checkmarkDouble)
         case (.computed(.waiting), _): return nil
@@ -344,6 +348,7 @@ extension Prescription {
              (.undefined, _),
              (.completed, _),
              (.computed(.sent), _),
+             (.inProgress, .archived),
              (.ready, .archived): return Colors.systemGray
         case (.ready, .redeem),
              (.computed(.waiting), _),
@@ -363,6 +368,7 @@ extension Prescription {
              (.undefined, _),
              (.completed, _),
              (.computed(.sent), _),
+             (.inProgress, .archived),
              (.ready, .archived): return Colors.systemGray2
         case (.ready, .redeem),
              (.computed(.waiting), _),
@@ -382,6 +388,7 @@ extension Prescription {
              (.undefined, _),
              (.completed, _),
              (.computed(.sent), _),
+             (.inProgress, .archived),
              (.ready, .archived): return Colors.secondary
         case (.ready, .redeem),
              (.computed(.waiting), _),

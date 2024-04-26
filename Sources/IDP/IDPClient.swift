@@ -41,7 +41,7 @@ public protocol IDPClient {
     /// - Parameter nonce: OpenID parameter nonce of high entropy.
     /// - Parameter document:
     ///     use this DiscoveryDocument to resolve the actual endpoint and verify the response(s) [when applicable]
-    /// - Parameter redirect: Overwrite the common redirect. Used for FastTrack where the redirect differs from normal
+    /// - Parameter redirect: Overwrite the common redirect. Used for ExtAuth where the redirect differs from normal
     ///     IDP usage.
     /// - Returns: response with user content statement and signing challenge
     func requestChallenge( // swiftlint:disable:this function_parameter_count
@@ -133,7 +133,7 @@ public protocol IDPClient {
                    using document: DiscoveryDocument)
         -> AnyPublisher<IDPExchangeToken, IDPError>
 
-    /// Load available Insurance companies that are capable of External Authentication (*FastTrack*).
+    /// Load available Insurance companies that are capable of External Authentication (gID).
     /// - Parameter document: The DiscoveryDocument to resolve the actual endpoint.
     func loadDirectoryKKApps(using document: DiscoveryDocument) -> AnyPublisher<IDPDirectoryKKApps, IDPError>
 

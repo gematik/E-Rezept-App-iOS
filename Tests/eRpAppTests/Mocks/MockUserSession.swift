@@ -36,6 +36,7 @@ class MockUserSession: UserSession {
     var mockIDPSession: IDPSessionMock
     var profileSecureDataWiper: ProfileSecureDataWiper
     var secureUserStore: SecureUserDataStore
+    var mockUpdateChecker: UpdateChecker
 
     var isLoggedIn: Bool
     var profileId: UUID
@@ -46,7 +47,8 @@ class MockUserSession: UserSession {
         prescriptionRepository: MockPrescriptionRepository = MockPrescriptionRepository(),
         idpSession: IDPSessionMock = IDPSessionMock(),
         secureUserStore: SecureUserDataStore = MockSecureUserStore(),
-        profileSecureDataWiper: ProfileSecureDataWiper = MockProfileSecureDataWiper()
+        profileSecureDataWiper: ProfileSecureDataWiper = MockProfileSecureDataWiper(),
+        mockUpdateChecker: UpdateChecker = UpdateChecker { false }
     ) {
         isLoggedIn = isAuthenticated
         self.profileId = profileId
@@ -54,6 +56,7 @@ class MockUserSession: UserSession {
         mockIDPSession = idpSession
         self.profileSecureDataWiper = profileSecureDataWiper
         self.secureUserStore = secureUserStore
+        self.mockUpdateChecker = mockUpdateChecker
     }
 
     var isDemoMode: Bool {
@@ -119,6 +122,10 @@ class MockUserSession: UserSession {
     lazy var pharmacyRepository: PharmacyRepository = {
         MockPharmacyRepository()
     }()
+
+    var updateChecker: UpdateChecker {
+        mockUpdateChecker
+    }
 
     lazy var nfcSessionProvider: NFCSignatureProvider = {
         MockNFCSignatureProvider()

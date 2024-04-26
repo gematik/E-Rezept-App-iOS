@@ -29,8 +29,8 @@ class JWTTests: XCTestCase {
         hex: "049650AC6D4D5B1201DE4CFFE99DB3A2396426A377BC95D9DC466727A2574D7C39643159E578F05A6B607E89AFDD5395EEACC8E72714489CAC3160C4BB79AA45C6" // swiftlint:disable:this line_length
     ))
 
-    let document = try! Bundle(for: JWTTests.self)
-        .testResourceFilePath(in: "JWT", for: "discovery-doc.jwt")
+    let document = try! Bundle.module
+        .testResourceFilePath(in: "Resources/JWT", for: "discovery-doc.jwt")
         .readFileContents()
 
     func testParsingAndValidatingJWT() {

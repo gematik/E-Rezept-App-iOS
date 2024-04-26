@@ -292,3 +292,128 @@ extension IDPError: Equatable {
         }
     }
 }
+
+extension IDPError: Codable {
+    enum CodingKeys: String, CodingKey {
+        case type
+        case value
+    }
+
+    public enum LoadingError: Swift.Error {
+        case message(String?)
+    }
+
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+        let value = try? container.decode(String.self, forKey: .value)
+        switch type {
+        case "network":
+            self = .network(error: .unknown(LoadingError.message(value)))
+        case "validation":
+            self = .validation(error: LoadingError.message(value))
+        case "tokenUnavailable":
+            self = .tokenUnavailable
+        case "unspecified":
+            self = .unspecified(error: LoadingError.message(value))
+        case "decoding":
+            self = .decoding(error: LoadingError.message(value))
+        case "noCertificateFound":
+            self = .noCertificateFound
+        case "invalidDiscoveryDocument":
+            self = .invalidDiscoveryDocument
+        case "invalidStateParameter":
+            self = .invalidStateParameter
+        case "invalidNonce":
+            self = .invalidNonce
+        case "unsupported":
+            self = .unsupported(value)
+        case "encryption":
+            self = .encryption
+        case "decryption":
+            self = .decryption
+        case "`internal`":
+            self = .internal(error: .notImplemented)
+        case "trustStore":
+            self = .trustStore(error: .unspecified(error: LoadingError.message(value)))
+        case "pairing":
+            self = .pairing(LoadingError.message(value))
+        case "invalidSignature":
+            self = .invalidSignature(value ?? "")
+        case "serverError":
+            if let valueData = value?.data(using: .utf8),
+               let response = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: valueData) {
+                self = .serverError(response)
+            }
+            self = .serverError(.init(error: value ?? "", errorText: value ?? "", timestamp: 0, uuid: "", code: ""))
+        case "biometrics":
+            self = .biometrics(.internal(value ?? "", nil))
+        case "extAuthOriginalRequestMissing":
+            self = .extAuthOriginalRequestMissing
+        case "notAvailableInDemoMode":
+            self = .notAvailableInDemoMode
+        default:
+            self = .unsupported("Error while decoding the error")
+        }
+    }
+
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case let .network(error):
+            try container.encode("network", forKey: .type)
+            try container.encode(error.localizedDescription, forKey: .value)
+        case let .validation(error):
+            try container.encode("validation", forKey: .type)
+            try container.encode(error.localizedDescription, forKey: .value)
+        case let .unspecified(error):
+            try container.encode("unspecified", forKey: .type)
+            try container.encode(error.localizedDescription, forKey: .value)
+        case let .decoding(error):
+            try container.encode("decoding", forKey: .type)
+            try container.encode(error.localizedDescription, forKey: .value)
+        case .tokenUnavailable:
+            try container.encode("tokenUnavailable", forKey: .type)
+        case .noCertificateFound:
+            try container.encode("noCertificateFound", forKey: .type)
+        case .invalidDiscoveryDocument:
+            try container.encode("invalidDiscoveryDocument", forKey: .type)
+        case .extAuthOriginalRequestMissing:
+            try container.encode("extAuthOriginalRequestMissing", forKey: .type)
+        case let .internal(error):
+            try container.encode("internal", forKey: .type)
+            try container.encode(error.localizedDescription, forKey: .value)
+        case let .invalidSignature(text):
+            try container.encode("invalidSignature", forKey: .type)
+            try container.encode(text, forKey: .value)
+        case let .serverError(response):
+            try container.encode("serverError", forKey: .type)
+            let encodeResponse = try JSONEncoder().encode(response)
+            try container.encode(String(data: encodeResponse, encoding: .utf8), forKey: .value)
+        case let .trustStore(error):
+            try container.encode("trustStore", forKey: .type)
+            try container.encode(error.localizedDescription, forKey: .value)
+        case let .biometrics(error):
+            try container.encode("biometrics", forKey: .type)
+            try container.encode(error.localizedDescription, forKey: .value)
+        case .invalidStateParameter:
+            try container.encode("invalidStateParameter", forKey: .type)
+        case .invalidNonce:
+            try container.encode("invalidNonce", forKey: .type)
+        case let .unsupported(info):
+            try container.encode("unsupported", forKey: .type)
+            try container.encode(info, forKey: .value)
+        case .encryption:
+            try container.encode("encryption", forKey: .type)
+        case .decryption:
+            try container.encode("decryption", forKey: .type)
+        case let .pairing(error):
+            try container.encode("pairing", forKey: .type)
+            try container.encode(error.localizedDescription, forKey: .value)
+        case .notAvailableInDemoMode:
+            try container.encode("notAvailableInDemoMode", forKey: .type)
+        }
+    }
+}

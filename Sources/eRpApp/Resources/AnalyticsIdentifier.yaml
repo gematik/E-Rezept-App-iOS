@@ -87,6 +87,8 @@ screens:
     name: "pharmacySearch:detail"
   pharmacySearch_filter:
     name: "pharmacySearch:filter"
+  pharmacySearch_map:
+    name: "pharmacySearch:map"
   cardWall:
     name: "cardWall"
   cardWall_introduction:

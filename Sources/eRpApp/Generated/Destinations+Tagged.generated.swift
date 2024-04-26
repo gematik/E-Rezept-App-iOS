@@ -100,7 +100,7 @@ extension CardWallExtAuthSelectionDomain.Destinations.State {
 extension CardWallIntroductionDomain.Destinations.State {
     enum Tag: Int {
         case can
-        case fasttrack
+        case extauth
         case egk
     }
 
@@ -108,8 +108,8 @@ extension CardWallIntroductionDomain.Destinations.State {
         switch self {
             case .can:
                 return .can
-            case .fasttrack:
-                return .fasttrack
+            case .extauth:
+                return .extauth
             case .egk:
                 return .egk
         }
@@ -527,6 +527,27 @@ extension PharmacyRedeemDomain.Destinations.State {
     }
 }
 extension PharmacySearchDomain.Destinations.State {
+    enum Tag: Int {
+        case pharmacy
+        case filter
+        case alert
+        case mapSearch
+    }
+
+    var tag: Tag {
+        switch self {
+            case .pharmacy:
+                return .pharmacy
+            case .filter:
+                return .filter
+            case .alert:
+                return .alert
+            case .mapSearch:
+                return .mapSearch
+        }
+    }
+}
+extension PharmacySearchMapDomain.Destinations.State {
     enum Tag: Int {
         case pharmacy
         case filter

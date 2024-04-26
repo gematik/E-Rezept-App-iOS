@@ -46,11 +46,11 @@ schemes:
         - eRpLocalStorageTests_iOS
         - eRpRemoteStorageTests_iOS
         - PharmacyTests_iOS
-        - IDPTests_iOS
-        - HTTPClientTests_iOS
+        - package: eRpKit/IDPTests
+        - package: eRpKit/HTTPClientTests
         - FHIRClientTests_iOS
-        - TrustStoreTests_iOS
-        - VAUClientTests_iOS
+        - package: eRpKit/TrustStoreTests
+        - package: eRpKit/VAUClientTests
         - AVSTests_iOS
   AllTests_macOS:
     build:
@@ -65,11 +65,11 @@ schemes:
         - eRpLocalStorageTests_macOS
         - eRpRemoteStorageTests_macOS
         - PharmacyTests_macOS
-        - IDPTests_macOS
-        - HTTPClientTests_macOS
+        - package: eRpKit/IDPTests
+        - package: eRpKit/HTTPClientTests
         - FHIRClientTests_macOS
-        - TrustStoreTests_macOS
-        - VAUClientTests_macOS
+        - package: eRpKit/TrustStoreTests
+        - package: eRpKit/VAUClientTests
   AllIntegrationTests_iOS:
     build:
       targets:
@@ -93,6 +93,8 @@ schemes:
       targets:
         - eRpAppStoreScreenshots
 packages:
+  eRpKit:
+    path: ./
   OpenHealthCardKit:
     url: https://github.com/gematik/ref-OpenHealthCardKit/
     majorVersion: 5.3.0
@@ -142,9 +144,6 @@ packages:
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
     majorVersion: 1.10.0
-  CustomDump:
-    url: https://github.com/pointfreeco/swift-custom-dump
-    majorVersion: 0.10.3
   SwiftUI-Introspect:
     url: https://github.com/siteline/SwiftUI-Introspect
     majorVersion: 0.1.3
@@ -163,7 +162,7 @@ settings:
     DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC: 1
     CURRENT_PROJECT_VERSION: -1
     CODE_SIGN_IDENTITY: ""
-    SWIFT_VERSION: 5.0
+    SWIFT_VERSION: 5.8
     ALWAYS_SEARCH_USER_PATHS: NO
     FRAMEWORK_SEARCH_PATHS: "$(inherited)"
   configs:
@@ -191,12 +190,16 @@ targets:
       - target: eRpKit_iOS
       - target: eRpLocalStorage_iOS
       - target: Pharmacy_iOS
-      - target: IDP_iOS
-      - target: HTTPClient_iOS
       - target: FHIRClient_iOS
-      - target: TrustStore_iOS
-      - target: VAUClient_iOS
       - target: AVS_iOS
+      - package: eRpKit
+        product: IDP
+      - package: eRpKit
+        product: TrustStore
+      - package: eRpKit
+        product: VAUClient
+      - package: eRpKit
+        product: HTTPClient
       - package: OpenSSL-Swift
       - package: DataKit
       - package: GemCommonsKit
@@ -244,7 +247,8 @@ targets:
     sources:
       - Sources/AVS
     dependencies:
-      - target: HTTPClient_${platform}
+      - package: eRpKit
+        product: HTTPClient
       - package: ASN1Kit
       - package: GemCommonsKit
         product: GemCommonsKit
@@ -282,7 +286,8 @@ targets:
     sources:
       - Sources/eRpKit
     dependencies:
-      - target: IDP_${platform}
+      - package: eRpKit
+        product: IDP
       - target: FHIRClient_${platform}
       - package: BundleKit
       - package: IdentifiedCollections
@@ -327,7 +332,8 @@ targets:
       - target: eRpKit_${platform}
       - package: FHIRModels
         product: ModelsR4
-      - target: HTTPClient_${platform}
+      - package: eRpKit
+        product: HTTPClient
       - target: FHIRClient_${platform}
     scheme:
       testTargets:
@@ -344,48 +350,13 @@ targets:
     dependencies:
       - package: FHIRModels
         product: ModelsR4
-      - target: HTTPClient_${platform}
+      - package: eRpKit
+        product: HTTPClient
       - target: FHIRClient_${platform}
       - target: eRpKit_${platform}
     scheme:
       testTargets:
         - PharmacyTests_${platform}
-      gatherCoverageData: true
-  IDP:
-    settings:
-      PRODUCT_NAME: IDP
-      INFOPLIST_FILE: Sources/IDP/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/IDP
-    dependencies:
-      - target: HTTPClient_${platform}
-      - target: TrustStore_${platform}
-      - package: ASN1Kit
-      - package: DataKit
-      - package: GemCommonsKit
-        product: GemCommonsKit
-      - package: OpenSSL-Swift
-      - package: CombineSchedulers
-    scheme:
-      testTargets:
-        - IDPTests_${platform}
-      gatherCoverageData: true
-  HTTPClient:
-    settings:
-      PRODUCT_NAME: HTTPClient
-      INFOPLIST_FILE: Sources/HTTPClient/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/HTTPClient
-    dependencies:
-      - package: GemCommonsKit
-        product: GemCommonsKit
-    scheme:
-      testTargets:
-        - HTTPClientTests_${platform}
       gatherCoverageData: true
   FHIRClient:
     settings:
@@ -396,7 +367,8 @@ targets:
     sources:
       - Sources/FHIRClient
     dependencies:
-      - target: HTTPClient_${platform}
+      - package: eRpKit
+        product: HTTPClient
       - package: FHIRModels
         product: ModelsR4
       - package: CombineSchedulers
@@ -405,56 +377,6 @@ targets:
     scheme:
       testTargets:
         - FHIRClientTests_${platform}
-      gatherCoverageData: true
-  TestUtils:
-    settings:
-      INFOPLIST_FILE: Sources/TestUtils/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/TestUtils
-    dependencies:
-      - target: HTTPClient_${platform}
-      - target: IDP_${platform}
-      - target: VAUClient_${platform}
-      - package: Nimble
-      - package: CustomDump
-      - sdk: XCTest.framework
-    scheme:
-  TrustStore:
-    settings:
-      PRODUCT_NAME: TrustStore
-      INFOPLIST_FILE: Sources/TrustStore/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/TrustStore
-    dependencies:
-      - target: HTTPClient_${platform}
-      - package: GemCommonsKit
-        product: GemCommonsKit
-      - package: DataKit
-      - package: OpenSSL-Swift
-    scheme:
-      testTargets:
-        - TrustStoreTests_${platform}
-      gatherCoverageData: true
-  VAUClient:
-    settings:
-      PRODUCT_NAME: VAUClient
-      INFOPLIST_FILE: Sources/VAUClient/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/VAUClient
-    dependencies:
-      - target: HTTPClient_${platform}
-      - target: TrustStore_${platform}
-      - package: OpenSSL-Swift
-      - package: DataKit
-    scheme:
-      testTargets:
-        - TrustStoreTests_${platform}
       gatherCoverageData: true
   AVSTests:
     type: bundle.unit-test
@@ -465,7 +387,8 @@ targets:
       - Tests/AVSTests
     dependencies:
       - target: AVS_${platform}
-      - target: TestUtils_${platform}
+      - package: eRpKit
+        product: TestUtils
       - package: DataKit
       - package: GemCommonsKit
         product: GemCommonsKit
@@ -507,7 +430,8 @@ targets:
           - "**/__Snapshots__/**"
       - path: Sources/eRpLocalStorage/Prescriptions/ParsingDuplicates
     dependencies:
-      - target: TestUtils_iOS
+      - package: eRpKit
+        product: TestUtils
       - target: eRpApp
       - package: Nimble
       - package: SnapshotTesting
@@ -521,7 +445,8 @@ targets:
         excludes:
           - "**/__Snapshots__/**"
     dependencies:
-      - target: TestUtils_iOS
+      - package: eRpKit
+        product: TestUtils
       - target: eRpApp
       - package: Nimble
       - package: SnapshotTesting
@@ -534,7 +459,8 @@ targets:
       - Tests/eRpKitTests
     dependencies:
       - target: eRpKit_${platform}
-      - target: TestUtils_${platform}
+      - package: eRpKit
+        product: TestUtils
       - package: Nimble
   eRpStyleKitTests:
     type: bundle.unit-test
@@ -555,7 +481,8 @@ targets:
       - Tests/eRpLocalStorageTests
     dependencies:
       - target: eRpLocalStorage_${platform}
-      - target: TestUtils_${platform}
+      - package: eRpKit
+        product: TestUtils
       - package: Nimble
   eRpRemoteStorageTests:
     type: bundle.unit-test
@@ -566,7 +493,8 @@ targets:
       - path: Tests/eRpRemoteStorageTests
     dependencies:
       - target: eRpRemoteStorage_${platform}
-      - target: TestUtils_${platform}
+      - package: eRpKit
+        product: TestUtils
       - package: BundleKit
       - package: Nimble
       - package: OHHTTPStubs
@@ -580,37 +508,8 @@ targets:
       - path: Tests/PharmacyTests
     dependencies:
       - target: Pharmacy_${platform}
-      - target: TestUtils_${platform}
-      - package: BundleKit
-      - package: Nimble
-      - package: OHHTTPStubs
-        product: OHHTTPStubsSwift
-  IDPTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/IDPTests/Resources/Info.plist
-    sources:
-      - path: Tests/IDPTests
-        excludes:
-          - "**/.swiftlint.yml"
-    dependencies:
-      - target: IDP_${platform}
-      - target: TestUtils_${platform}
-      - package: BundleKit
-      - package: Nimble
-      - package: OHHTTPStubs
-        product: OHHTTPStubsSwift
-  HTTPClientTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/HTTPClientTests/Resources/Info.plist
-    sources:
-      - Tests/HTTPClientTests
-    dependencies:
-      - target: HTTPClient_${platform}
-      - target: TestUtils_${platform}
+      - package: eRpKit
+        product: TestUtils
       - package: BundleKit
       - package: Nimble
       - package: OHHTTPStubs
@@ -624,44 +523,10 @@ targets:
       - Tests/FHIRClientTests
     dependencies:
       - target: FHIRClient_${platform}
-      - target: TestUtils_${platform}
+      - package: eRpKit
+        product: TestUtils
       - package: BundleKit
       - package: Nimble
-      - package: OHHTTPStubs
-        product: OHHTTPStubsSwift
-  TrustStoreTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/TrustStoreTests/Resources/Info.plist
-    sources:
-      - Tests/TrustStoreTests
-    dependencies:
-      - target: TrustStore_${platform}
-      - target: TestUtils_${platform}
-      - package: DataKit
-      - package: GemCommonsKit
-        product: GemCommonsKit
-      - package: Nimble
-      - package: BundleKit
-      - package: OHHTTPStubs
-        product: OHHTTPStubsSwift
-  VAUClientTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/VAUClientTests/Resources/Info.plist
-    sources:
-      - Tests/VAUClientTests
-    dependencies:
-      - target: VAUClient_${platform}
-      - target: TestUtils_${platform}
-      - package: ASN1Kit
-      - package: DataKit
-      - package: GemCommonsKit
-        product: GemCommonsKit
-      - package: Nimble
-      - package: BundleKit
       - package: OHHTTPStubs
         product: OHHTTPStubsSwift
   IntegrationTests:
@@ -675,10 +540,14 @@ targets:
       - target: AVS_${platform}
       - target: eRpKit_${platform}
       - target: eRpApp
-      - target: IDP_${platform}
-      - target: TrustStore_${platform}
-      - target: TestUtils_${platform}
-      - target: VAUClient_${platform}
+      - package: eRpKit
+        product: IDP
+      - package: eRpKit
+        product: TrustStore
+      - package: eRpKit
+        product: TestUtils
+      - package: eRpKit
+        product: VAUClient
       - package: BundleKit
       - package: Nimble
 buildImplicitDependencies: true

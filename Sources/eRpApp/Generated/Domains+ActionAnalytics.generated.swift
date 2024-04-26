@@ -388,6 +388,13 @@ extension PharmacySearchFilterDomain.Action {
         }
     }
 }
+extension PharmacySearchMapDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
 extension PickupCodeDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {

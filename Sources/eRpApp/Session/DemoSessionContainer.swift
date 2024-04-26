@@ -112,6 +112,10 @@ class DemoSessionContainer: UserSession {
         )
     }()
 
+    var updateChecker = UpdateChecker {
+        false
+    }
+
     private lazy var demoErxTaskRepository: ErxTaskRepository = {
         DemoErxTaskRepository(
             requestDelayInSeconds: 0.9,

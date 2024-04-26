@@ -40,12 +40,12 @@ final class DefaultIDPSessionTests: XCTestCase {
     }()
 
     private func discoveryDocument(createdOn: Date) -> DiscoveryDocument {
-        guard let documentData = try? Bundle(for: Self.self)
-            .path(forResource: "discovery-doc", ofType: "jwt", inDirectory: "JWT.bundle")?
+        guard let documentData = try? Bundle.module
+            .path(forResource: "discovery-doc", ofType: "jwt", inDirectory: "Resources/JWT.bundle")?
             .readFileContents(),
             let documentJWT = try? JWT(from: documentData),
-            let jwkData = try? Bundle(for: Self.self)
-            .path(forResource: "jwk", ofType: "json", inDirectory: "JWT.bundle")?
+            let jwkData = try? Bundle.module
+            .path(forResource: "jwk", ofType: "json", inDirectory: "Resources/JWT.bundle")?
             .readFileContents(),
             let jwk = try? JSONDecoder().decode(JWK.self, from: jwkData),
             let document = try? DiscoveryDocument(
@@ -61,8 +61,8 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     private lazy var challengeDocument: IDPChallenge = {
-        guard let challengeData = try? Bundle(for: Self.self)
-            .path(forResource: "challenge-2", ofType: "json", inDirectory: "JWT.bundle")?
+        guard let challengeData = try? Bundle.module
+            .path(forResource: "challenge-2", ofType: "json", inDirectory: "Resources/JWT.bundle")?
             .readFileContents(),
             let challenge = try? JSONDecoder().decode(IDPChallenge.self, from: challengeData) else {
             fatalError("Could not load test idp challenge")
@@ -71,8 +71,8 @@ final class DefaultIDPSessionTests: XCTestCase {
     }()
 
     private lazy var invalidChallenge: IDPChallenge = {
-        guard let challengeData = try? Bundle(for: Self.self)
-            .path(forResource: "challenge-invalid", ofType: "json", inDirectory: "JWT.bundle")?
+        guard let challengeData = try? Bundle.module
+            .path(forResource: "challenge-invalid", ofType: "json", inDirectory: "Resources/JWT.bundle")?
             .readFileContents(),
             let challenge = try? JSONDecoder().decode(IDPChallenge.self, from: challengeData) else {
             fatalError("Could not load test idp challenge")
@@ -520,8 +520,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             redirect: "redirect"
         )
         idpClientMock.verify_Publisher = Just(expectedToken).setFailureType(to: IDPError.self).eraseToAnyPublisher()
-        let signedJwt = try! JWT(from: Bundle(for: Self.self)
-            .path(forResource: "signed-challenge-query-param", ofType: "jwt", inDirectory: "JWT.bundle")!
+        let signedJwt = try! JWT(from: Bundle.module
+            .path(forResource: "signed-challenge-query-param", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
             .readFileContents())
         let challenge = try! IDPChallenge(
             challenge: JWT(header: JWT.Header(), payload: IDPChallenge.Claim())
@@ -561,15 +561,15 @@ final class DefaultIDPSessionTests: XCTestCase {
     }()
 
     let encryptedTokenPayload: TokenPayload = {
-        let tokenPayloadPath = Bundle(for: DefaultIDPSessionTests.self)
-            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "JWT.bundle")!
+        let tokenPayloadPath = Bundle.module
+            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle")!
         let encryptedTokenData = try! tokenPayloadPath.readFileContents()
         return try! JSONDecoder().decode(TokenPayload.self, from: encryptedTokenData)
     }()
 
     let decryptedTokenPayload: TokenPayload = {
-        let tokenPath = Bundle(for: DefaultIDPSessionTests.self)
-            .path(forResource: "idp_token_decrypted", ofType: "json", inDirectory: "JWT.bundle")!
+        let tokenPath = Bundle.module
+            .path(forResource: "idp_token_decrypted", ofType: "json", inDirectory: "Resources/JWT.bundle")!
         let tokenData = try! tokenPath.readFileContents()
         return try! JSONDecoder().decode(TokenPayload.self, from: tokenData)
     }()
@@ -1180,7 +1180,7 @@ final class DefaultIDPSessionTests: XCTestCase {
                         ssoToken: self.decryptedTokenPayload.ssoToken,
                         tokenType: self.decryptedTokenPayload.tokenType,
                         redirect: "https://das-e-rezept-fuer-deutschland.de",
-                        isPkvFastTrackFlowInitiated: true
+                        isPkvExtAuthFlowInitiated: true
                     )
                     expect(response).to(equal(expected))
                 }

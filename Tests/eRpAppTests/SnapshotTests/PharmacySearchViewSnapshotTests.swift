@@ -17,8 +17,10 @@
 //
 
 import ComposableArchitecture
+import ComposableCoreLocation
 @testable import eRpApp
 import eRpKit
+import MapKit
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -120,6 +122,25 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPharmacySearch_mapSearch_WithUserButton() {
+        let sut = PharmacySearchMapView(
+            store: .init(
+                initialState: .init(
+                    erxTasks: [ErxTask](),
+                    mapLocation: MKCoordinateRegion.gematikHQRegion,
+                    pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies
+                )
+            ) {
+                EmptyReducer()
+            },
+
+            isRedeemRecipe: false
+        )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

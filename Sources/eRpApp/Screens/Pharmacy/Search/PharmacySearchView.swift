@@ -124,6 +124,53 @@ struct PharmacySearchView: View {
                     .accentColor(Colors.primary600)
                 })
                 .accessibility(hidden: true)
+
+            Rectangle()
+                .frame(width: 0, height: 0, alignment: .center)
+                .fullScreenCover(isPresented: Binding<Bool>(get: {
+                    viewStore.destinationTag == .mapSearch && isRedeemRecipe == false
+                }, set: { show in
+                    if !show {
+                        viewStore.send(.nothing)
+                    }
+                }),
+                onDismiss: {},
+                content: {
+                    IfLetStore(
+                        store.scope(state: \.$destination, action: PharmacySearchDomain.Action.destination),
+                        state: /PharmacySearchDomain.Destinations.State.mapSearch,
+                        action: PharmacySearchDomain.Destinations.Action.pharmacyMapSearch(action:)
+                    ) { store in
+                        PharmacySearchMapView(store: store, isRedeemRecipe: isRedeemRecipe)
+                    }
+                })
+                .accessibility(hidden: true)
+
+            NavigationLink(
+                isActive: .init(
+                    get: {
+                        viewStore.destinationTag == .mapSearch && isRedeemRecipe == true
+                    },
+                    set: { show in
+                        if !show {
+                            viewStore.send(.nothing)
+                        }
+                    }
+                ),
+                destination: {
+                    IfLetStore(
+                        store.scope(state: \.$destination, action: PharmacySearchDomain.Action.destination),
+                        state: /PharmacySearchDomain.Destinations.State.mapSearch,
+                        action: PharmacySearchDomain.Destinations.Action.pharmacyMapSearch(action:)
+                    ) { store in
+                        PharmacySearchMapView(store: store, isRedeemRecipe: isRedeemRecipe)
+                    }
+                },
+                label: {
+                    EmptyView()
+                }
+            )
+            .accessibility(hidden: true)
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {

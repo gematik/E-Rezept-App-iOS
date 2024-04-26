@@ -20,12 +20,14 @@ import CasePaths
 import Combine
 import ComposableArchitecture
 import ComposableCoreLocation
+import CoreLocationUI
 import eRpKit
 import IDP
+import MapKit
 import Pharmacy
 import SwiftUI
 
-// swiftlint:disable type_body_length
+// swiftlint:disable type_body_length file_length
 struct PharmacySearchDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
@@ -36,6 +38,8 @@ struct PharmacySearchDomain: ReducerProtocol {
         var searchText = ""
         /// Stores the current device location when determined by Core-Location
         var currentLocation: Location?
+        /// Map-Location for MapView with the standard value if location is not active
+        var mapLocation = MKCoordinateRegion.gematikHQRegion
         /// Store for the remote search result
         var pharmacies: [PharmacyLocationViewModel] = []
         /// Store for the local pharmacies
@@ -46,6 +50,7 @@ struct PharmacySearchDomain: ReducerProtocol {
         }
 
         var pharmacyRedeemState: PharmacyRedeemDomain.State?
+        var pharmacySearchMapState: PharmacySearchMapDomain.State?
 
         var isLoading: Bool {
             switch searchState {
@@ -76,9 +81,12 @@ struct PharmacySearchDomain: ReducerProtocol {
         case performSearch
         case quickSearch(filters: [PharmacySearchFilterDomain.PharmacyFilterOption])
         case loadAndNavigateToPharmacy(PharmacyLocation)
+        // Map
+        case mapSetUp
+        case showMap
+        case nothing
         // Pharmacy details
         case showDetails(PharmacyLocationViewModel)
-
         // Filter
         case removeFilterOption(PharmacySearchFilterDomain.PharmacyFilterOption)
         // Device location
@@ -137,6 +145,34 @@ struct PharmacySearchDomain: ReducerProtocol {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
+        case .showMap:
+            state.destination = .mapSearch(.init(erxTasks: state.erxTasks,
+                                                 currentUserLocation: state.currentLocation,
+                                                 mapLocation: state.mapLocation))
+            return .none
+        case .mapSetUp:
+            guard let currentLocation = locationManager.location() else {
+                state.mapLocation = MKCoordinateRegion.gematikHQRegion
+                return .none
+            }
+            state.currentLocation = currentLocation
+            state.mapLocation.center = currentLocation.coordinate
+            return .none
+        case let .destination(.presented(.pharmacyMapSearch(action: .delegate(action)))):
+            switch action {
+            case .closeMap:
+                state.destination = nil
+                state.searchState = .startView(loading: false)
+                return .none
+            case .close:
+                state.destination = nil
+                return .run { send in
+                    // swiftlint:disable:next todo
+                    // TODO: this is workaround to avoid `onAppear` of the the child view getting called
+                    try await schedulers.main.sleep(for: 0.1)
+                    await send(.delegate(.close))
+                }
+            }
         case .closeButtonTouched:
             return EffectTask.send(.delegate(.close))
         case let .delegate(action):
@@ -147,13 +183,15 @@ struct PharmacySearchDomain: ReducerProtocol {
             }
         case .task:
             state.searchHistory = searchHistory.historyItems()
-            return .publisher(
-                pharmacyRepository.loadLocal(count: 5)
-                    .first()
-                    .receive(on: schedulers.main.animation())
-                    .catchToPublisher()
-                    .map { .response(.loadLocalPharmaciesReceived($0)) }
-                    .eraseToAnyPublisher
+            return .merge(
+                .publisher(
+                    pharmacyRepository.loadLocal(count: 5)
+                        .first()
+                        .receive(on: schedulers.main.animation())
+                        .catchToPublisher()
+                        .map { .response(.loadLocalPharmaciesReceived($0)) }
+                        .eraseToAnyPublisher
+                ), Effect.send(.mapSetUp)
             )
         case .onAppear:
             return locationManager
@@ -324,8 +362,7 @@ struct PharmacySearchDomain: ReducerProtocol {
                  .authorizedWhenInUse:
                 return locationManager.startUpdatingLocation().fireAndForget()
             case .notDetermined:
-                return locationManager.requestWhenInUseAuthorization()
-                    .fireAndForget()
+                return locationManager.requestWhenInUseAuthorization().fireAndForget()
             case .restricted, .denied:
                 state.currentLocation = nil
                 state.destination = .alert(Self.locationPermissionAlertState)
@@ -343,6 +380,7 @@ struct PharmacySearchDomain: ReducerProtocol {
             return .none
         case .locationManager(.didChangeAuthorization(.denied)),
              .locationManager(.didChangeAuthorization(.restricted)):
+            state.currentLocation = nil
             if state.searchState == .searchAfterLocalizationWasAuthorized {
                 state.destination = .alert(Self.locationPermissionAlertState)
             }
@@ -350,15 +388,14 @@ struct PharmacySearchDomain: ReducerProtocol {
         case let .locationManager(.didUpdateLocations(locations)):
             state.currentLocation = locations.first
             return .concatenate(
-                locationManager.stopUpdatingLocation()
-                    .fireAndForget(),
+                locationManager.stopUpdatingLocation().fireAndForget(),
                 EffectTask.send(.performSearch)
             )
         case let .setNavigation(tag: tag):
             switch tag {
             case .filter:
                 state.destination = .filter(.init(pharmacyFilterOptions: state.pharmacyFilterOptions))
-            case .pharmacy, .alert:
+            case .pharmacy, .alert, .mapSearch:
                 break
             case .none:
                 state.destination = nil
@@ -395,7 +432,7 @@ struct PharmacySearchDomain: ReducerProtocol {
         case .destination(.presented(.alert(.openAppSpecificSettings))):
             openSettings()
             return .none
-        case .destination, .locationManager:
+        case .destination, .locationManager, .nothing:
             return .none
         }
     }

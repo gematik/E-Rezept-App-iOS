@@ -28,11 +28,14 @@ extension PharmacySearchDomain {
             case filter(PharmacySearchFilterDomain.State)
             // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<Action.Alert>)
+            // sourcery: AnalyticsScreen = pharmacySearch_map
+            case mapSearch(PharmacySearchMapDomain.State)
         }
 
         enum Action: Equatable {
             case pharmacyDetailView(action: PharmacyDetailDomain.Action)
             case pharmacyFilterView(action: PharmacySearchFilterDomain.Action)
+            case pharmacyMapSearch(action: PharmacySearchMapDomain.Action)
 
             case alert(Alert)
 
@@ -54,6 +57,12 @@ extension PharmacySearchDomain {
                 action: /Action.pharmacyFilterView
             ) {
                 PharmacySearchFilterDomain()
+            }
+            Scope(
+                state: /State.mapSearch,
+                action: /Action.pharmacyMapSearch
+            ) {
+                PharmacySearchMapDomain(referenceDateForOpenHours: nil)
             }
         }
     }

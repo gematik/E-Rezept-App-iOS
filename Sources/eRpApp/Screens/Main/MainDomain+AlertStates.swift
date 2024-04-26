@@ -83,6 +83,21 @@ extension MainDomain {
                 }
             }
         }
+
+        static func forcedUpdateAlert() -> ErpAlertState<Destinations.Action.Alert> {
+            .init(
+                title: L10n.erxTxtForcedUpdateAlertTitle,
+                actions: {
+                    ButtonState(role: .cancel, action: .send(.dismiss)) {
+                        TextState(L10n.erxTxtForcedUpdateAlertIgnore)
+                    }
+                    ButtonState(action: .send(.goToAppStore)) {
+                        TextState(L10n.erxTxtForcedUpdateAlertUpdate)
+                    }
+                },
+                message: L10n.erxTxtForcedUpdateAlertDescription
+            )
+        }
     }
 
     enum ToastStates {

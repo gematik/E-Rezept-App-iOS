@@ -68,6 +68,7 @@ struct PharmacySearchFilterDomain: ReducerProtocol {
     struct State: Equatable {
         /// Store for the active filter options the user has chosen
         var pharmacyFilterOptions: [PharmacyFilterOption] = []
+        var pharmacyFilterShow: [PharmacyFilterOption] = [.currentLocation, .open, .delivery, .shipment]
     }
 
     enum Action: Equatable {

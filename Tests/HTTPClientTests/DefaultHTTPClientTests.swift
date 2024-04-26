@@ -30,8 +30,8 @@ final class DefaultHTTPClientTests: XCTestCase {
     func testSendRequest() {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
-        guard let url = Bundle(for: Self.self)
-            .path(forResource: "file", ofType: "json", inDirectory: "HTTPClientResponses.bundle") else {
+        guard let url = Bundle.module
+            .path(forResource: "file", ofType: "json", inDirectory: "Resources/HTTPClientResponses.bundle") else {
             fail("Bundle could not find URL")
             return
         }
@@ -58,8 +58,8 @@ final class DefaultHTTPClientTests: XCTestCase {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
         let alternatePath = "/path/to/alternate-resource.html"
-        guard let url = Bundle(for: Self.self)
-            .path(forResource: "file", ofType: "json", inDirectory: "HTTPClientResponses.bundle") else {
+        guard let url = Bundle.module
+            .path(forResource: "file", ofType: "json", inDirectory: "Resources/HTTPClientResponses.bundle") else {
             fail("Bundle could not find URL")
             return
         }
@@ -86,8 +86,8 @@ final class DefaultHTTPClientTests: XCTestCase {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
         let alternatePath = "/path/to/alternate-resource.html"
-        guard let url = Bundle(for: Self.self)
-            .path(forResource: "file", ofType: "json", inDirectory: "HTTPClientResponses.bundle") else {
+        guard let url = Bundle.module
+            .path(forResource: "file", ofType: "json", inDirectory: "Resources/HTTPClientResponses.bundle") else {
             fail("Bundle could not find URL")
             return
         }
@@ -114,8 +114,8 @@ final class DefaultHTTPClientTests: XCTestCase {
     func testSendRequestAndFollowRedirect() {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
-        guard let url = Bundle(for: Self.self)
-            .path(forResource: "file", ofType: "json", inDirectory: "HTTPClientResponses.bundle") else {
+        guard let url = Bundle.module
+            .path(forResource: "file", ofType: "json", inDirectory: "Resources/HTTPClientResponses.bundle") else {
             fail("Bundle could not find URL")
             return
         }
@@ -155,8 +155,8 @@ final class DefaultHTTPClientTests: XCTestCase {
     func testSendRequestAndHandleRedirect() async {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
-        guard let url = Bundle(for: Self.self)
-            .path(forResource: "file", ofType: "json", inDirectory: "HTTPClientResponses.bundle") else {
+        guard let url = Bundle.module
+            .path(forResource: "file", ofType: "json", inDirectory: "Resources/HTTPClientResponses.bundle") else {
             fail("Bundle could not find URL")
             return
         }

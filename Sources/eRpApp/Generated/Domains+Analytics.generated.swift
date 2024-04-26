@@ -126,7 +126,7 @@ extension CardWallIntroductionDomain.State {
         switch destination {
             case let .can(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case let .fasttrack(state: state):
+            case let .extauth(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .egk(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
@@ -576,6 +576,8 @@ extension PharmacySearchDomain.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
+            case let .mapSearch(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -583,6 +585,22 @@ extension PharmacySearchDomain.State {
 extension PharmacySearchFilterDomain.State {
     func routeName() -> String? {
             return nil
+    }
+}
+
+extension PharmacySearchMapDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case let .pharmacy(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .filter(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
     }
 }
 
@@ -873,7 +891,7 @@ extension CardWallIntroductionDomain.Destinations.State {
         switch destination {
             case let .can(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case let .fasttrack(state: state):
+            case let .extauth(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .egk(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
@@ -1207,6 +1225,22 @@ extension PharmacySearchDomain.Destinations.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
+            case let .mapSearch(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension PharmacySearchMapDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .pharmacy(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .filter(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -1426,7 +1460,7 @@ extension CardWallIntroductionDomain.Destinations.State.Tag {
         switch self {
             case .can: 
                 return Analytics.Screens.cardWall_CAN.name
-            case .fasttrack: 
+            case .extauth: 
                 return Analytics.Screens.cardWall_extAuth.name
             case .egk: 
                 return Analytics.Screens.contactInsuranceCompany.name
@@ -1708,6 +1742,20 @@ extension PharmacyRedeemDomain.Destinations.State.Tag {
     }
 }
 extension PharmacySearchDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .pharmacy: 
+                return Analytics.Screens.pharmacySearch_detail.name
+            case .filter: 
+                return Analytics.Screens.pharmacySearch_filter.name
+            case .alert: 
+                return Analytics.Screens.alert.name
+            case .mapSearch: 
+                return Analytics.Screens.pharmacySearch_map.name
+        }
+    }
+}
+extension PharmacySearchMapDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .pharmacy: 

@@ -24,9 +24,9 @@ import XCTest
 final class OCSPListTests: XCTestCase {
     func testDecodeValidListJson() throws {
         // given
-        guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig",
-                                                   withExtension: "json",
-                                                   subdirectory: "OCSPList.bundle"),
+        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig",
+                                          withExtension: "json",
+                                          subdirectory: "Resources/OCSPList.bundle"),
             let data = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")

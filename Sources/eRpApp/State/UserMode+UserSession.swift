@@ -57,6 +57,10 @@ extension UserMode: UserSession {
         sessionContainer.pharmacyRepository
     }
 
+    var updateChecker: UpdateChecker {
+        sessionContainer.updateChecker
+    }
+
     var localUserStore: UserDataStore {
         sessionContainer.localUserStore
     }

@@ -111,6 +111,11 @@ internal enum Asset {
     internal static let cloudSlashGrey = ImageAsset(name: "CloudSlashGrey")
     internal static let exclamationmarkCloudRed = ImageAsset(name: "ExclamationmarkCloudRed")
   }
+  internal enum Map {
+    internal static let closedMarker = ImageAsset(name: "ClosedMarker")
+    internal static let emptyMarker = ImageAsset(name: "EmptyMarker")
+    internal static let mapMarker = ImageAsset(name: "MapMarker")
+  }
   internal enum Onboarding {
     internal static let apotheker = ImageAsset(name: "Apotheker")
     internal static let appLogo = ImageAsset(name: "AppLogo")

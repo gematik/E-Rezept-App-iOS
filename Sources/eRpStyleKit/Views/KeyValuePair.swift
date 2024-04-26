@@ -98,6 +98,9 @@ public struct DefaultKeyValuePairStyle: KeyValuePairStyle {
             configuration.value
                 .font(.body.weight(.bold))
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(configuration.key)
+        .accessibilityValue(configuration.value)
         .padding()
     }
 }
@@ -121,6 +124,9 @@ public struct SeparatedKeyValuePairStyle: KeyValuePairStyle {
         }
         .bottomDivider(showSeparator: showSeparator)
         .padding(.leading)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(configuration.key)
+        .accessibilityValue(configuration.value)
     }
 }
 
@@ -135,6 +141,9 @@ public struct PlainKeyValuePairStyle: KeyValuePairStyle {
                 .font(.body)
                 .foregroundColor(Color(.secondaryLabel))
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(configuration.key)
+        .accessibilityValue(configuration.value)
     }
 }
 

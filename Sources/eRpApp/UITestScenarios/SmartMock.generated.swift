@@ -946,6 +946,80 @@ class SmartMockErxTaskCoreDataStore: ErxTaskCoreDataStore, SmartMock {
 }
 
 
+// MARK: - SmartMockLoginHandler -
+
+class SmartMockLoginHandler: LoginHandler, SmartMock {
+    private var wrapped: LoginHandler
+    private var isRecording: Bool
+
+    init(wrapped: LoginHandler, mocks: Mocks?, isRecording: Bool = false) {
+        self.wrapped = wrapped
+        self.isRecording = isRecording
+
+        isAuthenticatedRecordings = mocks?.isAuthenticatedRecordings ?? .delegate
+        isAuthenticatedOrAuthenticateRecordings = mocks?.isAuthenticatedOrAuthenticateRecordings ?? .delegate
+    }
+
+    var isAuthenticatedRecordings: MockAnswer<Result<Bool, LoginHandlerError>>
+
+    func isAuthenticated() -> AnyPublisher<LoginResult, Never> {
+        guard !isRecording else {
+            let result = wrapped.isAuthenticated(
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.isAuthenticatedRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = isAuthenticatedRecordings.next() {
+            return Just(value)
+                .setFailureType(to: Never.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.isAuthenticated(
+            )
+        }
+    }
+
+    var isAuthenticatedOrAuthenticateRecordings: MockAnswer<Result<Bool, LoginHandlerError>>
+
+    func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never> {
+        guard !isRecording else {
+            let result = wrapped.isAuthenticatedOrAuthenticate(
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.isAuthenticatedOrAuthenticateRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = isAuthenticatedOrAuthenticateRecordings.next() {
+            return Just(value)
+                .setFailureType(to: Never.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.isAuthenticatedOrAuthenticate(
+            )
+        }
+    }
+
+    struct Mocks: Codable {
+        var isAuthenticatedRecordings: MockAnswer<Result<Bool, LoginHandlerError>>? = .delegate
+        var isAuthenticatedOrAuthenticateRecordings: MockAnswer<Result<Bool, LoginHandlerError>>? = .delegate
+    }
+    func recordedData() throws -> CodableMock {
+        return try CodableMock(
+            "LoginHandler",
+            Mocks(
+                isAuthenticatedRecordings: isAuthenticatedRecordings,
+                isAuthenticatedOrAuthenticateRecordings: isAuthenticatedOrAuthenticateRecordings
+            )
+        )
+    }
+}
+
+
 // MARK: - SmartMockPharmacyRemoteDataStore -
 
 class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {

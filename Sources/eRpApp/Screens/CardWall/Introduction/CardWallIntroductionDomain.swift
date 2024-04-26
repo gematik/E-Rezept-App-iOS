@@ -29,14 +29,14 @@ struct CardWallIntroductionDomain: ReducerProtocol {
             // sourcery: AnalyticsScreen = cardWall_CAN
             case can(CardWallCANDomain.State)
             // sourcery: AnalyticsScreen = cardWall_extAuth
-            case fasttrack(CardWallExtAuthSelectionDomain.State)
+            case extauth(CardWallExtAuthSelectionDomain.State)
             // sourcery: AnalyticsScreen = contactInsuranceCompany
             case egk(OrderHealthCardDomain.State)
         }
 
         enum Action: Equatable {
             case canAction(action: CardWallCANDomain.Action)
-            case fasttrack(action: CardWallExtAuthSelectionDomain.Action)
+            case extauth(action: CardWallExtAuthSelectionDomain.Action)
             case egkAction(action: OrderHealthCardDomain.Action)
         }
 
@@ -44,7 +44,7 @@ struct CardWallIntroductionDomain: ReducerProtocol {
             Scope(state: /State.can, action: /Action.canAction) {
                 CardWallCANDomain()
             }
-            Scope(state: /State.fasttrack, action: /Action.fasttrack) {
+            Scope(state: /State.extauth, action: /Action.extauth) {
                 CardWallExtAuthSelectionDomain()
             }
             Scope(state: /State.egk, action: /Action.egkAction) {
@@ -112,11 +112,11 @@ struct CardWallIntroductionDomain: ReducerProtocol {
             state.destination = nil
             return .none
         case .destination(.presented(.canAction(.delegate(.navigateToIntro)))),
-             .setNavigation(tag: .fasttrack):
-            state.destination = .fasttrack(CardWallExtAuthSelectionDomain.State())
+             .setNavigation(tag: .extauth):
+            state.destination = .extauth(CardWallExtAuthSelectionDomain.State())
             return .none
         case .destination(.presented(.canAction(.delegate(.close)))),
-             .destination(.presented(.fasttrack(action: .delegate(.close)))):
+             .destination(.presented(.extauth(action: .delegate(.close)))):
             state.destination = nil
             return .run { send in
                 try await schedulers.main.sleep(for: 0.05)

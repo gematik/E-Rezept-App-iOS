@@ -126,12 +126,12 @@ final class PrescriptionViewStatusTests: XCTestCase {
 
     func testTaskAlreadyExpired() {
         // given
-        let task = generateTask(expiresOn: DemoDate.createDemoDate(.today),
-                                acceptedUntil: DemoDate.createDemoDate(.today))
+        let task = generateTask(expiresOn: "2024-01-01T08:23:19+00:00",
+                                acceptedUntil: "2023-12-01T08:23:19+00:00")
         // when
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
-        expect(sut.viewStatus).to(equal(.archived(message: "Nicht mehr gültig")))
+        expect(sut.viewStatus).to(equal(.archived(message: "Abgelaufen am 01.01.2024")))
     }
 
     func testScannedTaskIsClosed() {
@@ -230,11 +230,11 @@ final class PrescriptionViewStatusTests: XCTestCase {
 
         // expired today
         task = generateTask(
-            expiresOn: DemoDate.createDemoDate(.today),
-            acceptedUntil: DemoDate.createDemoDate(.dayBeforeYesterday)
+            expiresOn: "2024-01-01T08:23:19+00:00",
+            acceptedUntil: "2023-12-01T08:23:19+00:00"
         )
         sut = Prescription(erxTask: task, dateFormatter: .testValue)
-        expect(sut.viewStatus).to(equal(.archived(message: "Nicht mehr gültig")))
+        expect(sut.viewStatus).to(equal(.archived(message: "Abgelaufen am 01.01.2024")))
 
         // one day left until expired (including today)
         task = generateTask(

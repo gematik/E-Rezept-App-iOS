@@ -33,11 +33,11 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
     }()
 
     private lazy var certList: CertList = {
-        guard let url = Bundle(for: Self.self)
+        guard let url = Bundle.module
             .url(
                 forResource: "kompca10-fd-enc-idp-sig1-idp-sig3",
                 withExtension: "json",
-                subdirectory: "CertList.bundle"
+                subdirectory: "Resources/CertList.bundle"
             ),
             let json = try? Data(contentsOf: url)
         else {
@@ -47,9 +47,9 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
     }()
 
     private lazy var ocspList: OCSPList = {
-        guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig1-idp-sig3",
-                                                   withExtension: "json",
-                                                   subdirectory: "OCSPList.bundle"),
+        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig1-idp-sig3",
+                                          withExtension: "json",
+                                          subdirectory: "Resources/OCSPList.bundle"),
             let json = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")
@@ -58,9 +58,9 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
     }()
 
     private lazy var ocspList_NotVerifiableByTrustStore: OCSPList = {
-        guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig",
-                                                   withExtension: "json",
-                                                   subdirectory: "OCSPList.bundle"),
+        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig",
+                                          withExtension: "json",
+                                          subdirectory: "Resources/OCSPList.bundle"),
             let json = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")

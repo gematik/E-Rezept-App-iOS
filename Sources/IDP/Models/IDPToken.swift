@@ -36,7 +36,7 @@ public struct IDPToken: Codable {
     public let redirect: String
     /// (Temporary) property to transport the information
     ///  whether the token was specifically requested for a PKV and by using Fast Track
-    public let isPkvFastTrackFlowInitiated: Bool
+    public let isPkvExtAuthFlowInitiated: Bool
 
     public init(
         accessToken: String,
@@ -45,7 +45,7 @@ public struct IDPToken: Codable {
         ssoToken: String? = nil,
         tokenType: String = "Bearer",
         redirect: String,
-        isPkvFastTrackFlowInitiated: Bool = false
+        isPkvExtAuthFlowInitiated: Bool = false
     ) {
         self.accessToken = accessToken
         self.expires = expires
@@ -53,7 +53,7 @@ public struct IDPToken: Codable {
         self.ssoToken = ssoToken
         self.tokenType = tokenType
         self.redirect = redirect
-        self.isPkvFastTrackFlowInitiated = isPkvFastTrackFlowInitiated
+        self.isPkvExtAuthFlowInitiated = isPkvExtAuthFlowInitiated
     }
 
     public func idTokenPayload() throws -> TokenPayload.IDTokenPayload {
@@ -68,7 +68,7 @@ public struct IDPToken: Codable {
         case ssoToken
         case tokenType
         case redirect
-        case isPkvFastTrackFlowInitiated
+        case isPkvExtAuthFlowInitiated
     }
 
     public init(from decoder: Decoder) throws {
@@ -80,8 +80,8 @@ public struct IDPToken: Codable {
         tokenType = try container.decode(String.self, forKey: .tokenType)
         redirect = try container
             .decodeIfPresent(String.self, forKey: .redirect) ?? "https://redirect.gematik.de/erezept"
-        isPkvFastTrackFlowInitiated = try container
-            .decodeIfPresent(Bool.self, forKey: .isPkvFastTrackFlowInitiated) ?? false
+        isPkvExtAuthFlowInitiated = try container
+            .decodeIfPresent(Bool.self, forKey: .isPkvExtAuthFlowInitiated) ?? false
     }
 }
 

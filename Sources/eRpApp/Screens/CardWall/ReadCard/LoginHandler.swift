@@ -80,6 +80,60 @@ enum LoginHandlerError: Swift.Error, Equatable, LocalizedError {
     }
 }
 
+import CasePaths
+
+extension LoginHandlerError: Codable {
+    enum CodingKeys: String, CodingKey {
+        case biometrieFailed
+        case biometrieFatal
+        case ssoFailed
+        case ssoExpired
+        case idpError
+        case network
+    }
+
+    public enum LoadingError: Swift.Error {
+        case message(String?)
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if container.contains(.biometrieFailed) {
+            self = .biometrieFailed
+        } else if container.contains(.biometrieFatal) {
+            self = .biometrieFatal
+        } else if container.contains(.ssoFailed) {
+            self = .ssoFailed
+        } else if container.contains(.ssoExpired) {
+            self = .ssoExpired
+        } else if container.contains(.idpError) {
+            self = .idpError(try container.decode(IDPError.self, forKey: .idpError))
+        } else if container.contains(.network) {
+            self = .network(LoadingError.message(try container.decode(String.self, forKey: .network)))
+        } else {
+            throw DecodingError.dataCorruptedError(forKey: .idpError, in: container, debugDescription: "No error found")
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .biometrieFailed:
+            try container.encode(true, forKey: .biometrieFailed)
+        case .biometrieFatal:
+            try container.encode(true, forKey: .biometrieFatal)
+        case .ssoFailed:
+            try container.encode(true, forKey: .ssoFailed)
+        case .ssoExpired:
+            try container.encode(true, forKey: .ssoExpired)
+        case let .idpError(idpError):
+            try container.encode(idpError, forKey: .idpError)
+        case let .network(error):
+            try container.encode(error.localizedDescription, forKey: .network)
+        }
+    }
+}
+
 class DefaultLoginHandler: LoginHandler {
     let idpSession: IDPSession
     let signatureProvider: SecureEnclaveSignatureProvider

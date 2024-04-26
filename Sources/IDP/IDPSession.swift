@@ -100,7 +100,7 @@ public protocol IDPSession {
     /// - Returns: AnyPublisher with `IDPExchangeToken` if successfull, fails with an `IDPError` otherwise.
     func altVerify(_ signedChallenge: SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError>
 
-    /// Load available Insurance companies that are capable of External Authentication (*FastTrack*).
+    /// Load available Insurance companies that are capable of External Authentication (*gID*).
     func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError>
 
     /// Initial step for external authentication with insurance company app.

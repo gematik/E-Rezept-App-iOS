@@ -18,7 +18,7 @@
 
 import Foundation
 
-/// Stores login information needed for external authentication (a.k.a. FastTrack).
+/// Stores login information needed for external authentication (a.k.a. gID).
 public struct IDPExtAuth {
     /// The user selected identifier of the application to use for the authentication.
     public let kkAppId: String
@@ -36,13 +36,10 @@ public struct IDPExtAuth {
     public let nonce: String
 
     /// Authentication type
-    public let authType: AuthType
+    public let authType: AuthType = .gid
 
     /// Authentication type stating the method of authentication
     public enum AuthType {
-        /// Using fasttrack
-        @available(*, deprecated, message: "Stop using this")
-        case fasttrack
         /// Using "Gesundheits ID"
         case gid
     }

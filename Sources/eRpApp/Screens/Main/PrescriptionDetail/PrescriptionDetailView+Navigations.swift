@@ -241,6 +241,7 @@ extension PrescriptionDetailView {
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
+                .accessibilityElement(children: .contain)
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfo)
             }
         }

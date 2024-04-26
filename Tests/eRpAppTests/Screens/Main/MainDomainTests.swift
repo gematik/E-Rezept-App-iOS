@@ -399,6 +399,72 @@ final class MainDomainTests: XCTestCase {
             state.destination = nil
         }
     }
+
+    func testForcedUpdateAlertNoUpdate() async {
+        // given
+        let sut = testStore(
+            for: .init(
+                isDemoMode: false,
+                destination: .none,
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )
+        )
+
+        // when
+        await sut.send(.checkForForcedUpdates)
+
+        await sut.receive(.response(.showUpdateAlertResponse(false)), timeout: .zero) { state in
+            state.updateChecked = true
+        }
+    }
+
+    func testForcedUpdateAlertUpdateAvailable() async {
+        // given
+        mockUserSession = MockUserSession(mockUpdateChecker: UpdateChecker {
+            true
+        })
+
+        let sut = testStore(
+            for: .init(
+                isDemoMode: false,
+                destination: .none,
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )
+        )
+
+        // when
+        await sut.send(.checkForForcedUpdates)
+
+        await sut.receive(.response(.showUpdateAlertResponse(true)), timeout: .zero) { state in
+            state.updateChecked = true
+            state.destination = .alert(MainDomain.AlertStates.forcedUpdateAlert())
+        }
+    }
+
+    func testForcedUpdateAlertUpdateAvailableButNavigationInProgress() async {
+        // given
+        mockUserSession = MockUserSession(mockUpdateChecker: UpdateChecker {
+            true
+        })
+
+        let sut = testStore(
+            for: .init(
+                isDemoMode: false,
+                destination: .cardWall(.init(isNFCReady: true, profileId: UUID())),
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )
+        )
+
+        // when
+        await sut.send(.checkForForcedUpdates)
+
+        await sut.receive(.response(.showUpdateAlertResponse(true)), timeout: .zero) { state in
+            state.updateChecked = true
+        }
+    }
 }
 
 extension MainDomainTests {

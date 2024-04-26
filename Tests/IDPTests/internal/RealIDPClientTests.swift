@@ -44,24 +44,24 @@ final class RealIDPClientTests: XCTestCase {
     )
 
     var documentPath: String {
-        guard let documentPath = Bundle(for: Self.self)
-            .path(forResource: "discovery-doc", ofType: "jwt", inDirectory: "JWT.bundle") else {
+        guard let documentPath = Bundle.module
+            .path(forResource: "discovery-doc", ofType: "jwt", inDirectory: "Resources/JWT.bundle") else {
             fatalError("Could not load  discovery document")
         }
         return documentPath
     }
 
     var jwkPath: String {
-        guard let path = Bundle(for: Self.self)
-            .path(forResource: "jwk", ofType: "json", inDirectory: "JWT.bundle") else {
+        guard let path = Bundle.module
+            .path(forResource: "jwk", ofType: "json", inDirectory: "Resources/JWT.bundle") else {
             fatalError("Could not load JWK")
         }
         return path
     }
 
     var localDocumentPath: String {
-        guard let documentPath = Bundle(for: Self.self)
-            .path(forResource: "test-discovery-doc", ofType: "jwt", inDirectory: "JWT.bundle") else {
+        guard let documentPath = Bundle.module
+            .path(forResource: "test-discovery-doc", ofType: "jwt", inDirectory: "Resources/JWT.bundle") else {
             fatalError("Could not load test discovery document")
         }
         return documentPath
@@ -95,8 +95,8 @@ final class RealIDPClientTests: XCTestCase {
     }
 
     func testLoadInvalidDiscoveryDocument() throws {
-        guard let jwksPath = Bundle(for: Self.self)
-            .path(forResource: "jwks-keys", ofType: "json", inDirectory: "JWT.bundle") else {
+        guard let jwksPath = Bundle.module
+            .path(forResource: "jwks-keys", ofType: "json", inDirectory: "Resources/JWT.bundle") else {
             throw IDPError.internal(error: .loadDiscoveryDocumentUnexpectedNil)
         }
 
@@ -141,8 +141,8 @@ final class RealIDPClientTests: XCTestCase {
     var localDiscoveryDocument: DiscoveryDocument {
         let documentContents = try! localDocumentPath.readFileContents()
         let jwt = try! JWT(from: documentContents)
-        let jwkData = try! Bundle(for: Self.self)
-            .path(forResource: "jwk", ofType: "json", inDirectory: "JWT.bundle")!
+        let jwkData = try! Bundle.module
+            .path(forResource: "jwk", ofType: "json", inDirectory: "Resources/JWT.bundle")!
             .readFileContents()
         let jwk = try! JSONDecoder().decode(JWK.self, from: jwkData)
         return try! DiscoveryDocument(jwt: jwt, encryptPuks: jwk, signingPuks: jwk)
@@ -153,8 +153,8 @@ final class RealIDPClientTests: XCTestCase {
         let state = "D1FC3A1F5303B169C51D85ACFD1DA845F8A33447A1A549636B6B5456C6AF"
         let nonce = "01379FF7F0754551CFA484FF19061EB61E847EF72D9886BA0180C8DD4F11"
 
-        guard let challengePath = Bundle(for: Self.self)
-            .path(forResource: "challenge", ofType: "json", inDirectory: "JWT.bundle") else {
+        guard let challengePath = Bundle.module
+            .path(forResource: "challenge", ofType: "json", inDirectory: "Resources/JWT.bundle") else {
             fatalError("Could not load test challenge json")
         }
 
@@ -209,13 +209,13 @@ final class RealIDPClientTests: XCTestCase {
     }
 
     func testSendVerify() {
-        let signedChallengeResponse = try! JWT(from: Bundle(for: Self.self)
-            .path(forResource: "signed-challenge-query-param", ofType: "jwt", inDirectory: "JWT.bundle")!
+        let signedChallengeResponse = try! JWT(from: Bundle.module
+            .path(forResource: "signed-challenge-query-param", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
             .readFileContents())
 
         let exchangeString = exchangeToken.asciiString!
-        let ssoToken = try! Bundle(for: Self.self)
-            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "JWT.bundle")!
+        let ssoToken = try! Bundle.module
+            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
             .readFileContents()
         let ssoString = ssoToken.asciiString!
 
@@ -411,8 +411,8 @@ final class RealIDPClientTests: XCTestCase {
 
     func testSendAltVerifySucceeds() throws {
         let exchangeString = exchangeToken.asciiString!
-        let ssoToken = try! Bundle(for: Self.self)
-            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "JWT.bundle")!
+        let ssoToken = try! Bundle.module
+            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
             .readFileContents()
         let ssoString = ssoToken.asciiString!
 
@@ -523,14 +523,14 @@ final class RealIDPClientTests: XCTestCase {
     )
 
     let ssoToken: String = {
-        try! Bundle(for: RealIDPClientTests.self)
-            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "JWT.bundle")!
+        try! Bundle.module
+            .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
             .readFileContents().asciiString!
     }()
 
     let exchangeToken: Data = {
-        try! Bundle(for: RealIDPClientTests.self)
-            .path(forResource: "exchange-code", ofType: "jwt", inDirectory: "JWT.bundle")!
+        try! Bundle.module
+            .path(forResource: "exchange-code", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
             .readFileContents()
     }()
 
@@ -657,8 +657,8 @@ final class RealIDPClientTests: XCTestCase {
             .joined(separator: "&")
             .data(using: .utf8)!
 
-        let idpTokenResponsePath = Bundle(for: Self.self)
-            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "JWT.bundle")!
+        let idpTokenResponsePath = Bundle.module
+            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle")!
         let expectedTokenData = try! idpTokenResponsePath.readFileContents()
         let expectedToken = try! JSONDecoder().decode(TokenPayload.self, from: expectedTokenData)
 
@@ -715,8 +715,8 @@ final class RealIDPClientTests: XCTestCase {
             .joined(separator: "&")
             .data(using: .utf8)!
 
-        let idpTokenResponsePath = Bundle(for: Self.self)
-            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "JWT.bundle")!
+        let idpTokenResponsePath = Bundle.module
+            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "Resources/JWT.bundle")!
         let expectedTokenData = try! idpTokenResponsePath.readFileContents()
         let expectedToken = try! JSONDecoder().decode(TokenPayload.self, from: expectedTokenData)
 
@@ -783,8 +783,7 @@ final class RealIDPClientTests: XCTestCase {
                                     state: "state",
                                     codeChallenge: "code_challenge",
                                     codeChallengeMethod: .sha256,
-                                    nonce: "nonce",
-                                    authType: .gid)
+                                    nonce: "nonce")
         let parameters: [String: String] = [
             "idp_iss": idpExtAuth.kkAppId,
             "state": idpExtAuth.state,
@@ -842,8 +841,7 @@ final class RealIDPClientTests: XCTestCase {
                                     state: "state",
                                     codeChallenge: "code_challenge",
                                     codeChallengeMethod: .sha256,
-                                    nonce: "nonce",
-                                    authType: .gid)
+                                    nonce: "nonce")
         let parameters: [String: String] = [
             "idp_iss": idpExtAuth.kkAppId,
             "state": idpExtAuth.state,

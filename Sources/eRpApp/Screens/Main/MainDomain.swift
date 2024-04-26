@@ -33,6 +33,7 @@ struct MainDomain: ReducerProtocol {
         var prescriptionListState: PrescriptionListDomain.State
         var extAuthPendingState = ExtAuthPendingDomain.State()
         var horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State
+        var updateChecked = false
     }
 
     enum Action: Equatable {
@@ -41,6 +42,8 @@ struct MainDomain: ReducerProtocol {
         case showMedicationReminder([UUID])
         /// Hides the `ScannerView`
         case loadDeviceSecurityView
+        /// Check for forced updates
+        case checkForForcedUpdates
         /// Start listening to demo mode changes
         case subscribeToDemoModeChange
         /// Tapping the demo mode banner can also turn the demo mode off
@@ -66,6 +69,7 @@ struct MainDomain: ReducerProtocol {
             case importReceived(Result<[ErxTask], Error>)
             case showDrawer(MainDomain.Environment.DrawerEvaluationResult)
             case grantChargeItemsConsentActivate(ChargeItemConsentService.GrantResult)
+            case showUpdateAlertResponse(Bool)
         }
     }
     // sourcery: CodedError = "015"
@@ -184,6 +188,18 @@ extension MainDomain {
                 state.destination = .deviceSecurity(deviceSecurityState)
             }
             return .none
+        case .checkForForcedUpdates:
+            return .run(operation: { [updateChecked = state.updateChecked] send in
+                @Dependency(\.userSession.updateChecker) var updateChecker
+
+                guard !updateChecked else { return }
+
+                if await updateChecker.isUpdateAvailable() {
+                    await send(.response(.showUpdateAlertResponse(true)))
+                    return
+                }
+                await send(.response(.showUpdateAlertResponse(false)))
+            })
         case .subscribeToDemoModeChange:
             return .publisher(
                 environment.userSessionContainer.isDemoMode
@@ -191,6 +207,12 @@ extension MainDomain {
                     .receive(on: environment.schedulers.main.animation())
                     .eraseToAnyPublisher
             )
+        case let .response(.showUpdateAlertResponse(show)):
+            state.updateChecked = true
+            if show, state.destination == nil {
+                state.destination = .alert(AlertStates.forcedUpdateAlert())
+            }
+            return .none
         case let .response(.demoModeChangeReceived(demoModeValue)):
             state.isDemoMode = demoModeValue
             return .none
@@ -353,6 +375,14 @@ extension MainDomain {
             return .run { send in
                 await send(.grantChargeItemsConsentActivate)
             }
+        case .destination(.presented(.alert(.goToAppStore))):
+            @Dependency(\.resourceHandler) var resourceHandler
+
+            guard let url = URL(string: "https://itunes.apple.com/app/id1511792179?mt=8") else {
+                return .none
+            }
+            resourceHandler.open(url)
+            return .none
         case .destination(.presented(.alert(.consentServiceErrorAuthenticate))):
             state.destination = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
             return .none

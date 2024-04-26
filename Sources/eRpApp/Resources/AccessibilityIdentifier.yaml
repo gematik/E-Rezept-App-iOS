@@ -470,6 +470,14 @@ pharmacySearchStart:
   - pha_search_txt_local_pharm_title
   - pha_search_txt_local_pharm_entry
   - pha_search_local_pharm_section
+  - pha_search_txt_map_header
+  - pha_search_map
+pharmacySearchMap:
+  - pha_search_map_btn_filter
+  - pha_search_map_btn_close
+  - pha_search_map_btn_go_to_user
+  - pha_search_map_btn_search_here
+  - pha_search_map_map
 pharmacyDetail:
   - pha_detail_txt_subtitle
   - pha_detail_btn_organization
@@ -559,6 +567,7 @@ medicationReminder:
   - med_reminder_btn_schedule_time_date_picker
   - med_reminder_btn_schedule_time_textfield_amount
   - med_reminder_btn_schedule_time_add_entry
+  - med_reminder_btn_schedule_time_list
   - med_reminder_btn_save_schedule
   - med_reminder_drawer_dosage_instruction_info
   - med_reminder_drawer_dosage_instruction_info_title
@@ -569,6 +578,8 @@ medicationReminder:
   - med_reminder_btn_repetition_date_end
   - med_reminder_btn_one_day_summary_go_to_reminders_overview_button
   - med_reminder_btn_one_day_summary_close_button
+medicationReminderList:
+  - med_reminder_list_cell
 
 # ./Sources/eRpApp/Components/Tiles/FootnoteView.swift:                .accessibility(identifier: text)
 # ./Sources/eRpApp/Components/Tiles/SectionView.swift:                .accessibility(identifier: text)

@@ -50,11 +50,11 @@ final class CardWallIntroductionDomainTests: XCTestCase {
         )
     }()
 
-    func testFastTrackCloseActionShouldBeForwarded() async {
-        let store = testStore(for: .init(isNFCReady: true, profileId: UUID(), destination: .fasttrack(.init())))
+    func testExtAuthCloseActionShouldBeForwarded() async {
+        let store = testStore(for: .init(isNFCReady: true, profileId: UUID(), destination: .extauth(.init())))
 
         // when
-        await store.send(.destination(.presented(.fasttrack(action: .delegate(.close))))) { state in
+        await store.send(.destination(.presented(.extauth(action: .delegate(.close))))) { state in
             state.destination = nil
         }
         await uiScheduler.run()

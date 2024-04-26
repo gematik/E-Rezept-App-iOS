@@ -24,6 +24,7 @@ import eRpRemoteStorage
 import eRpStyleKit
 import FHIRClient
 import Foundation
+import IDP
 import Pharmacy
 import SwiftUI
 
@@ -64,6 +65,15 @@ extension SceneDelegate {
             }
             _ = try? FileManager.default.removeItem(at: LocalStoreFactory.defaultDatabaseUrl)
         }
+
+        if let flagsString = ProcessInfo.processInfo.environment["UITEST.FLAGS"] {
+            if let flags = try? JSONDecoder().decode([String].self, from: flagsString.data(using: .utf8) ?? Data()) {
+                for flag in flags {
+                    UserDefaults.standard.setValue(true, forKey: flag)
+                }
+                UserDefaults.standard.synchronize()
+            }
+        }
     }
 }
 
@@ -98,6 +108,15 @@ extension ReducerProtocol {
             dependencies.erxRemoteDataStoreFactory = ErxRemoteDataStoreFactory { fhirClient in
                 SmartMocks.shared.smartMockErxRemoteDataStore(fhirClient: fhirClient, scenario, isRecording)
             }
+            dependencies
+                .loginHandlerServiceFactory = LoginHandlerServiceFactory { idpSession, signatureProvider in
+                    SmartMocks.shared.smartMockLoginHandler(
+                        idpSession: idpSession,
+                        signatureProvider: signatureProvider,
+                        scenario,
+                        isRecording
+                    )
+                }
         }
     }
 }
@@ -187,6 +206,23 @@ struct SmartMocks {
         smartMockErxRemoteDataStore = mock
         return mock
     }
+
+    private var smartMockLoginHandler: SmartMockLoginHandler?
+    mutating func smartMockLoginHandler(idpSession: IDPSession, signatureProvider: SecureEnclaveSignatureProvider,
+                                        _ scenario: Scenario?, _ isRecording: Bool) -> LoginHandler {
+        if let existingMock = smartMockLoginHandler {
+            return existingMock
+        }
+        let loginHandler = DefaultLoginHandler(idpSession: idpSession, signatureProvider: signatureProvider)
+        let mock = SmartMockLoginHandler(
+            wrapped: loginHandler,
+            mocks: scenario?.loginHandler,
+            isRecording: isRecording
+        )
+        smartMockRegister.register(mock)
+        smartMockLoginHandler = mock
+        return mock
+    }
 }
 
 struct Scenario {
@@ -194,6 +230,7 @@ struct Scenario {
     var pharmacyRemoteDataStore: SmartMockPharmacyRemoteDataStore.Mocks?
     var erxTaskCoreDataStore: SmartMockErxTaskCoreDataStore.Mocks?
     var erxRemoteDataStore: SmartMockErxRemoteDataStore.Mocks?
+    var loginHandler: SmartMockLoginHandler.Mocks?
 }
 
 struct ScenarioLoader {
@@ -227,21 +264,167 @@ struct ScenarioLoader {
             scenarioUrl: scenarioPath,
             with: "ErxRemoteDataStore"
         )
+        let loginHandler: SmartMockLoginHandler.Mocks? = loadMockData(
+            scenarioUrl: scenarioPath,
+            with: "LoginHandler"
+        )
 
         return Scenario(
             userDataStore: userDataStoreMock,
             pharmacyRemoteDataStore: pharmacyMock,
             erxTaskCoreDataStore: erxTaskCoreDataStore,
-            erxRemoteDataStore: erxRemoteDataStore
+            erxRemoteDataStore: erxRemoteDataStore,
+            loginHandler: loginHandler
         )
     }
 
     private func loadMockData<T>(scenarioUrl: URL, with name: String) -> T? where T: Codable {
         let filePath = scenarioUrl.appendingPathComponent("\(name).json", isDirectory: false)
-        guard let jsonData = try? Data(contentsOf: filePath) else {
+        guard FileManager.default.fileExists(atPath: filePath.path),
+              let jsonData = try? Data(contentsOf: filePath).applyDynamicReplacements() else {
             return nil
         }
-        return try? JSONDecoder().decode(T.self, from: jsonData)
+        do {
+            return try JSONDecoder().decode(T.self, from: jsonData)
+        } catch {
+            fatalError("failed to decode scenario file '\(name)'. Error: \(error.localizedDescription)")
+        }
+    }
+}
+
+extension Data {
+    func applyDynamicReplacements() -> Data {
+        // replace placeholders
+        guard let jsonDataAsString = String(data: self, encoding: .utf8) else {
+            fatalError("Something went wrong while converting JSON Data to String")
+        }
+        guard let result = jsonDataAsString.applyDateReplacements().data(using: .utf8) else {
+            fatalError("Something went wrong while converting JSON String back to Data")
+        }
+
+        return result
+    }
+}
+
+extension String {
+    // This extension method applies date replacements to the string using a specific pattern.
+    // The pattern is defined as "{{<type>:<offset>#<format>}".
+    // - The "<type>" specifies the type of date replacement. The following types are supported:
+    //   - DATE: Replaces the placeholder with the current date resulting in the format `yyyy-MM-dd`.
+    //   - TIME: Replaces the placeholder with the current time resulting in the format `HH:mm:ss`.
+    //   - DATETIME: Replaces the placeholder with the current date and time resulting in the format
+    //     `yyyy-MM-dd'T'HH:mm:ss.SSSxxxxx`
+    // - The "<offset>" specifies the offset value and unit for the date replacement. Use positive or negative integers
+    //   in combination with a unit (Y = years, M = months, D = days, h = hours, m = minutes, s = seconds) to specify
+    //   the offset. If no offset is specified, the current date and time will be used.
+    // - The "<format>" specifies the format of the resulting date string.
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func applyDateReplacements() -> String {
+        let pattern = #"\{\{(?<type>DATE|TIME|DATETIME)(:(?<offset>[+-]\d+)(?<unit>[YMDhms])?)?(#(?<format>.+))?\}\}"#
+
+        // Create a regular expression using the pattern.
+        let dateRegex: NSRegularExpression
+        do {
+            dateRegex = try NSRegularExpression(pattern: pattern)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+
+        var result = self
+
+        // Find all matches of the date pattern in the string.
+        let matches = dateRegex.matches(in: self, options: [], range: NSRange(location: 0, length: count))
+
+        // Iterate through the matches in reverse order to ensure correct ranges.
+        for match in matches.reversed() {
+            let matchString = (self as NSString).substring(with: match.range)
+            guard let matchResult = dateRegex.firstMatch(
+                in: matchString,
+                options: [],
+                range: NSRange(location: 0, length: matchString.count)
+            ) else { continue }
+
+            let type: String
+            let typeRange = matchResult.range(withName: "type")
+            if typeRange.location != NSNotFound,
+               let range = Range(typeRange, in: matchString) {
+                type = String(matchString[range])
+            } else {
+                type = "DATE"
+            }
+
+            // Extract the offset value from the match, if present.
+            let offset: Int
+            let offsetRange = matchResult.range(withName: "offset")
+            if offsetRange.location != NSNotFound,
+               let range = Range(offsetRange, in: matchString) {
+                offset = Int(matchString[range]) ?? 0
+            } else {
+                offset = 0
+            }
+
+            // Extract the offset unit from the match, if present.
+            let unit: Calendar.Component
+            let unitRange = matchResult.range(withName: "unit")
+            if unitRange.location != NSNotFound,
+               let range = Range(unitRange, in: matchString) {
+                switch matchString[range] {
+                case "Y":
+                    unit = .year
+                case "M":
+                    unit = .month
+                case "D":
+                    unit = .day
+                case "h":
+                    unit = .hour
+                case "m":
+                    unit = .minute
+                case "s":
+                    unit = .second
+                default:
+                    unit = .day
+                }
+            } else {
+                unit = .day
+            }
+
+            // Extract the format from the match, if present.
+            let format: String
+            let formatRange = matchResult.range(withName: "format")
+            if formatRange.location != NSNotFound,
+               let range = Range(formatRange, in: matchString) {
+                format = String(matchString[range])
+            } else {
+                format = getDefaultFormat(for: type)
+            }
+
+            // Calculate the resulting date by adding the offset to the current date.
+            guard let date = Calendar.current.date(byAdding: unit, value: offset, to: Date()) else { continue }
+
+            // Format the date using the specified format.
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = format
+            let dateString = dateFormatter.string(from: date)
+
+            // Replace the match string with the formatted date in the result.
+            result = result.replacingOccurrences(of: matchString, with: dateString)
+        }
+
+        // Return the final result with applied date replacements.
+        return result
+    }
+
+    private func getDefaultFormat(for type: String) -> String {
+        switch type {
+        case "DATE":
+            return "yyyy-MM-dd"
+        case "TIME":
+            return "HH:mm:ss"
+        case "DATETIME":
+            return "yyyy-MM-dd'T'HH:mm:ss.SSSxxxxx"
+        default:
+            return "yyyy-MM-dd"
+        }
     }
 }
 
@@ -250,4 +433,5 @@ extension UserDataStore {}
 extension PharmacyRemoteDataStore {}
 extension ErxTaskCoreDataStore {}
 extension ErxRemoteDataStore {}
+extension LoginHandler {}
 // sourcery:end

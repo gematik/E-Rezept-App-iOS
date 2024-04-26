@@ -24,9 +24,9 @@ import XCTest
 final class CertListTests: XCTestCase {
     func testDecodeValidListJson() throws {
         // given
-        guard let url = Bundle(for: Self.self).url(forResource: "syntactically-valid",
-                                                   withExtension: "json",
-                                                   subdirectory: "CertList.bundle"),
+        guard let url = Bundle.module.url(forResource: "syntactically-valid",
+                                          withExtension: "json",
+                                          subdirectory: "Resources/CertList.bundle"),
             let data = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")
@@ -51,8 +51,12 @@ final class CertListTests: XCTestCase {
 
     func testDecodeInvalidListJson() throws {
         // given
-        guard let url = Bundle(for: Self.self)
-            .url(forResource: "invalid-cacerts-missing", withExtension: "json", subdirectory: "CertList.bundle"),
+        guard let url = Bundle.module
+            .url(
+                forResource: "invalid-cacerts-missing",
+                withExtension: "json",
+                subdirectory: "Resources/CertList.bundle"
+            ),
             let data = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")
@@ -64,8 +68,8 @@ final class CertListTests: XCTestCase {
 
     func testJsonCodable() throws {
         // given
-        guard let url = Bundle(for: Self.self)
-            .url(forResource: "syntactically-valid", withExtension: "json", subdirectory: "CertList.bundle"),
+        guard let url = Bundle.module
+            .url(forResource: "syntactically-valid", withExtension: "json", subdirectory: "Resources/CertList.bundle"),
             let data = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")

@@ -14,7 +14,7 @@
 					"insuranceId": "X764228531",
 					"profile": "reply",
 					"identifier": "01ebb30c-7e65-7590-f05b-a56b23f9846c",
-					"timestamp": "2023-11-02T17:23:26.490+00:00",
+					"timestamp": "{{DATETIME:-1D}}",
 					"taskId": "160.000.006.405.283.05",
 					"payloadJSON": "{\n  \"version\": \"1\",\n  \"supplyOptionsType\": \"delivery\",\n  \"info_text\": \"jetzt ist es aber da\",\n  \"pickUpCodeHR\": \"T01__R01\",\n  \"pickUpCodeDMC\": \"Test_01___Rezept_01___abcdefg12345\",\n  \"url\": \"https:\/\/www.tree.fm\/forest\/33\"\n}",
 					"payload": {
@@ -42,7 +42,7 @@
 					"taskId": "160.000.006.405.283.05",
 					"insuranceId": "X764228531",
 					"identifier": "01ebb30c-7c23-0388-5f3e-0a0b479d4095",
-					"timestamp": "2023-11-02T17:22:48.581+00:00"
+					"timestamp": "{{DATETIME:-1D}}"
 				},
 				{
 					"telematikId": "3-01.2.2023001.16.101",
@@ -60,7 +60,7 @@
 					"identifier": "01ebb30c-7938-66b8-b776-490c73943b9e",
 					"profile": "reply",
 					"payloadJSON": "{\n  \"version\": \"1\",\n  \"supplyOptionsType\": \"delivery\",\n  \"info_text\": \"jetzt ist es aber da\",\n  \"pickUpCodeHR\": \"T01__R01\",\n  \"pickUpCodeDMC\": \"Test_01___Rezept_01___abcdefg12345\",\n  \"url\": \"https:\/\/www.tree.fm\/forest\/33\"\n}",
-					"timestamp": "2023-11-02T17:21:59.651+00:00"
+					"timestamp": "{{DATETIME:-1D}}"
 				},
 				{
 					"identifier": "01ebb30c-0fb3-08d8-8d91-a63e7e9ea458",
@@ -77,7 +77,7 @@
 					"taskId": "160.000.006.405.283.05",
 					"telematikId": "3-01.2.2023001.16.101",
 					"profile": "reply",
-					"timestamp": "2023-11-02T16:52:29.303+00:00",
+					"timestamp": "{{DATETIME:-1D}}",
 					"payloadJSON": "{\n  \"version\": \"1\",\n  \"supplyOptionsType\": \"delivery\",\n  \"info_text\": \"jetzt ist es aber da\",\n  \"pickUpCodeHR\": \"T01__R01\",\n  \"pickUpCodeDMC\": \"Test_01___Rezept_01___abcdefg12345\",\n  \"url\": \"https:\/\/www.tree.fm\/forest\/33\"\n}"
 				}
 			]
@@ -154,7 +154,7 @@
 					"avsTransactions": [],
 					"author": "I. D. Clair",
 					"source": "server",
-					"lastModified": "2023-11-02T16:52:24.181+00:00",
+					"lastModified": "{{DATETIME:-5D}}",
 					"patient": {
 						"insuranceId": "X764228531",
 						"birthDate": "1980-01-20",
@@ -163,8 +163,8 @@
 						"status": "5",
 						"insurance": "AOK Baden‐Württemberg"
 					},
-					"acceptedUntil": "2023-11-30",
-					"authoredOn": "2023-11-02T16:52:23.812+00:00",
+					"acceptedUntil": "{{DATE:+5D}}",
+					"authoredOn": "{{DATETIME:-50D}}",
 					"flowType": {
 						"pharmacyOnly": {}
 					},

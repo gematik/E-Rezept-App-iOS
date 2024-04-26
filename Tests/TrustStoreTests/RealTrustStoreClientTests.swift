@@ -35,8 +35,9 @@ final class RealTrustStoreClientTests: XCTestCase {
     let certListURL = URL(string: "http://vau.gematik/CertList")!
 
     var certListPath: String {
-        guard let certListPath = Bundle(for: Self.self)
-            .path(forResource: "kompca10-vauref-idpsig3", ofType: "json", inDirectory: "CertList.bundle") else {
+        guard let certListPath = Bundle.module
+            .path(forResource: "kompca10-vauref-idpsig3", ofType: "json", inDirectory: "Resources/CertList.bundle")
+        else {
             fatalError("Could not load  discovery document")
         }
         return certListPath

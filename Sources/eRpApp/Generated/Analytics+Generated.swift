@@ -231,6 +231,10 @@ typealias AnalyticsEvent = String
     struct PharmacySearch_filter: AnalyticsScreen {
       let name = "pharmacySearch:filter"
     }
+    static let pharmacySearch_map = PharmacySearch_map()
+    struct PharmacySearch_map: AnalyticsScreen {
+      let name = "pharmacySearch:map"
+    }
     static let prescriptionDetail = PrescriptionDetail()
     struct PrescriptionDetail: AnalyticsScreen {
       let name = "prescriptionDetail"

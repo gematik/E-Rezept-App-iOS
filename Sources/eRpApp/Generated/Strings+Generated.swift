@@ -205,14 +205,16 @@ import SwiftUI
     internal static let cdwBtnHelpNextHint = StringAsset("cdw_btn_help_next_hint")
     /// Close dialog
     internal static let cdwBtnIntroCancelLabel = StringAsset("cdw_btn_intro_cancel_label")
-    /// Insurance app
-    internal static let cdwBtnIntroFasttrack = StringAsset("cdw_btn_intro_fasttrack")
+    /// Digital health ID
+    internal static let cdwBtnIntroExtauth = StringAsset("cdw_btn_intro_extauth")
     /// health insurance app
-    internal static let cdwBtnIntroFasttrackCenter = StringAsset("cdw_btn_intro_fasttrack_center")
+    internal static let cdwBtnIntroExtauthCenter = StringAsset("cdw_btn_intro_extauth_center")
+    /// Additional app required
+    internal static let cdwBtnIntroExtauthDescription = StringAsset("cdw_btn_intro_extauth_description")
     /// Or: Sign in with your 
-    internal static let cdwBtnIntroFasttrackLeading = StringAsset("cdw_btn_intro_fasttrack_leading")
+    internal static let cdwBtnIntroExtauthLeading = StringAsset("cdw_btn_intro_extauth_leading")
     /// .
-    internal static let cdwBtnIntroFasttrackTrailing = StringAsset("cdw_btn_intro_fasttrack_trailing")
+    internal static let cdwBtnIntroExtauthTrailing = StringAsset("cdw_btn_intro_extauth_trailing")
     /// order now
     internal static let cdwBtnIntroFootnote = StringAsset("cdw_btn_intro_footnote")
     /// Find out more
@@ -221,6 +223,8 @@ import SwiftUI
     internal static let cdwBtnIntroNext = StringAsset("cdw_btn_intro_next")
     /// Insurance card
     internal static let cdwBtnIntroNfc = StringAsset("cdw_btn_intro_nfc")
+    /// Recommended
+    internal static let cdwBtnIntroRecommendation = StringAsset("cdw_btn_intro_recommendation")
     /// Close dialog
     internal static let cdwBtnNfuCancelLabel = StringAsset("cdw_btn_nfu_cancel_label")
     /// Back to the homepage
@@ -432,7 +436,7 @@ import SwiftUI
     internal static let cdwTxtIntroRequirementPhone = StringAsset("cdw_txt_intro_requirement_phone")
     /// The PIN for the medical card
     internal static let cdwTxtIntroRequirementPin = StringAsset("cdw_txt_intro_requirement_pin")
-    /// How do you want to sign in?
+    /// How would you like to authenticate?
     internal static let cdwTxtIntroSubheader = StringAsset("cdw_txt_intro_subheader")
     /// iOS App: NFC read error
     internal static let cdwTxtMailSubject = StringAsset("cdw_txt_mail_subject")
@@ -444,7 +448,7 @@ import SwiftUI
     internal static let cdwTxtNfuTitle = StringAsset("cdw_txt_nfu_title")
     /// You can enter any digits.
     internal static let cdwTxtPinDemoModeInfo = StringAsset("cdw_txt_pin_demo_mode_info")
-    /// You received your PIN in a letter from your health insurance company.
+    /// You received the PIN for your health card from your health insurance company using a secure procedure such as Postident.
     internal static let cdwTxtPinDescription = StringAsset("cdw_txt_pin_description")
     /// Your PIN can have between 6 and 8 digits.
     internal static let cdwTxtPinHint = StringAsset("cdw_txt_pin_hint")
@@ -529,9 +533,9 @@ import SwiftUI
     /// Turn your display off and on again.
     internal static let cdwTxtRcListDisplay = StringAsset("cdw_txt_rc_list_display")
     /// Register with your health insurance app.
-    internal static let cdwTxtRcListFasttrack = StringAsset("cdw_txt_rc_list_fasttrack")
+    internal static let cdwTxtRcListExtauth = StringAsset("cdw_txt_rc_list_extauth")
     /// Find out more
-    internal static let cdwTxtRcListFasttrackMore = StringAsset("cdw_txt_rc_list_fasttrack_more")
+    internal static let cdwTxtRcListExtauthMore = StringAsset("cdw_txt_rc_list_extauth_more")
     /// Not work? Here are a few more tips.
     internal static let cdwTxtRcListHeader = StringAsset("cdw_txt_rc_list_header")
     /// Restart the e-prescription app or mobile device.
@@ -814,10 +818,22 @@ import SwiftUI
     internal static let erxTxtAuthored = StringAsset("erx_txt_authored")
     /// Current
     internal static let erxTxtCurrent = StringAsset("erx_txt_current")
+    /// Expired on %@
+    internal static func erxTxtExpiredOn(_ element1: String) -> StringAsset {
+        StringAsset("erx_txt_expired_on_%@", arguments: [element1])
+    }
     /// Plural format key: "%#@variable_0@"
     internal static func erxTxtExpiresIn(_ element1: Int) -> StringAsset {
         StringAsset("erx_txt_expires_in", arguments: [element1])
     }
+    /// Optimize your app experience by updating the app.
+    internal static let erxTxtForcedUpdateAlertDescription = StringAsset("erx_txt_forced_update_alert_description")
+    /// Maybe later
+    internal static let erxTxtForcedUpdateAlertIgnore = StringAsset("erx_txt_forced_update_alert_ignore")
+    /// New update available
+    internal static let erxTxtForcedUpdateAlertTitle = StringAsset("erx_txt_forced_update_alert_title")
+    /// Update now
+    internal static let erxTxtForcedUpdateAlertUpdate = StringAsset("erx_txt_forced_update_alert_update")
     /// No longer valid
     internal static let erxTxtInvalid = StringAsset("erx_txt_invalid")
     /// Unknown medicine
@@ -1440,7 +1456,7 @@ import SwiftUI
     internal static let mainBtnArchivedPresc = StringAsset("main_btn_archived_presc")
     /// Enable
     internal static let mainBtnConsentDrawerActivate = StringAsset("main_btn_consent_drawer_activate")
-    /// Vielleicht später
+    /// Maybe later
     internal static let mainBtnConsentDrawerCancel = StringAsset("main_btn_consent_drawer_cancel")
     /// Register
     internal static let mainBtnLogin = StringAsset("main_btn_login")
@@ -1450,7 +1466,7 @@ import SwiftUI
     internal static let mainBtnRefresh = StringAsset("main_btn_refresh")
     /// ↓ Drag the screen down to update.
     internal static let mainEmptyTxtConnected = StringAsset("main_empty_txt_connected")
-    /// Add prescriptions using the ⊕ button in the top right corner.
+    /// Sign in to receive recipes automatically or add a new recipe using the ⊕ in the top corner.
     internal static let mainEmptyTxtDisconnected = StringAsset("main_empty_txt_disconnected")
     /// No prescriptions
     internal static let mainEmptyTxtTitle = StringAsset("main_empty_txt_title")
@@ -1586,7 +1602,7 @@ import SwiftUI
     internal static let onbAnaAlertDeny = StringAsset("onb_ana_alert_deny")
     /// Your data will be used for product improvements and will not be passed on to third parties.
     internal static let onbAnaAlertMessage = StringAsset("onb_ana_alert_message")
-    /// Do you consent to the anonymous analysis of usage behaviour by e-prescription?
+    /// Do you allow E-Prescription to analyze your usage behavior anonymously?
     internal static let onbAnaAlertTitle = StringAsset("onb_ana_alert_title")
     /// Next
     internal static let onbAnaBtnNext = StringAsset("onb_ana_btn_next")
@@ -1698,7 +1714,7 @@ import SwiftUI
     internal static let ordDetailShipmentLinkBtn = StringAsset("ord_detail_shipment_link_btn")
     /// Please go to the pharmacy website to complete the order.
     internal static let ordDetailShipmentLinkText = StringAsset("ord_detail_shipment_link_text")
-    /// %@ sent to %@ .
+    /// %@ sent to %@ . The digital redemption process is still unfamiliar for many pharmacies. If you don't hear back by tomorrow, we recommend calling to inquire as a precaution.
     internal static func ordDetailTxtSendTo(_ element1: String, _ element2: String) -> StringAsset {
         StringAsset("ord_detail_txt_%@_send_to_%@", arguments: [element1, element2])
     }
@@ -1962,6 +1978,12 @@ import SwiftUI
     internal static let phaSearchFilterTxtTitle = StringAsset("pha_search_filter_txt_title")
     /// Close location sharing, don't share location
     internal static let phaSearchHintTxtClose = StringAsset("pha_search_hint_txt_close")
+    /// Cancel
+    internal static let phaSearchMapBtnErrorCancel = StringAsset("pha_search_map_btn_Error_cancel")
+    /// Search here
+    internal static let phaSearchMapBtnSearchHere = StringAsset("pha_Search_Map_Btn_search_here")
+    /// Close by
+    internal static let phaSearchMapHeader = StringAsset("pha_search_map_header")
     /// Closed
     internal static let phaSearchTxtClosed = StringAsset("pha_search_txt_closed")
     /// Closing soon
@@ -2704,7 +2726,7 @@ import SwiftUI
     internal static let stgConTextContactHotline = StringAsset("stg_con_text_contact_hotline")
     /// Write email
     internal static let stgConTextMail = StringAsset("stg_con_text_mail")
-    /// Take part in the survey
+    /// Survey about the app
     internal static let stgConTextSurvey = StringAsset("stg_con_text_survey")
     /// Privacy policy
     internal static let stgDpoTxtDataPrivacy = StringAsset("stg_dpo_txt_data_privacy")
@@ -2845,7 +2867,7 @@ import SwiftUI
     internal static let stgTxtCardResetPinAlertPinTooLongTitle = StringAsset("stg_txt_card_reset_pin_alert_pin_too_long_title")
     /// Select desired PIN
     internal static let stgTxtCardResetPinHeadline = StringAsset("stg_txt_card_reset_pin_headline")
-    /// You can choose your new personal identification number (PIN) yourself (6 to 8 digits).
+    /// You can choose your new PIN yourself (6 to 8 digits).
     internal static let stgTxtCardResetPinHint = StringAsset("stg_txt_card_reset_pin_hint")
     /// Please make a note of your PIN and keep it in a safe place.
     internal static let stgTxtCardResetPinHintMessage = StringAsset("stg_txt_card_reset_pin_hint_message")
@@ -3123,7 +3145,7 @@ import SwiftUI
     internal static let tabTxtPharmacySearch = StringAsset("tab_txt_pharmacy_search")
     /// Settings
     internal static let tabTxtSettings = StringAsset("tab_txt_settings")
-    /// Vielleicht später
+    /// Maybe later
     internal static let wlcdBtnDecline = StringAsset("wlcd_btn_decline")
     /// Register
     internal static let wlcdBtnLogin = StringAsset("wlcd_btn_login")

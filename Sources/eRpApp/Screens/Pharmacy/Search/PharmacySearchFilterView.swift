@@ -55,7 +55,19 @@ struct PharmacySearchFilterView: View {
 
         var body: some View {
             HStack {
-                ForEach(filters, id: \.self) { filterOption in
+                ForEach(filters[0 ..< 2], id: \.self) { filterOption in
+                    FilterView(
+                        title: filterOption.localizedStringKey,
+                        isEnabled: viewStore.binding(get: { state in
+                            state.pharmacyFilterOptions.contains(filterOption)
+                        }, send: { _ in
+                            PharmacySearchFilterDomain.Action.toggleFilter(filterOption)
+                        })
+                    )
+                }
+            }
+            HStack {
+                ForEach(filters[2 ..< filters.count], id: \.self) { filterOption in
                     FilterView(
                         title: filterOption.localizedStringKey,
                         isEnabled: viewStore.binding(get: { state in
@@ -75,8 +87,7 @@ struct PharmacySearchFilterView: View {
                 .font(.subheadline.weight(.bold))
 
             VStack(alignment: .leading, spacing: 8) {
-                FilterRow(viewStore: viewStore, filters: [.currentLocation, .open])
-                FilterRow(viewStore: viewStore, filters: [.delivery, .shipment])
+                FilterRow(viewStore: viewStore, filters: viewStore.pharmacyFilterShow)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 

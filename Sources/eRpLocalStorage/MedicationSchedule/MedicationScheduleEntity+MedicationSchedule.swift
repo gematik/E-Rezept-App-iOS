@@ -55,10 +55,14 @@ extension MedicationSchedule {
             return nil
         }
 
-        let entries: [MedicationSchedule.Entry] = entity.entries?.compactMap { entity in
+        let entries: [MedicationSchedule.Entry] = (entity.entries?.compactMap { entity in
             guard let entry = entity as? MedicationScheduleEntryEntity else { return nil }
             return MedicationSchedule.Entry(entity: entry)
-        } ?? []
+        } ?? [])
+            .sorted {
+                $0.hourComponent < $1.hourComponent ||
+                    $0.hourComponent == $1.hourComponent && $0.minuteComponent < $1.minuteComponent
+            }
 
         self.init(
             id: identifier,

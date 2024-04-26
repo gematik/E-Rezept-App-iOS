@@ -357,6 +357,26 @@ extension DependencyValues {
     }
 }
 
+struct LoginHandlerServiceFactory {
+    let construct: (_ idpSession: IDPSession, _ signatureProvider: SecureEnclaveSignatureProvider) -> LoginHandler
+
+    init(construct: @escaping (_ idpSession: IDPSession, _ signatureProvider: SecureEnclaveSignatureProvider)
+        -> LoginHandler) {
+        self.construct = construct
+    }
+}
+
+extension LoginHandlerServiceFactory: DependencyKey {
+    static var liveValue = LoginHandlerServiceFactory(construct: DefaultLoginHandler.init)
+}
+
+extension DependencyValues {
+    var loginHandlerServiceFactory: LoginHandlerServiceFactory {
+        get { self[LoginHandlerServiceFactory.self] }
+        set { self[LoginHandlerServiceFactory.self] = newValue }
+    }
+}
+
 struct ErxTaskCoreDataStoreFactory {
     let construct: (UUID?, CoreDataControllerFactory) -> ErxTaskCoreDataStore
 

@@ -465,8 +465,7 @@ public class DefaultIDPSession: IDPSession {
                                          state: state,
                                          codeChallenge: codeChallenge,
                                          codeChallengeMethod: .sha256,
-                                         nonce: nonce,
-                                         authType: entry.gId ? .gid : .fasttrack)
+                                         nonce: nonce)
 
                 let challengeSession = ExtAuthChallengeSession(verifierCode: verifierCode, nonce: nonce, for: entry)
 
@@ -520,16 +519,16 @@ public class DefaultIDPSession: IDPSession {
                 guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: token.state) else {
                     return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
                 }
-                let isPkvFastTrackFlowInitiated = challengeSession.entry.identifier.hasSuffix("pkv")
+                let isPkvExtAuthFlowInitiated = challengeSession.entry.identifier.hasSuffix("pkv")
                 // swiftlint:disable:next trailing_closure
                 return self.exchange(
                     token: token,
                     challengeSession: challengeSession,
                     idTokenValidator: idTokenValidator
                 )
-                // Temporary workaround (see above isPkvFastTrackFlowInitiated)
+                // Temporary workaround (see above isPkvExtAuthFlowInitiated)
                 .map { idpToken in
-                    if isPkvFastTrackFlowInitiated {
+                    if isPkvExtAuthFlowInitiated {
                         return IDPToken(
                             accessToken: idpToken.accessToken,
                             expires: idpToken.expires,
@@ -537,7 +536,7 @@ public class DefaultIDPSession: IDPSession {
                             ssoToken: idpToken.ssoToken,
                             tokenType: idpToken.tokenType,
                             redirect: idpToken.redirect,
-                            isPkvFastTrackFlowInitiated: true
+                            isPkvExtAuthFlowInitiated: true
                         )
                     } else {
                         return idpToken

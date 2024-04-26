@@ -53,6 +53,9 @@ protocol UserSession {
     /// Access to the `PharmacyRepository`
     var pharmacyRepository: PharmacyRepository { get }
 
+    /// Check for forced app updates
+    var updateChecker: UpdateChecker { get }
+
     /// The UserDefaults repository for this session
     var localUserStore: UserDataStore { get }
 

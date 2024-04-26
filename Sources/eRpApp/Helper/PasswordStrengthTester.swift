@@ -46,13 +46,26 @@ struct DefaultPasswordStrengthTester: PasswordStrengthTester {
 
 private class LazyZxcvbnDB {
     private(set) lazy var zxcvbn = DBZxcvbn()
+
+    private(set) lazy var wordList: [String] = {
+        guard let url = Bundle.main.url(forResource: "german_dictionary", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let list = try? JSONDecoder().decode(List.self, from: data) else {
+            return []
+        }
+        return list.words
+    }()
+
+    struct List: Codable {
+        let words: [String]
+    }
 }
 
 private var lazyZxcvbnDB = LazyZxcvbnDB()
 
 extension String {
     func passwordStrength() -> PasswordStrength {
-        switch lazyZxcvbnDB.zxcvbn.passwordStrength(self)?.score {
+        switch lazyZxcvbnDB.zxcvbn.passwordStrength(self, userInputs: lazyZxcvbnDB.wordList)?.score {
         case 0:
             return .veryWeak
         case 1:

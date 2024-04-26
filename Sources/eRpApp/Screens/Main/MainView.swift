@@ -129,6 +129,9 @@ struct MainView: View {
             .task {
                 await viewStore.send(.subscribeToDemoModeChange).finish()
             }
+            .task {
+                await viewStore.send(.checkForForcedUpdates).finish()
+            }
             .onAppear {
                 // [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
                 viewStore.send(.loadDeviceSecurityView)

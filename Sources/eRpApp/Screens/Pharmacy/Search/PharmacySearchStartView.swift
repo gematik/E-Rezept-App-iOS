@@ -17,12 +17,19 @@
 //
 
 import ComposableArchitecture
+import ComposableCoreLocation
 import eRpStyleKit
+import MapKit
 import SwiftUI
 
 struct PharmacySearchStartView: View {
     var store: Store<PharmacySearchDomain.State, PharmacySearchDomain.Action>
     @ObservedObject var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
+    static let height: CGFloat = {
+        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
+        // 193 is the standard height for the Mini-Map Display
+        193 * UIScreen.main.scale / UIScreen.main.nativeScale
+    }()
 
     init(store: Store<PharmacySearchDomain.State, PharmacySearchDomain.Action>) {
         self.store = store
@@ -32,13 +39,53 @@ struct PharmacySearchStartView: View {
     struct ViewState: Equatable {
         let isLoading: Bool
         let localPharmacies: [PharmacyLocationViewModel]
+        let mapLocation: MKCoordinateRegion
         init(_ state: PharmacySearchDomain.State) {
             isLoading = state.searchState.isStartViewLoading
             localPharmacies = state.localPharmacies
+            mapLocation = state.mapLocation
         }
     }
 
     var body: some View {
+        SingleElementSectionContainer(
+            header: {
+                Text(L10n.phaSearchMapHeader)
+                    .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchTxtMapHeader)
+            },
+            content: {
+                VStack {
+                    #if targetEnvironment(simulator)
+                    Rectangle()
+                        .foregroundColor(Color.gray)
+                        .frame(maxWidth: nil, maxHeight: Self.height)
+                        .scaledToFill()
+                        .clipShape(RoundedRectangle(cornerRadius: 16,
+                                                    style: .continuous))
+                    #else
+                    MapViewWithClustering(region: viewStore.binding(
+                        get: \.mapLocation,
+                        send: PharmacySearchDomain.Action.nothing
+                    ),
+                    disableUserInteraction: true,
+                    onAnnotationTapped: { _ in },
+                    onClusterTapped: { _ in })
+                        .onTapGesture {
+                            viewStore.send(.showMap)
+                        }
+                        .frame(maxWidth: nil, maxHeight: Self.height)
+                        .scaledToFill()
+                        .clipShape(RoundedRectangle(cornerRadius: 16,
+                                                    style: .continuous))
+
+                    #endif
+                }
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
+        )
+        .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchMap)
+
         SectionContainer(
             header: {
                 Text(L10n.phaSearchTxtQuickFilterSectionTitle)

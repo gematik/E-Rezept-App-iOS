@@ -67,6 +67,7 @@ struct PrescriptionDetailView: View {
                         ))
                     })
                         .buttonStyle(.navigation)
+                        .accessibilityValue(viewStore.medicationReminderState)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedicationReminder)
 
                     Button(action: { viewStore.send(.setNavigation(tag: .dosageInstructionsInfo)) }, label: {

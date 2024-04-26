@@ -76,6 +76,7 @@ struct MedicationReminderListView: View {
                                                 showSeparator: medicationProfileReminderListEntry !=
                                                     profileMedicationReminder.medicationProfileReminderList.last
                                             ))
+                                            .accessibilityIdentifier(A11y.medicationReminderList.medReminderListCell)
                                     }
 
                                     EmptyView()

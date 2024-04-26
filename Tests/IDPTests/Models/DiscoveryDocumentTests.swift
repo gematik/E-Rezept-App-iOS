@@ -69,12 +69,12 @@ class DiscoveryDocumentTests: XCTestCase {
             ]
         )
 
-        let jwtData = try Bundle(for: Self.self)
-            .path(forResource: "discovery-doc", ofType: "jwt", inDirectory: "JWT.bundle")!
+        let jwtData = try Bundle.module
+            .path(forResource: "discovery-doc", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
             .readFileContents()
         let jwt = try JWT(from: jwtData)
-        let jwkData = try Bundle(for: Self.self)
-            .path(forResource: "jwk", ofType: "json", inDirectory: "JWT.bundle")!
+        let jwkData = try Bundle.module
+            .path(forResource: "jwk", ofType: "json", inDirectory: "Resources/JWT.bundle")!
             .readFileContents()
         let jwk = try JSONDecoder().decode(JWK.self, from: jwkData)
 

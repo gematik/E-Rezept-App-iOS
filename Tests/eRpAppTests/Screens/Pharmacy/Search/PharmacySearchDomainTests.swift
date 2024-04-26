@@ -20,6 +20,7 @@ import ComposableArchitecture
 import ComposableCoreLocation
 @testable import eRpApp
 import eRpKit
+import MapKit
 import Nimble
 import Pharmacy
 import XCTest
@@ -159,9 +160,15 @@ class PharmacySearchDomainTests: XCTestCase {
             .eraseToAnyPublisher()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .denied }
+        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
+        sut.dependencies.locationManager.location = { nil }
 
         await sut.send(.task)
         await testScheduler.advance()
+        await sut.receive(.mapSetUp)
         await sut.receive(.response(.loadLocalPharmaciesReceived(.success(storedPharmacies)))) {
             $0.localPharmacies = storedPharmacies
                 .map { PharmacyLocationViewModel(pharmacy: $0, referenceDate: TestData.openHoursTestReferenceDate) }
@@ -497,6 +504,42 @@ class PharmacySearchDomainTests: XCTestCase {
                 reservationService: .erxTaskRepositoryAvailable,
                 destination: .redeemViaErxTaskRepository(newPharmacyRedeemState)
             ))
+        }
+    }
+
+    func test_MiniMapSetup() async {
+        // given
+        let state = TestData.stateWithStartView
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmacies)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+        let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
+        searchHistoryMock.historyItemsReturnValue = []
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .authorizedWhenInUse }
+        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
+        sut.dependencies.locationManager.location = { TestData.testLocation }
+
+        // then
+        await sut.send(.onAppear)
+        await sut.send(.mapSetUp) { state in
+            state.currentLocation = TestData.testLocation
+            state.mapLocation = MKCoordinateRegion(
+                center: TestData.testLocation.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+            )
+        }
+        locationManagerSubject.send(.didChangeAuthorization(.denied))
+        await sut.receive(.locationManager(.didChangeAuthorization(.denied))) { state in
+            state.currentLocation = nil
+        }
+        sut.dependencies.locationManager.location = { nil }
+        locationManagerSubject.send(completion: .finished)
+
+        await sut.send(.mapSetUp) { state in
+            state.mapLocation = MKCoordinateRegion.gematikHQRegion
         }
     }
 }

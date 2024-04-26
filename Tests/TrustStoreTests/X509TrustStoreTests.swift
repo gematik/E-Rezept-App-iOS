@@ -26,69 +26,69 @@ import XCTest
 // swiftlint:disable line_length identifier_name
 final class X509TrustStoreTests: XCTestCase {
     lazy var epaVauEnc: X509 = {
-        let file = "2_C.FD.AUT_oid_epa_vau_ecc.pem"
+        let file = "2_C.FD.AUT_oid_epa_vau_ecc"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var vauEncExpired: X509 = {
-        let file = "c.fd.enc-erp-erpserver-expired.pem"
+        let file = "c.fd.enc-erp-erpserver-expired"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var vauEncOtherCa: X509 = {
-        let file = "c.fd.enc-erp-erpserver-otherCA.pem"
+        let file = "c.fd.enc-erp-erpserver-otherCA"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var vauEncReference: X509 = {
-        let file = "c.fd.enc-erp-erpserverReferenz.pem"
+        let file = "c.fd.enc-erp-erpserverReferenz"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var vauSigReference: X509 = {
-        let file = "c.fd.sig-erp-erpserverReferenz.pem"
+        let file = "c.fd.sig-erp-erpserverReferenz"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var kompCa10TestOnly: X509 = {
-        let file = "GEM.KOMP-CA10-TEST-ONLY.pem"
+        let file = "GEM.KOMP-CA10-TEST-ONLY"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
     lazy var rca5TestOnly: X509 = {
-        let file = "GEM.RCA5-TEST-ONLY.pem"
+        let file = "GEM.RCA5-TEST-ONLY"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
     lazy var kompCa51TestOnly: X509 = {
-        let file = "GEM.KOMP-CA51-TEST-ONLY.pem"
+        let file = "GEM.KOMP-CA51-TEST-ONLY"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var kompCa11TestOnly: X509 = {
-        let file = "GEM.KOMP-CA11-TEST-ONLY.pem"
+        let file = "GEM.KOMP-CA11-TEST-ONLY"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var rootCa3TestOnly: X509 = {
-        let file = "GEM.RCA3-TEST-ONLY.pem"
+        let file = "GEM.RCA3-TEST-ONLY"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var idpSigReference1: X509 = {
-        let file = "idp-fd-sig-refimpl-1.pem"
+        let file = "idp-fd-sig-refimpl-1"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var idpSigReference2: X509 = {
-        let file = "idp-fd-sig-refimpl-2.pem"
+        let file = "idp-fd-sig-refimpl-2"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
     lazy var idpSigReference3: X509 = {
-        let file = "idp-fd-sig-refimpl-3.pem"
+        let file = "idp-fd-sig-refimpl-3"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
@@ -164,8 +164,12 @@ final class X509TrustStoreTests: XCTestCase {
 
     func testBuildFromCertList() throws {
         // given
-        guard let url = Bundle(for: Self.self)
-            .url(forResource: "kompca10-vauref-idpsig3", withExtension: "json", subdirectory: "CertList.bundle"),
+        guard let url = Bundle.module
+            .url(
+                forResource: "kompca10-vauref-idpsig3",
+                withExtension: "json",
+                subdirectory: "Resources/CertList.bundle"
+            ),
             let json = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")
@@ -225,9 +229,9 @@ final class X509TrustStoreTests: XCTestCase {
     }
 
     private lazy var ocspList_FdEnc: OCSPList = {
-        guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc",
-                                                   withExtension: "json",
-                                                   subdirectory: "OCSPList.bundle"),
+        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc",
+                                          withExtension: "json",
+                                          subdirectory: "Resources/OCSPList.bundle"),
             let json = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")
@@ -236,9 +240,9 @@ final class X509TrustStoreTests: XCTestCase {
     }()
 
     private lazy var ocspList_FdEncIdpSig1IdpSig3: OCSPList = {
-        guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig1-idp-sig3",
-                                                   withExtension: "json",
-                                                   subdirectory: "OCSPList.bundle"),
+        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig1-idp-sig3",
+                                          withExtension: "json",
+                                          subdirectory: "Resources/OCSPList.bundle"),
             let json = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")
@@ -247,9 +251,9 @@ final class X509TrustStoreTests: XCTestCase {
     }()
 
     private lazy var ocspList_NotSignedByKompCa: OCSPList = {
-        guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig_notKompCa10signed",
-                                                   withExtension: "json",
-                                                   subdirectory: "OCSPList.bundle"),
+        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig_notKompCa10signed",
+                                          withExtension: "json",
+                                          subdirectory: "Resources/OCSPList.bundle"),
             let json = try? Data(contentsOf: url)
         else {
             fatalError("Could not load json")
@@ -352,7 +356,7 @@ final class X509TrustStoreTests: XCTestCase {
 }
 
 enum CertificateResourceFileReader {
-    enum InForm {
+    enum InForm: String {
         case pem
         case der
     }
@@ -361,11 +365,11 @@ enum CertificateResourceFileReader {
         case fileNotFound(String)
     }
 
-    static func readFromCertificatesBundle(file: String, inForm _: InForm = .pem) throws -> Data {
-        let bundle = Bundle(for: X509TrustStoreTests.self)
-        guard let url = bundle.resourceURL?
-            .appendingPathComponent("Certificates.bundle")
-            .appendingPathComponent(file)
+    static func readFromCertificatesBundle(file: String, inForm: InForm = .pem) throws -> Data {
+        let bundle = Bundle.module
+        guard let url = bundle.url(forResource: file,
+                                   withExtension: inForm.rawValue,
+                                   subdirectory: "Resources/Certificates.bundle")
         else {
             throw Error.fileNotFound(file)
         }
@@ -374,7 +378,7 @@ enum CertificateResourceFileReader {
 }
 
 let rootCa3TestOnlyTrustAnchor: TrustAnchor = {
-    let file = "GEM.RCA3-TEST-ONLY.pem"
+    let file = "GEM.RCA3-TEST-ONLY"
     let pem = try! CertificateResourceFileReader.readFromCertificatesBundle(file: file)
     return try! TrustAnchor(withPEM: pem.utf8string!)
 }()

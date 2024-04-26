@@ -213,7 +213,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
             guard case let .extAuthReceived(entry) = state.extAuthState else { return .none }
             let payload = try? idpToken.idTokenPayload()
             state.extAuthState = .extAuthSuccessful(entry)
-            let overrideInsuranceTypeToPkv = idpToken.isPkvFastTrackFlowInitiated
+            let overrideInsuranceTypeToPkv = idpToken.isPkvExtAuthFlowInitiated
             return
                 .concatenate(
                     .run { _ in

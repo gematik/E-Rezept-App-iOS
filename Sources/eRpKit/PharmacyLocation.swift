@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import MapKit
 import OpenSSL
 
 /// Represents all information needed for searching for pharmacies.
@@ -285,6 +286,13 @@ extension PharmacyLocation {
 
         public let latitude: Decimal?
         public let longitude: Decimal?
+        public var coordinate: CLLocationCoordinate2D? {
+            if let longitude = longitude, let latitude = latitude {
+                return CLLocationCoordinate2D(latitude: latitude.doubleValue, longitude: longitude.doubleValue)
+            } else {
+                return nil
+            }
+        }
     }
 
     public struct Address: Codable, Hashable {

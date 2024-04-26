@@ -443,7 +443,7 @@ final class IDPIntegrationTests: XCTestCase {
             extAuthRequestStorage: PersistentExtAuthRequestStorage()
         )
 
-        // Step: Download available KKs for external authentication (a.k.a. fasttrack), select the first named
+        // Step: Download available KKs for external authentication (a.k.a. gID), select the first named
         // "*Gematik*"
 
         var success = false
