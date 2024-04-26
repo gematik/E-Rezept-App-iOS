@@ -144,7 +144,7 @@ extension AVSMessage {
         }
 
         func isValid(name: String?) -> Validity {
-            (name?.countIsLessOrEqual(50) ?? true) ? .valid :
+            (name?.countIsLessOrEqual(Validator.maxNameLength) ?? true) ? .valid :
                 .invalid(L10n.rivAvsInvalidName(String(Validator.maxNameLength)).text)
         }
 
@@ -272,7 +272,7 @@ extension ErxTaskOrder {
     struct Validator: RedeemInputValidator, Equatable {
         static var maxHintLength = 90
         static var maxAddressFieldLength = 50
-        static var maxNameLength = 50
+        static var maxNameLength = 100
         init() {}
 
         func isValidErxTaskOrderInput( // swiftlint:disable:this function_parameter_count
@@ -322,7 +322,7 @@ extension ErxTaskOrder {
         }
 
         func isValid(name: String?) -> Validity {
-            (name?.countIsLessOrEqual(50) ?? true) ? .valid :
+            (name?.countIsLessOrEqual(Validator.maxNameLength) ?? true) ? .valid :
                 .invalid(L10n.rivTiInvalidName(String(Validator.maxNameLength)).text)
         }
 

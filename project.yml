@@ -5,7 +5,7 @@ options:
   developmentLanguage: en-GB
   useBaseInternationalization: false
   deploymentTarget:
-    macOS: 11.0
+    macOS: 12.0
     iOS: 15.0
 schemes:
   UITests_iOS:
@@ -51,6 +51,7 @@ schemes:
         - FHIRClientTests_iOS
         - TrustStoreTests_iOS
         - VAUClientTests_iOS
+        - AVSTests_iOS
   AllTests_macOS:
     build:
       targets:
@@ -122,6 +123,9 @@ packages:
   ComposableCoreLocation:
     url: https://github.com/pointfreeco/composable-core-location
     minorVersion: 0.3.0
+  IdentifiedCollections:
+    url: https://github.com/pointfreeco/swift-identified-collections.git
+    minorVersion: 0.8.0
   ContentSquare:
     url:  https://github.com/ContentSquare/CS_iOS_SDK
     majorVersion: 4.27.1
@@ -281,6 +285,8 @@ targets:
       - target: IDP_${platform}
       - target: FHIRClient_${platform}
       - package: BundleKit
+      - package: IdentifiedCollections
+        product: IdentifiedCollections
     scheme:
       testTargets:
         - eRpKitTests_${platform}
@@ -303,6 +309,8 @@ targets:
       - target: eRpKit_${platform}
       - package: FHIRModels
         product: ModelsR4
+      - package: IdentifiedCollections
+        product: IdentifiedCollections
     scheme:
       testTargets:
         - eRpLocalStorageTests_${platform}

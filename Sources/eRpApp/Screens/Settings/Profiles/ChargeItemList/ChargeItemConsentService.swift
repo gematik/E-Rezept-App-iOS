@@ -50,7 +50,9 @@ struct ChargeItemConsentService {
 
     enum RevokeResult: Equatable {
         case success
+        case conflict
         case notAuthenticated
+        case error(ChargeItemConsentService.Error)
     }
 }
 
@@ -137,7 +139,38 @@ extension ChargeItemConsentService {
                 }
             },
 
-            revokeConsent: unimplemented(".revokeConsent not implemented")
+            revokeConsent: { profileId in
+                let userSession = userSessionProvider.userSession(for: profileId)
+                let loginHandler = userSession.idpSessionLoginHandler
+                let erxTaskRepository = userSession.erxTaskRepository
+
+                let isAuthenticatedResult = try await loginHandler.isAuthenticated().async()
+
+                switch isAuthenticatedResult {
+                case .success(true):
+                    let revokeConsent: Bool
+                    do {
+                        revokeConsent = try await erxTaskRepository.revokeConsent(.chargcons).async()
+                    } catch let error as ErxRepositoryError {
+                        // we handle the URL return code 409 (conflict) especially as it's not a serious outcome
+                        if case let .remote(.fhirClient(.http(fhirClientHttpError))) = error,
+                           case let .httpError(urlError) = fhirClientHttpError.httpClientError,
+                           urlError.code.rawValue == 409 {
+                            return .conflict
+                        }
+                        throw ChargeItemConsentService.Error.erxRepository(error)
+                    }
+                    if revokeConsent {
+                        return .success
+                    } else {
+                        throw Error.unexpectedRevokeConsentResponse
+                    }
+                case .success(false):
+                    return .notAuthenticated
+                case let .failure(error):
+                    throw Error.loginHandler(error)
+                }
+            }
         )
     }
 

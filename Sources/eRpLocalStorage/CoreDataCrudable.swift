@@ -58,6 +58,11 @@ protocol CoreDataCrudable {
         in context: @escaping (NSManagedObjectContext) throws -> Void
     ) -> AnyPublisher<Bool, LocalStoreError>
 
+    func save(
+        mergePolicy: NSMergePolicy,
+        in context: @escaping (NSManagedObjectContext) throws -> Void
+    ) throws
+
     /// Deletes all results of the passed NSFetchRequest on a background context
     /// and returns the success or failure state of the operation in a publisher
     /// - Parameter fetchRequest: NSFetchRequest of the entities that should be deleted
@@ -65,11 +70,19 @@ protocol CoreDataCrudable {
         resultsOf fetchRequest: NSFetchRequest<Entity>
     ) -> AnyPublisher<Bool, LocalStoreError>
 
+    func delete<Entity: NSManagedObject>(
+        with fetchRequest: NSFetchRequest<Entity>
+    ) throws
+
     /// Executes the passed NSFetchRequest on the `viewContext` and returns the results in a publisher
     /// - Parameter request: NSFetchRequest for the entities to fetch
     func fetch<Entity: NSManagedObject>(
         _ request: NSFetchRequest<Entity>
     ) -> AnyPublisher<[Entity], LocalStoreError>
+
+    func fetch<Entity: NSManagedObject>(
+        _ request: NSFetchRequest<Entity>
+    ) throws -> [Entity]
 }
 
 extension CoreDataCrudable {
@@ -88,6 +101,18 @@ extension CoreDataCrudable {
             .receive(on: foregroundQueue)
             .mapError(Error.read)
             .eraseToAnyPublisher()
+    }
+
+    func fetch<Entity: NSManagedObject>(
+        _ request: NSFetchRequest<Entity>
+    ) throws -> [Entity] {
+        let coreData: CoreDataController
+        do {
+            coreData = try coreDataControllerFactory.loadCoreDataController()
+        } catch {
+            throw Error.initialization(error: error)
+        }
+        return try coreData.container.viewContext.fetch(request)
     }
 
     func save(
@@ -124,6 +149,28 @@ extension CoreDataCrudable {
         .eraseToAnyPublisher()
     }
 
+    func save(
+        mergePolicy: NSMergePolicy,
+        in context: @escaping (NSManagedObjectContext) throws -> Void
+    ) throws -> Bool {
+        let coreData: CoreDataController
+        do {
+            coreData = try coreDataControllerFactory.loadCoreDataController()
+        } catch {
+            throw Error.initialization(error: error)
+        }
+
+        let moc = coreData.container.newBackgroundContext()
+        moc.mergePolicy = mergePolicy
+        return try moc.performAndWait {
+            try context(moc)
+            try moc.save()
+            moc.reset()
+            return true
+        }
+    }
+
+    @_disfavoredOverload
     func save<T>(
         mergePolicy: NSMergePolicy,
         in context: @escaping (NSManagedObjectContext) throws -> T
@@ -158,6 +205,28 @@ extension CoreDataCrudable {
         .eraseToAnyPublisher()
     }
 
+    @discardableResult
+    func save<T>(
+        mergePolicy: NSMergePolicy,
+        in context: @escaping (NSManagedObjectContext) throws -> T
+    ) throws -> T {
+        let coreData: CoreDataController
+        do {
+            coreData = try coreDataControllerFactory.loadCoreDataController()
+        } catch {
+            throw Error.initialization(error: error)
+        }
+
+        let moc = coreData.container.newBackgroundContext()
+        moc.mergePolicy = mergePolicy
+        return try moc.performAndWait {
+            let result = try context(moc)
+            try moc.save()
+            moc.reset()
+            return result
+        }
+    }
+
     func delete<Entity: NSManagedObject>(resultsOf fetchRequest: NSFetchRequest<Entity>) -> AnyPublisher<Bool, Error> {
         let coreData: CoreDataController
         do {
@@ -189,5 +258,25 @@ extension CoreDataCrudable {
         .receive(on: foregroundQueue)
         .mapError(Error.delete)
         .eraseToAnyPublisher()
+    }
+
+    func delete<Entity: NSManagedObject>(
+        with fetchRequest: NSFetchRequest<Entity>
+    ) throws {
+        let coreData: CoreDataController
+        do {
+            coreData = try coreDataControllerFactory.loadCoreDataController()
+        } catch {
+            throw Error.initialization(error: error)
+        }
+
+        let moc = coreData.container.newBackgroundContext()
+        try moc.performAndWait {
+            let entities = try moc.fetch(fetchRequest)
+            for entity in entities {
+                moc.delete(entity)
+            }
+            try moc.save()
+        }
     }
 }

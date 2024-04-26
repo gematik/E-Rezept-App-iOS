@@ -130,64 +130,158 @@ struct AppStartDomain: ReducerProtocol {
         case let .settings(endpoint):
             switch endpoint {
             case .unlockCard:
-                return .merge(
-                    EffectTask
-                        .send(
-                            .app(
-                                action: .subdomains(
-                                    .settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))
-                                )
-                            )
-                        ),
-                    EffectTask.send(.app(action: .setNavigation(.settings)))
-                )
+                return .run { send in
+                    // reset destination of settings tab
+                    await send(.app(action: .subdomains(.settings(action: .popToRootView))))
+                    // wait for running effects to finish
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    // switch to the settings tab
+                    await send(.app(action: .setNavigation(.settings)))
+                    // set actual destination in settings tab
+                    await send(
+                        .app(action: .subdomains(.settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))))
+                    )
+                }
             case let .editProfile(editProfile):
                 switch editProfile {
                 case let .chargeItemListFor(profileId):
                     return .run { send in
+                        // reset destination of settings tab
+                        await send(.app(action: .subdomains(.settings(action: .popToRootView))))
+                        // wait for running effects to finish
+                        @Dependency(\.schedulers) var schedulers
+                        try await schedulers.main.sleep(for: 0.5)
+                        // switch to settings tab
                         await send(.app(action: .setNavigation(.settings)))
+                        // set actual destination in settings tab
                         await send(
                             .app(action: .subdomains(.settings(action: .showChargeItemListFor(profileId: profileId))))
                         )
                     }
                 }
+            case .medicationSchedule:
+                return .run { send in
+                    // reset destination of settings tab
+                    await send(.app(action: .subdomains(.settings(action: .popToRootView))))
+                    // wait for running effects to finish
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    // switch to settings tab
+                    await send(.app(action: .setNavigation(.settings)))
+                    // set actual destination in settings tab
+                    await send(
+                        .app(action: .subdomains(.settings(action: .setNavigation(tag: .medicationReminderList))))
+                    )
+                }
             default:
-                return .concatenate(
-                    EffectTask.send(.app(action: .subdomains(.settings(action: .popToRootView)))),
-                    EffectTask.send(.app(action: .setNavigation(.settings)))
-                )
+                return .run { send in
+                    await send(.app(action: .subdomains(.settings(action: .popToRootView))))
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    await send(.app(action: .setNavigation(.settings)))
+                }
             }
+
         case .scanner:
-            return EffectTask.send(.app(action: .subdomains(.main(action: .showScannerView))))
+            return .run { send in
+                // reset destination of settings tab
+                await send(.app(action: .subdomains(.main(action: .setNavigation(tag: nil)))))
+                // wait for possible running effects to finish
+                @Dependency(\.schedulers) var schedulers
+                try await schedulers.main.sleep(for: 0.5)
+                // switch to main tab
+                await send(.app(action: .setNavigation(.main)))
+                // set actual destination in main tab
+                await send(.app(action: .subdomains(.main(action: .showScannerView))))
+            }
         case .orders:
-            return EffectTask.send(.app(action: .setNavigation(.orders)))
+            return .run { send in
+                // reset destination of orders tab
+                await send(.app(action: .subdomains(.orders(action: .setNavigation(tag: nil)))))
+                // wait for possible running effects to finish
+                @Dependency(\.schedulers) var schedulers
+                try await schedulers.main.sleep(for: 0.5)
+                // switch to orders tab
+                await send(.app(action: .setNavigation(.orders)))
+            }
         case let .mainScreen(endpoint):
             switch endpoint {
+            case let .medicationReminder(scheduleEntries):
+                return .run { send in
+                    // reset destination of main tab
+                    await send(.app(action: .subdomains(.main(action: .setNavigation(tag: nil)))))
+                    // wait for possible running effects to finish
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    // switch to main tab
+                    await send(.app(action: .setNavigation(.main)))
+                    // set actual destination in main tab
+                    await send(
+                        .app(action: .subdomains(.main(action: .showMedicationReminder(scheduleEntries))))
+                    )
+                }
             case .login:
-                return .merge(
-                    EffectTask.send(.app(action: .setNavigation(.main))),
-                    EffectTask.send(.app(action: .subdomains(.main(action: .prescriptionList(action: .refresh)))))
-                )
+                return .run { send in
+                    // reset destination of main tab
+                    await send(.app(action: .subdomains(.main(action: .setNavigation(tag: nil)))))
+                    // wait for possible running effects to finish
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    // switch to main tab
+                    await send(.app(action: .setNavigation(.main)))
+                    // set actual destination in main tab
+                    await send(.app(action: .subdomains(.main(action: .prescriptionList(action: .refresh)))))
+                }
             default:
-                return EffectTask.send(.app(action: .setNavigation(.main)))
+                return .run { send in
+                    // reset destination of main tab
+                    await send(.app(action: .subdomains(.main(action: .setNavigation(tag: nil)))))
+                    // wait for possible running effects to finish
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    // switch to main tab
+                    await send(.app(action: .setNavigation(.main)))
+                }
             }
         // [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
         case let .universalLink(url):
             switch url.path {
             case "/extauth":
-                return EffectTask.send(.app(action: .subdomains(.main(action: .externalLogin(url)))))
+                return .run { send in
+                    // reset destination of main tab
+                    await send(.app(action: .subdomains(.main(action: .setNavigation(tag: nil)))))
+                    // wait for possible running effects to finish
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    // switch to main tab
+                    await send(.app(action: .setNavigation(.main)))
+                    // set actual destination in main tab
+                    await send(.app(action: .subdomains(.main(action: .externalLogin(url)))))
+                }
             case "/pharmacies/index.html",
                  "/pharmacies":
-                return Effect.concatenate(
-                    EffectTask.send(.app(action: .setNavigation(.pharmacySearch))),
-                    Effect.run(operation: { _ in
-                        @Dependency(\.schedulers) var schedulers
-                        try await schedulers.main.sleep(for: 0.5)
-                    }),
-                    EffectTask.send(.app(action: .subdomains(.pharmacySearch(action: .universalLink(url)))))
-                )
+                return .run { send in
+                    // reset destination of pharmacy tab
+                    await send(.app(action: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil)))))
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    await send(.app(action: .setNavigation(.pharmacySearch)))
+                    // set actual destination in pharmacy tab
+                    await send(.app(action: .subdomains(.pharmacySearch(action: .universalLink(url)))))
+                }
             case "/prescription":
-                return EffectTask.send(.app(action: .subdomains(.main(action: .importTaskByUrl(url)))))
+                return .run { send in
+                    // reset destination of main tab
+                    await send(.app(action: .subdomains(.main(action: .setNavigation(tag: nil)))))
+                    // wait for possible running effects to finish
+                    @Dependency(\.schedulers) var schedulers
+                    try await schedulers.main.sleep(for: 0.5)
+                    // switch to main tab
+                    await send(.app(action: .setNavigation(.main)))
+                    // set actual destination in main tab
+                    await send(.app(action: .subdomains(.main(action: .importTaskByUrl(url)))))
+                }
             default:
                 return .none
             }

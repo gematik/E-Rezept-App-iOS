@@ -53,6 +53,8 @@ extension DependencyValues {
     }
 }
 
+// `Unimplemented` code generation already done by `public struct ErxTaskRepositoryDependency: DependencyKey`
+// sourcery: skipUnimplmented
 public struct EntireErxTaskRepositoryDependency: DependencyKey {
     public static let liveValue: ErxTaskRepository? = nil
 
@@ -119,6 +121,24 @@ extension DependencyValues {
     var coreDataControllerFactory: CoreDataControllerFactory {
         get { self[CoreDataControllerFactoryDependency.self] }
         set { self[CoreDataControllerFactoryDependency.self] = newValue }
+    }
+}
+
+struct MedicationScheduleStoreDependency: DependencyKey {
+    static let liveValue: MedicationScheduleStore = {
+        @Dependency(\.coreDataControllerFactory) var coreDataControllerFactory
+        return MedicationScheduleCoreDataStore(coreDataControllerFactory: coreDataControllerFactory)
+    }()
+
+    static let previewValue: MedicationScheduleStore = UnimplementedMedicationScheduleStore()
+
+    static let testValue: MedicationScheduleStore = UnimplementedMedicationScheduleStore()
+}
+
+extension DependencyValues {
+    var medicationScheduleStore: MedicationScheduleStore {
+        get { self[MedicationScheduleStoreDependency.self] }
+        set { self[MedicationScheduleStoreDependency.self] = newValue }
     }
 }
 

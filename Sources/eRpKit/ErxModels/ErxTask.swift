@@ -38,6 +38,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
         source: Source = .server,
         medication: ErxMedication? = nil,
         medicationRequest: ErxMedicationRequest = ErxMedicationRequest(quantity: nil),
+        medicationSchedule: MedicationSchedule? = nil,
         patient: ErxPatient? = nil,
         practitioner: ErxPractitioner? = nil,
         organization: ErxOrganization? = nil,
@@ -58,6 +59,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
         self.author = author
         self.source = source
         self.medication = medication
+        self.medicationSchedule = medicationSchedule
         self.medicationRequest = medicationRequest
         self.patient = patient
         self.practitioner = practitioner
@@ -112,6 +114,8 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
     public let medication: ErxMedication?
     /// Everything contained in a MedicationRequest resource
     public let medicationRequest: ErxMedicationRequest
+    /// Associated MedicationSchedule if setup, nil otherwise
+    public let medicationSchedule: MedicationSchedule?
     /// Patient for whom the prescription is issued
     public let patient: ErxPatient?
     /// Practitioner who issued the prescription

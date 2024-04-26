@@ -39,6 +39,8 @@ extension MainDomain {
             case prescriptionDetail(PrescriptionDetailDomain.State)
             // sourcery: AnalyticsScreen = redeem_methodSelection
             case redeem(RedeemMethodsDomain.State)
+            // sourcery: AnalyticsScreen = main_medicationReminder
+            case medicationReminder(MedicationReminderOneDaySummaryDomain.State)
             // sourcery: AnalyticsScreen = main_welcomeDrawer
             case welcomeDrawer
             // sourcery: AnalyticsScreen = main_consentDrawer
@@ -59,6 +61,7 @@ extension MainDomain {
             case prescriptionArchiveAction(action: PrescriptionArchiveDomain.Action)
             case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
             case redeemMethods(action: RedeemMethodsDomain.Action)
+            case medicationReminder(action: MedicationReminderOneDaySummaryDomain.Action)
             case alert(Alert)
             case toast(Toast)
 
@@ -131,6 +134,12 @@ extension MainDomain {
                 action: /Action.redeemMethods
             ) {
                 RedeemMethodsDomain()
+            }
+            Scope(
+                state: /State.medicationReminder,
+                action: /Action.medicationReminder
+            ) {
+                MedicationReminderOneDaySummaryDomain()
             }
         }
     }

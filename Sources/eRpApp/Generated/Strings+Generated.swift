@@ -79,9 +79,9 @@ import SwiftUI
     internal static let authTxtBiometricsFailedNotEnrolled = StringAsset("auth_txt_biometrics_failed_not_enrolled")
     /// An alternative to biometric login is not configured. Please deposit a password.
     internal static let authTxtBiometricsFailedUserFallback = StringAsset("auth_txt_biometrics_failed_user_fallback")
-    /// Do you have any questions or problems concerning use of the app? You can contact our technical hotline on 0800 277 377 7. 
+    /// Do you have any questions or problems using the app? You can reach our telephone support on 0800 277 377 7. 
     /// 
-    /// We have already answered plenty of questions for you at das-e-rezept-fuer-deutschland.de.
+    ///  We have already answered many questions for you on das-e-rezept-fuer-deutschland.de.
     internal static let authTxtBiometricsFooter = StringAsset("auth_txt_biometrics_footer")
     /// app-feedback@gematik.de
     internal static let authTxtBiometricsFooterEmailDisplay = StringAsset("auth_txt_biometrics_footer_email_display")
@@ -187,7 +187,7 @@ import SwiftUI
     internal static let cdwBtnExtauthAlertSaveProfile = StringAsset("cdw_btn_extauth_alert_save_profile")
     /// Cancel
     internal static let cdwBtnExtauthConfirmCancel = StringAsset("cdw_btn_extauth_confirm_cancel")
-    /// Contact technical customer service
+    /// Contact telephone support
     internal static let cdwBtnExtauthConfirmContact = StringAsset("cdw_btn_extauth_confirm_contact")
     /// Send
     internal static let cdwBtnExtauthConfirmSend = StringAsset("cdw_btn_extauth_confirm_send")
@@ -368,11 +368,11 @@ import SwiftUI
     internal static let cdwTxtExtauthConfirmContactsheetMail = StringAsset("cdw_txt_extauth_confirm_contactsheet_mail")
     /// Phone
     internal static let cdwTxtExtauthConfirmContactsheetTelephone = StringAsset("cdw_txt_extauth_confirm_contactsheet_telephone")
-    /// Contact customer service
+    /// Contact support
     internal static let cdwTxtExtauthConfirmContactsheetTitle = StringAsset("cdw_txt_extauth_confirm_contactsheet_title")
     /// We will now request authentication from your health insurance company.
     internal static let cdwTxtExtauthConfirmDescription = StringAsset("cdw_txt_extauth_confirm_description")
-    /// Please mention this error to our technical customer service to facilitate the search for a solution.
+    /// Please mention this error to our support to help find a solution.
     internal static let cdwTxtExtauthConfirmErrorDescription = StringAsset("cdw_txt_extauth_confirm_error_description")
     /// Requesting authentication
     internal static let cdwTxtExtauthConfirmHeadline = StringAsset("cdw_txt_extauth_confirm_headline")
@@ -480,7 +480,7 @@ import SwiftUI
     internal static let cdwTxtRcDescription = StringAsset("cdw_txt_rc_description")
     /// card blocked
     internal static let cdwTxtRcErrorCardLockedDescription = StringAsset("cdw_txt_rc_error_card_locked_description")
-    /// The PIN was entered incorrectly three times. Your card has therefore been blocked for security reasons.
+    /// The PIN was entered incorrectly three times. Your card has therefore been blocked for use with a PIN for security reasons.
     internal static let cdwTxtRcErrorCardLockedRecovery = StringAsset("cdw_txt_rc_error_card_locked_recovery")
     /// Error reading the medical card
     internal static let cdwTxtRcErrorGenericCardDescription = StringAsset("cdw_txt_rc_error_generic_card_description")
@@ -1486,6 +1486,66 @@ import SwiftUI
     internal static let mainTxtProfileStatusOffline = StringAsset("main_txt_profile_status_offline")
     /// Status: Profile logged in
     internal static let mainTxtProfileStatusOnline = StringAsset("main_txt_profile_status_online")
+    /// Remind me
+    internal static let medReminderBtnActivationToggle = StringAsset("med_reminder_btn_activation_toggle")
+    /// To my memories
+    internal static let medReminderBtnOneDaySummaryGoToRemindersOverviewButton = StringAsset("med_reminder_btn_one_day_summary_go_to_reminders_overview_button")
+    /// Last day
+    internal static let medReminderBtnRepetitionDatepickerEnd = StringAsset("med_reminder_btn_repetition_datepicker_end")
+    /// First day
+    internal static let medReminderBtnRepetitionDatepickerStart = StringAsset("med_reminder_btn_repetition_datepicker_start")
+    /// Save
+    internal static let medReminderBtnSaveSchedule = StringAsset("med_reminder_btn_save_schedule")
+    /// Add time
+    internal static let medReminderBtnTimeScheduleAddEntry = StringAsset("med_reminder_btn_time_schedule_add_entry")
+    /// Instructions for use
+    internal static let medReminderTxtDosageInstructionSubtitle = StringAsset("med_reminder_txt_dosage_instruction_subtitle")
+    /// No intake reminders
+    internal static let medReminderTxtListEmptyListHeadline = StringAsset("med_reminder_txt_list_empty_list_headline")
+    /// You can set reminders for your prescriptions.
+    internal static let medReminderTxtListEmptyListSubheadline = StringAsset("med_reminder_txt_list_empty_list_subheadline")
+    /// A
+    internal static let medReminderTxtListPlanActive = StringAsset("med_reminder_txt_list_plan_active")
+    /// Out of
+    internal static let medReminderTxtListPlanInactive = StringAsset("med_reminder_txt_list_plan_inactive")
+    /// Memory
+    internal static let medReminderTxtNotificationContentTitle = StringAsset("med_reminder_txt_notification_content_title")
+    /// You have no memories today.
+    internal static let medReminderTxtOneDaySummaryEmptyEventSubtitle = StringAsset("med_reminder_txt_one_day_summary_empty_event_subtitle")
+    /// No active memories
+    internal static let medReminderTxtOneDaySummaryEmptyEventTitle = StringAsset("med_reminder_txt_one_day_summary_empty_event_title")
+    /// At evening
+    internal static let medReminderTxtOneDaySummaryInTheEvening = StringAsset("med_reminder_txt_one_day_summary_in_the_evening")
+    /// In the morning
+    internal static let medReminderTxtOneDaySummaryInTheMorning = StringAsset("med_reminder_txt_one_day_summary_in_the_morning")
+    /// At night
+    internal static let medReminderTxtOneDaySummaryInTheNight = StringAsset("med_reminder_txt_one_day_summary_in_the_night")
+    /// Midday
+    internal static let medReminderTxtOneDaySummaryInTheNoon = StringAsset("med_reminder_txt_one_day_summary_in_the_noon")
+    /// Memory
+    internal static let medReminderTxtOneDaySummaryTitle = StringAsset("med_reminder_txt_one_day_summary_title")
+    /// dose
+    internal static let medReminderTxtParserMedicationSchedulePlaceholderAmount = StringAsset("med_reminder_txt_parser_medication_schedule_placeholder_amount")
+    /// Medicine
+    internal static let medReminderTxtParserMedicationSchedulePlaceholderTitle = StringAsset("med_reminder_txt_parser_medication_schedule_placeholder_title")
+    /// until %@
+    internal static func medReminderTxtRepetitionFiniteTill(_ element1: String) -> StringAsset {
+        StringAsset("med_reminder_txt_repetition_finite_till_%@", arguments: [element1])
+    }
+    /// Repeat
+    internal static let medReminderTxtRepetitionTitle = StringAsset("med_reminder_txt_repetition_title")
+    /// Limited
+    internal static let medReminderTxtRepetitionTypeFinite = StringAsset("med_reminder_txt_repetition_type_finite")
+    /// Unlimited
+    internal static let medReminderTxtRepetitionTypeInfinite = StringAsset("med_reminder_txt_repetition_type_infinite")
+    /// Time
+    internal static let medReminderTxtScheduleSectionHeader = StringAsset("med_reminder_txt_schedule_section_header")
+    /// Quantity
+    internal static let medReminderTxtTimeScheduleAmountPlaceholder = StringAsset("med_reminder_txt_time_schedule_amount_placeholder")
+    /// dose
+    internal static let medReminderTxtTimeScheduleDosageLabel = StringAsset("med_reminder_txt_time_schedule_dosage_label")
+    /// Revenue reminder
+    internal static let medReminderTxtTitle = StringAsset("med_reminder_txt_title")
     /// Profile name
     internal static let mgmFallbackProfileName = StringAsset("mgm_fallback_profile_name")
     /// No profile could be created during the update
@@ -2016,6 +2076,8 @@ import SwiftUI
     internal static let prscDtlBtnDirectAssignment = StringAsset("prsc_dtl_btn_direct_assignment")
     /// Open gesund.bund.de
     internal static let prscDtlBtnFooter = StringAsset("prsc_dtl_btn_footer")
+    /// Revenue reminder
+    internal static let prscDtlBtnMedicationReminder = StringAsset("prsc_dtl_btn_medication_reminder")
     /// Enable
     internal static let prscDtlBtnPkvHintActivate = StringAsset("prsc_dtl_btn_pkv_hint_activate")
     /// Cost receipt
@@ -2138,8 +2200,22 @@ import SwiftUI
     internal static let prscDtlTxtAuthoredOnDate = StringAsset("prsc_dtl_txt_authored_on_date")
     /// Eligible according to BVG
     internal static let prscDtlTxtBvg = StringAsset("prsc_dtl_txt_bvg")
-    /// Submission instructions
+    /// Directions for use
     internal static let prscDtlTxtDosageInstructions = StringAsset("prsc_dtl_txt_dosage_instructions")
+    /// Your doctor has noted that you have been given instructions on how to take this medication that is not on the prescription. This could be on your medication plan, for example.
+    internal static let prscDtlTxtDosageInstructionsDf = StringAsset("prsc_dtl_txt_dosage_instructions_df")
+    /// at evening
+    internal static let prscDtlTxtDosageInstructionsEvening = StringAsset("prsc_dtl_txt_dosage_instructions_evening")
+    /// Unless your doctor has given you different instructions, the instructions for use can be understood as follows:
+    internal static let prscDtlTxtDosageInstructionsFormatted = StringAsset("prsc_dtl_txt_dosage_instructions_formatted")
+    /// In the morning
+    internal static let prscDtlTxtDosageInstructionsMorning = StringAsset("prsc_dtl_txt_dosage_instructions_morning")
+    /// at night
+    internal static let prscDtlTxtDosageInstructionsNight = StringAsset("prsc_dtl_txt_dosage_instructions_night")
+    /// at noon
+    internal static let prscDtlTxtDosageInstructionsNoon = StringAsset("prsc_dtl_txt_dosage_instructions_noon")
+    /// Your doctor has given you this information about taking the medication.
+    internal static let prscDtlTxtDosageInstructionsNote = StringAsset("prsc_dtl_txt_dosage_instructions_note")
     /// Emergency service fee
     internal static let prscDtlTxtEmergencyServiceFee = StringAsset("prsc_dtl_txt_emergency_service_fee")
     /// Takes insurance
@@ -2154,6 +2230,14 @@ import SwiftUI
     internal static let prscDtlTxtInsuredPerson = StringAsset("prsc_dtl_txt_insured_person")
     /// Medicine
     internal static let prscDtlTxtMedication = StringAsset("prsc_dtl_txt_medication")
+    /// My memory
+    internal static let prscDtlTxtMedicationReminder = StringAsset("prsc_dtl_txt_medication_reminder")
+    /// Out of
+    internal static let prscDtlTxtMedicationReminderOff = StringAsset("prsc_dtl_txt_medication_reminder_off")
+    /// A
+    internal static let prscDtlTxtMedicationReminderOn = StringAsset("prsc_dtl_txt_medication_reminder_on")
+    /// Your doctor has not given you any information about taking the medication.
+    internal static let prscDtlTxtMissingDosageInstructions = StringAsset("prsc_dtl_txt_missing_dosage_instructions")
     /// Multiple prescription
     internal static let prscDtlTxtMultiPrescription = StringAsset("prsc_dtl_txt_multi_prescription")
     /// No
@@ -2602,6 +2686,8 @@ import SwiftUI
     internal static let stgBtnEditProfileLogout = StringAsset("stg_btn_edit_profile_logout")
     /// Connected devices
     internal static let stgBtnEditProfileRegisteredDevices = StringAsset("stg_btn_edit_profile_registered_devices")
+    /// Revenue reminder
+    internal static let stgBtnMedicationReminder = StringAsset("stg_btn_medication_reminder")
     /// Save
     internal static let stgBtnNewProfileCreate = StringAsset("stg_btn_new_profile_create")
     /// Register
@@ -2614,7 +2700,7 @@ import SwiftUI
     internal static let stgConHotlineAva = StringAsset("stg_con_hotline_ava")
     /// +49-800-277-3777
     internal static let stgConHotlineContact = StringAsset("stg_con_hotline_contact")
-    /// Call technical hotline
+    /// Call telephone support
     internal static let stgConTextContactHotline = StringAsset("stg_con_text_contact_hotline")
     /// Write email
     internal static let stgConTextMail = StringAsset("stg_con_text_mail")
@@ -2646,7 +2732,7 @@ import SwiftUI
     internal static let stgLnoMailTextContact = StringAsset("stg_lno_mail_text_contact")
     /// +49 0800 277 3777
     internal static let stgLnoPhoneContact = StringAsset("stg_lno_phone_contact")
-    /// Call technical hotline
+    /// Call telephone support
     internal static let stgLnoPhoneTextContact = StringAsset("stg_lno_phone_text_contact")
     /// Imprint
     internal static let stgLnoTxtLegalNotice = StringAsset("stg_lno_txt_legal_notice")
@@ -2656,12 +2742,12 @@ import SwiftUI
     internal static let stgLnoTxtTextIssuer = StringAsset("stg_lno_txt_text_issuer")
     /// We strive to use gender-sensitive language. If you notice any errors, we would be pleased to hear from you by email.
     internal static let stgLnoTxtTextNote = StringAsset("stg_lno_txt_text_note")
-    /// Dr. med. Markus Leyck Dieken
+    /// Dr. Florian Hartge
     internal static let stgLnoTxtTextResponsible = StringAsset("stg_lno_txt_text_responsible")
-    /// Managing Director: Dr. med. Markus Leyck Dieken
-    /// Register Court: Amtsgericht Berlin-Charlottenburg
-    /// Commercial register no.: HRB 96351
-    /// VAT ID: DE241843684
+    /// Managing Director: Dr. Florian Hartge
+    ///  Registration court: Berlin-Charlottenburg District Court
+    ///  Commercial register number: HRB 96351
+    ///  VAT identification number: DE241843684
     internal static let stgLnoTxtTextTaxAndMore = StringAsset("stg_lno_txt_text_taxAndMore")
     /// Contact
     internal static let stgLnoTxtTitleContact = StringAsset("stg_lno_txt_title_contact")

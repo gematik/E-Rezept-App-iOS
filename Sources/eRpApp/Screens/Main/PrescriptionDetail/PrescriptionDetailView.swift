@@ -57,6 +57,27 @@ struct PrescriptionDetailView: View {
                 SectionContainer(footer: {
                     FooterView { viewStore.send(.openUrlGesundBundDe) }
                 }, content: {
+                    Button(action: { viewStore.send(.setNavigation(tag: .medicationReminder)) }, label: {
+                        SubTitle(
+                            title: viewStore.reminderText,
+                            description: L10n.prscDtlBtnMedicationReminder.text
+                        )
+                        .subTitleStyle(.navigation(
+                            stateText: viewStore.medicationReminderState
+                        ))
+                    })
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedicationReminder)
+
+                    Button(action: { viewStore.send(.setNavigation(tag: .dosageInstructionsInfo)) }, label: {
+                        SubTitle(
+                            title: viewStore.dosageInstructions,
+                            description: L10n.prscDtlTxtDosageInstructions
+                        ).subTitleStyle(.info)
+                    })
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtDosageInstructions)
+
                     Button(action: { viewStore.send(.setNavigation(tag: .coPaymentInfo)) }, label: {
                         SubTitle(
                             title: viewStore.coPaymentStatusText,
@@ -77,9 +98,6 @@ struct PrescriptionDetailView: View {
                     })
                         .buttonStyle(.navigation)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnEmergencyServiceFee)
-
-                    SubTitle(title: viewStore.dosageInstructions, description: L10n.prscDtlTxtDosageInstructions)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtDosageInstructions)
 
                     SubTitle(title: viewStore.quantity, description: L10n.prscDtlTxtQuantity)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtQuantity)
@@ -113,6 +131,7 @@ struct PrescriptionDetailView: View {
                         .buttonStyle(.navigation)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInstitution)
 
+                }, moreContent: {
                     if let accidentReason = viewStore.accidentReason {
                         Button(action: { viewStore.send(.setNavigation(tag: .accidentInfo)) }, label: {
                             SubTitle(title: accidentReason, description: L10n.prscDtlTxtAccidentReason)
@@ -120,7 +139,7 @@ struct PrescriptionDetailView: View {
                             .buttonStyle(.navigation)
                             .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnWorkRelatedAccident)
                     }
-                }, moreContent: {
+
                     SubTitle(
                         title: viewStore.bvg ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
                         description: L10n.prscDtlTxtBvg
@@ -205,6 +224,7 @@ extension PrescriptionDetailView {
         let isManualRedeemEnabled: Bool
         let isRedeemable: Bool
         let dosageInstructions: String
+        let medicationReminderState: String
         let authoredOnDate: String
         let bvg: Bool
         let multiplePrescriptionNumber: String?
@@ -214,6 +234,7 @@ extension PrescriptionDetailView {
         let chargeItemConstentState: PrescriptionDetailDomain.ChargeItemConsentState
         let destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
         let quantity: String
+        let reminderText: String
 
         init(state: PrescriptionDetailDomain.State) {
             medicationName = state.prescription.title
@@ -230,11 +251,14 @@ extension PrescriptionDetailView {
             isRedeemable = state.prescription.isRedeemable
             destinationTag = state.destination?.tag
             authoredOnDate = state.prescription.authoredOnDate ?? L10n.prscFdTxtNa.text
-            if let instructions = state.prescription.medicationRequest.dosageInstructions, !instructions.isEmpty {
-                dosageInstructions = instructions
+            if state.prescription.erxTask.medicationSchedule?.isActive == true {
+                medicationReminderState = L10n.prscDtlTxtMedicationReminderOn.text
             } else {
-                dosageInstructions = L10n.prscFdTxtNa.text
+                medicationReminderState = L10n.prscDtlTxtMedicationReminderOff.text
             }
+            reminderText = L10n.prscDtlTxtMedicationReminder.text
+            dosageInstructions = state.prescription.medicationRequest.dosageInstructions ?? L10n.prscFdTxtNa.text
+
             bvg = state.prescription.medicationRequest.bvg
             accidentReason = state.prescription.medicationRequest.accidentInfo?.localizedReason.text
             if let quantity = state.prescription.medicationRequest.quantity {

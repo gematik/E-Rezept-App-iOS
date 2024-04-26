@@ -38,6 +38,7 @@ struct MainDomain: ReducerProtocol {
     enum Action: Equatable {
         /// Presents the `ScannerView`
         case showScannerView
+        case showMedicationReminder([UUID])
         /// Hides the `ScannerView`
         case loadDeviceSecurityView
         /// Start listening to demo mode changes
@@ -146,8 +147,9 @@ extension MainDomain {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .turnOffDemoMode:
-            environment.router.routeTo(.settings(nil))
-            return .none
+            return .run { _ in
+                await environment.router.routeTo(.settings(nil))
+            }
         case let .prescriptionList(action: .profilePictureViewTapped(profile)):
             state.destination = .editProfilePicture(
                 EditProfilePictureDomain.State(
@@ -195,7 +197,6 @@ extension MainDomain {
         case let .externalLogin(url):
             // [REQ:BSI-eRp-ePA:O.Source_1#7] redirect into correct domain
             return .run { send in
-                try await schedulers.main.sleep(for: 5)
                 await send(.extAuthPending(action: .externalLogin(url)))
             }
         case let .importTaskByUrl(url):
@@ -215,6 +216,9 @@ extension MainDomain {
         case .destination(.presented(.deviceSecurity(.delegate(.close)))),
              .setNavigation(tag: .none):
             state.destination = nil
+            return .none
+        case let .showMedicationReminder(scheduleEntries):
+            state.destination = .medicationReminder(.init(entries: scheduleEntries))
             return .none
         case .setNavigation(tag: .cardWall),
              .destination(.presented(.alert(.cardWall))):
@@ -333,8 +337,10 @@ extension MainDomain {
             }
             return .none
         case .destination(.presented(.toast(.routeToChargeItemsList))):
-            environment.router.routeTo(.settings(.editProfile(.chargeItemListFor(environment.userSession.profileId))))
-            return .none
+            return .run { _ in
+                await environment.router
+                    .routeTo(.settings(.editProfile(.chargeItemListFor(environment.userSession.profileId))))
+            }
         case .grantChargeItemsConsentDismiss,
              .destination(.presented(.alert(.dismissGrantChargeItemConsent))):
             state.destination = nil
@@ -406,8 +412,9 @@ extension MainDomain {
             }
         case .destination(.presented(.cardWall(action: .delegate(.unlockCardClose)))):
             state.destination = nil
-            environment.router.routeTo(.settings(.unlockCard))
-            return .none
+            return .run { _ in
+                await environment.router.routeTo(.settings(.unlockCard))
+            }
 
         case .destination,
              .setNavigation,

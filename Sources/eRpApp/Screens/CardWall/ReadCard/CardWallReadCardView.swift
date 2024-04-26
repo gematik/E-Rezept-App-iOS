@@ -137,8 +137,8 @@ struct CardWallReadCardView: View {
                 action: CardWallReadCardDomain.Destinations.Action.alert
             )
             .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
-            .onAppear {
-                viewStore.send(.getChallenge)
+            .task {
+                await viewStore.send(.getChallenge).finish()
             }
         }
         .statusBar(hidden: true)

@@ -124,9 +124,11 @@ final class ErxTaskOrderValidatorTests: XCTestCase {
 
     func testNameValidatorFails() {
         let sut = ErxTaskOrder.Validator()
-        expect(sut.isValid(
-            name: "Mr. and Mrs. Super Dooper way tooooooo long name to be a true with more than 50 characters"
-        )) == .invalid(L10n.rivTiInvalidName(String(ErxTaskOrder.Validator.maxNameLength)).text)
+        expect(
+            sut.isValid(
+                name: "Mr. and Mrs. Super Dooper way tooooooo long name to be a true with more than 100 characters. That is invalid." // swiftlint:disable:this line_length
+            )
+        ) == .invalid(L10n.rivTiInvalidName(String(ErxTaskOrder.Validator.maxNameLength)).text)
     }
 
     func testHintValidatorWithFails() {

@@ -296,15 +296,16 @@ struct EditProfileDomain: ReducerProtocol {
             }
         case .login:
             userDataStore.set(selectedProfileId: state.profileId)
-            router.routeTo(.mainScreen(.login))
-            return .none
+            return .run { _ in
+                await environment.router.routeTo(.mainScreen(.login))
+            }
         case .relogin:
             state.token = nil
             return .run { [profileId = state.profileId, environment = environment] _ in
                 try await environment.profileSecureDataWiper.wipeSecureData(of: profileId).async()
 
                 environment.userDataStore.set(selectedProfileId: profileId)
-                environment.router.routeTo(.mainScreen(.login))
+                await environment.router.routeTo(.mainScreen(.login))
             }
         case .setNavigation(tag: .none):
             state.destination = nil

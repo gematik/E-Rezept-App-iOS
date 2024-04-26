@@ -28,7 +28,6 @@ import XCTest
 @MainActor
 final class PrescriptionDetailDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
-    let initialState = Fixtures
     let mockErxTaskRepository = MockErxTaskRepository()
     let uiDateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
     let mockResourceHandler = MockResourceHandler()
@@ -36,13 +35,16 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     typealias TestStore = TestStoreOf<PrescriptionDetailDomain>
 
-    func testStore(_ state: PrescriptionDetailDomain.State? = nil,
-                   dateProvider: @escaping (() -> Date) = Date.init) -> TestStore {
+    func testStore(
+        _ state: PrescriptionDetailDomain.State? = nil,
+        dateProvider: @escaping (() -> Date) = Date.init,
+        withDependencies prepareDependencies: (inout DependencyValues) -> Void = { _ in }
+    ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         let userSessionContainer = MockUsersSessionContainer()
         userSessionContainer.userSession = MockUserSession()
 
-        return TestStore(initialState: state ?? initialState) {
+        return TestStore(initialState: state ?? Self.Fixtures.prescriptionDetailDomainInitialState) {
             PrescriptionDetailDomain()
         } withDependencies: { dependencies in
             dependencies.changeableUserSessionContainer = userSessionContainer
@@ -53,6 +55,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             dependencies.uiDateFormatter = uiDateFormatter
             dependencies.resourceHandler = mockResourceHandler
             dependencies.erxMatrixCodeGenerator = mockMatrixCodeGenerator
+
+            prepareDependencies(&dependencies)
         }
     }
 
@@ -347,13 +351,13 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testShowPrescriptionValidityInfo() async {
         let sut = testStore()
         let expectedValidityInfo = PrescriptionDetailDomain.Destinations.PrescriptionValidityState(
-            acceptBeginDisplayDate: uiDateFormatter.date(initialState.prescription.authoredOn),
+            acceptBeginDisplayDate: uiDateFormatter.date(sut.state.prescription.authoredOn),
             acceptEndDisplayDate: uiDateFormatter.date(
-                initialState.prescription.acceptedUntil,
+                sut.state.prescription.acceptedUntil,
                 advancedBy: -60 * 60 * 24
             ),
-            expiresBeginDisplayDate: uiDateFormatter.date(initialState.prescription.acceptedUntil),
-            expiresEndDisplayDate: uiDateFormatter.date(initialState.prescription.expiresOn, advancedBy: -60 * 60 * 24)
+            expiresBeginDisplayDate: uiDateFormatter.date(sut.state.prescription.acceptedUntil),
+            expiresEndDisplayDate: uiDateFormatter.date(sut.state.prescription.expiresOn, advancedBy: -60 * 60 * 24)
         )
 
         await sut.send(.setNavigation(tag: .prescriptionValidityInfo)) {
@@ -387,7 +391,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testLoadingImageAndShowShareSheet() async {
         let sut = testStore()
-        let expectedUrl = initialState.prescription.erxTask.shareUrl()!
+        let expectedUrl = sut.state.prescription.erxTask.shareUrl()!
         let expectedImage = mockMatrixCodeGenerator.uiImage
         let expectedLoadingState: LoadingState<UIImage, PrescriptionDetailDomain.LoadingImageError> =
             .value(expectedImage)
@@ -409,8 +413,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testShowTechnicalInformations() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.TechnicalInformationsState(
-            taskId: initialState.prescription.erxTask.identifier,
-            accessCode: initialState.prescription.erxTask.accessCode
+            taskId: sut.state.prescription.erxTask.identifier,
+            accessCode: sut.state.prescription.erxTask.accessCode
         )
 
         await sut.send(.setNavigation(tag: .technicalInformations)) {
@@ -421,7 +425,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testShowPatient() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.PatientState(
-            patient: initialState.prescription.patient!
+            patient: sut.state.prescription.patient!
         )
 
         await sut.send(.setNavigation(tag: .patient)) {
@@ -432,7 +436,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testShowPractitioner() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.PractitionerState(
-            practitioner: initialState.prescription.practitioner!
+            practitioner: sut.state.prescription.practitioner!
         )
 
         await sut.send(.setNavigation(tag: .practitioner)) {
@@ -443,7 +447,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testShowOrganization() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.OrganizationState(
-            organization: initialState.prescription.organization!
+            organization: sut.state.prescription.organization!
         )
 
         await sut.send(.setNavigation(tag: .organization)) {
@@ -454,7 +458,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testShowAccidentInfo() async {
         let sut = testStore()
         let expectedState = PrescriptionDetailDomain.Destinations.AccidentInfoState(
-            accidentInfo: initialState.prescription.medicationRequest.accidentInfo!
+            accidentInfo: sut.state.prescription.medicationRequest.accidentInfo!
         )
 
         await sut.send(.setNavigation(tag: .accidentInfo)) {
@@ -465,7 +469,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testShowMedication_when_not_dispensed() async {
         let sut = testStore()
         let expectedState = MedicationDomain.State(
-            subscribed: initialState.prescription.medication!
+            subscribed: sut.state.prescription.medication!
         )
 
         await sut.send(.setNavigation(tag: .medication)) {
@@ -497,8 +501,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let sut = testStore(
             PrescriptionDetailDomain.State(
                 prescription: Prescription(
-                    erxTask: Self.erxTaskFixtureWith(
-                        erxMedication: Self.medicationFixture,
+                    erxTask: Self.Fixtures.erxTaskFixtureWith(
+                        erxMedication: Self.Fixtures.medicationFixture,
                         authoredOn: authoredOn,
                         expiresOn: expiresOn,
                         acceptedUntil: acceptedUntil
@@ -516,7 +520,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
         mockErxTaskRepository.savePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
-        let expectedErxTask = Self.erxTaskFixtureWith(
+        let expectedErxTask = Self.Fixtures.erxTaskFixtureWith(
             erxMedication: ErxMedication(
                 name: "Hustenbonbons",
                 pzn: "06876512",
@@ -556,7 +560,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
         await sut.send(.setName("Hustenbonbonssss")) { state in
             state.prescription = Prescription(
-                erxTask: Self.erxTaskFixtureWith(
+                erxTask: Self.Fixtures.erxTaskFixtureWith(
                     erxMedication: ErxMedication(
                         name: "Hustenbonbonssss",
                         pzn: "06876512",
@@ -595,158 +599,81 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
         expect(self.mockErxTaskRepository.saveCalled).to(beFalse())
     }
-}
 
-extension PrescriptionDetailDomainTests {
-    static let medicationFixture = ErxMedication(
-        name: "Saflorblüten-Extrakt Pulver Peroral",
-        pzn: "06876512",
-        amount: ErxMedication.Ratio(
-            numerator: ErxMedication.Quantity(value: "10", unit: "St.")
-        ),
-        dosageForm: "PUL",
-        normSizeCode: "N1",
-        batch: .init(
-            lotNumber: "TOTO-5236-VL",
-            expiresOn: "12.12.2024"
-        ),
-        packaging: "Box",
-        manufacturingInstructions: "Anleitung beiliegend",
-        ingredients: []
-    )
-
-    static func erxTaskFixtureWith(
-        erxMedication: ErxMedication,
-        authoredOn: String?,
-        expiresOn: String?,
-        acceptedUntil: String?
-    ) -> ErxTask {
-        ErxTask(
-            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
-            status: .ready,
-            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
-            fullUrl: nil,
-            authoredOn: authoredOn,
-            expiresOn: expiresOn,
-            acceptedUntil: acceptedUntil,
-            author: "Dr. Dr. med. Carsten van Storchhausen",
-            medication: erxMedication,
-            medicationRequest: .init(
-                substitutionAllowed: true,
-                hasEmergencyServiceFee: true,
-                accidentInfo: AccidentInfo(
-                    type: .workAccident,
-                    workPlaceIdentifier: "1234567890",
-                    date: "9.4.2021"
-                ),
-                coPaymentStatus: .subjectToCharge
-            ),
-            patient: ErxPatient(
-                name: "Ludger Königsstein",
-                address: "Musterstr. 1 \n10623 Berlin",
-                birthDate: "22.6.1935",
-                phone: "555 1234567",
-                status: "Mitglied",
-                insurance: "AOK Rheinland/Hamburg",
-                insuranceId: "A123456789"
-            ),
-            practitioner: ErxPractitioner(
-                lanr: "123456789",
-                name: "Dr. Dr. med. Carsten van Storchhausen",
-                qualification: "Allgemeinarzt/Hausarzt",
-                email: "noreply@google.de",
-                address: "Hinter der Bahn 2\n12345 Berlin"
-            ),
-            organization: ErxOrganization(
-                identifier: "987654321",
-                name: "Praxis van Storchhausen",
-                phone: "555 76543321",
-                email: "noreply@praxisvonstorchhausen.de",
-                address: "Vor der Bahn 6\n54321 Berlin"
-            )
+    func testMedicationReminderButtonTapped_medicationReminderParser() async {
+        // given
+        let medicationSchedule = Self.Fixtures.medicationSchedule
+        let sut = testStore(
+            withDependencies: { dependencies in
+                dependencies.medicationReminderParser = MedicationReminderParser(parse: { _ in
+                    medicationSchedule
+                })
+            }
         )
+
+        // then
+        await sut.send(.setNavigation(tag: .medicationReminder)) {
+            $0.destination = .medicationReminder(.init(medicationSchedule: medicationSchedule))
+        }
     }
 
-    static let prescriptionDetailDomainStateFixture = PrescriptionDetailDomain.State(
-        prescription: Prescription(
-            erxTask: ErxTask(
-                identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
-                status: .ready,
-                accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
-                fullUrl: nil,
-                authoredOn: DemoDate.createDemoDate(.today),
-                expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
-                acceptedUntil: DemoDate.createDemoDate(.tomorrow),
-                author: "Dr. Dr. med. Carsten van Storchhausen",
-                medication: medicationFixture,
-                medicationRequest: .init(
-                    substitutionAllowed: true,
-                    hasEmergencyServiceFee: true,
-                    accidentInfo: AccidentInfo(
-                        type: .workAccident,
-                        workPlaceIdentifier: "1234567890",
-                        date: "9.4.2021"
-                    ),
-                    coPaymentStatus: .subjectToCharge
+    func testMedicationReminderButtonTapped_existingMedicationReminder() async {
+        // given
+        let medicationSchedule = Self.Fixtures.medicationSchedule
+        let sut = testStore(
+            .init(prescription: .init(
+                erxTask: .init(
+                    identifier: "identifier",
+                    status: .ready,
+                    medicationSchedule: medicationSchedule
                 ),
-                patient: ErxPatient(
-                    name: "Ludger Königsstein",
-                    address: "Musterstr. 1 \n10623 Berlin",
-                    birthDate: "22.6.1935",
-                    phone: "555 1234567",
-                    status: "Mitglied",
-                    insurance: "AOK Rheinland/Hamburg",
-                    insuranceId: "A123456789"
-                ),
-                practitioner: ErxPractitioner(
-                    lanr: "123456789",
-                    name: "Dr. Dr. med. Carsten van Storchhausen",
-                    qualification: "Allgemeinarzt/Hausarzt",
-                    email: "noreply@google.de",
-                    address: "Hinter der Bahn 2\n12345 Berlin"
-                ),
-                organization: ErxOrganization(
-                    identifier: "987654321",
-                    name: "Praxis van Storchhausen",
-                    phone: "555 76543321",
-                    email: "noreply@praxisvonstorchhausen.de",
-                    address: "Vor der Bahn 6\n54321 Berlin"
-                )
+                dateFormatter: UIDateFormatter.previewValue
             ),
-            dateFormatter: UIDateFormatter.previewValue
-        ),
-        isArchived: false
-    )
+            isArchived: false)
+        )
+
+        // then
+        await sut.send(.setNavigation(tag: .medicationReminder)) {
+            $0.destination = .medicationReminder(.init(medicationSchedule: medicationSchedule))
+        }
+    }
 }
 
 extension PrescriptionDetailDomainTests {
-    static let Fixtures = PrescriptionDetailDomain.State(
-        prescription: Prescription(
-            erxTask: ErxTask(
+    enum Fixtures {
+        static let medicationFixture = ErxMedication(
+            name: "Saflorblüten-Extrakt Pulver Peroral",
+            pzn: "06876512",
+            amount: ErxMedication.Ratio(
+                numerator: ErxMedication.Quantity(value: "10", unit: "St.")
+            ),
+            dosageForm: "PUL",
+            normSizeCode: "N1",
+            batch: .init(
+                lotNumber: "TOTO-5236-VL",
+                expiresOn: "12.12.2024"
+            ),
+            packaging: "Box",
+            manufacturingInstructions: "Anleitung beiliegend",
+            ingredients: []
+        )
+
+        static func erxTaskFixtureWith(
+            erxMedication: ErxMedication,
+            authoredOn: String?,
+            expiresOn: String?,
+            acceptedUntil: String?
+        ) -> ErxTask {
+            ErxTask(
                 identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: DemoDate.createDemoDate(.today),
-                expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
-                acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+                authoredOn: authoredOn,
+                expiresOn: expiresOn,
+                acceptedUntil: acceptedUntil,
                 author: "Dr. Dr. med. Carsten van Storchhausen",
-                medication: ErxMedication(
-                    name: "Saflorblüten-Extrakt Pulver Peroral",
-                    pzn: "06876512",
-                    amount: ErxMedication.Ratio(
-                        numerator: ErxMedication.Quantity(value: "10", unit: "St.")
-                    ),
-                    dosageForm: "PUL",
-                    normSizeCode: "N1",
-                    batch: .init(
-                        lotNumber: "TOTO-5236-VL",
-                        expiresOn: "12.12.2024"
-                    ),
-                    packaging: "Box",
-                    manufacturingInstructions: "Anleitung beiliegend",
-                    ingredients: []
-                ),
+                medication: erxMedication,
                 medicationRequest: .init(
                     substitutionAllowed: true,
                     hasEmergencyServiceFee: true,
@@ -780,9 +707,144 @@ extension PrescriptionDetailDomainTests {
                     email: "noreply@praxisvonstorchhausen.de",
                     address: "Vor der Bahn 6\n54321 Berlin"
                 )
+            )
+        }
+
+        static let prescriptionDetailDomainStateFixture = PrescriptionDetailDomain.State(
+            prescription: Prescription(
+                erxTask: ErxTask(
+                    identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+                    status: .ready,
+                    accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+                    fullUrl: nil,
+                    authoredOn: DemoDate.createDemoDate(.today),
+                    expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+                    acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+                    author: "Dr. Dr. med. Carsten van Storchhausen",
+                    medication: medicationFixture,
+                    medicationRequest: .init(
+                        substitutionAllowed: true,
+                        hasEmergencyServiceFee: true,
+                        accidentInfo: AccidentInfo(
+                            type: .workAccident,
+                            workPlaceIdentifier: "1234567890",
+                            date: "9.4.2021"
+                        ),
+                        coPaymentStatus: .subjectToCharge
+                    ),
+                    patient: ErxPatient(
+                        name: "Ludger Königsstein",
+                        address: "Musterstr. 1 \n10623 Berlin",
+                        birthDate: "22.6.1935",
+                        phone: "555 1234567",
+                        status: "Mitglied",
+                        insurance: "AOK Rheinland/Hamburg",
+                        insuranceId: "A123456789"
+                    ),
+                    practitioner: ErxPractitioner(
+                        lanr: "123456789",
+                        name: "Dr. Dr. med. Carsten van Storchhausen",
+                        qualification: "Allgemeinarzt/Hausarzt",
+                        email: "noreply@google.de",
+                        address: "Hinter der Bahn 2\n12345 Berlin"
+                    ),
+                    organization: ErxOrganization(
+                        identifier: "987654321",
+                        name: "Praxis van Storchhausen",
+                        phone: "555 76543321",
+                        email: "noreply@praxisvonstorchhausen.de",
+                        address: "Vor der Bahn 6\n54321 Berlin"
+                    )
+                ),
+                dateFormatter: UIDateFormatter.previewValue
             ),
-            dateFormatter: UIDateFormatter.previewValue
-        ),
-        isArchived: false
-    )
+            isArchived: false
+        )
+
+        static let prescriptionDetailDomainInitialState = PrescriptionDetailDomain.State(
+            prescription: Prescription(
+                erxTask: ErxTask(
+                    identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+                    status: .ready,
+                    accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+                    fullUrl: nil,
+                    authoredOn: DemoDate.createDemoDate(.today),
+                    expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+                    acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+                    author: "Dr. Dr. med. Carsten van Storchhausen",
+                    medication: ErxMedication(
+                        name: "Saflorblüten-Extrakt Pulver Peroral",
+                        pzn: "06876512",
+                        amount: ErxMedication.Ratio(
+                            numerator: ErxMedication.Quantity(value: "10", unit: "St.")
+                        ),
+                        dosageForm: "PUL",
+                        normSizeCode: "N1",
+                        batch: .init(
+                            lotNumber: "TOTO-5236-VL",
+                            expiresOn: "12.12.2024"
+                        ),
+                        packaging: "Box",
+                        manufacturingInstructions: "Anleitung beiliegend",
+                        ingredients: []
+                    ),
+                    medicationRequest: .init(
+                        substitutionAllowed: true,
+                        hasEmergencyServiceFee: true,
+                        accidentInfo: AccidentInfo(
+                            type: .workAccident,
+                            workPlaceIdentifier: "1234567890",
+                            date: "9.4.2021"
+                        ),
+                        coPaymentStatus: .subjectToCharge
+                    ),
+                    patient: ErxPatient(
+                        name: "Ludger Königsstein",
+                        address: "Musterstr. 1 \n10623 Berlin",
+                        birthDate: "22.6.1935",
+                        phone: "555 1234567",
+                        status: "Mitglied",
+                        insurance: "AOK Rheinland/Hamburg",
+                        insuranceId: "A123456789"
+                    ),
+                    practitioner: ErxPractitioner(
+                        lanr: "123456789",
+                        name: "Dr. Dr. med. Carsten van Storchhausen",
+                        qualification: "Allgemeinarzt/Hausarzt",
+                        email: "noreply@google.de",
+                        address: "Hinter der Bahn 2\n12345 Berlin"
+                    ),
+                    organization: ErxOrganization(
+                        identifier: "987654321",
+                        name: "Praxis van Storchhausen",
+                        phone: "555 76543321",
+                        email: "noreply@praxisvonstorchhausen.de",
+                        address: "Vor der Bahn 6\n54321 Berlin"
+                    )
+                ),
+                dateFormatter: UIDateFormatter.previewValue
+            ),
+            isArchived: false
+        )
+
+        static let medicationSchedule = MedicationSchedule(
+            id: UUID(0),
+            start: Date(),
+            end: Date().addingTimeInterval(60 * 60 * 24 * 7),
+            title: "dummy",
+            dosageInstructions: "schedule",
+            taskId: "1234.5678.9012",
+            isActive: true,
+            entries: [
+                .init(
+                    id: UUID(1),
+                    title: "1",
+                    hourComponent: 8,
+                    minuteComponent: 0,
+                    dosageForm: "Dosage",
+                    amount: "2"
+                ),
+            ]
+        )
+    }
 }

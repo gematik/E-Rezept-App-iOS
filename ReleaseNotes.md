@@ -1,3 +1,30 @@
+# Release 1.19.0
+
+### changed (5 changes)
+
+ - Change the 5 seconds forced delay for gID login
+ - Changed medication reminder finite name, default dosage and dosage instructions
+ - Fix buttons embedded in SwiftUI forms
+ - Fix crash with negative day count in medication reminder
+ - Changed MedicationPlan layout and options
+
+### fixed (3 changes)
+
+ - Fix GesundheitsID bottom banner to reappear
+ - Fix chargeItem revoke consent
+ - Fix deleting scheduled notifications
+
+### added (4 changes)
+
+ - Add Medication Reminder
+ - Add new pinning of RSA Certificate for FD
+ - Add medication schedule to medication detail
+ - Medication plan for scheduling applications
+
+### removed (1 change)
+
+ - Remove Fasttrack implementation from IDPSession and IDPClient
+
 # Release 1.18.0
 
 fixed (7 changes)

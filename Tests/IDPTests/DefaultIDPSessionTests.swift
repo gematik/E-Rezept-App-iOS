@@ -932,12 +932,12 @@ final class DefaultIDPSessionTests: XCTestCase {
 
         let mocked =
             try! IDPDirectoryKKApps(
-                jwt: "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwia2lkIjoicHVrX2Rpc2Nfc2lnIiwieDVjIjpbIk1JSUNzVENDQWxpZ0F3SUJBZ0lIQWJzc3FRaHFPekFLQmdncWhrak9QUVFEQWpDQmhERUxNQWtHQTFVRUJoTUNSRVV4SHpBZEJnTlZCQW9NRm1kbGJXRjBhV3NnUjIxaVNDQk9UMVF0VmtGTVNVUXhNakF3QmdOVkJBc01LVXR2YlhCdmJtVnVkR1Z1TFVOQklHUmxjaUJVWld4bGJXRjBhV3RwYm1aeVlYTjBjblZyZEhWeU1TQXdIZ1lEVlFRRERCZEhSVTB1UzA5TlVDMURRVEV3SUZSRlUxUXRUMDVNV1RBZUZ3MHlNVEF4TVRVd01EQXdNREJhRncweU5qQXhNVFV5TXpVNU5UbGFNRWt4Q3pBSkJnTlZCQVlUQWtSRk1TWXdKQVlEVlFRS0RCMW5aVzFoZEdscklGUkZVMVF0VDA1TVdTQXRJRTVQVkMxV1FVeEpSREVTTUJBR0ExVUVBd3dKU1VSUUlGTnBaeUF6TUZvd0ZBWUhLb1pJemowQ0FRWUpLeVFEQXdJSUFRRUhBMElBQklZWm53aUdBbjVRWU94NDNaOE13YVpMRDNyL2J6NkJUY1FPNXBiZXVtNnFRellENWREQ2NyaXcvVk5QUFpDUXpYUVBnNFN0V3l5NU9PcTlUb2dCRW1PamdlMHdnZW93RGdZRFZSMFBBUUgvQkFRREFnZUFNQzBHQlNza0NBTURCQ1F3SWpBZ01CNHdIREFhTUF3TUNrbEVVQzFFYVdWdWMzUXdDZ1lJS29JVUFFd0VnZ1F3SVFZRFZSMGdCQm93R0RBS0JnZ3FnaFFBVEFTQlN6QUtCZ2dxZ2hRQVRBU0JJekFmQmdOVkhTTUVHREFXZ0JRbzhQam1xY2gzekVORjI1cXUxenFEckE0UHFEQTRCZ2dyQmdFRkJRY0JBUVFzTUNvd0tBWUlLd1lCQlFVSE1BR0dIR2gwZEhBNkx5OWxhR05oTG1kbGJXRjBhV3N1WkdVdmIyTnpjQzh3SFFZRFZSME9CQllFRkM5NE05TGdXNDRsTmdvQWJrUGFvbW5MalM4L01Bd0dBMVVkRXdFQi93UUNNQUF3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnQ2c0eVpEV215QmlyZ3h6YXd6L1M4REpuUkZLdFlVL1lHTmxSYzcra0JIY0NJQnV6YmEzR3NwcVNtb1AxVndNZU5OS05hTHNnVjh2TWJESmIzMGFxYWlYMSJdfQ.eyJra19hcHBfbGlzdCI6W3sia2tfYXBwX25hbWUiOiAiR2VtYXRpayBLSyIsImtrX2FwcF9pZCI6ICJra0FwcElkMDAxIn0seyAgICAia2tfYXBwX25hbWUiOiAiQW5kZXJlIEtLIiwgImtrX2FwcF9pZCI6ICJra0FwcElkMDAyIn1dfQ.YgsCr2Lr_OnwcSvhMQOUSKIb8wq8ueyJVM0x5_pCVfhgwVW9orQzynQ4gHNOpgdOqBlHlOjLID6YYdkZSrrNOw" // swiftlint:disable:this line_length
+                jwt: "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwia2lkIjoicHVrX2Rpc2Nfc2lnIiwieDVjIjpbIk1JSUNzVENDQWxpZ0F3SUJBZ0lIQWJzc3FRaHFPekFLQmdncWhrak9QUVFEQWpDQmhERUxNQWtHQTFVRUJoTUNSRVV4SHpBZEJnTlZCQW9NRm1kbGJXRjBhV3NnUjIxaVNDQk9UMVF0VmtGTVNVUXhNakF3QmdOVkJBc01LVXR2YlhCdmJtVnVkR1Z1TFVOQklHUmxjaUJVWld4bGJXRjBhV3RwYm1aeVlYTjBjblZyZEhWeU1TQXdIZ1lEVlFRRERCZEhSVTB1UzA5TlVDMURRVEV3SUZSRlUxUXRUMDVNV1RBZUZ3MHlNVEF4TVRVd01EQXdNREJhRncweU5qQXhNVFV5TXpVNU5UbGFNRWt4Q3pBSkJnTlZCQVlUQWtSRk1TWXdKQVlEVlFRS0RCMW5aVzFoZEdscklGUkZVMVF0VDA1TVdTQXRJRTVQVkMxV1FVeEpSREVTTUJBR0ExVUVBd3dKU1VSUUlGTnBaeUF6TUZvd0ZBWUhLb1pJemowQ0FRWUpLeVFEQXdJSUFRRUhBMElBQklZWm53aUdBbjVRWU94NDNaOE13YVpMRDNyL2J6NkJUY1FPNXBiZXVtNnFRellENWREQ2NyaXcvVk5QUFpDUXpYUVBnNFN0V3l5NU9PcTlUb2dCRW1PamdlMHdnZW93RGdZRFZSMFBBUUgvQkFRREFnZUFNQzBHQlNza0NBTURCQ1F3SWpBZ01CNHdIREFhTUF3TUNrbEVVQzFFYVdWdWMzUXdDZ1lJS29JVUFFd0VnZ1F3SVFZRFZSMGdCQm93R0RBS0JnZ3FnaFFBVEFTQlN6QUtCZ2dxZ2hRQVRBU0JJekFmQmdOVkhTTUVHREFXZ0JRbzhQam1xY2gzekVORjI1cXUxenFEckE0UHFEQTRCZ2dyQmdFRkJRY0JBUVFzTUNvd0tBWUlLd1lCQlFVSE1BR0dIR2gwZEhBNkx5OWxhR05oTG1kbGJXRjBhV3N1WkdVdmIyTnpjQzh3SFFZRFZSME9CQllFRkM5NE05TGdXNDRsTmdvQWJrUGFvbW5MalM4L01Bd0dBMVVkRXdFQi93UUNNQUF3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnQ2c0eVpEV215QmlyZ3h6YXd6L1M4REpuUkZLdFlVL1lHTmxSYzcra0JIY0NJQnV6YmEzR3NwcVNtb1AxVndNZU5OS05hTHNnVjh2TWJESmIzMGFxYWlYMSJdfQ.eyJmZWRfaWRwX2xpc3QiOlt7ImlkcF9uYW1lIjogIkdlbWF0aWsgS0siLCJpZHBfaXNzIjogImtrQXBwSWQwMDEiLCAiaWRwX3Nla18yIjogdHJ1ZX0seyAgICAiaWRwX25hbWUiOiAiQW5kZXJlIEtLIiwgImlkcF9pc3MiOiAia2tBcHBJZDAwMiIsICJpZHBfc2VrXzIiOiB0cnVlfSx7ICAgICJpZHBfbmFtZSI6ICJBbmRlcmUgS0syIiwgImlkcF9pc3MiOiAia2tBcHBJZDAwMiIsICJpZHBfc2VrXzIiOiBmYWxzZX0seyAgICAiaWRwX25hbWUiOiAiQW5kZXJlIEtLMyIsICJpZHBfaXNzIjogImtrQXBwSWQwMDIifV19.NnAngqzLOG9aP-QIr_GvEbCdyTE9NqzR8NiEOWu8rR8FZJE136iC1Tft2mglZ0f2oTQM0JLquzKouaeui8qAgA" // swiftlint:disable:this line_length
             )
         let fixture = KKAppDirectory(
             apps: [
-                KKAppDirectory.Entry(name: "Andere KK", identifier: "kkAppId002"),
-                KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001"),
+                KKAppDirectory.Entry(name: "Andere KK", identifier: "kkAppId002", gId: true),
+                KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001", gId: true),
             ]
         )
 
@@ -1037,67 +1037,6 @@ final class DefaultIDPSessionTests: XCTestCase {
         expect(extAuthRequest.verifierCode).to(equal(try! cryptoBox.generateRandomVerifier()))
     }
 
-    // [REQ:gemSpec_IDP_Sek:A_22301] Positive Test
-    func testExtAuthVerifyAndExchangeFastTrack() throws {
-        sut = DefaultIDPSession(
-            client: idpClientMock,
-            storage: storage,
-            schedulers: schedulers,
-            trustStoreSession: trustStoreSessionMock,
-            extAuthRequestStorage: extAuthRequestStorageMock,
-            time: dateProvider,
-            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
-        )
-
-        let fixture = URL(string:
-            "https://das-e-rezept-fuer-deutschland.de?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
-        )!
-        idpClientMock.extAuthVerifyUsingReturnValue =
-            Just(IDPExchangeToken(code: "code",
-                                  sso: nil,
-                                  state: "state",
-                                  redirect: "https://das-e-rezept-fuer-deutschland.de"))
-            .setFailureType(to: IDPError.self)
-            .eraseToAnyPublisher()
-
-        idpClientMock.exchange_Publisher = Just(encryptedTokenPayload)
-            .setFailureType(to: IDPError.self)
-            .eraseToAnyPublisher()
-
-        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = ExtAuthChallengeSession(
-            verifierCode: "verifier_code",
-            nonce: "5557577A7576615347",
-            for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234")
-        )
-
-        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: false)
-            .test(
-                failure: { error in
-                    fail("Error: \(error)")
-                },
-                expectations: { response in
-                    let expected = IDPToken(accessToken: self.decryptedTokenPayload.accessToken,
-                                            expires: self.dateProvider().addingTimeInterval(300),
-                                            idToken: self.decryptedTokenPayload.idToken,
-                                            ssoToken: self.decryptedTokenPayload.ssoToken,
-                                            tokenType: self.decryptedTokenPayload.tokenType,
-                                            redirect: "https://das-e-rezept-fuer-deutschland.de")
-                    expect(response).to(equal(expected))
-                }
-            )
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("mystate"))
-
-        expect(self.idpClientMock.exchange_Called).to(beTrue())
-        expect(self.idpClientMock.exchange_ReceivedArguments).toNot(beNil())
-        guard let receivedArguments = idpClientMock.exchange_ReceivedArguments else {
-            fail("received Arguments nil")
-            return
-        }
-
-        expect(receivedArguments.redirectURI).to(equal("https://das-e-rezept-fuer-deutschland.de"))
-    }
-
     func testExtAuthVerifyAndExchangeGID() throws {
         sut = DefaultIDPSession(
             client: idpClientMock,
@@ -1130,7 +1069,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234")
         )
 
-        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: true)
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
             .test(
                 failure: { error in
                     fail("Error: \(error)")
@@ -1159,45 +1098,6 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     // [REQ:gemSpec_IDP_Sek:A_22301] Negative Test
-    func testExtAuthVerifyAndExchangeFailesWithoutReferenceStateFastTrack() throws {
-        idpClientMock.extAuthVerifyUsingReturnValue =
-            Just(IDPExchangeToken(code: "code",
-                                  sso: nil,
-                                  state: "state",
-                                  redirect: "https://das-e-rezept-fuer-deutschland.de"))
-            .setFailureType(to: IDPError.self)
-            .eraseToAnyPublisher()
-
-        sut = DefaultIDPSession(
-            client: idpClientMock,
-            storage: storage,
-            schedulers: schedulers,
-            trustStoreSession: trustStoreSessionMock,
-            extAuthRequestStorage: extAuthRequestStorageMock,
-            time: dateProvider,
-            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
-        )
-
-        let fixture = URL(string:
-            "https://das-e-rezept-fuer-deutschland.de/extauth?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
-        )!
-
-        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = nil
-
-        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: false)
-            .test(
-                failure: { error in
-                    expect(error).to(equal(IDPError.extAuthOriginalRequestMissing))
-                },
-                expectations: { _ in
-                    fail("Should not be called!")
-                }
-            )
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("mystate"))
-    }
-
-    // [REQ:gemSpec_IDP_Sek:A_22301] Negative Test
     func testExtAuthVerifyAndExchangeFailesWithoutReferenceStateGID() throws {
         idpClientMock.extAuthVerifyUsingReturnValue =
             Just(IDPExchangeToken(code: "code",
@@ -1223,7 +1123,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
         extAuthRequestStorageMock.getExtAuthRequestForReturnValue = nil
 
-        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: true)
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
             .test(
                 failure: { error in
                     expect(error).to(equal(IDPError.extAuthOriginalRequestMissing))
@@ -1248,8 +1148,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         )
 
         let fixture = URL(string:
-            "https://das-e-rezept-fuer-deutschland.de?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
-        )!
+            "https://das-e-rezept-fuer-deutschland.de?state=mystate&code=testcode")!
         idpClientMock.extAuthVerifyUsingReturnValue =
             Just(IDPExchangeToken(code: "code",
                                   sso: nil,
@@ -1268,7 +1167,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234pkv")
         )
 
-        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) }, isGidFlow: false)
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
             .test(
                 failure: { error in
                     fail("Error: \(error)")
@@ -1287,7 +1186,7 @@ final class DefaultIDPSessionTests: XCTestCase {
                 }
             )
         expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
-        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("mystate"))
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("state"))
 
         expect(self.idpClientMock.exchange_Called).to(beTrue())
         expect(self.idpClientMock.exchange_ReceivedArguments).toNot(beNil())

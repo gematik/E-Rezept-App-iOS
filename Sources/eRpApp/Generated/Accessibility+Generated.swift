@@ -171,6 +171,26 @@ internal enum A11y {
       static let dmcImgMatrixcode = "dmc_img_matrixcode"
       static let dmcBtnClose = "dmc_btn_close"
   }
+    internal enum medicationReminder {
+      static let medReminderBtnActivationToggle = "med_reminder_btn_activation_toggle"
+      static let medReminderBtnDosageInstruction = "med_reminder_btn_dosage_instruction"
+      static let medReminderTxtScheduleHeader = "med_reminder_txt_schedule_header"
+      static let medReminderBtnRepetitionDetails = "med_reminder_btn_repetition_details"
+      static let medReminderTxtScheduleTimeSectionHeader = "med_reminder_txt_schedule_time_section_header"
+      static let medReminderBtnScheduleTimeDatePicker = "med_reminder_btn_schedule_time_date_picker"
+      static let medReminderBtnScheduleTimeTextfieldAmount = "med_reminder_btn_schedule_time_textfield_amount"
+      static let medReminderBtnScheduleTimeAddEntry = "med_reminder_btn_schedule_time_add_entry"
+      static let medReminderBtnSaveSchedule = "med_reminder_btn_save_schedule"
+      static let medReminderDrawerDosageInstructionInfo = "med_reminder_drawer_dosage_instruction_info"
+      static let medReminderDrawerDosageInstructionInfoTitle = "med_reminder_drawer_dosage_instruction_info_title"
+      static let medReminderDrawerDosageInstructionInfoDescription = "med_reminder_drawer_dosage_instruction_info_description"
+      static let medReminderBtnRepetitionInfinite = "med_reminder_btn_repetition_infinite"
+      static let medReminderBtnRepetitionFinite = "med_reminder_btn_repetition_finite"
+      static let medReminderBtnRepetitionDateStart = "med_reminder_btn_repetition_date_start"
+      static let medReminderBtnRepetitionDateEnd = "med_reminder_btn_repetition_date_end"
+      static let medReminderBtnOneDaySummaryGoToRemindersOverviewButton = "med_reminder_btn_one_day_summary_go_to_reminders_overview_button"
+      static let medReminderBtnOneDaySummaryCloseButton = "med_reminder_btn_one_day_summary_close_button"
+  }
     internal enum migration {
       static let amgTxtAndSpinner = "amg_txt_and_spinner"
   }
@@ -360,6 +380,7 @@ internal enum A11y {
       static let prscDtlBtnAdditionalFee = "prsc_dtl_btn_additional_fee"
       static let prscDtlBtnEmergencyServiceFee = "prsc_dtl_btn_emergency_service_fee"
       static let prscDtlBtnMedication = "prsc_dtl_btn_medication"
+      static let prscDtlBtnMedicationReminder = "prsc_dtl_btn_medication_reminder"
       static let prscDtlBtnInsuredPerson = "prsc_dtl_btn_insured_person"
       static let prscDtlBtnPractitioner = "prsc_dtl_btn_practitioner"
       static let prscDtlBtnInstitution = "prsc_dtl_btn_institution"
@@ -368,6 +389,9 @@ internal enum A11y {
       static let prscDtlDrawerCoPaymentInfoTitle = "prsc_dtl_drawer_co_payment_info_title"
       static let prscDtlDrawerCoPaymentInfoDescription = "prsc_dtl_drawer_co_payment_info_description"
       static let prscDtlDrawerCoPaymentInfo = "prsc_dtl_drawer_co_payment_info"
+      static let prscDtlDrawerDosageInstructionsInfoTitle = "prsc_dtl_drawer_dosage_instructions_info_title"
+      static let prscDtlDrawerDosageInstructionsInfoDescription = "prsc_dtl_drawer_dosage_instructions_info_description"
+      static let prscDtlDrawerDosageInstructionsInfo = "prsc_dtl_drawer_dosage_instructions_info"
       static let prscDtlDrawerEmergencyServiceFeeInfo = "prsc_dtl_drawer_emergency_service_fee_info"
       static let prscDtlTxtAuthoredOn = "prsc_dtl_txt_authored_on"
       static let prscDtlTxtBvg = "prsc_dtl_txt_bvg"
@@ -604,6 +628,7 @@ internal enum A11y {
       static let stgTxtSecurityPassword = "stg_txt_security_password"
       static let stgTxtSecurityTokens = "stg_txt_security_tokens"
       static let stgBtnDeviceSecurity = "stg_btn_device_security"
+      static let stgBtnMedicationReminder = "stg_btn_medication_reminder"
   }
     internal enum termsOfUse {
       static let stgTouTxtTermsOfUse = "stg_tou_txt_terms_of_use"

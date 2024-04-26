@@ -108,8 +108,18 @@ struct ProfilesView: View {
 
 struct ProfilesView_PreviewProvider: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            ProfilesView(store: ProfilesDomain.Dummies.store)
-        }.background(Color(.secondarySystemBackground).ignoresSafeArea())
+        ProfilesView(store: .init(
+            initialState: .init(
+                profiles: [
+                    UserProfile.Dummies.profileA,
+                    UserProfile.Dummies.profileB,
+                    UserProfile.Dummies.profileC,
+                ],
+                selectedProfileId: UserProfile.Dummies.profileA.id
+            )
+        ) {
+            EmptyReducer()
+        })
+            .background(Color(.secondarySystemBackground).ignoresSafeArea())
     }
 }

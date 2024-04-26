@@ -27,12 +27,28 @@ struct UIDateFormatter {
         self.fhirDateFormatter = fhirDateFormatter
     }
 
+    private var timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        formatter.doesRelativeDateFormatting = false
+        return formatter
+    }()
+
     private var relativeDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale.current
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
         formatter.doesRelativeDateFormatting = true
+        return formatter
+    }()
+
+    private var relativeTimeFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.dateTimeStyle = .named
+        formatter.formattingContext = .beginningOfSentence
         return formatter
     }()
 
@@ -92,6 +108,16 @@ struct UIDateFormatter {
 
     func relativeDate(from date: Date) -> String {
         relativeDateFormatter.string(from: date)
+    }
+
+    func relativeTime(from date: Date) -> String {
+        @Dependency(\.date) var dateGenerator
+
+        return relativeTimeFormatter.localizedString(for: date, relativeTo: dateGenerator())
+    }
+
+    func formattedTime(from date: Date) -> String {
+        timeFormatter.string(from: date)
     }
 
     func date(_ string: String?) -> String? {

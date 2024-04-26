@@ -28,6 +28,10 @@ import UIKit
 struct CardWallReadCardDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
+    private enum CancelID {
+        case getChallenge
+    }
+
     struct State: Equatable {
         let isDemoModus: Bool
         let profileId: UUID
@@ -102,6 +106,7 @@ struct CardWallReadCardDomain: ReducerProtocol {
     @Dependency(\.profileBasedSessionProvider) var profileBasedSessionProvider: ProfileBasedSessionProvider
     @Dependency(\.nfcSessionProvider) var nfcSessionProvider: NFCSignatureProvider
     @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
+    @Dependency(\.router) var router: Routing
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
@@ -136,6 +141,7 @@ struct CardWallReadCardDomain: ReducerProtocol {
                     await send(value)
                 }
             }
+            .cancellable(id: CancelID.getChallenge, cancelInFlight: true)
         case let .response(.state(.loggedIn(idpToken))):
             let payload = try? idpToken.idTokenPayload()
             state.output = .loggedIn(idpToken)

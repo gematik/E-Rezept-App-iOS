@@ -217,7 +217,7 @@ extension ModelsR4.Bundle {
     func parseErxMedicationRequest() -> ErxMedicationRequest {
         .init(
             authoredOn: medicationRequest?.authoredOn?.value?.description,
-            dosageInstructions: joinedDosageInstructions,
+            dosageInstructions: medicationRequest?.kbvDosageInstruction,
             substitutionAllowed: medicationRequest?.substitutionAllowed,
             hasEmergencyServiceFee: medicationRequest?.noctuFeeWaiver,
             dispenseValidityEnd: dispenseValidityEnd,
@@ -376,13 +376,6 @@ extension ModelsR4.Bundle {
             }
             return nil
         }
-    }
-
-    var joinedDosageInstructions: String? {
-        medicationRequest?.dosageInstruction?.compactMap {
-            $0.text?.value?.string
-        }
-        .joined(separator: ",")
     }
 }
 

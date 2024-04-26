@@ -68,9 +68,21 @@ public class DefaultHTTPClient: HTTPClient {
         return URLRequestChain(request: newRequest, session: urlSession, with: interceptors + requestInterceptors)
             .proceed(request: newRequest)
             .handleEvents(
-                receiveSubscription: { _ in self.delegate?.redirectHandler[requestID] = handler },
-                receiveCompletion: { _ in self.delegate?.redirectHandler[requestID] = nil },
-                receiveCancel: { self.delegate?.redirectHandler[requestID] = nil }
+                receiveSubscription: { _ in
+                    Task {
+                        await self.delegate?.setRedirectHandler(handler, for: requestID)
+                    }
+                },
+                receiveCompletion: { _ in
+                    Task {
+                        await self.delegate?.setRedirectHandler(nil, for: requestID)
+                    }
+                },
+                receiveCancel: {
+                    Task {
+                        await self.delegate?.setRedirectHandler(nil, for: requestID)
+                    }
+                }
             )
             .eraseToAnyPublisher()
     }
@@ -85,24 +97,23 @@ extension URLRequest {
 }
 
 extension DefaultHTTPClient {
-    class ProxyDelegate: NSObject, URLSessionTaskDelegate {
-        var redirectHandler = [String: RedirectHandler]()
+    actor ProxyDelegate: NSObject, URLSessionTaskDelegate {
+        private var redirectHandler = [String: RedirectHandler]()
 
-        func urlSession(
-            _: URLSession,
-            task: URLSessionTask,
-            willPerformHTTPRedirection response: HTTPURLResponse,
-            newRequest request: URLRequest,
-            completionHandler: @escaping (URLRequest?) -> Void
-        ) {
+        func setRedirectHandler(_ handler: RedirectHandler?, for identifier: String) async {
+            redirectHandler[identifier] = handler
+        }
+
+        func urlSession(_: URLSession,
+                        task: URLSessionTask,
+                        willPerformHTTPRedirection response: HTTPURLResponse,
+                        newRequest request: URLRequest) async -> URLRequest? {
             if let originalRequest = task.originalRequest,
                let requestID = originalRequest.value(forHTTPHeaderField: "X-RID"),
                let handler = redirectHandler[requestID] {
-                handler(response, request, completionHandler)
-            } else {
-                // Follow redirect [default]
-                completionHandler(request)
+                return await handler(response, request)
             }
+            return request
         }
     }
 }

@@ -17,6 +17,12 @@ screens:
     name: "main:welcomeDrawer"
   main_consentDrawer:
     name: "main:consentDrawer" 
+  main_medicationReminder:
+    name: "main:medicationReminder"
+  medicationReminder_repetitionDetails:
+    name: "medicationReminder:repetitionDetails"
+  medicationReminder_dosageInstruction:
+    name: "medicationReminder:dosageInstructionsInfo"
   prescriptionDetail:
     name: "prescriptionDetail"
   prescriptionDetail_medication:
@@ -45,6 +51,8 @@ screens:
     name: "prescriptionDetail:scannedPrescriptionInfo"
   prescriptionDetail_coPaymentInfo:
     name: "prescriptionDetail:coPaymentInfo"
+  prescriptionDetail_dosageInstructionsInfo:
+    name: "prescriptionDetail:dosageInstructionsInfo"
   prescriptionDetail_emergencyServiceFeeInfo:
     name: "prescriptionDetail:emergencyServiceFeeInfo"
   prescriptionDetail_medicationOverview:
@@ -53,6 +61,8 @@ screens:
     name: "prescriptionDetail:medication_ingredients"
   prescriptionDetail_toast:
     name: "prescriptionDetail:toast"
+  prescriptionDetail_setupMedicationSchedule:
+    name: "prescriptionDetail:setupMedicationSchedule"
   redeem_methodSelection:
     name: "redeem:methodSelection"
   redeem_prescriptionAllOrSelection:
@@ -181,6 +191,8 @@ screens:
     name: "profile:editPicture"
   settings_newProfile:
     name: "settings:newProfile"
+  settings_medicationReminderList:
+    name: "settings:medicationReminderList"
   profile_token:
     name: "profile:token"
   profile_registeredDevices:

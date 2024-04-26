@@ -65,6 +65,8 @@ struct SettingsDomain: ReducerProtocol {
             case editProfile(EditProfileDomain.State)
             // sourcery: AnalyticsScreen = settings_newProfile
             case newProfile(NewProfileDomain.State)
+            // sourcery: AnalyticsScreen = settings_medicationReminderList
+            case medicationReminderList(MedicationReminderListDomain.State)
         }
 
         enum Action: Equatable {
@@ -76,6 +78,7 @@ struct SettingsDomain: ReducerProtocol {
             case egkAction(OrderHealthCardDomain.Action)
             case editProfileAction(EditProfileDomain.Action)
             case newProfileAction(NewProfileDomain.Action)
+            case medicationReminderListAction(MedicationReminderListDomain.Action)
             case alert(Alert)
 
             case complyTracking(None)
@@ -131,6 +134,12 @@ struct SettingsDomain: ReducerProtocol {
             ) {
                 NewProfileDomain()
             }
+            Scope(
+                state: /State.medicationReminderList,
+                action: /Action.medicationReminderListAction
+            ) {
+                MedicationReminderListDomain()
+            }
         }
     }
 
@@ -157,7 +166,6 @@ struct SettingsDomain: ReducerProtocol {
     @Dependency(\.changeableUserSessionContainer) var changeableUserSessionContainer: UsersSessionContainer
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.tracker) var tracker: Tracker
-    @Dependency(\.router) var router: Routing
 
     var body: some ReducerProtocol<State, Action> {
         Scope(state: \State.profiles, action: /SettingsDomain.Action.profiles(action:)) {
@@ -274,6 +282,8 @@ struct SettingsDomain: ReducerProtocol {
                 state.destination = .termsOfUse
             case .appSecurity:
                 state.destination = .appSecurity(.init(availableSecurityOptions: []))
+            case .medicationReminderList:
+                state.destination = .medicationReminderList(.init())
             case .none:
                 state.destination = nil
                 return .none

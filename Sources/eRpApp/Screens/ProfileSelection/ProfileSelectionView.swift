@@ -19,6 +19,7 @@
 import ComposableArchitecture
 import SwiftUI
 
+// TODO: this view is not in use. Can be removed? // swiftlint:disable:this todo
 struct ProfileSelectionView: View {
     let store: ProfileSelectionDomain.Store
 

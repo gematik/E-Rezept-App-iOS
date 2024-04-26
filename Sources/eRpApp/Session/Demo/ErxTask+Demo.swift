@@ -253,6 +253,7 @@ extension ErxTask {
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication1,
             medicationRequest: .init(
+                dosageInstructions: "1-0-0-0",
                 substitutionAllowed: true,
                 hasEmergencyServiceFee: true,
                 accidentInfo: demoAccidentInfo,
@@ -276,6 +277,7 @@ extension ErxTask {
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication2,
             medicationRequest: .init(
+                dosageInstructions: "1-0-1-0",
                 substitutionAllowed: true,
                 accidentInfo: demoAccidentInfo,
                 quantity: .init(value: "2", unit: "Packungen")
@@ -296,6 +298,7 @@ extension ErxTask {
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication3,
             medicationRequest: .init(
+                dosageInstructions: "1-0-2-0",
                 hasEmergencyServiceFee: true,
                 accidentInfo: demoAccidentInfo,
                 quantity: .init(value: "2", unit: "Packungen")

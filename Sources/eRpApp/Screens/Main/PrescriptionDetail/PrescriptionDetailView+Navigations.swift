@@ -62,6 +62,21 @@ extension PrescriptionDetailView {
                 ), content: EmergencyServiceFeeDrawerView.init)
                 .accessibility(hidden: true)
 
+            Rectangle()
+                .frame(width: 0, height: 0, alignment: .center)
+                .smallSheet(isPresented: Binding<Bool>(
+                    get: { viewStore.destinationTag == .dosageInstructionsInfo },
+                    set: { if !$0 { viewStore.send(.setNavigation(tag: nil), animation: .easeInOut) } }
+                )) {
+                    IfLetStore(
+                        store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                        state: /PrescriptionDetailDomain.Destinations.State.dosageInstructionsInfo,
+                        action: PrescriptionDetailDomain.Destinations.Action.dosageInstructionsInfo,
+                        then: DosageInstructionsDrawerView.init(store:)
+                    )
+                }
+                .accessibility(hidden: true)
+
             NavigationLinkStore(
                 store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
                 state: /PrescriptionDetailDomain.Destinations.State.chargeItem,
@@ -138,6 +153,16 @@ extension PrescriptionDetailView {
                 destination: MedicationOverview.init(store:),
                 label: { EmptyView() }
             ).accessibility(hidden: true)
+
+            // MedicationReminder
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.medicationReminder,
+                action: PrescriptionDetailDomain.Destinations.Action.medicationReminder(action:),
+                onTap: { viewStore.send(.setNavigation(tag: .medicationReminder)) },
+                destination: MedicationReminderSetupView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
         }
 
         struct CoPaymentDrawerView: View {
@@ -167,7 +192,7 @@ extension PrescriptionDetailView {
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
-                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo)
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfo)
             }
         }
 
@@ -185,6 +210,38 @@ extension PrescriptionDetailView {
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerEmergencyServiceFeeInfo)
+            }
+        }
+
+        struct DosageInstructionsDrawerView: View {
+            @ObservedObject var viewStore: ViewStore<
+                PrescriptionDetailDomain.Destinations.DosageInstructionsState,
+                PrescriptionDetailDomain.Destinations.Action.None
+            >
+
+            init(store: Store<
+                PrescriptionDetailDomain.Destinations.DosageInstructionsState,
+                PrescriptionDetailDomain.Destinations.Action.None
+            >) {
+                viewStore = ViewStore(store) { $0 }
+            }
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(viewStore.title)
+                        .font(.headline)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfoTitle)
+
+                    Text(viewStore.description)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibilityIdentifier(A11y.prescriptionDetails
+                            .prscDtlDrawerDosageInstructionsInfoDescription)
+                    Spacer()
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Colors.systemBackground.ignoresSafeArea())
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfo)
             }
         }
     }

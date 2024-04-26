@@ -47,6 +47,8 @@ extension ReducerProtocol {
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     var mainWindow: UIWindow?
     var authenticationWindow: UIWindow?
+    lazy var notificationDelegate = LocalNotificationDelegate(router: self.routerStore)
+
     // This must be raw userDefaults access, demo session should *not* interfere with user authentication
     @Dependency(\.userDataStore) var userDataStore
     @Dependency(\.tracker) var tracker
@@ -65,7 +67,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     // Timer that counts down until the app will be locked
     var appLockTimer: Timer?
 
+    // For delaying the universal link after the authentication dialog has been shown.
     var universalLinkAfterAuthentication: URL?
+
+    // For delaying the universal link after the authentication dialog has been shown.
+    var willPresentAppAuthenticationDialog = false
 
     private struct MigrationCoordinator {
         let userDataStore: UserDataStore
@@ -106,6 +112,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             mainWindow = UIWindow(windowScene: windowScene)
         }
         parseUserActivities(connectionOptions.userActivities)
+
+        UNUserNotificationCenter.current().delegate = notificationDelegate
 
         #if DEBUG
         setupUITests()
@@ -162,17 +170,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             return
         }
         #endif
+
+        // [REQ:BSI-eRp-ePA:O.Data_13#3,O.Plat_12#3] Moving the application to the foreground removes the blur.
+        removeBlurOverlayFromWindow()
+
         #if DEBUG
         if ProcessInfo.processInfo.environment["UITEST.DISABLE_AUTHENTICATION"] == "YES" {
             return
         }
         #endif
 
-        // [REQ:BSI-eRp-ePA:O.Data_13#3,O.Plat_12#3] Moving the application to the foreground removes the blur.
-        removeBlurOverlayFromWindow()
-
         guard !migrationCoordinator.isMigrating else { return }
 
+        willPresentAppAuthenticationDialog = true
         // [REQ:BSI-eRp-ePA:O.Auth_7#2] Present the authentication window
         // dispatching necessary to prevents keyboard not showing on iOS 16
         DispatchQueue.main.async { [weak self] in
@@ -197,6 +207,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     }
 
     func presentAppAuthenticationDomain(scene: UIScene?) {
+        willPresentAppAuthenticationDialog = false
+
         guard let windowScene = scene as? UIWindowScene else {
             // prevent using the app if authentication view can't be presented
             mainWindow?.rootViewController = nil
@@ -247,7 +259,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         switch userActivity.activityType {
         case NSUserActivityTypeBrowsingWeb:
             guard let url = userActivity.webpageURL else { return }
-            routeTo(.universalLink(url))
+            // Delay calls if authentication is about to be shown. In that case authentication will handle calling the
+            // universal link
+            if willPresentAppAuthenticationDialog {
+                universalLinkAfterAuthentication = url
+            } else {
+                routeTo(.universalLink(url))
+            }
         default:
             break
         }

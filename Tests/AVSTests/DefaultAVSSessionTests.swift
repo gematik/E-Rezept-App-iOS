@@ -49,7 +49,8 @@ final class DefaultAVSSessionTests: XCTestCase {
 
         let sut = DefaultAVSSession(
             avsMessageConverter: mockAvsMessageConverter,
-            avsClient: mockAvsClient
+            avsClient: mockAvsClient,
+            logger: nil
         )
 
         // then

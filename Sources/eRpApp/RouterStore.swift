@@ -28,11 +28,13 @@ enum Endpoint: Equatable {
 
     enum MainScreen: Equatable {
         case login
+        case medicationReminder([UUID])
     }
 
     enum SettingsScreen: Equatable {
         case unlockCard
         case editProfile(EditProfileScreen)
+        case medicationSchedule
     }
 
     enum EditProfileScreen: Equatable {
@@ -41,7 +43,7 @@ enum Endpoint: Equatable {
 }
 
 protocol Routing: AnyObject {
-    func routeTo(_ endpoint: Endpoint)
+    func routeTo(_ endpoint: Endpoint) async
 }
 
 class RouterStore<ContentReducer: ReducerProtocol>: Routing
@@ -73,14 +75,15 @@ class RouterStore<ContentReducer: ReducerProtocol>: Routing
         routerInstance.delegate = self
     }
 
+    @MainActor
     func routeTo(_ endpoint: Endpoint) {
         let viewStore = ViewStore(store) { $0 }
         viewStore.send(.routeTo(endpoint))
     }
 
     private class RouterInstance: Routing {
-        func routeTo(_ endpoint: eRpApp.Endpoint) {
-            delegate?.routeTo(endpoint)
+        func routeTo(_ endpoint: eRpApp.Endpoint) async {
+            await delegate?.routeTo(endpoint)
         }
 
         weak var delegate: Routing?

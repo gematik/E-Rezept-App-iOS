@@ -24,8 +24,4 @@ public struct IDPExtAuthVerify {
     public let code: String
     /// State of IDP to dereference the code
     public let state: String
-    /// Redirect URI for the sektoral idp
-    public let kkAppRedirectURI: String
-    /// True, if the external authentication is done via "Gesundheits ID", false otherwise.
-    public let isGid: Bool
 }

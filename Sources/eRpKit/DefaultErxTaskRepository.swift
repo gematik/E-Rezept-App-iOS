@@ -20,6 +20,31 @@
 import Combine
 import Foundation
 
+/// Repository for the app to the MedicationSchedule data layer handling the syncing between its data stores.
+public struct MedicationScheduleRepository {
+    /// Create a MEdicationSchedule
+    public var create: @Sendable (MedicationSchedule) async throws -> Void
+    /// Load all MedicationSchedule
+    public var readAll: @Sendable () async throws -> [MedicationSchedule]
+    /// Load a MedicationSchedule with `taskId`
+    public var read: @Sendable (_ taskId: String) async throws -> MedicationSchedule?
+    /// Delete all passed MedicationSchedule
+    public var delete: @Sendable ([MedicationSchedule]) async throws -> Void
+
+    /// Default init for MedicationScheduleRepository
+    public init(
+        create: @escaping @Sendable (MedicationSchedule) async throws -> Void,
+        readAll: @escaping @Sendable () async throws -> [MedicationSchedule],
+        read: @escaping @Sendable (String) async throws -> MedicationSchedule?,
+        delete: @escaping @Sendable ([MedicationSchedule]) async throws -> Void
+    ) {
+        self.create = create
+        self.readAll = readAll
+        self.read = read
+        self.delete = delete
+    }
+}
+
 /// Repository for the app to the ErxTask data layer handling the syncing between its data stores.
 public class DefaultErxTaskRepository: ErxTaskRepository {
     /// ErxTaskRepository ErrorType
@@ -27,6 +52,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
 
     private let disk: ErxLocalDataStore
     private let cloud: ErxRemoteDataStore
+    private let medicationScheduleRepository: MedicationScheduleRepository
     private let profile: AnyPublisher<Profile, LocalStoreError>
 
     /// Initialize a new ErxTaskRepository as the gateway between Presentation layer and underlying data layer(s)
@@ -37,10 +63,12 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     public required init(
         disk: ErxLocalDataStore,
         cloud: ErxRemoteDataStore,
+        medicationScheduleRepository: MedicationScheduleRepository,
         profile: AnyPublisher<Profile, LocalStoreError>
     ) {
         self.disk = disk
         self.cloud = cloud
+        self.medicationScheduleRepository = medicationScheduleRepository
         self.profile = profile
     }
 
@@ -241,10 +269,14 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     /// - Parameter erxTasks: The tasks that should be deleted
     /// - Returns: AnyPublisher that emits `true` if deletion was successful or returns an`ErrorType`
     public func delete(erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErrorType> {
+        let schedules = erxTasks.compactMap(\.medicationSchedule)
         // Delete only locally when all tasks are scanned tasks
         if erxTasks.allSatisfy({ $0.source == ErxTask.Source.scanner }) {
             return disk.delete(tasks: erxTasks)
                 .mapError(ErrorType.local)
+                .flatMap { _ in
+                    self.delete(schedules: schedules)
+                }
                 .eraseToAnyPublisher()
             // Delete remote & locally when at least one is not a scanned task
         } else {
@@ -257,8 +289,31 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                     self.disk.delete(tasks: erxTasks)
                         .mapError(ErrorType.local)
                 }
+                .flatMap { _ in
+                    self.delete(schedules: schedules)
+                }
                 .eraseToAnyPublisher()
         }
+    }
+
+    private func delete(schedules: [MedicationSchedule]) -> AnyPublisher<Bool, ErrorType> {
+        if schedules.isEmpty {
+            return Just(true)
+                .setFailureType(to: ErrorType.self)
+                .eraseToAnyPublisher()
+        }
+
+        return Future<Bool, ErrorType> { promise in
+            Task {
+                do {
+                    try await self.medicationScheduleRepository.delete(schedules)
+                    promise(.success(true))
+                } catch {
+                    promise(.failure(ErrorType.local(.delete(error: error))))
+                }
+            }
+        }
+        .eraseToAnyPublisher()
     }
 
     /// Sends a redeem request of  an `ErxTask` for the selected pharmacy

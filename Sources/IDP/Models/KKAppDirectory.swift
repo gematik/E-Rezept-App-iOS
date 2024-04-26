@@ -25,19 +25,10 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeysV2.self)
-        if let apps = try? container.decode([KKAppDirectory.Entry].self, forKey: CodingKeysV2.apps) {
-            self.apps = apps
-        } else {
-            let container = try decoder.container(keyedBy: CodingKeysV1.self)
-            apps = try container.decode([KKAppDirectory.Entry].self, forKey: CodingKeysV1.apps)
-        }
+        apps = try container.decode([KKAppDirectory.Entry].self, forKey: CodingKeysV2.apps)
     }
 
     public let apps: [Entry]
-
-    enum CodingKeysV1: String, CodingKey {
-        case apps = "kk_app_list"
-    }
 
     enum CodingKeysV2: String, CodingKey {
         case apps = "fed_idp_list"
@@ -57,11 +48,6 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
         public let gId: Bool
         public let logo: String?
 
-        enum CodingKeysV1: String, CodingKey {
-            case name = "kk_app_name"
-            case identifier = "kk_app_id"
-        }
-
         enum CodingKeysV2: String, CodingKey {
             case name = "idp_name"
             case identifier = "idp_iss"
@@ -70,23 +56,19 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
         }
 
         public init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: KKAppDirectory.Entry.CodingKeysV1.self)
-            if let name = try? container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV1.name) {
-                self.name = name
-                identifier = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV1.identifier)
-                gId = false
-                logo = nil
-            } else {
-                let container = try decoder.container(keyedBy: KKAppDirectory.Entry.CodingKeysV2.self)
-                name = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.name)
-                identifier = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.identifier)
-                gId = (try? container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.identifier)) != nil
-                logo = try? container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.logo)
-            }
+            let container = try decoder.container(keyedBy: KKAppDirectory.Entry.CodingKeysV2.self)
+            name = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.name)
+            identifier = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.identifier)
+            gId = (try? container.decode(Bool.self, forKey: KKAppDirectory.Entry.CodingKeysV2.gId)) ?? false
+            logo = try? container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.logo)
         }
     }
 
     public func sorted() -> Self {
-        KKAppDirectory(apps: apps.sorted { $0.name.lowercased() < $1.name.lowercased() })
+        KKAppDirectory(apps: apps.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending })
+    }
+
+    public func filterGID() -> Self {
+        KKAppDirectory(apps: apps.filter(\.gId))
     }
 }

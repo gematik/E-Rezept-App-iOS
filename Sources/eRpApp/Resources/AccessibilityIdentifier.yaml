@@ -162,6 +162,7 @@ settings:
     - stg_txt_security_password
     - stg_txt_security_tokens
     - stg_btn_device_security
+    - stg_btn_medication_reminder
   createPassword:
     - cpw_btn_save
     - cpw_btn_update
@@ -380,6 +381,7 @@ prescriptionDetails:
   - prsc_dtl_btn_additional_fee
   - prsc_dtl_btn_emergency_service_fee
   - prsc_dtl_btn_medication
+  - prsc_dtl_btn_medication_reminder
   - prsc_dtl_btn_insured_person
   - prsc_dtl_btn_practitioner
   - prsc_dtl_btn_institution
@@ -388,6 +390,9 @@ prescriptionDetails:
   - prsc_dtl_drawer_co_payment_info_title
   - prsc_dtl_drawer_co_payment_info_description
   - prsc_dtl_drawer_co_payment_info
+  - prsc_dtl_drawer_dosage_instructions_info_title
+  - prsc_dtl_drawer_dosage_instructions_info_description
+  - prsc_dtl_drawer_dosage_instructions_info
   - prsc_dtl_drawer_emergency_service_fee_info
   - prsc_dtl_txt_authored_on
   - prsc_dtl_txt_bvg
@@ -545,6 +550,25 @@ matrixCode:
   - dmc_img_loading_indicator
   - dmc_img_matrixcode
   - dmc_btn_close
+medicationReminder:
+  - med_reminder_btn_activation_toggle
+  - med_reminder_btn_dosage_instruction
+  - med_reminder_txt_schedule_header
+  - med_reminder_btn_repetition_details
+  - med_reminder_txt_schedule_time_section_header
+  - med_reminder_btn_schedule_time_date_picker
+  - med_reminder_btn_schedule_time_textfield_amount
+  - med_reminder_btn_schedule_time_add_entry
+  - med_reminder_btn_save_schedule
+  - med_reminder_drawer_dosage_instruction_info
+  - med_reminder_drawer_dosage_instruction_info_title
+  - med_reminder_drawer_dosage_instruction_info_description
+  - med_reminder_btn_repetition_infinite
+  - med_reminder_btn_repetition_finite
+  - med_reminder_btn_repetition_date_start
+  - med_reminder_btn_repetition_date_end
+  - med_reminder_btn_one_day_summary_go_to_reminders_overview_button
+  - med_reminder_btn_one_day_summary_close_button
 
 # ./Sources/eRpApp/Components/Tiles/FootnoteView.swift:                .accessibility(identifier: text)
 # ./Sources/eRpApp/Components/Tiles/SectionView.swift:                .accessibility(identifier: text)

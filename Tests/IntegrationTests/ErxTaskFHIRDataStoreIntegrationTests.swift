@@ -221,6 +221,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         let erxTaskRepository = DefaultErxTaskRepository(
             disk: MockErxLocalDataStore(),
             cloud: cloud,
+            medicationScheduleRepository: .testValue,
             profile: Just(Profile(name: "Test User")).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         )
 

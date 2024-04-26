@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.18.0</string>
+	<string>1.19.0</string>
 	<key>CFBundleVersion</key>
 	<string>$(GEMATIK_BUNDLE_VERSION)</string>
 	<key>CSDisableAutostart</key>
@@ -84,6 +84,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>RRM1dGqnDFsCJXBTHky16vi1obOlCgFFn/yOhI/y+ho=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>w9I8WrpHr1YAS0DugvLGsrI9Vm1yEkZAyllKxemXXf4=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>erp-ref.app.ti-dienste.de</key>
@@ -104,6 +108,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>RRM1dGqnDFsCJXBTHky16vi1obOlCgFFn/yOhI/y+ho=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>w9I8WrpHr1YAS0DugvLGsrI9Vm1yEkZAyllKxemXXf4=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>erp-test.app.ti-dienste.de</key>
@@ -124,6 +132,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>RRM1dGqnDFsCJXBTHky16vi1obOlCgFFn/yOhI/y+ho=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>w9I8WrpHr1YAS0DugvLGsrI9Vm1yEkZAyllKxemXXf4=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>erp.app.ti-dienste.de</key>
@@ -144,6 +156,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>RRM1dGqnDFsCJXBTHky16vi1obOlCgFFn/yOhI/y+ho=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>w9I8WrpHr1YAS0DugvLGsrI9Vm1yEkZAyllKxemXXf4=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>idp-pairing-ref.zentral.idp.splitdns.ti-dienste.de</key>

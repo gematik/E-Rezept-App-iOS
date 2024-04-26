@@ -76,7 +76,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         expect(task.medication?.pzn) == "02532741"
         expect(task.medication?.amount).to(beNil())
         // medication request
-        expect(task.medicationRequest.dosageInstructions?.isEmpty) == true
+        expect(task.medicationRequest.dosageInstructions) == "Dj"
         expect(task.medicationRequest.hasEmergencyServiceFee) == true
         expect(task.medicationRequest.dispenseValidityEnd).to(beNil())
         expect(task.medicationRequest.substitutionAllowed) == false

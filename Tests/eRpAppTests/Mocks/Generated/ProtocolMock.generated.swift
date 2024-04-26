@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import AVS
 import Combine
@@ -632,20 +632,20 @@ final class MockIDPSession: IDPSession {
     
    // MARK: - extAuthVerifyAndExchange
 
-    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowCallsCount = 0
-    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowCalled: Bool {
-        extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowCallsCount > 0
+    var extAuthVerifyAndExchangeIdTokenValidatorCallsCount = 0
+    var extAuthVerifyAndExchangeIdTokenValidatorCalled: Bool {
+        extAuthVerifyAndExchangeIdTokenValidatorCallsCount > 0
     }
-    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReceivedArguments: (url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool)?
-    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReceivedInvocations: [(url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool)] = []
-    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReturnValue: AnyPublisher<IDPToken, IDPError>!
-    var extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowClosure: ((URL, @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, Bool) -> AnyPublisher<IDPToken, IDPError>)?
+    var extAuthVerifyAndExchangeIdTokenValidatorReceivedArguments: (url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)?
+    var extAuthVerifyAndExchangeIdTokenValidatorReceivedInvocations: [(url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)] = []
+    var extAuthVerifyAndExchangeIdTokenValidatorReturnValue: AnyPublisher<IDPToken, IDPError>!
+    var extAuthVerifyAndExchangeIdTokenValidatorClosure: ((URL, @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError>)?
 
-    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool) -> AnyPublisher<IDPToken, IDPError> {
-        extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowCallsCount += 1
-        extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReceivedArguments = (url: url, idTokenValidator: idTokenValidator, isGidFlow: isGidFlow)
-        extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReceivedInvocations.append((url: url, idTokenValidator: idTokenValidator, isGidFlow: isGidFlow))
-        return extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowClosure.map({ $0(url, idTokenValidator, isGidFlow) }) ?? extAuthVerifyAndExchangeIdTokenValidatorIsGidFlowReturnValue
+    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
+        extAuthVerifyAndExchangeIdTokenValidatorCallsCount += 1
+        extAuthVerifyAndExchangeIdTokenValidatorReceivedArguments = (url: url, idTokenValidator: idTokenValidator)
+        extAuthVerifyAndExchangeIdTokenValidatorReceivedInvocations.append((url: url, idTokenValidator: idTokenValidator))
+        return extAuthVerifyAndExchangeIdTokenValidatorClosure.map({ $0(url, idTokenValidator) }) ?? extAuthVerifyAndExchangeIdTokenValidatorReturnValue
     }
 }
 
@@ -708,6 +708,117 @@ final class MockMatrixCodeGenerator: MatrixCodeGenerator {
         generateImageForWidthHeightReceivedArguments = (contents: contents, width: width, height: height)
         generateImageForWidthHeightReceivedInvocations.append((contents: contents, width: width, height: height))
         return try generateImageForWidthHeightClosure.map({ try $0(contents, width, height) }) ?? generateImageForWidthHeightReturnValue
+    }
+}
+
+
+// MARK: - MockMedicationScheduleStore -
+
+final class MockMedicationScheduleStore: MedicationScheduleStore {
+    
+   // MARK: - fetch
+
+    var fetchByThrowableError: Error?
+    var fetchByCallsCount = 0
+    var fetchByCalled: Bool {
+        fetchByCallsCount > 0
+    }
+    var fetchByReceivedTaskID: ErxTask.ID?
+    var fetchByReceivedInvocations: [ErxTask.ID] = []
+    var fetchByReturnValue: MedicationSchedule?
+    var fetchByClosure: ((ErxTask.ID) throws -> MedicationSchedule?)?
+
+    func fetch(by taskID: ErxTask.ID) throws -> MedicationSchedule? {
+        if let error = fetchByThrowableError {
+            throw error
+        }
+        fetchByCallsCount += 1
+        fetchByReceivedTaskID = taskID
+        fetchByReceivedInvocations.append(taskID)
+        return try fetchByClosure.map({ try $0(taskID) }) ?? fetchByReturnValue
+    }
+    
+   // MARK: - fetch
+
+    var fetchByEntryIdDateProviderThrowableError: Error?
+    var fetchByEntryIdDateProviderCallsCount = 0
+    var fetchByEntryIdDateProviderCalled: Bool {
+        fetchByEntryIdDateProviderCallsCount > 0
+    }
+    var fetchByEntryIdDateProviderReceivedArguments: (entryId: UUID, dateProvider: () -> Date)?
+    var fetchByEntryIdDateProviderReceivedInvocations: [(entryId: UUID, dateProvider: () -> Date)] = []
+    var fetchByEntryIdDateProviderReturnValue: MedicationScheduleFetchByEntryIdResponse!
+    var fetchByEntryIdDateProviderClosure: ((UUID, @escaping () -> Date) throws -> MedicationScheduleFetchByEntryIdResponse)?
+
+    func fetch(byEntryId entryId: UUID, dateProvider: @escaping () -> Date) throws -> MedicationScheduleFetchByEntryIdResponse {
+        if let error = fetchByEntryIdDateProviderThrowableError {
+            throw error
+        }
+        fetchByEntryIdDateProviderCallsCount += 1
+        fetchByEntryIdDateProviderReceivedArguments = (entryId: entryId, dateProvider: dateProvider)
+        fetchByEntryIdDateProviderReceivedInvocations.append((entryId: entryId, dateProvider: dateProvider))
+        return try fetchByEntryIdDateProviderClosure.map({ try $0(entryId, dateProvider) }) ?? fetchByEntryIdDateProviderReturnValue
+    }
+    
+   // MARK: - fetchAll
+
+    var fetchAllThrowableError: Error?
+    var fetchAllCallsCount = 0
+    var fetchAllCalled: Bool {
+        fetchAllCallsCount > 0
+    }
+    var fetchAllReturnValue: [MedicationSchedule]!
+    var fetchAllClosure: (() throws -> [MedicationSchedule])?
+
+    func fetchAll() throws -> [MedicationSchedule] {
+        if let error = fetchAllThrowableError {
+            throw error
+        }
+        fetchAllCallsCount += 1
+        return try fetchAllClosure.map({ try $0() }) ?? fetchAllReturnValue
+    }
+    
+   // MARK: - save
+
+    var saveMedicationSchedulesThrowableError: Error?
+    var saveMedicationSchedulesCallsCount = 0
+    var saveMedicationSchedulesCalled: Bool {
+        saveMedicationSchedulesCallsCount > 0
+    }
+    var saveMedicationSchedulesReceivedMedicationSchedules: [MedicationSchedule]?
+    var saveMedicationSchedulesReceivedInvocations: [[MedicationSchedule]] = []
+    var saveMedicationSchedulesReturnValue: [MedicationSchedule]!
+    var saveMedicationSchedulesClosure: (([MedicationSchedule]) throws -> [MedicationSchedule])?
+
+    func save(medicationSchedules: [MedicationSchedule]) throws -> [MedicationSchedule] {
+        if let error = saveMedicationSchedulesThrowableError {
+            throw error
+        }
+        saveMedicationSchedulesCallsCount += 1
+        saveMedicationSchedulesReceivedMedicationSchedules = medicationSchedules
+        saveMedicationSchedulesReceivedInvocations.append(medicationSchedules)
+        return try saveMedicationSchedulesClosure.map({ try $0(medicationSchedules) }) ?? saveMedicationSchedulesReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deleteMedicationSchedulesThrowableError: Error?
+    var deleteMedicationSchedulesCallsCount = 0
+    var deleteMedicationSchedulesCalled: Bool {
+        deleteMedicationSchedulesCallsCount > 0
+    }
+    var deleteMedicationSchedulesReceivedMedicationSchedules: [MedicationSchedule]?
+    var deleteMedicationSchedulesReceivedInvocations: [[MedicationSchedule]] = []
+    var deleteMedicationSchedulesClosure: (([MedicationSchedule]) throws -> Void)?
+
+    func delete(medicationSchedules: [MedicationSchedule]) throws {
+        if let error = deleteMedicationSchedulesThrowableError {
+            throw error
+        }
+        deleteMedicationSchedulesCallsCount += 1
+        deleteMedicationSchedulesReceivedMedicationSchedules = medicationSchedules
+        deleteMedicationSchedulesReceivedInvocations.append(medicationSchedules)
+        try deleteMedicationSchedulesClosure?(medicationSchedules)
     }
 }
 

@@ -54,7 +54,6 @@ enum ChargeItemDomainServiceFetchResult: Equatable {
     case success([ErxSparseChargeItem])
     case notAuthenticated
     case consentNotGranted
-
     case error(Error)
 
     // sourcery: CodedError = "030"
@@ -117,6 +116,7 @@ enum ChargeItemListDomainServiceGrantResult: Equatable {
 enum ChargeItemListDomainServiceRevokeResult: Equatable {
     case success(ChargeItemDomainServiceDeleteResult)
     case notAuthenticated
+    case conflict
     case error(Error)
 
     // sourcery: CodedError = "033"
@@ -129,6 +129,8 @@ enum ChargeItemListDomainServiceRevokeResult: Equatable {
         case erxRepository(ErxRepositoryError)
         // sourcery: errorCode = "04"
         case unexpected
+        // sourcery: errorCode = "05"
+        case chargeItemConsentService(ChargeItemConsentService.Error)
     }
 }
 
@@ -323,57 +325,50 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
     }
 
     func revokeChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> {
-        let loginHandler = loginHandler(for: profileId)
-        let erxTaskRepository = erxTaskRepository(for: profileId)
-        let userSession = userSessionProvider.userSession(for: profileId)
-
-        return loginHandler.isAuthenticated()
-            .first()
-            .flatMap { (loginResult: LoginResult) -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> in
-                switch loginResult {
-                case .success(true):
-                    return userSession.profile()
-                        .first()
-                        .flatMap { _ -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> in
-                            erxTaskRepository.revokeConsent(.chargcons)
-                                .first()
-                                .flatMap { wasSuccessful -> AnyPublisher<
-                                    ChargeItemListDomainServiceRevokeResult, Never
-                                > in
-                                switch wasSuccessful {
-                                case true:
-                                    return self.deleteAllLocalChargeItems(for: profileId)
-                                        .first()
-                                        .map(ChargeItemListDomainServiceRevokeResult.success)
-                                        .eraseToAnyPublisher()
-                                case false:
-                                    return Just(.error(.unexpected))
-                                        .eraseToAnyPublisher() //  either true or error is returned
-                                }
-                                }
-                                .catch { error -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> in
-                                    Just(.error(.erxRepository(error))).eraseToAnyPublisher()
-                                }
-                                .eraseToAnyPublisher()
-                        }
-                        .catch { error -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> in
-                            Just(.error(.localStore(error))).eraseToAnyPublisher()
-                        }
-                        .eraseToAnyPublisher()
-
-                case LoginResult.success(false):
-                    return Just(.notAuthenticated).eraseToAnyPublisher()
-
-                case let LoginResult.failure(error):
-                    return Just(.error(.loginHandler(error))).eraseToAnyPublisher()
-                }
+        Future<ChargeItemConsentService.RevokeResult, Swift.Error> {
+            try await chargeItemConsentService.revokeConsent(profileId)
+        }
+        .mapError { error in
+            guard let error = error as? ChargeItemConsentService.Error
+            else { return ChargeItemConsentService.Error.unexpected }
+            return error
+        }
+        .flatMap { chargeItemConsentServiceResult -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> in
+            switch chargeItemConsentServiceResult {
+            case .success:
+                return deleteAllLocalChargeItems(for: profileId)
+                    .first()
+                    .map { .success($0) }
+                    .eraseToAnyPublisher()
+            case .notAuthenticated:
+                return Just(.notAuthenticated).eraseToAnyPublisher()
+            case .conflict: return Just(.conflict).eraseToAnyPublisher()
+            case let .error(error):
+                return Just(ChargeItemListDomainServiceRevokeResult.error(.chargeItemConsentService(error)))
+                    .eraseToAnyPublisher()
             }
-            .eraseToAnyPublisher()
+        }
+        .catch { error -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> in
+            Just(.error(.chargeItemConsentService(error))).eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
     }
 
-    private func deleteAllLocalChargeItems(for _: UUID)
-        -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
-        Just(.success).eraseToAnyPublisher() // to-do: integration
+    private func deleteAllLocalChargeItems(for _: UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
+        Just(.success)
+            .eraseToAnyPublisher() // to-do: integration
+    }
+}
+
+extension Publisher where Self.Output == ChargeItemDomainServiceDeleteResult,
+    Failure == ChargeItemConsentService.Error {
+    func eraseToResult() -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> {
+        map { .success($0) }
+            .catch { error in
+                Just(.error(.chargeItemConsentService(error)))
+                    .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
     }
 }
 

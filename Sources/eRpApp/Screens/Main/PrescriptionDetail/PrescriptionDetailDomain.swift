@@ -102,6 +102,7 @@ struct PrescriptionDetailDomain: ReducerProtocol {
     @Dependency(\.dateProvider) var dateProvider: () -> Date
     @Dependency(\.uiDateFormatter) var uiDateFormatter
     @Dependency(\.resourceHandler) var resourceHandler
+    @Dependency(\.medicationReminderParser) var medicationParser
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
@@ -367,6 +368,11 @@ struct PrescriptionDetailDomain: ReducerProtocol {
                 guard let status = state.prescription.erxTask.medicationRequest.coPaymentStatus else { return .none }
                 let coPaymentState = Destinations.CoPaymentState(status: status)
                 state.destination = .coPaymentInfo(coPaymentState)
+            case .dosageInstructionsInfo:
+                let dosageInstructionsState = Destinations.DosageInstructionsState(
+                    dosageInstructions: state.prescription.medicationRequest.dosageInstructions
+                )
+                state.destination = .dosageInstructionsInfo(dosageInstructionsState)
             case .emergencyServiceFeeInfo:
                 state.destination = .emergencyServiceFeeInfo
             case .none:
@@ -406,6 +412,12 @@ struct PrescriptionDetailDomain: ReducerProtocol {
                 state.destination = .technicalInformations(techInfoState)
             case .toast:
                 return .none
+            case .medicationReminder:
+                let schedule = state.prescription.medicationSchedule ??
+                    medicationParser.parse(state.prescription.erxTask)
+                state
+                    .destination = .medicationReminder(MedicationReminderSetupDomain
+                        .State(medicationSchedule: schedule))
             }
             return .none
         case .openUrlGesundBundDe:
@@ -440,6 +452,15 @@ struct PrescriptionDetailDomain: ReducerProtocol {
             return .none
         case .pencilButtonTapped:
             state.focus = .medicationName
+            return .none
+
+        case let .destination(.presented(.medicationReminder(action: .delegate(delegateAction)))):
+            switch delegateAction {
+            case let .saveButtonTapped(medicationSchedule):
+                let newErxTask = ErxTask.lens.medicationSchedule.set(medicationSchedule)(state.prescription.erxTask)
+                state.prescription = Prescription.lens.erxTask.set(newErxTask)(state.prescription)
+                state.destination = nil
+            }
             return .none
         case let .setFocus(field):
             state.focus = field

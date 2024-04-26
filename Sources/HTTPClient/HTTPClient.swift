@@ -29,9 +29,8 @@ public typealias HTTPResponse = (data: Data, response: HTTPURLResponse, status: 
 /// - Parameter completionHandler: the function that takes the newRequest to follow or nil to not follow the redirect
 public typealias RedirectHandler = (
     _ original: HTTPURLResponse,
-    _ redirect: URLRequest,
-    _ completionHandler: (URLRequest?) -> Void
-) -> Void
+    _ redirect: URLRequest
+) async -> URLRequest?
 
 // swiftlint:enable large_tuple
 

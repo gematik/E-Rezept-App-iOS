@@ -180,6 +180,11 @@ extension ErxTask {
             quantity = .init(value: value, unit: entity.quantity?.unit)
         }
 
+        var medicationSchedule: MedicationSchedule?
+        if let schedule = entity.medicationSchedule {
+            medicationSchedule = MedicationSchedule(entity: schedule)
+        }
+
         self.init(
             identifier: identifier,
             status: erxTaskStatus,
@@ -207,6 +212,7 @@ extension ErxTask {
                 multiplePrescription: MultiplePrescription(entity: entity.multiplePrescription),
                 quantity: quantity
             ),
+            medicationSchedule: medicationSchedule,
             patient: ErxPatient(entity: entity.patient),
             practitioner: ErxPractitioner(entity: entity.practitioner),
             organization: ErxOrganization(entity: entity.organization),

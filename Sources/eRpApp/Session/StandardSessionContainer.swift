@@ -198,6 +198,7 @@ class StandardSessionContainer: UserSession {
     }()
 
     @Dependency(\.erxRemoteDataStoreFactory) var erxRemoteDataStoreFactory: ErxRemoteDataStoreFactory
+    @Dependency(\.medicationScheduleRepository) var medicationScheduleRepository
 
     private lazy var erxRemoteDataStore: ErxRemoteDataStore = {
         let vauSession = VAUSession(
@@ -219,6 +220,7 @@ class StandardSessionContainer: UserSession {
         DefaultErxTaskRepository(
             disk: erxTaskCoreDataStore,
             cloud: erxRemoteDataStore,
+            medicationScheduleRepository: medicationScheduleRepository,
             profile: profile()
         )
     }()
@@ -228,6 +230,7 @@ class StandardSessionContainer: UserSession {
         DefaultErxTaskRepository(
             disk: entireCoreDataStore,
             cloud: erxRemoteDataStore,
+            medicationScheduleRepository: medicationScheduleRepository,
             profile: profile()
         )
     }()

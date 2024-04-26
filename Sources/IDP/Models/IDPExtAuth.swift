@@ -41,6 +41,7 @@ public struct IDPExtAuth {
     /// Authentication type stating the method of authentication
     public enum AuthType {
         /// Using fasttrack
+        @available(*, deprecated, message: "Stop using this")
         case fasttrack
         /// Using "Gesundheits ID"
         case gid

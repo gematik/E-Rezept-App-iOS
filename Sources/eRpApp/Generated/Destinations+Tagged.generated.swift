@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -318,6 +318,7 @@ extension MainDomain.Destinations.State {
         case prescriptionArchive
         case prescriptionDetail
         case redeem
+        case medicationReminder
         case welcomeDrawer
         case grantChargeItemConsentDrawer
         case alert
@@ -344,6 +345,8 @@ extension MainDomain.Destinations.State {
                 return .prescriptionDetail
             case .redeem:
                 return .redeem
+            case .medicationReminder:
+                return .medicationReminder
             case .welcomeDrawer:
                 return .welcomeDrawer
             case .grantChargeItemConsentDrawer:
@@ -376,6 +379,39 @@ extension MedicationOverviewDomain.Destinations.State {
         switch self {
             case .medication:
                 return .medication
+        }
+    }
+}
+extension MedicationReminderListDomain.Destinations.State {
+    enum Tag: Int {
+        case medicationReminder
+        case alert
+    }
+
+    var tag: Tag {
+        switch self {
+            case .medicationReminder:
+                return .medicationReminder
+            case .alert:
+                return .alert
+        }
+    }
+}
+extension MedicationReminderSetupDomain.Destinations.State {
+    enum Tag: Int {
+        case alert
+        case repetitionDetails
+        case dosageInstructionsInfo
+    }
+
+    var tag: Tag {
+        switch self {
+            case .alert:
+                return .alert
+            case .repetitionDetails:
+                return .repetitionDetails
+            case .dosageInstructionsInfo:
+                return .dosageInstructionsInfo
         }
     }
 }
@@ -540,6 +576,8 @@ extension PrescriptionDetailDomain.Destinations.State {
         case coPaymentInfo
         case emergencyServiceFeeInfo
         case toast
+        case medicationReminder
+        case dosageInstructionsInfo
     }
 
     var tag: Tag {
@@ -580,6 +618,10 @@ extension PrescriptionDetailDomain.Destinations.State {
                 return .emergencyServiceFeeInfo
             case .toast:
                 return .toast
+            case .medicationReminder:
+                return .medicationReminder
+            case .dosageInstructionsInfo:
+                return .dosageInstructionsInfo
         }
     }
 }
@@ -662,6 +704,7 @@ extension SettingsDomain.Destinations.State {
         case egk
         case editProfile
         case newProfile
+        case medicationReminderList
     }
 
     var tag: Tag {
@@ -694,6 +737,8 @@ extension SettingsDomain.Destinations.State {
                 return .editProfile
             case .newProfile:
                 return .newProfile
+            case .medicationReminderList:
+                return .medicationReminderList
         }
     }
 }

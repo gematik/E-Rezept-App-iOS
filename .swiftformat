@@ -12,7 +12,7 @@
 --wraparguments preserve
 --wrapcollections preserve
 --typeattributes prev-line
---varattributes same-line
+--varattributes preserve
 # rules
 
 --enable isEmpty

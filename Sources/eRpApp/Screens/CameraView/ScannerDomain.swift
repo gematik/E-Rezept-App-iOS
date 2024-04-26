@@ -150,12 +150,12 @@ struct ScannerDomain: ReducerProtocol {
                     return checkForTaskDuplicatesInStore(scannedTasks)
                         .cancellable(id: CancelID.loadErxTask)
                 case let .url(universalLink):
-                    return .run { @MainActor _ in
+                    return .run { _ in
                         @Dependency(\.dismiss) var dismiss
 
                         await dismiss()
 
-                        router.routeTo(.universalLink(universalLink))
+                        await router.routeTo(.universalLink(universalLink))
                     }
                 }
             } catch let error as ScannerDomain.Error {

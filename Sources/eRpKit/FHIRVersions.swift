@@ -239,6 +239,12 @@ public enum ErpPrescription {
             public static let multiplePrescriptionMark = "Kennzeichen"
             /// Multiple Prescription Number
             public static let multiplePrescriptionNumber = "Nummerierung"
+            /// Key for the dosage informations toggle
+            public static let dosageInstructionFlagKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag"
+            /// This is used by PVS software to indicate, that a Medikationsplan or another form of
+            /// dosage instruction has been provided
+            /// source: KBV_ITA_SIEX_Infos_Dosierungsangabe
+            public static let dosageInstructionDj = "Dj"
         }
 
         /// Coverage Status

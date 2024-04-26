@@ -623,6 +623,250 @@ public extension SectionContainer {
             }
         })
     }
+
+    init<
+        Content0: View,
+        Content1: View,
+        Content2: View,
+        Content3: View,
+        Content4: View,
+        Content5: View,
+        Content6: View,
+        Content7: View,
+        Content8: View,
+        Content9: View,
+        Content10: View,
+        Content11: View,
+        Content12: View,
+        Content13: View
+    >(@ViewBuilder header: @escaping () -> Header? = { nil },
+      @ViewBuilder footer: @escaping () -> Footer? = { nil },
+      @ViewBuilder content: @escaping ()
+          -> TupleView<(Content0, Content1, Content2, Content3, Content4, Content5, Content6, Content7, Content8,
+                        Content9)>,
+      @ViewBuilder moreContent: @escaping () -> TupleView<(Content10, Content11, Content12, Content13)>)
+        where Content == TupleView<(Group<TupleView<(
+            ModifiedContent<Content0, SectionContainerCellModifier>,
+            ModifiedContent<Content1, SectionContainerCellModifier>,
+            ModifiedContent<Content2, SectionContainerCellModifier>,
+            ModifiedContent<Content3, SectionContainerCellModifier>,
+            ModifiedContent<Content4, SectionContainerCellModifier>,
+            ModifiedContent<Content5, SectionContainerCellModifier>,
+            ModifiedContent<Content6, SectionContainerCellModifier>,
+            ModifiedContent<Content7, SectionContainerCellModifier>,
+            ModifiedContent<Content8, SectionContainerCellModifier>,
+            ModifiedContent<Content9, SectionContainerCellModifier>
+        )>>, Group<TupleView<(
+            ModifiedContent<Content10, SectionContainerCellModifier>,
+            ModifiedContent<Content11, SectionContainerCellModifier>,
+            ModifiedContent<Content12, SectionContainerCellModifier>,
+            ModifiedContent<Content13, SectionContainerCellModifier>
+        )>>)> {
+        let content = content()
+        let moreContent = moreContent()
+
+        self.init(header: header, footer: footer, modifiedContent: {
+            Group {
+                content.value.0
+                    .modifier(SectionContainerCellModifier())
+                content.value.1
+                    .modifier(SectionContainerCellModifier())
+                content.value.2
+                    .modifier(SectionContainerCellModifier())
+                content.value.3
+                    .modifier(SectionContainerCellModifier())
+                content.value.4
+                    .modifier(SectionContainerCellModifier())
+                content.value.5
+                    .modifier(SectionContainerCellModifier())
+                content.value.6
+                    .modifier(SectionContainerCellModifier())
+                content.value.7
+                    .modifier(SectionContainerCellModifier())
+                content.value.8
+                    .modifier(SectionContainerCellModifier())
+                content.value.9
+                    .modifier(SectionContainerCellModifier())
+            }
+            Group {
+                moreContent.value.0
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.1
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.2
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.3
+                    .modifier(SectionContainerCellModifier(last: true))
+            }
+        })
+    }
+
+    init<
+        Content0: View,
+        Content1: View,
+        Content2: View,
+        Content3: View,
+        Content4: View,
+        Content5: View,
+        Content6: View,
+        Content7: View,
+        Content8: View,
+        Content9: View,
+        Content10: View,
+        Content11: View,
+        Content12: View,
+        Content13: View,
+        Content14: View
+    >(@ViewBuilder header: @escaping () -> Header? = { nil },
+      @ViewBuilder footer: @escaping () -> Footer? = { nil },
+      @ViewBuilder content: @escaping ()
+          -> TupleView<(Content0, Content1, Content2, Content3, Content4, Content5, Content6, Content7, Content8,
+                        Content9)>,
+      @ViewBuilder moreContent: @escaping () -> TupleView<(Content10, Content11, Content12, Content13, Content14)>)
+        where Content == TupleView<(Group<TupleView<(
+            ModifiedContent<Content0, SectionContainerCellModifier>,
+            ModifiedContent<Content1, SectionContainerCellModifier>,
+            ModifiedContent<Content2, SectionContainerCellModifier>,
+            ModifiedContent<Content3, SectionContainerCellModifier>,
+            ModifiedContent<Content4, SectionContainerCellModifier>,
+            ModifiedContent<Content5, SectionContainerCellModifier>,
+            ModifiedContent<Content6, SectionContainerCellModifier>,
+            ModifiedContent<Content7, SectionContainerCellModifier>,
+            ModifiedContent<Content8, SectionContainerCellModifier>,
+            ModifiedContent<Content9, SectionContainerCellModifier>
+        )>>, Group<TupleView<(
+            ModifiedContent<Content10, SectionContainerCellModifier>,
+            ModifiedContent<Content11, SectionContainerCellModifier>,
+            ModifiedContent<Content12, SectionContainerCellModifier>,
+            ModifiedContent<Content13, SectionContainerCellModifier>,
+            ModifiedContent<Content14, SectionContainerCellModifier>
+        )>>)> {
+        let content = content()
+        let moreContent = moreContent()
+
+        self.init(header: header, footer: footer, modifiedContent: {
+            Group {
+                content.value.0
+                    .modifier(SectionContainerCellModifier())
+                content.value.1
+                    .modifier(SectionContainerCellModifier())
+                content.value.2
+                    .modifier(SectionContainerCellModifier())
+                content.value.3
+                    .modifier(SectionContainerCellModifier())
+                content.value.4
+                    .modifier(SectionContainerCellModifier())
+                content.value.5
+                    .modifier(SectionContainerCellModifier())
+                content.value.6
+                    .modifier(SectionContainerCellModifier())
+                content.value.7
+                    .modifier(SectionContainerCellModifier())
+                content.value.8
+                    .modifier(SectionContainerCellModifier())
+                content.value.9
+                    .modifier(SectionContainerCellModifier())
+            }
+            Group {
+                moreContent.value.0
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.1
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.2
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.3
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.4
+                    .modifier(SectionContainerCellModifier(last: true))
+            }
+        })
+    }
+
+    init<
+        Content0: View,
+        Content1: View,
+        Content2: View,
+        Content3: View,
+        Content4: View,
+        Content5: View,
+        Content6: View,
+        Content7: View,
+        Content8: View,
+        Content9: View,
+        Content10: View,
+        Content11: View,
+        Content12: View,
+        Content13: View,
+        Content14: View,
+        Content15: View
+    >(@ViewBuilder header: @escaping () -> Header? = { nil },
+      @ViewBuilder footer: @escaping () -> Footer? = { nil },
+      @ViewBuilder content: @escaping ()
+          -> TupleView<(Content0, Content1, Content2, Content3, Content4, Content5, Content6, Content7, Content8,
+                        Content9)>,
+      @ViewBuilder moreContent: @escaping ()
+          -> TupleView<(Content10, Content11, Content12, Content13, Content14, Content15)>)
+        where Content == TupleView<(Group<TupleView<(
+            ModifiedContent<Content0, SectionContainerCellModifier>,
+            ModifiedContent<Content1, SectionContainerCellModifier>,
+            ModifiedContent<Content2, SectionContainerCellModifier>,
+            ModifiedContent<Content3, SectionContainerCellModifier>,
+            ModifiedContent<Content4, SectionContainerCellModifier>,
+            ModifiedContent<Content5, SectionContainerCellModifier>,
+            ModifiedContent<Content6, SectionContainerCellModifier>,
+            ModifiedContent<Content7, SectionContainerCellModifier>,
+            ModifiedContent<Content8, SectionContainerCellModifier>,
+            ModifiedContent<Content9, SectionContainerCellModifier>
+        )>>, Group<TupleView<(
+            ModifiedContent<Content10, SectionContainerCellModifier>,
+            ModifiedContent<Content11, SectionContainerCellModifier>,
+            ModifiedContent<Content12, SectionContainerCellModifier>,
+            ModifiedContent<Content13, SectionContainerCellModifier>,
+            ModifiedContent<Content14, SectionContainerCellModifier>,
+            ModifiedContent<Content15, SectionContainerCellModifier>
+        )>>)> {
+        let content = content()
+        let moreContent = moreContent()
+
+        self.init(header: header, footer: footer, modifiedContent: {
+            Group {
+                content.value.0
+                    .modifier(SectionContainerCellModifier())
+                content.value.1
+                    .modifier(SectionContainerCellModifier())
+                content.value.2
+                    .modifier(SectionContainerCellModifier())
+                content.value.3
+                    .modifier(SectionContainerCellModifier())
+                content.value.4
+                    .modifier(SectionContainerCellModifier())
+                content.value.5
+                    .modifier(SectionContainerCellModifier())
+                content.value.6
+                    .modifier(SectionContainerCellModifier())
+                content.value.7
+                    .modifier(SectionContainerCellModifier())
+                content.value.8
+                    .modifier(SectionContainerCellModifier())
+                content.value.9
+                    .modifier(SectionContainerCellModifier())
+            }
+            Group {
+                moreContent.value.0
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.1
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.2
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.3
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.4
+                    .modifier(SectionContainerCellModifier())
+                moreContent.value.5
+                    .modifier(SectionContainerCellModifier(last: true))
+            }
+        })
+    }
 }
 
 struct SectionContainer_Preview: PreviewProvider {

@@ -160,6 +160,30 @@ extension ModelsR4.MedicationRequest {
         )
     }
 
+    var kbvDosageInstruction: String? {
+        guard let instruction = dosageInstruction?.first else {
+            return nil
+        }
+
+        let hasInstructions = instruction.extension?
+            .first {
+                $0.url.value?.url.absoluteString == ErpPrescription.Key.MedicationRequest.dosageInstructionFlagKey
+            }
+            .flatMap {
+                if let valueX = $0.value,
+                   case Extension.ValueX.boolean(true) = valueX {
+                    return true
+                }
+                return false
+            }
+
+        if hasInstructions == false {
+            return ErpPrescription.Key.MedicationRequest.dosageInstructionDj
+        } else {
+            return instruction.text?.value?.string
+        }
+    }
+
     var substitutionAllowed: Bool {
         if case .boolean(booleanLiteral: true) = substitution?.allowed {
             return true

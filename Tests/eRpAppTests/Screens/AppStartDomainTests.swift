@@ -119,79 +119,97 @@ final class AppStartDomainTests: XCTestCase {
     }
 
     func testRouterSharingDeepLinkRouting() async {
-        let sut = AppStartDomain.router
+        await withDependencies { dependencies in
+            dependencies.schedulers = .immediate
+        } operation: {
+            let sut = AppStartDomain.router
 
-        let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/prescription#")!
+            let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/prescription#")!
 
-        let expected = AppStartDomain.Action.app(action: .subdomains(.main(action: .importTaskByUrl(url))))
-        let expectedActions = [expected]
+            let expected1 = AppStartDomain.Action.app(action: .subdomains(.main(action: .setNavigation(tag: nil))))
+            let expected2 = AppStartDomain.Action.app(action: .setNavigation(.main))
+            let expected3 = AppStartDomain.Action.app(action: .subdomains(.main(action: .importTaskByUrl(url))))
+            let expectedActions = [expected1, expected2, expected3]
 
-        var receivedActions: [AppStartDomain.Action] = []
-        for await action in sut(Endpoint.universalLink(url)).actions {
-            receivedActions.append(action)
+            var receivedActions: [AppStartDomain.Action] = []
+            for await action in sut(Endpoint.universalLink(url)).actions {
+                receivedActions.append(action)
+            }
+
+            // then
+            expect(receivedActions).to(equal(expectedActions))
         }
-
-        // then
-        let sortComparator = AppStartDomainActionComparator.forward
-        expect(receivedActions.sorted(using: sortComparator)).to(equal(expectedActions.sorted(using: sortComparator)))
     }
 
     func testRouterSharingDeepExtAuth() async {
-        let sut = AppStartDomain.router
+        await withDependencies { dependencies in
+            dependencies.schedulers = .immediate
+        } operation: {
+            let sut = AppStartDomain.router
 
-        let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth/")!
+            let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth/")!
 
-        let expected = AppStartDomain.Action.app(action: .subdomains(.main(action: .externalLogin(url))))
-        let expectedActions = [expected]
+            let expected1 = AppStartDomain.Action.app(action: .subdomains(.main(action: .setNavigation(tag: nil))))
+            let expected2 = AppStartDomain.Action.app(action: .setNavigation(.main))
+            let expected3 = AppStartDomain.Action.app(action: .subdomains(.main(action: .externalLogin(url))))
+            let expectedActions = [expected1, expected2, expected3]
 
-        var receivedActions: [AppStartDomain.Action] = []
-        for await action in sut(Endpoint.universalLink(url)).actions {
-            receivedActions.append(action)
+            var receivedActions: [AppStartDomain.Action] = []
+            for await action in sut(Endpoint.universalLink(url)).actions {
+                receivedActions.append(action)
+            }
+
+            expect(receivedActions).to(equal(expectedActions))
         }
-
-        let sortComparator = AppStartDomainActionComparator.forward
-        expect(receivedActions.sorted(using: sortComparator)).to(equal(expectedActions.sorted(using: sortComparator)))
     }
 
     func testRouterRouteToMainScreenLogin() async {
-        // given
-        let sut = AppStartDomain.router
+        await withDependencies { dependencies in
+            dependencies.schedulers = .immediate
+        } operation: {
+            // given
+            let sut = AppStartDomain.router
 
-        let expected1 = AppStartDomain.Action.app(action: .setNavigation(.main))
-        let expected2 = AppStartDomain.Action
-            .app(action: .subdomains(.main(action: .prescriptionList(action: .refresh))))
-        let expectedActions = [expected1, expected2]
+            let expected1 = AppStartDomain.Action.app(action: .subdomains(.main(action: .setNavigation(tag: nil))))
+            let expected2 = AppStartDomain.Action.app(action: .setNavigation(.main))
+            let expected3 = AppStartDomain.Action
+                .app(action: .subdomains(.main(action: .prescriptionList(action: .refresh))))
+            let expectedActions = [expected1, expected2, expected3]
 
-        // when
-        var receivedActions: [AppStartDomain.Action] = []
-        for await action in sut(Endpoint.mainScreen(.login)).actions {
-            receivedActions.append(action)
+            // when
+            var receivedActions: [AppStartDomain.Action] = []
+            for await action in sut(Endpoint.mainScreen(.login)).actions {
+                receivedActions.append(action)
+            }
+
+            // then
+            expect(receivedActions).to(equal(expectedActions))
         }
-
-        // then
-        let sortComparator = AppStartDomainActionComparator.forward
-        expect(receivedActions.sorted(using: sortComparator)).to(equal(expectedActions.sorted(using: sortComparator)))
     }
 
     func testRouterRouteToSettingsUnlockCard() async {
-        // given
-        let sut = AppStartDomain.router
+        await withDependencies { dependencies in
+            dependencies.schedulers = .immediate
+        } operation: {
+            // given
+            let sut = AppStartDomain.router
 
-        let expected1 = AppStartDomain.Action.app(action: .setNavigation(.settings))
-        let expected2 = AppStartDomain.Action.app(action: .subdomains(
-            .settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))
-        ))
-        let expectedActions = [expected1, expected2]
+            let expected1 = AppStartDomain.Action.app(action: .subdomains(.settings(action: .popToRootView)))
+            let expected2 = AppStartDomain.Action.app(action: .setNavigation(.settings))
+            let expected3 = AppStartDomain.Action.app(action: .subdomains(
+                .settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))
+            ))
+            let expectedActions = [expected1, expected2, expected3]
 
-        // when
-        var receivedActions: [AppStartDomain.Action] = []
-        for await action in sut(Endpoint.settings(.unlockCard)).actions {
-            receivedActions.append(action)
+            // when
+            var receivedActions: [AppStartDomain.Action] = []
+            for await action in sut(Endpoint.settings(.unlockCard)).actions {
+                receivedActions.append(action)
+            }
+
+            // then
+            expect(receivedActions).to(equal(expectedActions))
         }
-
-        // then
-        let sortComparator = AppStartDomainActionComparator.forward
-        expect(receivedActions.sorted(using: sortComparator)).to(equal(expectedActions.sorted(using: sortComparator)))
     }
 }
 

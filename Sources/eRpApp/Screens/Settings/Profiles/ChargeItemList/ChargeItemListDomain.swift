@@ -502,6 +502,11 @@ struct ChargeItemListDomain: ReducerProtocol {
                 state.grantConsentState = .error
                 state.destination = .alert(AlertStates.revokeConsentErrorFor(error: error))
                 return .none
+            case .conflict:
+                state.authenticationState = .notAuthenticated
+                state.grantConsentState = .unknown
+                state.bottomBannerState = .authenticate
+                return .none
             }
 
         case .destination(.presented(.idpCardWallAction(.delegate(.close)))):

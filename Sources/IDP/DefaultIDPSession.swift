@@ -433,7 +433,10 @@ public class DefaultIDPSession: IDPSession {
                         guard try jwtContainer.verify(with: document.discKey) == true else {
                             throw IDPError.invalidSignature("kk_apps document signature wrong")
                         }
-                        return try jwtContainer.claims().sorted()
+                        return try jwtContainer
+                            .claims()
+                            .filterGID()
+                            .sorted()
                     }
                     .mapError { $0.asIDPError() }
                     .eraseToAnyPublisher()
@@ -491,12 +494,9 @@ public class DefaultIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
-    // this can simplified after 01.01.2024
-    // swiftlint:disable:next function_body_length
     public func extAuthVerifyAndExchange(
         _ url: URL,
-        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
-        isGidFlow: Bool
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let code = components.queryItemWithName("code")?.value,
@@ -505,17 +505,8 @@ public class DefaultIDPSession: IDPSession {
                 error: IDPError.internal(error: .extAuthVerifyAndExchangeMissingQueryItem)
             ).eraseToAnyPublisher()
         }
-        let kkAppRedirectURI = components.queryItemWithName("kk_app_redirect_uri")?.value
-        guard isGidFlow || kkAppRedirectURI != nil else {
-            return Fail(
-                error: IDPError.internal(error: .extAuthVerifyAndExchangeMissingQueryItem)
-            ).eraseToAnyPublisher()
-        }
 
-        let verify = IDPExtAuthVerify(code: code,
-                                      state: state,
-                                      kkAppRedirectURI: kkAppRedirectURI ?? "",
-                                      isGid: isGidFlow)
+        let verify = IDPExtAuthVerify(code: code, state: state)
 
         // [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
         return extAuthVerify(verify)
@@ -526,21 +517,8 @@ public class DefaultIDPSession: IDPSession {
                     ).eraseToAnyPublisher()
                 }
 
-                let challengeSession: ExtAuthChallengeSession
-                if isGidFlow {
-                    guard let fastTrackChallengeSession = extAuthRequestStorage.getExtAuthRequest(for: token.state)
-                    else {
-                        return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
-                    }
-                    challengeSession = fastTrackChallengeSession
-                } else {
-                    // [REQ:gemSpec_IDP_Sek:A_22301] Match request with existing state
-                    guard let fastTrackChallengeSession = extAuthRequestStorage.getExtAuthRequest(for: state) else {
-                        return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
-                    }
-                    challengeSession = fastTrackChallengeSession
-                    // (Temporary) workaround to transport the information
-                    // whether the token was specifically requested for a PKV and by using Fast Track
+                guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: token.state) else {
+                    return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
                 }
                 let isPkvFastTrackFlowInitiated = challengeSession.entry.identifier.hasSuffix("pkv")
                 // swiftlint:disable:next trailing_closure
@@ -566,7 +544,7 @@ public class DefaultIDPSession: IDPSession {
                     }
                 }
                 .handleEvents(receiveOutput: { _ in
-                    self.extAuthRequestStorage.setExtAuthRequest(nil, for: state)
+                    self.extAuthRequestStorage.setExtAuthRequest(nil, for: token.state)
                 })
                 .eraseToAnyPublisher()
             }

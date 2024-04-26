@@ -22,16 +22,26 @@ import Nimble
 import TestUtils
 import XCTest
 
+@MainActor
 final class DefaultErxTaskRepositoryTests: XCTestCase {
+    var mockMedicationScheduleRepository = MedicationScheduleRepository(
+        create: { _ in },
+        readAll: { [] },
+        read: { _ in nil },
+        delete: { _ in }
+    )
+
     func testGetPagedTasksEvents() {
         let mockLocalDataStore = MockErxLocalDataStore()
         let mockRemoteDataStore = MockErxRemoteDataStore()
+
         let gkvProfilePublisher = Just(Profile(name: "GKV Profile")).setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
         let sut = DefaultErxTaskRepository(
             disk: mockLocalDataStore,
             cloud: mockRemoteDataStore,
+            medicationScheduleRepository: mockMedicationScheduleRepository,
             profile: gkvProfilePublisher
         )
 
@@ -99,6 +109,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         let sut = DefaultErxTaskRepository(
             disk: mockLocalDataStore,
             cloud: mockRemoteDataStore,
+            medicationScheduleRepository: mockMedicationScheduleRepository,
             profile: gkvProfilePublisher
         )
         let expectedCallOrder = [
@@ -181,6 +192,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         let sut = DefaultErxTaskRepository(
             disk: mockLocalDataStore,
             cloud: mockRemoteDataStore,
+            medicationScheduleRepository: mockMedicationScheduleRepository,
             profile: pkvProfilePublisher
         )
         let expectedCallOrder = [
@@ -283,6 +295,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         let sut = DefaultErxTaskRepository(
             disk: mockLocalDataStore,
             cloud: mockRemoteDataStore,
+            medicationScheduleRepository: mockMedicationScheduleRepository,
             profile: pkvProfilePublisher
         )
 
@@ -307,6 +320,96 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         let result = try awaitPublisher(sut.countAllUnreadCommunicationsAndChargeItems(for: .all))
         expect(result) == 2
         expect(actualCallOrder) == expectedCallOrder
+    }
+
+    func testDeleteTask() async throws {
+        let mockLocalDataStore = MockErxLocalDataStore()
+        let mockRemoteDataStore = MockErxRemoteDataStore()
+        var actualCallOrder = [String]()
+        let profilePublisher = Just(Profile(name: "Profile"))
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+
+        let asyncCallCounter = TestActor()
+        let sut = DefaultErxTaskRepository(
+            disk: mockLocalDataStore,
+            cloud: mockRemoteDataStore,
+            medicationScheduleRepository: MedicationScheduleRepository(
+                create: { _ in },
+                readAll: { [] },
+                read: { _ in nil },
+                delete: { _ in await asyncCallCounter.increaseCount() }
+            ),
+            profile: profilePublisher
+        )
+
+        mockLocalDataStore.deleteTasksClosure = { _ in
+            actualCallOrder.append("deleteLocalTasksCalled")
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        mockRemoteDataStore.deleteTasksClosure = { _ in
+            actualCallOrder.append("deleteRemoteTasksCalled")
+            return Just(true).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+        }
+        let expectedCallOrder = [
+            "deleteRemoteTasksCalled",
+            "deleteLocalTasksCalled",
+        ]
+
+        let result = try awaitPublisher(sut.delete(erxTasks: [Fixtures.erxTaskWithSchedule]))
+        expect(result).to(beTrue())
+        let actualDeleteCalls = await asyncCallCounter.actualCallCount()
+        expect(actualDeleteCalls).to(equal(1))
+        expect(actualCallOrder) == expectedCallOrder
+    }
+
+    func testDeleteScannedTask() async throws {
+        let mockLocalDataStore = MockErxLocalDataStore()
+        let mockRemoteDataStore = MockErxRemoteDataStore()
+        var actualCallOrder = [String]()
+        let profilePublisher = Just(Profile(name: "Profile"))
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+
+        let asyncCallCounter = TestActor()
+        let sut = DefaultErxTaskRepository(
+            disk: mockLocalDataStore,
+            cloud: mockRemoteDataStore,
+            medicationScheduleRepository: MedicationScheduleRepository(
+                create: { _ in },
+                readAll: { [] },
+                read: { _ in nil },
+                delete: { _ in await asyncCallCounter.increaseCount() }
+            ),
+            profile: profilePublisher
+        )
+        mockMedicationScheduleRepository.delete = { _ in }
+
+        mockLocalDataStore.deleteTasksClosure = { _ in
+            actualCallOrder.append("deleteLocalTasksCalled")
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        let expectedCallOrder = [
+            "deleteLocalTasksCalled",
+        ]
+
+        let result = try awaitPublisher(sut.delete(erxTasks: [Fixtures.scannedTaskWithMedicationSchedule]))
+        expect(result).to(beTrue())
+        expect(actualCallOrder) == expectedCallOrder
+        let actualDeleteCalls = await asyncCallCounter.actualCallCount()
+        expect(actualDeleteCalls).to(equal(1))
+    }
+
+    actor TestActor {
+        private var callCount = 0
+
+        func increaseCount() {
+            callCount += 1
+        }
+
+        func actualCallCount() -> Int {
+            callCount
+        }
     }
 }
 
@@ -378,6 +481,12 @@ extension DefaultErxTaskRepositoryTests {
         static let erxTask7 = ErxTask(identifier: "task7", status: .ready)
         static let erxTask8 = ErxTask(identifier: "task8", status: .ready)
         static let erxTask9 = ErxTask(identifier: "task9", status: .ready)
+        static let scannedTaskWithMedicationSchedule = ErxTask(
+            identifier: "scannedTask",
+            status: .ready,
+            source: .scanner,
+            medicationSchedule: medicationSchedule
+        )
 
         static let erxTaskPageA: PagedContent<[ErxTask]> = PagedContent(content: [
             erxTask1,
@@ -428,6 +537,22 @@ extension DefaultErxTaskRepositoryTests {
             taskId: "task id 14",
             fhirData: Data(),
             isRead: false
+        )
+
+        static let erxTaskWithSchedule = ErxTask(
+            identifier: "task1",
+            status: .ready,
+            medicationSchedule: medicationSchedule
+        )
+
+        static let medicationSchedule: MedicationSchedule = .init(
+            start: Date(),
+            end: Date(),
+            title: "",
+            dosageInstructions: "",
+            taskId: "",
+            isActive: true,
+            entries: []
         )
     }
 }

@@ -28,7 +28,10 @@ extension ErxTaskEntity {
     @NSManaged public var accessCode: String?
     @NSManaged public var author: String?
     @NSManaged public var authoredOn: String?
+    @NSManaged public var bvg: Bool
+    @NSManaged public var coPaymentStatus: String?
     @NSManaged public var dispenseValidityEnd: String?
+    @NSManaged public var dosageInstructions: String?
     @NSManaged public var expiresOn: String?
     @NSManaged public var flowType: String?
     @NSManaged public var form: String?
@@ -41,10 +44,6 @@ extension ErxTaskEntity {
     @NSManaged public var source: String?
     @NSManaged public var status: String?
     @NSManaged public var substitutionAllowed: Bool
-    @NSManaged public var coPaymentStatus: String?
-    @NSManaged public var bvg: Bool
-    @NSManaged public var dosageInstructions: String?
-    @NSManaged public var auditEvents: NSSet?
     @NSManaged public var avsTransaction: NSSet?
     @NSManaged public var communications: NSSet?
     @NSManaged public var medication: ErxTaskMedicationEntity?
@@ -56,6 +55,7 @@ extension ErxTaskEntity {
     @NSManaged public var profile: ProfileEntity?
     @NSManaged public var accidentInfo: ErxTaskAccidentInfoEntity?
     @NSManaged public var quantity: ErxTaskQuantityEntity?
+    @NSManaged public var medicationSchedule: MedicationScheduleEntity?
 }
 
 // MARK: Generated accessors for avsTransaction

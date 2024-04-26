@@ -243,8 +243,7 @@ public class IDPSessionMock: IDPSession {
     public var extAuthVerifyAndExchange_Publisher: AnyPublisher<IDPToken, IDPError>!
     public var extAuthVerifyAndExchange_ReceivedArguments: (
         URL,
-        (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
-        Bool
+        (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     )?
     public var extAuthVerifyAndExchange_CallsCount = 0
     public var extAuthVerifyAndExchange_Called: Bool {
@@ -253,11 +252,10 @@ public class IDPSessionMock: IDPSession {
 
     public func extAuthVerifyAndExchange(
         _ url: URL,
-        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
-        isGidFlow: Bool
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
         extAuthVerifyAndExchange_CallsCount += 1
-        extAuthVerifyAndExchange_ReceivedArguments = (url, idTokenValidator, isGidFlow)
+        extAuthVerifyAndExchange_ReceivedArguments = (url, idTokenValidator)
         return extAuthVerifyAndExchange_Publisher
     }
 }

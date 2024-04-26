@@ -50,7 +50,7 @@ final class RealAVSClientTests: XCTestCase {
         let sut = RealAVSClient()
 
         // then
-        await sut.send(data: Data(), to: endPoint)
+        sut.send(data: Data(), to: endPoint)
             .test(
                 expectations: { httpResponse in
                     expect(httpResponse.status) == .ok
@@ -73,7 +73,7 @@ final class RealAVSClientTests: XCTestCase {
         let sut = RealAVSClient()
 
         // then
-        await sut.send(data: Data(), to: endPoint)
+        sut.send(data: Data(), to: endPoint)
             .test(
                 failure: { error in
                     expect(error) == .network(error: HTTPClientError.httpError(URLError(.init(rawValue: status))))

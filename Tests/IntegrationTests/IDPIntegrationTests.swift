@@ -411,166 +411,6 @@ final class IDPIntegrationTests: XCTestCase {
         expect(success) == true
     }
 
-    func testExternalAuthenticationLogin() throws {
-        guard let idpsekServer = environment.idpsekURLServer else {
-            throw XCTSkip("Skip test because no IDP Server was provided")
-        }
-
-        let storage = MemStorage()
-        let configuration = DefaultIDPSession.Configuration(
-            clientId: "eRezeptApp",
-            redirectURI: environment.appConfiguration.redirectUri,
-            extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
-            discoveryURL: environment.appConfiguration.idp,
-            scopes: environment.appConfiguration.idpDefaultScopes
-        )
-        let httpClient = DefaultHTTPClient(
-            urlSessionConfiguration: .ephemeral,
-            interceptors: [
-                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.idpAdditionalHeader),
-                LoggingInterceptor(log: .body),
-            ]
-        )
-
-        let trustStoreSession = MockTrustStoreSession()
-        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
-        let session = DefaultIDPSession(
-            config: configuration,
-            storage: storage,
-            schedulers: schedulers,
-            httpClient: httpClient,
-            trustStoreSession: trustStoreSession,
-            extAuthRequestStorage: PersistentExtAuthRequestStorage()
-        )
-
-        // Step: Download available KKs for external authentication (a.k.a. fasttrack), select the first named
-        // "*Gematik*"
-
-        var success = false
-        var selectedEntry: KKAppDirectory.Entry?
-
-        session.loadDirectoryKKApps()
-            .test(
-                timeout: 10,
-                failure: { error in
-                    fail("\(error)")
-                },
-                expectations: { list in
-                    success = true
-                    selectedEntry = list.apps.first { entry in
-                        entry.name.localizedCaseInsensitiveContains("Gematik")
-                    }
-                }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
-            )
-
-        expect(success) == true
-        expect(selectedEntry).toNot(beNil())
-
-        guard let selectedEntry = selectedEntry else {
-            return
-        }
-
-        // MARK: - Step 1: Authentication Request
-
-        var redirectURL: URL?
-        success = false
-
-        session.startExtAuth(entry: selectedEntry)
-            .test(failure: { error in
-                      fail("\(error)")
-                  },
-                  expectations: { list in
-
-                      // MARK: - Step 2: Authentication Request Response
-
-                      success = true
-                      redirectURL = list
-                  }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
-
-        expect(selectedEntry).toNot(beNil())
-
-        // MARK: - Step 3: Universal Link - mocked by calling Step 4 - 7 within this test
-
-        guard let redirectURL2 = redirectURL,
-              var components = URLComponents(url: redirectURL2, resolvingAgainstBaseURL: true) else {
-            return
-        }
-
-        let idpsekURL = idpsekServer.url
-        components.scheme = idpsekURL.scheme
-        components.host = idpsekURL.host
-        components.port = idpsekURL.port
-        components.path = idpsekURL.path
-
-        // MARK: - STEP 4 - 7
-
-        expect(components.url).toNot(beNil())
-        guard let urlStep4 = components.url else {
-            fail("Step 4 URL Creation failed")
-            return
-        }
-        let request = URLRequest(url: urlStep4)
-
-        var urlStep7RedirectVal: URL?
-        httpClient
-            .send(
-                request: request,
-                interceptors: [
-                    LoggingInterceptor(log: .url),
-                    AdditionalHeaderInterceptor(additionalHeader: idpsekServer.header),
-                ]
-            ) { _, redirect, completionHandler in
-                urlStep7RedirectVal = redirect.url
-                completionHandler(nil) // Handle redirect
-            }
-            .test(
-                timeout: 10,
-                failure: { error in
-                    fail("\(error)")
-                },
-                expectations: { result in
-                    print(result)
-                },
-                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
-            )
-
-        expect(urlStep7RedirectVal).toNot(beNil())
-        guard let urlStep7Redirect = urlStep7RedirectVal else {
-            return
-        }
-
-        // MARK: - STEP 8
-
-        guard var components = URLComponents(url: urlStep7Redirect, resolvingAgainstBaseURL: true) else {
-            fail("Step 8 URL parsing failed")
-            return
-        }
-        let redirectHost = components.host ?? "" + components.path
-        components.queryItems?.append(URLQueryItem(name: "kk_app_redirect_uri", value: redirectHost))
-        components.host = "das-e-rezept-fuer-deutschland.de"
-        components.path = "/extauth"
-
-        guard let universalLink = components.url else {
-            fail("Step 8 URL Creation failed")
-            return
-        }
-
-        // MARK: - STEP 9
-
-        var token: IDPToken?
-        session.extAuthVerifyAndExchange(universalLink, idTokenValidator: { _ in .success(true) }, isGidFlow: false)
-            .test(
-                failure: { error in
-                    fail("\(error)")
-                },
-                expectations: { response in
-                    token = response
-                },
-                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
-            )
-        expect(token).toNot(beNil())
-    }
-
     func testExternalAuthenticationLoginGid() throws {
         guard let idpsekServer = environment.idpsekURLServer else {
             throw XCTSkip("Skip test because no IDP Server was provided")
@@ -690,9 +530,9 @@ final class IDPIntegrationTests: XCTestCase {
                     LoggingInterceptor(log: .url),
                     AdditionalHeaderInterceptor(additionalHeader: idpsekServer.header),
                 ]
-            ) { _, redirect, completionHandler in
+            ) { _, redirect in
                 urlStep7RedirectVal = redirect.url
-                completionHandler(nil) // Handle redirect
+                return nil
             }
             .test(
                 timeout: 10,
@@ -717,7 +557,7 @@ final class IDPIntegrationTests: XCTestCase {
         // MARK: - STEP 9
 
         var token: IDPToken?
-        session.extAuthVerifyAndExchange(universalLink, idTokenValidator: { _ in .success(true) }, isGidFlow: true)
+        session.extAuthVerifyAndExchange(universalLink, idTokenValidator: { _ in .success(true) })
             .test(
                 failure: { error in
                     fail("\(error)")

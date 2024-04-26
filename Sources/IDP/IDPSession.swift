@@ -114,8 +114,7 @@ public protocol IDPSession {
     ///   - idTokenValidator: Closure that validates the passed IDToken for the selected profile
     func extAuthVerifyAndExchange(
         _ url: URL,
-        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
-        isGidFlow: Bool
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError>
 }
 

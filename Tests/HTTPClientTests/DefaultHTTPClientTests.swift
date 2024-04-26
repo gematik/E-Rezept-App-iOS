@@ -152,7 +152,7 @@ final class DefaultHTTPClientTests: XCTestCase {
         expect(counter) == 2
     }
 
-    func testSendRequestAndHandleRedirect() {
+    func testSendRequestAndHandleRedirect() async {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
         guard let url = Bundle(for: Self.self)
@@ -183,8 +183,8 @@ final class DefaultHTTPClientTests: XCTestCase {
             return fixture(filePath: url, headers: ["Content-Type": "html/text"])
         }
 
-        let redirectHandler: RedirectHandler = { _, _, completion in
-            completion(nil)
+        let redirectHandler: RedirectHandler = { _, _ in
+            nil
         }
 
         DefaultHTTPClient(urlSessionConfiguration: .default)

@@ -324,6 +324,163 @@ extension SectionContainer where Header == EmptyView {
             moreContent: moreContent
         )
     }
+
+    init<
+        Content0: View,
+        Content1: View,
+        Content2: View,
+        Content3: View,
+        Content4: View,
+        Content5: View,
+        Content6: View,
+        Content7: View,
+        Content8: View,
+        Content9: View,
+        Content10: View,
+        Content11: View,
+        Content12: View,
+        Content13: View
+    >(
+        @ViewBuilder footer: @escaping () -> Footer,
+        @ViewBuilder content: @escaping ()
+            -> TupleView<(Content0, Content1, Content2, Content3, Content4, Content5, Content6, Content7, Content8,
+                          Content9)>,
+        @ViewBuilder moreContent: @escaping () -> TupleView<(Content10, Content11, Content12, Content13)>
+    )
+        where Content == TupleView<(
+            Group<TupleView<(
+                ModifiedContent<Content0, SectionContainerCellModifier>,
+                ModifiedContent<Content1, SectionContainerCellModifier>,
+                ModifiedContent<Content2, SectionContainerCellModifier>,
+                ModifiedContent<Content3, SectionContainerCellModifier>,
+                ModifiedContent<Content4, SectionContainerCellModifier>,
+                ModifiedContent<Content5, SectionContainerCellModifier>,
+                ModifiedContent<Content6, SectionContainerCellModifier>,
+                ModifiedContent<Content7, SectionContainerCellModifier>,
+                ModifiedContent<Content8, SectionContainerCellModifier>,
+                ModifiedContent<Content9, SectionContainerCellModifier>
+            )>>,
+            Group<TupleView<(
+                ModifiedContent<Content10, SectionContainerCellModifier>,
+                ModifiedContent<Content11, SectionContainerCellModifier>,
+                ModifiedContent<Content12, SectionContainerCellModifier>,
+                ModifiedContent<Content13, SectionContainerCellModifier>
+            )>>
+        )> {
+        self.init(
+            header: { nil as EmptyView? },
+            footer: footer,
+            content: content,
+            moreContent: moreContent
+        )
+    }
+
+    init<
+        Content0: View,
+        Content1: View,
+        Content2: View,
+        Content3: View,
+        Content4: View,
+        Content5: View,
+        Content6: View,
+        Content7: View,
+        Content8: View,
+        Content9: View,
+        Content10: View,
+        Content11: View,
+        Content12: View,
+        Content13: View,
+        Content14: View
+    >(
+        @ViewBuilder footer: @escaping () -> Footer,
+        @ViewBuilder content: @escaping ()
+            -> TupleView<(Content0, Content1, Content2, Content3, Content4, Content5, Content6, Content7, Content8,
+                          Content9)>,
+        @ViewBuilder moreContent: @escaping () -> TupleView<(Content10, Content11, Content12, Content13, Content14)>
+    )
+        where Content == TupleView<(
+            Group<TupleView<(
+                ModifiedContent<Content0, SectionContainerCellModifier>,
+                ModifiedContent<Content1, SectionContainerCellModifier>,
+                ModifiedContent<Content2, SectionContainerCellModifier>,
+                ModifiedContent<Content3, SectionContainerCellModifier>,
+                ModifiedContent<Content4, SectionContainerCellModifier>,
+                ModifiedContent<Content5, SectionContainerCellModifier>,
+                ModifiedContent<Content6, SectionContainerCellModifier>,
+                ModifiedContent<Content7, SectionContainerCellModifier>,
+                ModifiedContent<Content8, SectionContainerCellModifier>,
+                ModifiedContent<Content9, SectionContainerCellModifier>
+            )>>,
+            Group<TupleView<(
+                ModifiedContent<Content10, SectionContainerCellModifier>,
+                ModifiedContent<Content11, SectionContainerCellModifier>,
+                ModifiedContent<Content12, SectionContainerCellModifier>,
+                ModifiedContent<Content13, SectionContainerCellModifier>,
+                ModifiedContent<Content14, SectionContainerCellModifier>
+            )>>
+        )> {
+        self.init(
+            header: { nil as EmptyView? },
+            footer: footer,
+            content: content,
+            moreContent: moreContent
+        )
+    }
+
+    init<
+        Content0: View,
+        Content1: View,
+        Content2: View,
+        Content3: View,
+        Content4: View,
+        Content5: View,
+        Content6: View,
+        Content7: View,
+        Content8: View,
+        Content9: View,
+        Content10: View,
+        Content11: View,
+        Content12: View,
+        Content13: View,
+        Content14: View,
+        Content15: View
+    >(
+        @ViewBuilder footer: @escaping () -> Footer,
+        @ViewBuilder content: @escaping ()
+            -> TupleView<(Content0, Content1, Content2, Content3, Content4, Content5, Content6, Content7, Content8,
+                          Content9)>,
+        @ViewBuilder moreContent: @escaping ()
+            -> TupleView<(Content10, Content11, Content12, Content13, Content14, Content15)>
+    )
+        where Content == TupleView<(
+            Group<TupleView<(
+                ModifiedContent<Content0, SectionContainerCellModifier>,
+                ModifiedContent<Content1, SectionContainerCellModifier>,
+                ModifiedContent<Content2, SectionContainerCellModifier>,
+                ModifiedContent<Content3, SectionContainerCellModifier>,
+                ModifiedContent<Content4, SectionContainerCellModifier>,
+                ModifiedContent<Content5, SectionContainerCellModifier>,
+                ModifiedContent<Content6, SectionContainerCellModifier>,
+                ModifiedContent<Content7, SectionContainerCellModifier>,
+                ModifiedContent<Content8, SectionContainerCellModifier>,
+                ModifiedContent<Content9, SectionContainerCellModifier>
+            )>>,
+            Group<TupleView<(
+                ModifiedContent<Content10, SectionContainerCellModifier>,
+                ModifiedContent<Content11, SectionContainerCellModifier>,
+                ModifiedContent<Content12, SectionContainerCellModifier>,
+                ModifiedContent<Content13, SectionContainerCellModifier>,
+                ModifiedContent<Content14, SectionContainerCellModifier>,
+                ModifiedContent<Content15, SectionContainerCellModifier>
+            )>>
+        )> {
+        self.init(
+            header: { nil as EmptyView? },
+            footer: footer,
+            content: content,
+            moreContent: moreContent
+        )
+    }
 }
 
 public

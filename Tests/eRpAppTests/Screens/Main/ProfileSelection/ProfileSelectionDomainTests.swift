@@ -66,8 +66,6 @@ final class ProfileSelectionDomainTests: XCTestCase {
             state.selectedProfileId = Fixtures.profileA.id
         }
         expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beTrue())
-
-        await store.receive(.close)
     }
 
     func testUpdatedProfilesUpdateTheState() async {
@@ -116,8 +114,6 @@ final class ProfileSelectionDomainTests: XCTestCase {
         await store.send(.editProfiles)
 
         expect(self.mockRouting.routeToReceivedEndpoint).to(equal(Endpoint.settings(nil)))
-
-        await store.receive(.close)
     }
 
     func testLoadingFailure() async {

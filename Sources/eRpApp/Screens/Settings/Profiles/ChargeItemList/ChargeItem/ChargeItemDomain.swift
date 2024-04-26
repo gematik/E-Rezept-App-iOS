@@ -146,10 +146,10 @@ struct ChargeItemDomain: ReducerProtocol {
             ))
             return .none
         case .routeToChargeItemList:
-            return .run { @MainActor [profileId = state.profileId] _ in
+            return .run { [profileId = state.profileId] _ in
 
                 await dismiss()
-                router.routeTo(.settings(.editProfile(.chargeItemListFor(profileId))))
+                await router.routeTo(.settings(.editProfile(.chargeItemListFor(profileId))))
             }
         case .destination(.presented(.alert(.deleteConfirm))):
             state.destination = nil

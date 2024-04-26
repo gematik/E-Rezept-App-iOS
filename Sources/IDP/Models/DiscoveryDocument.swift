@@ -133,6 +133,7 @@ public struct DiscoveryDocument: Codable {
         Endpoint(url: payload.authenticationPair.correct(), cert: signingCert)
     }
 
+    @available(*, deprecated, renamed: "directoryKKAppsgId", message: "Not allowed anymore by 01.01.2024")
     public var directoryKKApps: IDPEndpoint? {
         guard let url = payload.kkAppList else {
             return nil

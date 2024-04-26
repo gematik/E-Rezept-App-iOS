@@ -34,6 +34,8 @@ extension ChargeItemConsentService {
         case unexpectedGrantConsentResponse
         // sourcery: errorCode = "05"
         case unexpected
+        // sourcery: errorCode = "06"
+        case unexpectedRevokeConsentResponse
 
         // TOOD: assuming this translates to Alert Title
         var errorDescription: String? {
@@ -58,6 +60,7 @@ extension ChargeItemConsentService {
             case let .loginHandler(loginHandlerError): return loginHandlerError.errorDescription
             case let .erxRepository(erxRepositoryError): return erxRepositoryError.errorDescription
             case .unexpectedGrantConsentResponse,
+                 .unexpectedRevokeConsentResponse,
                  .unexpected: return nil // rely on CodedError mechanisms for error presentation
             }
         }
@@ -84,6 +87,7 @@ extension ChargeItemConsentService {
             case let .loginHandler(loginHandlerError): return loginHandlerError.recoverySuggestion
             case let .erxRepository(erxRepositoryError): return erxRepositoryError.recoverySuggestion
             case .unexpectedGrantConsentResponse,
+                 .unexpectedRevokeConsentResponse,
                  .unexpected: return nil // rely on CodedError mechanisms for error presentation
             }
         }

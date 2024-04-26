@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -459,12 +459,11 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
-	func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool) -> AnyPublisher<IDPToken, IDPError> {
+	func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.extAuthVerifyAndExchange(
 				url,
-				idTokenValidator: idTokenValidator,
-				isGidFlow: isGidFlow
+				idTokenValidator: idTokenValidator
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()

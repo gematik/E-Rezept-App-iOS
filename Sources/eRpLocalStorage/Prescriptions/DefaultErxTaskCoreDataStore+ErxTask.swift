@@ -112,35 +112,75 @@ extension DefaultErxTaskCoreDataStore {
             if updateProfileLastAuthenticated {
                 profileEntity?.lastAuthenticated = Date()
             }
-
             for task in tasks {
-                let taskEntity = ErxTaskEntity.from(task: task, in: moc)
+                let schedule = self?.fetchMedicationSchedule(for: task.identifier)
+                schedule?.erxTask = nil
+            }
+            return true
+        }
+        .flatMap { [weak self] _ -> AnyPublisher<Bool, LocalStoreError> in
+            guard let self = self else {
+                return Just(false).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            }
+            return coreDataCrudable.save(mergePolicy: .mergeByPropertyObjectTrump) { [weak self] moc -> Bool in
+                guard let self = self else { return false }
+                let profileEntity = self.fetchProfile(in: moc)
 
-                let request: NSFetchRequest<ErxTaskMedicationDispenseEntity> = ErxTaskMedicationDispenseEntity
-                    .fetchRequest()
-                request.predicate = NSPredicate(
-                    format: "%K == %@",
-                    #keyPath(ErxTaskMedicationDispenseEntity.taskId),
-                    task.identifier
-                )
-
-                _ = try? request.execute().map {
-                    taskEntity.addToMedicationDispenses($0)
+                if updateProfileLastAuthenticated {
+                    profileEntity?.lastAuthenticated = Date()
                 }
 
-                if let profileEntity = profileEntity {
-                    if profileEntity.insuranceId == nil || task.patient?.insuranceId == nil {
-                        taskEntity.profile = profileEntity
-                    } else if profileEntity.insuranceId == task.patient?.insuranceId {
-                        taskEntity.profile = profileEntity
-                    } else {
-                        assertionFailure(
-                            "This should never happen and indicates a serious problem which should be investigated!"
-                        )
+                for task in tasks {
+                    let taskEntity = ErxTaskEntity.from(task: task, in: moc)
+
+                    let request: NSFetchRequest<ErxTaskMedicationDispenseEntity> = ErxTaskMedicationDispenseEntity
+                        .fetchRequest()
+                    request.predicate = NSPredicate(
+                        format: "%K == %@",
+                        #keyPath(ErxTaskMedicationDispenseEntity.taskId),
+                        task.identifier
+                    )
+
+                    taskEntity.medicationSchedule = self.fetchMedicationSchedule(for: task.identifier)
+
+                    _ = try? request.execute().map {
+                        taskEntity.addToMedicationDispenses($0)
+                    }
+
+                    if let profileEntity = profileEntity {
+                        if profileEntity.insuranceId == nil || task.patient?.insuranceId == nil {
+                            taskEntity.profile = profileEntity
+                        } else if profileEntity.insuranceId == task.patient?.insuranceId {
+                            taskEntity.profile = profileEntity
+                        } else {
+                            assertionFailure(
+                                "This should never happen and indicates a serious problem which should be investigated!"
+                            )
+                        }
                     }
                 }
+                return true
             }
         }
+        .eraseToAnyPublisher()
+    }
+
+    func fetchMedicationSchedule(for taskId: String) -> MedicationScheduleEntity? {
+        let request: NSFetchRequest<MedicationScheduleEntity> = MedicationScheduleEntity.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(MedicationScheduleEntity.taskId),
+            taskId
+        )
+
+        guard let result = try? request.execute() else {
+            return nil
+        }
+        if result.count > 1 {
+            assertionFailure("there should only be one \(MedicationScheduleEntity.self) per task id.")
+        }
+
+        return result.first
     }
 
     /// Deletes a sequence of tasks from the store

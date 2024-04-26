@@ -60,12 +60,17 @@ extension PrescriptionDetailDomain {
             case emergencyServiceFeeInfo
             // sourcery: AnalyticsScreen = prescriptionDetail_toast
             case toast(ToastState<Action.Toast>)
+            // sourcery: AnalyticsScreen = prescriptionDetail_setupMedicationSchedule
+            case medicationReminder(MedicationReminderSetupDomain.State)
+            // sourcery: AnalyticsScreen = prescriptionDetail_dosageInstructionsInfo
+            case dosageInstructionsInfo(DosageInstructionsState)
         }
 
         enum Action: Equatable {
             case chargeItem(action: ChargeItemDomain.Action)
             case medication(action: MedicationDomain.Action)
             case medicationOverview(action: MedicationOverviewDomain.Action)
+            case medicationReminder(action: MedicationReminderSetupDomain.Action)
 
             case patient(None)
             case practitioner(None)
@@ -80,6 +85,7 @@ extension PrescriptionDetailDomain {
             case errorInfo(None)
             case coPaymentInfo(None)
             case emergencyServiceFeeInfo(None)
+            case dosageInstructionsInfo(None)
 
             case alert(Alert)
             case toast(Toast)
@@ -120,6 +126,13 @@ extension PrescriptionDetailDomain {
             ) {
                 MedicationOverviewDomain()
             }
+
+            Scope(
+                state: /State.medicationReminder,
+                action: /Action.medicationReminder
+            ) {
+                MedicationReminderSetupDomain()
+            }
         }
 
         struct CoPaymentState: Equatable {
@@ -137,6 +150,32 @@ extension PrescriptionDetailDomain {
                 case .artificialInsemination:
                     title = L10n.prscDtlDrCoPaymentPartialTitle.text
                     description = L10n.prscDtlDrCoPaymentPartialDescription.text
+                }
+            }
+        }
+
+        struct DosageInstructionsState: Equatable {
+            let title: String
+            let description: String
+
+            init(dosageInstructions: String?) {
+                title = L10n.prscDtlTxtDosageInstructions.text
+
+                guard let dosageInstructions = dosageInstructions, !dosageInstructions.isEmpty else {
+                    description = L10n.prscDtlTxtMissingDosageInstructions.text
+                    return
+                }
+                let instructions = MedicationReminderParser.parseFromDosageInstructions(dosageInstructions)
+
+                if !instructions.isEmpty {
+                    var description = L10n.prscDtlTxtDosageInstructionsFormatted.text + "\n\n"
+                    description += instructions.map(\.description).joined(separator: "\n")
+                    self.description = description
+                } else if dosageInstructions
+                    .localizedCaseInsensitiveContains(ErpPrescription.Key.MedicationRequest.dosageInstructionDj) {
+                    description = L10n.prscDtlTxtDosageInstructionsDf.text
+                } else {
+                    description = L10n.prscDtlTxtDosageInstructionsNote.text
                 }
             }
         }

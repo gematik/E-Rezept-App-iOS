@@ -33,6 +33,7 @@ class PersistentExtAuthRequestStorage: ExtAuthRequestStorage {
 
     func reset() {
         extAuthRequests = [:]
+        _pendingExtAuthRequests.send(Array(extAuthRequests.values))
     }
 
     private var _pendingExtAuthRequests = CurrentValueSubject<[ExtAuthChallengeSession], Never>([])

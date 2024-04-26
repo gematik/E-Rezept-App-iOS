@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -282,6 +282,27 @@ extension MedicationDomain.Action {
     }
 }
 extension MedicationOverviewDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension MedicationReminderListDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension MedicationReminderOneDaySummaryDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension MedicationReminderSetupDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
             default: break

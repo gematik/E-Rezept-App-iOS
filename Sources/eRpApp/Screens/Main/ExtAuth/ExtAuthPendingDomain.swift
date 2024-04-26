@@ -179,8 +179,6 @@ struct ExtAuthPendingDomain: ReducerProtocol {
             let environment = environment
 
             let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
-            // gID only includes state and code, fasttrack uses kk_app_redirect_uri
-            let isGidFlow = components?.queryItemWithName("kk_app_redirect_uri") == nil
 
             if let entry = state.extAuthState.entry {
                 state.extAuthState = .extAuthReceived(entry)
@@ -193,8 +191,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
                         environment.idpSession
                             .extAuthVerifyAndExchange(
                                 url,
-                                idTokenValidator: idTokenValidator.validate(idToken:),
-                                isGidFlow: isGidFlow
+                                idTokenValidator: idTokenValidator.validate(idToken:)
                             )
                             .mapError { error in
                                 if case let .unspecified(error) = error,

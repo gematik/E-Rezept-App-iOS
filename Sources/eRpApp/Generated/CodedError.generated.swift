@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -263,6 +263,8 @@ extension ChargeItemConsentService.Error: CodedError {
                 return "i-03604"
             case .unexpected:
                 return "i-03605"
+            case .unexpectedRevokeConsentResponse:
+                return "i-03606"
         }
     }
     var erpErrorCodeList: [String] {
@@ -400,6 +402,8 @@ extension ChargeItemListDomainServiceRevokeResult.Error: CodedError {
                 return "i-03303"
             case .unexpected:
                 return "i-03304"
+            case .chargeItemConsentService:
+                return "i-03305"
         }
     }
     var erpErrorCodeList: [String] {
@@ -409,6 +413,8 @@ extension ChargeItemListDomainServiceRevokeResult.Error: CodedError {
             case let .loginHandler(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .chargeItemConsentService(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
@@ -1153,6 +1159,36 @@ extension MatrixCodeDomain.LoadingImageError: CodedError {
     var erpErrorCodeList: [String] {
         switch self {
             default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension MedicationReminderListDomain.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .generic:
+                return "i-03601"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .generic:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension MedicationReminderSetupDomain.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .generic:
+                return "i-03601"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .generic:
                 return [erpErrorCode]
         }
     }

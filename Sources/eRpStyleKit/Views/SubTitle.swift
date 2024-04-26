@@ -143,10 +143,12 @@ public struct SectionContainerSubTitleStyle: SubTitleStyle {
 public struct DetailNavigationSubTitleStyle: SubTitleStyle {
     let showSeparator: Bool
     let minChevronSpacing: CGFloat
+    let stateText: String?
 
-    init(showSeparator: Bool, minChevronSpacing: CGFloat? = nil) {
+    init(showSeparator: Bool, minChevronSpacing: CGFloat? = nil, stateText: String? = nil) {
         self.showSeparator = showSeparator
         self.minChevronSpacing = minChevronSpacing ?? 16
+        self.stateText = stateText
     }
 
     public func makeBody(configuration: SubTitleConfiguration) -> some View {
@@ -170,6 +172,12 @@ public struct DetailNavigationSubTitleStyle: SubTitleStyle {
             }
 
             Spacer(minLength: minChevronSpacing)
+
+            if let text = stateText {
+                Text(text)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .padding(.horizontal)
+            }
 
             Image(systemName: SFSymbolName.chevronForward)
                 .foregroundColor(Color(.tertiaryLabel))
@@ -323,9 +331,14 @@ extension SubTitleStyle where Self == DetailNavigationSubTitleStyle {
     /// the ``View/subTitleStyle(.navigation(showSeparator:))`` modifier.
     public static func navigation(
         showSeparator: Bool = true,
-        minChevronSpacing: CGFloat? = nil
+        minChevronSpacing: CGFloat? = nil,
+        stateText: String? = nil
     ) -> DetailNavigationSubTitleStyle {
-        DetailNavigationSubTitleStyle(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing)
+        DetailNavigationSubTitleStyle(
+            showSeparator: showSeparator,
+            minChevronSpacing: minChevronSpacing,
+            stateText: stateText
+        )
     }
 }
 
@@ -421,6 +434,7 @@ struct SubTitle_Preview: PreviewProvider {
             SubTitle(title: "abc", description: "def", details: "ghi")
 
             SubTitle(title: "abc", description: "def", details: "ghi")
+                .subTitleStyle(.navigation(stateText: "Ein"))
         }
     }
 }

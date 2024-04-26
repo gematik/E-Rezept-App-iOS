@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -368,6 +368,8 @@ extension MainDomain.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .redeem(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case let .medicationReminder(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .welcomeDrawer:
                 return destination.tag.analyticsName
             case .grantChargeItemConsentDrawer:
@@ -406,6 +408,42 @@ extension MedicationOverviewDomain.State {
         switch destination {
             case let .medication(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension MedicationReminderListDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case let .medicationReminder(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension MedicationReminderOneDaySummaryDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
+extension MedicationReminderSetupDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case .repetitionDetails:
+                return destination.tag.analyticsName
+            case .dosageInstructionsInfo:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -608,6 +646,10 @@ extension PrescriptionDetailDomain.State {
                 return destination.tag.analyticsName
             case .toast:
                 return destination.tag.analyticsName
+            case let .medicationReminder(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .dosageInstructionsInfo:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -727,6 +769,8 @@ extension SettingsDomain.State {
             case let .editProfile(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .newProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .medicationReminderList(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -1007,6 +1051,8 @@ extension MainDomain.Destinations.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .redeem(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case let .medicationReminder(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .welcomeDrawer:
                 return destination.tag.analyticsName
             case .grantChargeItemConsentDrawer:
@@ -1035,6 +1081,32 @@ extension MedicationOverviewDomain.Destinations.State {
         switch destination {
             case let .medication(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension MedicationReminderListDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .medicationReminder(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension MedicationReminderSetupDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case .repetitionDetails:
+                return destination.tag.analyticsName
+            case .dosageInstructionsInfo:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -1189,6 +1261,10 @@ extension PrescriptionDetailDomain.Destinations.State {
                 return destination.tag.analyticsName
             case .toast:
                 return destination.tag.analyticsName
+            case let .medicationReminder(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .dosageInstructionsInfo:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -1274,6 +1350,8 @@ extension SettingsDomain.Destinations.State {
             case let .editProfile(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .newProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .medicationReminderList(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -1504,6 +1582,8 @@ extension MainDomain.Destinations.State.Tag {
                 return Analytics.Screens.prescriptionDetail.name
             case .redeem: 
                 return Analytics.Screens.redeem_methodSelection.name
+            case .medicationReminder: 
+                return Analytics.Screens.main_medicationReminder.name
             case .welcomeDrawer: 
                 return Analytics.Screens.main_welcomeDrawer.name
             case .grantChargeItemConsentDrawer: 
@@ -1528,6 +1608,28 @@ extension MedicationOverviewDomain.Destinations.State.Tag {
         switch self {
             case .medication: 
                 return Analytics.Screens.prescriptionDetail_medication.name
+        }
+    }
+}
+extension MedicationReminderListDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .medicationReminder: 
+                return "medicationReminder"
+            case .alert: 
+                return "alert"
+        }
+    }
+}
+extension MedicationReminderSetupDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .alert: 
+                return Analytics.Screens.alert.name
+            case .repetitionDetails: 
+                return Analytics.Screens.medicationReminder_repetitionDetails.name
+            case .dosageInstructionsInfo: 
+                return Analytics.Screens.medicationReminder_dosageInstruction.name
         }
     }
 }
@@ -1664,6 +1766,10 @@ extension PrescriptionDetailDomain.Destinations.State.Tag {
                 return Analytics.Screens.prescriptionDetail_emergencyServiceFeeInfo.name
             case .toast: 
                 return Analytics.Screens.prescriptionDetail_toast.name
+            case .medicationReminder: 
+                return Analytics.Screens.prescriptionDetail_setupMedicationSchedule.name
+            case .dosageInstructionsInfo: 
+                return Analytics.Screens.prescriptionDetail_dosageInstructionsInfo.name
         }
     }
 }
@@ -1740,6 +1846,8 @@ extension SettingsDomain.Destinations.State.Tag {
                 return Analytics.Screens.profile.name
             case .newProfile: 
                 return Analytics.Screens.settings_newProfile.name
+            case .medicationReminderList: 
+                return Analytics.Screens.settings_medicationReminderList.name
         }
     }
 }

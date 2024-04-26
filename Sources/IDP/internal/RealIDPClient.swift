@@ -132,8 +132,8 @@ class RealIDPClient: IDPClient {
         }
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        return httpClient.send(request: request, interceptors: []) { _, _, completion in
-            completion(nil) // Don't follow the redirect, but handle it
+        return httpClient.send(request: request, interceptors: []) { _, _ in
+            nil // Don't follow the redirect, but handle it
         }
         .tryMap { body, _, status -> IDPChallenge in
             if status.isSuccessful {
@@ -171,8 +171,8 @@ class RealIDPClient: IDPClient {
 
         let redirect = clientConfig.redirectURI.absoluteString
 
-        return httpClient.send(request: request, interceptors: []) { _, _, completion in
-            completion(nil) // Don't follow the redirect, but handle it
+        return httpClient.send(request: request, interceptors: []) { _, _ in
+            nil // Don't follow the redirect, but handle it
         }
         .tryMap { body, httpResponse, status -> IDPExchangeToken in
             if status.isRedirect {
@@ -217,8 +217,8 @@ class RealIDPClient: IDPClient {
             "ssotoken": ssotoken,
         ])
 
-        return httpClient.send(request: request, interceptors: []) { _, _, completion in
-            completion(nil) // Don't follow the redirect, but handle it
+        return httpClient.send(request: request, interceptors: []) { _, _ in
+            nil // Don't follow the redirect, but handle it
         }
         .tryMap { data, httpResponse, status -> IDPExchangeToken in
             if status.isRedirect {
@@ -368,8 +368,8 @@ class RealIDPClient: IDPClient {
         request
             .setFormUrlEncodedBody(parameters: ["encrypted_signed_authentication_data": encryptedSignedChallengeData])
 
-        return httpClient.send(request: request, interceptors: []) { _, _, completion in
-            completion(nil) // Don't follow the redirect, but handle it
+        return httpClient.send(request: request, interceptors: []) { _, _ in
+            nil // Don't follow the redirect, but handle it
         }
         .tryMap { [redirect = clientConfig.redirectURI.absoluteString] data, httpResponse, status -> IDPExchangeToken in
             if status.isRedirect {
@@ -393,7 +393,7 @@ class RealIDPClient: IDPClient {
     }
 
     func loadDirectoryKKApps(using document: DiscoveryDocument) -> AnyPublisher<IDPDirectoryKKApps, IDPError> {
-        guard let url = document.directoryKKAppsgId?.url ?? document.directoryKKApps?.url else {
+        guard let url = document.directoryKKAppsgId?.url else {
             return Fail(error: Self.missingFeature).eraseToAnyPublisher()
         }
         // load complete kk_apps directory
@@ -420,27 +420,14 @@ class RealIDPClient: IDPClient {
             .eraseToAnyPublisher()
     }
 
-    // will be simplified when fasttrack is no longer available
-    // swiftlint:disable:next function_body_length
     func startExtAuth(_ app: IDPExtAuth, using document: DiscoveryDocument) -> AnyPublisher<URL, IDPError> {
-        let endpoint: URL?
-        let appIdParameterName: String
-        switch app.authType {
-        case .fasttrack:
-            appIdParameterName = "kk_app_id"
-            endpoint = document.thirdPartyAuth?.url
-        case .gid:
-            appIdParameterName = "idp_iss"
-            endpoint = document.federationAuth?.url
-        }
-
-        guard let url = endpoint else {
+        guard let url = document.federationAuth?.url else {
             return Fail(error: Self.missingFeature).eraseToAnyPublisher()
         }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         let queryItems = [
-            URLQueryItem(name: appIdParameterName, value: app.kkAppId.urlPercentEscapedString()),
+            URLQueryItem(name: "idp_iss", value: app.kkAppId.urlPercentEscapedString()),
             URLQueryItem(name: "response_type", value: "code"),
             URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
             URLQueryItem(name: "state", value: app.state),
@@ -459,8 +446,8 @@ class RealIDPClient: IDPClient {
         }
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
 
-        return httpClient.send(request: request, interceptors: []) { _, _, completion in
-            completion(nil) // Don't follow the redirect, but handle it
+        return httpClient.send(request: request, interceptors: []) { _, _ in
+            nil // Don't follow the redirect, but handle it
         }
         .tryMap { data, httpResponse, status -> URL in
             if status.isRedirect {
@@ -482,25 +469,22 @@ class RealIDPClient: IDPClient {
 
     func extAuthVerify(_ verify: IDPExtAuthVerify,
                        using document: DiscoveryDocument) -> AnyPublisher<IDPExchangeToken, IDPError> {
-        guard let url = verify.isGid ? document.federationAuth?.url : document.thirdPartyAuth?.url else {
+        guard let url = document.federationAuth?.url else {
             return Fail(error: Self.missingFeature).eraseToAnyPublisher()
         }
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
         request.httpMethod = "POST"
 
-        var formUrlParameters = [
+        let formUrlParameters = [
             "state": verify.state,
             "code": verify.code,
         ]
-        if !verify.isGid {
-            formUrlParameters["kk_app_redirect_uri"] = verify.kkAppRedirectURI
-        }
 
         request.setFormUrlEncodedHeader()
         request.setFormUrlEncodedBody(parameters: formUrlParameters)
 
-        return httpClient.send(request: request, interceptors: []) { _, _, completion in
-            completion(nil) // Don't follow the redirect, but handle it
+        return httpClient.send(request: request, interceptors: []) { _, _ in
+            nil // Don't follow the redirect, but handle it
         }
         .tryMap { [redirect = clientConfig.extAuthRedirectURI.absoluteString] body, httpResponse, status
             -> IDPExchangeToken in

@@ -147,8 +147,7 @@ class DemoIDPSession: IDPSession {
 
     func extAuthVerifyAndExchange(
         _: URL,
-        idTokenValidator _: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>,
-        isGidFlow _: Bool
+        idTokenValidator _: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
         Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()

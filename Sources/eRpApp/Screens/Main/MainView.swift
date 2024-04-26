@@ -391,6 +391,29 @@ private extension MainView {
                     }
                 )
                 .accessibility(hidden: true)
+
+            Rectangle()
+                .frame(width: 0, height: 0, alignment: .center)
+                .smallSheet(
+                    isPresented: Binding<Bool>(
+                        get: { viewStore.destinationTag == .medicationReminder },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
+                            }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
+                        IfLetStore(
+                            store.scope(state: \.$destination, action: MainDomain.Action.destination),
+                            state: /MainDomain.Destinations.State.medicationReminder,
+                            action: MainDomain.Destinations.Action.medicationReminder(action:),
+                            then: MedicationReminderOneDaySummaryView.init(store:)
+                        )
+                    }
+                )
+                .accessibility(hidden: true)
         }
     }
 }

@@ -41,6 +41,7 @@ extension IDPSession {}
 extension FeedbackReceiver {}
 extension LoginHandler {}
 extension MatrixCodeGenerator {}
+extension MedicationScheduleStore {}
 extension ModelMigrating {}
 extension NFCHealthCardPasswordController {}
 extension NFCSignatureProvider {}

@@ -18,6 +18,7 @@
 
 import eRpKit
 import Foundation
+import IdentifiedCollections
 
 struct Lens<Whole, Part> {
     let get: (Whole) -> Part
@@ -78,6 +79,39 @@ extension ErxTask {
                         source: oldErxTask.source,
                         medication: newMedication,
                         medicationRequest: oldErxTask.medicationRequest,
+                        medicationSchedule: oldErxTask.medicationSchedule,
+                        patient: oldErxTask.patient,
+                        practitioner: oldErxTask.practitioner,
+                        organization: oldErxTask.organization,
+                        communications: oldErxTask.communications,
+                        medicationDispenses: oldErxTask.medicationDispenses
+                    )
+                }
+            }
+        )
+
+        static let medicationSchedule = Lens<ErxTask, MedicationSchedule?>(
+            get: { $0.medicationSchedule },
+            set: { newMedicationSchedule in
+                { oldErxTask in
+                    ErxTask(
+                        identifier: oldErxTask.identifier,
+                        status: oldErxTask.status,
+                        flowType: oldErxTask.flowType,
+                        accessCode: oldErxTask.accessCode,
+                        fullUrl: oldErxTask.fullUrl,
+                        authoredOn: oldErxTask.authoredOn,
+                        lastModified: oldErxTask.lastModified,
+                        expiresOn: oldErxTask.expiresOn,
+                        acceptedUntil: oldErxTask.acceptedUntil,
+                        redeemedOn: oldErxTask.redeemedOn,
+                        avsTransactions: oldErxTask.avsTransactions,
+                        author: oldErxTask.author,
+                        prescriptionId: oldErxTask.prescriptionId,
+                        source: oldErxTask.source,
+                        medication: oldErxTask.medication,
+                        medicationRequest: oldErxTask.medicationRequest,
+                        medicationSchedule: newMedicationSchedule,
                         patient: oldErxTask.patient,
                         practitioner: oldErxTask.practitioner,
                         organization: oldErxTask.organization,
@@ -109,6 +143,28 @@ extension ErxMedication {
                         packaging: oldErxMedication.packaging,
                         manufacturingInstructions: oldErxMedication.manufacturingInstructions,
                         ingredients: oldErxMedication.ingredients
+                    )
+                }
+            }
+        )
+    }
+}
+
+extension MedicationSchedule {
+    enum lens {
+        static let entries = Lens<MedicationSchedule, IdentifiedArrayOf<MedicationSchedule.Entry>>(
+            get: { $0.entries },
+            set: { newEntries in
+                { oldValue in
+                    MedicationSchedule(
+                        id: oldValue.id,
+                        start: oldValue.start,
+                        end: oldValue.end,
+                        title: oldValue.title,
+                        dosageInstructions: oldValue.dosageInstructions,
+                        taskId: oldValue.taskId,
+                        isActive: oldValue.isActive,
+                        entries: newEntries
                     )
                 }
             }

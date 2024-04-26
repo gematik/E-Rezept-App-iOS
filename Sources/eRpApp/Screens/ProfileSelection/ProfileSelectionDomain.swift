@@ -50,7 +50,6 @@ struct ProfileSelectionDomain: ReducerProtocol {
         case loadReceived(Result<[UserProfile], UserProfileServiceError>)
         case selectedProfileReceived(UUID)
         case selectProfile(UserProfile)
-        case close
 
         case editProfiles
 
@@ -99,11 +98,12 @@ struct ProfileSelectionDomain: ReducerProtocol {
         case let .selectProfile(profile):
             state.selectedProfileId = profile.id
             userProfileService.set(selectedProfileId: profile.id)
-            return .send(.close)
+            return .none
         case .editProfiles:
-            router.routeTo(.settings(nil))
-            return .send(.close)
-        case .destination, .close:
+            return .run { _ in
+                await router.routeTo(.settings(nil))
+            }
+        case .destination:
             return .none
         }
     }

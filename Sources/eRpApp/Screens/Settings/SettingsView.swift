@@ -55,11 +55,11 @@ struct SettingsView: View {
 
                     DemoModeSectionView(store: store)
 
+                    PersonalSettingsView(store: store)
+
                     HealthCardSectionView(store: store)
 
                     TrackerSectionView(store: store)
-
-                    SecuritySectionViewTest(store: store)
 
                     SettingsContactInfoView()
 
@@ -128,6 +128,20 @@ struct SettingsView: View {
                 )
                 .hidden()
                 .accessibility(hidden: true)
+
+                NavigationLinkStore(
+                    store.scope(
+                        state: \.$destination,
+                        action: SettingsDomain.Action.destination
+                    ),
+                    state: /SettingsDomain.Destinations.State.medicationReminderList,
+                    action: SettingsDomain.Destinations.Action.medicationReminderListAction,
+                    onTap: { viewStore.send(.setNavigation(tag: .medicationReminderList)) },
+                    destination: MedicationReminderListView.init(store:),
+                    label: {}
+                )
+                .hidden()
+                .accessibility(hidden: true)
             }
             .accentColor(Colors.primary600)
             .background(Color(.secondarySystemBackground).ignoresSafeArea())
@@ -181,32 +195,6 @@ extension SettingsView {
                             Label(L10n.stgTxtDemoMode, systemImage: SFSymbolName.wandAndStars)
                     }
                     .accessibilityIdentifier(A18n.settings.demo.stgTxtDemoMode)
-                }
-            )
-        }
-    }
-
-    private struct SecuritySectionViewTest: View {
-        let store: SettingsDomain.Store
-
-        @ObservedObject var viewStore: ViewStore<SettingsDomain.State, SettingsDomain.Action>
-
-        init(store: SettingsDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store) { $0 }
-        }
-
-        var body: some View {
-            SingleElementSectionContainer(
-                header: { Text(L10n.stgTxtHeaderPersonalSettings) },
-                content: {
-                    Button(action: {
-                        viewStore.send(.setNavigation(tag: .appSecurity))
-                    }, label: {
-                        Label(L10n.stgBtnDeviceSecurity, systemImage: SFSymbolName.iPhonelocked)
-                    })
-                        .accessibility(identifier: A11y.settings.security.stgBtnDeviceSecurity)
-                        .buttonStyle(.navigation)
                 }
             )
         }
@@ -401,6 +389,48 @@ extension SettingsView {
             }
             .accentColor(Colors.primary600)
             .navigationViewStyle(StackNavigationViewStyle())
+        }
+    }
+
+    private struct PersonalSettingsView: View {
+        let store: SettingsDomain.Store
+
+        @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store, observe: ViewState.init)
+        }
+
+        struct ViewState: Equatable {
+            let destinationTag: SettingsDomain.Destinations.State.Tag?
+
+            init(state: SettingsDomain.State) {
+                destinationTag = state.destination?.tag
+            }
+        }
+
+        var body: some View {
+            SectionContainer(
+                header: { Text(L10n.stgTxtHeaderPersonalSettings) },
+                content: {
+                    Button {
+                        viewStore.send(.setNavigation(tag: .medicationReminderList))
+                    } label: {
+                        Label(L10n.stgBtnMedicationReminder, systemImage: SFSymbolName.alarm)
+                    }
+                    .accessibility(identifier: A11y.settings.security.stgBtnMedicationReminder)
+                    .buttonStyle(.navigation)
+
+                    Button(action: {
+                        viewStore.send(.setNavigation(tag: .appSecurity))
+                    }, label: {
+                        Label(L10n.stgBtnDeviceSecurity, systemImage: SFSymbolName.iPhonelocked)
+                    })
+                        .accessibility(identifier: A11y.settings.security.stgBtnDeviceSecurity)
+                        .buttonStyle(.navigation)
+                }
+            )
         }
     }
 }

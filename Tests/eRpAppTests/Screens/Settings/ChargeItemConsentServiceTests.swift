@@ -98,6 +98,54 @@ final class ChargeItemConsentServiceTests: XCTestCase {
         expect(self.mockErxTaskRepository.grantConsentCalled) == true
         expect(self.mockErxTaskRepository.grantConsentCallsCount) == 1
     }
+
+    func testRevokeConsent_happyPath() async throws {
+        // given
+        let sut = ChargeItemConsentService(userSessionProvider: mockUserSessionProvider)
+
+        mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
+        mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsConsentService)
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockErxTaskRepository.revokeConsentReturnValue = Just(true)
+            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+
+        // when
+        let result = try await sut.revokeConsent(Self.testProfileId)
+
+        // then
+        expect(result) == ChargeItemConsentService.RevokeResult.success
+        expect(self.mockLoginHandler.isAuthenticatedCalled) == true
+        expect(self.mockLoginHandler.isAuthenticatedCallsCount) == 1
+        expect(self.mockErxTaskRepository.revokeConsentCalled) == true
+        expect(self.mockErxTaskRepository.revokeConsentCallsCount) == 1
+    }
+
+    func testRevokeConsent_unexpectedResponse() async {
+        // given
+        let sut = ChargeItemConsentService(userSessionProvider: mockUserSessionProvider)
+
+        mockLoginHandler.isAuthenticatedReturnValue = Just(.success(true)).eraseToAnyPublisher()
+        mockUserSession.profileReturnValue = Just(Self.Fixtures.profileForChargeItemsConsentService)
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockErxTaskRepository.revokeConsentReturnValue = Just(false)
+            .setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+
+        // when
+        var runSuccess = false
+        do {
+            _ = try await sut.revokeConsent(Self.testProfileId)
+        } catch {
+            expect { throw error }.to(throwError(ChargeItemConsentService.Error.unexpectedRevokeConsentResponse))
+            runSuccess = true
+        }
+
+        // then
+        expect(runSuccess) == true
+        expect(self.mockLoginHandler.isAuthenticatedCalled) == true
+        expect(self.mockLoginHandler.isAuthenticatedCallsCount) == 1
+        expect(self.mockErxTaskRepository.revokeConsentCalled) == true
+        expect(self.mockErxTaskRepository.revokeConsentCallsCount) == 1
+    }
 }
 
 extension ChargeItemConsentServiceTests {

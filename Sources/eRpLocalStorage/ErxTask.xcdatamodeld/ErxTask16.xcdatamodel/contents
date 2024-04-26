@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23B92" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AVSTransactionEntity" representedClassName="AVSTransactionEntity" syncable="YES">
         <attribute name="groupedRedeemID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="groupedRedeemTime" attributeType="Date" usesScalarValueType="NO"/>
@@ -80,6 +80,7 @@
         <relationship name="communications" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxTaskCommunicationEntity" inverseName="task" inverseEntity="ErxTaskCommunicationEntity"/>
         <relationship name="medication" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskMedicationEntity" inverseName="task" inverseEntity="ErxTaskMedicationEntity"/>
         <relationship name="medicationDispenses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxTaskMedicationDispenseEntity" inverseName="task" inverseEntity="ErxTaskMedicationDispenseEntity"/>
+        <relationship name="medicationSchedule" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MedicationScheduleEntity" inverseName="erxTask" inverseEntity="MedicationScheduleEntity"/>
         <relationship name="multiplePrescription" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskMultiplePrescriptionEntity" inverseName="task" inverseEntity="ErxTaskMultiplePrescriptionEntity"/>
         <relationship name="organization" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskOrganizationEntity" inverseName="task" inverseEntity="ErxTaskOrganizationEntity"/>
         <relationship name="patient" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskPatientEntity" inverseName="task" inverseEntity="ErxTaskPatientEntity"/>
@@ -187,6 +188,37 @@
         <relationship name="ingredient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskIngredientEntity" inverseName="strengthRatio" inverseEntity="ErxTaskIngredientEntity"/>
         <relationship name="medication" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationEntity" inverseName="amountRatio" inverseEntity="ErxTaskMedicationEntity"/>
         <relationship name="numerator" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="numeratorRatio" inverseEntity="ErxTaskQuantityEntity"/>
+    </entity>
+    <entity name="MedicationScheduleEntity" representedClassName="MedicationScheduleEntity" syncable="YES">
+        <attribute name="body" optional="YES" attributeType="String"/>
+        <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="taskId" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="entries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MedicationScheduleEntryEntity" inverseName="medicationSchedule" inverseEntity="MedicationScheduleEntryEntity"/>
+        <relationship name="erxTask" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="medicationSchedule" inverseEntity="ErxTaskEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="taskId"/>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="MedicationScheduleEntryEntity" representedClassName="MedicationScheduleEntryEntity" syncable="YES">
+        <attribute name="amount" optional="YES" attributeType="String"/>
+        <attribute name="dosageForm" optional="YES" attributeType="String"/>
+        <attribute name="hourComponent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="minuteComponent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="medicationSchedule" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MedicationScheduleEntity" inverseName="entries" inverseEntity="MedicationScheduleEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="PharmacyEntity" representedClassName="PharmacyEntity" syncable="YES">
         <attribute name="city" optional="YES" attributeType="String"/>

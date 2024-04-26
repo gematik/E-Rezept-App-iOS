@@ -175,6 +175,10 @@ typealias AnalyticsEvent = String
     struct Main_editProfilePicture: AnalyticsScreen {
       let name = "main:editProfilePicture"
     }
+    static let main_medicationReminder = Main_medicationReminder()
+    struct Main_medicationReminder: AnalyticsScreen {
+      let name = "main:medicationReminder"
+    }
     static let main_prescriptionArchive = Main_prescriptionArchive()
     struct Main_prescriptionArchive: AnalyticsScreen {
       let name = "main:prescriptionArchive"
@@ -186,6 +190,14 @@ typealias AnalyticsEvent = String
     static let main_welcomeDrawer = Main_welcomeDrawer()
     struct Main_welcomeDrawer: AnalyticsScreen {
       let name = "main:welcomeDrawer"
+    }
+    static let medicationReminder_dosageInstruction = MedicationReminder_dosageInstruction()
+    struct MedicationReminder_dosageInstruction: AnalyticsScreen {
+      let name = "medicationReminder:dosageInstructionsInfo"
+    }
+    static let medicationReminder_repetitionDetails = MedicationReminder_repetitionDetails()
+    struct MedicationReminder_repetitionDetails: AnalyticsScreen {
+      let name = "medicationReminder:repetitionDetails"
     }
     static let mlKit = MlKit()
     struct MlKit: AnalyticsScreen {
@@ -235,6 +247,10 @@ typealias AnalyticsEvent = String
     struct PrescriptionDetail_directAssignmentInfo: AnalyticsScreen {
       let name = "prescriptionDetail:directAssignmentInfo"
     }
+    static let prescriptionDetail_dosageInstructionsInfo = PrescriptionDetail_dosageInstructionsInfo()
+    struct PrescriptionDetail_dosageInstructionsInfo: AnalyticsScreen {
+      let name = "prescriptionDetail:dosageInstructionsInfo"
+    }
     static let prescriptionDetail_emergencyServiceFeeInfo = PrescriptionDetail_emergencyServiceFeeInfo()
     struct PrescriptionDetail_emergencyServiceFeeInfo: AnalyticsScreen {
       let name = "prescriptionDetail:emergencyServiceFeeInfo"
@@ -274,6 +290,10 @@ typealias AnalyticsEvent = String
     static let prescriptionDetail_scannedPrescriptionInfo = PrescriptionDetail_scannedPrescriptionInfo()
     struct PrescriptionDetail_scannedPrescriptionInfo: AnalyticsScreen {
       let name = "prescriptionDetail:scannedPrescriptionInfo"
+    }
+    static let prescriptionDetail_setupMedicationSchedule = PrescriptionDetail_setupMedicationSchedule()
+    struct PrescriptionDetail_setupMedicationSchedule: AnalyticsScreen {
+      let name = "prescriptionDetail:setupMedicationSchedule"
     }
     static let prescriptionDetail_sharePrescription = PrescriptionDetail_sharePrescription()
     struct PrescriptionDetail_sharePrescription: AnalyticsScreen {
@@ -382,6 +402,10 @@ typealias AnalyticsEvent = String
     static let settings_legalNotice = Settings_legalNotice()
     struct Settings_legalNotice: AnalyticsScreen {
       let name = "settings:legalNotice"
+    }
+    static let settings_medicationReminderList = Settings_medicationReminderList()
+    struct Settings_medicationReminderList: AnalyticsScreen {
+      let name = "settings:medicationReminderList"
     }
     static let settings_newProfile = Settings_newProfile()
     struct Settings_newProfile: AnalyticsScreen {

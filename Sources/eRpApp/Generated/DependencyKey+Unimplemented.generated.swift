@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -295,8 +295,8 @@ struct UnimplementedIDPSession: IDPSession {
     func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
         fatalError("startExtAuth(entry:) has not been implemented")
     }
-    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>, isGidFlow: Bool) -> AnyPublisher<IDPToken, IDPError> {
-        fatalError("extAuthVerifyAndExchange(_:idTokenValidator:isGidFlow:) has not been implemented")
+    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
+        fatalError("extAuthVerifyAndExchange(_:idTokenValidator:) has not been implemented")
     }
     func verifyAndExchange(signedChallenge: SignedChallenge, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         fatalError("verifyAndExchange(signedChallenge:idTokenValidator:) has not been implemented")
@@ -319,6 +319,25 @@ struct UnimplementedMatrixCodeGenerator: MatrixCodeGenerator {
     }
     func matrixCodePublisher(for string: String, with size: CGSize, scale: CGFloat = UIScreen.main.scale, orientation: UIImage.Orientation = .up) -> AnyPublisher<UIImage, Swift.Error> {
         fatalError("matrixCodePublisher(for:with:scale:orientation:) has not been implemented")
+    }
+}
+struct UnimplementedMedicationScheduleStore: MedicationScheduleStore {
+    init() {}
+
+    func fetch(by taskID: ErxTask.ID) throws -> MedicationSchedule? {
+        fatalError("fetch(by:) has not been implemented")
+    }
+    func fetch(byEntryId entryId: UUID, dateProvider: @escaping () -> Date) throws -> MedicationScheduleFetchByEntryIdResponse {
+        fatalError("fetch(byEntryId:dateProvider:) has not been implemented")
+    }
+    func fetchAll() throws -> [MedicationSchedule] {
+        fatalError("fetchAll has not been implemented")
+    }
+    func save(medicationSchedules: [MedicationSchedule]) throws -> [MedicationSchedule] {
+        fatalError("save(medicationSchedules:) has not been implemented")
+    }
+    func delete(medicationSchedules: [MedicationSchedule]) throws -> Void {
+        fatalError("delete(medicationSchedules:) has not been implemented")
     }
 }
 struct UnimplementedModelMigrating: ModelMigrating {

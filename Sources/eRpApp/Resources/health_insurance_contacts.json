@@ -683,7 +683,7 @@
   },
   {
     "name": "BKK ZF & Partner",
-    "healthCardAndPinPhone": "+493381306652512",
+    "healthCardAndPinPhone": "+49754139080",
     "healthCardAndPinMail": "",
     "healthCardAndPinUrl": "",
     "pinUrl": "",
@@ -785,11 +785,11 @@
     "healthCardAndPinPhone": "+4951191110911",
     "healthCardAndPinMail": "info@energie-bkk.de",
     "healthCardAndPinUrl": "https://www.energie-bkk.de/das-erezept-8979.html",
-    "pinUrl": "",
+    "pinUrl": "https://www.energie-bkk.de/das-erezept-8979.html",
     "subjectCardAndPinMail": "",
     "bodyCardAndPinMail": "",
-    "subjectPinMail": "",
-    "bodyPinMail": ""
+    "subjectPinMail": "#PIN# Bestellung einer PIN zur Gesundheitskarte",
+    "bodyPinMail": "Sehr geehrte Damen und Herren,\nich möchte die E-Rezept-App der gematik nutzen.\n\nName:\nVorname:\nVersichertennummer/ KVNR:\n\nIch benötige zu der Gesundheitskarte  die PIN. Bitte senden Sie mir Informationen zu, wie ich die PIN erhalten kann.\n\nMit freundlichen Grüßen\nIhr Versicherter/ Ihre Versicherte"
   },
   {
     "name": "Ernst & Young BKK",
