@@ -39,4 +39,18 @@ struct PharmacySearchScreen: Screen {
 
         return PharmacyDetailsScreen(app: app)
     }
+
+    @discardableResult
+    func tapMapSearch(file _: StaticString = #file, line _: UInt = #line) -> PharmacySearchMapScreen<Self> {
+        app.maps.firstMatch.tap()
+        return .init(app: app, previous: self)
+    }
+
+    @discardableResult
+    func tapCancleButton(file: StaticString = #file, line: UInt = #line) -> RedeemSelectionScreen {
+        print(app.debugDescription)
+        button(within: app.navigationBars, by: "Abbrechen", file: file, line: line).tap()
+
+        return RedeemSelectionScreen(app: app)
+    }
 }

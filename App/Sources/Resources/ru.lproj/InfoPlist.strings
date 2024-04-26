@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "E-Rezept";
+"NFCReaderUsageDescription" = "Позволяет идентифицировать и аутентифицировать себя с помощью электронной медицинской карты.";
+"NSCameraUsageDescription" = "Камера нужна для записи рецептов или фотографирования.";
+"NSFaceIDUsageDescription" = "E-Rezept требует FaceID для защиты приложения от несанкционированного доступа.";

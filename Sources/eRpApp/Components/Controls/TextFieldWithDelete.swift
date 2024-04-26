@@ -35,28 +35,29 @@ struct TextFieldWithDelete: View {
 
     var body: some View {
         HStack {
-            TextField(title,
-                      text: $text)
-                .padding()
-                .font(Font.body)
-                .foregroundColor(Color(.label))
-                .accessibility(label: Text(accessibilityLabelKey))
-                .overlay(
-                    HStack {
-                        if text.isEmpty == false {
-                            Button(action: {
-                                text = ""
-                            }, label: {
-                                Image(systemName: SFSymbolName.crossIconFill)
-                                    .foregroundColor(Color(.tertiaryLabel))
-                            })
-                                .accessibility(identifier: A11y.controls.textfieldwithdelete.ctlBtnTextfieldDelete)
+            TextField(text: $text) {
+                Text(title, bundle: .module)
+            }
+            .padding()
+            .font(Font.body)
+            .foregroundColor(Color(.label))
+            .accessibility(label: Text(accessibilityLabelKey, bundle: .module))
+            .overlay(
+                HStack {
+                    if text.isEmpty == false {
+                        Button(action: {
+                            text = ""
+                        }, label: {
+                            Image(systemName: SFSymbolName.crossIconFill)
                                 .foregroundColor(Color(.tertiaryLabel))
-                                .padding()
-                                .buttonStyle(PlainButtonStyle())
-                        }
-                    }, alignment: .trailing
-                )
+                        })
+                            .accessibility(identifier: A11y.controls.textfieldwithdelete.ctlBtnTextfieldDelete)
+                            .foregroundColor(Color(.tertiaryLabel))
+                            .padding()
+                            .buttonStyle(PlainButtonStyle())
+                    }
+                }, alignment: .trailing
+            )
         }
     }
 }

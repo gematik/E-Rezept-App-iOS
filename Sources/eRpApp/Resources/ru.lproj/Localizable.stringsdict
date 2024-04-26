@@ -92,12 +92,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
 			<key>one</key>
-			<string></string>
+			<string>%lu рецепт</string>
 			<key>other</key>
-			<string></string>
-			<key>zero</key>
-			<string></string>
+			<string>%lu рецепты</string>
 		</dict>
 	</dict>
 	<key>pha_redeem_alert_title_failure</key>

@@ -216,7 +216,7 @@ extension ErxTaskScannerView.ScannerOverlay {
         var body: some View {
             VStack {
                 HStack {
-                    Text(localizedTextKey)
+                    Text(localizedTextKey, bundle: .module)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.white)
                         .accessibility(identifier: A11y.scanner.scnTxtScanState)

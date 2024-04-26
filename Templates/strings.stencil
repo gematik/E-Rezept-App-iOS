@@ -67,7 +67,7 @@ import SwiftUI
     
   internal extension StringAsset {
     init(_ string: String, arguments: [CVarArg]? = nil) {
-        self.init(string, arguments: arguments, bundle: Bundle(for: BundleToken.self))
+        self.init(string, arguments: arguments, bundle: Bundle.module)
     }
   }
   // swiftlint:enable function_parameter_count identifier_name line_length type_body_length

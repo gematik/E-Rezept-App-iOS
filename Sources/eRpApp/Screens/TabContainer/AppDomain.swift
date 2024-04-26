@@ -30,7 +30,7 @@ struct AppDomain: ReducerProtocol {
             var main: MainDomain.State
             var pharmacySearch: PharmacySearchDomain.State
             var orders: OrdersDomain.State
-            var settingsState: SettingsDomain.State
+            var settings: SettingsDomain.State
         }
 
         enum Action: Equatable {
@@ -63,7 +63,7 @@ struct AppDomain: ReducerProtocol {
             }
 
             Scope(
-                state: \.settingsState,
+                state: \.settings,
                 action: /Action.settings(action:)
             ) {
                 SettingsDomain()
@@ -83,7 +83,7 @@ struct AppDomain: ReducerProtocol {
             // sourcery: AnalyticsState = subdomains.orders
             // sourcery: AnalyticsScreen = orders
             case orders
-            // sourcery: AnalyticsState = subdomains.settingsState
+            // sourcery: AnalyticsState = subdomains.settings
             // sourcery: AnalyticsScreen = settings
             case settings
         }
@@ -102,6 +102,18 @@ struct AppDomain: ReducerProtocol {
 
         var unreadOrderMessageCount: Int
         var isDemoMode: Bool
+
+        init(
+            destination: Destinations.State,
+            subdomains: Subdomains.State,
+            unreadOrderMessageCount: Int,
+            isDemoMode: Bool
+        ) {
+            self.destination = destination
+            self.subdomains = subdomains
+            self.unreadOrderMessageCount = unreadOrderMessageCount
+            self.isDemoMode = isDemoMode
+        }
     }
 
     enum Action: Equatable {
@@ -160,7 +172,7 @@ struct AppDomain: ReducerProtocol {
             return .none
         case let .isDemoModeReceived(isDemoMode):
             state.isDemoMode = isDemoMode
-            state.subdomains.settingsState.isDemoMode = isDemoMode
+            state.subdomains.settings.isDemoMode = isDemoMode
             return .none
         case .registerDemoModeListener:
             return .publisher(
@@ -195,7 +207,7 @@ struct AppDomain: ReducerProtocol {
                     state.subdomains.orders.destination = nil
                     return .none
                 case .settings:
-                    state.subdomains.settingsState.destination = nil
+                    state.subdomains.settings.destination = nil
                     return .none
                 }
             } else {
@@ -218,7 +230,7 @@ extension AppDomain {
                 main: MainDomain.Dummies.state,
                 pharmacySearch: PharmacySearchDomain.Dummies.stateStartView,
                 orders: OrdersDomain.Dummies.state,
-                settingsState: SettingsDomain.Dummies.state
+                settings: SettingsDomain.Dummies.state
             ),
             unreadOrderMessageCount: 0,
             isDemoMode: false

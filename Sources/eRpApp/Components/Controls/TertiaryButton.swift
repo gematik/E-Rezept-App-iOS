@@ -28,7 +28,7 @@ struct TertiaryButton: View {
     var body: some View {
         Button(action: action) {
             HStack {
-                Text(text)
+                Text(text, bundle: .module)
                     .fontWeight(.regular)
                     .font(.subheadline)
                     .foregroundColor(isEnabled ? Colors.primary : Colors.systemGray)

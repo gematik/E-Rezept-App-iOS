@@ -92,7 +92,7 @@ struct EditProfilePictureView: View {
                     .cornerRadius(16)
 
                     if !viewStore.isFullScreenPresented {
-                        Text(viewStore.color.name)
+                        Text(viewStore.color.name, bundle: .module)
                             .foregroundColor(Colors.textSecondary)
                             .frame(maxWidth: .infinity, alignment: .center)
                     }

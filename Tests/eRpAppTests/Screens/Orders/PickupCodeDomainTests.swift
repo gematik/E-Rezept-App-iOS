@@ -19,7 +19,7 @@
 import Combine
 import CombineSchedulers
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Nimble
 import XCTest
@@ -29,13 +29,11 @@ final class PickupCodeDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
     var matrixCodeGenerator: MockMatrixCodeGenerator!
 
-    static let testBundleName = "qrcode"
-
     override func setUp() {
         super.setUp()
 
         matrixCodeGenerator = MockMatrixCodeGenerator()
-        let uiImage = UIImage(testBundleNamed: MockErxMatrixCodeGenerator.testBundleName)!
+        let uiImage = Asset.qrcode.image
         let cgImage = uiImage.cgImage!
         matrixCodeGenerator.generateImageForWidthHeightReturnValue = cgImage
     }

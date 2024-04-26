@@ -21,12 +21,8 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-struct AuditEventsDomain: ReducerProtocol {
+struct AuditEventsDomain: Reducer {
     typealias Store = StoreOf<Self>
-
-    static func cleanup<T>() -> EffectTask<T> {
-        .merge(CancelID.allCases.map(EffectPublisher.cancel(id:)))
-    }
 
     enum CancelID: CaseIterable, Hashable {
         case loadNextAuditEvents

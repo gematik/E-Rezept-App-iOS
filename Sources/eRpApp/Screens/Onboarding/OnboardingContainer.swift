@@ -36,12 +36,16 @@ struct OnboardingContainer: View, KeyboardReadable {
         let isShowingNextButton: Bool
         let hasValidAuthenticationSelection: Bool
         let legalConfirmed: Bool
+        let showTermsOfPrivacy: Bool
+        let showTermsOfUse: Bool
 
         init(state: OnboardingDomain.State) {
             composition = state.composition
             isShowingNextButton = state.isShowingNextButton
             hasValidAuthenticationSelection = state.registerAuthenticationState.hasValidSelection
             legalConfirmed = state.legalConfirmed
+            showTermsOfPrivacy = state.showTermsOfPrivacy
+            showTermsOfUse = state.showTermsOfUse
         }
     }
 
@@ -61,10 +65,11 @@ struct OnboardingContainer: View, KeyboardReadable {
                     case .legalInfo:
                         OnboardingLegalInfoView(isAllAccepted: viewStore.binding(get: \.legalConfirmed,
                                                                                  send: OnboardingDomain.Action
-                                                                                     .setConfirmLegal)) {
-                            viewStore.send(.nextPage, animation: .default)
-                        }
-                        .tag(1)
+                                                                                     .setConfirmLegal),
+                                                showTermsOfUse: { viewStore.send(.setShowUse(true)) },
+                                                showTermsOfPrivacy: { viewStore.send(.setShowPrivacy(true)) },
+                                                action: { viewStore.send(.nextPage, animation: .default) })
+                            .tag(1)
                     case .registerAuthentication:
                         OnboardingRegisterAuthenticationView(
                             store: store.scope(state: { $0.registerAuthenticationState },
@@ -79,6 +84,34 @@ struct OnboardingContainer: View, KeyboardReadable {
                         .tag(3)
                     }
                 }
+            }
+            // [REQ:BSI-eRp-ePA:O.Arch_9#2] DataPrivacy display within Onboarding
+            .sheet(isPresented: viewStore.binding(get: \.showTermsOfPrivacy,
+                                                  send: OnboardingDomain.Action.setShowPrivacy)) {
+                NavigationView {
+                    DataPrivacyView()
+                        .toolbar {
+                            CloseButton { viewStore.send(.setShowPrivacy(false)) }
+                                .embedToolbarContent()
+                                .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
+                        }
+                }
+                .accentColor(Colors.primary600)
+                .navigationViewStyle(StackNavigationViewStyle())
+            }
+            // [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
+            .sheet(isPresented: viewStore.binding(get: \.showTermsOfUse,
+                                                  send: OnboardingDomain.Action.setShowUse)) {
+                NavigationView {
+                    TermsOfUseView()
+                        .toolbar {
+                            CloseButton { viewStore.send(.setShowUse(false)) }
+                                .embedToolbarContent()
+                                .accessibilityIdentifier(A11y.settings.termsOfUse.stgBtnTermsOfUseClose)
+                        }
+                }
+                .accentColor(Colors.primary600)
+                .navigationViewStyle(StackNavigationViewStyle())
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))

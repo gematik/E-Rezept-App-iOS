@@ -31,7 +31,7 @@ struct ListCellView: View {
                 .foregroundColor(Colors.primary500)
                 .frame(width: iconSize)
                 .font(Font.body.weight(.semibold))
-            Text(text)
+            Text(text, bundle: .module)
                 .foregroundColor(Colors.systemLabel)
             Spacer()
         }

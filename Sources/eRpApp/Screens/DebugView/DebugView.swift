@@ -415,7 +415,7 @@ extension DebugView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 4) {
-                Text(text)
+                Text(text, bundle: .module)
                 Text(value).font(.system(.footnote, design: .monospaced))
             }.contextMenu {
                 Button(

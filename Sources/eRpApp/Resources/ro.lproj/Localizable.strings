@@ -1,5 +1,5 @@
 "add_btn_save" = "Salvați";
-"add_txt_profile1" = "Profiluri 1";
+"add_txt_profile1" = "Numele profilului";
 "add_txt_title" = "Introdu numele";
 "alert_btn_close" = "Refuza";
 "alert_btn_ok" = "Bine";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Număr de acces incorect";
 "cdw_txt_rc_error_wrong_can_recovery" = "Vă rugăm să corectați numărul de acces (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "PIN incorect";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ mai multe încercări. Vă rugăm să corectați codul PIN introdus.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ mai multe încercări. Atentie: trebuie sa fie PIN-ul cardului dumneavoastra de sanatate. Nu PIN-ul de identificare TK, de exemplu.";
 "cdw_txt_rc_headline" = "Pregătiți cardul de sănătate";
 "cdw_txt_rc_list_charge" = "Verificați dacă dispozitivul dvs. este încărcat suficient.";
 "cdw_txt_rc_list_cover" = "Dacă este necesar, îndepărtați capacul de protecție.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Foarte slab";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Slab";
 "ctl_txt_profile__cell_not_connected" = "Neconectat";
-"ctl_txt_profile_color_picker_blue" = "Albastru";
-"ctl_txt_profile_color_picker_green" = "Verde";
-"ctl_txt_profile_color_picker_grey" = "gri";
-"ctl_txt_profile_color_picker_pink" = "Roz";
+"ctl_txt_profile_color_picker_blue" = "Luna albastră septembrie";
+"ctl_txt_profile_color_picker_green" = "Copac";
+"ctl_txt_profile_color_picker_grey" = "Gri de primăvară";
+"ctl_txt_profile_color_picker_pink" = "Aceasta! Este! Roz!";
 "ctl_txt_profile_color_picker_selected" = "Selectat";
-"ctl_txt_profile_color_picker_yellow" = "Galben";
+"ctl_txt_profile_color_picker_yellow" = "Roza soarelui";
 "ctl_txt_profile_connection_status_connected" = "Legați împreună";
 "ctl_txt_profile_connection_status_disconnected" = "Nu este conectat";
 "ctl_txt_search_bar_field_label" = "Câmp de căutare";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Răscumpăra";
 "main_btn_refresh" = "A updata";
 "main_empty_txt_connected" = "↓ Trageți ecranul în jos pentru a actualiza.";
-"main_empty_txt_disconnected" = "Conectați-vă pentru a primi rețete automat sau adăugați o nouă rețetă folosind ⊕ din colțul de sus.";
+"main_empty_txt_disconnected" = "Înscrieți-vă pentru a primi rețete automat.";
 "main_empty_txt_title" = "Fara retete";
 "main_txt_consent_drawer_message" = "Notă: nu veți mai primi chitanțele dvs. de cost ca imprimare la farmacie.";
 "main_txt_consent_drawer_title" = "Primiți chitanțe de cost în format digital";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filtru";
 "pha_search_filter_txt_title" = "Filtru";
 "pha_search_hint_txt_close" = "Închideți partajarea locației, nu partajați locația";
+"pha_search_map_annotation" = "Farmacie";
 "pha_search_map_btn_Error_cancel" = "Anulare";
 "pha_search_map_header" = "Aproape de";
 "pha_search_txt_closed" = "Închis";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Taxa de serviciu de urgenta";
 "prsc_dtl_dr_error_info_description" = "Nu toate informațiile sunt prezentate corect în această rețetă. Cu toate acestea, îl puteți valorifica în continuare la farmacie.";
 "prsc_dtl_dr_error_info_title" = "Reteta incorecta";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "În această perioadă vă puteți completa rețeta la orice farmacie cu o coplata.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "În această perioadă, vă puteți răscumpăra rețeta în orice farmacie cu o plată suplimentară maximă de 10 EUR.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Puteți completa rețeta la o farmacie în această perioadă, dar va trebui să plătiți singur prețul de achiziție al medicamentului. Ca alternativă, puteți cere cabinetului dumneavoastră să fie reemisă rețeta.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Cât timp este valabilă această rețetă?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Rețetele importate dintr-o copie hârtie nu pot afișa informații personale sau medicale din motive de securitate. \n\n Conectați-vă la această aplicație cu cardul de sănătate sau aplicația de asigurare pentru a vedea toate informațiile conținute în rețetă.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Chitanța digitală a costurilor";
 "prsc_dtl_txt_practitioner_person" = "Prescriptor";
 "prsc_dtl_txt_quantity" = "Numărul de pachete prescris";
+"prsc_dtl_txt_section_details_header" = "Informatii detaliate";
 "prsc_dtl_txt_yes" = "da";
 "prsc_fd_btn_error_banner" = "Raport";
 "prsc_fd_hint_dosageInstructions_pic" = "doctor";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Instrucțiunile de utilizare";
 "prsc_fd_txt_error_banner_message" = "Ceva pare să fi mers prost în timpul creării rețetei. Raportați o eroare?";
 "prsc_fd_txt_na" = "Nu este specificat";
-"prsc_fd_txt_navigation_title" = "detaliu";
+"prsc_fd_txt_navigation_title" = "Detalii reteta";
 "prsc_fd_txt_noctu_description" = "Acest medicament poate fi, de asemenea, răscumpărat la o farmacie pe timp de noapte, fără o taxă de serviciu de urgență.";
 "prsc_fd_txt_noctu_title" = "Aici este nevoie de grabă";
 "prsc_fd_txt_organization_address" = "abordare";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Memento de venit";
 "stg_btn_new_profile_create" = "Salvați";
 "stg_btn_reg_devices_load" = "Inregistreaza-te";
+"stg_con_btn_gemmunity" = "Forumul de prescriptie electronica";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback din aplicația e-rețetă";
 "stg_con_hotline_ava" = "Gratuit pentru apelant. Orele de serviciu: Luni - Vineri 8:00 - 20:00, cu excepția sărbătorilor naționale";

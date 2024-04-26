@@ -19,7 +19,7 @@
 import Combine
 @_spi(Internals)
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Nimble
 import XCTest
@@ -65,13 +65,13 @@ final class AppStartDomainTests: XCTestCase {
         // when receiving onboarding with composition
         await store.receive(.refreshOnboardingStateReceived(OnboardingDomain.Composition.allPages)) {
             // onboarding should be presented
-            $0 = .onboarding(OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages))
+            $0.destination = .onboarding(OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages))
         }
 
         // when onboarding was dismissed
-        await store.send(.onboarding(action: .dismissOnboarding)) {
+        await store.send(.destination(.onboarding(.dismissOnboarding))) {
             // than app should be presented
-            $0 = .app(
+            $0.destination = .app(
                 AppDomain.State(
                     destination: .main,
                     subdomains: .init(
@@ -81,7 +81,7 @@ final class AppStartDomainTests: XCTestCase {
                         ),
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
-                        settingsState: SettingsDomain.State(isDemoMode: false)
+                        settings: SettingsDomain.State(isDemoMode: false)
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
@@ -99,7 +99,7 @@ final class AppStartDomainTests: XCTestCase {
         await store.receive(.refreshOnboardingStateReceived(
             OnboardingDomain.Composition()
         )) {
-            $0 = .app(
+            $0.destination = .app(
                 AppDomain.State(
                     destination: .main,
                     subdomains: .init(
@@ -109,7 +109,7 @@ final class AppStartDomainTests: XCTestCase {
                         ),
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
-                        settingsState: .init(isDemoMode: false)
+                        settings: .init(isDemoMode: false)
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
@@ -126,9 +126,10 @@ final class AppStartDomainTests: XCTestCase {
 
             let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/prescription#")!
 
-            let expected1 = AppStartDomain.Action.app(action: .subdomains(.main(action: .setNavigation(tag: nil))))
-            let expected2 = AppStartDomain.Action.app(action: .setNavigation(.main))
-            let expected3 = AppStartDomain.Action.app(action: .subdomains(.main(action: .importTaskByUrl(url))))
+            let expected1 = AppStartDomain.Action
+                .destination(.app(.subdomains(.main(action: .setNavigation(tag: nil)))))
+            let expected2 = AppStartDomain.Action.destination(.app(.setNavigation(.main)))
+            let expected3 = AppStartDomain.Action.destination(.app(.subdomains(.main(action: .importTaskByUrl(url)))))
             let expectedActions = [expected1, expected2, expected3]
 
             var receivedActions: [AppStartDomain.Action] = []
@@ -149,9 +150,10 @@ final class AppStartDomainTests: XCTestCase {
 
             let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth/")!
 
-            let expected1 = AppStartDomain.Action.app(action: .subdomains(.main(action: .setNavigation(tag: nil))))
-            let expected2 = AppStartDomain.Action.app(action: .setNavigation(.main))
-            let expected3 = AppStartDomain.Action.app(action: .subdomains(.main(action: .externalLogin(url))))
+            let expected1 = AppStartDomain.Action
+                .destination(.app(.subdomains(.main(action: .setNavigation(tag: nil)))))
+            let expected2 = AppStartDomain.Action.destination(.app(.setNavigation(.main)))
+            let expected3 = AppStartDomain.Action.destination(.app(.subdomains(.main(action: .externalLogin(url)))))
             let expectedActions = [expected1, expected2, expected3]
 
             var receivedActions: [AppStartDomain.Action] = []
@@ -170,10 +172,11 @@ final class AppStartDomainTests: XCTestCase {
             // given
             let sut = AppStartDomain.router
 
-            let expected1 = AppStartDomain.Action.app(action: .subdomains(.main(action: .setNavigation(tag: nil))))
-            let expected2 = AppStartDomain.Action.app(action: .setNavigation(.main))
+            let expected1 = AppStartDomain.Action
+                .destination(.app(.subdomains(.main(action: .setNavigation(tag: nil)))))
+            let expected2 = AppStartDomain.Action.destination(.app(.setNavigation(.main)))
             let expected3 = AppStartDomain.Action
-                .app(action: .subdomains(.main(action: .prescriptionList(action: .refresh))))
+                .destination(.app(.subdomains(.main(action: .prescriptionList(action: .refresh)))))
             let expectedActions = [expected1, expected2, expected3]
 
             // when
@@ -194,11 +197,11 @@ final class AppStartDomainTests: XCTestCase {
             // given
             let sut = AppStartDomain.router
 
-            let expected1 = AppStartDomain.Action.app(action: .subdomains(.settings(action: .popToRootView)))
-            let expected2 = AppStartDomain.Action.app(action: .setNavigation(.settings))
-            let expected3 = AppStartDomain.Action.app(action: .subdomains(
+            let expected1 = AppStartDomain.Action.destination(.app(.subdomains(.settings(action: .popToRootView))))
+            let expected2 = AppStartDomain.Action.destination(.app(.setNavigation(.settings)))
+            let expected3 = AppStartDomain.Action.destination(.app(.subdomains(
                 .settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))
-            ))
+            )))
             let expectedActions = [expected1, expected2, expected3]
 
             // when
@@ -216,7 +219,7 @@ final class AppStartDomainTests: XCTestCase {
 struct AppStartDomainActionComparator: SortComparator {
     typealias Compared = AppStartDomain.Action
 
-    func compare(_ lhs: eRpApp.AppStartDomain.Action, _ rhs: eRpApp.AppStartDomain.Action) -> ComparisonResult {
+    func compare(_ lhs: AppStartDomain.Action, _ rhs: AppStartDomain.Action) -> ComparisonResult {
         if String(describing: lhs) < String(describing: rhs) {
             return .orderedAscending
         } else if String(describing: lhs) > String(describing: rhs) {

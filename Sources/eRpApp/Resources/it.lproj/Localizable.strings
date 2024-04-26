@@ -1,5 +1,5 @@
 "add_btn_save" = "Salva";
-"add_txt_profile1" = "Profili 1";
+"add_txt_profile1" = "Nome del profilo";
 "add_txt_title" = "Inserisci il nome";
 "alert_btn_close" = "Rifiutare";
 "alert_btn_ok" = "OK";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Numero di accesso errato";
 "cdw_txt_rc_error_wrong_can_recovery" = "Per favore correggi il tuo numero di accesso (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "PIN errato";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ tentativi in ​​più. Correggi il tuo PIN.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ tentativi in ​​più. Attenzione: deve essere il PIN della tua tessera sanitaria. Non il PIN Ident TK, per esempio.";
 "cdw_txt_rc_headline" = "Tieni pronta la tessera sanitaria";
 "cdw_txt_rc_list_charge" = "Controlla se il tuo dispositivo è sufficientemente carico.";
 "cdw_txt_rc_list_cover" = "Se necessario, rimuovere la copertura protettiva.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Molto debole";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Debole";
 "ctl_txt_profile__cell_not_connected" = "Accesso non effettuato";
-"ctl_txt_profile_color_picker_blue" = "Blu";
-"ctl_txt_profile_color_picker_green" = "Verde";
-"ctl_txt_profile_color_picker_grey" = "Grigio";
-"ctl_txt_profile_color_picker_pink" = "Rosa";
+"ctl_txt_profile_color_picker_blue" = "Luna blu di settembre";
+"ctl_txt_profile_color_picker_green" = "Albero";
+"ctl_txt_profile_color_picker_grey" = "Grigio primaverile";
+"ctl_txt_profile_color_picker_pink" = "Esso! È! Rosa!";
 "ctl_txt_profile_color_picker_selected" = "Selezionato";
-"ctl_txt_profile_color_picker_yellow" = "Giallo";
+"ctl_txt_profile_color_picker_yellow" = "Drosera";
 "ctl_txt_profile_connection_status_connected" = "Legati insieme";
 "ctl_txt_profile_connection_status_disconnected" = "Non collegata";
 "ctl_txt_search_bar_field_label" = "Campo di ricerca";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Riscattare";
 "main_btn_refresh" = "Aggiornare";
 "main_empty_txt_connected" = "↓ Trascina lo schermo verso il basso per aggiornare.";
-"main_empty_txt_disconnected" = "Accedi per ricevere le ricette automaticamente o aggiungi una nuova ricetta utilizzando ⊕ nell'angolo in alto.";
+"main_empty_txt_disconnected" = "Iscriviti per ricevere le ricette automaticamente.";
 "main_empty_txt_title" = "Nessuna ricetta";
 "main_txt_consent_drawer_message" = "Nota: in farmacia non riceverete più i giustificativi dei costi sotto forma di stampa.";
 "main_txt_consent_drawer_title" = "Ricevi le ricevute dei costi in formato digitale";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filtro";
 "pha_search_filter_txt_title" = "Filtro";
 "pha_search_hint_txt_close" = "Chiudi la condivisione della posizione, non condividere la posizione";
+"pha_search_map_annotation" = "Farmacia";
 "pha_search_map_btn_Error_cancel" = "Annulla";
 "pha_search_map_header" = "Vicino a";
 "pha_search_txt_closed" = "Chiuso";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Tassa per il servizio di emergenza";
 "prsc_dtl_dr_error_info_description" = "Non tutte le informazioni sono presentate correttamente in questa ricetta. Puoi comunque riscattarlo presso la tua farmacia.";
 "prsc_dtl_dr_error_info_title" = "Ricetta errata";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Durante questo periodo è possibile compilare la ricetta presso qualsiasi farmacia con ticket.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Durante questo periodo puoi riscattare la tua ricetta in qualsiasi farmacia con un pagamento aggiuntivo massimo di 10€.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Entro questo termine potete comunque compilare la ricetta in farmacia, ma dovrete pagare voi stessi l'intero prezzo d'acquisto del medicinale. In alternativa potete chiedere al vostro studio di farvi riemettere la prescrizione.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Per quanto tempo è valida questa prescrizione?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Le prescrizioni importate da una copia cartacea non possono visualizzare informazioni personali o mediche per motivi di sicurezza. \n\n Accedi a questa app con tessera sanitaria o app Assicurazione per visualizzare tutte le informazioni contenute nella ricetta.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Ricevuta di spesa digitale";
 "prsc_dtl_txt_practitioner_person" = "Prescrittore";
 "prsc_dtl_txt_quantity" = "Numero di confezioni prescritte";
+"prsc_dtl_txt_section_details_header" = "Informazioni dettagliate";
 "prsc_dtl_txt_yes" = "SÌ";
 "prsc_fd_btn_error_banner" = "Rapporto";
 "prsc_fd_hint_dosageInstructions_pic" = "medico";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Istruzioni per l'uso";
 "prsc_fd_txt_error_banner_message" = "Sembra che qualcosa sia andato storto durante la creazione della tua ricetta. Segnala un errore?";
 "prsc_fd_txt_na" = "Non specificato";
-"prsc_fd_txt_navigation_title" = "dettaglio";
+"prsc_fd_txt_navigation_title" = "Dettagli della ricetta";
 "prsc_fd_txt_noctu_description" = "Questo farmaco può essere riscattato anche di notte in farmacia senza costi per il servizio di emergenza.";
 "prsc_fd_txt_noctu_title" = "Qui è richiesta la fretta";
 "prsc_fd_txt_organization_address" = "indirizzo";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Promemoria entrate";
 "stg_btn_new_profile_create" = "Salva";
 "stg_btn_reg_devices_load" = "Registrati";
+"stg_con_btn_gemmunity" = "Forum sulla prescrizione elettronica";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback dall'app di prescrizione elettronica";
 "stg_con_hotline_ava" = "Gratuito per il chiamante. Orari di servizio: lun - ven 8:00 - 20:00 esclusi festivi nazionali";

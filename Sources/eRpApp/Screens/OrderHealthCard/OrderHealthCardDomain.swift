@@ -61,13 +61,6 @@ struct OrderHealthCardDomain: ReducerProtocol {
         case healthCardAndPin
 
         var id: Int { rawValue }
-
-        var localizedName: LocalizedStringKey {
-            switch self {
-            case .pin: return L10n.orderEgkTxtServiceInquiryOnlyPin.key
-            case .healthCardAndPin: return L10n.orderEgkTxtServiceInquiryHealthcardAndPin.key
-            }
-        }
     }
 
     enum Action: Equatable {
@@ -119,7 +112,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
         case .loadList:
             let decoder = JSONDecoder()
             let insuranceCompanies: [HealthInsuranceCompany]
-            if let url = Bundle.main.url(forResource: "health_insurance_contacts", withExtension: "json"),
+            if let url = Bundle.module.url(forResource: "health_insurance_contacts", withExtension: "json"),
                let data = try? Data(contentsOf: url),
                let directory = try? decoder
                .decode([HealthInsuranceCompany].self, from: data) {

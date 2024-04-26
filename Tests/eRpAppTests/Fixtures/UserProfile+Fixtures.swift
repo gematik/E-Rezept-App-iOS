@@ -16,7 +16,7 @@
 //  
 //
 
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Foundation
 
@@ -48,6 +48,20 @@ extension UserProfile {
             ),
             connectionStatus: .disconnected,
             activityIndicating: false
+        )
+
+        static let privatePaul = UserProfile(
+            from: Profile(
+                name: "Private Paul",
+                identifier: UUID(),
+                created: Date(),
+                insuranceId: nil,
+                insuranceType: .pKV,
+                color: .red,
+                lastAuthenticated: nil,
+                erxTasks: []
+            ),
+            isAuthenticated: true
         )
     }
 }

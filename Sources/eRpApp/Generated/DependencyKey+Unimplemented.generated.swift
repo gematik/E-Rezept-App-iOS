@@ -350,21 +350,21 @@ struct UnimplementedModelMigrating: ModelMigrating {
 struct UnimplementedNFCHealthCardPasswordController: NFCHealthCardPasswordController {
     init() {}
 
-    func resetEgkMrPinRetryCounter(can: String, puk: String, mode: NFCResetRetryCounterMode) -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
+    func resetEgkMrPinRetryCounter(can: String, puk: String, mode: NFCResetRetryCounterMode) async -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
         fatalError("resetEgkMrPinRetryCounter(can:puk:mode:) has not been implemented")
     }
-    func changeReferenceData(can: String, old: String, new: String, mode: NFCChangeReferenceDataMode) -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
+    func changeReferenceData(can: String, old: String, new: String, mode: NFCChangeReferenceDataMode) async -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
         fatalError("changeReferenceData(can:old:new:mode:) has not been implemented")
     }
 }
 struct UnimplementedNFCSignatureProvider: NFCSignatureProvider {
     init() {}
 
-    func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
-        fatalError("openSecureSession(can:pin:) has not been implemented")
-    }
     func sign(can: String, pin: String, challenge: IDPChallengeSession) async -> Result<SignedChallenge, NFCSignatureProviderError> {
         fatalError("sign(can:pin:challenge:) has not been implemented")
+    }
+    func signForBiometrics(can: String, pin: String, challenge: IDPChallengeSession, registerDataProvider: SecureEnclaveSignatureProvider, in pairingSession: PairingSession) async -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        fatalError("signForBiometrics(can:pin:challenge:registerDataProvider:in:) has not been implemented")
     }
 }
 struct UnimplementedOrdersRepository: OrdersRepository {

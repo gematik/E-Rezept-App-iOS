@@ -16,7 +16,7 @@
 //  
 //
 
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Nimble
 import XCTest

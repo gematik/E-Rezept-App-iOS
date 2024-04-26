@@ -1,5 +1,5 @@
 "add_btn_save" = "Zapisz";
-"add_txt_profile1" = "Profile 1";
+"add_txt_profile1" = "Nazwa profilu";
 "add_txt_title" = "Podaj nazwę";
 "alert_btn_close" = "Odrzuć";
 "alert_btn_ok" = "OK";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Błędny numer dostępu";
 "cdw_txt_rc_error_wrong_can_recovery" = "Popraw swój numer dostępu (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Błędny PIN";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "Pozostało %@ prób. Popraw wpisany PIN.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ więcej prób. Uwaga: musi to być PIN Twojej karty zdrowia. Na przykład nie jest to identyfikator PIN TK.";
 "cdw_txt_rc_headline" = "Przygotuj kartę zdrowia";
 "cdw_txt_rc_list_charge" = "Sprawdź, czy Twoje urządzenie jest wystarczająco naładowane.";
 "cdw_txt_rc_list_cover" = "Rozwiązaniem może być usunięcie osłonki.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Bardzo słaba";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Słaba";
 "ctl_txt_profile__cell_not_connected" = "Nie zalogowano";
-"ctl_txt_profile_color_picker_blue" = "Niebieski";
-"ctl_txt_profile_color_picker_green" = "Zielony";
-"ctl_txt_profile_color_picker_grey" = "Szary";
-"ctl_txt_profile_color_picker_pink" = "Różowy";
+"ctl_txt_profile_color_picker_blue" = "Niebieski księżyc; wrzesień";
+"ctl_txt_profile_color_picker_green" = "Drzewo";
+"ctl_txt_profile_color_picker_grey" = "Wiosenny szary";
+"ctl_txt_profile_color_picker_pink" = "To kolor różowy!";
 "ctl_txt_profile_color_picker_selected" = "Wybrano";
-"ctl_txt_profile_color_picker_yellow" = "Żółty";
+"ctl_txt_profile_color_picker_yellow" = "Rosiczka";
 "ctl_txt_profile_connection_status_connected" = "Połączono";
 "ctl_txt_profile_connection_status_disconnected" = "Brak połączenia";
 "ctl_txt_search_bar_field_label" = "Pole wyszukiwania";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Zrealizuj";
 "main_btn_refresh" = "Aktualizuj";
 "main_empty_txt_connected" = "↓ Przeciągnij ekran w dół, aby zaktualizować.";
-"main_empty_txt_disconnected" = "Zaloguj się, aby automatycznie otrzymywać przepisy lub dodaj nowy przepis za pomocą ⊕ w górnym rogu.";
+"main_empty_txt_disconnected" = "Zarejestruj się, aby automatycznie otrzymywać przepisy.";
 "main_empty_txt_title" = "Brak recept";
 "main_txt_consent_drawer_message" = "Uwaga: w aptece nie będziesz już otrzymywać rachunków w formie wydruku.";
 "main_txt_consent_drawer_title" = "Otrzymuj rachunki kosztów w formie cyfrowej";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filtruj";
 "pha_search_filter_txt_title" = "Filtruj";
 "pha_search_hint_txt_close" = "Zamknij udostępnianie lokalizacji, nie udostępniaj lokalizacji";
+"pha_search_map_annotation" = "Apteka";
 "pha_search_map_btn_Error_cancel" = "Anuluj";
 "pha_search_map_header" = "Tuż obok";
 "pha_search_txt_closed" = "Zamknięte";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Opłata za obsługę w nagłych wypadkach";
 "prsc_dtl_dr_error_info_description" = "Nie wszystkie informacje są podane prawidłowo w tym przepisie. Jednak nadal możesz go zrealizować w swojej aptece.";
 "prsc_dtl_dr_error_info_title" = "Przepis błędny";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "W tym okresie możesz zrealizować receptę w dowolnej aptece, korzystając z dopłaty.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "W tym okresie możesz zrealizować receptę w dowolnej aptece za maksymalną dopłatą w wysokości 10 €.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "W tym okresie nadal możesz zrealizować receptę w aptece, ale całą cenę zakupu leku będziesz musiał sam zapłacić. Alternatywnie możesz poprosić swoją praktykę o ponowne wystawienie recepty.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Jak długo ważna jest ta recepta?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Ze względów bezpieczeństwa recepty importowane z wersji papierowej nie mogą zawierać danych osobowych ani medycznych. \n\n Zaloguj się do tej aplikacji za pomocą karty zdrowia lub aplikacji ubezpieczeniowej, aby wyświetlić wszystkie informacje zawarte na recepcie.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Cyfrowy rachunek kosztów";
 "prsc_dtl_txt_practitioner_person" = "Osoba wystawiająca receptę";
 "prsc_dtl_txt_quantity" = "Liczba przepisanych opakowań";
+"prsc_dtl_txt_section_details_header" = "Dokładna informacja";
 "prsc_dtl_txt_yes" = "Tak";
 "prsc_fd_btn_error_banner" = "Zgłoś";
 "prsc_fd_hint_dosageInstructions_pic" = "Lekarka";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Stosowanie";
 "prsc_fd_txt_error_banner_message" = "Wygląda na to, że podczas wystawiania Twojej recepty coś poszło nie tak. Czy zgłosić błąd?";
 "prsc_fd_txt_na" = "Brak danych";
-"prsc_fd_txt_navigation_title" = "Szczegół";
+"prsc_fd_txt_navigation_title" = "Szczegóły przepisu";
 "prsc_fd_txt_noctu_description" = "Ten lek można wykupić w aptece także nocą bez opłaty za dyżur.";
 "prsc_fd_txt_noctu_title" = "Trzeba się pospieszyć";
 "prsc_fd_txt_organization_address" = "Adres";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Przypomnienie o przychodach";
 "stg_btn_new_profile_create" = "Zapisz";
 "stg_btn_reg_devices_load" = "Rejestr";
+"stg_con_btn_gemmunity" = "Forum e-recept";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Informacje zwrotne z aplikacji E-recepta";
 "stg_con_hotline_ava" = "Bezpłatnie dla dzwoniącego. Godziny świadczenia usług: Pon. - Pt. 8:00 - 20:00 z wyjątkiem świąt państwowych";

@@ -85,9 +85,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string></string>
+			<string>%lu Rezept</string>
 			<key>other</key>
-			<string></string>
+			<string>%lu Rezepte</string>
 			<key>zero</key>
 			<string></string>
 		</dict>

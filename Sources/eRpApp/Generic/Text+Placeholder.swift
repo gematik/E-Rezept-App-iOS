@@ -23,7 +23,7 @@ extension Text {
         if let text = content {
             self = Text(text)
         } else {
-            self = Text(placeholder)
+            self = Text(placeholder, bundle: .module)
         }
     }
 }

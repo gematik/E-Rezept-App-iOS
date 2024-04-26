@@ -18,7 +18,14 @@ xcassets:
         - templatePath: Templates/xcassets.stencil
           params:
             forceProvidesNamespaces: true
+            bundle: Bundle.module
           output: Sources/eRpApp/Generated/XCAssets+Generated.swift
+    - inputs: Tests/eRpAppTests/Resources/Assets.xcassets
+      outputs:
+        - templatePath: Templates/xcassets.stencil
+          params:
+            forceProvidesNamespaces: true
+          output: Tests/eRpAppTests/Mocks/Generated/XCAssets+Generated.swift
     - inputs: Sources/eRpStyleKit/Resources/Assets.xcassets
       outputs:
         - templatePath: Templates/xcassets.stencil

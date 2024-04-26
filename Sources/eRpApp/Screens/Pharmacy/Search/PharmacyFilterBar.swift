@@ -84,7 +84,7 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
         var body: some View {
             HStack {
                 Button(action: pressedAction) {
-                    Text(key)
+                    Text(key, bundle: .module)
                 }
 
                 Button(action: closeButtonAction) {

@@ -2,6 +2,8 @@
 // DO NOT EDIT
 /// Use sourcery to update this file.
 
+#if DEBUG
+
 import Combine
 import eRpKit
 import eRpLocalStorage
@@ -1558,3 +1560,5 @@ extension Array where Element == SerializableX509 {
         map(\.payload)
     }
 }
+
+#endif

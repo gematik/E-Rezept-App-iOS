@@ -205,7 +205,7 @@ struct OrderDetailView: View {
 
         var body: some View {
             HStack {
-                Text(title)
+                Text(title, bundle: .module)
                     .font(.headline)
                     .multilineTextAlignment(.leading)
                     .accessibility(identifier: a11y)

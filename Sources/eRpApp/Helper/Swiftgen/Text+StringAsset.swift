@@ -20,7 +20,7 @@ import SwiftUI
 
 extension Text {
     init(_ stringAsset: StringAsset) {
-        self.init(stringAsset.key)
+        self.init(stringAsset.key, bundle: Bundle.module)
     }
 
     init<S>(_ text: S?, placeholder: StringAsset) where S: StringProtocol {

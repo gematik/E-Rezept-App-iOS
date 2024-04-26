@@ -38,8 +38,8 @@ extension TermsOfUseView {
             let wkWebView = WKWebView()
             // [REQ:BSI-eRp-ePA:O.Plat_11#3] disabled javascript
             wkWebView.configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-            if let url = Bundle.main.url(forResource: "TermsOfUse",
-                                         withExtension: "html") {
+            if let url = Bundle.module.url(forResource: "TermsOfUse",
+                                           withExtension: "html") {
                 wkWebView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
             }
             wkWebView.navigationDelegate = navigationDelegate

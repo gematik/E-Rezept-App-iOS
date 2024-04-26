@@ -56,7 +56,7 @@ struct CardWallCANInputView: View {
                 }
             }.accessibility(hidden: true)
 
-            TextField("", text: $can.trimCAN(), onEditingChanged: { _ in }, onCommit: {})
+            TextField("", text: $can.trimCAN())
                 .textContentType(.oneTimeCode)
                 .keyboardType(.numberPad)
                 .foregroundColor(.clear)

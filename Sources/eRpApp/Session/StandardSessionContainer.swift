@@ -144,17 +144,17 @@ class StandardSessionContainer: UserSession {
         return switchedSignatureProvider
         #endif
         #else
-        return EGKSignatureProvider(schedulers: schedulers)
+        return EGKSignatureProvider()
         #endif
     }()
 
     lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
-        DefaultNFCResetRetryCounterController(schedulers: schedulers)
+        DefaultNFCResetRetryCounterController()
     }()
 
     #if ENABLE_DEBUG_VIEW
     lazy var switchedSignatureProvider: NFCSignatureProvider = {
-        SwitchSignatureProvider(defaultSignatureProvider: EGKSignatureProvider(schedulers: self.schedulers),
+        SwitchSignatureProvider(defaultSignatureProvider: EGKSignatureProvider(),
                                 alternativeSignatureProvider: VirtualEGKSignatureProvider())
     }()
     #endif

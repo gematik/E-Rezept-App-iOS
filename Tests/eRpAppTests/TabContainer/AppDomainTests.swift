@@ -18,7 +18,7 @@
 
 import Combine
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import Nimble
 import XCTest
 
@@ -40,7 +40,7 @@ final class AppDomainTests: XCTestCase {
                     main: Self.Fixtures.mainDomainState,
                     pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
                     orders: Self.Fixtures.ordersDomainState,
-                    settingsState: SettingsDomain.State(
+                    settings: SettingsDomain.State(
                         isDemoMode: false,
                         destination: nil
                     )
@@ -64,7 +64,7 @@ final class AppDomainTests: XCTestCase {
                     main: Self.Fixtures.mainDomainState,
                     pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
                     orders: Self.Fixtures.ordersDomainState,
-                    settingsState: SettingsDomain.State(
+                    settings: SettingsDomain.State(
                         isDemoMode: false,
                         destination: .healthCardPasswordForgotPin(.init(mode: .forgotPin))
                     )
@@ -81,7 +81,7 @@ final class AppDomainTests: XCTestCase {
                 main: Self.Fixtures.mainDomainState,
                 pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
                 orders: Self.Fixtures.ordersDomainState,
-                settingsState: SettingsDomain.State(
+                settings: SettingsDomain.State(
                     isDemoMode: false,
                     destination: nil
                 )
@@ -97,7 +97,7 @@ final class AppDomainTests: XCTestCase {
                     main: Self.Fixtures.mainDomainState,
                     pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
                     orders: Self.Fixtures.ordersDomainState,
-                    settingsState: SettingsDomain.State(
+                    settings: SettingsDomain.State(
                         isDemoMode: false,
                         destination: .healthCardPasswordForgotPin(
                             .init(
@@ -121,7 +121,7 @@ final class AppDomainTests: XCTestCase {
                 main: Self.Fixtures.mainDomainState,
                 pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
                 orders: Self.Fixtures.ordersDomainState,
-                settingsState: SettingsDomain.State(
+                settings: SettingsDomain.State(
                     isDemoMode: false,
                     destination: nil
                 )

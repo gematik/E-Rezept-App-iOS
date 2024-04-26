@@ -17,7 +17,7 @@
 //
 
 import Combine
-@testable import eRpApp
+@testable import eRpFeatures
 import UIKit
 
 // MARK: - MockResourceHandler -

@@ -19,7 +19,7 @@
 @testable import AVS
 import Combine
 import DataKit
-@testable import eRpApp
+@testable import eRpFeatures
 import Foundation
 import HTTPClient
 import Nimble

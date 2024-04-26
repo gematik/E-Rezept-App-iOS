@@ -19,7 +19,7 @@ import SwiftUI
     internal static let nsFaceIDUsageDescription = StringAsset("NSFaceIDUsageDescription")
     /// Save
     internal static let addBtnSave = StringAsset("add_btn_save")
-    /// Profiles 1
+    /// Profile name
     internal static let addTxtProfile1 = StringAsset("add_txt_profile1")
     /// Enter name
     internal static let addTxtTitle = StringAsset("add_txt_title")
@@ -518,7 +518,7 @@ import SwiftUI
     internal static let cdwTxtRcErrorWrongCanRecovery = StringAsset("cdw_txt_rc_error_wrong_can_recovery")
     /// Incorrect PIN
     internal static let cdwTxtRcErrorWrongPinDescription = StringAsset("cdw_txt_rc_error_wrong_pin_description_%@")
-    /// %@ attempts left. Please enter the correct PIN.
+    /// %@ more attempts. Attention: it must be the PIN of your health card. Not the TK Ident PIN, for example.
     internal static func cdwTxtRcErrorWrongPinRecovery(_ element1: String) -> StringAsset {
         StringAsset("cdw_txt_rc_error_wrong_pin_recovery_%@", arguments: [element1])
     }
@@ -676,17 +676,17 @@ import SwiftUI
     internal static let ctlTxtPasswordStrengthAccessiblityValueWeak = StringAsset("ctl_txt_password_strength_accessiblity_value_weak")
     /// Not logged in
     internal static let ctlTxtProfileCellNotConnected = StringAsset("ctl_txt_profile__cell_not_connected")
-    /// Blue
+    /// Blue moon September
     internal static let ctlTxtProfileColorPickerBlue = StringAsset("ctl_txt_profile_color_picker_blue")
-    /// Green
+    /// Tree
     internal static let ctlTxtProfileColorPickerGreen = StringAsset("ctl_txt_profile_color_picker_green")
-    /// Grey
+    /// Spring grey
     internal static let ctlTxtProfileColorPickerGrey = StringAsset("ctl_txt_profile_color_picker_grey")
-    /// Pink
+    /// It! Is! Pink!
     internal static let ctlTxtProfileColorPickerPink = StringAsset("ctl_txt_profile_color_picker_pink")
     /// Selected
     internal static let ctlTxtProfileColorPickerSelected = StringAsset("ctl_txt_profile_color_picker_selected")
-    /// Yellow
+    /// Sun dew
     internal static let ctlTxtProfileColorPickerYellow = StringAsset("ctl_txt_profile_color_picker_yellow")
     /// Connected
     internal static let ctlTxtProfileConnectionStatusConnected = StringAsset("ctl_txt_profile_connection_status_connected")
@@ -1470,7 +1470,7 @@ import SwiftUI
     internal static let mainBtnRefresh = StringAsset("main_btn_refresh")
     /// ↓ Drag the screen down to update.
     internal static let mainEmptyTxtConnected = StringAsset("main_empty_txt_connected")
-    /// Sign in to receive recipes automatically or add a new recipe using the ⊕ in the top corner.
+    /// Sign up to receive prescriptions automatically.
     internal static let mainEmptyTxtDisconnected = StringAsset("main_empty_txt_disconnected")
     /// No prescriptions
     internal static let mainEmptyTxtTitle = StringAsset("main_empty_txt_title")
@@ -1982,6 +1982,8 @@ import SwiftUI
     internal static let phaSearchFilterTxtTitle = StringAsset("pha_search_filter_txt_title")
     /// Close location sharing, don't share location
     internal static let phaSearchHintTxtClose = StringAsset("pha_search_hint_txt_close")
+    /// Pharmacy
+    internal static let phaSearchMapAnnotation = StringAsset("pha_search_map_annotation")
     /// Cancel
     internal static let phaSearchMapBtnErrorCancel = StringAsset("pha_search_map_btn_Error_cancel")
     /// Search here
@@ -2148,7 +2150,7 @@ import SwiftUI
     internal static let prscDtlDrErrorInfoDescription = StringAsset("prsc_dtl_dr_error_info_description")
     /// Prescription incorrect
     internal static let prscDtlDrErrorInfoTitle = StringAsset("prsc_dtl_dr_error_info_title")
-    /// During this period you can fill your prescription at any pharmacy with a co-payment.
+    /// During this period, you can redeem your prescription in any pharmacy with a maximum additional payment of €10.
     internal static let prscDtlDrPrescriptionValidityInfoAcceptDateDescription = StringAsset("prsc_dtl_dr_prescription_validity_info_accept_date_description")
     /// You can still fill the prescription at a pharmacy within this period, but you will have to pay the entire purchase price for the medication yourself. Alternatively, you can ask your practice to have the prescription reissued.
     internal static let prscDtlDrPrescriptionValidityInfoExpireDateDescription = StringAsset("prsc_dtl_dr_prescription_validity_info_expire_date_description")
@@ -2286,6 +2288,8 @@ import SwiftUI
     internal static let prscDtlTxtPractitionerPerson = StringAsset("prsc_dtl_txt_practitioner_person")
     /// Number of packs prescribed
     internal static let prscDtlTxtQuantity = StringAsset("prsc_dtl_txt_quantity")
+    /// Detailed information
+    internal static let prscDtlTxtSectionDetailsHeader = StringAsset("prsc_dtl_txt_section_details_header")
     /// Yes
     internal static let prscDtlTxtYes = StringAsset("prsc_dtl_txt_yes")
     /// Report
@@ -2328,7 +2332,7 @@ import SwiftUI
     internal static let prscFdTxtErrorBannerMessage = StringAsset("prsc_fd_txt_error_banner_message")
     /// Not specified
     internal static let prscFdTxtNa = StringAsset("prsc_fd_txt_na")
-    /// Detail
+    /// Prescription details
     internal static let prscFdTxtNavigationTitle = StringAsset("prsc_fd_txt_navigation_title")
     /// This medication can also be redeemed in a pharmacy at night without an emergency service fee.
     internal static let prscFdTxtNoctuDescription = StringAsset("prsc_fd_txt_noctu_description")
@@ -2722,6 +2726,8 @@ import SwiftUI
     internal static let stgBtnNewProfileCreate = StringAsset("stg_btn_new_profile_create")
     /// Register
     internal static let stgBtnRegDevicesLoad = StringAsset("stg_btn_reg_devices_load")
+    /// E-prescription forum
+    internal static let stgConBtnGemmunity = StringAsset("stg_con_btn_gemmunity")
     /// app-feedback@gematik.de
     internal static let stgConFbkMail = StringAsset("stg_con_fbk_mail")
     /// Feedback from the e-prescription app
@@ -3164,7 +3170,7 @@ import SwiftUI
   }
   internal extension StringAsset {
     init(_ string: String, arguments: [CVarArg]? = nil) {
-        self.init(string, arguments: arguments, bundle: Bundle(for: BundleToken.self))
+        self.init(string, arguments: arguments, bundle: Bundle.module)
     }
   }
   // swiftlint:enable function_parameter_count identifier_name line_length type_body_length

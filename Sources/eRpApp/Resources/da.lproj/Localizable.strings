@@ -1,5 +1,5 @@
 "add_btn_save" = "Gemme";
-"add_txt_profile1" = "Profiler 1";
+"add_txt_profile1" = "Profil navn";
 "add_txt_title" = "Indtast navn";
 "alert_btn_close" = "Nægte";
 "alert_btn_ok" = "Okay";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Forkert adgangsnummer";
 "cdw_txt_rc_error_wrong_can_recovery" = "Ret venligst dit adgangsnummer (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Forkert pinkode";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ flere forsøg. Ret venligst din PIN-kode.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ flere forsøg. OBS: det skal være pinkoden på dit sundhedskort. Ikke TK Ident PIN, for eksempel.";
 "cdw_txt_rc_headline" = "Hav et sundhedskort klar";
 "cdw_txt_rc_list_charge" = "Kontroller, om din enhed er tilstrækkeligt opladet.";
 "cdw_txt_rc_list_cover" = "Fjern om nødvendigt beskyttelsesdækslet.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Meget svag";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Svag";
 "ctl_txt_profile__cell_not_connected" = "Ikke logget ind";
-"ctl_txt_profile_color_picker_blue" = "Blå";
-"ctl_txt_profile_color_picker_green" = "Grøn";
-"ctl_txt_profile_color_picker_grey" = "Grå";
-"ctl_txt_profile_color_picker_pink" = "Lyserød";
+"ctl_txt_profile_color_picker_blue" = "Blå måne september";
+"ctl_txt_profile_color_picker_green" = "Træ";
+"ctl_txt_profile_color_picker_grey" = "Forårsgrå";
+"ctl_txt_profile_color_picker_pink" = "Det! Er! Lyserød!";
 "ctl_txt_profile_color_picker_selected" = "Valgte";
-"ctl_txt_profile_color_picker_yellow" = "Gul";
+"ctl_txt_profile_color_picker_yellow" = "Soldug";
 "ctl_txt_profile_connection_status_connected" = "Bundet sammen";
 "ctl_txt_profile_connection_status_disconnected" = "Ikke forbundet";
 "ctl_txt_search_bar_field_label" = "Søgefelt";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Indløs";
 "main_btn_refresh" = "At opdatere";
 "main_empty_txt_connected" = "↓ Træk skærmen ned for at opdatere.";
-"main_empty_txt_disconnected" = "Log ind for at modtage opskrifter automatisk, eller tilføj en ny opskrift ved hjælp af ⊕ i øverste hjørne.";
+"main_empty_txt_disconnected" = "Tilmeld dig for at modtage opskrifter automatisk.";
 "main_empty_txt_title" = "Ingen opskrifter";
 "main_txt_consent_drawer_message" = "Bemærk: Du modtager ikke længere dine omkostningskvitteringer som udskrift på apoteket.";
 "main_txt_consent_drawer_title" = "Modtag omkostningskvitteringer digitalt";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filter";
 "pha_search_filter_txt_title" = "Filter";
 "pha_search_hint_txt_close" = "Luk placeringsdeling, del ikke placering";
+"pha_search_map_annotation" = "Apotek";
 "pha_search_map_btn_Error_cancel" = "Afbestille";
 "pha_search_map_header" = "Tæt på";
 "pha_search_txt_closed" = "Lukket";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Akut servicegebyr";
 "prsc_dtl_dr_error_info_description" = "Ikke alle oplysninger er præsenteret korrekt i denne opskrift. Du kan dog stadig indløse den på dit apotek.";
 "prsc_dtl_dr_error_info_title" = "Opskriften er forkert";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "I denne periode kan du udfylde din recept på ethvert apotek med egenbetaling.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "I denne periode kan du indløse din recept på ethvert apotek med en maksimal ekstra betaling på €10.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Du kan stadig udfylde recepten på apoteket inden for denne periode, men du skal selv betale hele købesummen for medicinen. Alternativt kan du bede din praksis om at få genudstedt recepten.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Hvor længe er denne recept gyldig?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Recepter importeret fra en papirkopi kan ikke vise personlige eller medicinske oplysninger af sikkerhedsmæssige årsager. \n\n Log ind på denne app med sundhedskort eller forsikringsapp for at se alle oplysningerne i recepten.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Digital omkostningskvittering";
 "prsc_dtl_txt_practitioner_person" = "Udskriver";
 "prsc_dtl_txt_quantity" = "Antal foreskrevne pakninger";
+"prsc_dtl_txt_section_details_header" = "Detaljeret information";
 "prsc_dtl_txt_yes" = "Ja";
 "prsc_fd_btn_error_banner" = "Rapport";
 "prsc_fd_hint_dosageInstructions_pic" = "læge";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Brugsanvisning";
 "prsc_fd_txt_error_banner_message" = "Noget ser ud til at være gået galt under oprettelsen af ​​din opskrift. Rapportere en fejl?";
 "prsc_fd_txt_na" = "Ikke specificeret";
-"prsc_fd_txt_navigation_title" = "detalje";
+"prsc_fd_txt_navigation_title" = "Opskrift detaljer";
 "prsc_fd_txt_noctu_description" = "Denne medicin kan også indløses på et apotek om natten uden et akut servicegebyr.";
 "prsc_fd_txt_noctu_title" = "Skynd dig her";
 "prsc_fd_txt_organization_address" = "adresse";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Påmindelse om omsætning";
 "stg_btn_new_profile_create" = "Gemme";
 "stg_btn_reg_devices_load" = "Tilmeld";
+"stg_con_btn_gemmunity" = "E-receptforum";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback fra e-recept-appen";
 "stg_con_hotline_ava" = "Gratis for den, der ringer op. Tjenestetider: Man - Fre 8:00 - 20:00 undtagen på nationale helligdage";

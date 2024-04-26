@@ -51,7 +51,7 @@ struct FormTextFieldView: View {
                     )
 
                     if let title = subtitle {
-                        Text(title)
+                        Text(title, bundle: .module)
                             .font(.subheadline)
                             .fixedSize(horizontal: false, vertical: true)
                             .foregroundColor(Colors.textSecondary)

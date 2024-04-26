@@ -16,6 +16,7 @@
 //  
 //
 
+import CasePaths
 import Combine
 import DataKit
 import Foundation
@@ -24,115 +25,94 @@ import OpenSSL
 
 #if ENABLE_DEBUG_VIEW
 class VirtualEGKSignatureProvider: NFCSignatureProvider {
-    func openSecureSession(can _: String,
-                           pin _: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
+    func sign(
+        can _: String,
+        pin _: String,
+        challenge challengeSession: IDPChallengeSession
+    ) async -> Result<SignedChallenge, NFCSignatureProviderError> {
         let cchaut = UserDefaults.standard.virtualEGKCCHAut ?? ""
         let prkchaut = UserDefaults.standard.virtualEGKPrkCHAut ?? ""
 
-        let signatureSession = Session(privateKey: prkchaut, certificate: cchaut)
-
-        return Just(signatureSession).setFailureType(to: NFCSignatureProviderError.self).eraseToAnyPublisher()
-    }
-
-    func sign(
-        can: String,
-        pin: String,
-        challenge: IDPChallengeSession
-    ) async -> Result<SignedChallenge, NFCSignatureProviderError> {
+        let signer: Brainpool256r1Signer
         do {
-            let signature = try await openSecureSession(can: can, pin: pin)
-                .flatMap { session in
-                    session.sign(challengeSession: challenge)
-                }
-                .eraseToAnyPublisher()
-                .async()
-            return .success(signature)
+            signer = try Brainpool256r1Signer(
+                x5c: cchaut,
+                key: prkchaut
+            )
         } catch {
-            return .failure(NFCSignatureProviderError.signingFailure(.certificate(error)))
+            return .failure(.signingFailure(.certificate(error)))
+        }
+
+        do {
+            let signedChallenge = try await challengeSession.sign(with: signer, using: signer.certificates)
+                .async()
+            return .success(signedChallenge)
+        } catch {
+            return .failure(error.asNFCSignatureError())
         }
     }
 
-    class Session: SignatureSession {
-        var encodedPrivateKey: String
-        var encodedCertificate: String
+    func signForBiometrics(
+        can _: String,
+        pin _: String,
+        challenge challengeSession: IDPChallengeSession,
+        registerDataProvider: SecureEnclaveSignatureProvider,
+        in pairingSession: PairingSession
+    ) async -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        let cchaut = UserDefaults.standard.virtualEGKCCHAut ?? ""
+        let prkchaut = UserDefaults.standard.virtualEGKPrkCHAut ?? ""
 
-        init(privateKey: String, certificate: String) {
-            encodedPrivateKey = privateKey
-            encodedCertificate = certificate
+        let signer: Brainpool256r1Signer
+        let cert: X509
+        do {
+            signer = try Brainpool256r1Signer(
+                x5c: cchaut,
+                key: prkchaut
+            )
+            guard let certificate = signer.certificates.first
+            else {
+                return .failure(.signingFailure(.missingCertificate))
+            }
+            cert = try X509(der: certificate)
+        } catch {
+            return .failure(.signingFailure(.certificate(error)))
         }
 
-        func sign(challengeSession: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
-            do {
-                let signer = try Brainpool256r1Signer(
-                    x5c: encodedCertificate,
-                    key: encodedPrivateKey
-                )
+        do {
+            let signedChallenge = try await challengeSession
+                .sign(with: signer, using: signer.certificates)
+                .async()
+            let registrationData = try await registerDataProvider
+                .signPairingSession(pairingSession, with: signer, certificate: cert)
+                .async(/NFCSignatureProviderError.secureEnclaveError)
+            return .success((signedChallenge, registrationData))
+        } catch {
+            return .failure(error.asNFCSignatureError())
+        }
+    }
 
-                return challengeSession
-                    .sign(with: signer, using: signer.certificates)
-                    .mapError { error in
-                        error.asNFCSignatureError()
-                    }
-                    .eraseToAnyPublisher()
-            } catch {
-                return Fail(outputType: SignedChallenge.self,
-                            failure: NFCSignatureProviderError.signingFailure(.certificate(error)))
-                    .eraseToAnyPublisher()
-            }
+    class Brainpool256r1Signer: JWTSigner {
+        let x5c: X509
+        let derBytes: Data
+        let key: BrainpoolP256r1.Verify.PrivateKey
+
+        init(x5c x5cBase64: String, key keyBase64: String) throws {
+            derBytes = try Base64.decode(string: x5cBase64)
+            x5c = try X509(der: derBytes)
+            key = try BrainpoolP256r1.Verify.PrivateKey(raw: try Base64.decode(string: keyBase64))
         }
 
-        func sign(registerDataProvider: SecureEnclaveSignatureProvider,
-                  in pairingSession: PairingSession,
-                  signedChallenge: SignedChallenge)
-            -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
-            do {
-                let signer = try Brainpool256r1Signer(
-                    x5c: encodedCertificate,
-                    key: encodedPrivateKey
-                )
-                guard let certificate = signer.certificates.first else {
-                    return Fail(
-                        error: NFCSignatureProviderError.signingFailure(.missingCertificate)
-                    ).eraseToAnyPublisher()
-                }
-                let cert = try X509(der: certificate)
-                return registerDataProvider
-                    .signPairingSession(pairingSession, with: signer, certificate: cert)
-                    .mapError(NFCSignatureProviderError.secureEnclaveError)
-                    .map { (signedChallenge, $0) }
-                    .eraseToAnyPublisher()
-            } catch {
-                return Fail(error: NFCSignatureProviderError.signingFailure(.certificate(error))).eraseToAnyPublisher()
-            }
+        var certificates: [Data] {
+            [derBytes]
         }
 
-        func updateAlert(message _: String) {}
-
-        func invalidateSession(with _: String?) {}
-
-        class Brainpool256r1Signer: JWTSigner {
-            let x5c: X509
-            let derBytes: Data
-            let key: BrainpoolP256r1.Verify.PrivateKey
-
-            init(x5c x5cBase64: String, key keyBase64: String) throws {
-                derBytes = try Base64.decode(string: x5cBase64)
-                x5c = try X509(der: derBytes)
-                key = try BrainpoolP256r1.Verify.PrivateKey(raw: try Base64.decode(string: keyBase64))
+        func sign(message: Data) -> AnyPublisher<Data, Error> {
+            Future { promise in
+                promise(Result {
+                    try self.key.sign(message: message).rawRepresentation
+                })
             }
-
-            var certificates: [Data] {
-                [derBytes]
-            }
-
-            func sign(message: Data) -> AnyPublisher<Data, Error> {
-                Future { promise in
-                    promise(Result {
-                        try self.key.sign(message: message).rawRepresentation
-                    })
-                }
-                .eraseToAnyPublisher()
-            }
+            .eraseToAnyPublisher()
         }
     }
 }

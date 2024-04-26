@@ -1,5 +1,5 @@
 "add_btn_save" = "حفظ";
-"add_txt_profile1" = "الملفات الشخصية 1";
+"add_txt_profile1" = "اسم البروفايل";
 "add_txt_title" = "أدخل الاسم";
 "alert_btn_close" = "الرفض";
 "alert_btn_ok" = "موافق";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "رقم الدخول غير صحيح";
 "cdw_txt_rc_error_wrong_can_recovery" = "يرجى تصحيح رقم الوصول الخاص بك (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "رقم التعريف الشخصي غير صحيح";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "يتبقى لك عدد %@ محاولة. يُرجى تصحيح إدخال رقم التعريف الشخصي الخاص بك.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ محاولات أخرى. تنبيه: يجب أن يكون رقم التعريف الشخصي لبطاقتك الصحية. ليس رقم التعريف الشخصي لمعرف TK، على سبيل المثال.";
 "cdw_txt_rc_headline" = "جهز بطاقتك الصحية";
 "cdw_txt_rc_list_charge" = "تحقق مما إذا كان جهازك مشحونًا بشكل كافٍ.";
 "cdw_txt_rc_list_cover" = "انزع عند الضرورة علبة الحماية.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "ضعيف جدا";
 "ctl_txt_password_strength_accessiblity_value_weak" = "ضعيف";
 "ctl_txt_profile__cell_not_connected" = "لم يتم تسجيل الدخول";
-"ctl_txt_profile_color_picker_blue" = "أزرق";
-"ctl_txt_profile_color_picker_green" = "أخضر";
-"ctl_txt_profile_color_picker_grey" = "رمادي";
-"ctl_txt_profile_color_picker_pink" = "وردي";
+"ctl_txt_profile_color_picker_blue" = "القمر الأزرق سبتمبر";
+"ctl_txt_profile_color_picker_green" = "شجرة";
+"ctl_txt_profile_color_picker_grey" = "رمادي ربيعي";
+"ctl_txt_profile_color_picker_pink" = "هو - هي! هو! لون القرنفل!";
 "ctl_txt_profile_color_picker_selected" = "تم الاختيار";
-"ctl_txt_profile_color_picker_yellow" = "أصفر";
+"ctl_txt_profile_color_picker_yellow" = "سنديو";
 "ctl_txt_profile_connection_status_connected" = "تم الاتصال";
 "ctl_txt_profile_connection_status_disconnected" = "غير متصل";
 "ctl_txt_search_bar_field_label" = "مربع البحث";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "الصرف";
 "main_btn_refresh" = "تحديث";
 "main_empty_txt_connected" = "↓ اسحب الشاشة لأسفل للتحديث.";
-"main_empty_txt_disconnected" = "قم بتسجيل الدخول لتلقي الوصفات تلقائيًا أو قم بإضافة وصفة جديدة باستخدام الرمز ⊕ في الزاوية العلوية.";
+"main_empty_txt_disconnected" = "قم بالتسجيل لتلقي الوصفات تلقائيا.";
 "main_empty_txt_title" = "لا توجد وصفات طبية";
 "main_txt_consent_drawer_message" = "ملاحظة: لن تتمكن بعد الآن من استلام إيصالات التكلفة الخاصة بك كنسخة مطبوعة في الصيدلية.";
 "main_txt_consent_drawer_title" = "تلقي إيصالات التكلفة رقميا";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "الفرز";
 "pha_search_filter_txt_title" = "الفرز";
 "pha_search_hint_txt_close" = "إغلاق إتاحة الموقع ، عدم إتاحة الموقع";
+"pha_search_map_annotation" = "الصيدلية";
 "pha_search_map_btn_Error_cancel" = "إلغاء";
 "pha_search_map_header" = "قريب من";
 "pha_search_txt_closed" = "مُغلق";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "رسوم خدمة الطوارئ";
 "prsc_dtl_dr_error_info_description" = "لم يتم تقديم جميع المعلومات بشكل صحيح في هذه الوصفة. ومع ذلك، لا يزال بإمكانك استبداله في الصيدلية الخاصة بك.";
 "prsc_dtl_dr_error_info_title" = "الوصفة غير صحيحة";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "خلال هذه الفترة، يمكنك صرف الوصفة الطبية الخاصة بك في أي صيدلية مع الدفع المشترك.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "خلال هذه الفترة، يمكنك استرداد الوصفة الطبية الخاصة بك في أي صيدلية بحد أقصى للدفع الإضافي قدره 10 يورو.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "لا يزال بإمكانك صرف الوصفة الطبية من الصيدلية خلال هذه الفترة، ولكن سيتعين عليك دفع سعر شراء الدواء بالكامل بنفسك. وبدلاً من ذلك، يمكنك أن تطلب من عيادتك إعادة إصدار الوصفة الطبية.";
 "prsc_dtl_dr_prescription_validity_info_title" = "ما هي مدة صلاحية هذه الوصفة الطبية؟";
 "prsc_dtl_dr_scanned_prescription_info_description" = "الوصفات الطبية المستوردة من نسخة مطبوعة لا يمكنها عرض المعلومات الشخصية أو الطبية لأسباب أمنية. \n\n قم بتسجيل الدخول إلى هذا التطبيق باستخدام البطاقة الصحية أو تطبيق التأمين لعرض جميع المعلومات الواردة في الوصفة الطبية.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "إيصال التكلفة الرقمية";
 "prsc_dtl_txt_practitioner_person" = "الشخص واصف الدواء";
 "prsc_dtl_txt_quantity" = "عدد العبوات المقررة";
+"prsc_dtl_txt_section_details_header" = "معلومات مفصلة";
 "prsc_dtl_txt_yes" = "نعم";
 "prsc_fd_btn_error_banner" = "الإبلاغ";
 "prsc_fd_hint_dosageInstructions_pic" = "الطبيبة";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "تعليمات تناول الدواء";
 "prsc_fd_txt_error_banner_message" = "يبدو أن شيئًا ما قد حدث خطأ أثناء إعداد وصفتك. هل تريد الإبلاغ عن خطأ؟";
 "prsc_fd_txt_na" = "بدون بيان";
-"prsc_fd_txt_navigation_title" = "التفاصيل";
+"prsc_fd_txt_navigation_title" = "تفاصيل الوصفة";
 "prsc_fd_txt_noctu_description" = "يمكن أيضًا صرف هذا الدواء من الصيدلية ليلاً بدون رسوم خدمة الطوارئ.";
 "prsc_fd_txt_noctu_title" = "السرعة مطلوبة هنا";
 "prsc_fd_txt_organization_address" = "العنوان";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "تذكير بالإيرادات";
 "stg_btn_new_profile_create" = "حفظ";
 "stg_btn_reg_devices_load" = "يسجل";
+"stg_con_btn_gemmunity" = "منتدى الوصفات الطبية الإلكترونية";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "ملاحظة من تطبيق الوصفة الإلكترونية";
 "stg_con_hotline_ava" = "مجانا للمتصل. أوقات الخدمة: الإثنين - الجمعة 8:00 صباحًا - 8:00 مساءً باستثناء أيام العطل الوطنية";

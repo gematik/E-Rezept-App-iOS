@@ -29,7 +29,7 @@ struct MedicationRedeemView: View {
     var body: some View {
         Button(action: action) {
             Spacer()
-            Text(text)
+            Text(text, bundle: .module)
                 .fontWeight(.semibold)
                 .font(.body)
                 .multilineTextAlignment(.center)

@@ -19,7 +19,7 @@
 import Combine
 import ComposableArchitecture
 import CustomDump
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 @testable import eRpRemoteStorage
 import GemCommonsKit
@@ -883,7 +883,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     private func chargeItemFromFile(_ file: String, identifier: String) throws -> ErxChargeItem? {
-        let data = try Bundle(for: Self.self)
+        let data = try Bundle.module
             .testResourceFilePath(in: "PDF", for: file)
             .readFileContents()
         return try JSONDecoder()

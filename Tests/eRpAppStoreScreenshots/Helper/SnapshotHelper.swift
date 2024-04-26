@@ -16,7 +16,10 @@
 //  
 //
 
+import SnapshotTesting
+import SwiftUI
 import UIKit
+import XCTest
 
 extension UIImage {
     private class TestBundleAnchor {}
@@ -34,25 +37,44 @@ extension ViewImageConfig {
     }
 }
 
-import SnapshotTesting
-import SwiftUI
-
-struct SnapshotHelper {
+enum SnapshotHelper {
     private static var didRecord = false
 
     static func fixOffsetProblem() {
         guard didRecord == false else { return }
 
-        let dummy = NavigationView {
-            Text("*")
-                .navigationTitle("⚕︎ Redeem")
-        }
-        assertSnapshot(matching: dummy, as: .image(precision: 0.0), named: "dummy", record: false)
+        assertSnapshot(
+            of: OffsetPreview(
+                .image(layout: .device(config: .iPhone14(.portrait)))
+            ),
+            as: .image(
+                precision: 0.0,
+                layout: .device(config: .iPhone14(.portrait))
+            ),
+            named: "dummy",
+            record: false
+        )
         didRecord = true
     }
 }
 
-import XCTest
+struct OffsetPreview: View {
+    let snapshotting: Snapshotting<AnyView, UIImage>
+
+    init(_ snapshotting: Snapshotting<AnyView, UIImage>) {
+        self.snapshotting = snapshotting
+    }
+
+    var body: some View {
+        Snapshot(self.snapshotting) {
+            NavigationView {
+                Text("*")
+                    .navigationTitle("⚕︎ Redeem")
+            }
+            .fixedSize(horizontal: true, vertical: true)
+        }
+    }
+}
 
 class ERPSnapshotTestCase: XCTestCase {
     override func setUp() {
@@ -60,5 +82,45 @@ class ERPSnapshotTestCase: XCTestCase {
         diffTool = "open"
 
         SnapshotHelper.fixOffsetProblem()
+    }
+}
+
+extension ViewImageConfig {
+    static func iPhone14(_ orientation: Orientation) -> ViewImageConfig {
+        let safeArea: UIEdgeInsets
+        let size: CGSize
+        switch orientation {
+        case .landscape:
+            safeArea = .init(top: 0, left: 47, bottom: 21, right: 47)
+            size = .init(width: 844, height: 390)
+        case .portrait:
+            safeArea = .init(top: 47, left: 0, bottom: 34, right: 0)
+            size = .init(width: 390, height: 844)
+        }
+        return .init(safeArea: safeArea, size: size, traits: .iPhone14(orientation))
+    }
+}
+
+extension UITraitCollection {
+    static func iPhone14(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
+        let base: [UITraitCollection] = [
+            .init(forceTouchCapability: .available),
+            .init(layoutDirection: .leftToRight),
+            .init(preferredContentSizeCategory: .medium),
+            .init(userInterfaceIdiom: .phone),
+        ]
+
+        switch orientation {
+        case .landscape:
+            return .init(traitsFrom: base + [
+                .init(horizontalSizeClass: .regular),
+                .init(verticalSizeClass: .compact),
+            ])
+        case .portrait:
+            return .init(traitsFrom: base + [
+                .init(horizontalSizeClass: .compact),
+                .init(verticalSizeClass: .regular),
+            ])
+        }
     }
 }

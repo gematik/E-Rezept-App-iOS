@@ -57,7 +57,7 @@ struct ToggleCell: View {
                         .foregroundColor(isDisabled ? Colors.systemGray : iconColor)
                         .disabled(isDisabled)
                 }
-                Text(text)
+                Text(text, bundle: .module)
                     .font(.body)
                     .foregroundColor(isDisabled ? Colors.systemGray : textColor)
             }

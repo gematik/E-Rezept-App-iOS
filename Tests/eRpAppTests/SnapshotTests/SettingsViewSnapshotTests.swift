@@ -18,7 +18,7 @@
 
 import CombineSchedulers
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 @testable import eRpLocalStorage
 import SnapshotTesting

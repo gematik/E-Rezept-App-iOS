@@ -37,7 +37,7 @@ struct PharmacySearchFilterView: View {
             Button(action: {
                 isEnabled.toggle()
             }, label: {
-                Text(title)
+                Text(title, bundle: .module)
                     .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                     .foregroundColor(isEnabled ? Colors.systemBackground : Colors.systemLabelSecondary)
                     .background(isEnabled ? Colors.primary : Colors.systemBackgroundSecondary)
@@ -110,7 +110,7 @@ struct PharmacySearchFilterView: View {
 
         var body: some View {
             HStack {
-                Text(filter.localizedStringKey)
+                Text(filter.localizedStringKey, bundle: .module)
                 Spacer()
                 Image(systemName: isActive ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
                     .foregroundColor(isActive ? Colors.primary600 : Colors.systemGray)

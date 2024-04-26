@@ -33,4 +33,10 @@ struct TabBarScreen: Screen {
 
         return .init(app: app)
     }
+
+    func tapRedeemTab(file: StaticString = #file, line: UInt = #line) -> PharmacySearchScreen {
+        button(within: app.tabBars, by: "Apothekensuche", file: file, line: line).tap()
+
+        return .init(app: app)
+    }
 }

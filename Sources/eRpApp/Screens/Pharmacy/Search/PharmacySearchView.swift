@@ -185,7 +185,7 @@ struct PharmacySearchView: View {
         .searchable(
             text: searchText,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: L10n.phaSearchTxtSearchHint.key
+            prompt: L10n.phaSearchTxtSearchHint.text
         ) {
             Suggestions(viewStore: viewStore)
         }

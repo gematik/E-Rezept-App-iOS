@@ -16,6 +16,8 @@
 //  
 //
 
+#if DEBUG
+
 import Dependencies
 import Foundation
 import UIKit
@@ -70,3 +72,5 @@ extension DependencyValues {
         set { self[SmartMockRegister.self] = newValue }
     }
 }
+
+#endif

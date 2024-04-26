@@ -35,6 +35,36 @@ extension View {
             )
         )
     }
+
+    /// Presents a sheet when a binding to an item value that you provide is set. The size of the sheet is
+    /// dynamically updated. If you use view component without intrinsic content size (such as `NavigationView` or
+    /// `List`), you need to add a `.frame(height:)` modifier to your displayed content.
+    public func smallSheet<Item, Content: View>(
+        _ item: Binding<Item?>,
+        @ViewBuilder content: (Item) -> Content
+    ) -> some View {
+        modifier(
+            SmallSheetPresentationControllerModifier(
+                isPresented: Binding(get: {
+                    item.wrappedValue != nil
+                }, set: { value in
+                    if !value {
+                        item.wrappedValue = nil
+                    }
+                }),
+                onDismiss: {
+                    item.wrappedValue = nil
+                },
+                content: {
+                    if let item = item.wrappedValue {
+                        content(item)
+                    } else {
+                        EmptyView()
+                    }
+                }
+            )
+        )
+    }
 }
 
 struct SmallSheetPresentationControllerModifier<SheetContent: View>: ViewModifier {

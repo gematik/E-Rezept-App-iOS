@@ -68,7 +68,42 @@ final class RedeemUITests: XCTestCase {
             .tapRedeem()
             .tapClose()
 
-        expect(self.app.staticTexts["Gefällt dir E-Rezept?"].exists).to(beTrue())
-        app.buttons["Später"].tap()
+        let de = app.staticTexts["Gefällt dir E-Rezept?"].exists
+        let en = app.staticTexts["Enjoying E-prescription?"].exists
+
+        expect(de || en).to(beTrue())
+        if app.buttons["Not Now"].exists {
+            app.buttons["Not Now"].tap()
+        }
+        if app.buttons["Später"].exists {
+            app.buttons["Später"].tap()
+        }
+    }
+
+    func testRedeemFromDetailsPharmacyRedeem() {
+        let details = TabBarScreen(app: app)
+            .tapPrescriptionsTab()
+            .detailsForPrescriptionNamed("Adavomilproston")
+
+        _ = details
+            .tapRedeemPharmacyButton()
+            .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
+            .tapRedeem()
+
+        let prescriptions = app.buttons["pha_redeem_btn_edit_prescription"]
+        expect(prescriptions.staticTexts["Adavomilproston"]).to(exist("Adavomilproston"))
+        expect(prescriptions.staticTexts["1 Rezepte"]).to(exist("1 Rezepte"))
+    }
+
+    func testRedeemFromDetailsShowMatrixCode() {
+        let details = TabBarScreen(app: app)
+            .tapPrescriptionsTab()
+            .detailsForPrescriptionNamed("Adavomilproston")
+
+        let redeem = details
+            .tapShowMatrixCodeButton()
+
+        expect(self.app.staticTexts["Adavomilproston"]).to(exist("Adavomilproston"))
+        expect(redeem.title().label).to(equal("Rezeptcode"))
     }
 }

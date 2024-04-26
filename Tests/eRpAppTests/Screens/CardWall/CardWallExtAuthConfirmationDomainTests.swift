@@ -18,7 +18,7 @@
 
 import Combine
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import IDP
 import Nimble
 import TestUtils

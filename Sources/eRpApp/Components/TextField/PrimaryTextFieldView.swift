@@ -26,10 +26,9 @@ struct PrimaryTextFieldView: View {
     let a11y: String
 
     var body: some View {
-        TextField(
-            placeholder,
-            text: $text
-        )
+        TextField(text: $text) {
+            Text(placeholder, bundle: .module)
+        }
         .padding()
         .font(Font.body)
         .foregroundColor(Colors.systemLabel)

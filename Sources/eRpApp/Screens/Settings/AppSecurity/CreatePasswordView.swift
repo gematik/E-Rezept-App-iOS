@@ -66,10 +66,11 @@ struct CreatePasswordView: View {
                     },
                     footer: { currentPasswordFooter() },
                     content: {
-                        SecureField(L10n.cpwInpCurrentPasswordPlaceholder,
-                                    text: currentPassword) {
-                            viewStore.send(.enterButtonTapped)
-                        }
+                        SecureField(
+                            L10n.cpwInpCurrentPasswordPlaceholder,
+                            text: currentPassword
+                        )
+                        .onSubmit { viewStore.send(.enterButtonTapped) }
                         .textContentType(.password)
                         .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
                         .padding()
@@ -96,10 +97,11 @@ struct CreatePasswordView: View {
                 },
                 content: {
                     VStack {
-                        SecureField(L10n.cpwInpPasswordAPlaceholder,
-                                    text: passwordA) {
-                            viewStore.send(.enterButtonTapped)
-                        }
+                        SecureField(
+                            L10n.cpwInpPasswordAPlaceholder,
+                            text: passwordA
+                        )
+                        .onSubmit { viewStore.send(.enterButtonTapped) }
                         .padding()
                         .textContentType(.newPassword)
                         .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
@@ -108,10 +110,11 @@ struct CreatePasswordView: View {
             )
 
             SingleElementSectionContainer {
-                SecureField(L10n.cpwInpPasswordBPlaceholder,
-                            text: passwordB) {
-                    viewStore.send(.saveButtonTapped)
-                }
+                SecureField(
+                    L10n.cpwInpPasswordBPlaceholder,
+                    text: passwordB
+                )
+                .onSubmit { viewStore.send(.saveButtonTapped) }
                 .padding()
                 .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
                 .textContentType(.newPassword)

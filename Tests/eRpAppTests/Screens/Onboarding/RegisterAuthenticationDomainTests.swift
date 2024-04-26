@@ -18,7 +18,7 @@
 
 import Combine
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import LocalAuthentication
 import Nimble
 import XCTest

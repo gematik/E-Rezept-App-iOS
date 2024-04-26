@@ -35,6 +35,31 @@ extension View {
             ToastContainerView(isPresented: isPresented.animation(.easeInOut), toast: toast)
         }
     }
+
+    /// Presents a toast on the view.
+    /// - Parameters:
+    ///   - isPresented: Binding to the presentation state. Dependend on the kind of the toast, this will be called by
+    ///   the toast to dismiss the toast.
+    ///   - toast: The toast to show
+    /// - Returns: The modified view.
+    @ViewBuilder public func toast(toast: Binding<Toast?>) -> some View {
+        overlay {
+            ToastContainerView(
+                isPresented: .init(
+                    get: {
+                        toast.wrappedValue != nil
+                    },
+                    set: { value in
+                        if !value {
+                            toast.wrappedValue = nil
+                        }
+                    }
+                )
+                .animation(.easeInOut),
+                toast: toast.wrappedValue
+            )
+        }
+    }
 }
 
 /// Structure describing a toast
@@ -91,25 +116,25 @@ public struct ToastContainerView: View {
                     ZStack(alignment: .trailing) {
                         switch toast?.style {
                         case let .simple(text, _):
-                            Text(text)
+                            Text(text, bundle: .module)
                                 .font(.subheadline)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: .infinity, alignment: .center)
                         case let .twoLines(upper, lower, _):
                             VStack {
-                                Text(upper)
+                                Text(upper, bundle: .module)
                                     .font(.subheadline)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity, alignment: .center)
 
-                                Text(lower)
+                                Text(lower, bundle: .module)
                                     .font(.subheadline)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity, alignment: .center)
                             }
                         case let .action(text, buttonTitle, action):
                             VStack(alignment: .trailing) {
-                                Text(text)
+                                Text(text, bundle: .module)
                                     .font(.subheadline)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity, alignment: .leading)

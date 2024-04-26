@@ -34,24 +34,35 @@ struct SettingsContactInfoView: View {
                 .accessibilityIdentifier(A11y.settings.contact.stgConTxtFootnote)
         }, content: {
             Button(action: {
+                guard let url = URL(string: "https://gematik.shortcm.li/E-Rezept-App_Feedback"),
+                      UIApplication.shared.canOpenURL(url) else { return }
+
+                UIApplication.shared.open(url)
+            }, label: {
+                Label(L10n.stgConTextSurvey, systemImage: SFSymbolName.chartBarAxis)
+            })
+                .accessibility(identifier: A11y.settings.contact.stgConTxtSurvey)
+                .buttonStyle(.navigation)
+
+            Button(action: {
                 if let email: URL = Self.createEmailUrl() {
                     if UIApplication.shared.canOpenURL(email) {
                         UIApplication.shared.open(email)
                     }
                 }
             }, label: {
-                Label(L10n.stgConTextMail, systemImage: SFSymbolName.mail)
+                Label(L10n.stgConTextMail, systemImage: SFSymbolName.textBubble)
             })
                 .accessibility(identifier: A11y.settings.contact.stgConTxtMail)
                 .buttonStyle(.navigation)
 
             Button(action: {
-                guard let url = URL(string: "https://gematik.shortcm.li/E-Rezept-App_Feedback"),
+                guard let url = URL(string: "https://www.das-e-rezept-fuer-deutschland.de/ext/community"),
                       UIApplication.shared.canOpenURL(url) else { return }
 
                 UIApplication.shared.open(url)
             }, label: {
-                Label(L10n.stgConTextSurvey, systemImage: SFSymbolName.clipboardDoc)
+                Label(L10n.stgConBtnGemmunity, systemImage: SFSymbolName.person2)
             })
                 .accessibility(identifier: A11y.settings.contact.stgConTxtSurvey)
                 .buttonStyle(.navigation)

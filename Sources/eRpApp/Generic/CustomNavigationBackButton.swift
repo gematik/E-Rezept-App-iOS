@@ -30,7 +30,7 @@ struct CustomNavigationBackButton: View {
             HStack {
                 Image(systemName: SFSymbolName.back).padding(0)
                     .foregroundColor(Colors.primary700)
-                Text(label)
+                Text(label, bundle: .module)
                     .font(.body)
                     .foregroundColor(Colors.primary700)
                     .padding(0)

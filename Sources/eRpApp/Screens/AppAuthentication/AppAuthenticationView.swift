@@ -106,7 +106,7 @@ struct AppAuthenticationView: View {
 
                     Spacer()
 
-                    Image(Asset.Illustrations.groupShot.name)
+                    Image(asset: Asset.Illustrations.groupShot)
                         .resizable()
                         .scaledToFit()
                 }

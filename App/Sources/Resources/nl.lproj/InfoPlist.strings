@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "E-recept";
+"NFCReaderUsageDescription" = "Hiermee kunt u zich identificeren en authenticeren met uw elektronische zorgkaart";
+"NSCameraUsageDescription" = "De camera is nodig om recepten op te nemen of foto's te maken.";
+"NSFaceIDUsageDescription" = "Voor e-recepten is FaceID vereist om de app te beschermen tegen ongeoorloofde toegang.";

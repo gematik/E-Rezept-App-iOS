@@ -21,7 +21,7 @@ configurations:
     output: Tests/eRpAppTests
     args:
       protocolMockImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingObjC ]
-      protocolMockTestableImports: [ eRpApp ]
+      protocolMockTestableImports: [ eRpFeatures ]
   - sources: # writes to Tests/eRpKitTests/Mocks/Generated/
       - Sources
       - Tests/eRpKitTests

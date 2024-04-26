@@ -1,9 +1,0 @@
-#include "base.xcconfig"
-
-SWIFT_COMPILATION_MODE = wholemodule
-
-CODE_SIGN_IDENTITY = iPhone Distribution
-GEM_PROVISIONING_PROFILE_SPECIFIER = match AppStore de.gematik.erp4ios.eRezept
-PROVISIONING_PROFILE_SPECIFIER = ${GEM_PROVISIONING_PROFILE_SPECIFIER}
-
-EXCLUDED_SOURCE_FILE_NAMES = SmartMock.generated.swift Sources/eRpApp/UITestScenarios/**

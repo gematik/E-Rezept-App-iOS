@@ -16,6 +16,8 @@
 //  
 //
 
+#if DEBUG
+
 import Foundation
 
 protocol SmartMock: AnyObject {
@@ -108,3 +110,5 @@ enum MockAnswer<T: Codable>: Codable {
         case decodingError
     }
 }
+
+#endif

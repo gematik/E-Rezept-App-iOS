@@ -5,6 +5,7 @@ import Foundation
 
 
 
+
 extension AppAuthenticationBiometricPasswordDomain.State {
     func routeName() -> String? {
             return nil
@@ -39,7 +40,7 @@ extension AppDomain.State {
             case .orders:
                 return subdomains.orders.routeName() ?? destination.tag.analyticsName
             case .settings:
-                return subdomains.settingsState.routeName() ?? destination.tag.analyticsName
+                return subdomains.settings.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -63,6 +64,19 @@ extension AppSecurityDomain.State {
         }
         switch destination {
             case let .appPassword(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension AppStartDomain.State {
+    func routeName() -> String? {
+        switch destination {
+            case .loading:
+                return destination.tag.analyticsName
+            case let .onboarding(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .app(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -366,7 +380,7 @@ extension MainDomain.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .prescriptionDetail(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case let .redeem(state: state):
+            case let .redeemMethods(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .medicationReminder(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
@@ -797,20 +811,6 @@ extension SettingsDomain.State {
 }
 
 
-extension AppStartDomain.State {
-    func routeName() -> String? {
-        let destination = self
-        switch destination {
-            case .loading:
-                return destination.tag.analyticsName
-            case let .onboarding(state: state):
-                return state.routeName() ?? destination.tag.analyticsName
-            case let .app(state: state):
-                return state.routeName() ?? destination.tag.analyticsName
-        }
-    }
-}
-
 extension ReadCardHelpDomain.State {
     func routeName() -> String? {
         let destination = self
@@ -844,6 +844,20 @@ extension AppSecurityDomain.Destinations.State {
         let destination = self
         switch destination {
             case let .appPassword(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension AppStartDomain.Destination.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .loading:
+                return destination.tag.analyticsName
+            case let .onboarding(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .app(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -1005,7 +1019,7 @@ extension EditProfilePictureDomain.Destinations.State {
     }
 }
 
-extension ExtAuthPendingDomain.Destinations.State {
+extension ExtAuthPendingDomain.Destination.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
@@ -1049,7 +1063,7 @@ extension HealthCardPasswordReadCardDomain.Destinations.State {
     }
 }
 
-extension MainDomain.Destinations.State {
+extension MainDomain.Destination.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
@@ -1069,7 +1083,7 @@ extension MainDomain.Destinations.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .prescriptionDetail(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case let .redeem(state: state):
+            case let .redeemMethods(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .medicationReminder(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
@@ -1427,6 +1441,18 @@ extension AppSecurityDomain.Destinations.State.Tag {
         }
     }
 }
+extension AppStartDomain.Destination.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .loading: 
+                return "loading"
+            case .onboarding: 
+                return "onboarding"
+            case .app: 
+                return "app"
+        }
+    }
+}
 extension AuditEventsDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
@@ -1561,7 +1587,7 @@ extension EditProfilePictureDomain.Destinations.State.Tag {
         }
     }
 }
-extension ExtAuthPendingDomain.Destinations.State.Tag {
+extension ExtAuthPendingDomain.Destination.State.Tag {
     var analyticsName: String {
         switch self {
             case .extAuthAlert: 
@@ -1599,7 +1625,7 @@ extension HealthCardPasswordReadCardDomain.Destinations.State.Tag {
         }
     }
 }
-extension MainDomain.Destinations.State.Tag {
+extension MainDomain.Destination.State.Tag {
     var analyticsName: String {
         switch self {
             case .createProfile: 
@@ -1618,7 +1644,7 @@ extension MainDomain.Destinations.State.Tag {
                 return Analytics.Screens.main_prescriptionArchive.name
             case .prescriptionDetail: 
                 return Analytics.Screens.prescriptionDetail.name
-            case .redeem: 
+            case .redeemMethods: 
                 return Analytics.Screens.redeem_methodSelection.name
             case .medicationReminder: 
                 return Analytics.Screens.main_medicationReminder.name
@@ -1907,18 +1933,6 @@ extension SettingsDomain.Destinations.State.Tag {
 }
 
 
-extension AppStartDomain.State.Tag {
-    var analyticsName: String {
-        switch self {
-            case .loading: 
-                return "loading"
-            case .onboarding: 
-                return "onboarding"
-            case .app: 
-                return "app"
-        }
-    }
-}
 extension ReadCardHelpDomain.State.Tag {
     var analyticsName: String {
         switch self {

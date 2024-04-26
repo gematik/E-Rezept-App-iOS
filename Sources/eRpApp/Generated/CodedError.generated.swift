@@ -1239,6 +1239,10 @@ extension NFCHealthCardPasswordControllerError: CodedError {
                 return "i-02604"
             case .changeReferenceData:
                 return "i-02605"
+            case .couldNotInitializeSession:
+                return "i-02606"
+            case .nfcHealthCardSession:
+                return "i-02607"
         }
     }
     var erpErrorCodeList: [String] {
@@ -1256,6 +1260,8 @@ extension NFCHealthCardPasswordControllerError: CodedError {
             case let .changeReferenceData(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
             case .changeReferenceData:
+                return [erpErrorCode]
+            case .nfcHealthCardSession:
                 return [erpErrorCode]
             default:
                 return [erpErrorCode]

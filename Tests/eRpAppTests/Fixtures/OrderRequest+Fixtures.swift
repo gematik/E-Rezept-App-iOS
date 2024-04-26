@@ -18,7 +18,7 @@
 
 import AVS
 import DataKit
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Foundation
 import OpenSSL

@@ -20,20 +20,22 @@ import SwiftUI
 
 /// sourcery: StringAssetInitialized
 public struct SubTitleTop: View {
-    public init(subject: LocalizedStringKey, title: LocalizedStringKey? = nil) {
+    public init(subject: LocalizedStringKey, title: LocalizedStringKey? = nil, bundle: Bundle) {
         self.subject = subject
         self.title = title
+        self.bundle = bundle
     }
 
     var subject: LocalizedStringKey
     var title: LocalizedStringKey?
+    var bundle: Bundle
 
     public var body: some View {
         VStack {
-            Text(subject)
+            Text(subject, bundle: bundle)
 
             if let title = title {
-                Text(title)
+                Text(title, bundle: bundle)
             }
         }
     }

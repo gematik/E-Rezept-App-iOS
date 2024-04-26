@@ -29,7 +29,7 @@ struct OptInCell: View {
             action: { isOn.toggle() },
             label: {
                 HStack {
-                    Text(text)
+                    Text(text, bundle: .module)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .font(.body)
                         .foregroundColor(Colors.text)

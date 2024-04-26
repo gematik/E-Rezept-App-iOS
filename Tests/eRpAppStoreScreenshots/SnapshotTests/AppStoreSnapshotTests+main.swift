@@ -17,7 +17,7 @@
 //
 
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import SnapshotTesting
 import SwiftUI
@@ -31,7 +31,7 @@ extension AppStoreSnapshotTests {
         )
 
         return MainView(
-            store: MainDomain.Store(
+            store: StoreOf<MainDomain>(
                 initialState: MainDomain.State(
                     prescriptionListState: state,
                     horizontalProfileSelectionState: HorizontalProfileSelectionDomain

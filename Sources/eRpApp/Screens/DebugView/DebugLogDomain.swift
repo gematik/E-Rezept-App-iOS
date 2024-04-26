@@ -199,7 +199,7 @@ extension DebugLogDomain {
             let response: HTTPResponse = (
                 // swiftlint:disable:next force_try
                 data: try! Data(contentsOf:
-                    Bundle.main.url(
+                    Bundle.module.url(
                         forResource: "FOSS",
                         withExtension: "html"
                     )!),

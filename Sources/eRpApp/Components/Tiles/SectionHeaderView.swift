@@ -26,7 +26,7 @@ struct SectionHeaderView: View {
 
     var body: some View {
         HStack {
-            Text(text)
+            Text(text, bundle: .module)
                 .font(Font.headline.weight(Font.Weight.bold))
                 .foregroundColor(Colors.systemLabel)
                 .multilineTextAlignment(.leading)

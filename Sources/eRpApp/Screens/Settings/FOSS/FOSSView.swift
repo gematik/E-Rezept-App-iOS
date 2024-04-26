@@ -37,8 +37,8 @@ extension FOSSView {
             let wkWebView = WKWebView()
             // [REQ:BSI-eRp-ePA:O.Plat_11#4] disabled javascript
             wkWebView.configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-            if let url = Bundle.main.url(forResource: "FOSS",
-                                         withExtension: "html") {
+            if let url = Bundle.module.url(forResource: "FOSS",
+                                           withExtension: "html") {
                 wkWebView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
             }
             wkWebView.navigationDelegate = navigationDelegate

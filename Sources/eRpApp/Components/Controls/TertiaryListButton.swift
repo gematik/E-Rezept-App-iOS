@@ -33,7 +33,7 @@ struct TertiaryListButton: View {
                     Image(systemName: imageName)
                         .foregroundColor(Colors.primary)
                 }
-                Text(text)
+                Text(text, bundle: .module)
                     .font(.subheadline)
                     .foregroundColor(Colors.primary)
             }

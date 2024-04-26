@@ -49,6 +49,24 @@ extension AppSecurityDomain.Destinations.State {
         }
     }
 }
+extension AppStartDomain.Destination.State {
+    enum Tag: Int {
+        case loading
+        case onboarding
+        case app
+    }
+
+    var tag: Tag {
+        switch self {
+            case .loading:
+                return .loading
+            case .onboarding:
+                return .onboarding
+            case .app:
+                return .app
+        }
+    }
+}
 extension AuditEventsDomain.Destinations.State {
     enum Tag: Int {
         case alert
@@ -250,7 +268,7 @@ extension EditProfilePictureDomain.Destinations.State {
         }
     }
 }
-extension ExtAuthPendingDomain.Destinations.State {
+extension ExtAuthPendingDomain.Destination.State {
     enum Tag: Int {
         case extAuthAlert
     }
@@ -307,7 +325,7 @@ extension HealthCardPasswordReadCardDomain.Destinations.State {
         }
     }
 }
-extension MainDomain.Destinations.State {
+extension MainDomain.Destination.State {
     enum Tag: Int {
         case createProfile
         case editProfilePicture
@@ -317,7 +335,7 @@ extension MainDomain.Destinations.State {
         case cardWall
         case prescriptionArchive
         case prescriptionDetail
-        case redeem
+        case redeemMethods
         case medicationReminder
         case welcomeDrawer
         case grantChargeItemConsentDrawer
@@ -343,8 +361,8 @@ extension MainDomain.Destinations.State {
                 return .prescriptionArchive
             case .prescriptionDetail:
                 return .prescriptionDetail
-            case .redeem:
-                return .redeem
+            case .redeemMethods:
+                return .redeemMethods
             case .medicationReminder:
                 return .medicationReminder
             case .welcomeDrawer:

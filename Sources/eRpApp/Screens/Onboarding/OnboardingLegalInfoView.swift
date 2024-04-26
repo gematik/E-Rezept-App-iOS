@@ -22,10 +22,11 @@ import SwiftUI
 
 struct OnboardingLegalInfoView: View {
     @Binding<Bool> var isAllAccepted: Bool
-    var action: () -> Void
 
-    @State private var showTermsOfUse = false
-    @State private var showTermsOfPrivacy = false
+    var showTermsOfUse: () -> Void
+    var showTermsOfPrivacy: () -> Void
+
+    var action: () -> Void
 
     var body: some View {
         VStack {
@@ -35,13 +36,42 @@ struct OnboardingLegalInfoView: View {
                         .padding(.bottom)
 
                     VStack {
-                        OnboardingTermsOfUseView(
-                            showTermsOfUse: $showTermsOfUse
-                        )
+                        HStack {
+                            Button(
+                                action: { showTermsOfUse() },
+                                label: {
+                                    Text(L10n.onbTxtTermsOfUseLink)
+                                        .font(Font.body.weight(.semibold))
+                                        .multilineTextAlignment(.leading)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
+                                        .padding()
+                                        .foregroundColor(Colors.primary600)
+                                }
+                            )
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .background(Colors.systemGray6.cornerRadius(16))
+                        }
+                        .padding(.bottom, 16)
 
-                        OnboardingPrivacyView(
-                            showTermsOfPrivacy: $showTermsOfPrivacy
-                        )
+                        HStack {
+                            Button(
+                                action: { showTermsOfPrivacy() },
+                                label: {
+                                    Text(L10n.onbTxtTermsOfPrivacyLink)
+                                        .font(Font.body.weight(.semibold))
+                                        .multilineTextAlignment(.leading)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
+                                        .padding()
+                                        .foregroundColor(Colors.primary600)
+                                }
+                            )
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .background(Colors.systemGray6.cornerRadius(16))
+                        }
                     }
                     .padding(.vertical, 32)
 
@@ -114,7 +144,6 @@ extension OnboardingLegalInfoView {
         }
     }
 
-    // [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
     struct OnboardingTermsOfUseView: View {
         @Binding var showTermsOfUse: Bool
 
@@ -135,18 +164,6 @@ extension OnboardingLegalInfoView {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .fixedSize(horizontal: false, vertical: true)
                 .background(Colors.systemGray6.cornerRadius(16))
-                .sheet(isPresented: $showTermsOfUse) {
-                    NavigationView {
-                        TermsOfUseView()
-                            .toolbar {
-                                CloseButton { showTermsOfUse = false }
-                                    .embedToolbarContent()
-                                    .accessibilityIdentifier(A11y.settings.termsOfUse.stgBtnTermsOfUseClose)
-                            }
-                    }
-                    .accentColor(Colors.primary600)
-                    .navigationViewStyle(StackNavigationViewStyle())
-                }
             }
             .padding(.bottom, 16)
         }
@@ -173,19 +190,6 @@ extension OnboardingLegalInfoView {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .fixedSize(horizontal: false, vertical: true)
                 .background(Colors.systemGray6.cornerRadius(16))
-                // [REQ:BSI-eRp-ePA:O.Arch_9#2] DataPrivacy display within Onboarding
-                .sheet(isPresented: $showTermsOfPrivacy) {
-                    NavigationView {
-                        DataPrivacyView()
-                            .toolbar {
-                                CloseButton { showTermsOfPrivacy = false }
-                                    .embedToolbarContent()
-                                    .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
-                            }
-                    }
-                    .accentColor(Colors.primary600)
-                    .navigationViewStyle(StackNavigationViewStyle())
-                }
             }
         }
     }
@@ -194,11 +198,24 @@ extension OnboardingLegalInfoView {
 struct OnboardingLegalInfoView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            OnboardingLegalInfoView(isAllAccepted: .constant(false)) {}
-            OnboardingLegalInfoView(isAllAccepted: .constant(false)) {}
-                .preferredColorScheme(.dark)
-            OnboardingLegalInfoView(isAllAccepted: .constant(false)) {}
-                .previewDevice("iPod touch (7th generation)")
+            OnboardingLegalInfoView(
+                isAllAccepted: .constant(false),
+                showTermsOfUse: {},
+                showTermsOfPrivacy: {},
+                action: {}
+            )
+            OnboardingLegalInfoView(
+                isAllAccepted: .constant(false),
+                showTermsOfUse: {},
+                showTermsOfPrivacy: {},
+                action: {}
+            ).preferredColorScheme(.dark)
+            OnboardingLegalInfoView(
+                isAllAccepted: .constant(false),
+                showTermsOfUse: {},
+                showTermsOfPrivacy: {},
+                action: {}
+            ).previewDevice("iPod touch (7th generation)")
         }
     }
 }

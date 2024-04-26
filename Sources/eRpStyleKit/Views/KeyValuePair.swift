@@ -24,16 +24,24 @@ public struct KeyValuePair: View {
 
     @Environment(\.keyValuePairStyle) var keyValuePairStyle: AnyKeyValuePairStyle
 
-    public init(key: LocalizedStringKey, value: LocalizedStringKey) {
+    public init(
+        key: LocalizedStringKey,
+        value: LocalizedStringKey,
+        bundle: Bundle? = nil
+    ) {
         configuration = KeyValuePairConfiguration(
-            key: Text(key),
-            value: Text(value)
+            key: Text(key, bundle: bundle),
+            value: Text(value, bundle: bundle)
         )
     }
 
-    public init(key: LocalizedStringKey, value: String) {
+    public init(
+        key: LocalizedStringKey,
+        value: String,
+        bundle: Bundle? = nil
+    ) {
         configuration = KeyValuePairConfiguration(
-            key: Text(key),
+            key: Text(key, bundle: bundle),
             value: Text(value)
         )
     }

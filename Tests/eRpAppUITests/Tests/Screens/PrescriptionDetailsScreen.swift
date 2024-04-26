@@ -53,6 +53,18 @@ struct PrescriptionDetailsScreen: Screen {
         return MainScreen(app: app)
     }
 
+    func tapRedeemPharmacyButton(file: StaticString = #file, line: UInt = #line) -> PharmacySearchScreen {
+        button(by: A11y.prescriptionDetails.prscDtlBtnRedeem, file: file, line: line).tap()
+
+        return PharmacySearchScreen(app: app)
+    }
+
+    func tapShowMatrixCodeButton(file: StaticString = #file, line: UInt = #line) -> RedeemMatrixCodeScreen<Self> {
+        button(by: A11y.prescriptionDetails.prscDtlBtnShowMatrixCode, file: file, line: line).tap()
+
+        return RedeemMatrixCodeScreen(app: app, previous: self)
+    }
+
     struct DosageInstructionsScreen: Screen {
         let app: XCUIApplication
 

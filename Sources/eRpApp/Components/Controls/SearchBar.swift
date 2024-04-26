@@ -28,12 +28,10 @@ struct SearchBar: View {
 
     var body: some View {
         HStack {
-            TextField(
-                prompt,
-                text: $searchText,
-                onEditingChanged: { _ in },
-                onCommit: onSubmit
-            )
+            TextField(text: $searchText) {
+                Text(prompt, bundle: .module)
+            }
+            .onSubmit(onSubmit)
             .introspectTextField { textField in
                 textField.returnKeyType = .go
             }

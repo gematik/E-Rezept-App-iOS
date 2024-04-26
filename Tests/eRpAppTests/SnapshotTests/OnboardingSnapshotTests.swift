@@ -17,7 +17,7 @@
 //
 
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import LocalAuthentication
 import SnapshotTesting
@@ -157,8 +157,13 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testOnboardingLegalInfoView() {
-        let sut = OnboardingLegalInfoView(isAllAccepted: .constant(false), action: next)
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        let sut = OnboardingLegalInfoView(
+            isAllAccepted: .constant(false),
+            showTermsOfUse: {},
+            showTermsOfPrivacy: {},
+            action: next
+        )
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 }

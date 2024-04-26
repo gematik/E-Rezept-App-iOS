@@ -58,11 +58,11 @@ extension IDPTokenView.TokenCell {
     }
 }
 extension KeyValuePair {
-    init(key: StringAsset, value: StringAsset) {
-    self.init(key: key.key, value: value.key)
+    init(key: StringAsset, value: StringAsset, bundle: Bundle? = nil) {
+    self.init(key: key.key, value: value.key, bundle: bundle)
     }
-    init(key: StringAsset, value: String) {
-    self.init(key: key.key, value: value)
+    init(key: StringAsset, value: String, bundle: Bundle? = nil) {
+    self.init(key: key.key, value: value, bundle: bundle)
     }
 }
 extension LegalNoticeView.LegalNoticeContactView {
@@ -141,22 +141,22 @@ extension StatusView {
     }
 }
 extension SubTitle {
-    init(title: StringAsset, description: StringAsset? = nil, details: StringAsset? = nil) {
-    self.init(title: title.key, description: description?.key, details: details?.key)
+    init(title: StringAsset, description: StringAsset? = nil, details: StringAsset? = nil, bundle: Bundle? = nil) {
+    self.init(title: title.key, description: description?.key, details: details?.key, bundle: bundle)
     }
-    init(title: String, details: StringAsset) {
-    self.init(title: title, details: details.key)
+    init(title: String, details: StringAsset, bundle: Bundle? = nil) {
+    self.init(title: title, details: details.key, bundle: bundle)
     }
-    init(title: String, description: StringAsset) {
-    self.init(title: title, description: description.key)
+    init(title: String, description: StringAsset, bundle: Bundle? = nil) {
+    self.init(title: title, description: description.key, bundle: bundle)
     }
-    init(title: StringAsset, description: String) {
-    self.init(title: title.key, description: description)
+    init(title: StringAsset, description: String, bundle: Bundle? = nil) {
+    self.init(title: title.key, description: description, bundle: bundle)
     }
 }
 extension SubTitleTop {
-    init(subject: StringAsset, title: StringAsset? = nil) {
-    self.init(subject: subject.key, title: title?.key)
+    init(subject: StringAsset, title: StringAsset? = nil, bundle: Bundle) {
+    self.init(subject: subject.key, title: title?.key, bundle: bundle)
     }
 }
 extension TertiaryListButton {

@@ -72,9 +72,10 @@ struct PharmacySearchStartView: View {
                 }
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)
+                .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchMap)
             }
         )
-        .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchMap)
+        .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchMapSection)
 
         SectionContainer(
             header: {

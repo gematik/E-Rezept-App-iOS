@@ -520,21 +520,21 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
 	}
 
 
-	func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
-        stream
-        	.map { $0.openSecureSession(
-				can: can,
-				pin: pin
-            ) }
-            .switchToLatest()
-            .eraseToAnyPublisher()
-	}
-
 	func sign(can: String, pin: String, challenge: IDPChallengeSession) async -> Result<SignedChallenge, NFCSignatureProviderError> {
         await current.sign(
 				can: can,
 				pin: pin,
 				challenge: challenge
+            )
+	}
+
+	func signForBiometrics(can: String, pin: String, challenge: IDPChallengeSession, registerDataProvider: SecureEnclaveSignatureProvider, in pairingSession: PairingSession) async -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        await current.signForBiometrics(
+				can: can,
+				pin: pin,
+				challenge: challenge,
+				registerDataProvider: registerDataProvider,
+				in: pairingSession
             )
 	}
 

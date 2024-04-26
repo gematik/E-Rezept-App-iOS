@@ -27,7 +27,7 @@ struct SecondaryTextButton: View {
 
     var body: some View {
         Button(action: action) {
-            Text(text)
+            Text(text, bundle: .module)
                 .fontWeight(.semibold)
                 .font(.body)
                 .multilineTextAlignment(.center)

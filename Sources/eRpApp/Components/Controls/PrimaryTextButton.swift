@@ -34,7 +34,7 @@ struct PrimaryTextButton: View {
                 if let image = image {
                     image.foregroundColor(.white)
                 }
-                Text(text)
+                Text(text, bundle: .module)
                     .fontWeight(.semibold)
                     .font(.body)
                     .multilineTextAlignment(.center)
@@ -69,7 +69,7 @@ struct PrimaryTextButtonBorder: View {
                             .foregroundColor(isEnabled ? Colors.primary : Colors.disabled)
                             .font(.body.weight(.semibold))
                     }
-                    Text(text)
+                    Text(text, bundle: .module)
                         .fontWeight(.semibold)
                         .font(.body)
                         .multilineTextAlignment(.center)
@@ -78,7 +78,7 @@ struct PrimaryTextButtonBorder: View {
                     Spacer()
                 }
                 if let note = note {
-                    Text(note)
+                    Text(note, bundle: .module)
                         .font(.footnote)
                         .foregroundColor(isEnabled ? Colors.primary : Colors.disabled)
                 }
@@ -116,7 +116,7 @@ struct LoadingPrimaryButton: View {
                         .padding()
                 }
             } else {
-                Text(text)
+                Text(text, bundle: .module)
                     .fontWeight(.semibold)
                     .font(.body)
                     .multilineTextAlignment(.center)

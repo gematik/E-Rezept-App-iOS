@@ -30,7 +30,7 @@ struct AppStartView: View {
         viewStore = ViewStore(store) {
             $0
         } removeDuplicates: { old, new in
-            switch (old, new) {
+            switch (old.destination, new.destination) {
             case (.onboarding, .onboarding),
                  (.app, .app):
                 return true
@@ -41,19 +41,19 @@ struct AppStartView: View {
     }
 
     var body: some View {
-        SwitchStore(store) { state in
+        SwitchStore(store.scope(state: \.destination, action: AppStartDomain.Action.destination)) { state in
             switch state {
             case .onboarding:
                 CaseLet(
-                    /AppStartDomain.State.onboarding,
-                    action: AppStartDomain.Action.onboarding(action:)
+                    /AppStartDomain.Destination.State.onboarding,
+                    action: AppStartDomain.Destination.Action.onboarding
                 ) { onboardingStore in
                     OnboardingContainer(store: onboardingStore)
                 }
             case .app:
                 CaseLet(
-                    /AppStartDomain.State.app,
-                    action: AppStartDomain.Action.app(action:)
+                    /AppStartDomain.Destination.State.app,
+                    action: AppStartDomain.Destination.Action.app
                 ) { appStore in
                     TabContainerView(store: appStore)
                 }

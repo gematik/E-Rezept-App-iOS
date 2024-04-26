@@ -25,6 +25,8 @@ struct OnboardingDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
     struct State: Equatable {
+        var showTermsOfUse = false
+        var showTermsOfPrivacy = false
         var legalConfirmed = false
         var composition: Composition
         @PresentationState var alertState: AlertState<Action.Alert>?
@@ -113,6 +115,8 @@ struct OnboardingDomain: ReducerProtocol {
         case registerAuthentication(action: RegisterAuthenticationDomain.Action)
         case nextPage
         case setConfirmLegal(Bool)
+        case setShowPrivacy(Bool)
+        case setShowUse(Bool)
         case showTracking
         case alert(PresentationAction<Alert>)
 
@@ -149,6 +153,12 @@ struct OnboardingDomain: ReducerProtocol {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
+        case let .setShowPrivacy(bool):
+            state.showTermsOfPrivacy = bool
+            return .none
+        case let .setShowUse(bool):
+            state.showTermsOfUse = bool
+            return .none
         case .nextPage:
             state.composition.next()
             return .none

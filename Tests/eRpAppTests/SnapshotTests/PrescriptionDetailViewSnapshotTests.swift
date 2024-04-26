@@ -18,7 +18,7 @@
 
 import CombineSchedulers
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import SnapshotTesting
 import SwiftUI
@@ -94,8 +94,8 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPrescriptionDetail_PkvWithoutChargeItem() {
         let store = store(
-            with: ErxTask.Fixtures.erxTaskRedeemed,
-            profile: UserProfile.Dummies.profileE,
+            with: ErxTask.Fixtures.erxTaskRedeemedFixDate,
+            profile: UserProfile.Fixtures.privatePaul,
             chargeItemConstentState: .granted,
             isArchived: true
         )
@@ -107,8 +107,8 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPrescriptionDetail_PkvWithoutConsent() {
         let store = store(
-            with: ErxTask.Fixtures.erxTaskRedeemed,
-            profile: UserProfile.Dummies.profileE,
+            with: ErxTask.Fixtures.erxTaskRedeemedFixDate,
+            profile: UserProfile.Fixtures.privatePaul,
             chargeItemConstentState: .notGranted,
             isArchived: true
         )
@@ -121,7 +121,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
     func testPrescriptionDetail_PkvWithChargeItem() {
         let store = store(
             with: ErxTask.Fixtures.erxTaskRedeemed,
-            profile: UserProfile.Dummies.profileE,
+            profile: UserProfile.Fixtures.privatePaul,
             chargeItem: ErxChargeItem.Dummies.dummy.sparseChargeItem,
             chargeItemConstentState: .granted,
             isArchived: true

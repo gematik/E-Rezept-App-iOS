@@ -218,13 +218,12 @@ struct CardWallReadCardDomain: ReducerProtocol {
                 }
 
                 if biometrieFlow {
-                    for await value in environment.signChallengeThenAltAuthWithNFCCard(
+                    await environment.signChallengeThenAltAuthWithNFCCard(
                         can: can,
                         pin: pin,
-                        profileID: profileID
-                    ) {
-                        await send(value)
-                    }
+                        profileID: profileID,
+                        send: send
+                    )
                 } else {
                     await environment.signChallengeWithNFCCard(
                         can: can,
@@ -447,29 +446,26 @@ extension CardWallReadCardDomain.Environment {
 
         await send(.response(.state(.verifying(.loading))))
 
-        guard let actionAfterVerify = try? await verifyResultWithIDPAsync(
-            signedChallenge,
-            profileID: profileID
-        )
-        else { return }
-
+        let actionAfterVerify = await verifyResultWithIDP(signedChallenge, profileID: profileID)
         await send(actionAfterVerify)
     }
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
-    func verifyResultWithIDPAsync(
+    func verifyResultWithIDP(
         _ signedChallenge: SignedChallenge,
         profileID: UUID
-    ) async throws -> CardWallReadCardDomain.Action {
+    ) async -> CardWallReadCardDomain.Action {
         let idTokenValidator: IDTokenValidator
         do {
-            idTokenValidator = try await sessionProvider.idTokenValidator(for: profileID)
-                .async(/CardWallReadCardDomain.State.Error.profileValidation)
+            idTokenValidator = try await sessionProvider.idTokenValidator(
+                for: profileID
+            ) //  IDTokenValidatorError
+            .async(/CardWallReadCardDomain.State.Error.profileValidation)
         } catch let error as CardWallReadCardDomain.State.Error {
             return .response(.state(.verifying(.error(error))))
         } catch {
-            throw error
+            return .response(.state(.verifying(.error(.profileValidation(.other(error: error))))))
         }
 
         let idpSession = sessionProvider.idpSession(for: profileID)
@@ -481,7 +477,7 @@ extension CardWallReadCardDomain.Environment {
                 token: idpExchangeToken,
                 challengeSession: signedChallenge.originalChallenge,
                 idTokenValidator: idTokenValidator.validate(idToken:)
-            )
+            ) // IDPError
             .async()
             stateOutput = .loggedIn(idpToken)
         } catch let error as IDPError {
@@ -494,7 +490,7 @@ extension CardWallReadCardDomain.Environment {
             }
             stateOutput = .verifying(.error(stateError))
         } catch {
-            throw error
+            return .response(.state(.verifying(.error(.profileValidation(.other(error: error))))))
         }
         return .response(.state(stateOutput))
     }

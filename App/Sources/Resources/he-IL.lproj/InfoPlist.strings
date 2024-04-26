@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "מרשם אלקטרוני";
+"NFCReaderUsageDescription" = "מאפשר לך לזהות ולאמת את עצמך באמצעות כרטיס הבריאות האלקטרוני שלך";
+"NSCameraUsageDescription" = "המצלמה נחוצה כדי להקליט מתכונים או לצלם תמונות.";
+"NSFaceIDUsageDescription" = "מרשם אלקטרוני דורש FaceID כדי להגן על האפליקציה מפני גישה לא מורשית.";

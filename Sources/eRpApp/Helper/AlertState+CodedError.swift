@@ -55,6 +55,10 @@ extension AlertState {
 }
 
 enum ErpAlertState<Action: Equatable>: Equatable {
+    // Support for @Reducer enum macros
+    typealias State = Self
+    typealias Action = Action
+
     static func ==(lhs: ErpAlertState<Action>, rhs: ErpAlertState<Action>) -> Bool {
         switch (lhs, rhs) {
         case let (.info(lhsv), .info(rhsv)),
@@ -79,7 +83,7 @@ enum ErpAlertState<Action: Equatable>: Equatable {
 
     init(for error: CodedError, title: StringAsset) {
         self.init(for: error) {
-            TextState(title.key)
+            TextState(title)
         }
     }
 
@@ -94,7 +98,7 @@ enum ErpAlertState<Action: Equatable>: Equatable {
     ) {
         self.init(
             for: error,
-            title: { TextState(title.key) },
+            title: { TextState(title) },
             actions: actions
         )
     }
@@ -117,14 +121,14 @@ enum ErpAlertState<Action: Equatable>: Equatable {
     ) {
         if let message {
             self = .info(.init(
-                title: { TextState(title.key) },
+                title: { TextState(title) },
                 actions: actions,
-                message: { TextState(message.key) }
+                message: { TextState(message) }
             ))
         } else {
             self = .info(.init(
                 title: {
-                    TextState(title.key)
+                    TextState(title)
                 },
                 actions: actions
             ))

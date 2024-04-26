@@ -47,11 +47,14 @@ struct SecureFieldWithReveal: View {
     var body: some View {
         ZStack(alignment: .trailing) {
             // [REQ:BSI-eRp-ePA:O.Data_10#3] `SecureFields` are used for password input.
-            SecureField(titleKey, text: $text, onCommit: onCommit)
-                .font(Font.body)
-                .foregroundColor(!showPassword ? Color(.label) : self.backgroundColor)
-                .accessibility(label: Text(accessibilityLabelKey))
-                .textContentType(textContentType)
+            SecureField(text: $text) {
+                Text(titleKey, bundle: .module)
+            }
+            .onSubmit(onCommit)
+            .font(Font.body)
+            .foregroundColor(!showPassword ? Color(.label) : self.backgroundColor)
+            .accessibility(label: Text(accessibilityLabelKey, bundle: .module))
+            .textContentType(textContentType)
 
             HStack {
                 Text(text)

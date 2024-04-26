@@ -17,17 +17,15 @@
 //
 
 import Combine
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import UIKit
 import ZXingObjC
 
 // Encodes a string with a given `MatrixCodeGenerator` into an DMC image.
 class MockErxMatrixCodeGenerator: ErxMatrixCodeGenerator {
-    static let testBundleName = "qrcode"
-
     init() {
-        uiImage = UIImage(testBundleNamed: MockErxMatrixCodeGenerator.testBundleName)!
+        uiImage = Asset.qrcode.image
         cgImage = uiImage.cgImage!
     }
 

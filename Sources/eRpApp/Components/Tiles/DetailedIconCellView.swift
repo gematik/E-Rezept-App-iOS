@@ -30,7 +30,7 @@ struct DetailedIconCellView: View {
         VStack(alignment: .leading) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
+                    Text(title, bundle: .module)
                         .font(Font.subheadline)
                         .foregroundColor(Colors.systemLabelSecondary)
                     Text(value)

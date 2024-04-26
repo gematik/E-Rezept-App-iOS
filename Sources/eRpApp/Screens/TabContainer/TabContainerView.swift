@@ -96,7 +96,7 @@ struct TabContainerView: View {
 
                     SettingsView(
                         store: store.scope(
-                            state: \.subdomains.settingsState
+                            state: \.subdomains.settings
                         ) { AppDomain.Action.subdomains(.settings(action: $0)) }
                     )
                     .tabItem {

@@ -18,7 +18,7 @@
 
 import ComposableArchitecture
 import ComposableCoreLocation
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Nimble
 import Pharmacy

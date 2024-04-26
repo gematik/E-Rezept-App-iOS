@@ -57,10 +57,11 @@ class DefaultProfileSecureDataWiper: ProfileSecureDataWiper {
         return storage.keyIdentifier
             .first()
             .flatMap { identifier -> AnyPublisher<Void, Never> in
+                // [REQ:gemSpec_IDP_Frontend:A_21603] key identifier
+                storage.set(keyIdentifier: nil)
+
                 if let someIdentifier = identifier,
-                   let identifier = Base64.urlSafe.encode(data: someIdentifier).utf8string {
-                    // [REQ:gemSpec_IDP_Frontend:A_21603] key identifier
-                    storage.set(keyIdentifier: nil)
+                   let identifier = Base64.urlSafe.encode(data: someIdentifier, with: .none).utf8string {
                     // If deletion fails we cannot do anything
                     // [REQ:gemSpec_IDP_Frontend:A_21603] PrK_SE_AUT/PuK_SE_AUT
                     _ = try? PrivateKeyContainer.deleteExistingKey(for: identifier)

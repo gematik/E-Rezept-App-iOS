@@ -47,7 +47,7 @@ struct ReadCardHelpCardView: View {
                         .padding(.top)
                 }
 
-                Image(Asset.CardReader.cardReading.name)
+                Image(asset: Asset.CardReader.cardReading)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .padding()

@@ -98,27 +98,17 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .readCard:
-            switch state.mode {
-            case let .healthCardResetPinCounterNoNewSecret(can: can, puk: puk):
-                return .publisher(
-                    environment.resetEgkMrPinRetryCounterExt(can: can, puk: puk)
-                        .receive(on: schedulers.main)
-                        .eraseToAnyPublisher
-                )
-
-            case let .healthCardResetPinCounterWithNewSecret(can: can, puk: puk, newPin: newPin):
-                return .publisher(
-                    environment.resetEgkMrPinRetryCounterExt(can: can, puk: puk, newPin: newPin)
-                        .receive(on: schedulers.main)
-                        .eraseToAnyPublisher
-                )
-
-            case let .healthCardSetNewPinSecret(can: can, oldPin: oldPin, newPin: newPin):
-                return .publisher(
-                    environment.changeEgkMrPinReferenceDataExt(can: can, oldPin: oldPin, pin: newPin)
-                        .receive(on: schedulers.main)
-                        .eraseToAnyPublisher
-                )
+            return .run { [state = state] send in
+                let action: Action
+                switch state.mode {
+                case let .healthCardResetPinCounterNoNewSecret(can: can, puk: puk):
+                    action = await environment.resetEgkMrPinRetryCounterExt(can: can, puk: puk)
+                case let .healthCardResetPinCounterWithNewSecret(can: can, puk: puk, newPin: newPin):
+                    action = await environment.resetEgkMrPinRetryCounterExt(can: can, puk: puk, newPin: newPin)
+                case let .healthCardSetNewPinSecret(can: can, oldPin: oldPin, newPin: newPin):
+                    action = await environment.changeEgkMrPinReferenceDataExt(can: can, oldPin: oldPin, pin: newPin)
+                }
+                await send(action)
             }
 
         case let .response(.nfcHealthCardPasswordControllerResponseReceived(nfcHealthCardPasswordControllerResponse)):
@@ -163,9 +153,14 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
         case let .response(.nfcHealthCardPasswordControllerErrorReceived(nfcHealthCardPasswordControllerError)):
             if case .wrongCan = nfcHealthCardPasswordControllerError {
                 state.destination = .alert(AlertStates.wrongCan)
-            } else if let tagError = nfcHealthCardPasswordControllerError.underlyingTagError {
-                if case .userCanceled = tagError { return .none }
-                state.destination = .alert(.init(for: tagError))
+            } else
+            if case let .nfcHealthCardSession(nfcHealthCardSessionError) = nfcHealthCardPasswordControllerError,
+               case let .coreNFC(coreNFCError) = nfcHealthCardSessionError {
+                if case .userCanceled = coreNFCError {
+                    return .none
+                } else {
+                    state.destination = .alert(.init(for: coreNFCError))
+                }
             } else {
                 state.destination = .alert(AlertStates.alertFor(nfcHealthCardPasswordControllerError))
             }
@@ -211,46 +206,38 @@ extension HealthCardPasswordReadCardDomain {
             can: String,
             puk: String,
             newPin: String? = nil
-        ) -> AnyPublisher<HealthCardPasswordReadCardDomain.Action, Never> {
+        ) async -> HealthCardPasswordReadCardDomain.Action {
             let mode: NFCResetRetryCounterMode
             if let newPin = newPin {
                 mode = .resetEgkMrPinRetryCountWithNewSecret(newPin)
             } else {
                 mode = .resetEgkMrPinRetryCountWithoutNewSecret
             }
-            return nfcSessionController
+            let nfcHealthCardPasswordControllerResponse = await nfcSessionController
                 .resetEgkMrPinRetryCounter(can: can, puk: puk, mode: mode)
-                .map {
-                    HealthCardPasswordReadCardDomain.Action.response(
-                        .nfcHealthCardPasswordControllerResponseReceived($0)
-                    )
-                }
-                .catch {
-                    Just(
-                        HealthCardPasswordReadCardDomain.Action.response(
-                            .nfcHealthCardPasswordControllerErrorReceived($0)
-                        )
-                    )
-                    .eraseToAnyPublisher()
-                }
-                .eraseToAnyPublisher()
+
+            switch nfcHealthCardPasswordControllerResponse {
+            case let .success(value):
+                return .response(.nfcHealthCardPasswordControllerResponseReceived(value))
+            case let .failure(error):
+                return .response(.nfcHealthCardPasswordControllerErrorReceived(error))
+            }
         }
 
         func changeEgkMrPinReferenceDataExt(
             can: String,
             oldPin: String,
             pin: String
-        ) -> AnyPublisher<HealthCardPasswordReadCardDomain.Action, Never> {
-            nfcSessionController
+        ) async -> HealthCardPasswordReadCardDomain.Action {
+            let nfcHealthCardPasswordControllerResponse = await nfcSessionController
                 .changeReferenceData(can: can, old: oldPin, new: pin, mode: .changeEgkMrPinSecret)
-                .map {
-                    Action.response(.nfcHealthCardPasswordControllerResponseReceived($0))
-                }
-                .catch {
-                    Just(Action.response(.nfcHealthCardPasswordControllerErrorReceived($0)))
-                        .eraseToAnyPublisher()
-                }
-                .eraseToAnyPublisher()
+
+            switch nfcHealthCardPasswordControllerResponse {
+            case let .success(value):
+                return .response(.nfcHealthCardPasswordControllerResponseReceived(value))
+            case let .failure(error):
+                return .response(.nfcHealthCardPasswordControllerErrorReceived(error))
+            }
         }
     }
 }

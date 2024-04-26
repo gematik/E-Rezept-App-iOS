@@ -26,21 +26,21 @@ extension View {
         _ stringAsset: StringAsset,
         displayMode: NavigationBarItem.TitleDisplayMode
     ) -> some View {
-        navigationBarTitle(stringAsset.key, displayMode: displayMode)
+        navigationBarTitle(stringAsset.text, displayMode: displayMode)
     }
 
     func navigationTitle(_ stringAsset: StringAsset) -> some View {
-        navigationTitle(stringAsset.key)
+        navigationTitle(stringAsset.text)
     }
 
     func accessibilityLabel(_ stringAsset: StringAsset) -> some View {
-        accessibilityLabel(stringAsset.key)
+        accessibilityLabel(stringAsset.text)
     }
 }
 
 extension ProgressView where CurrentValueLabel == EmptyView {
     init(_ stringAsset: StringAsset) where Label == Text {
-        self.init(stringAsset.key)
+        self.init(stringAsset.text)
     }
 }
 
@@ -48,6 +48,6 @@ extension ProgressView where CurrentValueLabel == EmptyView {
 
 extension TextState {
     init(_ stringAsset: StringAsset) {
-        self.init(stringAsset.key)
+        self.init(stringAsset.key, bundle: stringAsset.bundle)
     }
 }

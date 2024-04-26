@@ -71,7 +71,7 @@ struct CardWallReadCardView: View {
                     viewStore.send(viewStore.output.nextAction)
                 } label: {
                     Label {
-                        Text(viewStore.output.buttonTitle)
+                        Text(viewStore.output.buttonTitle, bundle: .module)
                     } icon: {
                         if !viewStore.output.nextButtonEnabled {
                             ProgressView()
@@ -94,7 +94,7 @@ struct CardWallReadCardView: View {
                     }, label: {
                         HStack(alignment: .center) {
                             Image(systemName: SFSymbolName.questionmarkCircle)
-                            Text(L10n.cdwBtnRcHelp.key)
+                            Text(L10n.cdwBtnRcHelp)
                         }
                         .foregroundColor(Colors.textSecondary)
                         .font(.subheadline.weight(.semibold))
@@ -168,7 +168,7 @@ struct CardWallReadCardView: View {
                         step1.toggle()
                     }
                 }
-                Image(Asset.CardReader.cardReadPosition1.name)
+                Image(asset: Asset.CardReader.cardReadPosition1)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .padding(.top, 50)

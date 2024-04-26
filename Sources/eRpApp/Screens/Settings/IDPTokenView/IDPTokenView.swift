@@ -62,7 +62,7 @@ struct IDPTokenView: View {
                 label: {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text(title)
+                            Text(title, bundle: .module)
                                 .foregroundColor(Colors.systemLabel)
                             Text(token)
                                 .lineLimit(2)

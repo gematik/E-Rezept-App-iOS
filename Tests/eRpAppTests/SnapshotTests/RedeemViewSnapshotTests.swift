@@ -17,7 +17,7 @@
 //
 
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import SnapshotTesting
 import SwiftUI
@@ -45,7 +45,7 @@ final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
                     loadingState: .value(.init(uniqueElements: [
                         MatrixCodeDomain.State.IdentifiedImage(
                             identifier: UUID(),
-                            image: UIImage(testBundleNamed: "qrcode")!,
+                            image: Asset.qrcode.image,
                             chunk: []
                         ),
                     ]))
@@ -68,7 +68,7 @@ final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
                     loadingState: .value(.init(uniqueElements: [
                         MatrixCodeDomain.State.IdentifiedImage(
                             identifier: UUID(),
-                            image: UIImage(testBundleNamed: "qrcode")!,
+                            image: Asset.qrcode.image,
                             chunk: [
                                 ErxTask.Demo.erxTask1,
                                 ErxTask.Demo.erxTask2,
@@ -77,7 +77,7 @@ final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
                         ),
                         MatrixCodeDomain.State.IdentifiedImage(
                             identifier: UUID(),
-                            image: UIImage(testBundleNamed: "qrcode")!,
+                            image: Asset.qrcode.image,
                             chunk: [
                                 ErxTask.Demo.erxTask4,
                                 ErxTask.Demo.erxTask5,

@@ -240,6 +240,8 @@ class SmartMock{{ type.name }}: {{ type.name }}, SmartMock {
 // sourcery:file:eRpApp/UITestScenarios/SmartMock
 /// Use sourcery to update this file.
 
+#if DEBUG
+
 import Combine
 import eRpKit
 import eRpLocalStorage
@@ -293,4 +295,7 @@ extension Array where Element == SerializableX509 {
         map(\.payload)
     }
 }
+
+#endif
+
 // sourcery:end

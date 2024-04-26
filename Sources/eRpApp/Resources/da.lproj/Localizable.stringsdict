@@ -77,11 +77,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string></string>
+			<string>%lu opskrift</string>
 			<key>other</key>
-			<string></string>
-			<key>zero</key>
-			<string></string>
+			<string>%lu opskrifter</string>
 		</dict>
 	</dict>
 	<key>pha_redeem_alert_title_failure</key>

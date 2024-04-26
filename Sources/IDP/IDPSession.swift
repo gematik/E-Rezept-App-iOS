@@ -78,7 +78,7 @@ public protocol IDPSession {
     /// - Parameters:
     ///   - registrationData: `RegistrationData` containing information about the biometric key to register.
     ///   - token: Accesstoken for authentication and authorization for the new key.
-    /// - Returns: AnyPublisher with a`PairingEntry` containing registration information upon success.
+    /// - Returns: AnyPublisher with a `PairingEntry` containing registration information upon success.
     func pairDevice(with registrationData: RegistrationData, token: IDPToken) -> AnyPublisher<PairingEntry, IDPError>
 
     /// Unregisters the devices key with the given identifier.

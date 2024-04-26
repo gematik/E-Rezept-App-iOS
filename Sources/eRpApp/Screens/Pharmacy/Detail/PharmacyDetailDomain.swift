@@ -60,7 +60,7 @@ struct PharmacyDetailDomain: ReducerProtocol {
             ) {
                 PharmacyRedeemDomain()
                     .dependency(\.redeemInputValidator, avsMessageValidator)
-                    .dependency(\.redeemService, avsRedeemService)
+                    .dependency(\.redeemService, avsRedeemService())
             }
             Scope(
                 state: /State.redeemViaErxTaskRepository,
@@ -68,7 +68,7 @@ struct PharmacyDetailDomain: ReducerProtocol {
             ) {
                 PharmacyRedeemDomain()
                     .dependency(\.redeemInputValidator, erxTaskOrderValidator)
-                    .dependency(\.redeemService, erxTaskRepositoryRedeemService)
+                    .dependency(\.redeemService, erxTaskRepositoryRedeemService())
             }
         }
     }

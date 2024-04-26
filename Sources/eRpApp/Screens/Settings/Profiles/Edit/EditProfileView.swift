@@ -253,20 +253,6 @@ extension EditProfileView {
                     .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogin)
             }
         }
-
-        var profileSubtitle: LocalizedStringKey {
-            let title = [
-                viewStore.state.fullName,
-                viewStore.state.insuranceId,
-                viewStore.state.insurance,
-            ]
-            .compactMap { $0 }
-            .joined(separator: "\n")
-
-            return !title.isEmpty ?
-                L10n.stgTxtEditProfileNameConnection(title).key :
-                L10n.stgTxtEditProfileNameConnectionPlaceholder.key
-        }
     }
 
     private struct ChargeItemsSectionView: View {

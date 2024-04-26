@@ -26,7 +26,7 @@ struct FootnoteView: View {
 
     var body: some View {
         HStack {
-            Text(text)
+            Text(text, bundle: .module)
                 .font(.footnote)
                 .foregroundColor(Colors.textSecondary)
                 .multilineTextAlignment(.leading)

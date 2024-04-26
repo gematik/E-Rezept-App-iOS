@@ -18,7 +18,7 @@
 
 import Combine
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import HealthCardControl
 import Nimble
 import TestUtils
@@ -58,9 +58,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
         )
 
         mockNFCSessionController
-            .resetEgkMrPinRetryCounterCanPukModeReturnValue = Just(NFCHealthCardPasswordControllerResponse.success)
-            .setFailureType(to: NFCHealthCardPasswordControllerError.self)
-            .eraseToAnyPublisher()
+            .resetEgkMrPinRetryCounterCanPukModeReturnValue = .success(NFCHealthCardPasswordControllerResponse.success)
 
         await sut.send(.readCard)
         await uiScheduler.advance()
@@ -81,10 +79,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
             )
         )
 
-        mockNFCSessionController
-            .changeReferenceDataCanOldNewModeReturnValue = Just(NFCHealthCardPasswordControllerResponse.success)
-            .setFailureType(to: NFCHealthCardPasswordControllerError.self)
-            .eraseToAnyPublisher()
+        mockNFCSessionController.changeReferenceDataCanOldNewModeReturnValue = .success(.success)
 
         await sut.send(.readCard)
         await uiScheduler.advance()
@@ -105,11 +100,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
             )
         )
 
-        mockNFCSessionController
-            .changeReferenceDataCanOldNewModeReturnValue = Just(NFCHealthCardPasswordControllerResponse
-                .commandBlocked)
-            .setFailureType(to: NFCHealthCardPasswordControllerError.self)
-            .eraseToAnyPublisher()
+        mockNFCSessionController.changeReferenceDataCanOldNewModeReturnValue = .success(.commandBlocked)
 
         await sut.send(.readCard)
         await uiScheduler.advance()

@@ -15,7 +15,7 @@ import TrustStore
 import VAUClient
 import ZXingObjC
 
-@testable import eRpApp
+@testable import eRpFeatures
 
 /// AUTO GENERATED – DO NOT EDIT
 ///
@@ -859,10 +859,10 @@ final class MockNFCHealthCardPasswordController: NFCHealthCardPasswordController
     }
     var resetEgkMrPinRetryCounterCanPukModeReceivedArguments: (can: String, puk: String, mode: NFCResetRetryCounterMode)?
     var resetEgkMrPinRetryCounterCanPukModeReceivedInvocations: [(can: String, puk: String, mode: NFCResetRetryCounterMode)] = []
-    var resetEgkMrPinRetryCounterCanPukModeReturnValue: AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>!
-    var resetEgkMrPinRetryCounterCanPukModeClosure: ((String, String, NFCResetRetryCounterMode) -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>)?
+    var resetEgkMrPinRetryCounterCanPukModeReturnValue: Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>!
+    var resetEgkMrPinRetryCounterCanPukModeClosure: ((String, String, NFCResetRetryCounterMode) -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>)?
 
-    func resetEgkMrPinRetryCounter(can: String, puk: String, mode: NFCResetRetryCounterMode) -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
+    func resetEgkMrPinRetryCounter(can: String, puk: String, mode: NFCResetRetryCounterMode) -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
         resetEgkMrPinRetryCounterCanPukModeCallsCount += 1
         resetEgkMrPinRetryCounterCanPukModeReceivedArguments = (can: can, puk: puk, mode: mode)
         resetEgkMrPinRetryCounterCanPukModeReceivedInvocations.append((can: can, puk: puk, mode: mode))
@@ -877,10 +877,10 @@ final class MockNFCHealthCardPasswordController: NFCHealthCardPasswordController
     }
     var changeReferenceDataCanOldNewModeReceivedArguments: (can: String, old: String, new: String, mode: NFCChangeReferenceDataMode)?
     var changeReferenceDataCanOldNewModeReceivedInvocations: [(can: String, old: String, new: String, mode: NFCChangeReferenceDataMode)] = []
-    var changeReferenceDataCanOldNewModeReturnValue: AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>!
-    var changeReferenceDataCanOldNewModeClosure: ((String, String, String, NFCChangeReferenceDataMode) -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>)?
+    var changeReferenceDataCanOldNewModeReturnValue: Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>!
+    var changeReferenceDataCanOldNewModeClosure: ((String, String, String, NFCChangeReferenceDataMode) -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>)?
 
-    func changeReferenceData(can: String, old: String, new: String, mode: NFCChangeReferenceDataMode) -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
+    func changeReferenceData(can: String, old: String, new: String, mode: NFCChangeReferenceDataMode) -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
         changeReferenceDataCanOldNewModeCallsCount += 1
         changeReferenceDataCanOldNewModeReceivedArguments = (can: can, old: old, new: new, mode: mode)
         changeReferenceDataCanOldNewModeReceivedInvocations.append((can: can, old: old, new: new, mode: mode))
@@ -892,24 +892,6 @@ final class MockNFCHealthCardPasswordController: NFCHealthCardPasswordController
 // MARK: - MockNFCSignatureProvider -
 
 final class MockNFCSignatureProvider: NFCSignatureProvider {
-    
-   // MARK: - openSecureSession
-
-    var openSecureSessionCanPinCallsCount = 0
-    var openSecureSessionCanPinCalled: Bool {
-        openSecureSessionCanPinCallsCount > 0
-    }
-    var openSecureSessionCanPinReceivedArguments: (can: String, pin: String)?
-    var openSecureSessionCanPinReceivedInvocations: [(can: String, pin: String)] = []
-    var openSecureSessionCanPinReturnValue: AnyPublisher<SignatureSession, NFCSignatureProviderError>!
-    var openSecureSessionCanPinClosure: ((String, String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError>)?
-
-    func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
-        openSecureSessionCanPinCallsCount += 1
-        openSecureSessionCanPinReceivedArguments = (can: can, pin: pin)
-        openSecureSessionCanPinReceivedInvocations.append((can: can, pin: pin))
-        return openSecureSessionCanPinClosure.map({ $0(can, pin) }) ?? openSecureSessionCanPinReturnValue
-    }
     
    // MARK: - sign
 
@@ -927,6 +909,24 @@ final class MockNFCSignatureProvider: NFCSignatureProvider {
         signCanPinChallengeReceivedArguments = (can: can, pin: pin, challenge: challenge)
         signCanPinChallengeReceivedInvocations.append((can: can, pin: pin, challenge: challenge))
         return signCanPinChallengeClosure.map({ $0(can, pin, challenge) }) ?? signCanPinChallengeReturnValue
+    }
+    
+   // MARK: - signForBiometrics
+
+    var signForBiometricsCanPinChallengeRegisterDataProviderInCallsCount = 0
+    var signForBiometricsCanPinChallengeRegisterDataProviderInCalled: Bool {
+        signForBiometricsCanPinChallengeRegisterDataProviderInCallsCount > 0
+    }
+    var signForBiometricsCanPinChallengeRegisterDataProviderInReceivedArguments: (can: String, pin: String, challenge: IDPChallengeSession, registerDataProvider: SecureEnclaveSignatureProvider, pairingSession: PairingSession)?
+    var signForBiometricsCanPinChallengeRegisterDataProviderInReceivedInvocations: [(can: String, pin: String, challenge: IDPChallengeSession, registerDataProvider: SecureEnclaveSignatureProvider, pairingSession: PairingSession)] = []
+    var signForBiometricsCanPinChallengeRegisterDataProviderInReturnValue: Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>!
+    var signForBiometricsCanPinChallengeRegisterDataProviderInClosure: ((String, String, IDPChallengeSession, SecureEnclaveSignatureProvider, PairingSession) -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>)?
+
+    func signForBiometrics(can: String, pin: String, challenge: IDPChallengeSession, registerDataProvider: SecureEnclaveSignatureProvider, in pairingSession: PairingSession) -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        signForBiometricsCanPinChallengeRegisterDataProviderInCallsCount += 1
+        signForBiometricsCanPinChallengeRegisterDataProviderInReceivedArguments = (can: can, pin: pin, challenge: challenge, registerDataProvider: registerDataProvider, pairingSession: pairingSession)
+        signForBiometricsCanPinChallengeRegisterDataProviderInReceivedInvocations.append((can: can, pin: pin, challenge: challenge, registerDataProvider: registerDataProvider, pairingSession: pairingSession))
+        return signForBiometricsCanPinChallengeRegisterDataProviderInClosure.map({ $0(can, pin, challenge, registerDataProvider, pairingSession) }) ?? signForBiometricsCanPinChallengeRegisterDataProviderInReturnValue
     }
 }
 

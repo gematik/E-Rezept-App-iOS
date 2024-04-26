@@ -17,8 +17,8 @@
 //
 // swiftlint:disable file_length
 
+import CasePaths
 import Combine
-import CombineSchedulers
 import CoreNFC
 import HealthCardAccess
 import HealthCardControl
@@ -28,13 +28,19 @@ import OpenSSL
 
 /// sourcery: StreamWrapped
 protocol NFCSignatureProvider {
-    func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError>
-
     func sign(
         can: String,
         pin: String,
         challenge: IDPChallengeSession
     ) async -> Result<SignedChallenge, NFCSignatureProviderError>
+
+    func signForBiometrics(
+        can: String,
+        pin: String,
+        challenge: IDPChallengeSession,
+        registerDataProvider: SecureEnclaveSignatureProvider,
+        in pairingSession: PairingSession
+    ) async -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
 }
 
 // sourcery: CodedError = "004"
@@ -265,81 +271,8 @@ extension EGKSignatureProvider {
     }
 }
 
-class EGKSignatureSession: SignatureSession {
-    internal init(healthCard: HealthCardType, nfcCardSession: NFCCardSession) {
-        self.healthCard = healthCard
-        self.nfcCardSession = nfcCardSession
-    }
-
-    let healthCard: HealthCardType
-    let nfcCardSession: NFCCardSession
-
-    func sign(challengeSession: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
-        healthCard.sign(challengeSession: challengeSession)
-    }
-
-    func sign(registerDataProvider: SecureEnclaveSignatureProvider,
-              in pairingSession: PairingSession,
-              signedChallenge: SignedChallenge)
-        -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
-        healthCard.sign(registerDataProvider: registerDataProvider,
-                        in: pairingSession,
-                        signedChallenge: signedChallenge)
-    }
-
-    func updateAlert(message: String) {
-        nfcCardSession.updateAlert(message: message)
-    }
-
-    func invalidateSession(with error: String?) {
-        nfcCardSession.invalidateSession(with: error)
-    }
-}
-
-protocol SignatureSession: AnyObject {
-    func sign(challengeSession: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError>
-
-    func sign(registerDataProvider: SecureEnclaveSignatureProvider,
-              in pairingSession: PairingSession,
-              signedChallenge: SignedChallenge)
-        -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
-
-    func updateAlert(message: String)
-
-    func invalidateSession(with error: String?)
-}
-
 final class EGKSignatureProvider: NFCSignatureProvider {
     typealias Error = NFCSignatureProviderError
-
-    init(schedulers: Schedulers) {
-        self.schedulers = schedulers
-    }
-
-    let schedulers: Schedulers
-    private var uiScheduler: AnySchedulerOf<DispatchQueue> {
-        schedulers.main
-    }
-
-    func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
-        NFCTagReaderSession
-            .publisher(messages: .defaultMessages)
-            .mapError { NFCSignatureProviderError.cardError($0) }
-            .flatMap { session -> AnyPublisher<SignatureSession, NFCSignatureProviderError> in
-                session.updateAlert(message: L10n.cdwTxtRcNfcDialogOpenPace.text)
-
-                return session
-                    .openSecureSession(can: can)
-                    .userMessage(session: session, message: Self.systemNFCDialogVerifyPin)
-                    .verifyCard(pin: pin)
-                    .userMessage(session: session, message: Self.systemNFCDialogSignChallenge)
-                    .map { healthCard -> EGKSignatureSession in
-                        EGKSignatureSession(healthCard: healthCard, nfcCardSession: session)
-                    }
-                    .eraseToAnyPublisher()
-            }
-            .eraseToAnyPublisher()
-    }
 
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign
     // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
@@ -360,31 +293,24 @@ final class EGKSignatureProvider: NFCSignatureProvider {
                 guard case .success = verifyResponse
                 else {
                     if let verifyPINError = NFCSignatureProviderError.VerifyPINError.from(verifyResponse) {
-                        return Result<SignedChallenge, NFCSignatureProviderError>
-                            .failure(NFCSignatureProviderError.verifyCardError(verifyPINError))
+                        return .failure(.verifyCardError(verifyPINError))
                     } else {
-                        return Result<SignedChallenge, NFCSignatureProviderError>
-                            .failure(NFCSignatureProviderError.verifyCardError(.unknownFailure))
+                        return .failure(.verifyCardError(.unknownFailure))
                     }
                 }
                 session.updateAlert(message: Self.systemNFCDialogSignChallenge)
-                let signedChallengeResult: Result<SignedChallenge, NFCSignatureProviderError>
-                signedChallengeResult = await session.card.sign(challenge: challenge)
-                switch signedChallengeResult {
-                case .success:
+                let signedChallengeResult = await session.card.sign(challenge: challenge)
+                if case .success = signedChallengeResult {
                     session.updateAlert(message: Self.systemNFCDialogSuccess)
-                case let .failure(error):
-                    session.invalidateSession(with: error.localizedDescription)
                 }
-                // The delay is needed to show the success message
-                try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 100)
                 return signedChallengeResult
             }
         )
         else {
             // The initializer only returns nil if `NFCTagReaderSession` could not be initialized.
-            return .failure(NFCSignatureProviderError.nfcHealthCardSession(.couldNotInitializeSession))
+            return .failure(.nfcHealthCardSession(.couldNotInitializeSession))
         }
+
         let signedChallengeResult: Result<SignedChallenge, NFCSignatureProviderError>
         do {
             signedChallengeResult = try await nfcHealthCardSession.executeOperation()
@@ -393,37 +319,143 @@ final class EGKSignatureProvider: NFCSignatureProvider {
             if case .wrongCAN = error {
                 nfcSignatureProviderError = .wrongCAN(error)
             } else {
-                nfcSignatureProviderError = NFCSignatureProviderError.nfcHealthCardSession(error)
+                nfcSignatureProviderError = .nfcHealthCardSession(error)
             }
-            nfcHealthCardSession.invalidateSession(with: nfcSignatureProviderError.localizedDescription)
-            return .failure(nfcSignatureProviderError)
+            signedChallengeResult = .failure(nfcSignatureProviderError)
         } catch {
-            nfcHealthCardSession.invalidateSession(with: error.localizedDescription)
-            return .failure(.cardReadingError(error))
+            signedChallengeResult = .failure(.cardReadingError(error))
         }
+
+        switch signedChallengeResult {
+        case .success:
+            nfcHealthCardSession.invalidateSession(with: nil)
+        case let .failure(error):
+            nfcHealthCardSession.invalidateSession(with: error.localizedDescription)
+        }
+        do {
+            // The delay is needed to show the error/success message
+            try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 100)
+        } catch {}
         return signedChallengeResult
     }
-}
 
-extension Publisher {
-    func userMessage(session: NFCCardSession, message: String) -> AnyPublisher<Self.Output, Self.Failure> {
-        handleEvents(receiveOutput: { _ in
-            // swiftlint:disable:previous trailing_closure
-            session.updateAlert(message: message)
-        })
-            .eraseToAnyPublisher()
-    }
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func signForBiometrics(
+        can: String,
+        pin: String,
+        challenge idpChallengeSession: IDPChallengeSession,
+        registerDataProvider: SecureEnclaveSignatureProvider,
+        in pairingSession: PairingSession
+    ) async -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        guard let nfcHealthCardSession = NFCHealthCardSession(
+            messages: .defaultMessages,
+            can: can,
+            operation: { session in
+                session.updateAlert(message: Self.systemNFCDialogVerifyPin)
+                let verifyResponse = try await session.card.verifyAsync(
+                    pin: pin,
+                    affectedPassword: .mrPinHomeNoDfSpecific
+                )
+                guard case .success = verifyResponse
+                else {
+                    if let verifyPINError = NFCSignatureProviderError.VerifyPINError.from(verifyResponse) {
+                        return .failure(NFCSignatureProviderError.verifyCardError(verifyPINError))
+                    } else {
+                        return .failure(NFCSignatureProviderError.verifyCardError(.unknownFailure))
+                    }
+                }
+                session.updateAlert(message: Self.systemNFCDialogSignChallenge)
 
-    func userMessage(session: SignatureSession, message: String) -> AnyPublisher<Self.Output, Self.Failure> {
-        handleEvents(receiveOutput: { _ in
-            // swiftlint:disable:previous trailing_closure
-            session.updateAlert(message: message)
-        })
-            .eraseToAnyPublisher()
+                // first sign the challenge
+                // [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
+                // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
+                // [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
+                let autCertificateResponse: AutCertificateResponse
+                let signedChallenge: SignedChallenge
+                do {
+                    autCertificateResponse = try await session.card.readAutCertificateAsync()
+                    // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+                    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
+                    guard let alg = autCertificateResponse.info.algorithm.alg
+                    else {
+                        return .failure(.signingFailure(.unsupportedAlgorithm))
+                    }
+                    // [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
+                    signedChallenge = try await idpChallengeSession.sign(
+                        with: EGKSigner(card: session.card),
+                        using: [autCertificateResponse.certificate],
+                        alg: alg
+                    )
+                    .async()
+                } catch {
+                    let error = NFCSignatureProviderError.nfcHealthCardSession(error.asNFCHealthCardSessionError())
+                    session.invalidateSession(with: error.localizedDescription)
+                    return .failure(error)
+                }
+
+                // then request and sign pairing data
+                let registrationData: RegistrationData
+                // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+                // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
+                guard autCertificateResponse.info.algorithm.alg == .bp256r1 else {
+                    return .failure(NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm))
+                }
+
+                do {
+                    let cert = try X509(der: autCertificateResponse.certificate)
+                    registrationData = try await registerDataProvider.signPairingSession(
+                        pairingSession,
+                        with: EGKSigner(card: session.card),
+                        certificate: cert
+                    )
+                    .async(/NFCSignatureProviderError.secureEnclaveError)
+                } catch let error as CoreNFCError {
+                    return .failure(.nfcHealthCardSession(.coreNFC(error)))
+                } catch {
+                    return .failure(.signingFailure(.certificate(error)))
+                }
+
+                session.updateAlert(message: Self.systemNFCDialogSuccess)
+
+                return .success((signedChallenge, registrationData))
+            }
+        )
+        else {
+            // The initializer only returns nil if `NFCTagReaderSession` could not be initialized.
+            return .failure(NFCSignatureProviderError.nfcHealthCardSession(.couldNotInitializeSession))
+        }
+
+        let signForBiometricsResult: Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
+        do {
+            signForBiometricsResult = try await nfcHealthCardSession.executeOperation()
+        } catch let error as NFCHealthCardSessionError {
+            let nfcSignatureProviderError: NFCSignatureProviderError
+            if case .wrongCAN = error {
+                nfcSignatureProviderError = .wrongCAN(error)
+            } else {
+                nfcSignatureProviderError = .nfcHealthCardSession(error)
+            }
+            signForBiometricsResult = .failure(nfcSignatureProviderError)
+        } catch {
+            signForBiometricsResult = .failure(.cardReadingError(error))
+        }
+
+        switch signForBiometricsResult {
+        case .success:
+            nfcHealthCardSession.invalidateSession(with: nil)
+        case let .failure(error):
+            nfcHealthCardSession.invalidateSession(with: error.localizedDescription)
+        }
+        do {
+            // The delay is needed to show the error/success message
+            try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 100)
+        } catch {}
+        return signForBiometricsResult
     }
 }
 
 extension NFCHealthCardSession<Result<SignedChallenge, NFCSignatureProviderError>>.Messages {
+    // Default messages for the sign use case
     static let defaultMessages: Self = .init(
         discoveryMessage: L10n.cdwTxtRcNfcMessageDiscoveryMessage.text,
         connectMessage: L10n.cdwTxtRcNfcMessageConnectMessage.text,
@@ -435,10 +467,12 @@ extension NFCHealthCardSession<Result<SignedChallenge, NFCSignatureProviderError
     )
 }
 
-extension NFCTagReaderSession.Messages {
+extension NFCHealthCardSession<Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError>>.Messages {
+    // Default messages for the signChallengeThenAltAuthWithNFCCard() use case
     static let defaultMessages: Self = .init(
         discoveryMessage: L10n.cdwTxtRcNfcMessageDiscoveryMessage.text,
         connectMessage: L10n.cdwTxtRcNfcMessageConnectMessage.text,
+        secureChannelMessage: L10n.cdwTxtRcNfcDialogOpenPace.text,
         noCardMessage: L10n.cdwTxtRcNfcMessageNoCardMessage.text,
         multipleCardsMessage: L10n.cdwTxtRcNfcMessageMultipleCardsMessage.text,
         unsupportedCardMessage: L10n.cdwTxtRcNfcMessageUnsupportedCardMessage.text,
@@ -446,68 +480,15 @@ extension NFCTagReaderSession.Messages {
     )
 }
 
-extension NFCCardSession {
-    func openSecureSession(can: String) -> AnyPublisher<HealthCardType, NFCSignatureProviderError> {
-        card
-            .openSecureSession(can: can, writeTimeout: 0, readTimeout: 0)
-            .map { $0 as HealthCardType }
-            .mapError { error in
-                if let error = error as? HealthCardControl.KeyAgreement.Error,
-                   case .macPcdVerificationFailedOnCard = error {
-                    return NFCSignatureProviderError.wrongCAN(error)
-                }
-                return NFCSignatureProviderError.cardConnectionError(error)
-            }
-            .eraseToAnyPublisher()
-    }
-}
-
-extension Publisher where Self.Output == HealthCardType, Self.Failure == NFCSignatureProviderError {
-    func verifyCard(pin: String) -> AnyPublisher<HealthCardType, Failure> {
-        flatMap { secureCard in
-            secureCard.verify(pin: pin, affectedPassword: .mrPinHomeNoDfSpecific)
-                .tryMap { response -> HealthCardType in
-                    if case .success = response {
-                        return secureCard
-                    } else {
-                        guard let verifyPINError = NFCSignatureProviderError.VerifyPINError.from(response) else {
-                            throw NFCSignatureProviderError.VerifyPINError.unknownFailure
-                        }
-                        throw NFCSignatureProviderError.verifyCardError(verifyPINError)
-                    }
-                }
-                .mapError { error -> NFCSignatureProviderError in
-                    error.asNFCSignatureError()
-                }
-        }.eraseToAnyPublisher()
-    }
-
-    func sign(challenge session: IDPChallengeSession) -> AnyPublisher<SignedChallenge, Failure> {
-        flatMap { secureCard in
-            secureCard
-                // [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
-                // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
-                // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
-                .readAutCertificate()
-                .flatMap { certificate -> AnyPublisher<SignedChallenge, Swift.Error> in
-                    // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
-                    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
-                    guard let alg = certificate.info.algorithm.alg else {
-                        return Fail(
-                            error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
-                        ).eraseToAnyPublisher()
-                    }
-                    // [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
-                    return session.sign(
-                        with: EGKSigner(card: secureCard),
-                        using: [certificate.certificate],
-                        alg: alg
-                    )
-                    .eraseToAnyPublisher()
-                }
-                .mapError { $0.asNFCSignatureError() }
-                .eraseToAnyPublisher()
-        }.eraseToAnyPublisher()
+extension Swift.Error {
+    func asNFCHealthCardSessionError() -> NFCHealthCardSessionError {
+        if let error = self as? NFCHealthCardSessionError {
+            return error
+        } else if let error = self as? CoreNFCError {
+            return NFCHealthCardSessionError.coreNFC(error)
+        } else {
+            return NFCHealthCardSessionError.operation(self)
+        }
     }
 }
 
@@ -521,7 +502,7 @@ extension HealthCardType {
         do {
             certificate = try await readAutCertificateAsync()
         } catch {
-            return .failure(NFCSignatureProviderError.cardReadingError(error))
+            return .failure(NFCSignatureProviderError.nfcHealthCardSession(error.asNFCHealthCardSessionError()))
         }
         // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
         // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
@@ -529,18 +510,21 @@ extension HealthCardType {
             return .failure(NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm))
         }
 
+        let signedChallenge: SignedChallenge
         do {
             // [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
-            let signedChallenge = try await session.sign(
+            signedChallenge = try await session.sign(
                 with: EGKSigner(card: self),
                 using: [certificate.certificate],
                 alg: alg
             )
             .async()
-            return .success(signedChallenge)
+        } catch let error as CoreNFCError {
+            return .failure(.nfcHealthCardSession(.coreNFC(error)))
         } catch {
             return .failure(error.asNFCSignatureError())
         }
+        return .success(signedChallenge)
     }
 }
 

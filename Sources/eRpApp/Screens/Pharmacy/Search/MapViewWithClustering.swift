@@ -132,7 +132,6 @@ struct MapViewWithClustering: UIViewRepresentable {
         let mapView = MKMapView()
         guard !Self.isTestingEnvironment else {
             let greyView = context.coordinator.greyView
-
             return greyView
         }
         mapView.delegate = context.coordinator
@@ -271,5 +270,9 @@ class NormalAnnotationView: MKAnnotationView {
             image = pharmacyAnnotation.pharmacy.todayOpeningState
                 .isOpen ? UIImage(asset: Asset.Map.mapMarker) : UIImage(asset: Asset.Map.closedMarker)
         }
+        let pharmacyName = pharmacyAnnotation.pharmacy.name ?? L10n.phaSearchMapAnnotation.text
+        let pharmacyAddress = pharmacyAnnotation.pharmacy.address?.fullAddress ?? ""
+        accessibilityLabel = pharmacyAddress.isEmpty ? pharmacyName : "\(pharmacyName), \(pharmacyAddress)"
+        accessibilityIdentifier = pharmacyAnnotation.pharmacy.telematikID
     }
 }

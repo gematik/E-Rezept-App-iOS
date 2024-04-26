@@ -21,17 +21,21 @@ import SwiftUI
 /// Wrapped `TextField` applying styles and padding suited for using within `SectionContainer`.
 public struct FormTextField: View {
     var titleKey: LocalizedStringKey
+    var titleKeyBundle: Bundle
 
     @Binding var text: String
 
-    public init(_ titleKey: LocalizedStringKey, text: Binding<String>) {
+    public init(_ titleKey: LocalizedStringKey, bundle titleKeyBundle: Bundle, text: Binding<String>) {
         self.titleKey = titleKey
         _text = text
+        self.titleKeyBundle = titleKeyBundle
     }
 
     public var body: some View {
-        TextField(titleKey, text: $text)
-            .padding()
+        TextField(text: $text) {
+            Text(titleKey, bundle: titleKeyBundle)
+        }
+        .padding()
     }
 }
 

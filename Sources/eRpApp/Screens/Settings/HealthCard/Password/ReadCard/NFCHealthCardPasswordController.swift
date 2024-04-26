@@ -24,11 +24,18 @@ import HealthCardControl
 import NFCCardReaderProvider
 
 protocol NFCHealthCardPasswordController {
-    func resetEgkMrPinRetryCounter(can: String, puk: String, mode: NFCResetRetryCounterMode)
-        -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>
+    func resetEgkMrPinRetryCounter(
+        can: String,
+        puk: String,
+        mode: NFCResetRetryCounterMode
+    ) async -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>
 
-    func changeReferenceData(can: String, old: String, new: String, mode: NFCChangeReferenceDataMode)
-        -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>
+    func changeReferenceData(
+        can: String,
+        old: String,
+        new: String,
+        mode: NFCChangeReferenceDataMode
+    ) async -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError>
 }
 
 enum NFCResetRetryCounterMode: Equatable {
@@ -89,100 +96,85 @@ enum NFCHealthCardPasswordControllerError: Swift.Error {
     case wrongCan
     // sourcery: errorCode = "05"
     case changeReferenceData(Swift.Error)
-
-    var underlyingTagError: CoreNFCError? {
-        switch self {
-        case let .cardError(readerError):
-            if case let .nfcTag(error: tagError) = readerError {
-                return tagError
-            }
-        case let .openSecureSession(error),
-             let .resetRetryCounter(error),
-             let .changeReferenceData(error):
-            if let cardError = error as? NFCCardError,
-               case let .nfcTag(error: tagError) = cardError {
-                return tagError
-            } else if let readerError = error as? NFCTagReaderSession.Error,
-                      case let .nfcTag(error: tagError) = readerError {
-                return tagError
-            }
-        default: break
-        }
-
-        return nil
-    }
+    // sourcery: errorCode = "06"
+    case couldNotInitializeSession
+    // sourcery: errorCode = "07"
+    /// Any error regarding the communication with the NFC health card itself
+    /// or sending/receiving data (operation execution)
+    case nfcHealthCardSession(NFCHealthCardSessionError)
 }
 
 struct DefaultNFCResetRetryCounterController: NFCHealthCardPasswordController {
-    init(schedulers: Schedulers) {
-        self.schedulers = schedulers
-    }
-
-    let schedulers: Schedulers
-    private var uiScheduler: AnySchedulerOf<DispatchQueue> {
-        schedulers.main
-    }
-
     // swiftlint:disable:next function_body_length
     func resetEgkMrPinRetryCounter(
         can: String,
         puk: String,
         mode: NFCResetRetryCounterMode
-    ) -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
-        NFCTagReaderSession
-            .publisher(messages: .defaultMessages)
-            .mapError { NFCHealthCardPasswordControllerError.cardError($0) }
-            .flatMap { session in
-                session.card
-                    .openSecureSession(can: can)
-                    .mapError { error -> NFCHealthCardPasswordControllerError in
-                        if let error = error as? HealthCardControl.KeyAgreement.Error,
-                           case .macPcdVerificationFailedOnCard = error {
-                            return NFCHealthCardPasswordControllerError.wrongCan
-                        } else {
-                            return NFCHealthCardPasswordControllerError.openSecureSession(error)
-                        }
+    ) async
+        -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
+        guard let nfcHealthCardSession = NFCHealthCardSession(
+            messages: .defaultMessages,
+            can: can,
+            operation: { session in
+                session.updateAlert(message: mode.nfcDialogStartUnlockCardMessage)
+                let resetRetryCounterResponse: ResetRetryCounterResponse
+                switch mode {
+                case .resetEgkMrPinRetryCountWithoutNewSecret:
+                    do {
+                        resetRetryCounterResponse = try await session.card.resetRetryCounter(
+                            puk: puk,
+                            affectedPassWord: .mrPinHomeNoDfSpecific
+                        )
+                    } catch {
+                        return .failure(.resetRetryCounter(error))
                     }
-                    .userMessage(session: session, message: mode.nfcDialogStartUnlockCardMessage)
-                    .flatMap { card -> AnyPublisher<ResetRetryCounterResponse, NFCHealthCardPasswordControllerError> in
-                        switch mode {
-                        case .resetEgkMrPinRetryCountWithoutNewSecret:
-                            return card.resetRetryCounter(puk: puk, affectedPassWord: .mrPinHomeNoDfSpecific)
-                                .mapError {
-                                    NFCHealthCardPasswordControllerError.resetRetryCounter($0)
-                                }
-                                .eraseToAnyPublisher()
-                        case let .resetEgkMrPinRetryCountWithNewSecret(newPin):
-                            return card.resetRetryCounterAndSetNewPin(
-                                puk: puk,
-                                newPin: newPin,
-                                affectedPassWord: .mrPinHomeNoDfSpecific
-                            )
-                            .mapError {
-                                NFCHealthCardPasswordControllerError.resetRetryCounter($0)
-                            }
-                            .eraseToAnyPublisher()
-                        }
+                case let .resetEgkMrPinRetryCountWithNewSecret(newPin):
+                    do {
+                        resetRetryCounterResponse = try await session.card.resetRetryCounterAndSetNewPinAsync(
+                            puk: puk,
+                            newPin: newPin,
+                            affectedPassWord: .mrPinHomeNoDfSpecific
+                        )
+                    } catch {
+                        return .failure(.resetRetryCounter(error))
                     }
-                    .map(NFCHealthCardPasswordControllerResponse.from(resetRetryCounterResponse:))
-                    .handleEvents(
-                        receiveOutput: { resetRetryCounterResponse in
-                            if case .success = resetRetryCounterResponse {
-                                session.invalidateSession(with: nil)
-                            } else {
-                                session.invalidateSession(with: L10n.stgTxtCardResetRcNfcDialogError.text)
-                            }
-                        },
-                        receiveCancel: {
-                            session.invalidateSession(with: EGKSignatureProvider.systemNFCDialogCancel)
-                        }
-                    )
-                    .mapError { error -> NFCHealthCardPasswordControllerError in
-                        session.invalidateSession(with: L10n.stgTxtCardResetRcNfcDialogError.text)
-                        return error
-                    }
+                }
+
+                let nfcHealthCardPasswordControllerResponse = NFCHealthCardPasswordControllerResponse
+                    .from(resetRetryCounterResponse:
+                        resetRetryCounterResponse)
+                return .success(nfcHealthCardPasswordControllerResponse)
             }
-            .eraseToAnyPublisher()
+        )
+        else {
+            return .failure(.couldNotInitializeSession)
+        }
+
+        let nfcHealthCardPasswordControllerResponse: Result<
+            NFCHealthCardPasswordControllerResponse,
+            NFCHealthCardPasswordControllerError
+        >
+        do {
+            nfcHealthCardPasswordControllerResponse = try await nfcHealthCardSession.executeOperation()
+        } catch let error as NFCHealthCardSessionError {
+            let nfcHealthCardPasswordControllerError: NFCHealthCardPasswordControllerError
+            if case .wrongCAN = error {
+                nfcHealthCardPasswordControllerError = .wrongCan
+            } else {
+                nfcHealthCardPasswordControllerError = .nfcHealthCardSession(error)
+            }
+            nfcHealthCardPasswordControllerResponse = .failure(nfcHealthCardPasswordControllerError)
+        } catch {
+            nfcHealthCardPasswordControllerResponse = .failure(.resetRetryCounter(error))
+        }
+
+        if case .success(.success) = nfcHealthCardPasswordControllerResponse {
+            nfcHealthCardSession.invalidateSession(with: nil)
+        } else {
+            nfcHealthCardSession.invalidateSession(with: L10n.stgTxtCardResetRcNfcDialogError.text)
+        }
+
+        return nfcHealthCardPasswordControllerResponse
     }
 
     func changeReferenceData(
@@ -190,56 +182,59 @@ struct DefaultNFCResetRetryCounterController: NFCHealthCardPasswordController {
         old: String,
         new: String,
         mode: NFCChangeReferenceDataMode
-    ) -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
-        NFCTagReaderSession
-            .publisher(messages: .defaultMessages)
-            .mapError { NFCHealthCardPasswordControllerError.cardError($0) }
-            .flatMap { session in
-                session.card
-                    .openSecureSession(can: can)
-                    .mapError { error -> NFCHealthCardPasswordControllerError in
-                        if let error = error as? HealthCardControl.KeyAgreement.Error,
-                           case .macPcdVerificationFailedOnCard = error {
-                            return NFCHealthCardPasswordControllerError.wrongCan
-                        } else {
-                            return NFCHealthCardPasswordControllerError.openSecureSession(error)
-                        }
+    ) async -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
+        guard let nfcHealthCardSession = NFCHealthCardSession(
+            messages: .defaultMessages,
+            can: can,
+            operation: { session in
+                session.updateAlert(message: mode.nfcDialogStartChangeReferenceDataMessage)
+                switch mode {
+                case .changeEgkMrPinSecret:
+                    do {
+                        let changeReferenceDataResponse = try await session.card.changeReferenceDataSetNewPin(
+                            old: old,
+                            new: new,
+                            affectedPassword: .mrPinHomeNoDfSpecific
+                        )
+                        let nfcHealthCardPasswordControllerResponse = NFCHealthCardPasswordControllerResponse
+                            .from(changeReferenceDataResponse: changeReferenceDataResponse)
+                        return .success(nfcHealthCardPasswordControllerResponse)
+                    } catch {
+                        let error = NFCHealthCardPasswordControllerError.changeReferenceData(error)
+                        return .failure(error)
                     }
-                    .userMessage(session: session, message: mode.nfcDialogStartChangeReferenceDataMessage)
-                    .flatMap { card ->
-                        AnyPublisher<ChangeReferenceDataResponse, NFCHealthCardPasswordControllerError> in
-                        switch mode {
-                        case .changeEgkMrPinSecret:
-                            return card.changeReferenceDataSetNewPin(
-                                old: old,
-                                new: new,
-                                affectedPassword: .mrPinHomeNoDfSpecific
-                            )
-                            .mapError {
-                                NFCHealthCardPasswordControllerError.changeReferenceData($0)
-                            }
-                            .eraseToAnyPublisher()
-                        }
-                    }
-                    .map(NFCHealthCardPasswordControllerResponse.from(changeReferenceDataResponse:))
-                    .handleEvents(
-                        receiveOutput: { changeReferenceDataResponse in
-                            if case .success = changeReferenceDataResponse {
-                                session.invalidateSession(with: nil)
-                            } else {
-                                session.invalidateSession(with: L10n.stgTxtCardResetRcNfcDialogError.text)
-                            }
-                        },
-                        receiveCancel: {
-                            session.invalidateSession(with: EGKSignatureProvider.systemNFCDialogCancel)
-                        }
-                    )
-                    .mapError { error -> NFCHealthCardPasswordControllerError in
-                        session.invalidateSession(with: L10n.stgTxtCardResetRcNfcDialogError.text)
-                        return error
-                    }
+                }
             }
-            .eraseToAnyPublisher()
+        )
+        else {
+            return .failure(.couldNotInitializeSession)
+        }
+
+        let nfcHealthCardPasswordControllerResponse: Result<
+            NFCHealthCardPasswordControllerResponse,
+            NFCHealthCardPasswordControllerError
+        >
+        do {
+            nfcHealthCardPasswordControllerResponse = try await nfcHealthCardSession.executeOperation()
+        } catch let error as NFCHealthCardSessionError {
+            let nfcHealthCardPasswordControllerError: NFCHealthCardPasswordControllerError
+            if case .wrongCAN = error {
+                nfcHealthCardPasswordControllerError = .wrongCan
+            } else {
+                nfcHealthCardPasswordControllerError = .nfcHealthCardSession(error)
+            }
+            nfcHealthCardPasswordControllerResponse = .failure(nfcHealthCardPasswordControllerError)
+        } catch {
+            nfcHealthCardPasswordControllerResponse = .failure(.resetRetryCounter(error))
+        }
+
+        if case .success(.success) = nfcHealthCardPasswordControllerResponse {
+            nfcHealthCardSession.invalidateSession(with: nil)
+        } else {
+            nfcHealthCardSession.invalidateSession(with: L10n.stgTxtCardResetRcNfcDialogError.text)
+        }
+
+        return nfcHealthCardPasswordControllerResponse
     }
 }
 
@@ -260,6 +255,23 @@ extension NFCChangeReferenceDataMode {
     }
 }
 
+extension NFCHealthCardSession<
+    Result<
+        NFCHealthCardPasswordControllerResponse,
+        NFCHealthCardPasswordControllerError
+    >
+>.Messages {
+    static let defaultMessages: Self = .init(
+        discoveryMessage: L10n.cdwTxtRcNfcMessageDiscoveryMessage.text,
+        connectMessage: L10n.cdwTxtRcNfcMessageConnectMessage.text,
+        secureChannelMessage: L10n.cdwTxtRcNfcDialogOpenPace.text,
+        noCardMessage: L10n.cdwTxtRcNfcMessageNoCardMessage.text,
+        multipleCardsMessage: L10n.cdwTxtRcNfcMessageMultipleCardsMessage.text,
+        unsupportedCardMessage: L10n.cdwTxtRcNfcMessageUnsupportedCardMessage.text,
+        connectionErrorMessage: L10n.cdwTxtRcNfcMessageConnectionErrorMessage.text
+    )
+}
+
 extension NFCHealthCardPasswordControllerError: Equatable {
     public static func ==(lhs: NFCHealthCardPasswordControllerError,
                           rhs: NFCHealthCardPasswordControllerError) -> Bool {
@@ -271,6 +283,12 @@ extension NFCHealthCardPasswordControllerError: Equatable {
         case let (.resetRetryCounter(lhsError), .resetRetryCounter(rhsError)):
             return lhsError.localizedDescription == rhsError.localizedDescription
         case let (.changeReferenceData(lhsError), .changeReferenceData(rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        case (.wrongCan, .wrongCan):
+            return true
+        case (.couldNotInitializeSession, .couldNotInitializeSession):
+            return true
+        case let (.nfcHealthCardSession(lhsError), .nfcHealthCardSession(rhsError)):
             return lhsError.localizedDescription == rhsError.localizedDescription
         default:
             return false
@@ -291,6 +309,10 @@ extension NFCHealthCardPasswordControllerError: CustomStringConvertible, Localiz
             return "wrongCANError"
         case let .changeReferenceData(error):
             return "changeReferenceDataError: \(error.localizedDescription)"
+        case .couldNotInitializeSession:
+            return "couldNotInitializeSession"
+        case let .nfcHealthCardSession(error):
+            return "nfcHealthCardSession: \(error.localizedDescription)"
         }
     }
 
@@ -306,6 +328,10 @@ extension NFCHealthCardPasswordControllerError: CustomStringConvertible, Localiz
             return nil
         case let .changeReferenceData(error):
             return error.localizedDescription
+        case .couldNotInitializeSession:
+            return nil
+        case let .nfcHealthCardSession(error):
+            return error.localizedDescription
         }
     }
 
@@ -314,28 +340,25 @@ extension NFCHealthCardPasswordControllerError: CustomStringConvertible, Localiz
         case let .cardError(error as LocalizedError),
              let .openSecureSession(error as LocalizedError),
              let .resetRetryCounter(error as LocalizedError),
-             let .changeReferenceData(error as LocalizedError):
+             let .changeReferenceData(error as LocalizedError),
+             let .nfcHealthCardSession(error as LocalizedError):
             return error.recoverySuggestion
-        case .resetRetryCounter, .openSecureSession, .wrongCan, .changeReferenceData:
+        case .resetRetryCounter, .openSecureSession, .wrongCan, .changeReferenceData, .couldNotInitializeSession,
+             .nfcHealthCardSession:
             return nil
         }
     }
 }
 
 struct DummyNFCHealthCardPasswordController: NFCHealthCardPasswordController {
-    func resetEgkMrPinRetryCounter(can _: String, puk _: String, mode _: NFCResetRetryCounterMode)
-        -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
-        Just(NFCHealthCardPasswordControllerResponse.success)
-            .setFailureType(to: NFCHealthCardPasswordControllerError.self)
-            .eraseToAnyPublisher()
+    func resetEgkMrPinRetryCounter(can _: String, puk _: String, mode _: NFCResetRetryCounterMode) async
+        -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
+        .success(.success)
     }
 
-    func changeReferenceData(can _: String, old _: String, new _: String,
-                             mode _: NFCChangeReferenceDataMode)
-        -> AnyPublisher<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
-        Just(NFCHealthCardPasswordControllerResponse.success)
-            .setFailureType(to: NFCHealthCardPasswordControllerError.self)
-            .eraseToAnyPublisher()
+    func changeReferenceData(can _: String, old _: String, new _: String, mode _: NFCChangeReferenceDataMode) async
+        -> Result<NFCHealthCardPasswordControllerResponse, NFCHealthCardPasswordControllerError> {
+        .success(.success)
     }
 }
 
@@ -344,7 +367,7 @@ struct DummyNFCHealthCardPasswordController: NFCHealthCardPasswordController {
 // swiftlint:disable:next type_name
 struct NFCHealthCardPasswordControllerDependency: DependencyKey {
     static let liveValue: NFCHealthCardPasswordController =
-        DefaultNFCResetRetryCounterController(schedulers: .liveValue)
+        DefaultNFCResetRetryCounterController()
 
     static let previewValue: NFCHealthCardPasswordController = DummyNFCHealthCardPasswordController()
 

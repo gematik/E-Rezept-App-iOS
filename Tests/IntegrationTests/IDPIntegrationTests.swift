@@ -18,7 +18,7 @@
 
 import ASN1Kit
 import Combine
-@testable import eRpApp
+@testable import eRpFeatures
 import Foundation
 import HTTPClient
 @testable import IDP

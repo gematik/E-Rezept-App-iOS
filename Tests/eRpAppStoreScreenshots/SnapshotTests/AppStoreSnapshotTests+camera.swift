@@ -17,8 +17,7 @@
 //
 
 import CombineSchedulers
-@testable import eRpApp
-@testable import eRpKit
+@testable import eRpFeatures
 import SnapshotTesting
 import SwiftUI
 import XCTest

@@ -321,14 +321,6 @@ lane :build_ios do |options|
     raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
   end
 
-  if options[:ios_sdk]
-    sdk = options[:ios_sdk]
-  elsif ENV["G_IOS_SDK"]
-    sdk = ENV["G_IOS_SDK"]
-  else
-    sdk = "iphonesimulator"
-  end
-
   if options[:ios_destination]
     destination = options[:ios_destination]
   elsif ENV["G_IOS_DESTINATION"]
@@ -351,7 +343,6 @@ lane :build_ios do |options|
     schemes = ENV["G_IOS_SCHEMES"]
   else
     scan(
-      sdk: sdk,
       destination: destination,
       configuration: configuration
     )
@@ -361,7 +352,6 @@ lane :build_ios do |options|
     schemes.split(",").each do |scheme|
       scan(
         scheme: scheme,
-        sdk: sdk,
         destination: destination,
         configuration: configuration
       )
@@ -482,7 +472,7 @@ lane :generate_documentation do |options|
     sh "cd .. && mint run -s sourcekitten doc -- -project eRp-App.xcodeproj -scheme #{scheme} > build/docs/#{scheme}.json; cd -"
   end
 
-  version = sh 'cd .. && grep -A 1 -R CFBundleShortVersionString ./Sources/eRpApp/Resources/Info.plist | grep "<string>" | sed -E "s/.*<string>(.*)<\\/string>/\\1/g"; cd - > /dev/null'.strip
+  version = sh 'cd .. && grep -A 1 -R CFBundleShortVersionString ./App/Sources/Resources/Info.plist | grep "<string>" | sed -E "s/.*<string>(.*)<\\/string>/\\1/g"; cd - > /dev/null'.strip
 
   for scheme in schemes
     sh "cd .. && jazzy --config '.jazzy.yml' --module-version '#{version}' --sourcekitten-sourcefile build/docs/#{scheme}.json --output 'docs/modules/#{scheme.sub('_macOS','')}' --readme doc/modules/#{scheme.sub('_macOS','')}/Readme.md --documentation 'doc/modules/#{scheme.sub('_macOS','')}/*.md'; cd -"

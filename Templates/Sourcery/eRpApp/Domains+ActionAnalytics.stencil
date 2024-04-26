@@ -6,8 +6,26 @@ import Foundation
 {% typed actionType as Enum %}
     {% for case in actionType.cases %}
         {% if case.hasAssociatedValue and not case.name|contains:"debug" %}
-            {% if case.associatedValues[0].typeName|default:"abc"|hasSuffix:"Domain.Action"  %}
-            case let .{{ case.name }}({{ case.associatedValues[0].localName }}: action):
+            {% if case.associatedValues[0].typeName|default:"abc"|hasSuffix:"Domain.Action" or case.associatedValues[0].typeName|default:"abc"|hasPrefix:"Destination.Action" %}
+            case let .{{ case.name }}({% if case.associatedValues[0].localName %}{{ case.associatedValues[0].localName }}: {% endif %}action):
+                action.analytics(tracker: tracker)
+            {% endif %}
+        {% endif %}
+        {% if case.hasAssociatedValue and not case.name|contains:"debug" %}
+            {% if case.associatedValues[0].typeName|default:"abc"|hasPrefix:"PresentationAction<Destinations.Action>" or case.associatedValues[0].typeName|default:"abc"|hasPrefix:"PresentationAction<Destination.Action>" %}
+            case let .{{ case.name }}(.presented({% if case.associatedValues[0].localName %}{{ case.associatedValues[0].localName }}: {% endif %}action)):
+                action.analytics(tracker: tracker)
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro FindDestinationActions actionType %}
+{% typed actionType as Enum %}
+    {% for case in actionType.cases %}
+        {% if case.hasAssociatedValue and not case.name|contains:"debug" %}
+            {% if case.associatedValues[0].typeName|default:"abc"|hasSuffix:"Domain" or case.associatedValues[0].typeName|default:"abc"|hasPrefix:"PresentationAction" or case.associatedValues[0].typeName|default:"abc"|hasPrefix:"Destination.Action"  %}
+            case let .{{ case.name }}({% if case.associatedValues[0].localName %}{{ case.associatedValues[0].localName }}: {% endif %}action):
                 action.analytics(tracker: tracker)
             {% endif %}
         {% endif %}
@@ -42,11 +60,14 @@ import Foundation
 {% macro PrintAction actionType %}
 {% typed actionType as Enum %}
     {% if not actionType.name|contains:"Debug" %} 
-extension {{ actionType.name }} {
+extension {{ actionType.name }}{% if actionType.attributes.Reducer %}.Action{% endif %} {
     func analytics(tracker: Tracker) {
         switch self {
             {% call FindAnalyticsActions actionType %}
             {% call FindSubdomainActions actionType %}
+            {% if actionType.attributes.Reducer %}
+                {% call FindDestinationActions actionType %}
+            {% endif %}
             default: break
         }
     }
@@ -55,7 +76,7 @@ extension {{ actionType.name }} {
 {% endmacro %}
 
 {% for type in types.enums %}
-    {% if type.name|hasSuffix:"Action" and type.parentName|default:"abc"|hasSuffix:"Domain" and not type.parent.annotations.SkipSourcery %}
+    {% if type.name|hasSuffix:"Action" and (type.parentName|default:"abc"|hasSuffix:"Domain" or type.parentName|default:"abc"|hasSuffix:"Destination" or type.parentName|default:"abc"|hasSuffix:"Destinations") and not type.parent.annotations.SkipSourcery or type.attributes.Reducer %}
         {% call PrintAction type %}
     {% endif %}
 {% endfor %}

@@ -47,7 +47,7 @@ struct RedeemSuccessView: View {
                         .padding(.vertical, 8)
                 }
 
-                Text(titlelForSource(viewStore.state.redeemOption))
+                Text(titlelForSource(viewStore.state.redeemOption), bundle: .module)
                     .font(Font.title3.bold())
 
                 ContentView(option: viewStore.state.redeemOption)
@@ -79,8 +79,8 @@ struct RedeemSuccessView: View {
             videoName = "animation_versand"
         }
 
-        guard let bundle = Bundle.main.path(forResource: videoName,
-                                            ofType: "mp4") else {
+        guard let bundle = Bundle.module.path(forResource: videoName,
+                                              ofType: "mp4") else {
             return nil
         }
 

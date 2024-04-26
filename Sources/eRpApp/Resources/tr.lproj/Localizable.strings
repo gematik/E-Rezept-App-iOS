@@ -1,5 +1,5 @@
 "add_btn_save" = "Kaydet";
-"add_txt_profile1" = "Profiller 1";
+"add_txt_profile1" = "Profil adı";
 "add_txt_title" = "Ad girin";
 "alert_btn_close" = "Reddet";
 "alert_btn_ok" = "Tamam";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Yanlış erişim numarası";
 "cdw_txt_rc_error_wrong_can_recovery" = "Lütfen erişim numaranızı düzeltin (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Yanlış PIN";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ deneme kaldı. Lütfen PIN girişinizi düzeltin.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ daha fazla deneme. Dikkat: Sağlık kartınızın PIN kodu olmalıdır. Örneğin TK Kimlik PIN'i değil.";
 "cdw_txt_rc_headline" = "Sağlık kartınızı hazırlayın";
 "cdw_txt_rc_list_charge" = "Cihazınızın yeterince şarj olup olmadığını kontrol edin.";
 "cdw_txt_rc_list_cover" = "Gerekirse koruyucu kapağı çıkarın.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Çok zayıf";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Zayıf";
 "ctl_txt_profile__cell_not_connected" = "Oturum açılmadı";
-"ctl_txt_profile_color_picker_blue" = "Mavi";
-"ctl_txt_profile_color_picker_green" = "Yeşil";
-"ctl_txt_profile_color_picker_grey" = "Gri";
-"ctl_txt_profile_color_picker_pink" = "Pembe";
+"ctl_txt_profile_color_picker_blue" = "Mavi ay Eylül";
+"ctl_txt_profile_color_picker_green" = "Ağaç";
+"ctl_txt_profile_color_picker_grey" = "Bahar grisi";
+"ctl_txt_profile_color_picker_pink" = "BT! Dır-dir! Pembe!";
 "ctl_txt_profile_color_picker_selected" = "Seçili";
-"ctl_txt_profile_color_picker_yellow" = "Sarı";
+"ctl_txt_profile_color_picker_yellow" = "Sundew";
 "ctl_txt_profile_connection_status_connected" = "Bağlı";
 "ctl_txt_profile_connection_status_disconnected" = "Bağlı değil";
 "ctl_txt_search_bar_field_label" = "Arama alanı";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Kullan";
 "main_btn_refresh" = "Güncelleştir";
 "main_empty_txt_connected" = "↓ Güncellemek için ekranı aşağı sürükleyin.";
-"main_empty_txt_disconnected" = "Tarifleri otomatik olarak almak için oturum açın veya üst köşedeki ⊕ işaretini kullanarak yeni bir tarif ekleyin.";
+"main_empty_txt_disconnected" = "Tarifleri otomatik olarak almak için kaydolun.";
 "main_empty_txt_title" = "Tarif yok";
 "main_txt_consent_drawer_message" = "Not: Artık eczaneden maliyet makbuzlarınızı çıktı olarak almayacaksınız.";
 "main_txt_consent_drawer_title" = "Maliyet makbuzlarını dijital olarak alın";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filtrele";
 "pha_search_filter_txt_title" = "Filtrele";
 "pha_search_hint_txt_close" = "Konum paylaşımını kapatın, konum paylaşmayın";
+"pha_search_map_annotation" = "Eczane";
 "pha_search_map_btn_Error_cancel" = "İptal et";
 "pha_search_map_header" = "Bu civarda";
 "pha_search_txt_closed" = "Kapalı";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Acil servis ücreti";
 "prsc_dtl_dr_error_info_description" = "Bu tarifte tüm bilgiler doğru şekilde sunulmamaktadır. Ancak yine de eczanenizde kullanabilirsiniz.";
 "prsc_dtl_dr_error_info_title" = "Tarif yanlış";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Bu süre zarfında herhangi bir eczaneden katkı payı ödeyerek reçetenizi doldurabilirsiniz.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Bu süre zarfında reçetenizi herhangi bir eczaneden maksimum 10 € ek ödemeyle alabilirsiniz.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Bu süre içinde reçeteyi yine eczanede doldurabilirsiniz, ancak ilacın satın alma bedelinin tamamını kendiniz ödemek zorunda kalacaksınız. Alternatif olarak muayenehanenizden reçetenin yeniden düzenlenmesini isteyebilirsiniz.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Bu reçete ne kadar süreyle geçerlidir?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Basılı kopyadan içe aktarılan reçeteler, güvenlik nedeniyle kişisel veya tıbbi bilgileri görüntüleyemez. \n\n Reçetede yer alan tüm bilgileri görüntülemek için bu uygulamaya sağlık kartı veya sigorta uygulamasıyla giriş yapın.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Dijital maliyet makbuzu";
 "prsc_dtl_txt_practitioner_person" = "Reçete yazan kişi";
 "prsc_dtl_txt_quantity" = "Reçete edilen paket sayısı";
+"prsc_dtl_txt_section_details_header" = "Detaylı bilgi";
 "prsc_dtl_txt_yes" = "Evet";
 "prsc_fd_btn_error_banner" = "Bildir";
 "prsc_fd_hint_dosageInstructions_pic" = "Doktor";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Kullanım talimatları";
 "prsc_fd_txt_error_banner_message" = "Reçetenizi oluştururken bir şeyler ters gitmiş gibi görünüyor. Hatayı bildirmek ister misiniz?";
 "prsc_fd_txt_na" = "Belirtilmemiş";
-"prsc_fd_txt_navigation_title" = "Ayrıntı";
+"prsc_fd_txt_navigation_title" = "Tarif ayrıntıları";
 "prsc_fd_txt_noctu_description" = "Bu ilaç, acil servis ücreti olmadan geceleri dahil bir eczanede kullanılabilir.";
 "prsc_fd_txt_noctu_title" = "Bu acil bir durum";
 "prsc_fd_txt_organization_address" = "Adres";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Gelir hatırlatıcısı";
 "stg_btn_new_profile_create" = "Kaydet";
 "stg_btn_reg_devices_load" = "Kayıt olmak";
+"stg_con_btn_gemmunity" = "E-reçete forumu";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "E-Rezept uygulamasından geri bildirim";
 "stg_con_hotline_ava" = "Arayan için ücretsizdir. Hizmet saatleri: Ulusal tatiller hariç Pazartesi - Cuma 08:00 - 20:00";

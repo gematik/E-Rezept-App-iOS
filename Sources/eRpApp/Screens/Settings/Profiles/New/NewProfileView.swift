@@ -78,6 +78,7 @@ struct NewProfileView: View {
                     SingleElementSectionContainer {
                         FormTextField(
                             L10n.stgTxtNewProfileNamePlaceholder.key,
+                            bundle: .module,
                             text: viewStore.binding(get: \.name, send: NewProfileDomain.Action.setName)
                         )
                         .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)

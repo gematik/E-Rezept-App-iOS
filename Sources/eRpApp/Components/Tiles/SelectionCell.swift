@@ -42,13 +42,13 @@ struct SelectionCell: View {
                     }
 
                     VStack(alignment: .leading) {
-                        Text(text)
+                        Text(text, bundle: .module)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.body)
                             .foregroundColor(Colors.text)
 
                         if let description = description {
-                            Text(description)
+                            Text(description, bundle: .module)
                                 .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .font(.subheadline)

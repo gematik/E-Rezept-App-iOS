@@ -28,7 +28,7 @@ struct StatusView: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Text(title)
+            Text(title, bundle: .module)
                 .foregroundColor(foregroundColor)
         }
         .font(Font.caption2.weight(.semibold))

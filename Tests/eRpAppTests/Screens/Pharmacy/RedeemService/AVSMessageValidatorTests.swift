@@ -17,7 +17,7 @@
 //
 
 import AVS
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Foundation
 import Nimble

@@ -17,7 +17,7 @@
 //
 
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Nimble
 import XCTest
@@ -83,12 +83,14 @@ final class MedicationReminderSetupDomainTests: XCTestCase {
             state.medicationSchedule.entries = [expectedNewEntry]
         }
 
+        var schedule = sut.state.medicationSchedule
         // when setting the time of the first entry to 12:00
         var expectedNewEntry1200 = expectedNewEntry
         expectedNewEntry1200.hourComponent = 12
         expectedNewEntry1200.minuteComponent = 00
+        schedule.entries = [expectedNewEntry1200]
 
-        await sut.send(.binding(.set(\.$medicationSchedule.entries, [expectedNewEntry1200]))) { state in
+        await sut.send(.set(\.$medicationSchedule, schedule)) { state in
             // then the time is updated
             state.medicationSchedule.entries = [expectedNewEntry1200]
         }

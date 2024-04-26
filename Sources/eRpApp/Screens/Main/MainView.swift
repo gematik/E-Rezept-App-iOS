@@ -36,7 +36,7 @@ struct MainView: View {
 
     struct ViewState: Equatable {
         let isDemoModeEnabled: Bool
-        let destinationTag: MainDomain.Destinations.State.Tag?
+        let destinationTag: MainDomain.Destination.State.Tag?
         let showTooltips: Bool
 
         init(state: MainDomain.State) {
@@ -98,8 +98,8 @@ struct MainView: View {
             )
             .toast(
                 store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                state: /MainDomain.Destinations.State.toast,
-                action: MainDomain.Destinations.Action.toast
+                state: /MainDomain.Destination.State.toast,
+                action: MainDomain.Destination.Action.toast
             )
 
             .navigationTitle(Text(L10n.erxTitle))
@@ -141,8 +141,8 @@ struct MainView: View {
             }
             .alert(
                 store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                state: /MainDomain.Destinations.State.alert,
-                action: MainDomain.Destinations.Action.alert
+                state: /MainDomain.Destination.State.alert,
+                action: MainDomain.Destination.Action.alert
             )
         }
         .accentColor(Colors.primary600)
@@ -180,7 +180,7 @@ private extension MainView {
         }
 
         struct ViewState: Equatable {
-            let destinationTag: MainDomain.Destinations.State.Tag?
+            let destinationTag: MainDomain.Destination.State.Tag?
 
             init(state: MainDomain.State) {
                 destinationTag = state.destination?.tag
@@ -221,8 +221,8 @@ private extension MainView {
                 content: {
                     IfLetStore(
                         store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                        state: /MainDomain.Destinations.State.scanner,
-                        action: MainDomain.Destinations.Action.scanner(action:),
+                        state: /MainDomain.Destination.State.scanner,
+                        action: MainDomain.Destination.Action.scanner(action:),
                         then: ErxTaskScannerView.init(store:)
                     )
                 })
@@ -246,8 +246,8 @@ private extension MainView {
                     content: {
                         IfLetStore(
                             store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                            state: /MainDomain.Destinations.State.deviceSecurity,
-                            action: MainDomain.Destinations.Action.deviceSecurity(action:),
+                            state: /MainDomain.Destination.State.deviceSecurity,
+                            action: MainDomain.Destination.Action.deviceSecurity(action:),
                             then: DeviceSecurityView.init(store:)
                         )
                     }
@@ -258,8 +258,8 @@ private extension MainView {
             // Navigation into details
             NavigationLinkStore(
                 store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                state: /MainDomain.Destinations.State.prescriptionDetail,
-                action: MainDomain.Destinations.Action.prescriptionDetailAction(action:),
+                state: /MainDomain.Destination.State.prescriptionDetail,
+                action: MainDomain.Destination.Action.prescriptionDetailAction(action:),
                 onTap: { viewStore.send(.setNavigation(tag: .prescriptionDetail)) },
                 destination: PrescriptionDetailView.init(store:),
                 label: { EmptyView() }
@@ -268,8 +268,8 @@ private extension MainView {
             // Navigation into archived prescriptions
             NavigationLinkStore(
                 store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                state: /MainDomain.Destinations.State.prescriptionArchive,
-                action: MainDomain.Destinations.Action.prescriptionArchiveAction(action:),
+                state: /MainDomain.Destination.State.prescriptionArchive,
+                action: MainDomain.Destination.Action.prescriptionArchiveAction(action:),
                 onTap: { viewStore.send(.setNavigation(tag: .prescriptionArchive)) },
                 destination: PrescriptionArchiveView.init(store:),
                 label: { EmptyView() }
@@ -279,7 +279,7 @@ private extension MainView {
             Rectangle()
                 .frame(width: 0, height: 0, alignment: .center)
                 .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .redeem },
+                    get: { viewStore.destinationTag == .redeemMethods },
                     set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil))
@@ -290,8 +290,8 @@ private extension MainView {
                 content: {
                     IfLetStore(
                         store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                        state: /MainDomain.Destinations.State.redeem,
-                        action: MainDomain.Destinations.Action.redeemMethods(action:),
+                        state: /MainDomain.Destination.State.redeemMethods,
+                        action: MainDomain.Destination.Action.redeemMethods(action:),
                         then: RedeemMethodsView.init(store:)
                     )
                 })
@@ -313,8 +313,8 @@ private extension MainView {
                 content: {
                     IfLetStore(
                         store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                        state: /MainDomain.Destinations.State.cardWall,
-                        action: MainDomain.Destinations.Action.cardWall(action:),
+                        state: /MainDomain.Destination.State.cardWall,
+                        action: MainDomain.Destination.Action.cardWall(action:),
                         then: CardWallIntroductionView.init(store:)
                     )
                 })
@@ -337,8 +337,8 @@ private extension MainView {
                         ZStack {
                             IfLetStore(
                                 store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                                state: /MainDomain.Destinations.State.createProfile,
-                                action: MainDomain.Destinations.Action.createProfileAction(action:),
+                                state: /MainDomain.Destination.State.createProfile,
+                                action: MainDomain.Destination.Action.createProfileAction(action:),
                                 then: CreateProfileView.init(store:)
                             )
                         }
@@ -362,8 +362,8 @@ private extension MainView {
                         ZStack {
                             IfLetStore(
                                 store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                                state: /MainDomain.Destinations.State.editName,
-                                action: MainDomain.Destinations.Action.editProfileNameAction(action:),
+                                state: /MainDomain.Destination.State.editName,
+                                action: MainDomain.Destination.Action.editProfileNameAction(action:),
                                 then: EditProfileNameView.init(store:)
                             )
                         }
@@ -386,8 +386,8 @@ private extension MainView {
                     content: {
                         IfLetStore(
                             store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                            state: /MainDomain.Destinations.State.editProfilePicture,
-                            action: MainDomain.Destinations.Action.editProfilePictureAction(action:),
+                            state: /MainDomain.Destination.State.editProfilePicture,
+                            action: MainDomain.Destination.Action.editProfilePictureAction(action:),
                             then: EditProfilePictureView.init(store:)
                         )
                     }
@@ -409,8 +409,8 @@ private extension MainView {
                     content: {
                         IfLetStore(
                             store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                            state: /MainDomain.Destinations.State.medicationReminder,
-                            action: MainDomain.Destinations.Action.medicationReminder(action:),
+                            state: /MainDomain.Destination.State.medicationReminder,
+                            action: MainDomain.Destination.Action.medicationReminder(action:),
                             then: MedicationReminderOneDaySummaryView.init(store:)
                         )
                     }

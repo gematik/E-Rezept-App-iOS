@@ -1,5 +1,5 @@
 "add_btn_save" = "Зберегти";
-"add_txt_profile1" = "Профілі 1";
+"add_txt_profile1" = "Ім'я профілю";
 "add_txt_title" = "Введіть ім'я";
 "alert_btn_close" = "Відхилити";
 "alert_btn_ok" = "Ok";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Неправильний номер доступу";
 "cdw_txt_rc_error_wrong_can_recovery" = "Виправте свій номер доступу (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Неправильний PIN-код";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "Залишилося ще %@ спроби. Виправте введення PIN-коду.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "Ще %@ спроб. Увага: це має бути PIN-код вашої медичної картки. Наприклад, не TK Ident PIN.";
 "cdw_txt_rc_headline" = "Підготуйте картку здоров'я";
 "cdw_txt_rc_list_charge" = "Перевірте, чи ваш пристрій достатньо заряджено.";
 "cdw_txt_rc_list_cover" = "За можливості видаліть захисну оболонку";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Дуже слабкий";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Слабкий";
 "ctl_txt_profile__cell_not_connected" = "Не в системі";
-"ctl_txt_profile_color_picker_blue" = "Синій";
-"ctl_txt_profile_color_picker_green" = "Зелений";
-"ctl_txt_profile_color_picker_grey" = "Сірий";
-"ctl_txt_profile_color_picker_pink" = "Рожевий";
+"ctl_txt_profile_color_picker_blue" = "Синій місяць вересень";
+"ctl_txt_profile_color_picker_green" = "Дерево";
+"ctl_txt_profile_color_picker_grey" = "Весняний сірий";
+"ctl_txt_profile_color_picker_pink" = "Це! Рожевого! Кольору!";
 "ctl_txt_profile_color_picker_selected" = "Вибрано";
-"ctl_txt_profile_color_picker_yellow" = "Жовтий";
+"ctl_txt_profile_color_picker_yellow" = "Росичка";
 "ctl_txt_profile_connection_status_connected" = "З'єднано";
 "ctl_txt_profile_connection_status_disconnected" = "Не з'єднано";
 "ctl_txt_search_bar_field_label" = "Поле пошуку";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Погасити";
 "main_btn_refresh" = "Оновити";
 "main_empty_txt_connected" = "↓ Перетягніть екран вниз, щоб оновити.";
-"main_empty_txt_disconnected" = "Увійдіть, щоб автоматично отримувати рецепти, або додайте новий рецепт, використовуючи ⊕ у верхньому куті.";
+"main_empty_txt_disconnected" = "Підпишіться, щоб автоматично отримувати рецепти.";
 "main_empty_txt_title" = "Кожних рецептів";
 "main_txt_consent_drawer_message" = "Примітка. Ви більше не отримуватимете роздруковані квитанції в аптеці.";
 "main_txt_consent_drawer_title" = "Отримуйте квитанції про витрати в цифровому вигляді";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Фільтрувати";
 "pha_search_filter_txt_title" = "Фільтрувати";
 "pha_search_hint_txt_close" = "Закрити місцеперебування, не ділитися місцеперебуванням";
+"pha_search_map_annotation" = "Аптека";
 "pha_search_map_btn_Error_cancel" = "Скасувати";
 "pha_search_map_header" = "Поруч";
 "pha_search_txt_closed" = "Закрито";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Плата за аварійну службу";
 "prsc_dtl_dr_error_info_description" = "У цьому рецепті не вся інформація подана правильно. Однак ви все одно можете придбати його в аптеці.";
 "prsc_dtl_dr_error_info_title" = "Рецепт невірний";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "У цей період ви можете отримати рецепт у будь-якій аптеці за доплатою.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Протягом цього періоду ви можете отримати рецепт у будь-якій аптеці з максимальною додатковою оплатою 10 євро.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Ви все ще можете виписати рецепт в аптеці протягом цього терміну, але вам доведеться заплатити всю вартість ліків самостійно. Крім того, ви можете попросити свою практику повторно виписати рецепт.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Скільки дійсний цей рецепт?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Рецепти, імпортовані з паперової копії, не можуть відображати особисту або медичну інформацію з міркувань безпеки. \n\n Увійдіть у цю програму за допомогою медичної картки або програми страхування, щоб переглянути всю інформацію, що міститься в рецепті.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Цифровий чек";
 "prsc_dtl_txt_practitioner_person" = "Особа, яка призначає рецепт";
 "prsc_dtl_txt_quantity" = "Приписана кількість упаковок";
+"prsc_dtl_txt_section_details_header" = "Детальна інформація";
 "prsc_dtl_txt_yes" = "Так";
 "prsc_fd_btn_error_banner" = "Повідомити про порушення";
 "prsc_fd_hint_dosageInstructions_pic" = "Лікарка";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Вказівки щодо приймання";
 "prsc_fd_txt_error_banner_message" = "Здається, під час створення вашого рецепта щось пішло не так. Повідомити про помилку?";
 "prsc_fd_txt_na" = "Дані відсутні";
-"prsc_fd_txt_navigation_title" = "Деталь";
+"prsc_fd_txt_navigation_title" = "Деталі рецепта";
 "prsc_fd_txt_noctu_description" = "Цей препарат можна навіть вночі придбати в аптеці без плати за екстрене обслуговування.";
 "prsc_fd_txt_noctu_title" = "Тут потрібно поспішати";
 "prsc_fd_txt_organization_address" = "Адреса";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Нагадування про доходи";
 "stg_btn_new_profile_create" = "Зберегти";
 "stg_btn_reg_devices_load" = "зареєструватися";
+"stg_con_btn_gemmunity" = "Форум електронних рецептів";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Відгук із застосунку E-Rezept";
 "stg_con_hotline_ava" = "Безкоштовно для абонента. Графік роботи: Пн – Пт 8:00 – 20:00, крім національних свят";

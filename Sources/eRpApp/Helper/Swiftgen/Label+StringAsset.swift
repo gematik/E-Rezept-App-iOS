@@ -20,60 +20,65 @@ import SwiftUI
 
 extension Label where Title == Text, Icon == Image {
     init(_ stringAsset: StringAsset, systemImage: String) {
-        self.init(stringAsset.key, systemImage: systemImage)
+        self.init {
+            Text(stringAsset.key, bundle: .module)
+        } icon: {
+            Image(systemName: systemImage)
+        }
     }
 
     init(_ stringAsset: StringAsset, image name: String) {
-        self.init(stringAsset.key, image: name)
+        self.init {
+            Text(stringAsset.key, bundle: .module)
+        } icon: {
+            Image(name, bundle: .module)
+        }
     }
 }
 
 extension Label where Title == Text, Icon == EmptyView {
     init(_ stringAsset: StringAsset) {
-        self.init(title: { Text(stringAsset.key) }, icon: {})
+        self.init(
+            title: { Text(stringAsset.key, bundle: .module) },
+            icon: {}
+        )
     }
 }
 
 extension TextField where Label == Text {
     init(
         _ stringAsset: StringAsset,
-        text: Binding<String>,
-        onEditingChanged: @escaping (Bool) -> Void = { _ in },
-        onCommit: @escaping () -> Void = {}
+        text: Binding<String>
     ) {
-        self.init(
-            stringAsset.key,
-            text: text,
-            onEditingChanged: onEditingChanged,
-            onCommit: onCommit
-        )
+        self.init(text: text) {
+            Text(stringAsset.key, bundle: .module)
+        }
     }
 }
 
 extension SecureField where Label == Text {
     init(
         _ stringAsset: StringAsset,
-        text: Binding<String>,
-        onCommit: @escaping () -> Void
+        text: Binding<String>
     ) {
-        self.init(stringAsset.key, text: text, onCommit: onCommit)
+        self.init(text: text) {
+            Text(stringAsset.key, bundle: .module)
+        }
     }
 }
 
 extension Button where Label == Text {
     init(_ stringAsset: StringAsset, action: @escaping () -> Void) {
-        self.init(stringAsset.key, action: action)
-    }
-}
-
-extension SecureField where Label == Text {
-    init(_ stringAsset: StringAsset, text: Binding<String>) {
-        self.init(stringAsset.key, text: text)
+        self.init(action: action) {
+            Text(stringAsset.key, bundle: .module)
+        }
     }
 }
 
 extension Link where Label == Text {
     init(_ stringAsset: StringAsset, destination: URL) {
-        self.init(stringAsset.key, destination: destination)
+        self.init(destination: destination) {
+            Text(stringAsset.key, bundle: .module)
+        }
     }
 }

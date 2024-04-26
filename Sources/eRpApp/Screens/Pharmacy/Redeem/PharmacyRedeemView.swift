@@ -41,7 +41,7 @@ struct PharmacyRedeemView: View {
         VStack {
             ScrollView {
                 HStack(alignment: .top, spacing: 0) {
-                    if let url = videoURLforSource(.onPremise) {
+                    if let url = videoURLforSource(viewStore.redeemType) {
                         LoopingVideoPlayerContainerView(withURL: url)
                             .frame(maxWidth: nil, maxHeight: Self.height)
                             .scaledToFill()
@@ -108,8 +108,8 @@ struct PharmacyRedeemView: View {
             videoName = "animation_versand"
         }
 
-        guard let bundle = Bundle.main.path(forResource: videoName,
-                                            ofType: "mp4") else {
+        guard let bundle = Bundle.module.path(forResource: videoName,
+                                              ofType: "mp4") else {
             return nil
         }
 
@@ -539,14 +539,6 @@ extension PharmacyRedeemView {
 }
 
 extension RedeemOption {
-    var localizedString: LocalizedStringKey {
-        switch self {
-        case .onPremise: return L10n.phaRedeemTxtTitleReservation.key
-        case .delivery: return L10n.phaRedeemTxtTitleDelivery.key
-        case .shipment: return L10n.phaRedeemTxtTitleMail.key
-        }
-    }
-
     var isPhoneRequired: Bool {
         switch self {
         case .onPremise: return false

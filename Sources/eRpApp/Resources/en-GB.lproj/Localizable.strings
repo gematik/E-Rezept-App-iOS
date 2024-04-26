@@ -1,5 +1,5 @@
 "add_btn_save" = "Save";
-"add_txt_profile1" = "Profiles 1";
+"add_txt_profile1" = "Profile name";
 "add_txt_title" = "Enter name";
 "alert_btn_close" = "Reject";
 "alert_btn_ok" = "OK";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Incorrect access number";
 "cdw_txt_rc_error_wrong_can_recovery" = "Please correct your access number (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Incorrect PIN";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ attempts left. Please enter the correct PIN.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ more attempts. Attention: it must be the PIN of your health card. Not the TK Ident PIN, for example.";
 "cdw_txt_rc_headline" = "Have your medical card ready";
 "cdw_txt_rc_list_charge" = "Check if your device is sufficiently charged.";
 "cdw_txt_rc_list_cover" = "Remove the protective case if necessary.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Very weak";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Weak";
 "ctl_txt_profile__cell_not_connected" = "Not logged in";
-"ctl_txt_profile_color_picker_blue" = "Blue";
-"ctl_txt_profile_color_picker_green" = "Green";
-"ctl_txt_profile_color_picker_grey" = "Grey";
-"ctl_txt_profile_color_picker_pink" = "Pink";
+"ctl_txt_profile_color_picker_blue" = "Blue moon September";
+"ctl_txt_profile_color_picker_green" = "Tree";
+"ctl_txt_profile_color_picker_grey" = "Spring grey";
+"ctl_txt_profile_color_picker_pink" = "It! Is! Pink!";
 "ctl_txt_profile_color_picker_selected" = "Selected";
-"ctl_txt_profile_color_picker_yellow" = "Yellow";
+"ctl_txt_profile_color_picker_yellow" = "Sun dew";
 "ctl_txt_profile_connection_status_connected" = "Connected";
 "ctl_txt_profile_connection_status_disconnected" = "Not connected";
 "ctl_txt_search_bar_field_label" = "Search box";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Redeem";
 "main_btn_refresh" = "Update";
 "main_empty_txt_connected" = "↓ Drag the screen down to update.";
-"main_empty_txt_disconnected" = "Sign in to receive recipes automatically or add a new recipe using the ⊕ in the top corner.";
+"main_empty_txt_disconnected" = "Sign up to receive prescriptions automatically.";
 "main_empty_txt_title" = "No prescriptions";
 "main_txt_consent_drawer_message" = "Note: You will no longer receive your cost receipts as a printout at the pharmacy.";
 "main_txt_consent_drawer_title" = "Receive cost receipts digitally";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filter";
 "pha_search_filter_txt_title" = "Filter";
 "pha_search_hint_txt_close" = "Close location sharing, don't share location";
+"pha_search_map_annotation" = "Pharmacy";
 "pha_search_map_btn_Error_cancel" = "Cancel";
 "pha_search_map_header" = "Close by";
 "pha_search_txt_closed" = "Closed";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Emergency service fee";
 "prsc_dtl_dr_error_info_description" = "Not all information is presented correctly in this prescription. However, you can still redeem it in your pharmacy.";
 "prsc_dtl_dr_error_info_title" = "Prescription incorrect";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "During this period you can fill your prescription at any pharmacy with a co-payment.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "During this period, you can redeem your prescription in any pharmacy with a maximum additional payment of €10.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "You can still fill the prescription at a pharmacy within this period, but you will have to pay the entire purchase price for the medication yourself. Alternatively, you can ask your practice to have the prescription reissued.";
 "prsc_dtl_dr_prescription_validity_info_title" = "How long is this prescription valid for?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Prescriptions imported from a hardcopy cannot display personal or medical information for security reasons. \n\n Log in to this app with health card or insurance app to view all the information contained in the prescription.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Digital cost receipt";
 "prsc_dtl_txt_practitioner_person" = "Prescriber";
 "prsc_dtl_txt_quantity" = "Number of packs prescribed";
+"prsc_dtl_txt_section_details_header" = "Detailed information";
 "prsc_dtl_txt_yes" = "Yes";
 "prsc_fd_btn_error_banner" = "Report";
 "prsc_fd_hint_dosageInstructions_pic" = "Doctor";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Directions for use";
 "prsc_fd_txt_error_banner_message" = "Something seems to have gone wrong when creating your prescription. Report an error?";
 "prsc_fd_txt_na" = "Not specified";
-"prsc_fd_txt_navigation_title" = "Detail";
+"prsc_fd_txt_navigation_title" = "Prescription details";
 "prsc_fd_txt_noctu_description" = "This medication can also be redeemed in a pharmacy at night without an emergency service fee.";
 "prsc_fd_txt_noctu_title" = "This is a matter of urgency";
 "prsc_fd_txt_organization_address" = "Address";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Revenue reminder";
 "stg_btn_new_profile_create" = "Save";
 "stg_btn_reg_devices_load" = "Register";
+"stg_con_btn_gemmunity" = "E-prescription forum";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback from the e-prescription app";
 "stg_con_hotline_ava" = "Free of charge for the caller. Service times: Mon - Fri 8:00 a.m. - 8:00 p.m. except on national holidays";

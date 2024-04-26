@@ -19,7 +19,7 @@
 import ComposableArchitecture
 
 extension MainDomain {
-    struct Destinations: ReducerProtocol {
+    struct Destination: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsScreen = main_createProfile
             case createProfile(CreateProfileDomain.State)
@@ -38,7 +38,7 @@ extension MainDomain {
             // sourcery: AnalyticsScreen = prescriptionDetail
             case prescriptionDetail(PrescriptionDetailDomain.State)
             // sourcery: AnalyticsScreen = redeem_methodSelection
-            case redeem(RedeemMethodsDomain.State)
+            case redeemMethods(RedeemMethodsDomain.State)
             // sourcery: AnalyticsScreen = main_medicationReminder
             case medicationReminder(MedicationReminderOneDaySummaryDomain.State)
             // sourcery: AnalyticsScreen = main_welcomeDrawer
@@ -131,7 +131,7 @@ extension MainDomain {
                 PrescriptionDetailDomain()
             }
             Scope(
-                state: /State.redeem,
+                state: /State.redeemMethods,
                 action: /Action.redeemMethods
             ) {
                 RedeemMethodsDomain()

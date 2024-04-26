@@ -1,5 +1,5 @@
 "add_btn_save" = "Redden";
-"add_txt_profile1" = "Profielen 1";
+"add_txt_profile1" = "Profielnaam";
 "add_txt_title" = "Voer naam in";
 "alert_btn_close" = "Weigeren";
 "alert_btn_ok" = "OK";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Verkeerd toegangsnummer";
 "cdw_txt_rc_error_wrong_can_recovery" = "Corrigeer uw toegangsnummer (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Onjuiste pincode";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ meer pogingen. Corrigeer uw pincode-invoer.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ meer pogingen. Let op: het moet de pincode van uw zorgkaart zijn. Niet de TK Ident-pincode bijvoorbeeld.";
 "cdw_txt_rc_headline" = "Houd een gezondheidskaart gereed";
 "cdw_txt_rc_list_charge" = "Controleer of uw apparaat voldoende is opgeladen.";
 "cdw_txt_rc_list_cover" = "Verwijder indien nodig de beschermhoes.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Erg zwak";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Zwak";
 "ctl_txt_profile__cell_not_connected" = "Niet ingelogd";
-"ctl_txt_profile_color_picker_blue" = "Blauw";
-"ctl_txt_profile_color_picker_green" = "Groente";
-"ctl_txt_profile_color_picker_grey" = "Grijs";
-"ctl_txt_profile_color_picker_pink" = "Roze";
+"ctl_txt_profile_color_picker_blue" = "Blauwe maan september";
+"ctl_txt_profile_color_picker_green" = "Boom";
+"ctl_txt_profile_color_picker_grey" = "Lente grijs";
+"ctl_txt_profile_color_picker_pink" = "Het! Is! Roze!";
 "ctl_txt_profile_color_picker_selected" = "Geselecteerd";
-"ctl_txt_profile_color_picker_yellow" = "Geel";
+"ctl_txt_profile_color_picker_yellow" = "Zonnedauw";
 "ctl_txt_profile_connection_status_connected" = "Samengebonden";
 "ctl_txt_profile_connection_status_disconnected" = "Niet verbonden";
 "ctl_txt_search_bar_field_label" = "Zoekveld";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Inwisselen";
 "main_btn_refresh" = "Updaten";
 "main_empty_txt_connected" = "↓ Sleep het scherm omlaag om bij te werken.";
-"main_empty_txt_disconnected" = "Meld u aan om automatisch recepten te ontvangen of voeg een nieuw recept toe met behulp van de ⊕ in de bovenhoek.";
+"main_empty_txt_disconnected" = "Meld u aan om automatisch recepten te ontvangen.";
 "main_empty_txt_title" = "Geen recepten";
 "main_txt_consent_drawer_message" = "Let op: U ontvangt uw kostenbewijzen niet meer als afdruk bij de apotheek.";
 "main_txt_consent_drawer_title" = "Ontvang kostenberekeningen digitaal";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filter";
 "pha_search_filter_txt_title" = "Filter";
 "pha_search_hint_txt_close" = "Locatie delen sluiten, locatie niet delen";
+"pha_search_map_annotation" = "Apotheek";
 "pha_search_map_btn_Error_cancel" = "Annuleren";
 "pha_search_map_header" = "Dichtbij";
 "pha_search_txt_closed" = "Gesloten";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Kosten voor noodservice";
 "prsc_dtl_dr_error_info_description" = "Niet alle informatie wordt correct weergegeven in dit recept. U kunt het echter nog steeds inwisselen bij uw apotheek.";
 "prsc_dtl_dr_error_info_title" = "Recept onjuist";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Gedurende deze periode kunt u bij elke apotheek uw recept afvullen tegen een eigen bijdrage.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Tijdens deze periode kunt u uw recept in elke apotheek inwisselen tegen een maximale bijbetaling van € 10,-.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Binnen deze termijn kunt u het recept nog steeds bij een apotheek invullen, maar u moet dan wel de volledige aankoopprijs van het medicijn zelf betalen. U kunt ook uw praktijk vragen om het recept opnieuw te laten verstrekken.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Hoe lang is dit recept geldig?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Recepten die van een papieren versie zijn geïmporteerd, kunnen om veiligheidsredenen geen persoonlijke of medische informatie weergeven. \n\n Log in op deze app met zorgpas of verzekeringsapp om alle informatie op het recept te bekijken.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Digitale kostenbon";
 "prsc_dtl_txt_practitioner_person" = "Voorschrijver";
 "prsc_dtl_txt_quantity" = "Aantal voorgeschreven verpakkingen";
+"prsc_dtl_txt_section_details_header" = "Gedetailleerde informatie";
 "prsc_dtl_txt_yes" = "Ja";
 "prsc_fd_btn_error_banner" = "Rapport";
 "prsc_fd_hint_dosageInstructions_pic" = "arts";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Gebruiksaanwijzingen";
 "prsc_fd_txt_error_banner_message" = "Er lijkt iets mis te zijn gegaan bij het maken van uw recept. Een fout melden?";
 "prsc_fd_txt_na" = "Niet gespecificeerd";
-"prsc_fd_txt_navigation_title" = "detail";
+"prsc_fd_txt_navigation_title" = "Receptdetails";
 "prsc_fd_txt_noctu_description" = "Dit medicijn kan ook 's nachts bij een apotheek worden ingewisseld zonder kosten voor de spoedservice.";
 "prsc_fd_txt_noctu_title" = "Haast is hier geboden";
 "prsc_fd_txt_organization_address" = "adres";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Herinnering aan inkomsten";
 "stg_btn_new_profile_create" = "Redden";
 "stg_btn_reg_devices_load" = "Register";
+"stg_con_btn_gemmunity" = "E-receptforum";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback van de e-receptenapp";
 "stg_con_hotline_ava" = "Gratis voor de beller. Servicetijden: ma t/m vr 8.00 - 20.00 uur behalve op nationale feestdagen";

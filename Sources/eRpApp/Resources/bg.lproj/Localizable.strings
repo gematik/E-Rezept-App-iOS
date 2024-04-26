@@ -1,5 +1,5 @@
 "add_btn_save" = "Запазване";
-"add_txt_profile1" = "Профили 1";
+"add_txt_profile1" = "Профилно име";
 "add_txt_title" = "Въведи име";
 "alert_btn_close" = "Отказвам";
 "alert_btn_ok" = "Добре";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Неправилен номер за достъп";
 "cdw_txt_rc_error_wrong_can_recovery" = "Моля, коригирайте своя номер за достъп (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Неправилен ПИН";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "Още %@ опита. Моля, коригирайте въведения ПИН код.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "Още %@ опита. Внимание: трябва да е ПИН кодът на здравната ви карта. Не TK Ident PIN, например.";
 "cdw_txt_rc_headline" = "Подгответе здравна карта";
 "cdw_txt_rc_list_charge" = "Проверете дали вашето устройство е достатъчно заредено.";
 "cdw_txt_rc_list_cover" = "Ако е необходимо, отстранете защитния капак.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Много слаб";
 "ctl_txt_password_strength_accessiblity_value_weak" = "слаб";
 "ctl_txt_profile__cell_not_connected" = "Не сте влезли в системата";
-"ctl_txt_profile_color_picker_blue" = "Син";
-"ctl_txt_profile_color_picker_green" = "Зелено";
-"ctl_txt_profile_color_picker_grey" = "Сив";
-"ctl_txt_profile_color_picker_pink" = "Розово";
+"ctl_txt_profile_color_picker_blue" = "Синя луна септември";
+"ctl_txt_profile_color_picker_green" = "Дърво";
+"ctl_txt_profile_color_picker_grey" = "Пролетно сиво";
+"ctl_txt_profile_color_picker_pink" = "То! Е! Розово!";
 "ctl_txt_profile_color_picker_selected" = "Избрано";
-"ctl_txt_profile_color_picker_yellow" = "Жълто";
+"ctl_txt_profile_color_picker_yellow" = "Росичка";
 "ctl_txt_profile_connection_status_connected" = "Завързани заедно";
 "ctl_txt_profile_connection_status_disconnected" = "Няма връзка";
 "ctl_txt_search_bar_field_label" = "Поле за търсене";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Откупете";
 "main_btn_refresh" = "Да се ​​актуализира";
 "main_empty_txt_connected" = "↓ Плъзнете екрана надолу, за да актуализирате.";
-"main_empty_txt_disconnected" = "Влезте, за да получавате рецепти автоматично или добавете нова рецепта, като използвате ⊕ в горния ъгъл.";
+"main_empty_txt_disconnected" = "Регистрирайте се, за да получавате рецепти автоматично.";
 "main_empty_txt_title" = "Без рецепти";
 "main_txt_consent_drawer_message" = "Забележка: Вече няма да получавате квитанции за разходите си като разпечатка в аптеката.";
 "main_txt_consent_drawer_title" = "Получавайте цифрови разписки за разходи";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Филтър";
 "pha_search_filter_txt_title" = "Филтър";
 "pha_search_hint_txt_close" = "Затворете споделянето на местоположението, не споделяйте местоположението";
+"pha_search_map_annotation" = "Аптека";
 "pha_search_map_btn_Error_cancel" = "Отказ";
 "pha_search_map_header" = "Близо до";
 "pha_search_txt_closed" = "Затворено";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Такса за спешни услуги";
 "prsc_dtl_dr_error_info_description" = "Не цялата информация е представена правилно в тази рецепта. Все пак можете да го осребрите във вашата аптека.";
 "prsc_dtl_dr_error_info_title" = "Рецептата е неправилна";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "През този период можете да изпълните рецептата си във всяка аптека с доплащане.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "През този период можете да осребрите своята рецепта във всяка аптека с максимално допълнително плащане от 10 евро.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Все още можете да изпълните рецептата в аптека в рамките на този период, но ще трябва да заплатите цялата покупна цена за лекарството сами. Като алтернатива можете да поискате от вашата практика рецептата да бъде преиздадена.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Колко време е валидна тази рецепта?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Рецептите, импортирани от хартиено копие, не могат да показват лична или медицинска информация от съображения за сигурност. \n\n Влезте в това приложение със здравна карта или застрахователно приложение, за да видите цялата информация, съдържаща се в рецептата.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Цифрова разписка за разходите";
 "prsc_dtl_txt_practitioner_person" = "Предписващ";
 "prsc_dtl_txt_quantity" = "Предписан брой опаковки";
+"prsc_dtl_txt_section_details_header" = "Подробна информация";
 "prsc_dtl_txt_yes" = "да";
 "prsc_fd_btn_error_banner" = "Докладвай";
 "prsc_fd_hint_dosageInstructions_pic" = "лекар";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Инструкции за употреба";
 "prsc_fd_txt_error_banner_message" = "Изглежда нещо се е объркало при създаването на вашата рецепта. Съобщаване за грешка?";
 "prsc_fd_txt_na" = "Неопределено";
-"prsc_fd_txt_navigation_title" = "детайл";
+"prsc_fd_txt_navigation_title" = "Подробности за рецептата";
 "prsc_fd_txt_noctu_description" = "Това лекарство може да бъде купено и в аптека през нощта без такса за спешно обслужване.";
 "prsc_fd_txt_noctu_title" = "Тук се изисква бързане";
 "prsc_fd_txt_organization_address" = "адрес";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Напомняне за приходи";
 "stg_btn_new_profile_create" = "Запазване";
 "stg_btn_reg_devices_load" = "Регистрирам";
+"stg_con_btn_gemmunity" = "Форум за електронни рецепти";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Обратна връзка от приложението за електронна рецепта";
 "stg_con_hotline_ava" = "Безплатно за обаждащия се. Работно време: понеделник - петък 8:00 - 20:00 с изключение на национални празници";

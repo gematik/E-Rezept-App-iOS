@@ -8,6 +8,7 @@ let package = Package(
         .iOS(.v15), .macOS(.v12)
     ],
     products: [
+        .library(name: "eRpFeatures", targets: ["eRpFeatures"]),
         .library(name: "eRpStyleKit", targets: ["eRpStyleKit"]),
         .library(name: "eRpKit", targets: ["eRpKit"]),
         .library(name: "eRpLocalStorage", targets: ["eRpLocalStorage"]),
@@ -22,29 +23,77 @@ let package = Package(
         .library(name: "VAUClient", targets: ["VAUClient"]),
     ],
     dependencies: [
-        //.package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.16.0"),
+        .package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.16.0"),
         .package(url: "https://github.com/AliSoftware/OHHTTPStubs", from: "9.1.0"),
-        //.package(url: "https://github.com/andyjohns/zxcvbn-ios", revision: "bf6083dc17df950c8bdfcf2063859ee1270015fd"),
+        .package(url: "https://github.com/andyjohns/zxcvbn-ios", revision: "bf6083dc17df950c8bdfcf2063859ee1270015fd"),
         .package(url: "https://github.com/apple/FHIRModels", from: "0.4.0"),
         .package(url: "https://github.com/gematik/ref-GemCommonsKit.git", from: "1.3.0"),
         .package(url: "https://github.com/pointfreeco/combine-schedulers", from: "0.5.3"),
-        //.package(url: "https://github.com/pointfreeco/composable-core-location", from: "0.3.0"),
-        //.package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.7.0"),
+        .package(url: "https://github.com/pointfreeco/composable-core-location", from: "0.3.0"),
+        .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.7.0"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "0.59.0"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.11.1"),
-        //.package(url: "https://github.com/pointfreeco/swift-dependencies", from: "0.6.0"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "0.6.0"),
+        .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "0.8.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.10.0"),
+        .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "0.9.0"),
         .package(url: "https://github.com/Quick/Nimble", from: "9.2.0"), // 10.0.0
-        //.package(url: "https://github.com/siteline/SwiftUI-Introspect", from: "0.1.3"),
-        //.package(url: "https://github.com/zxingify/zxingify-objc", from: "3.6.7"),
+        .package(url: "https://github.com/siteline/SwiftUI-Introspect", from: "0.1.3"),
+        // higher minor versions result into: "contains unsafe build flags"
+        .package(url: "https://github.com/zxingify/zxingify-objc", exact: "3.6.7"),
         .package(url: "https://github.com/SwiftCommon/DataKit", from: "1.1.0"),
         .package(url: "https://github.com/gematik/ASN1Kit", from: "1.2.0"),
         .package(url: "https://github.com/gematik/OpenSSL-Swift", from: "4.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "0.8.0"),
-        //.package(url: "https://github.com/gematik/swift-gemPDFKit", from: "0.1.0"),
-        //.package(url: "https://github.com/gematik/ref-OpenHealthCardKit", from: "5.3.0"),
+        .package(url: "https://github.com/gematik/swift-gemPDFKit", from: "0.1.0"),
+        .package(url: "https://github.com/gematik/ref-OpenHealthCardKit", from: "5.3.0"),
     ],
     targets: [
+        .target(
+            name: "eRpFeatures",
+            dependencies: [
+                "eRpStyleKit",
+                "eRpRemoteStorage",
+                "eRpKit",
+                "eRpLocalStorage",
+                "Pharmacy",
+                "IDP",
+                "HTTPClient",
+                "FHIRClient",
+                "TrustStore",
+                "VAUClient",
+                "AVS",
+                .product(name: "ASN1Kit", package: "ASN1Kit"),
+                .product(name: "DataKit", package: "DataKit"),
+                .product(name: "ModelsR4", package: "FHIRModels"),
+                .product(name: "ContentsquareModule", package: "CS_iOS_SDK"),
+                .product(name: "Zxcvbn", package: "zxcvbn-ios"),
+                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
+                .product(name: "CombineSchedulers", package: "combine-schedulers"),
+                .product(name: "ComposableCoreLocation", package: "composable-core-location"),
+                .product(name: "CasePaths", package: "swift-case-paths"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+                .product(name: "Introspect", package: "SwiftUI-Introspect"),
+                .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
+                .product(name: "GemPDFKit", package: "swift-gemPDFKit"),
+                .product(name: "ZXingObjC", package: "zxingify-objc"),
+                .product(name: "HealthCardAccess", package: "ref-openhealthcardkit"),
+                .product(name: "HealthCardControl", package: "ref-openhealthcardkit"),
+                .product(name: "NFCCardReaderProvider", package: "ref-openhealthcardkit"),
+                .product(name: "Helper", package: "ref-openhealthcardkit"),
+            ],
+            path: "Sources/eRpApp",
+            resources: [
+                .process("Resources")
+            ],
+            swiftSettings: [
+                .unsafeFlags(["-enable-bare-slash-regex"]),
+                .define("ENABLE_DEBUG_VIEW", .when(configuration: .debug)),
+                .define("TEST_ENVIRONMENT", .when(configuration: .debug))
+            ]
+        ),
         .target(
             name: "eRpStyleKit",
             dependencies: [],
@@ -58,7 +107,7 @@ let package = Package(
                 "IDP",
                 "FHIRClient",
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
             ]
         ),
         .target(
@@ -89,7 +138,9 @@ let package = Package(
                 "HTTPClient",
                 "FHIRClient",
                 "eRpKit",
+                .product(name: "DataKit", package: "DataKit"),
                 .product(name: "ModelsR4", package: "FHIRModels"),
+                .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
             ]
         ),
         .target(
@@ -108,6 +159,7 @@ let package = Package(
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
                 .product(name: "DataKit", package: "DataKit"),
                 .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
+                .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
             ]
         ),
@@ -116,7 +168,6 @@ let package = Package(
             dependencies: [
                 "HTTPClient",
                 .product(name: "ModelsR4", package: "FHIRModels"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
             ]
         ),
@@ -140,6 +191,7 @@ let package = Package(
             dependencies: [
                 "HTTPClient",
                 "TrustStore",
+                .product(name: "DataKit", package: "DataKit"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
             ]
         ),
@@ -154,6 +206,21 @@ let package = Package(
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "CustomDump", package: "swift-custom-dump"),
+            ]
+        ),
+        .testTarget(
+            name: "eRpFeaturesTests",
+            dependencies: [
+                "eRpFeatures",
+                "TestUtils",
+                .product(name: "CombineSchedulers", package: "combine-schedulers"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                .product(name: "Nimble", package: "Nimble"),
+            ],
+            path: "Tests/eRpAppTests",
+            resources: [
+                .copy("Resources/PDF.bundle")
             ]
         ),
         .testTarget(

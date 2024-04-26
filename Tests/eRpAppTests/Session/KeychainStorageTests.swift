@@ -18,7 +18,7 @@
 
 import Combine
 import DataKit
-@testable import eRpApp
+@testable import eRpFeatures
 @testable import IDP
 import Nimble
 import TestUtils

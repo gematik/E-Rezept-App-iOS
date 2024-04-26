@@ -90,8 +90,8 @@ struct ExtAuthPendingView: View {
                         state: \.$destination,
                         action: ExtAuthPendingDomain.Action.destination
                     ),
-                    state: /ExtAuthPendingDomain.Destinations.State.extAuthAlert,
-                    action: ExtAuthPendingDomain.Destinations.Action.alert
+                    state: /ExtAuthPendingDomain.Destination.State.extAuthAlert,
+                    action: ExtAuthPendingDomain.Destination.Action.alert
                 )
             if showToast {
                 HStack(spacing: 16) {

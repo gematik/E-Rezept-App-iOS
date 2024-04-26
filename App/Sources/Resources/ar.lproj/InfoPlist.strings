@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "E-Rezept";
+"NFCReaderUsageDescription" = "يتيح لك التعرف على هويتك والمصادقة عليها باستخدام بطاقتك الصحية الإلكترونية";
+"NSCameraUsageDescription" = "الكاميرا ضرورية لتسجيل الوصفات أو التقاط الصور.";
+"NSFaceIDUsageDescription" = "تتطلب الوصفة الطبية الإلكترونية FaceID لحماية التطبيق من الوصول غير المصرح به.";

@@ -372,10 +372,12 @@ internal enum A11y {
       static let phaSearchLocalPharmSection = "pha_search_local_pharm_section"
       static let phaSearchTxtMapHeader = "pha_search_txt_map_header"
       static let phaSearchMap = "pha_search_map"
+      static let phaSearchMapSection = "pha_search_map_section"
   }
     internal enum prescriptionDetails {
       static let prscDtlTxtTitle = "prsc_dtl_txt_title"
       static let prscDtlTxtTitleInput = "prsc_dtl_txt_title_input"
+      static let prscDtlTxtSectionDetailsHeader = "prsc_dtl_txt_section_details_header"
       static let prscDtlBtnEditTitle = "prsc_dtl_btn_edit_title"
       static let prscDtlBtnToggleRedeem = "prsc_dtl_btn_toggle_redeem"
       static let prscDtlBtnToolbarItem = "prsc_dtl_btn_toolbar_item"

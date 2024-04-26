@@ -123,7 +123,7 @@ struct PasswordStrengthView: View {
             )
 
             HStack {
-                Text(strengthLocalization)
+                Text(strengthLocalization, bundle: .module)
                     .font(.caption)
                     .foregroundColor(Color(.secondaryLabel))
 
@@ -136,7 +136,7 @@ struct PasswordStrengthView: View {
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibility(value: Text(strengthValue))
+        .accessibility(value: Text(strengthValue, bundle: .module))
     }
 }
 

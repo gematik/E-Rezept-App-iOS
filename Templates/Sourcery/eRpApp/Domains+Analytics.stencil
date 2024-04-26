@@ -2,6 +2,33 @@
 
 import Foundation
 
+{% macro DomainReducerRouteEnum stateType %}
+{% typed stateType as Enum %}
+    {% for case in stateType.cases %}
+    {% if case.associatedValues[0].typeName|default:""|hasSuffix:"ErpAlertState<Action>" %}
+            case let .{{ case.name }}(.error(error, _)): 
+                return error.analyticsName
+    {% endif %}
+    {% if not case.name|contains:"debug" %}
+        {% if case.hasAssociatedValue and case.associatedValues[0].actualTypeName|hasSuffix:"Domain" %}
+            case let .{{ case.name }}(state: state):
+                return state.routeName() ?? destination.analyticsName
+        {% else %}
+        {% if not case.annotations.AnalyticsState %}
+            case .{{ case.name }}:
+                return destination.analyticsName
+        {% else %}
+            case .{{ case.name }}:
+                return {{ case.annotations.AnalyticsState }}.routeName() ?? destination.analyticsName
+        {% endif %}
+        {% endif %}
+     {% else %}
+            case .{{ case.name }}:
+                return nil
+     {% endif %}
+    {% endfor %}
+{% endmacro %}
+
 {% macro DomainRouteEnum stateType %}
 {% typed stateType as Enum %}
 {% for case in stateType.cases %}
@@ -57,7 +84,13 @@ extension {{ stateType.name }} {
         }
                 {% endif %}
         switch {{ property.name }} {
-                {% call DomainRouteEnum property.type %}
+                {% if property.type %}
+                    {% call DomainRouteEnum property.type %}
+                {% else %}
+                    {% for t in stateType.parent.containedTypes where t.attributes.Reducer and t.kind == "enum" %}
+                        {% call DomainReducerRouteEnum t %}
+                    {% endfor %}
+                {% endif %}
         }
             {% endfor %}
         {% set FoundSomething %}{% for property in stateType.allVariables where property.name == "route" or property.name == "destination" %}found{% endfor %}{% endset %}
@@ -85,14 +118,14 @@ extension {{ stateType.name }} {
 {% endfor %}
 
 {% for type in types.structs %}
-    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Destinations" and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration and 
+    {% if type.localName == "State" and (type.parentName|default:"abc"|hasSuffix:"Destinations" or type.parentName|default:"abc"|hasSuffix:"Destination" ) and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration and 
     not type.parent.parent.annotations.SkipSourcery %}
         {% call DomainRoute type %}
     {% endif %}
 {% endfor %}
 
 {% for type in types.enums %}
-    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Destinations" and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration and 
+    {% if type.localName == "State" and (type.parentName|default:"abc"|hasSuffix:"Destinations" or type.parentName|default:"abc"|hasSuffix:"Destination" ) and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration and 
     not type.parent.parent.annotations.SkipSourcery %}
         {% call DomainRoute type %}
     {% endif %}
@@ -100,7 +133,7 @@ extension {{ stateType.name }} {
 
 {% macro GenerateTags routeType %}
 {% typed routeType as Enum %}
-extension {{ routeType.name }}.Tag {
+extension {{ routeType.name }}{% if routeType.attributes.Reducer %}.State{% else %}.Tag{% endif %} {
     var analyticsName: String {
         switch self {
         {% for case in routeType.cases %}
@@ -116,14 +149,14 @@ extension {{ routeType.name }}.Tag {
 }
 {% endmacro %}
 
-{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Destinations" and 
+{% for routeType in types.enums where routeType.localName == "State" and (routeType.parentName|default:""|hasSuffix:"Destinations" or routeType.parentName|default:""|hasSuffix:"Destination") and 
 not routeType.parent.parent.annotations.SkipSourcery %}
     {% if not routeType.parentName|contains:"Debug" %}
         {% call GenerateTags routeType %}
     {% endif %}
 {% endfor %}
 
-{% for routeType in types.enums where routeType.localName == "Route" and routeType.parentName|default:""|hasSuffix:"Domain" and 
+{% for routeType in types.enums where routeType.localName == "Destination" and routeType.parentName|default:""|hasSuffix:"Domain" and 
 not routeType.parent.annotations.SkipSourcery %}
     {% if not routeType.parentName|contains:"Debug" %}
         {% call GenerateTags routeType %}

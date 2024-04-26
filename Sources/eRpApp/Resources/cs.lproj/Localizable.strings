@@ -1,5 +1,5 @@
 "add_btn_save" = "Uložit";
-"add_txt_profile1" = "Profily 1";
+"add_txt_profile1" = "Jméno profilu";
 "add_txt_title" = "Napište jméno";
 "alert_btn_close" = "Odmítnout";
 "alert_btn_ok" = "OK";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Nesprávné přístupové číslo";
 "cdw_txt_rc_error_wrong_can_recovery" = "Opravte své přístupové číslo (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Nesprávný PIN";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ více pokusů. Opravte prosím svůj PIN.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ více pokusů. Pozor: musí to být PIN vaší zdravotní karty. Ne například TK Ident PIN.";
 "cdw_txt_rc_headline" = "Připravte si zdravotní kartu";
 "cdw_txt_rc_list_charge" = "Zkontrolujte, zda je vaše zařízení dostatečně nabité.";
 "cdw_txt_rc_list_cover" = "V případě potřeby sejměte ochranný kryt.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Velmi slabá";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Slabý";
 "ctl_txt_profile__cell_not_connected" = "Nepřihlášen";
-"ctl_txt_profile_color_picker_blue" = "Modrý";
-"ctl_txt_profile_color_picker_green" = "Zelená";
-"ctl_txt_profile_color_picker_grey" = "Šedá";
-"ctl_txt_profile_color_picker_pink" = "Růžový";
+"ctl_txt_profile_color_picker_blue" = "Modrý měsíc září";
+"ctl_txt_profile_color_picker_green" = "Strom";
+"ctl_txt_profile_color_picker_grey" = "Jarní šedá";
+"ctl_txt_profile_color_picker_pink" = "To! Je! Růžový!";
 "ctl_txt_profile_color_picker_selected" = "Vybraný";
-"ctl_txt_profile_color_picker_yellow" = "Žlutá";
+"ctl_txt_profile_color_picker_yellow" = "Rosnatka";
 "ctl_txt_profile_connection_status_connected" = "Svázané dohromady";
 "ctl_txt_profile_connection_status_disconnected" = "Nepřipojený";
 "ctl_txt_search_bar_field_label" = "Vyhledávací pole";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Vykoupit";
 "main_btn_refresh" = "Aktualizovat";
 "main_empty_txt_connected" = "↓ Aktualizaci provedete přetažením obrazovky dolů.";
-"main_empty_txt_disconnected" = "Přihlaste se, abyste dostávali recepty automaticky, nebo přidejte nový recept pomocí ⊕ v horním rohu.";
+"main_empty_txt_disconnected" = "Přihlaste se k automatickému odběru receptů.";
 "main_empty_txt_title" = "Žádné recepty";
 "main_txt_consent_drawer_message" = "Poznámka: Účtenky o nákladech již nebudete dostávat jako výtisk v lékárně.";
 "main_txt_consent_drawer_title" = "Přijímejte potvrzení o nákladech digitálně";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filtr";
 "pha_search_filter_txt_title" = "Filtr";
 "pha_search_hint_txt_close" = "Zavřete sdílení polohy, nesdílejte polohu";
+"pha_search_map_annotation" = "LÉKÁRNA";
 "pha_search_map_btn_Error_cancel" = "zrušení";
 "pha_search_map_header" = "Blízko";
 "pha_search_txt_closed" = "ZAVŘENO";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Poplatek za pohotovostní službu";
 "prsc_dtl_dr_error_info_description" = "Ne všechny informace jsou v tomto receptu uvedeny správně. Stále jej však můžete vykoupit ve své lékárně.";
 "prsc_dtl_dr_error_info_title" = "Recept nesprávný";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Během této doby si můžete recept vyplnit v jakékoli lékárně s doplatkem.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Během tohoto období můžete svůj recept uplatnit v jakékoli lékárně s maximálním doplatkem 10 EUR.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "V této lhůtě ještě můžete recept vyplnit v lékárně, ale celou kupní cenu za léky si budete muset zaplatit sami. Případně můžete požádat svou praxi o opětovné vystavení receptu.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Jak dlouho je tento předpis platný?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Předpisy importované z tištěné kopie nemohou z bezpečnostních důvodů zobrazovat osobní nebo lékařské informace. \n\n Přihlaste se do této aplikace pomocí zdravotní karty nebo pojišťovací aplikace a zobrazte všechny informace obsažené v předpisu.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Digitální potvrzení o nákladech";
 "prsc_dtl_txt_practitioner_person" = "Předepisující lékař";
 "prsc_dtl_txt_quantity" = "Předepsaný počet balení";
+"prsc_dtl_txt_section_details_header" = "Detailní informace";
 "prsc_dtl_txt_yes" = "Ano";
 "prsc_fd_btn_error_banner" = "Zpráva";
 "prsc_fd_hint_dosageInstructions_pic" = "doktor";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Návod k použití";
 "prsc_fd_txt_error_banner_message" = "Zdá se, že se při vytváření vašeho receptu něco pokazilo. Nahlásit chybu?";
 "prsc_fd_txt_na" = "Nespecifikováno";
-"prsc_fd_txt_navigation_title" = "detail";
+"prsc_fd_txt_navigation_title" = "Podrobnosti receptu";
 "prsc_fd_txt_noctu_description" = "Tento lék lze také zakoupit v lékárně v noci bez poplatku za pohotovostní službu.";
 "prsc_fd_txt_noctu_title" = "Tady je potřeba spěchat";
 "prsc_fd_txt_organization_address" = "adresa";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Připomenutí příjmů";
 "stg_btn_new_profile_create" = "Uložit";
 "stg_btn_reg_devices_load" = "Registrovat";
+"stg_con_btn_gemmunity" = "Fórum e-receptů";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Zpětná vazba z aplikace e-recept";
 "stg_con_hotline_ava" = "Zdarma pro volajícího. Servisní časy: Po - Pá 8:00 - 20:00 kromě státních svátků";

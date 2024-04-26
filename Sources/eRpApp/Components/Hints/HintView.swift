@@ -102,7 +102,7 @@ struct HintView<Action: Equatable>: View {
                 Image(systemName: name)
                     .font(.title.weight(.semibold))
             } else {
-                Image(name)
+                Image(name, bundle: .module)
                     .font(.title3)
             }
         }

@@ -18,7 +18,7 @@
 
 import CombineSchedulers
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import SnapshotTesting
 import SwiftUI
@@ -73,7 +73,7 @@ final class ChargeItemViewSnapshotTests: ERPSnapshotTestCase {
                     loadingState: .value(.init(uniqueElements: [
                         MatrixCodeDomain.State.IdentifiedImage(
                             identifier: UUID(),
-                            image: UIImage(testBundleNamed: "qrcode")!,
+                            image: Asset.qrcode.image,
                             chunk: []
                         ),
                     ]))

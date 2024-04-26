@@ -288,29 +288,29 @@ extension Prescription {
         }
     }
 
-    var statusTitle: LocalizedStringKey {
+    var statusTitle: String {
         guard type != .directAssignment else {
             switch viewStatus {
             case .open, .redeem, .undefined, .error:
-                return L10n.prscStatusDirectAssigned.key
+                return L10n.prscStatusDirectAssigned.text
             case .archived:
-                return L10n.prscStatusCompleted.key
+                return L10n.prscStatusCompleted.text
             }
         }
 
         switch (erxTask.status, viewStatus) {
-        case (.ready, .redeem): return L10n.prscStatusMultiplePrsc.key
-        case (.ready, .archived): return L10n.erxTxtInvalid.key
-        case (.ready, _): return L10n.prscStatusReady.key
-        case (.inProgress, .archived): return L10n.erxTxtInvalid.key
-        case (.inProgress, _): return L10n.prscStatusInProgress.key
-        case (.completed, _): return L10n.prscStatusCompleted.key
-        case (.cancelled, _): return L10n.prscStatusCanceled.key
-        case (.computed(.sent), _): return L10n.prscStatusSent.key
-        case (.computed(.waiting), _): return L10n.prscStatusWaiting.key
+        case (.ready, .redeem): return L10n.prscStatusMultiplePrsc.text
+        case (.ready, .archived): return L10n.erxTxtInvalid.text
+        case (.ready, _): return L10n.prscStatusReady.text
+        case (.inProgress, .archived): return L10n.erxTxtInvalid.text
+        case (.inProgress, _): return L10n.prscStatusInProgress.text
+        case (.completed, _): return L10n.prscStatusCompleted.text
+        case (.cancelled, _): return L10n.prscStatusCanceled.text
+        case (.computed(.sent), _): return L10n.prscStatusSent.text
+        case (.computed(.waiting), _): return L10n.prscStatusWaiting.text
         case (.draft, _),
-             (.undefined, _): return L10n.prscStatusUndefined.key
-        case (.error, _): return L10n.prscStatusError.key
+             (.undefined, _): return L10n.prscStatusUndefined.text
+        case (.error, _): return L10n.prscStatusError.text
         }
     }
 

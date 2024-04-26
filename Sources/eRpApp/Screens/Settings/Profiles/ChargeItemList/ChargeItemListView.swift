@@ -338,7 +338,7 @@ extension ChargeItemListView {
                 let title: LocalizedStringKey
 
                 var body: some View {
-                    Text(title)
+                    Text(title, bundle: .module)
                         .font(.subheadline)
                         .padding(.init(top: 8, leading: 12, bottom: 8, trailing: 12))
                         .background(Colors.primary100)

@@ -17,7 +17,7 @@
 //
 
 import CombineSchedulers
-@testable import eRpApp
+@testable import eRpFeatures
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -31,21 +31,21 @@ final class PickupCodeViewSnapshotTests: ERPSnapshotTestCase {
     func testPickupCodeViewWithHRCodeAndDMCCode() {
         let state = PickupCodeDomain.State(pickupCodeHR: "4911",
                                            pickupCodeDMC: "This is a data matrix code.",
-                                           dmcImage: UIImage(testBundleNamed: "qrcode")!)
+                                           dmcImage: Asset.qrcode.image)
         let sut = PickupCodeView(store: PickupCodeDomain.Dummies.storeFor(state))
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
     func testPickupCodeViewWithHRCodeOnly() {
         let state = PickupCodeDomain.State(pickupCodeHR: "4911")
         let sut = PickupCodeView(store: PickupCodeDomain.Dummies.storeFor(state))
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
     func testPickupCodeViewWithDMCCodeOnly() {
         let state = PickupCodeDomain.State(pickupCodeDMC: "This is a data matrix code.",
-                                           dmcImage: UIImage(testBundleNamed: "qrcode")!)
+                                           dmcImage: Asset.qrcode.image)
         let sut = PickupCodeView(store: PickupCodeDomain.Dummies.storeFor(state))
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 }

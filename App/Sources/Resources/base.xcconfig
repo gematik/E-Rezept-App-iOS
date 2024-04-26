@@ -1,0 +1,11 @@
+
+PRODUCT_NAME = eRpApp
+CODE_SIGN_ENTITLEMENTS = App/Sources/Resources/eRpApp.entitlements
+GEM_PRODUCT_MODULE_NAME = eRpFeatures
+
+GEMATIK_SOURCE_VERSION = $(GEMATIK_SOURCE_VERSION:default=LOCAL BUILD)
+GEMATIK_BUNDLE_VERSION = $(GEMATIK_BUNDLE_VERSION:default=LOCAL BUILD)
+GEM_PRODUCT_BUNDLE_IDENTIFIER = de.gematik.erp4ios.eRezept
+
+// CS Framework support needs this
+OTHER_LDFLAGS = -all_load

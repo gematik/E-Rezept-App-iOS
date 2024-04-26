@@ -1,3 +1,39 @@
+# Release 1.22.1
+
+### internal (6 changes)
+
+ - Add automated E2E Test builds to Release and MR builds
+ - Automate Health Insurance contact list pulling
+ - Add fastlane plugin for bumping versions and setting API Keys
+ - Prepare TCA 1.8
+ - Add integration tests trigger to release builds
+ - Added missing dependencies for IntegrationTests
+
+### changed (5 changes)
+
+ - Bump TCA Version to 1.9.1
+ - Add password change option in security settings
+ - Main Screen NewProfile and EditProfileName
+ - Update localization
+ - Rename eRpApp to eRpFeatures and moved it to SPM
+
+### added (4 changes)
+
+ - Add language settings button to settings
+ - Add Emoji and Memoji (via Stickers) support for profile avatars
+ - Add Community to contact options
+ - Add UI-Test for MapSearch
+
+### fixed (2 changes)
+
+ - Fix bugged string localization
+ - Fix issues and UITests with redeeming from details
+
+### other (2 changes)
+
+ - Refactor HealthCardPasswordReadCardDomain to use NFCHealthCardSession API
+ - Refactor ReadCardDomain to use NFCHealthCardSession API Part 2 (w/ biometrics)
+
 # Release 1.21.0
 
 ### added (7 changes)

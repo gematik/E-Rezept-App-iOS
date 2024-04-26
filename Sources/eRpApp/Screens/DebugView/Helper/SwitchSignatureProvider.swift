@@ -30,23 +30,41 @@ class SwitchSignatureProvider: NFCSignatureProvider {
         self.alternativeSignatureProvider = alternativeSignatureProvider
     }
 
-    func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
-        if UserDefaults.standard.isVirtualEGKEnabled {
-            return alternativeSignatureProvider.openSecureSession(can: can, pin: pin)
-        } else {
-            return defaultSignatureProvider.openSecureSession(can: can, pin: pin)
-        }
-    }
-
     func sign(
         can: String,
         pin: String,
         challenge: IDPChallengeSession
     ) async -> Result<SignedChallenge, NFCSignatureProviderError> {
         if UserDefaults.standard.isVirtualEGKEnabled {
-            return try await alternativeSignatureProvider.sign(can: can, pin: pin, challenge: challenge)
+            return await alternativeSignatureProvider.sign(can: can, pin: pin, challenge: challenge)
         } else {
-            return try await defaultSignatureProvider.sign(can: can, pin: pin, challenge: challenge)
+            return await defaultSignatureProvider.sign(can: can, pin: pin, challenge: challenge)
+        }
+    }
+
+    func signForBiometrics(
+        can: String,
+        pin: String,
+        challenge: IDPChallengeSession,
+        registerDataProvider: SecureEnclaveSignatureProvider,
+        in pairingSession: PairingSession
+    ) async -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        if UserDefaults.standard.isVirtualEGKEnabled {
+            return await alternativeSignatureProvider.signForBiometrics(
+                can: can,
+                pin: pin,
+                challenge: challenge,
+                registerDataProvider: registerDataProvider,
+                in: pairingSession
+            )
+        } else {
+            return await defaultSignatureProvider.signForBiometrics(
+                can: can,
+                pin: pin,
+                challenge: challenge,
+                registerDataProvider: registerDataProvider,
+                in: pairingSession
+            )
         }
     }
 }

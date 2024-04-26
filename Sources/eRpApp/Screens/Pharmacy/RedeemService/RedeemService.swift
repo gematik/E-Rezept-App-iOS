@@ -126,16 +126,20 @@ struct AVSRedeemService: RedeemService {
 // `Unimplemented` code generation already done by `public struct RedeemServiceDependency: DependencyKey`
 // sourcery: skipUnimplemented
 extension AVSRedeemService: DependencyKey {
-    static let liveValue: RedeemService = AVSRedeemService(
-        avsSession: UsersSessionContainerDependency.liveValue.userSession.avsSession,
-        avsTransactionDataStore: UsersSessionContainerDependency.liveValue.userSession.avsTransactionDataStore
-    )
+    static let liveValue: () -> RedeemService = {
+        @Dependency(\.userSession) var userSession
 
-    static let previewValue: RedeemService = liveValue
+        return AVSRedeemService(
+            avsSession: userSession.avsSession,
+            avsTransactionDataStore: userSession.avsTransactionDataStore
+        )
+    }
+
+    static let previewValue: () -> RedeemService = liveValue
 }
 
 extension DependencyValues {
-    var avsRedeemService: RedeemService {
+    var avsRedeemService: () -> RedeemService {
         get { self[AVSRedeemService.self] }
         set { self[AVSRedeemService.self] = newValue }
     }
@@ -229,11 +233,11 @@ extension ErxTaskRepositoryRedeemService: DependencyKey {
                 userSession.secureEnclaveSignatureProvider
             )
         )
-    }()
+    }
 }
 
 extension DependencyValues {
-    var erxTaskRepositoryRedeemService: ErxTaskRepositoryRedeemService {
+    var erxTaskRepositoryRedeemService: () -> ErxTaskRepositoryRedeemService {
         get { self[ErxTaskRepositoryRedeemService.self] }
         set { self[ErxTaskRepositoryRedeemService.self] = newValue }
     }

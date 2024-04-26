@@ -18,7 +18,7 @@
 
 import Combine
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 @testable import IDP
 import Nimble
@@ -325,7 +325,7 @@ final class MainDomainTests: XCTestCase {
         await sut
             .send(.prescriptionList(action: .redeemButtonTapped(openPrescriptions: nonReadyPrescriptions +
                     [expectedPrescription]))) { state in
-                    state.destination = .redeem(RedeemMethodsDomain.State(erxTasks: [expectedPrescription.erxTask]))
+                    state.destination = .redeemMethods(.init(erxTasks: [expectedPrescription.erxTask]))
             }
     }
 

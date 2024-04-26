@@ -23,11 +23,6 @@ import IDP
 import NFCCardReaderProvider
 
 class DemoSignatureProvider: NFCSignatureProvider {
-    func openSecureSession(can _: String,
-                           pin _: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
-        Fail(error: NFCSignatureProviderError.cardError(NFCTagReaderSession.Error.unsupportedTag)).eraseToAnyPublisher()
-    }
-
     func sign(can _: String, pin _: String,
               challenge: IDPChallengeSession) async -> Result<SignedChallenge, NFCSignatureProviderError> {
         guard let jwt = try? JWT(
@@ -42,5 +37,15 @@ class DemoSignatureProvider: NFCSignatureProvider {
             originalChallenge: challenge,
             signedChallenge: jwt
         ))
+    }
+
+    func signForBiometrics(
+        can _: String,
+        pin _: String,
+        challenge _: IDPChallengeSession,
+        registerDataProvider _: SecureEnclaveSignatureProvider,
+        in _: PairingSession
+    ) async -> Result<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        .failure(.nfcHealthCardSession(.couldNotInitializeSession))
     }
 }

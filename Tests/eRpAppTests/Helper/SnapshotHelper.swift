@@ -165,16 +165,11 @@ extension XCTestCase {
 }
 
 struct TransparencyPattern: ViewModifier {
-    private class TestBundleAnchor {}
-
-    static var testBundle = Bundle(for: TestBundleAnchor.self)
-
     func body(content: Content) -> some View {
-        content
-            .background(
-                Image("transparent_bg", bundle: Self.testBundle)
-                    .resizable(resizingMode: .tile)
-            )
+        content.background(
+            Asset.transparentBg.swiftUIImage
+                .resizable(resizingMode: .tile)
+        )
     }
 }
 
@@ -184,27 +179,23 @@ extension View {
     }
 }
 
-extension UIImage {
-    private class TestBundleAnchor {}
-
-    static var testBundle = Bundle(for: TestBundleAnchor.self)
-
-    convenience init?(testBundleNamed: String) {
-        self.init(named: testBundleNamed, in: Self.testBundle, with: nil)
-    }
-}
-
 enum SnapshotHelper {
-    static var didRecord = false
+    private static var didRecord = false
 
     static func fixOffsetProblem() {
         guard didRecord == false else { return }
 
-        let dummy = NavigationView {
-            Text("*")
-                .navigationTitle("⚕︎ Redeem")
-        }
-        assertSnapshot(matching: dummy, as: .image(precision: 0.0), named: "dummy", record: false)
+        assertSnapshot(
+            of: OffsetPreview(
+                .image(layout: .device(config: .iPhone14(.portrait)))
+            ),
+            as: .image(
+                precision: 0.0,
+                layout: .device(config: .iPhone14(.portrait))
+            ),
+            named: "dummy",
+            record: false
+        )
         didRecord = true
     }
 }
@@ -215,5 +206,89 @@ class ERPSnapshotTestCase: XCTestCase {
         diffTool = "open"
 
         SnapshotHelper.fixOffsetProblem()
+    }
+}
+
+struct OffsetPreview: View {
+    let snapshotting: Snapshotting<AnyView, UIImage>
+
+    init(_ snapshotting: Snapshotting<AnyView, UIImage>) {
+        self.snapshotting = snapshotting
+    }
+
+    var body: some View {
+        Snapshot(self.snapshotting) {
+            NavigationView {
+                Text("*")
+                    .navigationTitle("⚕︎ Redeem")
+            }
+            .fixedSize(horizontal: true, vertical: true)
+        }
+    }
+}
+
+struct Snapshot<Content>: View where Content: View {
+    private let content: () -> Content
+    @State private var image: Image?
+    private let snapshotting: Snapshotting<AnyView, UIImage>
+
+    init(_ snapshotting: Snapshotting<AnyView, UIImage>,
+         @ViewBuilder
+         _ content: @escaping () -> Content) {
+        self.content = content
+        self.snapshotting = snapshotting
+    }
+
+    var body: some View {
+        ZStack {
+            self.image?
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        }
+        .onAppear {
+            self.snapshotting
+                .snapshot(AnyView(self.content()))
+                .run { self.image = Image(uiImage: $0) }
+        }
+    }
+}
+
+extension ViewImageConfig {
+    static func iPhone14(_ orientation: Orientation) -> ViewImageConfig {
+        let safeArea: UIEdgeInsets
+        let size: CGSize
+        switch orientation {
+        case .landscape:
+            safeArea = .init(top: 0, left: 47, bottom: 21, right: 47)
+            size = .init(width: 844, height: 390)
+        case .portrait:
+            safeArea = .init(top: 47, left: 0, bottom: 34, right: 0)
+            size = .init(width: 390, height: 844)
+        }
+        return .init(safeArea: safeArea, size: size, traits: .iPhone14(orientation))
+    }
+}
+
+extension UITraitCollection {
+    static func iPhone14(_ orientation: ViewImageConfig.Orientation) -> UITraitCollection {
+        let base: [UITraitCollection] = [
+            .init(forceTouchCapability: .available),
+            .init(layoutDirection: .leftToRight),
+            .init(preferredContentSizeCategory: .medium),
+            .init(userInterfaceIdiom: .phone),
+        ]
+
+        switch orientation {
+        case .landscape:
+            return .init(traitsFrom: base + [
+                .init(horizontalSizeClass: .regular),
+                .init(verticalSizeClass: .compact),
+            ])
+        case .portrait:
+            return .init(traitsFrom: base + [
+                .init(horizontalSizeClass: .compact),
+                .init(verticalSizeClass: .regular),
+            ])
+        }
     }
 }

@@ -47,7 +47,7 @@ struct ReadCardHelpVideoView: View {
                         .padding(.top)
                 }
 
-                Image(Asset.CardReader.cardReadVideo.name)
+                Image(asset: Asset.CardReader.cardReadVideo)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .onTapGesture {

@@ -40,7 +40,7 @@ struct ProfileColorPicker: View {
                     }
                     .accessibility(value: Text(color == self.color ? L10n.ctlTxtProfileColorPickerSelected
                             .key : ""))
-                    .accessibility(label: Text(color.name))
+                    .accessibility(label: Text(color.name, bundle: .module))
                     .accessibility(addTraits: .isButton)
             }
         }

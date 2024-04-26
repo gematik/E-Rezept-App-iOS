@@ -17,7 +17,7 @@
 //
 
 import CombineSchedulers
-@testable import eRpApp
+@testable import eRpFeatures
 import IDP
 import SnapshotTesting
 import SwiftUI
@@ -42,7 +42,7 @@ final class TokensViewSnapshotTests: ERPSnapshotTestCase {
             )
         )
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
     func testTokensViewWithAccessTokenAndSsoTokenSnapshot() {
@@ -58,6 +58,6 @@ final class TokensViewSnapshotTests: ERPSnapshotTestCase {
             )
         )
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 }

@@ -61,12 +61,12 @@ extension LegalNoticeView {
         var text: LocalizedStringKey
         var body: some View {
             if let title = title {
-                Text(title)
+                Text(title, bundle: .module)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.headline)
                     .padding(.top, 20)
             }
-            Text(text)
+            Text(text, bundle: .module)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
                 .padding(.top, 1)
@@ -83,7 +83,7 @@ extension LegalNoticeView {
 
         var body: some View {
             if let title = title {
-                Text(title)
+                Text(title, bundle: .module)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(.headline)
                     .padding(.top, 20)

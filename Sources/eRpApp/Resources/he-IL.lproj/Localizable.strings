@@ -1,5 +1,5 @@
 "add_btn_save" = "להציל";
-"add_txt_profile1" = "פרופילים 1";
+"add_txt_profile1" = "שם פרופיל";
 "add_txt_title" = "הכנס שם";
 "alert_btn_close" = "מסרב";
 "alert_btn_ok" = "בסדר";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "מספר גישה שגוי";
 "cdw_txt_rc_error_wrong_can_recovery" = "אנא תקן את מספר הגישה שלך (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "PIN שגוי";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ ניסיונות נוספים. אנא תקן את הזנת ה-PIN שלך.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "%@ ניסיונות נוספים. שימו לב: זה חייב להיות ה-PIN של כרטיס הבריאות שלכם. לא ה-PIN של TK Ident, למשל.";
 "cdw_txt_rc_headline" = "הכינו כרטיס בריאות";
 "cdw_txt_rc_list_charge" = "בדוק אם המכשיר שלך טעון מספיק.";
 "cdw_txt_rc_list_cover" = "במידת הצורך, הסר את כיסוי המגן.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "חלש מאוד";
 "ctl_txt_password_strength_accessiblity_value_weak" = "חלש";
 "ctl_txt_profile__cell_not_connected" = "לא מחובר";
-"ctl_txt_profile_color_picker_blue" = "כְּחוֹל";
-"ctl_txt_profile_color_picker_green" = "ירוק";
-"ctl_txt_profile_color_picker_grey" = "אפור";
-"ctl_txt_profile_color_picker_pink" = "וָרוֹד";
+"ctl_txt_profile_color_picker_blue" = "ירח כחול ספטמבר";
+"ctl_txt_profile_color_picker_green" = "עֵץ";
+"ctl_txt_profile_color_picker_grey" = "אפור אביב";
+"ctl_txt_profile_color_picker_pink" = "זה! האם! וָרוֹד!";
 "ctl_txt_profile_color_picker_selected" = "נבחר";
-"ctl_txt_profile_color_picker_yellow" = "צהוב";
+"ctl_txt_profile_color_picker_yellow" = "טל שמש";
 "ctl_txt_profile_connection_status_connected" = "קשורים ביחד";
 "ctl_txt_profile_connection_status_disconnected" = "לא מחובר";
 "ctl_txt_search_bar_field_label" = "שדה חיפוש";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "לִפְדוֹת";
 "main_btn_refresh" = "לעדכן";
 "main_empty_txt_connected" = "↓ גרור את המסך למטה כדי לעדכן.";
-"main_empty_txt_disconnected" = "היכנס כדי לקבל מתכונים באופן אוטומטי או הוסף מתכון חדש באמצעות ⊕ בפינה העליונה.";
+"main_empty_txt_disconnected" = "הירשם לקבלת מתכונים באופן אוטומטי.";
 "main_empty_txt_title" = "אין מתכונים";
 "main_txt_consent_drawer_message" = "הערה: לא תקבל יותר את קבלות העלות שלך כתדפיס בבית המרקחת.";
 "main_txt_consent_drawer_title" = "קבלת קבלות עלויות באופן דיגיטלי";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "לְסַנֵן";
 "pha_search_filter_txt_title" = "לְסַנֵן";
 "pha_search_hint_txt_close" = "סגור שיתוף מיקום, אל תשתף מיקום";
+"pha_search_map_annotation" = "בֵּית מִרקַחַת";
 "pha_search_map_btn_Error_cancel" = "לְבַטֵל";
 "pha_search_map_header" = "קרוב";
 "pha_search_txt_closed" = "סָגוּר";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "עמלת שירות חירום";
 "prsc_dtl_dr_error_info_description" = "לא כל המידע מוצג בצורה נכונה במתכון זה. עם זאת, אתה עדיין יכול לממש אותו בבית המרקחת שלך.";
 "prsc_dtl_dr_error_info_title" = "מתכון שגוי";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "במהלך תקופה זו ניתן למלא את המרשם בכל בית מרקחת בהשתתפות עצמית.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "במהלך תקופה זו תוכל לממש את המרשם שלך בכל בית מרקחת בתשלום נוסף של 10 אירו.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "אתה עדיין יכול למלא את המרשם בבית מרקחת בתוך תקופה זו, אך תצטרך לשלם את כל מחיר הרכישה עבור התרופה בעצמך. לחלופין, אתה יכול לבקש מהמרפאה שלך להנפיק מחדש את המרשם.";
 "prsc_dtl_dr_prescription_validity_info_title" = "לכמה זמן מרשם זה תקף?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "מרשמים המיובאים מעותק קשיח אינם יכולים להציג מידע אישי או רפואי מסיבות אבטחה. \n\n היכנס לאפליקציה זו באמצעות כרטיס בריאות או אפליקציית ביטוח כדי לראות את כל המידע הכלול במרשם.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "קבלת עלות דיגיטלית";
 "prsc_dtl_txt_practitioner_person" = "רושם";
 "prsc_dtl_txt_quantity" = "מספר החבילות שנקבעו";
+"prsc_dtl_txt_section_details_header" = "מידע מפורט";
 "prsc_dtl_txt_yes" = "כן";
 "prsc_fd_btn_error_banner" = "להגיש תלונה";
 "prsc_fd_hint_dosageInstructions_pic" = "דוֹקטוֹר";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "הוראות לשימוש";
 "prsc_fd_txt_error_banner_message" = "נראה שמשהו השתבש במהלך יצירת המתכון שלך. לדווח על שגיאה?";
 "prsc_fd_txt_na" = "לא מוגדר";
-"prsc_fd_txt_navigation_title" = "פרט";
+"prsc_fd_txt_navigation_title" = "פרטי מתכון";
 "prsc_fd_txt_noctu_description" = "ניתן לממש תרופה זו גם בלילה בבית מרקחת ללא עמלת שירות חירום.";
 "prsc_fd_txt_noctu_title" = "יש צורך להזדרז כאן";
 "prsc_fd_txt_organization_address" = "כתובת";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "תזכורת להכנסות";
 "stg_btn_new_profile_create" = "להציל";
 "stg_btn_reg_devices_load" = "הירשם";
+"stg_con_btn_gemmunity" = "פורום מרשם אלקטרוני";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "משוב מאפליקציית המרשם האלקטרוני";
 "stg_con_hotline_ava" = "ללא תשלום עבור המתקשר. זמני השירות: שני - שישי 8:00 בבוקר - 20:00 למעט בחגים לאומיים";

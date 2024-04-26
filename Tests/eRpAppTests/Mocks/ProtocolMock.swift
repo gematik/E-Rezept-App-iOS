@@ -19,7 +19,7 @@
 
 import AVS
 import Combine
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import eRpLocalStorage
 import Foundation

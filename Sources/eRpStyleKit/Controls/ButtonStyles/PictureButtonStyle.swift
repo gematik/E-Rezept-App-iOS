@@ -99,6 +99,7 @@ public struct PictureLabelStyle: LabelStyle {
             configuration.icon
                 .frame(width: isLarge ? 56 : 32, height: isLarge ? 56 : 32)
                 .clipped()
+                .shadow(color: .black.opacity(0.16), radius: 8, x: 0, y: 4)
 
             configuration.title
                 .font(.caption)

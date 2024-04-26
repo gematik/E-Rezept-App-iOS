@@ -16,7 +16,7 @@
 //  
 //
 
-@testable import eRpApp // todo rm me (DemoDate)
+@testable import eRpFeatures // todo rm me (DemoDate)
 import eRpKit
 import Foundation
 
@@ -267,6 +267,28 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
+        )
+
+        static let erxTaskRedeemedFixDate: ErxTask = .init(
+            identifier: "7350f983-1e67-11b2-8555-63bf44e44fb8",
+            status: .completed,
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: "2023-12-13T20:15:00Z",
+            expiresOn: "2021-09-10T10:55:04+02:00",
+            acceptedUntil: "2021-08-10T10:55:04+02:00",
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication1,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
+            patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization,
+            medicationDispenses: [
+                medicationDispense1,
+                medicationDispense2,
+            ]
         )
 
         static let erxTaskError: ErxTask = .init(

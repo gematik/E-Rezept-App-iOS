@@ -17,7 +17,7 @@
 //
 
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import SnapshotTesting
 import SwiftUI
@@ -29,17 +29,19 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
         diffTool = "open"
     }
 
-    private func store(for state: MainDomain.State) -> MainDomain.Store {
-        MainDomain.Store(initialState: state) {
+    private func store(for state: MainDomain.State) -> StoreOf<MainDomain> {
+        StoreOf<MainDomain>(initialState: state) {
             EmptyReducer()
         }
     }
 
     private func store(for state: PrescriptionListDomain.State)
-        -> MainDomain.Store {
-        MainDomain.Store(
+        -> StoreOf<MainDomain> {
+        StoreOf<MainDomain>(
             initialState: MainDomain.State(
-                prescriptionListState: state, horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                prescriptionListState: state,
+                horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State(
+                )
             )
 
         ) {
@@ -113,7 +115,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
     func testMainView_ALotOfPrescriptions() {

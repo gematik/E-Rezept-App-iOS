@@ -44,11 +44,11 @@ struct Tile: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
+                    Text(title, bundle: .module)
                         .font(Font.subheadline.weight(.semibold))
                         .foregroundColor(isDisabled ? Colors.systemLabelSecondary : Colors.systemLabel)
                     if let description = description {
-                        Text(description)
+                        Text(description, bundle: .module)
                             .font(Font.subheadline)
                             .foregroundColor(Colors.systemLabelSecondary)
                     }

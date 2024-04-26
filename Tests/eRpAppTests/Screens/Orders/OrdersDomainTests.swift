@@ -19,7 +19,7 @@
 import Combine
 import CombineSchedulers
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Nimble
 import Pharmacy
@@ -125,7 +125,6 @@ final class OrdersDomainTests: XCTestCase {
     }
 
     func testLoadOrdersWithError() async {
-        let orderId = "orderId"
         let expected = DefaultOrdersRepository.Error.erxRepository(.local(.notImplemented))
 
         mockOrdersRepository

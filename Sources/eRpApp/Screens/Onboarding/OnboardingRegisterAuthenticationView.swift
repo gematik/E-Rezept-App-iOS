@@ -224,7 +224,7 @@ extension OnboardingRegisterAuthenticationView {
                     image
                         .foregroundColor(.white)
                         .font(Font.body.weight(.semibold))
-                    Text(text)
+                    Text(text, bundle: .module)
                         .fontWeight(.semibold)
                         .font(.body)
                         .multilineTextAlignment(.center)
@@ -270,16 +270,15 @@ extension OnboardingRegisterAuthenticationView {
                     .opacity(0.01)
                     .accessibility(hidden: true)
 
-                SecureField(L10n.cpwInpPasswordAPlaceholder, text: passwordA) {
-                    viewStore.send(.enterButtonTapped)
-                }
-                .padding()
-                .font(Font.body)
-                .foregroundColor(Colors.systemLabel)
-                .background(Colors.systemGray6)
-                .cornerRadius(16)
-                .textContentType(.newPassword)
-                .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
+                SecureField(L10n.cpwInpPasswordAPlaceholder, text: passwordA)
+                    .onSubmit { viewStore.send(.enterButtonTapped) }
+                    .padding()
+                    .font(Font.body)
+                    .foregroundColor(Colors.systemLabel)
+                    .background(Colors.systemGray6)
+                    .cornerRadius(16)
+                    .textContentType(.newPassword)
+                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
 
                 Text(L10n.cpwTxtPasswordRecommendation)
                     .font(.footnote)
@@ -294,10 +293,11 @@ extension OnboardingRegisterAuthenticationView {
                     .padding(.bottom, 16)
 
                 VStack(alignment: .leading, spacing: 11) {
-                    SecureField(L10n.cpwInpPasswordBPlaceholder,
-                                text: passwordB) {
-                        viewStore.send(.enterButtonTapped)
-                    }
+                    SecureField(
+                        L10n.cpwInpPasswordBPlaceholder,
+                        text: passwordB
+                    )
+                    .onSubmit { viewStore.send(.enterButtonTapped) }
                     .padding()
                     .font(Font.body)
                     .foregroundColor(Colors.systemLabel)

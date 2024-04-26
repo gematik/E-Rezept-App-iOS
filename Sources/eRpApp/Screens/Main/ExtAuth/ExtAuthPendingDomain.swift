@@ -22,6 +22,7 @@ import eRpKit
 import Foundation
 import IDP
 
+// swiftlint:disable:next type_body_length
 struct ExtAuthPendingDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
@@ -30,12 +31,12 @@ struct ExtAuthPendingDomain: ReducerProtocol {
     }
 
     struct State: Equatable {
-        @PresentationState var destination: Destinations.State?
+        @PresentationState var destination: Destination.State?
 
         var extAuthState: ExtAuthState
 
         init(
-            destination: Destinations.State? = nil,
+            destination: Destination.State? = nil,
             extAuthState: ExtAuthState = ExtAuthState()
         ) {
             self.destination = destination
@@ -68,7 +69,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
 
     // sourcery: CodedError = "014"
     /// `ExtAuthPendingDomain` error types
-    enum Error: Swift.Error, Equatable {
+    enum Error: Swift.Error, Equatable, LocalizedError {
         // sourcery: errorCode = "01"
         /// Underlying `IDPError` for the external authentication agains `URL`
         case idpError(IDPError, URL)
@@ -76,6 +77,15 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         /// Error when `Profile` validation with the given authentication fails.
         /// Error is produces within the `IDPError.unspecified` error before saving the IDPToken
         case profileValidation(error: IDTokenValidatorError)
+
+        var errorDescription: String? {
+            switch self {
+            case let .idpError(idpError, _):
+                return idpError.localizedDescription
+            case let .profileValidation(error: error):
+                return error.localizedDescription
+            }
+        }
     }
 
     enum Action: Equatable {
@@ -87,7 +97,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         case hide
         case cancelAllPendingRequests
 
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
         case response(Response)
 
         enum Response: Equatable {
@@ -96,7 +106,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         }
     }
 
-    struct Destinations: ReducerProtocol {
+    struct Destination: ReducerProtocol {
         enum State: Equatable {
             case extAuthAlert(ErpAlertState<Action.Alert>)
         }
@@ -139,12 +149,51 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         let extAuthRequestStorage: ExtAuthRequestStorage
         let currentProfile: AnyPublisher<Profile, LocalStoreError>
         let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
+
+        func saveProfileWith(
+            insuranceId: String?,
+            insurance: String?,
+            givenName: String?,
+            familyName: String?,
+            overrideInsuranceTypeToPkv: Bool = false
+        ) -> EffectTask<ExtAuthPendingDomain.Action> {
+            .publisher(
+                currentProfile
+                    .first()
+                    .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
+                        profileDataStore.update(profileId: profile.id) { profile in
+                            profile.insuranceId = insuranceId
+                            // This is needed to ensure proper pKV faking.
+                            // It can be removed when the debug option to fake pKV is removed.
+                            if profile.insuranceType == .unknown {
+                                profile.insuranceType = .gKV
+                            }
+                            // This is also temporary code until replaced by a proper implementation
+                            if overrideInsuranceTypeToPkv {
+                                profile.insuranceType = .pKV
+                            }
+                            profile.insurance = insurance
+                            profile.givenName = givenName
+                            profile.familyName = familyName
+                        }
+                        .eraseToAnyPublisher()
+                    }
+                    .map { _ in
+                        ExtAuthPendingDomain.Action.hide
+                    }
+                    .catch { error in
+                        Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
+                    }
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
+        }
     }
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
             .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
+                Destination()
             }
     }
 
@@ -261,88 +310,6 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         }
     }
 
-    static func alertState(title: String, message _: String, url: URL) -> ErpAlertState<Destinations.Action.Alert> {
-        ErpAlertState(
-            title: { TextState(L10n.mainTxtPendingextauthFailed(title)) },
-            actions: {
-                ButtonState(action: .send(.externalLogin(url))) {
-                    TextState(L10n.mainTxtPendingextauthRetry)
-                }
-                ButtonState(role: .cancel, action: .send(.cancelAllPendingRequests)) {
-                    TextState(L10n.mainTxtPendingextauthCancel)
-                }
-            },
-            message: { TextState(L10n.cdwTxtRcAlertMessageSaveProfile) }
-        )
-    }
-
-    static func alertState(title: String, message: String) -> ErpAlertState<Destinations.Action.Alert> {
-        ErpAlertState(
-            title: { TextState(title) },
-            actions: {
-                ButtonState(role: .cancel, action: .send(.cancelAllPendingRequests)) {
-                    TextState(L10n.mainTxtPendingextauthCancel)
-                }
-            },
-            message: { TextState(message) }
-        )
-    }
-
-    static var saveProfileAlert: ErpAlertState<Destinations.Action.Alert> = {
-        ErpAlertState(
-            title: { TextState(L10n.cdwTxtExtauthAlertTitleSaveProfile) },
-            actions: {
-                ButtonState(role: .cancel, action: .send(.cancelAllPendingRequests)) {
-                    TextState(L10n.cdwBtnExtauthAlertSaveProfile)
-                }
-            },
-            message: { TextState(L10n.cdwTxtExtauthAlertMessageSaveProfile) }
-        )
-    }()
-}
-
-extension ExtAuthPendingDomain.Environment {
-    func saveProfileWith(
-        insuranceId: String?,
-        insurance: String?,
-        givenName: String?,
-        familyName: String?,
-        overrideInsuranceTypeToPkv: Bool = false
-    ) -> EffectTask<ExtAuthPendingDomain.Action> {
-        .publisher(
-            currentProfile
-                .first()
-                .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
-                    profileDataStore.update(profileId: profile.id) { profile in
-                        profile.insuranceId = insuranceId
-                        // This is needed to ensure proper pKV faking.
-                        // It can be removed when the debug option to fake pKV is removed.
-                        if profile.insuranceType == .unknown {
-                            profile.insuranceType = .gKV
-                        }
-                        // This is also temporary code until replaced by a proper implementation
-                        if overrideInsuranceTypeToPkv {
-                            profile.insuranceType = .pKV
-                        }
-                        profile.insurance = insurance
-                        profile.givenName = givenName
-                        profile.familyName = familyName
-                    }
-                    .eraseToAnyPublisher()
-                }
-                .map { _ in
-                    ExtAuthPendingDomain.Action.hide
-                }
-                .catch { error in
-                    Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
-                }
-                .receive(on: schedulers.main)
-                .eraseToAnyPublisher
-        )
-    }
-}
-
-extension ExtAuthPendingDomain {
     enum Dummies {
         static let state = State()
 
@@ -352,17 +319,6 @@ extension ExtAuthPendingDomain {
             Store(initialState: state) {
                 EmptyReducer()
             }
-        }
-    }
-}
-
-extension ExtAuthPendingDomain.Error: LocalizedError {
-    var errorDescription: String? {
-        switch self {
-        case let .idpError(idpError, _):
-            return idpError.localizedDescription
-        case let .profileValidation(error: error):
-            return error.localizedDescription
         }
     }
 }

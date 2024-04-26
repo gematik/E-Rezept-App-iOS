@@ -24,33 +24,38 @@ public struct SubTitle: View {
 
     @Environment(\.subTitleStyle) var subTitleStyle: AnySubTitleStyle
 
-    public init(title: LocalizedStringKey, description: LocalizedStringKey? = nil, details: LocalizedStringKey? = nil) {
+    public init(
+        title: LocalizedStringKey,
+        description: LocalizedStringKey? = nil,
+        details: LocalizedStringKey? = nil,
+        bundle: Bundle? = nil
+    ) {
         configuration = SubTitleConfiguration(
-            title: Text(title),
-            description: description.map { Text($0) },
-            details: details.map { Text($0) }
+            title: Text(title, bundle: bundle),
+            description: description.map { Text($0, bundle: bundle) },
+            details: details.map { Text($0, bundle: bundle) }
         )
     }
 
-    public init(title: String, details: LocalizedStringKey) {
+    public init(title: String, details: LocalizedStringKey, bundle: Bundle? = nil) {
         configuration = SubTitleConfiguration(
             title: Text(title),
             description: nil,
-            details: Text(details)
+            details: Text(details, bundle: bundle)
         )
     }
 
-    public init(title: String, description: LocalizedStringKey) {
+    public init(title: String, description: LocalizedStringKey, bundle: Bundle? = nil) {
         configuration = SubTitleConfiguration(
             title: Text(title),
-            description: Text(description),
+            description: Text(description, bundle: bundle),
             details: nil
         )
     }
 
-    public init(title: LocalizedStringKey, description: String) {
+    public init(title: LocalizedStringKey, description: String, bundle: Bundle? = nil) {
         configuration = SubTitleConfiguration(
-            title: Text(title),
+            title: Text(title, bundle: bundle),
             description: Text(description),
             details: nil
         )
@@ -419,21 +424,21 @@ struct SubTitle_Preview: PreviewProvider {
             SubTitle(title: "abc", description: "def")
                 .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: true))
 
-            SubTitle(title: "abc", details: "def")
+            SubTitle(title: "abc", details: "def", bundle: .module)
                 .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: true))
 
-            SubTitle(title: "abc", description: "def", details: "ghi")
+            SubTitle(title: "abc", description: "def", details: "ghi", bundle: .module)
                 .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: true))
 
-            SubTitle(title: "abc", description: "def", details: "ghi")
+            SubTitle(title: "abc", description: "def", details: "ghi", bundle: .module)
                 .subTitleStyle(.navigation)
 
-            SubTitle(title: "abc", description: "def", details: "ghi")
+            SubTitle(title: "abc", description: "def", details: "ghi", bundle: .module)
                 .subTitleStyle(.info)
 
-            SubTitle(title: "abc", description: "def", details: "ghi")
+            SubTitle(title: "abc", description: "def", details: "ghi", bundle: .module)
 
-            SubTitle(title: "abc", description: "def", details: "ghi")
+            SubTitle(title: "abc", description: "def", details: "ghi", bundle: .module)
                 .subTitleStyle(.navigation(stateText: "Ein"))
         }
     }

@@ -16,7 +16,7 @@
 //  
 //
 
-@testable import eRpApp
+@testable import eRpFeatures
 import Foundation
 
 class IntegrationTestsEnvironment {

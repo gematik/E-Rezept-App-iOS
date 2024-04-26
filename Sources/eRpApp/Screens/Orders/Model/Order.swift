@@ -75,13 +75,16 @@ extension Order {
                 chargeItems: IdentifiedArrayOf(arrayLiteral: ErxChargeItem.Dummies.dummy)
             )
 
-        static let orderCommunications2 =
-            Order(
+        static let orderCommunications2 = {
+            var readCommunication = ErxChargeItem.Dummies.dummy
+            readCommunication.isRead = true
+            return Order(
                 orderId: "orderId_2",
                 communications: IdentifiedArrayOf(uniqueElements: ErxTask.Communication.Dummies
                     .multipleCommunications2),
-                chargeItems: IdentifiedArrayOf(arrayLiteral: ErxChargeItem.Dummies.dummy),
+                chargeItems: IdentifiedArrayOf(arrayLiteral: readCommunication),
                 pharmacy: PharmacyLocation.Dummies.pharmacy
             )
+        }()
     }
 }

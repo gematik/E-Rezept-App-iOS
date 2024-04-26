@@ -1,5 +1,5 @@
 "add_btn_save" = "Speichern";
-"add_txt_profile1" = "Profile 1";
+"add_txt_profile1" = "Profilname";
 "add_txt_title" = "Name eingeben";
 "alert_btn_close" = "Ablehnen";
 "alert_btn_ok" = "Okay";
@@ -238,7 +238,7 @@
 "cdw_txt_rc_error_wrong_can_description" = "Falsche Zugangsnummer";
 "cdw_txt_rc_error_wrong_can_recovery" = "Bitte korrigieren Sie Ihre Zugangsnummer (CAN)";
 "cdw_txt_rc_error_wrong_pin_description_%@" = "Falsche PIN";
-"cdw_txt_rc_error_wrong_pin_recovery_%@" = "Noch %@ Versuche. Bitte korrigieren Sie die Eingabe Ihrer PIN.";
+"cdw_txt_rc_error_wrong_pin_recovery_%@" = "Noch %@ Versuche. Achtung: es muss die PIN Ihrer Gesundheitskarte sein. Nicht z.B. die TK Ident PIN.";
 "cdw_txt_rc_headline" = "Gesundheitskarte bereithalten";
 "cdw_txt_rc_list_charge" = "Überprüfen Sie, ob Ihr Gerät ausreichend geladen ist.";
 "cdw_txt_rc_list_cover" = "Entfernen Sie ggf. die Schutzhülle.";
@@ -315,12 +315,12 @@
 "ctl_txt_password_strength_accessiblity_value_very_weak" = "Sehr schwach";
 "ctl_txt_password_strength_accessiblity_value_weak" = "Schwach";
 "ctl_txt_profile__cell_not_connected" = "Nicht angemeldet";
-"ctl_txt_profile_color_picker_blue" = "Blau";
-"ctl_txt_profile_color_picker_green" = "Grün";
-"ctl_txt_profile_color_picker_grey" = "Grau";
-"ctl_txt_profile_color_picker_pink" = "Rosa";
+"ctl_txt_profile_color_picker_blue" = "Blauer Mond September";
+"ctl_txt_profile_color_picker_green" = "Baum";
+"ctl_txt_profile_color_picker_grey" = "Frühlingsgrau";
+"ctl_txt_profile_color_picker_pink" = "Es! Ist! Rosa!";
 "ctl_txt_profile_color_picker_selected" = "Ausgewählt";
-"ctl_txt_profile_color_picker_yellow" = "Gelb";
+"ctl_txt_profile_color_picker_yellow" = "Sonnentau";
 "ctl_txt_profile_connection_status_connected" = "Verbunden";
 "ctl_txt_profile_connection_status_disconnected" = "Nicht Verbunden";
 "ctl_txt_search_bar_field_label" = "Suchfeld";
@@ -702,7 +702,7 @@
 "main_btn_redeem" = "Einlösen";
 "main_btn_refresh" = "Aktualisieren";
 "main_empty_txt_connected" = "↓ Ziehen Sie den Screen nach unten, um zu aktualisieren.";
-"main_empty_txt_disconnected" = "Melden Sie sich an, um Rezepte automatisch zu erhalten oder fügen Sie über das ⊕ in der oberen Ecke ein neues Rezept hinzu.";
+"main_empty_txt_disconnected" = "Melden Sie sich an, um Rezepte automatisch zu erhalten.";
 "main_empty_txt_title" = "Keine Rezepte";
 "main_txt_consent_drawer_message" = "Hinweis: Sie erhalten Ihre Kostenbelege nicht mehr als Ausdruck in der Apotheke.";
 "main_txt_consent_drawer_title" = "Kostenbelege digital erhalten";
@@ -943,6 +943,7 @@
 "pha_search_btn_show_filter_view" = "Filtern";
 "pha_search_filter_txt_title" = "Filtern";
 "pha_search_hint_txt_close" = "Standortfreigabe schließen, keinen Standort freigeben";
+"pha_search_map_annotation" = "Apotheke";
 "pha_search_map_btn_Error_cancel" = "Abbrechen";
 "pha_search_map_header" = "In der Nähe";
 "pha_search_txt_closed" = "Geschlossen";
@@ -1021,7 +1022,7 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Notdienstgebühr";
 "prsc_dtl_dr_error_info_description" = "In diesem Rezept werden nicht alle Informationen korrekt dargestellt. Sie können es aber dennoch in Ihrer Apotheke einlösen.";
 "prsc_dtl_dr_error_info_title" = "Rezept fehlerhaft";
-"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Innerhalb dieses Zeitraums können Sie Ihr Rezept in einer beliebigen Apotheke mit einer Zuzahlung einlösen.";
+"prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Innerhalb dieses Zeitraums können Sie Ihr Rezept in einer beliebigen Apotheke mit einer Zuzahlung von maximal 10€ einlösen.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Innerhalb dieses Zeitraums können Sie das Rezept nach wie vor in einer Apotheke einlösen, müssen jedoch die gesamte Kaufsumme des Medikaments selbst übernehmen. Alternativ können Sie in Ihrer Praxis um eine erneute Ausstellung des Rezepts bitten.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Wie lange ist dieses Rezept gültig?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Von einem Papierausdruck importierte Rezepte dürfen aus Sicherheitsgründen keine persönlichen oder medizinische Daten anzeigen.\n\nMelden Sie sich in dieser App mit Gesundheitskarte oder Versicherungs-App an, um alle im Rezept enthaltenen Informationen einzusehen.";
@@ -1088,6 +1089,7 @@
 "prsc_dtl_txt_pkv_hint_no_invoice_title" = "Digitaler Kostenbeleg";
 "prsc_dtl_txt_practitioner_person" = "Verschreibende Person";
 "prsc_dtl_txt_quantity" = "Anzahl der verordneten Packungen";
+"prsc_dtl_txt_section_details_header" = "Detailinformationen";
 "prsc_dtl_txt_yes" = "Ja";
 "prsc_fd_btn_error_banner" = "Melden";
 "prsc_fd_hint_dosageInstructions_pic" = "Ärztin";
@@ -1107,7 +1109,7 @@
 "prsc_fd_txt_dosage_instructions_title" = "Einnahmehinweise";
 "prsc_fd_txt_error_banner_message" = "Bei der Erstellung Ihres Rezepts scheint etwas schief gelaufen zu sein. Fehler melden?";
 "prsc_fd_txt_na" = "Keine Angabe";
-"prsc_fd_txt_navigation_title" = "Detail";
+"prsc_fd_txt_navigation_title" = "Rezeptdetails";
 "prsc_fd_txt_noctu_description" = "Dieses Medikament kann ohne Notdienstgebühr auch nachts in einer Apotheke eingelöst werden.";
 "prsc_fd_txt_noctu_title" = "Hier ist Eile geboten";
 "prsc_fd_txt_organization_address" = "Adresse";
@@ -1286,6 +1288,7 @@
 "stg_btn_medication_reminder" = "Einnahmeerinnerung";
 "stg_btn_new_profile_create" = "Speichern";
 "stg_btn_reg_devices_load" = "Anmelden";
+"stg_con_btn_gemmunity" = "Forum zum E-Rezept";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback aus der E-Rezept App";
 "stg_con_hotline_ava" = "Kostenfrei für den Anrufenden. Servicezeiten: Mo. - Fr. 08:00 - 20:00 Uhr außer an bundeseinheitlichen Feiertagen";

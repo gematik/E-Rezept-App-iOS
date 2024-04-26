@@ -48,7 +48,7 @@ private class LazyZxcvbnDB {
     private(set) lazy var zxcvbn = DBZxcvbn()
 
     private(set) lazy var wordList: [String] = {
-        guard let url = Bundle.main.url(forResource: "german_dictionary", withExtension: "json"),
+        guard let url = Bundle.module.url(forResource: "german_dictionary", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let list = try? JSONDecoder().decode(List.self, from: data) else {
             return []

@@ -82,7 +82,7 @@ class RouterStore<ContentReducer: ReducerProtocol>: Routing
     }
 
     private class RouterInstance: Routing {
-        func routeTo(_ endpoint: eRpApp.Endpoint) async {
+        func routeTo(_ endpoint: Endpoint) async {
             await delegate?.routeTo(endpoint)
         }
 

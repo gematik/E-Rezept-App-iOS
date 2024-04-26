@@ -18,7 +18,7 @@
 
 import Combine
 import Dependencies
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage

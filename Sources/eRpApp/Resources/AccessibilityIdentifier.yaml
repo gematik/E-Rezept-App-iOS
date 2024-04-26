@@ -361,6 +361,7 @@ editProfilePicture:
 prescriptionDetails:
   - prsc_dtl_txt_title
   - prsc_dtl_txt_title_input
+  - prsc_dtl_txt_section_details_header
   - prsc_dtl_btn_edit_title
   - prsc_dtl_btn_toggle_redeem
   - prsc_dtl_btn_toolbar_item
@@ -474,6 +475,7 @@ pharmacySearchStart:
   - pha_search_local_pharm_section
   - pha_search_txt_map_header
   - pha_search_map
+  - pha_search_map_section
 pharmacySearchMap:
   - pha_search_map_btn_filter
   - pha_search_map_btn_close

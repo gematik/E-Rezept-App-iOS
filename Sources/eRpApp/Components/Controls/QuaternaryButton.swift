@@ -25,7 +25,7 @@ struct QuaternaryButton: View {
 
     var body: some View {
         Button(action: action) {
-            Text(text)
+            Text(text, bundle: .module)
                 .fontWeight(.semibold)
                 .font(.subheadline)
                 .multilineTextAlignment(.center)

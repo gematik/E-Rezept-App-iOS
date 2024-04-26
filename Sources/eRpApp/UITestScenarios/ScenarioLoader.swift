@@ -54,6 +54,7 @@ extension View {
 
 extension SceneDelegate {
     func setupUITests() {
+        #if DEBUG
         if ProcessInfo.processInfo.environment["UITEST.DISABLE_ANIMATIONS"] != nil {
             mainWindow?.layer.speed = 1000
         }
@@ -74,9 +75,11 @@ extension SceneDelegate {
                 UserDefaults.standard.synchronize()
             }
         }
+        #endif
     }
 }
 
+#if DEBUG
 extension ReducerProtocol {
     func setupUITests() -> some ReducerProtocol<Self.State, Self.Action> {
         let isRecording = ProcessInfo.processInfo.environment["UITEST.RECORD_MOCKS"] != nil
@@ -118,7 +121,7 @@ extension ReducerProtocol {
                     )
                 }
 
-            dependencies.avsRedeemService = SmartMocks.shared.smartMockRedeemService(scenario, isRecording)
+            dependencies.avsRedeemService = { SmartMocks.shared.smartMockRedeemService(scenario, isRecording) }
         }
     }
 }
@@ -471,3 +474,5 @@ extension ErxRemoteDataStore {}
 extension LoginHandler {}
 extension RedeemService {}
 // sourcery:end
+
+#endif

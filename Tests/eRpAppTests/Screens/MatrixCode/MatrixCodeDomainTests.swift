@@ -19,7 +19,7 @@
 import Combine
 import CombineSchedulers
 import ComposableArchitecture
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import IDP
 import Nimble

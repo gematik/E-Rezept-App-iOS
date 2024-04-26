@@ -5,24 +5,6 @@ import Foundation
 
 
 
-extension AppStartDomain.State {
-    enum Tag: Int {
-        case loading
-        case onboarding
-        case app
-    }
-
-    var tag: Tag {
-        switch self {
-            case .loading:
-                return .loading
-            case .onboarding:
-                return .onboarding
-            case .app:
-                return .app
-        }
-    }
-}
 extension ReadCardHelpDomain.State {
     enum Tag: Int {
         case first

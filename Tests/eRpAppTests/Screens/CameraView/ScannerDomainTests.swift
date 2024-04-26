@@ -19,7 +19,7 @@
 import Combine
 import ComposableArchitecture
 import Dependencies
-@testable import eRpApp
+@testable import eRpFeatures
 import eRpKit
 import Foundation
 import Nimble

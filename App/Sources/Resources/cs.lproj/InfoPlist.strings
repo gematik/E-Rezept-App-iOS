@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "E-recept";
+"NFCReaderUsageDescription" = "Umožňuje vám identifikovat se a ověřit se pomocí vaší elektronické zdravotní karty";
+"NSCameraUsageDescription" = "Kamera je potřebná pro zachycení receptů nebo pořízení fotografií.";
+"NSFaceIDUsageDescription" = "Elektronický předpis vyžaduje FaceID k ochraně aplikace před neoprávněným přístupem.";

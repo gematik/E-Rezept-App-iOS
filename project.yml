@@ -53,6 +53,7 @@ schemes:
       targets:
         - eRpAppTests
         - eRpAppStoreScreenshots
+        - package: eRpKit/eRpFeaturesTests
         - package: eRpKit/eRpStyleKitTests
         - package: eRpKit/eRpKitTests
         - package: eRpKit/eRpLocalStorageTests
@@ -107,64 +108,25 @@ schemes:
 packages:
   eRpKit:
     path: ./
-  OpenHealthCardKit:
-    url: https://github.com/gematik/ref-OpenHealthCardKit/
-    majorVersion: 5.6.0   
   ASN1Kit:
     url: https://github.com/gematik/ASN1Kit
     majorVersion: 1.2.0
   DataKit:
     url: https://github.com/SwiftCommon/DataKit
     majorVersion: 1.1.0
-  GemCommonsKit:
-    url: https://github.com/gematik/ref-GemCommonsKit
-    majorVersion: 1.3.0
   OpenSSL-Swift:
-   url: https://github.com/gematik/OpenSSL-Swift
-   majorVersion: 4.1.0
-  CasePaths:
-    url: https://github.com/pointfreeco/swift-case-paths
-    majorVersion: 0.7.0
-  CombineSchedulers:
-    url: https://github.com/pointfreeco/combine-schedulers
-    majorVersion: 0.5.3  
-  ComposableArchitecture:
-    url: https://github.com/pointfreeco/swift-composable-architecture
-    minorVersion: 0.59.0
-  ComposableCoreLocation:
-    url: https://github.com/pointfreeco/composable-core-location
-    minorVersion: 0.3.0
+    url: https://github.com/gematik/OpenSSL-Swift
+    majorVersion: 4.1.0
   IdentifiedCollections:
     url: https://github.com/pointfreeco/swift-identified-collections.git
     minorVersion: 0.8.0
-  ContentSquare:
-    url:  https://github.com/ContentSquare/CS_iOS_SDK
-    majorVersion: 4.27.1
-  FHIRModels:
-    url: https://github.com/apple/FHIRModels
-    version: 0.4.0
   Nimble:
     url: https://github.com/Quick/Nimble
     majorVersion: 9.2.0
     # majorVersion: 10.0.0
-  OHHTTPStubs:
-    url: https://github.com/AliSoftware/OHHTTPStubs
-    majorVersion: 9.1.0
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
     majorVersion: 1.10.0
-  SwiftUI-Introspect:
-    url: https://github.com/siteline/SwiftUI-Introspect
-    majorVersion: 0.1.3
-  Zxcvbn:
-    url: https://github.com/andyjohns/zxcvbn-ios
-    revision: bf6083dc17df950c8bdfcf2063859ee1270015fd
-  ZXingObjC:
-    url: https://github.com/zxingify/zxingify-objc
-    majorVersion: 3.6.7
-  GemPDFKit:
-    url: https://github.com/gematik/swift-gemPDFKit
-    majorVersion: 0.1.0
 settings:
   base:
     # for DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC see: https://developer.apple.com/forums/thread/128806
@@ -194,71 +156,35 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: ${GEM_PRODUCT_BUNDLE_IDENTIFIER}
         TARGETED_DEVICE_FAMILY: 1
     configFiles:
-      Debug: Sources/eRpApp/Resources/debug.xcconfig
-      Release: Sources/eRpApp/Resources/release.xcconfig
+      Debug: App/Sources/Resources/debug.xcconfig
+      Release: App/Sources/Resources/release.xcconfig
     sources:
-      - Sources/eRpApp
+      - path: App/Sources
+        excludes:
+          - "Package.swift"
     dependencies:
       - package: eRpKit
-        product: eRpStyleKit
-      - package: eRpKit
-        product: eRpKit
-      - package: eRpKit
-        product: eRpRemoteStorage
-      - package: eRpKit
-        product: eRpLocalStorage
-      - package: eRpKit
-        product: Pharmacy
-      - package: eRpKit
-        product: AVS
-      - package: eRpKit
-        product: IDP
-      - package: eRpKit
-        product: FHIRClient
-      - package: eRpKit
-        product: HTTPClient
-      - package: eRpKit
-        product: TrustStore
-      - package: eRpKit
-        product: VAUClient
-      - package: OpenSSL-Swift
-      - package: DataKit
-      - package: GemCommonsKit
-        product: GemCommonsKit
-      - package: OpenHealthCardKit
-        product: CardReaderProviderApi
-      - package: OpenHealthCardKit
-        product: NFCCardReaderProvider
-      - package: ASN1Kit
-      - package: OpenHealthCardKit
-        product: HealthCardAccess
-      - package: OpenHealthCardKit
-        product: HealthCardControl
-      - package: OpenHealthCardKit
-        product: Helper
-      - sdk: CoreNFC.framework
-      - sdk: Combine.framework
-      - sdk: SwiftUI.framework
-      - package: ZXingObjC
-      - package: SwiftUI-Introspect
-        product: Introspect
-      - package: CombineSchedulers
-      - package: ComposableArchitecture
-        product: ComposableArchitecture
-      - package: ComposableCoreLocation
-        product: ComposableCoreLocation
-      - package: Zxcvbn
-        product: Zxcvbn
-      - package: ContentSquare
-        product: ContentsquareModule
-      - package: GemPDFKit
-        product: GemPDFKit
+        product: eRpFeatures
     scheme:
       language: de
       region: DE
       testTargets:
         - eRpAppTests
       gatherCoverageData: false
+  eRpAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    settings:
+      INFOPLIST_FILE: App/Tests/Resources/Info.plist
+    sources:
+      - path: App/Tests
+    dependencies:
+      - target: eRpApp
+      - package: eRpKit
+        product: eRpFeatures
+      - package: eRpKit
+        product: TestUtils
+      - package: Nimble
   eRpAppUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -280,21 +206,8 @@ targets:
       - path: Sources/eRpApp/Generated/Accessibility+Generated.swift
     dependencies:
       - target: eRpApp
-      - package: Nimble
-      - package: SnapshotTesting
-  eRpAppTests:
-    type: bundle.unit-test
-    platform: iOS
-    settings:
-      INFOPLIST_FILE: Tests/eRpAppTests/Resources/Info.plist
-    sources:
-      - path: Tests/eRpAppTests
-        excludes:
-          - "**/__Snapshots__/**"
-    dependencies:
-      - target: eRpApp
       - package: eRpKit
-        product: TestUtils
+        product: eRpFeatures
       - package: Nimble
       - package: SnapshotTesting
   eRpAppStoreScreenshots:
@@ -307,7 +220,8 @@ targets:
         excludes:
           - "**/__Snapshots__/**"
     dependencies:
-      - target: eRpApp
+      - package: eRpKit
+        product: eRpFeatures
       - package: eRpKit
         product: TestUtils
       - package: Nimble
@@ -323,15 +237,29 @@ targets:
       - target: eRpApp
       - package: eRpKit
         product: eRpKit
-      - package: eRpKit 
+      - package: eRpKit
+        product: eRpRemoteStorage
+      - package: eRpKit
+        product: eRpLocalStorage
+      - package: eRpKit
+        product: Pharmacy
+      - package: eRpKit
         product: AVS
-      - package: eRpKit  
+      - package: eRpKit
         product: IDP
-      - package: eRpKit 
+      - package: eRpKit
+        product: FHIRClient
+      - package: eRpKit
+        product: HTTPClient
+      - package: eRpKit
         product: TrustStore
-      - package: eRpKit  
-        product: TestUtils
-      - package: eRpKit   
+      - package: eRpKit
         product: VAUClient
+      - package: eRpKit
+        product: TestUtils
+      - package: OpenSSL-Swift
+      - package: DataKit
+      - package: ASN1Kit
       - package: Nimble
+      - package: IdentifiedCollections
 buildImplicitDependencies: true

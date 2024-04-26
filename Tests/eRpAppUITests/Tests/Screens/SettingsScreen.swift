@@ -26,4 +26,8 @@ struct SettingsScreen: Screen {
 
         return .init(app: app)
     }
+
+    func tapDemoMode(file: StaticString = #file, line: UInt = #line) {
+        switches(by: A11y.settings.demo.stgTxtDemoMode, file: file, line: line).tap()
+    }
 }

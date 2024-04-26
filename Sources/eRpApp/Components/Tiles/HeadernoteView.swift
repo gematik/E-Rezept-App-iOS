@@ -26,7 +26,7 @@ struct HeadernoteView: View {
 
     var body: some View {
         HStack {
-            Text(text)
+            Text(text, bundle: .module)
                 .font(.body)
                 .foregroundColor(Colors.systemLabel)
                 .multilineTextAlignment(.leading)
