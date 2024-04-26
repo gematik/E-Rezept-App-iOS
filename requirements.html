@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.18.0 Docs
+           1.19.0 Docs
         </a>
          (100% documented)
       </p>
@@ -320,6 +320,24 @@
                 <a class="nav-group-task-link" href="Extensions.html#/MatrixCodeDomain">MatrixCodeDomain</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/MedicationReminderListDomain">MedicationReminderListDomain</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp24MedicationReminderParserV">MedicationReminderParser</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/MedicationReminderSetupDomain">MedicationReminderSetupDomain</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/MedicationSchedule.html">MedicationSchedule</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/MedicationSchedule/Entry.html">– Entry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/MedicationScheduleRepository.html">MedicationScheduleRepository</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/NFCCardError.html">NFCCardError</a>
               </li>
               <li class="nav-group-task">
@@ -333,6 +351,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/NFCTagReaderSession/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp21NotificationSchedulerV">NotificationScheduler</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp5OrderV">Order</a>
@@ -642,7 +663,7 @@ NavigationLinkStore(
 // [REQ:BSI-eRp-ePA:O.Auth_3#2,O.Plat_10#2] Start login with KK
 return .publisher(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-184-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:184</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-190-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:190</code></h4>
 
 <p>Implementation of eGK connection</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_3#2] Implementation of eGK connection
@@ -686,7 +707,7 @@ func matches(password: String) throws -&gt; Bool {
 <h3 id='o-auth_7' class='heading'>O.Auth_7</h3>
 
 <p>The SceneDelegate exchanges the active window with an authentication window every time the app gains focus</p>
-<h4 id='code-sources-erpapp-scenedelegate-swift-164-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:164</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-174-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:174</code></h4>
 
 <p>Present the authentication window</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_7#2] Present the authentication window
@@ -696,26 +717,26 @@ DispatchQueue.main.async { [weak self] in
 <h3 id='o-auth_8' class='heading'>O.Auth_8</h3>
 
 <p>A Timer is used to measure the time a user is inactive. Every user interaction resets the timer.</p>
-<h4 id='code-sources-erpapp-scenedelegate-swift-312-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:312</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-330-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:330</code></h4>
 
 <p>A timer is used to determine inactive users</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_8#2] A timer is used to determine inactive users
 self?.presentAppAuthenticationDomain(scene: scene)
 </code></pre>
-<h4 id='code-sources-erpapp-scenedelegate-swift-293-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:293</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-311-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:311</code></h4>
 
 <p>the timer is reset on user interaction</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_8#3] the timer is reset on user interaction
 self?.setupTimer(scene: scene)
 </code></pre>
-<h4 id='code-sources-erpapp-scenedelegate-swift-322-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:322</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-340-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:340</code></h4>
 
 <p>User interaction is determined by using a higher order reducer watching all</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_8#4] User interaction is determined by using a higher order reducer watching all
 // actions
 NotificationCenter.default.post(name: .userInteractionDetected, object: nil, userInfo: nil)
 </code></pre>
-<h4 id='code-sources-erpapp-scenedelegate-swift-45-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:45</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-47-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:47</code></h4>
 
 <p>Concat the user interaction reducer to the normal application reducer</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_8#5] Concat the user interaction reducer to the normal application reducer
@@ -724,7 +745,7 @@ reducer: AppStartDomain().analytics().notifyUserInteraction().prepareUITestsDepe
 <h3 id='o-auth_9' class='heading'>O.Auth_9</h3>
 
 <p>Token invalidation happens after 12 hours. If a user is still active, a re-authentication via eGK, Biometrics or Insurance App is necessary. Each meaning the possession and or knowledge of the needed user input.</p>
-<h4 id='code-sources-idp-defaultidpsession-swift-801-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:801</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-779-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:779</code></h4>
 
 <p>application is also checking for expiration</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Auth_9#2] application is also checking for expiration
@@ -1038,14 +1059,14 @@ SecureField(titleKey, text: $text, onCommit: onCommit)
 <h3 id='o-data_13' class='heading'>O.Data_13</h3>
 
 <p>Suppressing Screenshots is not possible as of now.</p>
-<h4 id='code-sources-erpapp-scenedelegate-swift-228-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:228</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-240-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:240</code></h4>
 
 <p>Moving the application to the background blurs the application</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Data_13#2,O.Plat_12#2] Moving the application to the background blurs the application
 // window.
 addBlurOverlayToWindow()
 </code></pre>
-<h4 id='code-sources-erpapp-scenedelegate-swift-158-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:158</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-161-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:161</code></h4>
 
 <p>Moving the application to the foreground removes the blur.</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Data_13#3,O.Plat_12#3] Moving the application to the foreground removes the blur.
@@ -1282,14 +1303,14 @@ wkWebView.configuration.defaultWebpagePreferences.allowsContentJavaScript = fals
 <h3 id='o-plat_12' class='heading'>O.Plat_12</h3>
 
 <p>The content window is blurred upon leaving the application to not expose content to the system multitasking switcher.</p>
-<h4 id='code-sources-erpapp-scenedelegate-swift-228-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:228</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-240-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:240</code></h4>
 
 <p>Moving the application to the background blurs the application</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Data_13#2,O.Plat_12#2] Moving the application to the background blurs the application
 // window.
 addBlurOverlayToWindow()
 </code></pre>
-<h4 id='code-sources-erpapp-scenedelegate-swift-158-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:158</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-161-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:161</code></h4>
 
 <p>Moving the application to the foreground removes the blur.</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Data_13#3,O.Plat_12#3] Moving the application to the foreground removes the blur.
@@ -1449,7 +1470,7 @@ struct AnalyticsReducer&lt;ContentReducer: ReducerProtocol&gt;: ReducerProtocol
 if optIn {
 </code></pre>
 <h3 id='o-purp_5' class='heading'>O.Purp_5</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-236-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:236</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-224-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:224</code></h4>
 
 <p>Toggle within Settings to enable and disable usage tracking</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19097] Toggle within Settings to enable and disable usage tracking
@@ -1458,7 +1479,7 @@ if optIn {
 // [REQ:gemSpec_eRp_FdV:A_19982#4] Opt out of analytics
 Toggle(isOn: viewStore.binding(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-199-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:199</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-207-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:207</code></h4>
 
 <p>Actual disabling of analytics</p>
 <pre class="highlight plaintext"><code>// Tracking
@@ -1475,7 +1496,7 @@ case let .toggleTrackingTapped(optIn):
 // [REQ:gemSpec_eRp_FdV:A_19982#3] Opt out of analytics
 Rectangle()
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-210-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:210</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-218-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:218</code></h4>
 
 <p>User confirms the opt in within settings</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090,A_19091#4] User confirms the opt in within settings
@@ -1483,7 +1504,7 @@ Rectangle()
 case .confirmedOptInTracking:
 </code></pre>
 <h3 id='o-purp_6' class='heading'>O.Purp_6</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-237-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:237</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-225-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:225</code></h4>
 
 <p>Current Analytics state is inspectable by the user</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19097] Toggle within Settings to enable and disable usage tracking
@@ -1663,7 +1684,7 @@ guard try jwtContainer.verify(with: document.discKey) == true else {
 // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
 guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-775-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:775</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-753-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:753</code></h4>
 
 <p>Discovery Document signature verification</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Resi_6#5] Discovery Document signature verification
@@ -1741,19 +1762,19 @@ static func analyse(scanOutput: [ScanOutput],
 // [REQ:BSI-eRp-ePA:O.Source_1#4] actual validation by decoding into predefined structure
 erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
 </code></pre>
-<h4 id='code-sources-erpapp-scenedelegate-swift-232-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:232</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-244-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:244</code></h4>
 
 <p>External application calls via Universal Linking</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_1#5] External application calls via Universal Linking
 func scene(_: UIScene, continue userActivity: NSUserActivity) {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-appstartdomain-swift-161-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:161</code></h4>
+<h4 id='code-sources-erpapp-screens-appstartdomain-swift-234-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:234</code></h4>
 
 <p>External application calls via Universal Linking</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
 case let .universalLink(url):
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-maindomain-swift-183-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainDomain.swift:183</code></h4>
+<h4 id='code-sources-erpapp-screens-main-maindomain-swift-185-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainDomain.swift:185</code></h4>
 
 <p>redirect into correct domain</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_1#7] redirect into correct domain
@@ -1875,7 +1896,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_8#3] Debug menu is only visible on debug builds
 #if ENABLE_DEBUG_VIEW
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-267-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:267</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-255-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:255</code></h4>
 
 <p>DebugSectionView is only available on debug builds</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_8#4] DebugSectionView is only available on debug builds
@@ -2141,7 +2162,7 @@ guard type != .directAssignment
 </code></pre>
 <h2 id='gemspec_idp_frontend' class='heading'>gemSpec_IDP_Frontend</h2>
 <h3 id='a_19908-01' class='heading'>A_19908-01</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-652-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:652</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-630-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:630</code></h4>
 
 <p>Signature check</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
@@ -2156,7 +2177,7 @@ guard let verified = try? challenge.challenge.verify(with: document.authenticati
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Error formatting
 public var description: String {
 </code></pre>
-<h4 id='code-sources-idp-internal-realidpclient-swift-517-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:517</code></h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-501-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:501</code></h4>
 
 <p>Decoding server errors</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
@@ -2225,7 +2246,7 @@ guard let decrypted = try? token.decrypted(with: self.cryptoBox.aesKey) else {
 expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
 </code></pre>
 <h3 id='a_20309' class='heading'>A_20309</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-630-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:630</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-608-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:608</code></h4>
 
 <p>generation and hashing for codeChallenge</p>
 <pre class="highlight plaintext"><code>// Generate a verifierCode
@@ -2240,7 +2261,7 @@ guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
 try randomGenerator(verifierLength).encodeBase64urlsafe().utf8string
 </code></pre>
 <h3 id='a_20483' class='heading'>A_20483</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-638-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:638</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-616-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:616</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20483]
 return self.client.requestChallenge(
 </code></pre>
@@ -2291,7 +2312,7 @@ set(can: nil)
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20512]
 self.storage.set(discovery: nil)
 </code></pre>
-<h4 id='code-sources-idp-models-discoverydocument-swift-180-code' class='heading'><code>../Sources/IDP/Models/DiscoveryDocument.swift:180</code></h4>
+<h4 id='code-sources-idp-models-discoverydocument-swift-181-code' class='heading'><code>../Sources/IDP/Models/DiscoveryDocument.swift:181</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20512]
 func isValid(on date: Date) -&gt; Bool {
 </code></pre>
@@ -2301,14 +2322,14 @@ func isValid(on date: Date) -&gt; Bool {
 
 <p>Not applicable as authenticator module is within FdV. Consent is given by using the app.</p>
 <h3 id='a_20526-01' class='heading'>A_20526-01</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-407-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:407</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-413-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:413</code></h4>
 
 <p>sign and verify with idp</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-441-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:441</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-447-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:447</code></h4>
 
 <p>verify with idp</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
@@ -2344,7 +2365,7 @@ guard let encryptedKeyVerifier = try? KeyVerifier(
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20600]
 return IDPExchangeToken(
 </code></pre>
-<h4 id='code-sources-idp-internal-realidpclient-swift-502-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:502</code></h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-486-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:486</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20600]
 return IDPExchangeToken(code: code,
 </code></pre>
@@ -2400,7 +2421,7 @@ let clientId: String = defaultClientId
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Error formatting
 public var description: String {
 </code></pre>
-<h4 id='code-sources-idp-internal-realidpclient-swift-517-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:517</code></h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-501-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:501</code></h4>
 
 <p>Decoding server errors</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
@@ -2453,7 +2474,7 @@ case let .internal(error: error): return error.localizedDescription
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623]
 .validate(with: self.trustStoreSession, timeProvider: self.time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-714-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:714</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-692-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:692</code></h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument against the given trustStoreSession. If
 /// the validity cannot be verified, the publisher fails with an `IDPError.trustStore` error.
 ///
@@ -2465,7 +2486,7 @@ case let .internal(error: error): return error.localizedDescription
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `IDPError`
 func validate(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-746-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:746</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-724-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:724</code></h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument and returns nil if validity cannot be
 /// checked. All Errors are caught and result in an empty discoveryDocument.
 ///
@@ -2495,7 +2516,7 @@ case oidIdpd // 1.2.276.0.76.4.260 == 0x06082A8214004C048204
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623]
 .validate(with: self.trustStoreSession, timeProvider: self.time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-715-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:715</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-693-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:693</code></h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument against the given trustStoreSession. If
 /// the validity cannot be verified, the publisher fails with an `IDPError.trustStore` error.
 ///
@@ -2507,13 +2528,13 @@ case oidIdpd // 1.2.276.0.76.4.260 == 0x06082A8214004C048204
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `IDPError`
 func validate(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-718-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:718</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-696-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:696</code></h4>
 
 <p>Validation call</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20623] Validation call
 return trustStoreSession.validate(discoveryDocument: document)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-746-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:746</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-724-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:724</code></h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument and returns nil if validity cannot be
 /// checked. All Errors are caught and result in an empty discoveryDocument.
 ///
@@ -2525,7 +2546,7 @@ return trustStoreSession.validate(discoveryDocument: document)
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `Never`.
 func validateOrNil(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-776-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:776</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-754-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:754</code></h4>
 
 <p>Validation</p>
 <pre class="highlight plaintext"><code>/// Returns a publisher that checks a discoveryDocument against the trust store. The Stream contains an output
@@ -2680,7 +2701,7 @@ guard let keyVerifierEncoded = try? KeyVerifier.jsonEncoder.encode(self) else {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20602,A_21325#1]
 request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-346-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:346</code></h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-349-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:349</code></h4>
 
 <p>Interceptor order defines what is encrypted via VAU</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21325#2] Interceptor order defines what is encrypted via VAU
@@ -3036,7 +3057,7 @@ return .publisher(
 state.selectedKK = entry
 </code></pre>
 <h3 id='a_22295' class='heading'>A_22295</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-447-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:447</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-450-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:450</code></h4>
 
 <p>Usage of kk_app_id</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22295] Usage of kk_app_id
@@ -3057,7 +3078,7 @@ guard try jwtContainer.verify(with: document.discKey) == true else {
 return .publisher(
 </code></pre>
 <h3 id='a_22299' class='heading'>A_22299</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-465-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:465</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-468-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:468</code></h4>
 
 <p>Remember State parameter for later verification</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
@@ -3071,17 +3092,11 @@ guard let components = URLComponents(url: redirectUrl, resolvingAgainstBaseURL: 
 guard environment.resourceHandler.canOpenURL(url) else {
 </code></pre>
 <h3 id='a_22301' class='heading'>A_22301</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-507-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:507</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-498-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:498</code></h4>
 
 <p>Send authorization request</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
 return extAuthVerify(verify)
-</code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-524-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:524</code></h4>
-
-<p>Match request with existing state</p>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22301] Match request with existing state
-guard let fastTrackChallengeSession = extAuthRequestStorage.getExtAuthRequest(for: state) else {
 </code></pre>
 <h3 id='a_22313' class='heading'>A_22313</h3>
 <h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthconfirmationdomain-swift-102-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift:102</code></h4>
@@ -3115,7 +3130,7 @@ var alg: JWT.Algorithm? {
 // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
 guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-651-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:651</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-629-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:629</code></h4>
 
 <p>Only implemented for brainpoolP256r1</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
@@ -3455,7 +3470,7 @@ let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey() }
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
 var alg: JWT.Algorithm? {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-653-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:653</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-631-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:631</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
@@ -3514,7 +3529,7 @@ guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? fa
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
 var alg: JWT.Algorithm? {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-653-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:653</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-631-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:631</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
@@ -3576,7 +3591,7 @@ guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? fa
 // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
 var alg: JWT.Algorithm? {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-653-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:653</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-631-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:631</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
@@ -3836,14 +3851,14 @@ final class ContentSquareAnalyticsAdapter: NSObject, Tracker {
 case .showTracking:
 </code></pre>
 <h3 id='a_19089' class='heading'>A_19089</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-257-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:257</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-245-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:245</code></h4>
 
 <p>User info for usage tracking</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19089] User info for usage tracking
 Label(title: { Text(L10n.stgTrkTxtExplanation) }, icon: {})
 </code></pre>
 <h3 id='a_19090' class='heading'>A_19090</h3>
-<h4 id='code-sources-erpapp-scenedelegate-swift-275-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:275</code></h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-293-code' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:293</code></h4>
 
 <p>activate after optIn is granted</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090] activate after optIn is granted
@@ -3856,7 +3871,7 @@ tracker.stopTracking()
 // [REQ:BSI-eRp-ePA:O.Purp_3#6] Accept usage analytics
 case .alert(.presented(.allowTracking)):
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-209-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:209</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-217-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:217</code></h4>
 
 <p>User confirms the opt in within settings</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090,A_19091#4] User confirms the opt in within settings
@@ -3893,13 +3908,13 @@ case .showTracking:
 // [REQ:BSI-eRp-ePA:O.Purp_3#6] Accept usage analytics
 case .alert(.presented(.allowTracking)):
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-200-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:200</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-208-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:208</code></h4>
 
 <p>Show comply route to display analytics usage within settings</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19091#3] Show comply route to display analytics usage within settings
 state.destination = .complyTracking
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-209-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:209</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-217-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:217</code></h4>
 
 <p>User confirms the opt in within settings</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090,A_19091#4] User confirms the opt in within settings
@@ -3950,7 +3965,7 @@ Contentsquare.optOut()
 Contentsquare.start()
 </code></pre>
 <h3 id='a_19097' class='heading'>A_19097</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-235-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:235</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-223-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:223</code></h4>
 
 <p>Toggle within Settings to enable and disable usage tracking</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19097] Toggle within Settings to enable and disable usage tracking
@@ -4094,12 +4109,12 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <h3 id='a_19229' class='heading'>A_19229</h3>
 
 <p>Audit events will be deleted when the referencing task is deleted. Cascading relationship &ldquo;task -&gt; audit event&rdquo; is defined in Sources/eRpLocalStorage/Prescriptions/ErxTask.xcdatamodeld/ErxTask.xcdatamodel/contents</p>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-188-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:188</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-189-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:189</code></h4>
 <pre class="highlight plaintext"><code>// Delete
 // [REQ:gemSpec_eRp_FdV:A_19229]
 case .delete:
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-195-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:195</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-196-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:196</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19229]
 case .destination(.presented(.alert(.confirmedDelete))):
 </code></pre>
@@ -4160,7 +4175,7 @@ struct DataPrivacyView: View {
 <h3 id='a_19982' class='heading'>A_19982</h3>
 
 <p>The agreement to the use of the analytics framework can be revoked. But other agreements cannot be revoked, since the app would not operate properly.</p>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-200-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:200</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-208-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:208</code></h4>
 
 <p>Opt out of analytics</p>
 <pre class="highlight plaintext"><code>// Tracking
@@ -4177,7 +4192,7 @@ case let .toggleTrackingTapped(optIn):
 // [REQ:gemSpec_eRp_FdV:A_19982#3] Opt out of analytics
 Rectangle()
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-238-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:238</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-226-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:226</code></h4>
 
 <p>Opt out of analytics</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19097] Toggle within Settings to enable and disable usage tracking
@@ -4272,16 +4287,16 @@ if Result.success(false) == authenticated {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-381-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:381</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-387-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:387</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 func idpChallengePublisher(for profileID: UUID) -&gt; AsyncStream&lt;CardWallReadCardDomain.Action&gt; {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-406-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:406</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-412-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:412</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-440-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:440</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-446-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:446</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
@@ -4355,7 +4370,7 @@ storage: secureUserStore,
 schedulers: schedulers,
 </code></pre>
 <h3 id='a_20185' class='heading'>A_20185</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-203-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:203</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-211-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:211</code></h4>
 
 <p>OptOut for user</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20185,A_20187] OptOut for user
@@ -4378,7 +4393,7 @@ set(can: nil)
 storage.wipe()
 </code></pre>
 <h3 id='a_20187' class='heading'>A_20187</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-203-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:203</code></h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-211-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:211</code></h4>
 
 <p>OptOut for user</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20185,A_20187] OptOut for user
@@ -4464,13 +4479,13 @@ public struct IDPToken: Codable {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_21326#3,A_21327#3] Triggered at every app start, profile change, pull to refresh
 autoRefreshedToken.map { token in
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-792-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:792</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-770-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:770</code></h4>
 
 <p>Triggered at every app start, profile change, pull to refresh</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_21326#4,A_21327#4] Triggered at every app start, profile change, pull to refresh
 func refreshIfExpired(session: DefaultIDPSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-804-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:804</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-782-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:782</code></h4>
 
 <p>Either return a refreshed IDPToken</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_21326#5,A_21327#5] Either return a refreshed IDPToken
@@ -4494,13 +4509,13 @@ public struct IDPToken: Codable {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_21326#3,A_21327#3] Triggered at every app start, profile change, pull to refresh
 autoRefreshedToken.map { token in
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-792-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:792</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-770-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:770</code></h4>
 
 <p>Triggered at every app start, profile change, pull to refresh</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_21326#4,A_21327#4] Triggered at every app start, profile change, pull to refresh
 func refreshIfExpired(session: DefaultIDPSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-804-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:804</code></h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-782-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:782</code></h4>
 
 <p>Either return a refreshed IDPToken</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_21326#5,A_21327#5] Either return a refreshed IDPToken
@@ -4587,7 +4602,7 @@ func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -&gt; 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-15)</p>
+      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-01-17)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

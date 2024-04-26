@@ -61,6 +61,8 @@ i-01503,"MainDomain.Error.importDuplicate","Import of shared Task failed due to 
 i-01504,"MainDomain.Error.repositoryError","Saving or retrieving data failed",ErxRepositoryError
 i-01601,"PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02301,"MatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
+i-03601,"MedicationReminderListDomain.Error.generic","",
+i-03601,"MedicationReminderSetupDomain.Error.generic","",
 i-03701,"DefaultOrdersRepository.Error.erxRepository","",ErxRepositoryError
 i-03702,"DefaultOrdersRepository.Error.pharmacyRepository","",PharmacyRepositoryError
 i-03703,"DefaultOrdersRepository.Error.unspecified","",
@@ -88,6 +90,7 @@ i-03602,"ChargeItemConsentService.Error.loginHandler","",LoginHandlerError
 i-03603,"ChargeItemConsentService.Error.erxRepository","",ErxRepositoryError
 i-03604,"ChargeItemConsentService.Error.unexpectedGrantConsentResponse","",
 i-03605,"ChargeItemConsentService.Error.unexpected","",
+i-03606,"ChargeItemConsentService.Error.unexpectedRevokeConsentResponse","",
 i-03101,"ChargeItemDomainServiceAuthenticateResult.Error.loginHandler","",LoginHandlerError
 i-03102,"ChargeItemDomainServiceAuthenticateResult.Error.unexpected","",
 i-03401,"ChargeItemDomainServiceDeleteResult.Error.localStore","",LocalStoreError
@@ -109,6 +112,7 @@ i-03301,"ChargeItemListDomainServiceRevokeResult.Error.localStore","",LocalStore
 i-03302,"ChargeItemListDomainServiceRevokeResult.Error.loginHandler","",LoginHandlerError
 i-03303,"ChargeItemListDomainServiceRevokeResult.Error.erxRepository","",ErxRepositoryError
 i-03304,"ChargeItemListDomainServiceRevokeResult.Error.unexpected","",
+i-03305,"ChargeItemListDomainServiceRevokeResult.Error.chargeItemConsentService","",ChargeItemConsentService.Error
 i-03501,"ChargeItemPDFServiceError.couldNotCreateDestinationURL","",
 i-03502,"ChargeItemPDFServiceError.couldNotCreatePDFStringForParsing","",
 i-03503,"ChargeItemPDFServiceError.parsingError","",

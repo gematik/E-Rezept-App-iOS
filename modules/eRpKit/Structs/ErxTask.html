@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.18.0
+           1.19.0
  Docs
         </a>
          (100% documented)
@@ -353,6 +353,15 @@
                 <a class="nav-group-task-link" href="../Structs/ErxTaskOrder/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/MedicationSchedule.html">MedicationSchedule</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/MedicationSchedule/Entry.html">– Entry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/MedicationScheduleRepository.html">MedicationScheduleRepository</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/MultiplePrescription.html">MultiplePrescription</a>
               </li>
               <li class="nav-group-task">
@@ -455,9 +464,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit7ErxTaskV10identifier6status8flowType10accessCode7fullUrl10authoredOn12lastModified07expiresN013acceptedUntil08redeemedN015avsTransactions6author14prescriptionId6source10medication17medicationRequest7patient12practitioner12organization14communications19medicationDispensesACSS_AC6StatusOAC04FlowH0OSgSSSgA2_A2_A2_A2_A2_A2_SayAA14AVSTransactionVGA2_A2_AC6SourceOAA0C10MedicationVSgAA0C17MedicationRequestVAA0C7PatientVSgAA0C12PractitionerVSgAA0C12OrganizationVSgSayAC13CommunicationVGSayAA0C18MedicationDispenseVGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(identifier:status:flowType:accessCode:fullUrl:authoredOn:lastModified:expiresOn:acceptedUntil:redeemedOn:avsTransactions:author:prescriptionId:source:medication:medicationRequest:patient:practitioner:organization:communications:medicationDispenses:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit7ErxTaskV10identifier6status8flowType10accessCode7fullUrl10authoredOn12lastModified07expiresN013acceptedUntil08redeemedN015avsTransactions6author14prescriptionId6source10medication17medicationRequest7patient12practitioner12organization14communications19medicationDispensesACSS_AC6StatusOAC04FlowH0OSgSSSgA2_A2_A2_A2_A2_A2_SayAA14AVSTransactionVGA2_A2_AC6SourceOAA0C10MedicationVSgAA0C17MedicationRequestVAA0C7PatientVSgAA0C12PractitionerVSgAA0C12OrganizationVSgSayAC13CommunicationVGSayAA0C18MedicationDispenseVGtcfc">init(identifier:<wbr>status:<wbr>flowType:<wbr>accessCode:<wbr>fullUrl:<wbr>authoredOn:<wbr>lastModified:<wbr>expiresOn:<wbr>acceptedUntil:<wbr>redeemedOn:<wbr>avsTransactions:<wbr>author:<wbr>prescriptionId:<wbr>source:<wbr>medication:<wbr>medicationRequest:<wbr>patient:<wbr>practitioner:<wbr>organization:<wbr>communications:<wbr>medicationDispenses:<wbr>)</a>
+                    <a name="/s:6eRpKit7ErxTaskV10identifier6status8flowType10accessCode7fullUrl10authoredOn12lastModified07expiresN013acceptedUntil08redeemedN015avsTransactions6author14prescriptionId6source10medication17medicationRequest18medicationSchedule7patient12practitioner12organization14communications19medicationDispensesACSS_AC6StatusOAC04FlowH0OSgSSSgA3_A3_A3_A3_A3_A3_SayAA14AVSTransactionVGA3_A3_AC6SourceOAA0C10MedicationVSgAA0C17MedicationRequestVAA18MedicationScheduleVSgAA0C7PatientVSgAA0C12PractitionerVSgAA0C12OrganizationVSgSayAC13CommunicationVGSayAA0C18MedicationDispenseVGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(identifier:status:flowType:accessCode:fullUrl:authoredOn:lastModified:expiresOn:acceptedUntil:redeemedOn:avsTransactions:author:prescriptionId:source:medication:medicationRequest:medicationSchedule:patient:practitioner:organization:communications:medicationDispenses:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV10identifier6status8flowType10accessCode7fullUrl10authoredOn12lastModified07expiresN013acceptedUntil08redeemedN015avsTransactions6author14prescriptionId6source10medication17medicationRequest18medicationSchedule7patient12practitioner12organization14communications19medicationDispensesACSS_AC6StatusOAC04FlowH0OSgSSSgA3_A3_A3_A3_A3_A3_SayAA14AVSTransactionVGA3_A3_AC6SourceOAA0C10MedicationVSgAA0C17MedicationRequestVAA18MedicationScheduleVSgAA0C7PatientVSgAA0C12PractitionerVSgAA0C12OrganizationVSgSayAC13CommunicationVGSayAA0C18MedicationDispenseVGtcfc">init(identifier:<wbr>status:<wbr>flowType:<wbr>accessCode:<wbr>fullUrl:<wbr>authoredOn:<wbr>lastModified:<wbr>expiresOn:<wbr>acceptedUntil:<wbr>redeemedOn:<wbr>avsTransactions:<wbr>author:<wbr>prescriptionId:<wbr>source:<wbr>medication:<wbr>medicationRequest:<wbr>medicationSchedule:<wbr>patient:<wbr>practitioner:<wbr>organization:<wbr>communications:<wbr>medicationDispenses:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -489,6 +498,7 @@
     <span class="nv">source</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask/Source.html">Source</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">server</span><span class="p">,</span>
     <span class="nv">medication</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxMedication.html">ErxMedication</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">medicationRequest</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxMedicationRequest.html">ErxMedicationRequest</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/ErxMedicationRequest.html">ErxMedicationRequest</a></span><span class="p">(</span><span class="nv">quantity</span><span class="p">:</span> <span class="kc">nil</span><span class="p">),</span>
+    <span class="nv">medicationSchedule</span><span class="p">:</span> <span class="kt"><a href="../Structs/MedicationSchedule.html">MedicationSchedule</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">patient</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxPatient.html">ErxPatient</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">practitioner</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxPractitioner.html">ErxPractitioner</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">organization</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxOrganization.html">ErxOrganization</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1005,6 +1015,33 @@ e.g. &ldquo;<a href="https://prescriptionserver.telematik/Task/588780">https://p
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6eRpKit7ErxTaskV18medicationScheduleAA010MedicationF0VSgvp"></a>
+                    <a name="//apple_ref/swift/Property/medicationSchedule" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV18medicationScheduleAA010MedicationF0VSgvp">medicationSchedule</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Associated MedicationSchedule if setup, nil otherwise</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">medicationSchedule</span><span class="p">:</span> <span class="kt"><a href="../Structs/MedicationSchedule.html">MedicationSchedule</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6eRpKit7ErxTaskV7patientAA0C7PatientVSgvp"></a>
                     <a name="//apple_ref/swift/Property/patient" class="dashAnchor"></a>
                     <a class="token" href="#/s:6eRpKit7ErxTaskV7patientAA0C7PatientVSgvp">patient</a>
@@ -1398,7 +1435,7 @@ Use this method only for scanned <code>ErxTask</code>s that have been manually r
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-15)</p>
+      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-01-17)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
