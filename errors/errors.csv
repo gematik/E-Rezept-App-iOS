@@ -87,6 +87,8 @@ i-02602,"NFCHealthCardPasswordControllerError.openSecureSession","",
 i-02603,"NFCHealthCardPasswordControllerError.resetRetryCounter","",
 i-02604,"NFCHealthCardPasswordControllerError.wrongCan","",
 i-02605,"NFCHealthCardPasswordControllerError.changeReferenceData","",
+i-02606,"NFCHealthCardPasswordControllerError.couldNotInitializeSession","",
+i-02607,"NFCHealthCardPasswordControllerError.nfcHealthCardSession","Any error regarding the communication with the NFC health card itself\nor sending/receiving data (operation execution)",
 i-03601,"ChargeItemConsentService.Error.localStore","",LocalStoreError
 i-03602,"ChargeItemConsentService.Error.loginHandler","",LoginHandlerError
 i-03603,"ChargeItemConsentService.Error.erxRepository","",ErxRepositoryError

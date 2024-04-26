@@ -1335,13 +1335,13 @@
 <!-- NFCTagReaderSession_Error -->
 <g id="node19" class="node">
 <title>NFCTagReaderSession_Error</title>
-<text text-anchor="middle" x="1629" y="-2052.95" font-family="Times,serif" font-size="14.00">NFCTagReaderSession_Error</text>
+<text text-anchor="middle" x="1629" y="-2069.95" font-family="Times,serif" font-size="14.00">NFCTagReaderSession_Error</text>
 </g>
 <!-- NFCSignatureProviderError&#45;&gt;NFCTagReaderSession_Error -->
 <g id="i&#45;00401" class="edge">
 <title>NFCSignatureProviderError:CardError&#45;&gt;NFCTagReaderSession_Error:NFCTagReaderSession_Error</title>
-<path fill="none" stroke="black" d="M1381,-1861C1412.87,-1861 1417.29,-1881.2 1436,-1907 1464.1,-1945.75 1441.2,-1974.13 1476,-2007 1490.94,-2021.11 1509.9,-2031.33 1529.33,-2038.72"/>
-<polygon fill="black" stroke="black" points="1528.12,-2042 1538.72,-2042.04 1530.45,-2035.4 1528.12,-2042"/>
+<path fill="none" stroke="black" d="M1381,-1861C1412.87,-1861 1417.29,-1881.2 1436,-1907 1464.1,-1945.75 1442.84,-1972.48 1476,-2007 1495.89,-2027.71 1523.23,-2042.58 1549.23,-2053.03"/>
+<polygon fill="black" stroke="black" points="1547.88,-2056.26 1558.47,-2056.56 1550.38,-2049.72 1547.88,-2056.26"/>
 </g>
 <!-- NFCSignatureProviderError_VerifyPINError -->
 <g id="NFCSignatureProviderError_VerifyPINError" class="node">
@@ -1920,42 +1920,56 @@
 <g id="NFCHealthCardPasswordControllerError" class="node">
 <title>NFCHealthCardPasswordControllerError</title>
 <g id="a_NFCHealthCardPasswordControllerError"><a xlink:href="errors.html#nfchealthcardpasswordcontrollererror" xlink:title="&lt;TABLE&gt;">
-<polygon fill="lightgray" stroke="none" points="1130,-2089.5 1130,-2113.5 1400,-2113.5 1400,-2089.5 1130,-2089.5"/>
-<polygon fill="none" stroke="black" points="1130,-2089.5 1130,-2113.5 1400,-2113.5 1400,-2089.5 1130,-2089.5"/>
-<text text-anchor="start" x="1133" y="-2095.3" font-family="Times,serif" font-size="16.00">NFCHealthCardPasswordControllerError</text>
-<polyline fill="none" stroke="black" points="1180,-2089.5 1130,-2089.5 1130,-2072.5 1180,-2072.5"/>
-<text text-anchor="start" x="1153" y="-2078.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02601</text>
+<polygon fill="lightgray" stroke="none" points="1130,-2123.5 1130,-2147.5 1400,-2147.5 1400,-2123.5 1130,-2123.5"/>
+<polygon fill="none" stroke="black" points="1130,-2123.5 1130,-2147.5 1400,-2147.5 1400,-2123.5 1130,-2123.5"/>
+<text text-anchor="start" x="1133" y="-2129.3" font-family="Times,serif" font-size="16.00">NFCHealthCardPasswordControllerError</text>
+<polyline fill="none" stroke="black" points="1180,-2123.5 1130,-2123.5 1130,-2106.5 1180,-2106.5"/>
+<text text-anchor="start" x="1153" y="-2112.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02601</text>
 <g id="a_NFCHealthCardPasswordControllerError_188"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<polyline fill="none" stroke="black" points="1180,-2106.5 1400,-2106.5 1400,-2123.5 1180,-2123.5"/>
+<text text-anchor="start" x="1183" y="-2111" font-family="Times,serif" font-size="10.00">cardError</text>
+</a>
+</g>
+<polyline fill="none" stroke="black" points="1180,-2106.5 1130,-2106.5 1130,-2089.5 1180,-2089.5"/>
+<text text-anchor="start" x="1153" y="-2095.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02602</text>
+<g id="a_NFCHealthCardPasswordControllerError_189"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<polyline fill="none" stroke="black" points="1180,-2089.5 1400,-2089.5 1400,-2106.5 1180,-2106.5"/>
+<text text-anchor="start" x="1183" y="-2094" font-family="Times,serif" font-size="10.00">openSecureSession</text>
+</a>
+</g>
+<polyline fill="none" stroke="black" points="1180,-2089.5 1130,-2089.5 1130,-2072.5 1180,-2072.5"/>
+<text text-anchor="start" x="1153" y="-2078.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02603</text>
+<g id="a_NFCHealthCardPasswordControllerError_190"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1180,-2072.5 1400,-2072.5 1400,-2089.5 1180,-2089.5"/>
-<text text-anchor="start" x="1183" y="-2077" font-family="Times,serif" font-size="10.00">cardError</text>
+<text text-anchor="start" x="1183" y="-2077" font-family="Times,serif" font-size="10.00">resetRetryCounter</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1180,-2072.5 1130,-2072.5 1130,-2055.5 1180,-2055.5"/>
-<text text-anchor="start" x="1153" y="-2061.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02602</text>
-<g id="a_NFCHealthCardPasswordControllerError_189"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<text text-anchor="start" x="1153" y="-2061.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02604</text>
+<g id="a_NFCHealthCardPasswordControllerError_191"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1180,-2055.5 1400,-2055.5 1400,-2072.5 1180,-2072.5"/>
-<text text-anchor="start" x="1183" y="-2060" font-family="Times,serif" font-size="10.00">openSecureSession</text>
+<text text-anchor="start" x="1183" y="-2060" font-family="Times,serif" font-size="10.00">wrongCan</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1180,-2055.5 1130,-2055.5 1130,-2038.5 1180,-2038.5"/>
-<text text-anchor="start" x="1153" y="-2044.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02603</text>
-<g id="a_NFCHealthCardPasswordControllerError_190"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<text text-anchor="start" x="1153" y="-2044.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02605</text>
+<g id="a_NFCHealthCardPasswordControllerError_192"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1180,-2038.5 1400,-2038.5 1400,-2055.5 1180,-2055.5"/>
-<text text-anchor="start" x="1183" y="-2043" font-family="Times,serif" font-size="10.00">resetRetryCounter</text>
+<text text-anchor="start" x="1183" y="-2043" font-family="Times,serif" font-size="10.00">changeReferenceData</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1180,-2038.5 1130,-2038.5 1130,-2021.5 1180,-2021.5"/>
-<text text-anchor="start" x="1153" y="-2027.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02604</text>
-<g id="a_NFCHealthCardPasswordControllerError_191"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<text text-anchor="start" x="1153" y="-2027.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02606</text>
+<g id="a_NFCHealthCardPasswordControllerError_193"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1180,-2021.5 1400,-2021.5 1400,-2038.5 1180,-2038.5"/>
-<text text-anchor="start" x="1183" y="-2026" font-family="Times,serif" font-size="10.00">wrongCan</text>
+<text text-anchor="start" x="1183" y="-2026" font-family="Times,serif" font-size="10.00">couldNotInitializeSession</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1180,-2021.5 1130,-2021.5 1130,-2004.5 1180,-2004.5"/>
-<text text-anchor="start" x="1153" y="-2010.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02605</text>
-<g id="a_NFCHealthCardPasswordControllerError_192"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<text text-anchor="start" x="1153" y="-2010.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02607</text>
+<g id="a_NFCHealthCardPasswordControllerError_194"><a xlink:href="#" xlink:title="Any error regarding the communication with the NFC health card itself, or sending/receiving data (operation execution)">
 <polyline fill="none" stroke="black" points="1180,-2004.5 1400,-2004.5 1400,-2021.5 1180,-2021.5"/>
-<text text-anchor="start" x="1183" y="-2009" font-family="Times,serif" font-size="10.00">changeReferenceData</text>
+<text text-anchor="start" x="1183" y="-2009" font-family="Times,serif" font-size="10.00">nfcHealthCardSession</text>
 </a>
 </g>
 </a>
@@ -1964,8 +1978,8 @@
 <!-- NFCHealthCardPasswordControllerError&#45;&gt;NFCTagReaderSession_Error -->
 <g id="i&#45;02601" class="edge">
 <title>NFCHealthCardPasswordControllerError:CardError&#45;&gt;NFCTagReaderSession_Error:NFCTagReaderSession_Error</title>
-<path fill="none" stroke="black" d="M1401,-2081C1443,-2081 1489.15,-2077.05 1528.81,-2072.43"/>
-<polygon fill="black" stroke="black" points="1529.07,-2075.93 1538.58,-2071.26 1528.23,-2068.98 1529.07,-2075.93"/>
+<path fill="none" stroke="black" d="M1401,-2115C1451.43,-2115 1507.23,-2105.31 1550.88,-2095.46"/>
+<polygon fill="black" stroke="black" points="1551.56,-2098.9 1560.51,-2093.23 1549.98,-2092.08 1551.56,-2098.9"/>
 </g>
 <!-- ChargeItemConsentService_Error -->
 <g id="ChargeItemConsentService_Error" class="node">
@@ -1976,42 +1990,42 @@
 <text text-anchor="start" x="431.25" y="-545.8" font-family="Times,serif" font-size="16.00">ChargeItemConsentService.Error</text>
 <polyline fill="none" stroke="black" points="452,-540 422,-540 422,-523 452,-523"/>
 <text text-anchor="start" x="425" y="-528.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03601</text>
-<g id="a_ChargeItemConsentService_Error_193"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemConsentService_Error_195"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-523 652,-523 652,-540 452,-540"/>
 <text text-anchor="start" x="455" y="-527.5" font-family="Times,serif" font-size="10.00">localStore</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-523 422,-523 422,-506 452,-506"/>
 <text text-anchor="start" x="425" y="-511.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03602</text>
-<g id="a_ChargeItemConsentService_Error_194"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemConsentService_Error_196"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-506 652,-506 652,-523 452,-523"/>
 <text text-anchor="start" x="455" y="-510.5" font-family="Times,serif" font-size="10.00">loginHandler</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-506 422,-506 422,-489 452,-489"/>
 <text text-anchor="start" x="425" y="-494.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03603</text>
-<g id="a_ChargeItemConsentService_Error_195"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemConsentService_Error_197"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-489 652,-489 652,-506 452,-506"/>
 <text text-anchor="start" x="455" y="-493.5" font-family="Times,serif" font-size="10.00">erxRepository</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-489 422,-489 422,-472 452,-472"/>
 <text text-anchor="start" x="425" y="-477.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03604</text>
-<g id="a_ChargeItemConsentService_Error_196"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemConsentService_Error_198"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-472 652,-472 652,-489 452,-489"/>
 <text text-anchor="start" x="455" y="-476.5" font-family="Times,serif" font-size="10.00">unexpectedGrantConsentResponse</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-472 422,-472 422,-455 452,-455"/>
 <text text-anchor="start" x="425" y="-460.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03605</text>
-<g id="a_ChargeItemConsentService_Error_197"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemConsentService_Error_199"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-455 652,-455 652,-472 452,-472"/>
 <text text-anchor="start" x="455" y="-459.5" font-family="Times,serif" font-size="10.00">unexpected</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-455 422,-455 422,-438 452,-438"/>
 <text text-anchor="start" x="425" y="-443.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03606</text>
-<g id="a_ChargeItemConsentService_Error_198"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemConsentService_Error_200"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-438 652,-438 652,-455 452,-455"/>
 <text text-anchor="start" x="455" y="-442.5" font-family="Times,serif" font-size="10.00">unexpectedRevokeConsentResponse</text>
 </a>
@@ -2046,14 +2060,14 @@
 <text text-anchor="start" x="370.88" y="-967.8" font-family="Times,serif" font-size="16.00">ChargeItemDomainServiceAuthenticateResult.Error</text>
 <polyline fill="none" stroke="black" points="452,-962 368,-962 368,-945 452,-945"/>
 <text text-anchor="start" x="425" y="-950.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03101</text>
-<g id="a_ChargeItemDomainServiceAuthenticateResult_Error_199"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceAuthenticateResult_Error_201"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-945 706,-945 706,-962 452,-962"/>
 <text text-anchor="start" x="455" y="-949.5" font-family="Times,serif" font-size="10.00">loginHandler</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-945 368,-945 368,-928 452,-928"/>
 <text text-anchor="start" x="425" y="-933.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03102</text>
-<g id="a_ChargeItemDomainServiceAuthenticateResult_Error_200"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceAuthenticateResult_Error_202"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-928 706,-928 706,-945 452,-945"/>
 <text text-anchor="start" x="455" y="-932.5" font-family="Times,serif" font-size="10.00">unexpected</text>
 </a>
@@ -2076,28 +2090,28 @@
 <text text-anchor="start" x="391.12" y="-355.8" font-family="Times,serif" font-size="16.00">ChargeItemDomainServiceDeleteResult.Error</text>
 <polyline fill="none" stroke="black" points="451.5,-350 388.5,-350 388.5,-333 451.5,-333"/>
 <text text-anchor="start" x="424.5" y="-338.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03401</text>
-<g id="a_ChargeItemDomainServiceDeleteResult_Error_201"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceDeleteResult_Error_203"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="451.5,-333 685.5,-333 685.5,-350 451.5,-350"/>
 <text text-anchor="start" x="454.5" y="-337.5" font-family="Times,serif" font-size="10.00">localStore</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="451.5,-333 388.5,-333 388.5,-316 451.5,-316"/>
 <text text-anchor="start" x="424.5" y="-321.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03402</text>
-<g id="a_ChargeItemDomainServiceDeleteResult_Error_202"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceDeleteResult_Error_204"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="451.5,-316 685.5,-316 685.5,-333 451.5,-333"/>
 <text text-anchor="start" x="454.5" y="-320.5" font-family="Times,serif" font-size="10.00">loginHandler</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="451.5,-316 388.5,-316 388.5,-299 451.5,-299"/>
 <text text-anchor="start" x="424.5" y="-304.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03403</text>
-<g id="a_ChargeItemDomainServiceDeleteResult_Error_203"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceDeleteResult_Error_205"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="451.5,-299 685.5,-299 685.5,-316 451.5,-316"/>
 <text text-anchor="start" x="454.5" y="-303.5" font-family="Times,serif" font-size="10.00">erxRepository</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="451.5,-299 388.5,-299 388.5,-282 451.5,-282"/>
 <text text-anchor="start" x="424.5" y="-287.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03404</text>
-<g id="a_ChargeItemDomainServiceDeleteResult_Error_204"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceDeleteResult_Error_206"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="451.5,-282 685.5,-282 685.5,-299 451.5,-299"/>
 <text text-anchor="start" x="454.5" y="-286.5" font-family="Times,serif" font-size="10.00">unexpected</text>
 </a>
@@ -2132,35 +2146,35 @@
 <text text-anchor="start" x="29.75" y="-481.3" font-family="Times,serif" font-size="16.00">ChargeItemDomainServiceFetchResult.Error</text>
 <polyline fill="none" stroke="black" points="88,-475.5 27,-475.5 27,-458.5 88,-458.5"/>
 <text text-anchor="start" x="61" y="-464.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03001</text>
-<g id="a_ChargeItemDomainServiceFetchResult_Error_205"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceFetchResult_Error_207"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-458.5 319,-458.5 319,-475.5 88,-475.5"/>
 <text text-anchor="start" x="91" y="-463" font-family="Times,serif" font-size="10.00">localStore</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-458.5 27,-458.5 27,-441.5 88,-441.5"/>
 <text text-anchor="start" x="61" y="-447.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03002</text>
-<g id="a_ChargeItemDomainServiceFetchResult_Error_206"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceFetchResult_Error_208"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-441.5 319,-441.5 319,-458.5 88,-458.5"/>
 <text text-anchor="start" x="91" y="-446" font-family="Times,serif" font-size="10.00">loginHandler</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-441.5 27,-441.5 27,-424.5 88,-424.5"/>
 <text text-anchor="start" x="61" y="-430.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03003</text>
-<g id="a_ChargeItemDomainServiceFetchResult_Error_207"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceFetchResult_Error_209"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-424.5 319,-424.5 319,-441.5 88,-441.5"/>
 <text text-anchor="start" x="91" y="-429" font-family="Times,serif" font-size="10.00">erxRepository</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-424.5 27,-424.5 27,-407.5 88,-407.5"/>
 <text text-anchor="start" x="61" y="-413.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03005</text>
-<g id="a_ChargeItemDomainServiceFetchResult_Error_208"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceFetchResult_Error_210"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-407.5 319,-407.5 319,-424.5 88,-424.5"/>
 <text text-anchor="start" x="91" y="-412" font-family="Times,serif" font-size="10.00">chargeItemConsentService</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-407.5 27,-407.5 27,-390.5 88,-390.5"/>
 <text text-anchor="start" x="61" y="-396.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03004</text>
-<g id="a_ChargeItemDomainServiceFetchResult_Error_209"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemDomainServiceFetchResult_Error_211"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-390.5 319,-390.5 319,-407.5 88,-407.5"/>
 <text text-anchor="start" x="91" y="-395" font-family="Times,serif" font-size="10.00">unexpected</text>
 </a>
@@ -2201,42 +2215,42 @@
 <text text-anchor="start" x="17" y="-922.8" font-family="Times,serif" font-size="16.00">ChargeItemListDomainServiceGrantResult.Error</text>
 <polyline fill="none" stroke="black" points="88,-917 14,-917 14,-900 88,-900"/>
 <text text-anchor="start" x="61" y="-905.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03201</text>
-<g id="a_ChargeItemListDomainServiceGrantResult_Error_210"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceGrantResult_Error_212"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-900 332,-900 332,-917 88,-917"/>
 <text text-anchor="start" x="91" y="-904.5" font-family="Times,serif" font-size="10.00">localStore</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-900 14,-900 14,-883 88,-883"/>
 <text text-anchor="start" x="61" y="-888.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03202</text>
-<g id="a_ChargeItemListDomainServiceGrantResult_Error_211"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceGrantResult_Error_213"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-883 332,-883 332,-900 88,-900"/>
 <text text-anchor="start" x="91" y="-887.5" font-family="Times,serif" font-size="10.00">loginHandler</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-883 14,-883 14,-866 88,-866"/>
 <text text-anchor="start" x="61" y="-871.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03203</text>
-<g id="a_ChargeItemListDomainServiceGrantResult_Error_212"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceGrantResult_Error_214"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-866 332,-866 332,-883 88,-883"/>
 <text text-anchor="start" x="91" y="-870.5" font-family="Times,serif" font-size="10.00">erxRepository</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-866 14,-866 14,-849 88,-849"/>
 <text text-anchor="start" x="61" y="-854.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03206</text>
-<g id="a_ChargeItemListDomainServiceGrantResult_Error_213"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceGrantResult_Error_215"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-849 332,-849 332,-866 88,-866"/>
 <text text-anchor="start" x="91" y="-853.5" font-family="Times,serif" font-size="10.00">chargeItemConsentService</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-849 14,-849 14,-832 88,-832"/>
 <text text-anchor="start" x="61" y="-837.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03204</text>
-<g id="a_ChargeItemListDomainServiceGrantResult_Error_214"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceGrantResult_Error_216"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-832 332,-832 332,-849 88,-849"/>
 <text text-anchor="start" x="91" y="-836.5" font-family="Times,serif" font-size="10.00">unexpectedGrantConsentResponse</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-832 14,-832 14,-815 88,-815"/>
 <text text-anchor="start" x="61" y="-820.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03205</text>
-<g id="a_ChargeItemListDomainServiceGrantResult_Error_215"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceGrantResult_Error_217"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-815 332,-815 332,-832 88,-832"/>
 <text text-anchor="start" x="91" y="-819.5" font-family="Times,serif" font-size="10.00">unexpected</text>
 </a>
@@ -2277,35 +2291,35 @@
 <text text-anchor="start" x="10.62" y="-707.3" font-family="Times,serif" font-size="16.00">ChargeItemListDomainServiceRevokeResult.Error</text>
 <polyline fill="none" stroke="black" points="88,-701.5 8,-701.5 8,-684.5 88,-684.5"/>
 <text text-anchor="start" x="61" y="-690.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03301</text>
-<g id="a_ChargeItemListDomainServiceRevokeResult_Error_216"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceRevokeResult_Error_218"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-684.5 338,-684.5 338,-701.5 88,-701.5"/>
 <text text-anchor="start" x="91" y="-689" font-family="Times,serif" font-size="10.00">localStore</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-684.5 8,-684.5 8,-667.5 88,-667.5"/>
 <text text-anchor="start" x="61" y="-673.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03302</text>
-<g id="a_ChargeItemListDomainServiceRevokeResult_Error_217"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceRevokeResult_Error_219"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-667.5 338,-667.5 338,-684.5 88,-684.5"/>
 <text text-anchor="start" x="91" y="-672" font-family="Times,serif" font-size="10.00">loginHandler</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-667.5 8,-667.5 8,-650.5 88,-650.5"/>
 <text text-anchor="start" x="61" y="-656.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03303</text>
-<g id="a_ChargeItemListDomainServiceRevokeResult_Error_218"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceRevokeResult_Error_220"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-650.5 338,-650.5 338,-667.5 88,-667.5"/>
 <text text-anchor="start" x="91" y="-655" font-family="Times,serif" font-size="10.00">erxRepository</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-650.5 8,-650.5 8,-633.5 88,-633.5"/>
 <text text-anchor="start" x="61" y="-639.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03305</text>
-<g id="a_ChargeItemListDomainServiceRevokeResult_Error_219"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceRevokeResult_Error_221"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-633.5 338,-633.5 338,-650.5 88,-650.5"/>
 <text text-anchor="start" x="91" y="-638" font-family="Times,serif" font-size="10.00">chargeItemConsentService</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-633.5 8,-633.5 8,-616.5 88,-616.5"/>
 <text text-anchor="start" x="61" y="-622.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03304</text>
-<g id="a_ChargeItemListDomainServiceRevokeResult_Error_220"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemListDomainServiceRevokeResult_Error_222"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-616.5 338,-616.5 338,-633.5 88,-633.5"/>
 <text text-anchor="start" x="91" y="-621" font-family="Times,serif" font-size="10.00">unexpected</text>
 </a>
@@ -2346,56 +2360,56 @@
 <text text-anchor="start" x="80.75" y="-2011.8" font-family="Times,serif" font-size="16.00">ChargeItemPDFServiceError</text>
 <polyline fill="none" stroke="black" points="88,-2006 58,-2006 58,-1989 88,-1989"/>
 <text text-anchor="start" x="61" y="-1994.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03501</text>
-<g id="a_ChargeItemPDFServiceError_221"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemPDFServiceError_223"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-1989 288,-1989 288,-2006 88,-2006"/>
 <text text-anchor="start" x="91" y="-1993.5" font-family="Times,serif" font-size="10.00">couldNotCreateDestinationURL</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-1989 58,-1989 58,-1972 88,-1972"/>
 <text text-anchor="start" x="61" y="-1977.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03502</text>
-<g id="a_ChargeItemPDFServiceError_222"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemPDFServiceError_224"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-1972 288,-1972 288,-1989 88,-1989"/>
 <text text-anchor="start" x="91" y="-1976.5" font-family="Times,serif" font-size="10.00">couldNotCreatePDFStringForParsing</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-1972 58,-1972 58,-1955 88,-1955"/>
 <text text-anchor="start" x="61" y="-1960.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03503</text>
-<g id="a_ChargeItemPDFServiceError_223"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemPDFServiceError_225"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-1955 288,-1955 288,-1972 88,-1972"/>
 <text text-anchor="start" x="91" y="-1959.5" font-family="Times,serif" font-size="10.00">parsingError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-1955 58,-1955 58,-1938 88,-1938"/>
 <text text-anchor="start" x="61" y="-1943.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03504</text>
-<g id="a_ChargeItemPDFServiceError_224"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemPDFServiceError_226"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-1938 288,-1938 288,-1955 88,-1955"/>
 <text text-anchor="start" x="91" y="-1942.5" font-family="Times,serif" font-size="10.00">failedToCreateAttachment</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-1938 58,-1938 58,-1921 88,-1921"/>
 <text text-anchor="start" x="61" y="-1926.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03505</text>
-<g id="a_ChargeItemPDFServiceError_225"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemPDFServiceError_227"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-1921 288,-1921 288,-1938 88,-1938"/>
 <text text-anchor="start" x="91" y="-1925.5" font-family="Times,serif" font-size="10.00">dataMissingPatient</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-1921 58,-1921 58,-1904 88,-1904"/>
 <text text-anchor="start" x="61" y="-1909.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03506</text>
-<g id="a_ChargeItemPDFServiceError_226"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemPDFServiceError_228"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-1904 288,-1904 288,-1921 88,-1921"/>
 <text text-anchor="start" x="91" y="-1908.5" font-family="Times,serif" font-size="10.00">dataMissingDoctor</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-1904 58,-1904 58,-1887 88,-1887"/>
 <text text-anchor="start" x="61" y="-1892.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03507</text>
-<g id="a_ChargeItemPDFServiceError_227"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemPDFServiceError_229"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-1887 288,-1887 288,-1904 88,-1904"/>
 <text text-anchor="start" x="91" y="-1891.5" font-family="Times,serif" font-size="10.00">dataMissingPharmacy</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-1887 58,-1887 58,-1870 88,-1870"/>
 <text text-anchor="start" x="61" y="-1875.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;03508</text>
-<g id="a_ChargeItemPDFServiceError_228"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ChargeItemPDFServiceError_230"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-1870 288,-1870 288,-1887 88,-1887"/>
 <text text-anchor="start" x="91" y="-1874.5" font-family="Times,serif" font-size="10.00">dataMissingInvoice</text>
 </a>
@@ -2412,21 +2426,21 @@
 <text text-anchor="start" x="456.38" y="-807.3" font-family="Times,serif" font-size="16.00">AuditEventsServiceError</text>
 <polyline fill="none" stroke="black" points="452,-801.5 422,-801.5 422,-784.5 452,-784.5"/>
 <text text-anchor="start" x="425" y="-790.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02802</text>
-<g id="a_AuditEventsServiceError_229"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_AuditEventsServiceError_231"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-784.5 652,-784.5 652,-801.5 452,-801.5"/>
 <text text-anchor="start" x="455" y="-789" font-family="Times,serif" font-size="10.00">loginHandlerError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-784.5 422,-784.5 422,-767.5 452,-767.5"/>
 <text text-anchor="start" x="425" y="-773.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02803</text>
-<g id="a_AuditEventsServiceError_230"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_AuditEventsServiceError_232"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-767.5 652,-767.5 652,-784.5 452,-784.5"/>
 <text text-anchor="start" x="455" y="-772" font-family="Times,serif" font-size="10.00">erxRepositoryError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-767.5 422,-767.5 422,-750.5 452,-750.5"/>
 <text text-anchor="start" x="425" y="-756.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02801</text>
-<g id="a_AuditEventsServiceError_231"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_AuditEventsServiceError_233"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-750.5 652,-750.5 652,-767.5 452,-767.5"/>
 <text text-anchor="start" x="455" y="-755" font-family="Times,serif" font-size="10.00">missingAuthentication</text>
 </a>
@@ -2455,7 +2469,7 @@
 <text text-anchor="start" x="69.5" y="-2079.3" font-family="Times,serif" font-size="16.00">RegisteredDevicesDomain.Error</text>
 <polyline fill="none" stroke="black" points="88,-2073.5 58,-2073.5 58,-2056.5 88,-2056.5"/>
 <text text-anchor="start" x="61" y="-2062.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;01701</text>
-<g id="a_RegisteredDevicesDomain_Error_232"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_RegisteredDevicesDomain_Error_234"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2056.5 288,-2056.5 288,-2073.5 88,-2073.5"/>
 <text text-anchor="start" x="91" y="-2061" font-family="Times,serif" font-size="10.00">generic</text>
 </a>
@@ -2472,28 +2486,28 @@
 <text text-anchor="start" x="437.62" y="-1275.8" font-family="Times,serif" font-size="16.00">RegisteredDevicesServiceError</text>
 <polyline fill="none" stroke="black" points="452,-1270 422,-1270 422,-1253 452,-1253"/>
 <text text-anchor="start" x="425" y="-1258.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;01803</text>
-<g id="a_RegisteredDevicesServiceError_233"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_RegisteredDevicesServiceError_235"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-1253 652,-1253 652,-1270 452,-1270"/>
 <text text-anchor="start" x="455" y="-1257.5" font-family="Times,serif" font-size="10.00">loginHandlerError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-1253 422,-1253 422,-1236 452,-1236"/>
 <text text-anchor="start" x="425" y="-1241.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;01804</text>
-<g id="a_RegisteredDevicesServiceError_234"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_RegisteredDevicesServiceError_236"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-1236 652,-1236 652,-1253 452,-1253"/>
 <text text-anchor="start" x="455" y="-1240.5" font-family="Times,serif" font-size="10.00">idpError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-1236 422,-1236 422,-1219 452,-1219"/>
 <text text-anchor="start" x="425" y="-1224.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;01801</text>
-<g id="a_RegisteredDevicesServiceError_235"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_RegisteredDevicesServiceError_237"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-1219 652,-1219 652,-1236 452,-1236"/>
 <text text-anchor="start" x="455" y="-1223.5" font-family="Times,serif" font-size="10.00">missingAuthentication</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="452,-1219 422,-1219 422,-1202 452,-1202"/>
 <text text-anchor="start" x="425" y="-1207.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;01802</text>
-<g id="a_RegisteredDevicesServiceError_236"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_RegisteredDevicesServiceError_238"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="452,-1202 652,-1202 652,-1219 452,-1219"/>
 <text text-anchor="start" x="455" y="-1206.5" font-family="Times,serif" font-size="10.00">missingToken</text>
 </a>
@@ -2522,7 +2536,7 @@
 <text text-anchor="start" x="136.62" y="-2146.3" font-family="Times,serif" font-size="16.00">DemoError</text>
 <polyline fill="none" stroke="black" points="88,-2140.5 58,-2140.5 58,-2123.5 88,-2123.5"/>
 <text text-anchor="start" x="61" y="-2129.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;01901</text>
-<g id="a_DemoError_237"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_DemoError_239"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2123.5 288,-2123.5 288,-2140.5 88,-2140.5"/>
 <text text-anchor="start" x="91" y="-2128" font-family="Times,serif" font-size="10.00">demo</text>
 </a>
@@ -2539,21 +2553,21 @@
 <text text-anchor="start" x="87.5" y="-2247.3" font-family="Times,serif" font-size="16.00">AppSecurityManagerError</text>
 <polyline fill="none" stroke="black" points="88,-2241.5 58,-2241.5 58,-2224.5 88,-2224.5"/>
 <text text-anchor="start" x="61" y="-2230.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00601</text>
-<g id="a_AppSecurityManagerError_238"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_AppSecurityManagerError_240"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2224.5 288,-2224.5 288,-2241.5 88,-2241.5"/>
 <text text-anchor="start" x="91" y="-2229" font-family="Times,serif" font-size="10.00">savePasswordFailed</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2224.5 58,-2224.5 58,-2207.5 88,-2207.5"/>
 <text text-anchor="start" x="61" y="-2213.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00602</text>
-<g id="a_AppSecurityManagerError_239"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_AppSecurityManagerError_241"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2207.5 288,-2207.5 288,-2224.5 88,-2224.5"/>
 <text text-anchor="start" x="91" y="-2212" font-family="Times,serif" font-size="10.00">retrievePasswordFailed</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2207.5 58,-2207.5 58,-2190.5 88,-2190.5"/>
 <text text-anchor="start" x="61" y="-2196.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00603</text>
-<g id="a_AppSecurityManagerError_240"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_AppSecurityManagerError_242"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2190.5 288,-2190.5 288,-2207.5 88,-2207.5"/>
 <text text-anchor="start" x="91" y="-2195" font-family="Times,serif" font-size="10.00">localAuthenticationContext</text>
 </a>
@@ -2570,28 +2584,28 @@
 <text text-anchor="start" x="82.62" y="-2365.8" font-family="Times,serif" font-size="16.00">KeychainAccessHelperError</text>
 <polyline fill="none" stroke="black" points="88,-2360 58,-2360 58,-2343 88,-2343"/>
 <text text-anchor="start" x="61" y="-2348.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02001</text>
-<g id="a_KeychainAccessHelperError_241"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_KeychainAccessHelperError_243"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2343 288,-2343 288,-2360 88,-2360"/>
 <text text-anchor="start" x="91" y="-2347.5" font-family="Times,serif" font-size="10.00">illegalArgument</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2343 58,-2343 58,-2326 88,-2326"/>
 <text text-anchor="start" x="61" y="-2331.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02002</text>
-<g id="a_KeychainAccessHelperError_242"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_KeychainAccessHelperError_244"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2326 288,-2326 288,-2343 88,-2343"/>
 <text text-anchor="start" x="91" y="-2330.5" font-family="Times,serif" font-size="10.00">keyChainError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2326 58,-2326 58,-2309 88,-2309"/>
 <text text-anchor="start" x="61" y="-2314.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02002</text>
-<g id="a_KeychainAccessHelperError_243"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_KeychainAccessHelperError_245"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2309 288,-2309 288,-2326 88,-2326"/>
 <text text-anchor="start" x="91" y="-2313.5" font-family="Times,serif" font-size="10.00">keyChainError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2309 58,-2309 58,-2292 88,-2292"/>
 <text text-anchor="start" x="61" y="-2297.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02003</text>
-<g id="a_KeychainAccessHelperError_244"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_KeychainAccessHelperError_246"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2292 288,-2292 288,-2309 88,-2309"/>
 <text text-anchor="start" x="91" y="-2296.5" font-family="Times,serif" font-size="10.00">decodingError</text>
 </a>
@@ -2608,7 +2622,7 @@
 <text text-anchor="start" x="824.12" y="-111.3" font-family="Times,serif" font-size="16.00">UserProfileServiceError</text>
 <polyline fill="none" stroke="black" points="816,-105.5 786,-105.5 786,-88.5 816,-88.5"/>
 <text text-anchor="start" x="789" y="-94.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;02201</text>
-<g id="a_UserProfileServiceError_245"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_UserProfileServiceError_247"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="816,-88.5 1016,-88.5 1016,-105.5 816,-105.5"/>
 <text text-anchor="start" x="819" y="-93" font-family="Times,serif" font-size="10.00">localStoreError</text>
 </a>
@@ -2631,7 +2645,7 @@
 <text text-anchor="start" x="111.12" y="-2433.3" font-family="Times,serif" font-size="16.00">MockAnswer.Error</text>
 <polyline fill="none" stroke="black" points="78.5,-2427.5 67.5,-2427.5 67.5,-2410.5 78.5,-2410.5"/>
 <text text-anchor="start" x="70.38" y="-2416.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;</text>
-<g id="a_MockAnswer_Error_246"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_MockAnswer_Error_248"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="78.5,-2410.5 278.5,-2410.5 278.5,-2427.5 78.5,-2427.5"/>
 <text text-anchor="start" x="81.5" y="-2415" font-family="Times,serif" font-size="10.00">decodingError</text>
 </a>
@@ -2648,14 +2662,14 @@
 <text text-anchor="start" x="49.62" y="-2517.8" font-family="Times,serif" font-size="16.00">DefaultDataMatrixStringEncoderError</text>
 <polyline fill="none" stroke="black" points="88,-2512 47,-2512 47,-2495 88,-2495"/>
 <text text-anchor="start" x="61" y="-2500.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20201</text>
-<g id="a_DefaultDataMatrixStringEncoderError_247"><a xlink:href="#" xlink:title="Generic error while encoding the string.">
+<g id="a_DefaultDataMatrixStringEncoderError_249"><a xlink:href="#" xlink:title="Generic error while encoding the string.">
 <polyline fill="none" stroke="black" points="88,-2495 299,-2495 299,-2512 88,-2512"/>
 <text text-anchor="start" x="91" y="-2499.5" font-family="Times,serif" font-size="10.00">stringEncoding</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2495 47,-2495 47,-2478 88,-2478"/>
 <text text-anchor="start" x="61" y="-2483.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20202</text>
-<g id="a_DefaultDataMatrixStringEncoderError_248"><a xlink:href="#" xlink:title="Access code is missing">
+<g id="a_DefaultDataMatrixStringEncoderError_250"><a xlink:href="#" xlink:title="Access code is missing">
 <polyline fill="none" stroke="black" points="88,-2478 299,-2478 299,-2495 88,-2495"/>
 <text text-anchor="start" x="91" y="-2482.5" font-family="Times,serif" font-size="10.00">missingAccessCode</text>
 </a>
@@ -2672,14 +2686,14 @@
 <text text-anchor="start" x="116.38" y="-2601.8" font-family="Times,serif" font-size="16.00">ErxConsent.Error</text>
 <polyline fill="none" stroke="black" points="88,-2596 58,-2596 58,-2579 88,-2579"/>
 <text text-anchor="start" x="61" y="-2584.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20601</text>
-<g id="a_ErxConsent_Error_249"><a xlink:href="#" xlink:title="Unable to construct consent request">
+<g id="a_ErxConsent_Error_251"><a xlink:href="#" xlink:title="Unable to construct consent request">
 <polyline fill="none" stroke="black" points="88,-2579 288,-2579 288,-2596 88,-2596"/>
 <text text-anchor="start" x="91" y="-2583.5" font-family="Times,serif" font-size="10.00">unableToConstructConsentRequest</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2579 58,-2579 58,-2562 88,-2562"/>
 <text text-anchor="start" x="61" y="-2567.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20602</text>
-<g id="a_ErxConsent_Error_250"><a xlink:href="#" xlink:title="Invalid ErxConsent input">
+<g id="a_ErxConsent_Error_252"><a xlink:href="#" xlink:title="Invalid ErxConsent input">
 <polyline fill="none" stroke="black" points="88,-2562 288,-2562 288,-2579 88,-2579"/>
 <text text-anchor="start" x="91" y="-2566.5" font-family="Times,serif" font-size="10.00">invalidErxConsentInput</text>
 </a>
@@ -2696,42 +2710,42 @@
 <text text-anchor="start" x="106.25" y="-2753.8" font-family="Times,serif" font-size="16.00">ErxTask.Status.Error</text>
 <polyline fill="none" stroke="black" points="88,-2748 58,-2748 58,-2731 88,-2731"/>
 <text text-anchor="start" x="61" y="-2736.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20101</text>
-<g id="a_ErxTask_Status_Error_251"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ErxTask_Status_Error_253"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2731 288,-2731 288,-2748 88,-2748"/>
 <text text-anchor="start" x="91" y="-2735.5" font-family="Times,serif" font-size="10.00">decoding</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2731 58,-2731 58,-2714 88,-2714"/>
 <text text-anchor="start" x="61" y="-2719.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20102</text>
-<g id="a_ErxTask_Status_Error_252"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ErxTask_Status_Error_254"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2714 288,-2714 288,-2731 88,-2731"/>
 <text text-anchor="start" x="91" y="-2718.5" font-family="Times,serif" font-size="10.00">unknown</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2714 58,-2714 58,-2697 88,-2697"/>
 <text text-anchor="start" x="61" y="-2702.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20103</text>
-<g id="a_ErxTask_Status_Error_253"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ErxTask_Status_Error_255"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2697 288,-2697 288,-2714 88,-2714"/>
 <text text-anchor="start" x="91" y="-2701.5" font-family="Times,serif" font-size="10.00">missingStatus</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2697 58,-2697 58,-2680 88,-2680"/>
 <text text-anchor="start" x="61" y="-2685.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20104</text>
-<g id="a_ErxTask_Status_Error_254"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ErxTask_Status_Error_256"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2680 288,-2680 288,-2697 88,-2697"/>
 <text text-anchor="start" x="91" y="-2684.5" font-family="Times,serif" font-size="10.00">missingPatientReceiptReference</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2680 58,-2680 58,-2663 88,-2663"/>
 <text text-anchor="start" x="61" y="-2668.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20105</text>
-<g id="a_ErxTask_Status_Error_255"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ErxTask_Status_Error_257"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2663 288,-2663 288,-2680 88,-2680"/>
 <text text-anchor="start" x="91" y="-2667.5" font-family="Times,serif" font-size="10.00">missingPatientReceiptIdentifier</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2663 58,-2663 58,-2646 88,-2646"/>
 <text text-anchor="start" x="61" y="-2651.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20106</text>
-<g id="a_ErxTask_Status_Error_256"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ErxTask_Status_Error_258"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2646 288,-2646 288,-2663 88,-2663"/>
 <text text-anchor="start" x="91" y="-2650.5" font-family="Times,serif" font-size="10.00">missingPatientReceiptBundle</text>
 </a>
@@ -2748,14 +2762,14 @@
 <text text-anchor="start" x="109.25" y="-2837.8" font-family="Times,serif" font-size="16.00">ErxTaskOrder.Error</text>
 <polyline fill="none" stroke="black" points="88,-2832 58,-2832 58,-2815 88,-2815"/>
 <text text-anchor="start" x="61" y="-2820.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20601</text>
-<g id="a_ErxTaskOrder_Error_257"><a xlink:href="#" xlink:title="Unable to construct communication request">
+<g id="a_ErxTaskOrder_Error_259"><a xlink:href="#" xlink:title="Unable to construct communication request">
 <polyline fill="none" stroke="black" points="88,-2815 288,-2815 288,-2832 88,-2832"/>
 <text text-anchor="start" x="91" y="-2819.5" font-family="Times,serif" font-size="10.00">unableToConstructCommunicationRequest</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2815 58,-2815 58,-2798 88,-2798"/>
 <text text-anchor="start" x="61" y="-2803.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20602</text>
-<g id="a_ErxTaskOrder_Error_258"><a xlink:href="#" xlink:title="Invalid ErxTaskOrder though previous validation checks have been passed">
+<g id="a_ErxTaskOrder_Error_260"><a xlink:href="#" xlink:title="Invalid ErxTaskOrder though previous validation checks have been passed">
 <polyline fill="none" stroke="black" points="88,-2798 288,-2798 288,-2815 88,-2815"/>
 <text text-anchor="start" x="91" y="-2802.5" font-family="Times,serif" font-size="10.00">invalidErxTaskOrderInput</text>
 </a>
@@ -2772,35 +2786,35 @@
 <text text-anchor="start" x="1572.75" y="-208.3" font-family="Times,serif" font-size="16.00">FHIRClient.Error</text>
 <polyline fill="none" stroke="black" points="1544,-202.5 1514,-202.5 1514,-185.5 1544,-185.5"/>
 <text text-anchor="start" x="1517" y="-191.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;52001</text>
-<g id="a_FHIRClient_Error_259"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_FHIRClient_Error_261"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1544,-185.5 1744,-185.5 1744,-202.5 1544,-202.5"/>
 <text text-anchor="start" x="1547" y="-190" font-family="Times,serif" font-size="10.00">internalError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-185.5 1514,-185.5 1514,-168.5 1544,-168.5"/>
 <text text-anchor="start" x="1517" y="-174.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;52004</text>
-<g id="a_FHIRClient_Error_260"><a xlink:href="#" xlink:title="When the server returned a successful response with inconsistent response data., E.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.">
+<g id="a_FHIRClient_Error_262"><a xlink:href="#" xlink:title="When the server returned a successful response with inconsistent response data., E.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.">
 <polyline fill="none" stroke="black" points="1544,-168.5 1744,-168.5 1744,-185.5 1544,-185.5"/>
 <text text-anchor="start" x="1547" y="-173" font-family="Times,serif" font-size="10.00">inconsistentResponse</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-168.5 1514,-168.5 1514,-151.5 1544,-151.5"/>
 <text text-anchor="start" x="1517" y="-157.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;52005</text>
-<g id="a_FHIRClient_Error_261"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_FHIRClient_Error_263"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1544,-151.5 1744,-151.5 1744,-168.5 1544,-168.5"/>
 <text text-anchor="start" x="1547" y="-156" font-family="Times,serif" font-size="10.00">decoding</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-151.5 1514,-151.5 1514,-134.5 1544,-134.5"/>
 <text text-anchor="start" x="1517" y="-140.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;52006</text>
-<g id="a_FHIRClient_Error_262"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_FHIRClient_Error_264"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1544,-134.5 1744,-134.5 1744,-151.5 1544,-151.5"/>
 <text text-anchor="start" x="1547" y="-139" font-family="Times,serif" font-size="10.00">unknown</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-134.5 1514,-134.5 1514,-117.5 1544,-117.5"/>
 <text text-anchor="start" x="1517" y="-123.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;52007</text>
-<g id="a_FHIRClient_Error_263"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_FHIRClient_Error_265"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1544,-117.5 1744,-117.5 1744,-134.5 1544,-134.5"/>
 <text text-anchor="start" x="1547" y="-122" font-family="Times,serif" font-size="10.00">http</text>
 </a>
@@ -2823,21 +2837,21 @@
 <text text-anchor="start" x="117.12" y="-2939.3" font-family="Times,serif" font-size="16.00">SharedTask.Error</text>
 <polyline fill="none" stroke="black" points="88,-2933.5 58,-2933.5 58,-2916.5 88,-2916.5"/>
 <text text-anchor="start" x="61" y="-2922.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20701</text>
-<g id="a_SharedTask_Error_264"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_SharedTask_Error_266"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2916.5 288,-2916.5 288,-2933.5 88,-2933.5"/>
 <text text-anchor="start" x="91" y="-2921" font-family="Times,serif" font-size="10.00">missingSeparator</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2916.5 58,-2916.5 58,-2899.5 88,-2899.5"/>
 <text text-anchor="start" x="61" y="-2905.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20702</text>
-<g id="a_SharedTask_Error_265"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_SharedTask_Error_267"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2899.5 288,-2899.5 288,-2916.5 88,-2916.5"/>
 <text text-anchor="start" x="91" y="-2904" font-family="Times,serif" font-size="10.00">failedDecodingEmptyString</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-2899.5 58,-2899.5 58,-2882.5 88,-2882.5"/>
 <text text-anchor="start" x="61" y="-2888.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20703</text>
-<g id="a_SharedTask_Error_266"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_SharedTask_Error_268"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-2882.5 288,-2882.5 288,-2899.5 88,-2899.5"/>
 <text text-anchor="start" x="91" y="-2887" font-family="Times,serif" font-size="10.00">tooManyComponents</text>
 </a>
@@ -2854,14 +2868,14 @@
 <text text-anchor="start" x="54.88" y="-3023.8" font-family="Times,serif" font-size="16.00">AVSTransactionCoreDataStore.Error</text>
 <polyline fill="none" stroke="black" points="86,-3018 52,-3018 52,-3001 86,-3001"/>
 <text text-anchor="start" x="62.75" y="-3006.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5811</text>
-<g id="a_AVSTransactionCoreDataStore_Error_267"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_AVSTransactionCoreDataStore_Error_269"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="86,-3001 294,-3001 294,-3018 86,-3018"/>
 <text text-anchor="start" x="89" y="-3005.5" font-family="Times,serif" font-size="10.00">noMatchingEntity</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="86,-3001 52,-3001 52,-2984 86,-2984"/>
 <text text-anchor="start" x="62.75" y="-2989.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5812</text>
-<g id="a_AVSTransactionCoreDataStore_Error_268"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_AVSTransactionCoreDataStore_Error_270"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="86,-2984 294,-2984 294,-3001 86,-3001"/>
 <text text-anchor="start" x="89" y="-2988.5" font-family="Times,serif" font-size="10.00">internalError</text>
 </a>
@@ -2878,7 +2892,7 @@
 <text text-anchor="start" x="91.25" y="-3091.3" font-family="Times,serif" font-size="16.00">CoreDataController.Error</text>
 <polyline fill="none" stroke="black" points="88,-3085.5 58,-3085.5 58,-3068.5 88,-3068.5"/>
 <text text-anchor="start" x="61" y="-3074.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50001</text>
-<g id="a_CoreDataController_Error_269"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_CoreDataController_Error_271"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3068.5 288,-3068.5 288,-3085.5 88,-3085.5"/>
 <text text-anchor="start" x="91" y="-3073" font-family="Times,serif" font-size="10.00">initialization</text>
 </a>
@@ -2895,14 +2909,14 @@
 <text text-anchor="start" x="75.12" y="-3175.8" font-family="Times,serif" font-size="16.00">FileManager.ExcludeFileError</text>
 <polyline fill="none" stroke="black" points="88,-3170 58,-3170 58,-3153 88,-3153"/>
 <text text-anchor="start" x="61" y="-3158.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50301</text>
-<g id="a_FileManager_ExcludeFileError_270"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_FileManager_ExcludeFileError_272"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3153 288,-3153 288,-3170 88,-3170"/>
 <text text-anchor="start" x="91" y="-3157.5" font-family="Times,serif" font-size="10.00">fileDoesNotExist</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3153 58,-3153 58,-3136 88,-3136"/>
 <text text-anchor="start" x="61" y="-3141.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50302</text>
-<g id="a_FileManager_ExcludeFileError_271"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_FileManager_ExcludeFileError_273"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3136 288,-3136 288,-3153 88,-3153"/>
 <text text-anchor="start" x="91" y="-3140.5" font-family="Times,serif" font-size="10.00">error</text>
 </a>
@@ -2919,49 +2933,49 @@
 <text text-anchor="start" x="123.88" y="-3345.3" font-family="Times,serif" font-size="16.00">MigrationError</text>
 <polyline fill="none" stroke="black" points="88,-3339.5 58,-3339.5 58,-3322.5 88,-3322.5"/>
 <text text-anchor="start" x="61" y="-3328.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50101</text>
-<g id="a_MigrationError_272"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_MigrationError_274"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3322.5 288,-3322.5 288,-3339.5 88,-3339.5"/>
 <text text-anchor="start" x="91" y="-3327" font-family="Times,serif" font-size="10.00">isLatestVersion</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3322.5 58,-3322.5 58,-3305.5 88,-3305.5"/>
 <text text-anchor="start" x="61" y="-3311.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50102</text>
-<g id="a_MigrationError_273"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_MigrationError_275"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3305.5 288,-3305.5 288,-3322.5 88,-3322.5"/>
 <text text-anchor="start" x="91" y="-3310" font-family="Times,serif" font-size="10.00">missingProfile</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3305.5 58,-3305.5 58,-3288.5 88,-3288.5"/>
 <text text-anchor="start" x="61" y="-3294.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50103</text>
-<g id="a_MigrationError_274"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_MigrationError_276"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3288.5 288,-3288.5 288,-3305.5 88,-3305.5"/>
 <text text-anchor="start" x="91" y="-3293" font-family="Times,serif" font-size="10.00">write</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3288.5 58,-3288.5 58,-3271.5 88,-3271.5"/>
 <text text-anchor="start" x="61" y="-3277.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50104</text>
-<g id="a_MigrationError_275"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_MigrationError_277"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3271.5 288,-3271.5 288,-3288.5 88,-3288.5"/>
 <text text-anchor="start" x="91" y="-3276" font-family="Times,serif" font-size="10.00">read</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3271.5 58,-3271.5 58,-3254.5 88,-3254.5"/>
 <text text-anchor="start" x="61" y="-3260.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50105</text>
-<g id="a_MigrationError_276"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_MigrationError_278"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3254.5 288,-3254.5 288,-3271.5 88,-3271.5"/>
 <text text-anchor="start" x="91" y="-3259" font-family="Times,serif" font-size="10.00">delete</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3254.5 58,-3254.5 58,-3237.5 88,-3237.5"/>
 <text text-anchor="start" x="61" y="-3243.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50106</text>
-<g id="a_MigrationError_277"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_MigrationError_279"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3237.5 288,-3237.5 288,-3254.5 88,-3254.5"/>
 <text text-anchor="start" x="91" y="-3242" font-family="Times,serif" font-size="10.00">unspecified</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3237.5 58,-3237.5 58,-3220.5 88,-3220.5"/>
 <text text-anchor="start" x="61" y="-3226.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50107</text>
-<g id="a_MigrationError_278"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_MigrationError_280"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3220.5 288,-3220.5 288,-3237.5 88,-3237.5"/>
 <text text-anchor="start" x="91" y="-3225" font-family="Times,serif" font-size="10.00">initialization</text>
 </a>
@@ -2978,7 +2992,7 @@
 <text text-anchor="start" x="75.5" y="-3412.3" font-family="Times,serif" font-size="16.00">PharmacyCoreDataStore.Error</text>
 <polyline fill="none" stroke="black" points="88,-3406.5 58,-3406.5 58,-3389.5 88,-3389.5"/>
 <text text-anchor="start" x="61" y="-3395.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50501</text>
-<g id="a_PharmacyCoreDataStore_Error_279"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PharmacyCoreDataStore_Error_281"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3389.5 288,-3389.5 288,-3406.5 88,-3406.5"/>
 <text text-anchor="start" x="91" y="-3394" font-family="Times,serif" font-size="10.00">noMatchingEntity</text>
 </a>
@@ -2995,14 +3009,14 @@
 <text text-anchor="start" x="85.62" y="-3496.8" font-family="Times,serif" font-size="16.00">ProfileCoreDataStore.Error</text>
 <polyline fill="none" stroke="black" points="88,-3491 58,-3491 58,-3474 88,-3474"/>
 <text text-anchor="start" x="61" y="-3479.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50201</text>
-<g id="a_ProfileCoreDataStore_Error_280"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ProfileCoreDataStore_Error_282"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3474 288,-3474 288,-3491 88,-3491"/>
 <text text-anchor="start" x="91" y="-3478.5" font-family="Times,serif" font-size="10.00">noMatchingEntity</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3474 58,-3474 58,-3457 88,-3457"/>
 <text text-anchor="start" x="61" y="-3462.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50202</text>
-<g id="a_ProfileCoreDataStore_Error_281"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ProfileCoreDataStore_Error_283"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3457 288,-3457 288,-3474 88,-3474"/>
 <text text-anchor="start" x="91" y="-3461.5" font-family="Times,serif" font-size="10.00">initialization</text>
 </a>
@@ -3019,14 +3033,14 @@
 <text text-anchor="start" x="62.75" y="-3580.8" font-family="Times,serif" font-size="16.00">ShipmentInfoCoreDataStore.Error</text>
 <polyline fill="none" stroke="black" points="88,-3575 58,-3575 58,-3558 88,-3558"/>
 <text text-anchor="start" x="61" y="-3563.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50401</text>
-<g id="a_ShipmentInfoCoreDataStore_Error_282"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ShipmentInfoCoreDataStore_Error_284"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3558 288,-3558 288,-3575 88,-3575"/>
 <text text-anchor="start" x="91" y="-3562.5" font-family="Times,serif" font-size="10.00">noMatchingEntity</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3558 58,-3558 58,-3541 88,-3541"/>
 <text text-anchor="start" x="61" y="-3546.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;50402</text>
-<g id="a_ShipmentInfoCoreDataStore_Error_283"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ShipmentInfoCoreDataStore_Error_285"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3541 288,-3541 288,-3558 88,-3558"/>
 <text text-anchor="start" x="91" y="-3545.5" font-family="Times,serif" font-size="10.00">internalError</text>
 </a>
@@ -3043,7 +3057,7 @@
 <text text-anchor="start" x="59.75" y="-3648.3" font-family="Times,serif" font-size="16.00">RemoteStorageBundleParsingError</text>
 <polyline fill="none" stroke="black" points="88,-3642.5 57,-3642.5 57,-3625.5 88,-3625.5"/>
 <text text-anchor="start" x="61" y="-3631.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;58001</text>
-<g id="a_RemoteStorageBundleParsingError_284"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_RemoteStorageBundleParsingError_286"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3625.5 289,-3625.5 289,-3642.5 88,-3642.5"/>
 <text text-anchor="start" x="91" y="-3630" font-family="Times,serif" font-size="10.00">parseError</text>
 </a>
@@ -3060,14 +3074,14 @@
 <text text-anchor="start" x="70.25" y="-3732.8" font-family="Times,serif" font-size="16.00">BiometricsSHA256Signer.Error</text>
 <polyline fill="none" stroke="black" points="88,-3727 58,-3727 58,-3710 88,-3710"/>
 <text text-anchor="start" x="61" y="-3715.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10201</text>
-<g id="a_BiometricsSHA256Signer_Error_285"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_BiometricsSHA256Signer_Error_287"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3710 288,-3710 288,-3727 88,-3727"/>
 <text text-anchor="start" x="91" y="-3714.5" font-family="Times,serif" font-size="10.00">sessionClosed</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3710 58,-3710 58,-3693 88,-3693"/>
 <text text-anchor="start" x="61" y="-3698.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10202</text>
-<g id="a_BiometricsSHA256Signer_Error_286"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_BiometricsSHA256Signer_Error_288"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3693 288,-3693 288,-3710 88,-3710"/>
 <text text-anchor="start" x="91" y="-3697.5" font-family="Times,serif" font-size="10.00">signatureFailed</text>
 </a>
@@ -3084,14 +3098,14 @@
 <text text-anchor="start" x="138.88" y="-3816.8" font-family="Times,serif" font-size="16.00">JWE.Error</text>
 <polyline fill="none" stroke="black" points="88,-3811 58,-3811 58,-3794 88,-3794"/>
 <text text-anchor="start" x="61" y="-3799.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10301</text>
-<g id="a_JWE_Error_287"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_JWE_Error_289"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3794 288,-3794 288,-3811 88,-3811"/>
 <text text-anchor="start" x="91" y="-3798.5" font-family="Times,serif" font-size="10.00">invalidJWE</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3794 58,-3794 58,-3777 88,-3777"/>
 <text text-anchor="start" x="61" y="-3782.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10302</text>
-<g id="a_JWE_Error_288"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_JWE_Error_290"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3777 288,-3777 288,-3794 88,-3794"/>
 <text text-anchor="start" x="91" y="-3781.5" font-family="Times,serif" font-size="10.00">encodingError</text>
 </a>
@@ -3108,35 +3122,35 @@
 <text text-anchor="start" x="139.25" y="-3952.3" font-family="Times,serif" font-size="16.00">JWT.Error</text>
 <polyline fill="none" stroke="black" points="88,-3946.5 58,-3946.5 58,-3929.5 88,-3929.5"/>
 <text text-anchor="start" x="61" y="-3935.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10401</text>
-<g id="a_JWT_Error_289"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_JWT_Error_291"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3929.5 288,-3929.5 288,-3946.5 88,-3946.5"/>
 <text text-anchor="start" x="91" y="-3934" font-family="Times,serif" font-size="10.00">malformedJWT</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3929.5 58,-3929.5 58,-3912.5 88,-3912.5"/>
 <text text-anchor="start" x="61" y="-3918.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10402</text>
-<g id="a_JWT_Error_290"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_JWT_Error_292"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3912.5 288,-3912.5 288,-3929.5 88,-3929.5"/>
 <text text-anchor="start" x="91" y="-3917" font-family="Times,serif" font-size="10.00">noSignature</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3912.5 58,-3912.5 58,-3895.5 88,-3895.5"/>
 <text text-anchor="start" x="61" y="-3901.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10403</text>
-<g id="a_JWT_Error_291"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_JWT_Error_293"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3895.5 288,-3895.5 288,-3912.5 88,-3912.5"/>
 <text text-anchor="start" x="91" y="-3900" font-family="Times,serif" font-size="10.00">encodingError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3895.5 58,-3895.5 58,-3878.5 88,-3878.5"/>
 <text text-anchor="start" x="61" y="-3884.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10404</text>
-<g id="a_JWT_Error_292"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_JWT_Error_294"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3878.5 288,-3878.5 288,-3895.5 88,-3895.5"/>
 <text text-anchor="start" x="91" y="-3883" font-family="Times,serif" font-size="10.00">invalidSignature</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-3878.5 58,-3878.5 58,-3861.5 88,-3861.5"/>
 <text text-anchor="start" x="61" y="-3867.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10405</text>
-<g id="a_JWT_Error_293"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_JWT_Error_295"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3861.5 288,-3861.5 288,-3878.5 88,-3878.5"/>
 <text text-anchor="start" x="91" y="-3866" font-family="Times,serif" font-size="10.00">invalidExpirationDate</text>
 </a>
@@ -3153,7 +3167,7 @@
 <text text-anchor="start" x="117.12" y="-4019.3" font-family="Times,serif" font-size="16.00">KeyVerifier.Error</text>
 <polyline fill="none" stroke="black" points="88,-4013.5 58,-4013.5 58,-3996.5 88,-3996.5"/>
 <text text-anchor="start" x="61" y="-4002.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10501</text>
-<g id="a_KeyVerifier_Error_294"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_KeyVerifier_Error_296"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-3996.5 288,-3996.5 288,-4013.5 88,-4013.5"/>
 <text text-anchor="start" x="91" y="-4001" font-family="Times,serif" font-size="10.00">stringConversion</text>
 </a>
@@ -3170,21 +3184,21 @@
 <text text-anchor="start" x="108.5" y="-4120.3" font-family="Times,serif" font-size="16.00">TokenPayload.Error</text>
 <polyline fill="none" stroke="black" points="88,-4114.5 58,-4114.5 58,-4097.5 88,-4097.5"/>
 <text text-anchor="start" x="61" y="-4103.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10601</text>
-<g id="a_TokenPayload_Error_295"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TokenPayload_Error_297"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4097.5 288,-4097.5 288,-4114.5 88,-4114.5"/>
 <text text-anchor="start" x="91" y="-4102" font-family="Times,serif" font-size="10.00">dataEncoding</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4097.5 58,-4097.5 58,-4080.5 88,-4080.5"/>
 <text text-anchor="start" x="61" y="-4086.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10602</text>
-<g id="a_TokenPayload_Error_296"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TokenPayload_Error_298"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4080.5 288,-4080.5 288,-4097.5 88,-4097.5"/>
 <text text-anchor="start" x="91" y="-4085" font-family="Times,serif" font-size="10.00">stringConversion</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4080.5 58,-4080.5 58,-4063.5 88,-4063.5"/>
 <text text-anchor="start" x="61" y="-4069.28" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10603</text>
-<g id="a_TokenPayload_Error_297"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TokenPayload_Error_299"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4063.5 288,-4063.5 288,-4080.5 88,-4080.5"/>
 <text text-anchor="start" x="91" y="-4068" font-family="Times,serif" font-size="10.00">decryption</text>
 </a>
@@ -3207,49 +3221,49 @@
 <text text-anchor="start" x="1898.88" y="-438.3" font-family="Times,serif" font-size="16.00">TrustStoreError.InternalError</text>
 <polyline fill="none" stroke="black" points="1906,-432.5 1880,-432.5 1880,-415.5 1906,-415.5"/>
 <text text-anchor="start" x="1882.88" y="-421.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5611</text>
-<g id="a_TrustStoreError_InternalError_298"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TrustStoreError_InternalError_300"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1906,-415.5 2106,-415.5 2106,-432.5 1906,-432.5"/>
 <text text-anchor="start" x="1909" y="-420" font-family="Times,serif" font-size="10.00">loadOCSPCheckedTrustStoreUnexpectedNil</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1906,-415.5 1880,-415.5 1880,-398.5 1906,-398.5"/>
 <text text-anchor="start" x="1882.88" y="-404.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5612</text>
-<g id="a_TrustStoreError_InternalError_299"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TrustStoreError_InternalError_301"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1906,-398.5 2106,-398.5 2106,-415.5 1906,-415.5"/>
 <text text-anchor="start" x="1909" y="-403" font-family="Times,serif" font-size="10.00">loadCertListFromServerUnexpectedNil</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1906,-398.5 1880,-398.5 1880,-381.5 1906,-381.5"/>
 <text text-anchor="start" x="1882.88" y="-387.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5613</text>
-<g id="a_TrustStoreError_InternalError_300"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TrustStoreError_InternalError_302"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1906,-381.5 2106,-381.5 2106,-398.5 1906,-398.5"/>
 <text text-anchor="start" x="1909" y="-386" font-family="Times,serif" font-size="10.00">loadOCSPListFromServerUnexpectedNil</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1906,-381.5 1880,-381.5 1880,-364.5 1906,-364.5"/>
 <text text-anchor="start" x="1882.88" y="-370.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5614</text>
-<g id="a_TrustStoreError_InternalError_301"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TrustStoreError_InternalError_303"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1906,-364.5 2106,-364.5 2106,-381.5 1906,-381.5"/>
 <text text-anchor="start" x="1909" y="-369" font-family="Times,serif" font-size="10.00">trustStoreCertListUnexpectedNil</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1906,-364.5 1880,-364.5 1880,-347.5 1906,-347.5"/>
 <text text-anchor="start" x="1882.88" y="-353.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5615</text>
-<g id="a_TrustStoreError_InternalError_302"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TrustStoreError_InternalError_304"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1906,-347.5 2106,-347.5 2106,-364.5 1906,-364.5"/>
 <text text-anchor="start" x="1909" y="-352" font-family="Times,serif" font-size="10.00">loadOCSPResponsesUnexpectedNil</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1906,-347.5 1880,-347.5 1880,-330.5 1906,-330.5"/>
 <text text-anchor="start" x="1882.88" y="-336.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5616</text>
-<g id="a_TrustStoreError_InternalError_303"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TrustStoreError_InternalError_305"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1906,-330.5 2106,-330.5 2106,-347.5 1906,-347.5"/>
 <text text-anchor="start" x="1909" y="-335" font-family="Times,serif" font-size="10.00">missingSignerForEECertificate</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1906,-330.5 1880,-330.5 1880,-313.5 1906,-313.5"/>
 <text text-anchor="start" x="1882.88" y="-319.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;5617</text>
-<g id="a_TrustStoreError_InternalError_304"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TrustStoreError_InternalError_306"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="1906,-313.5 2106,-313.5 2106,-330.5 1906,-330.5"/>
 <text text-anchor="start" x="1909" y="-318" font-family="Times,serif" font-size="10.00">notImplemented</text>
 </a>
@@ -3272,7 +3286,7 @@
 <text text-anchor="start" x="97.62" y="-4187.3" font-family="Times,serif" font-size="16.00">IDPError.LoadingError</text>
 <polyline fill="none" stroke="black" points="78.5,-4181.5 67.5,-4181.5 67.5,-4164.5 78.5,-4164.5"/>
 <text text-anchor="start" x="70.38" y="-4170.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;</text>
-<g id="a_IDPError_LoadingError_305"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_IDPError_LoadingError_307"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="78.5,-4164.5 278.5,-4164.5 278.5,-4181.5 78.5,-4181.5"/>
 <text text-anchor="start" x="81.5" y="-4169" font-family="Times,serif" font-size="10.00">message</text>
 </a>
@@ -3289,7 +3303,7 @@
 <text text-anchor="start" x="119" y="-4254.3" font-family="Times,serif" font-size="16.00">ConversionError</text>
 <polyline fill="none" stroke="black" points="88,-4248.5 58,-4248.5 58,-4231.5 88,-4231.5"/>
 <text text-anchor="start" x="61" y="-4237.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10701</text>
-<g id="a_ConversionError_306"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ConversionError_308"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4231.5 288,-4231.5 288,-4248.5 88,-4248.5"/>
 <text text-anchor="start" x="91" y="-4236" font-family="Times,serif" font-size="10.00">generic</text>
 </a>
@@ -3306,56 +3320,56 @@
 <text text-anchor="start" x="87.12" y="-4440.8" font-family="Times,serif" font-size="16.00">PrivateKeyContainer.Error</text>
 <polyline fill="none" stroke="black" points="88,-4435 58,-4435 58,-4418 88,-4418"/>
 <text text-anchor="start" x="61" y="-4423.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10801</text>
-<g id="a_PrivateKeyContainer_Error_307"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PrivateKeyContainer_Error_309"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4418 288,-4418 288,-4435 88,-4435"/>
 <text text-anchor="start" x="91" y="-4422.5" font-family="Times,serif" font-size="10.00">keyNotFound</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4418 58,-4418 58,-4401 88,-4401"/>
 <text text-anchor="start" x="61" y="-4406.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10802</text>
-<g id="a_PrivateKeyContainer_Error_308"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PrivateKeyContainer_Error_310"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4401 288,-4401 288,-4418 88,-4418"/>
 <text text-anchor="start" x="91" y="-4405.5" font-family="Times,serif" font-size="10.00">unknownError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4401 58,-4401 58,-4384 88,-4384"/>
 <text text-anchor="start" x="61" y="-4389.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10803</text>
-<g id="a_PrivateKeyContainer_Error_309"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PrivateKeyContainer_Error_311"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4384 288,-4384 288,-4401 88,-4401"/>
 <text text-anchor="start" x="91" y="-4388.5" font-family="Times,serif" font-size="10.00">retrievingPublicKeyFailed</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4384 58,-4384 58,-4367 88,-4367"/>
 <text text-anchor="start" x="61" y="-4372.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10804</text>
-<g id="a_PrivateKeyContainer_Error_310"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PrivateKeyContainer_Error_312"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4367 288,-4367 288,-4384 88,-4384"/>
 <text text-anchor="start" x="91" y="-4371.5" font-family="Times,serif" font-size="10.00">creationFromBiometrie</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4367 58,-4367 58,-4350 88,-4350"/>
 <text text-anchor="start" x="61" y="-4355.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10805</text>
-<g id="a_PrivateKeyContainer_Error_311"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PrivateKeyContainer_Error_313"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4350 288,-4350 288,-4367 88,-4367"/>
 <text text-anchor="start" x="91" y="-4354.5" font-family="Times,serif" font-size="10.00">creationWithoutBiometrie</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4350 58,-4350 58,-4333 88,-4333"/>
 <text text-anchor="start" x="61" y="-4338.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10806</text>
-<g id="a_PrivateKeyContainer_Error_312"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PrivateKeyContainer_Error_314"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4333 288,-4333 288,-4350 88,-4350"/>
 <text text-anchor="start" x="91" y="-4337.5" font-family="Times,serif" font-size="10.00">convertingKey</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4333 58,-4333 58,-4316 88,-4316"/>
 <text text-anchor="start" x="61" y="-4321.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10807</text>
-<g id="a_PrivateKeyContainer_Error_313"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PrivateKeyContainer_Error_315"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4316 288,-4316 288,-4333 88,-4333"/>
 <text text-anchor="start" x="91" y="-4320.5" font-family="Times,serif" font-size="10.00">signing</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88,-4316 58,-4316 58,-4299 88,-4299"/>
 <text text-anchor="start" x="61" y="-4304.77" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;10808</text>
-<g id="a_PrivateKeyContainer_Error_314"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PrivateKeyContainer_Error_316"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4299 288,-4299 288,-4316 88,-4316"/>
 <text text-anchor="start" x="91" y="-4303.5" font-family="Times,serif" font-size="10.00">canceledByUser</text>
 </a>
@@ -3372,7 +3386,7 @@
 <text text-anchor="start" x="77" y="-4508.3" font-family="Times,serif" font-size="16.00">PharmacyBundleParsingError</text>
 <polyline fill="none" stroke="black" points="88,-4502.5 58,-4502.5 58,-4485.5 88,-4485.5"/>
 <text text-anchor="start" x="61" y="-4491.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;51001</text>
-<g id="a_PharmacyBundleParsingError_315"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_PharmacyBundleParsingError_317"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4485.5 288,-4485.5 288,-4502.5 88,-4502.5"/>
 <text text-anchor="start" x="91" y="-4490" font-family="Times,serif" font-size="10.00">parseError</text>
 </a>
@@ -3395,7 +3409,7 @@
 <text text-anchor="start" x="113.38" y="-4575.3" font-family="Times,serif" font-size="16.00">TrustAnchor.Error</text>
 <polyline fill="none" stroke="black" points="88,-4569.5 58,-4569.5 58,-4552.5 88,-4552.5"/>
 <text text-anchor="start" x="61" y="-4558.27" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;56201</text>
-<g id="a_TrustAnchor_Error_316"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_TrustAnchor_Error_318"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
 <polyline fill="none" stroke="black" points="88,-4552.5 288,-4552.5 288,-4569.5 88,-4569.5"/>
 <text text-anchor="start" x="91" y="-4557" font-family="Times,serif" font-size="10.00">invalidPEM</text>
 </a>
@@ -3412,42 +3426,42 @@
 <text text-anchor="start" x="1596" y="-1425.8" font-family="Times,serif" font-size="16.00">VAUError</text>
 <polyline fill="none" stroke="black" points="1544,-1420 1514,-1420 1514,-1403 1544,-1403"/>
 <text text-anchor="start" x="1517" y="-1408.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;55001</text>
-<g id="a_VAUError_317"><a xlink:href="#" xlink:title="In case of HTTP/Connection error">
+<g id="a_VAUError_319"><a xlink:href="#" xlink:title="In case of HTTP/Connection error">
 <polyline fill="none" stroke="black" points="1544,-1403 1744,-1403 1744,-1420 1544,-1420"/>
 <text text-anchor="start" x="1547" y="-1407.5" font-family="Times,serif" font-size="10.00">network</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-1403 1514,-1403 1514,-1386 1544,-1386"/>
 <text text-anchor="start" x="1517" y="-1391.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;55002</text>
-<g id="a_VAUError_318"><a xlink:href="#" xlink:title="When failed to extract a X.509 VAU certificate information">
+<g id="a_VAUError_320"><a xlink:href="#" xlink:title="When failed to extract a X.509 VAU certificate information">
 <polyline fill="none" stroke="black" points="1544,-1386 1744,-1386 1744,-1403 1544,-1403"/>
 <text text-anchor="start" x="1547" y="-1390.5" font-family="Times,serif" font-size="10.00">certificateDecoding</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-1386 1514,-1386 1514,-1369 1544,-1369"/>
 <text text-anchor="start" x="1517" y="-1374.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;55003</text>
-<g id="a_VAUError_319"><a xlink:href="#" xlink:title="When internal cryptographic operations fail">
+<g id="a_VAUError_321"><a xlink:href="#" xlink:title="When internal cryptographic operations fail">
 <polyline fill="none" stroke="black" points="1544,-1369 1744,-1369 1744,-1386 1544,-1386"/>
 <text text-anchor="start" x="1547" y="-1373.5" font-family="Times,serif" font-size="10.00">internalCryptoError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-1369 1514,-1369 1514,-1352 1544,-1352"/>
 <text text-anchor="start" x="1517" y="-1357.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;55004</text>
-<g id="a_VAUError_320"><a xlink:href="#" xlink:title="In case a response (or request) could not be (cryptographically) verified">
+<g id="a_VAUError_322"><a xlink:href="#" xlink:title="In case a response (or request) could not be (cryptographically) verified">
 <polyline fill="none" stroke="black" points="1544,-1352 1744,-1352 1744,-1369 1544,-1369"/>
 <text text-anchor="start" x="1547" y="-1356.5" font-family="Times,serif" font-size="10.00">responseValidation</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-1352 1514,-1352 1514,-1335 1544,-1335"/>
 <text text-anchor="start" x="1517" y="-1340.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;55005</text>
-<g id="a_VAUError_321"><a xlink:href="#" xlink:title="Other error cases">
+<g id="a_VAUError_323"><a xlink:href="#" xlink:title="Other error cases">
 <polyline fill="none" stroke="black" points="1544,-1335 1744,-1335 1744,-1352 1544,-1352"/>
 <text text-anchor="start" x="1547" y="-1339.5" font-family="Times,serif" font-size="10.00">unspecified</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1544,-1335 1514,-1335 1514,-1318 1544,-1318"/>
 <text text-anchor="start" x="1517" y="-1323.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;55006</text>
-<g id="a_VAUError_322"><a xlink:href="#" xlink:title="Internal error">
+<g id="a_VAUError_324"><a xlink:href="#" xlink:title="Internal error">
 <polyline fill="none" stroke="black" points="1544,-1318 1744,-1318 1744,-1335 1544,-1335"/>
 <text text-anchor="start" x="1547" y="-1322.5" font-family="Times,serif" font-size="10.00">internalError</text>
 </a>
