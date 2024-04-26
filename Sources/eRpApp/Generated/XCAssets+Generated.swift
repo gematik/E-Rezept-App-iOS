@@ -4,14 +4,15 @@
 #if os(macOS)
   import AppKit
 #elseif os(iOS)
-  import SwiftUI
+  import UIKit
 #elseif os(tvOS) || os(watchOS)
   import UIKit
 #endif
+#if canImport(SwiftUI)
+  import SwiftUI
+#endif
 
 // Deprecated typealiases
-@available(*, deprecated, renamed: "ColorAsset.Color", message: "This typealias will be removed in SwiftGen 7.0")
-internal typealias AssetColorTypeAlias = ColorAsset.Color
 @available(*, deprecated, renamed: "ImageAsset.Image", message: "This typealias will be removed in SwiftGen 7.0")
 internal typealias AssetImageTypeAlias = ImageAsset.Image
 
@@ -42,47 +43,6 @@ internal enum Asset {
     internal static let nfc = ImageAsset(name: "nfc")
     internal static let phoneExclamationMark = ImageAsset(name: "phoneExclamationMark")
     internal static let pinLetter = ImageAsset(name: "pinLetter")
-  }
-  internal enum Colors {
-    internal static let disabled = ColorAsset(name: "disabled")
-    internal static let gifBackground = ColorAsset(name: "gifBackground")
-    internal static let primary100 = ColorAsset(name: "primary100")
-    internal static let primary200 = ColorAsset(name: "primary200")
-    internal static let primary300 = ColorAsset(name: "primary300")
-    internal static let primary400 = ColorAsset(name: "primary400")
-    internal static let primary500 = ColorAsset(name: "primary500")
-    internal static let primary600 = ColorAsset(name: "primary600")
-    internal static let primary700 = ColorAsset(name: "primary700")
-    internal static let primary800 = ColorAsset(name: "primary800")
-    internal static let primary900 = ColorAsset(name: "primary900")
-    internal static let red100 = ColorAsset(name: "red100")
-    internal static let red200 = ColorAsset(name: "red200")
-    internal static let red300 = ColorAsset(name: "red300")
-    internal static let red400 = ColorAsset(name: "red400")
-    internal static let red500 = ColorAsset(name: "red500")
-    internal static let red600 = ColorAsset(name: "red600")
-    internal static let red700 = ColorAsset(name: "red700")
-    internal static let red800 = ColorAsset(name: "red800")
-    internal static let red900 = ColorAsset(name: "red900")
-    internal static let secondary100 = ColorAsset(name: "secondary100")
-    internal static let secondary200 = ColorAsset(name: "secondary200")
-    internal static let secondary300 = ColorAsset(name: "secondary300")
-    internal static let secondary400 = ColorAsset(name: "secondary400")
-    internal static let secondary500 = ColorAsset(name: "secondary500")
-    internal static let secondary600 = ColorAsset(name: "secondary600")
-    internal static let secondary700 = ColorAsset(name: "secondary700")
-    internal static let secondary800 = ColorAsset(name: "secondary800")
-    internal static let secondary900 = ColorAsset(name: "secondary900")
-    internal static let tabViewToolBarBackground = ColorAsset(name: "tabViewToolBarBackground")
-    internal static let yellow100 = ColorAsset(name: "yellow100")
-    internal static let yellow200 = ColorAsset(name: "yellow200")
-    internal static let yellow300 = ColorAsset(name: "yellow300")
-    internal static let yellow400 = ColorAsset(name: "yellow400")
-    internal static let yellow500 = ColorAsset(name: "yellow500")
-    internal static let yellow600 = ColorAsset(name: "yellow600")
-    internal static let yellow700 = ColorAsset(name: "yellow700")
-    internal static let yellow800 = ColorAsset(name: "yellow800")
-    internal static let yellow900 = ColorAsset(name: "yellow900")
   }
   internal enum Illustrations {
     internal static let arztRedCircle = ImageAsset(name: "Arzt_RedCircle")
@@ -135,6 +95,12 @@ internal enum Asset {
   }
   internal enum Pharmacy {
     internal static let pharmacyPlaceholder = ImageAsset(name: "PharmacyPlaceholder")
+    internal static let btnApoLarge = ImageAsset(name: "btn_apo_large")
+    internal static let btnApoSmall = ImageAsset(name: "btn_apo_small")
+    internal static let btnCarLarge = ImageAsset(name: "btn_car_large")
+    internal static let btnCarSmall = ImageAsset(name: "btn_car_small")
+    internal static let btnLkwLarge = ImageAsset(name: "btn_lkw_large")
+    internal static let btnLkwSmall = ImageAsset(name: "btn_lkw_small")
     internal static let eRxReadinessBadge = ImageAsset(name: "eRxReadinessBadge")
   }
   internal enum Prescriptions {
@@ -144,6 +110,7 @@ internal enum Asset {
       internal static let refreshLamp = ImageAsset(name: "refreshLamp")
     }
     internal static let checkmarkDouble = ImageAsset(name: "checkmarkDouble")
+    internal static let datamatrix = ImageAsset(name: "datamatrix")
     internal static let initialPlaceholder = ImageAsset(name: "initialPlaceholder")
   }
   internal enum Profile {
@@ -199,42 +166,6 @@ internal enum Asset {
 
 // MARK: - Implementation Details
 
-internal final class ColorAsset {
-  internal fileprivate(set) var name: String
-
-  #if os(macOS)
-  internal typealias Color = NSColor
-  #elseif os(iOS) || os(tvOS) || os(watchOS)
-  internal typealias Color = SwiftUI.Color
-  #endif
-
-  @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *)
-  internal private(set) lazy var color: Color = {
-    guard let color = Color(asset: self) else {
-      fatalError("Unable to load color asset named \(name).")
-    }
-    return color
-  }()
-
-  fileprivate init(name: String) {
-    self.name = name
-  }
-}
-
-internal extension ColorAsset.Color {
-  @available(iOS 13.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *)
-  init?(asset: ColorAsset) {
-    let bundle = BundleToken.bundle
-    #if os(iOS) || os(tvOS)
-    self.init(asset.name, bundle: bundle)
-    #elseif os(macOS)
-    self.init(named: NSColor.Name(asset.name), bundle: bundle)
-    #elseif os(watchOS)
-    self.init(named: asset.name)
-    #endif
-  }
-}
-
 internal struct ImageAsset {
   internal fileprivate(set) var name: String
 
@@ -244,6 +175,7 @@ internal struct ImageAsset {
   internal typealias Image = UIImage
   #endif
 
+  @available(iOS 8.0, tvOS 9.0, watchOS 2.0, macOS 10.7, *)
   internal var image: Image {
     let bundle = BundleToken.bundle
     #if os(iOS) || os(tvOS)
@@ -259,9 +191,28 @@ internal struct ImageAsset {
     }
     return result
   }
+
+  #if os(iOS) || os(tvOS)
+  @available(iOS 8.0, tvOS 9.0, *)
+  internal func image(compatibleWith traitCollection: UITraitCollection) -> Image {
+    let bundle = BundleToken.bundle
+    guard let result = Image(named: name, in: bundle, compatibleWith: traitCollection) else {
+      fatalError("Unable to load image asset named \(name).")
+    }
+    return result
+  }
+  #endif
+
+  #if canImport(SwiftUI)
+  @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+  internal var swiftUIImage: SwiftUI.Image {
+    SwiftUI.Image(asset: self)
+  }
+  #endif
 }
 
 internal extension ImageAsset.Image {
+  @available(iOS 8.0, tvOS 9.0, watchOS 2.0, *)
   @available(macOS, deprecated,
     message: "This initializer is unsafe on macOS, please use the ImageAsset.image property")
   convenience init?(asset: ImageAsset) {
@@ -276,3 +227,34 @@ internal extension ImageAsset.Image {
   }
 }
 
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
+internal extension SwiftUI.Image {
+  init(asset: ImageAsset) {
+    let bundle = BundleToken.bundle
+    self.init(asset.name, bundle: bundle)
+  }
+
+  init(asset: ImageAsset, label: Text) {
+    let bundle = BundleToken.bundle
+    self.init(asset.name, bundle: bundle, label: label)
+  }
+
+  init(decorative asset: ImageAsset) {
+    let bundle = BundleToken.bundle
+    self.init(decorative: asset.name, bundle: bundle)
+  }
+}
+#endif
+
+// swiftlint:disable convenience_type
+internal final class BundleToken {
+  static let bundle: Bundle = {
+    #if SWIFT_PACKAGE
+    return Bundle.module
+    #else
+    return Bundle(for: BundleToken.self)
+    #endif
+  }()
+}
+// swiftlint:enable convenience_type

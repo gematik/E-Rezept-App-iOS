@@ -64,6 +64,12 @@ import SwiftUI
     {% call recursiveBlock tables.first.name tables.first.levels %}
     {% endif %}
   }
+    
+  internal extension StringAsset {
+    init(_ string: String, arguments: [CVarArg]? = nil) {
+        self.init(string, arguments: arguments, bundle: Bundle(for: BundleToken.self))
+    }
+  }
   // swiftlint:enable function_parameter_count identifier_name line_length type_body_length
   {% else %}
   // No string found

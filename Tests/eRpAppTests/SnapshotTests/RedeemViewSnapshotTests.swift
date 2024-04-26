@@ -32,9 +32,8 @@ final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
     func testRedeemViewSnapshot() {
         let sut = RedeemMethodsView(store: RedeemMethodsDomain.Dummies.store)
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        // View takes current device Size into account, other devices would record wrong representations
+        assertSnapshots(matching: sut, as: snapshotModiCurrentDevice())
     }
 
     func testRedeemMatrixCodeViewSnapshot() {
@@ -43,15 +42,55 @@ final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
                 initialState: .init(
                     type: .erxTask,
                     erxTasks: ErxTask.Demo.erxTasks,
-                    loadingState: .value(UIImage(testBundleNamed: "qrcode")!)
+                    loadingState: .value(.init(uniqueElements: [
+                        MatrixCodeDomain.State.IdentifiedImage(
+                            identifier: UUID(),
+                            image: UIImage(testBundleNamed: "qrcode")!,
+                            chunk: []
+                        ),
+                    ]))
                 )
             ) {
                 EmptyReducer()
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        // View takes current device Size into account, other devices would record wrong representations
+        assertSnapshots(matching: sut, as: snapshotModiCurrentDevice())
+    }
+
+    func testRedeemMatrixCodeMultiplePrescriptionsViewSnapshot() {
+        let sut = MatrixCodeView(
+            store: MatrixCodeDomain.Store(
+                initialState: .init(
+                    type: .erxTask,
+                    erxTasks: ErxTask.Demo.erxTasks,
+                    loadingState: .value(.init(uniqueElements: [
+                        MatrixCodeDomain.State.IdentifiedImage(
+                            identifier: UUID(),
+                            image: UIImage(testBundleNamed: "qrcode")!,
+                            chunk: [
+                                ErxTask.Demo.erxTask1,
+                                ErxTask.Demo.erxTask2,
+                                ErxTask.Demo.erxTask3,
+                            ]
+                        ),
+                        MatrixCodeDomain.State.IdentifiedImage(
+                            identifier: UUID(),
+                            image: UIImage(testBundleNamed: "qrcode")!,
+                            chunk: [
+                                ErxTask.Demo.erxTask4,
+                                ErxTask.Demo.erxTask5,
+                            ]
+                        ),
+                    ]))
+                )
+            ) {
+                EmptyReducer()
+            }
+        )
+
+        // View takes current device Size into account, other devices would record wrong representations
+        assertSnapshots(matching: sut, as: snapshotModiCurrentDevice())
     }
 }

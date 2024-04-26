@@ -38,12 +38,15 @@ class SwitchSignatureProvider: NFCSignatureProvider {
         }
     }
 
-    func sign(can: String, pin: String,
-              challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
+    func sign(
+        can: String,
+        pin: String,
+        challenge: IDPChallengeSession
+    ) async -> Result<SignedChallenge, NFCSignatureProviderError> {
         if UserDefaults.standard.isVirtualEGKEnabled {
-            return alternativeSignatureProvider.sign(can: can, pin: pin, challenge: challenge)
+            return try await alternativeSignatureProvider.sign(can: can, pin: pin, challenge: challenge)
         } else {
-            return defaultSignatureProvider.sign(can: can, pin: pin, challenge: challenge)
+            return try await defaultSignatureProvider.sign(can: can, pin: pin, challenge: challenge)
         }
     }
 }

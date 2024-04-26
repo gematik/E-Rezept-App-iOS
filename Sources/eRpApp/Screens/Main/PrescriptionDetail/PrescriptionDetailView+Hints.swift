@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 extension PrescriptionDetailView {

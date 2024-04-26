@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -530,15 +530,12 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
             .eraseToAnyPublisher()
 	}
 
-	func sign(can: String, pin: String, challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
-        stream
-        	.map { $0.sign(
+	func sign(can: String, pin: String, challenge: IDPChallengeSession) async -> Result<SignedChallenge, NFCSignatureProviderError> {
+        await current.sign(
 				can: can,
 				pin: pin,
 				challenge: challenge
-            ) }
-            .switchToLatest()
-            .eraseToAnyPublisher()
+            )
 	}
 
 

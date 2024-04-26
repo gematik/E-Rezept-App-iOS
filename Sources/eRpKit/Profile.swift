@@ -19,7 +19,7 @@
 import Foundation
 
 /// Represents a user profile selectable within the settings
-public struct Profile: Identifiable, Hashable, Equatable {
+public struct Profile: Identifiable, Hashable, Equatable, Codable {
     public init(
         name: String,
         identifier: UUID = UUID(),
@@ -82,13 +82,13 @@ public struct Profile: Identifiable, Hashable, Equatable {
         insuranceId != nil
     }
 
-    public enum InsuranceType: String, Equatable {
+    public enum InsuranceType: String, Equatable, Codable {
         case unknown
         case gKV
         case pKV
     }
 
-    public enum Color: String, CaseIterable {
+    public enum Color: String, CaseIterable, Codable {
         case grey
         case yellow
         case red
@@ -121,7 +121,7 @@ public struct Profile: Identifiable, Hashable, Equatable {
         }
     }
 
-    public enum ProfilePictureType: String, CaseIterable {
+    public enum ProfilePictureType: String, CaseIterable, Codable {
         case baby
         case boyWithCard
         case developer

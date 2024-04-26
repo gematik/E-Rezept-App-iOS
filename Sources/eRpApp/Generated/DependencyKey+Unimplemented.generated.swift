@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -363,7 +363,7 @@ struct UnimplementedNFCSignatureProvider: NFCSignatureProvider {
     func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         fatalError("openSecureSession(can:pin:) has not been implemented")
     }
-    func sign(can: String, pin: String, challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
+    func sign(can: String, pin: String, challenge: IDPChallengeSession) async -> Result<SignedChallenge, NFCSignatureProviderError> {
         fatalError("sign(can:pin:challenge:) has not been implemented")
     }
 }
@@ -582,7 +582,7 @@ struct UnimplementedResourceHandler: ResourceHandler {
 class UnimplementedRouting: Routing {
     init() {}
 
-    func routeTo(_ endpoint: Endpoint) -> Void {
+    func routeTo(_ endpoint: Endpoint) async -> Void {
         fatalError("routeTo(_:) has not been implemented")
     }
 }

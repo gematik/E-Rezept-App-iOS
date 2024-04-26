@@ -16,10 +16,10 @@
 //  
 //
 
-import BundleKit
 import eRpKit
 @testable import eRpRemoteStorage
 import Foundation
+import GemCommonsKit
 import ModelsR4
 import Nimble
 import XCTest
@@ -117,8 +117,9 @@ final class FHIR_KBV_v1_0_2_MedicationTests: XCTestCase {
         resource file: String,
         from bundle: FHIRBundleDirectories = .kbv_v1_0_2
     ) throws -> ModelsR4.Medication {
-        try Bundle(for: Self.self)
-            .bundleFromResources(name: bundle.rawValue)
-            .decode(ModelsR4.Medication.self, from: file)
+        let data = try Bundle.module
+            .testResourceFilePath(in: "Resources/\(bundle.rawValue)", for: file)
+            .readFileContents()
+        return try JSONDecoder().decode(ModelsR4.Medication.self, from: data)
     }
 }

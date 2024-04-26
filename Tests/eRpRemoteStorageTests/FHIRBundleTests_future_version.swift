@@ -16,10 +16,10 @@
 //  
 //
 
-import BundleKit
 import eRpKit
 @testable import eRpRemoteStorage
 import Foundation
+import GemCommonsKit
 import ModelsR4
 import Nimble
 import SwiftUI
@@ -55,10 +55,11 @@ final class FHIRBundleTests_future_version: XCTestCase {
 
     private func decode(
         resource file: String,
-        from bundle: String = "FHIRExampleData_future_version.bundle"
+        from bundle: String = "FHIRExampleData_future_version"
     ) throws -> ModelsR4.Bundle {
-        try Bundle(for: Self.self)
-            .bundleFromResources(name: bundle)
-            .decode(ModelsR4.Bundle.self, from: file)
+        let data = try Bundle.module
+            .testResourceFilePath(in: "Resources/\(bundle)", for: file)
+            .readFileContents()
+        return try JSONDecoder().decode(ModelsR4.Bundle.self, from: data)
     }
 }

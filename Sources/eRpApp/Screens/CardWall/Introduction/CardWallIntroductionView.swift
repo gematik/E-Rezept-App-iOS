@@ -46,7 +46,7 @@ struct CardWallIntroductionView: View {
         NavigationView {
             VStack {
                 VStack(alignment: .center, spacing: 0) {
-                    Image(Asset.CardWall.scanningCard)
+                    Image(asset: Asset.CardWall.scanningCard)
                         .resizable()
                         .scaledToFit()
                         .clipShape(Circle())

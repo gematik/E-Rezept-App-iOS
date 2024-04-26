@@ -19,16 +19,20 @@
 import SwiftUI
 
 internal struct StringAsset {
+    internal let bundle: Bundle
     internal private(set) var rawKey: String
 
     // swiftlint:disable discouraged_optional_collection
     internal private(set) var arguments: [CVarArg]?
 
-    private let bundle = BundleToken.bundle
-
-    init(_ rawKey: String, arguments: [CVarArg]? = nil) {
+    init(
+        _ rawKey: String,
+        arguments: [CVarArg]? = nil,
+        bundle: Bundle
+    ) {
         self.rawKey = rawKey
         self.arguments = arguments
+        self.bundle = bundle
     }
 
     // swiftlint:enable discouraged_optional_collection

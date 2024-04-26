@@ -17,27 +17,46 @@
 //
 
 import eRpKit
+import Foundation
 
 extension MedicationSchedule {
     enum Fixtures {
-        static let medicationScheduleWFor_taskId_1: MedicationSchedule = .init(
-            start: "2021-06-10T10:55:04+02:00".date!,
+        static let medicationScheduleWForTask_id_1: MedicationSchedule = .init(
+            id: UUID(uuidString: "beefbeef-0001-beef-beef-beefbeefbeef")!,
+            start: "2021-06-10T10:55:10+02:00".date!,
             end: .distantFuture,
             title: "Test Schedule",
             dosageInstructions: "1-1-1",
-            taskId: "taskId",
-            isActive: true,
-            entries: [.init(hourComponent: 10, minuteComponent: 35, dosageForm: "Pill", amount: "1")]
+            taskId: "id_1",
+            isActive: false,
+            entries: [
+                .init(
+                    id: UUID(uuidString: "beefbeef-0002-beef-beef-beefbeefbeef")!,
+                    hourComponent: 10,
+                    minuteComponent: 35,
+                    dosageForm: "Pill",
+                    amount: "1"
+                ),
+            ]
         )
 
-        static let medicationScheduleWFor_taskId_2: MedicationSchedule = .init(
-            start: "2021-06-10T10:55:04+02:00".date!,
+        static let medicationScheduleWForTask_id_2: MedicationSchedule = .init(
+            id: UUID(uuidString: "beefbeef-0003-beef-beef-beefbeefbeef")!,
+            start: "2021-06-10T10:55:06+02:00".date!,
             end: .distantFuture,
             title: "Test Schedule",
-            dosageInstructions: "1-1-1",
-            taskId: "taskId_2",
+            dosageInstructions: "1-1-1-1",
+            taskId: "id_2",
             isActive: true,
-            entries: [.init(hourComponent: 10, minuteComponent: 35, dosageForm: "Pill", amount: "1")]
+            entries: [
+                .init(
+                    id: UUID(uuidString: "beefbeef-0004-beef-beef-beefbeefbeef")!,
+                    hourComponent: 12,
+                    minuteComponent: 55,
+                    dosageForm: "Tab",
+                    amount: "17"
+                ),
+            ]
         )
     }
 }

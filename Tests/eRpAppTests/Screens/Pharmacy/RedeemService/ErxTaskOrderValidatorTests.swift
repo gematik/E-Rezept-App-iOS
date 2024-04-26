@@ -134,7 +134,10 @@ final class ErxTaskOrderValidatorTests: XCTestCase {
     func testHintValidatorWithFails() {
         let sut = ErxTaskOrder.Validator()
         expect(sut.isValid(
-            hint: "The hint cannot be longer than 90 characters. That is different from using the AVS service."
+            hint: "The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!.." // swiftlint:disable:this line_length
+        )).to(equal(.valid))
+        expect(sut.isValid(
+            hint: "The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. The hint cannot be longer than 500 characters. That is now the same as using the AVS service, yay!. Too long." // swiftlint:disable:this line_length
         )) == .invalid(L10n.rivTiInvalidHint(String(ErxTaskOrder.Validator.maxHintLength)).text)
     }
 

@@ -53,7 +53,7 @@ protocol AVSOrder {
     var recipients: [X509] { get }
 }
 
-struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable {
+struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable, Codable {
     let orderID: UUID
     let redeemType: RedeemOption
     let version: String
@@ -102,6 +102,62 @@ struct OrderRequest: eRpRemoteStorageOrder, AVSOrder, Equatable {
         self.endpoint = endpoint
         self.recipients = recipients
         self.telematikId = telematikId
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case orderID
+        case version
+        case redeemType
+        case name
+        case address
+        case hint
+        case text
+        case phone
+        case mail
+        case transactionID
+        case taskID
+        case accessCode
+        case endpoint
+        case recipients
+        case telematikId
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        orderID = try container.decode(UUID.self, forKey: .orderID)
+        version = try container.decode(String.self, forKey: .version)
+        redeemType = try container.decode(RedeemOption.self, forKey: .redeemType)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        address = try container.decodeIfPresent(Address.self, forKey: .address)
+        hint = try container.decodeIfPresent(String.self, forKey: .hint)
+        text = try container.decodeIfPresent(String.self, forKey: .text)
+        phone = try container.decodeIfPresent(String.self, forKey: .phone)
+        mail = try container.decodeIfPresent(String.self, forKey: .mail)
+        transactionID = try container.decode(UUID.self, forKey: .transactionID)
+        taskID = try container.decode(String.self, forKey: .taskID)
+        accessCode = try container.decode(String.self, forKey: .accessCode)
+        endpoint = try container.decodeIfPresent(PharmacyLocation.AVSEndpoints.Endpoint.self, forKey: .endpoint)
+        recipients = try container.decode([Data].self, forKey: .recipients).map { try X509(der: $0) }
+        telematikId = try container.decodeIfPresent(String.self, forKey: .telematikId)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(orderID, forKey: .orderID)
+        try container.encode(version, forKey: .version)
+        try container.encode(redeemType, forKey: .redeemType)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(address, forKey: .address)
+        try container.encodeIfPresent(hint, forKey: .hint)
+        try container.encodeIfPresent(text, forKey: .text)
+        try container.encodeIfPresent(phone, forKey: .phone)
+        try container.encodeIfPresent(mail, forKey: .mail)
+        try container.encode(transactionID, forKey: .transactionID)
+        try container.encode(taskID, forKey: .taskID)
+        try container.encode(accessCode, forKey: .accessCode)
+        try container.encodeIfPresent(endpoint, forKey: .endpoint)
+        try container.encode(recipients.map(\.derBytes), forKey: .recipients)
+        try container.encodeIfPresent(telematikId, forKey: .telematikId)
     }
 }
 

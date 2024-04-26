@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpStyleKit
 import Foundation
 import SwiftUI
 
@@ -41,7 +42,7 @@ struct HorizontalProfileSelectionChipView: View {
                     }
             } else {
                 if showConnectionStatus {
-                    Image(Self.imageAsset(for: userProfile.connectionStatus))
+                    Image(asset: Self.imageAsset(for: userProfile.connectionStatus))
                         .onAppear {
                             DispatchQueue.main.asyncAfter(
                                 deadline: .now() + DispatchTimeInterval.seconds(showConnectionStatusTimeInterval)

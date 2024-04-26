@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct OrderHealthCardInquiryView: View {
@@ -43,7 +44,7 @@ struct OrderHealthCardInquiryView: View {
         VStack {
             if !viewStore.hasContactInfo {
                 ZStack(alignment: .bottom) {
-                    Image(Asset.OrderEGK.womanShrug)
+                    Image(asset: Asset.OrderEGK.womanShrug)
                         .resizable()
                         .scaledToFit()
                         .clipShape(Circle())
@@ -63,7 +64,7 @@ struct OrderHealthCardInquiryView: View {
                 VStack(alignment: .center) {
                     Spacer()
 
-                    Image(Asset.OrderEGK.blueEGK)
+                    Image(asset: Asset.OrderEGK.blueEGK)
                         .resizable()
                         .scaledToFit()
                         .clipShape(Circle())

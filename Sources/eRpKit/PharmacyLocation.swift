@@ -157,7 +157,7 @@ public struct PharmacyLocation: Identifiable, Equatable {
         public let deliveryUrl: String?
         public let deliveryUrlAdditionalHeaders: [String: String]
 
-        public struct Endpoint: Equatable {
+        public struct Endpoint: Equatable, Codable {
             public let url: URL
             public let additionalHeaders: [String: String]
 

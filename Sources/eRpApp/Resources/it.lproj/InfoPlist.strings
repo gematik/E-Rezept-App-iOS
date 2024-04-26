@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "Prescrizione elettronica";
+"NFCReaderUsageDescription" = "Ti permette di identificarti e autenticarti utilizzando la tua tessera sanitaria elettronica";
+"NSCameraUsageDescription" = "La fotocamera è necessaria per registrare ricette o scattare foto.";
+"NSFaceIDUsageDescription" = "La prescrizione elettronica richiede FaceID per proteggere l'app da accessi non autorizzati.";

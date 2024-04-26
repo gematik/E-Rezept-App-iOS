@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpStyleKit
 import SwiftUI
 
 struct ContactOptionsRowView: View {
@@ -72,7 +73,7 @@ struct ContactOptionsRowView: View {
                         .fontWeight(.semibold)
                         .font(.body)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(Asset.Colors.primary600.color)
+                        .foregroundColor(Colors.primary600)
                         .padding()
                         .fixedSize(horizontal: false, vertical: true)
                 }

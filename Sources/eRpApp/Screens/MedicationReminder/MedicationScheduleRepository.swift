@@ -31,19 +31,30 @@ extension MedicationScheduleRepository: DependencyKey {
                 _ = try medicationScheduleStore.save(medicationSchedules: [schedule])
                 // todomedicationReminder: implementation executes asynchronously. can we wait for completion?
                 try await notificationScheduler.cancelAllPendingRequests()
-                let allMedicationSchedules = try medicationScheduleStore.fetchAll()
+
+                let allMedicationSchedules = try await MainActor.run {
+                    try medicationScheduleStore.fetchAll()
+                }
                 try await notificationScheduler.schedule(allMedicationSchedules)
             },
             readAll: {
-                try medicationScheduleStore.fetchAll()
+                try await MainActor.run {
+                    try medicationScheduleStore.fetchAll()
+                }
             },
             read: { taskId in
-                try medicationScheduleStore.fetch(by: taskId)
+                try await MainActor.run {
+                    try medicationScheduleStore.fetch(by: taskId)
+                }
             },
             delete: { schedules in
                 try await notificationScheduler.cancelAllPendingRequests()
-                try medicationScheduleStore.delete(medicationSchedules: schedules)
-                let allMedicationSchedules = try medicationScheduleStore.fetchAll()
+                try await MainActor.run {
+                    try medicationScheduleStore.delete(medicationSchedules: schedules)
+                }
+                let allMedicationSchedules = try await MainActor.run {
+                    try medicationScheduleStore.fetchAll()
+                }
                 try await notificationScheduler.schedule(allMedicationSchedules)
             }
         )

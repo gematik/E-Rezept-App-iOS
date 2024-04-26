@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "E-rețetă";
+"NFCReaderUsageDescription" = "Vă permite să vă identificați și să vă autentificați folosind cardul de sănătate electronic";
+"NSCameraUsageDescription" = "Camera este necesară pentru a înregistra rețete sau pentru a face fotografii.";
+"NSFaceIDUsageDescription" = "Prescripția electronică necesită FaceID pentru a proteja aplicația împotriva accesului neautorizat.";

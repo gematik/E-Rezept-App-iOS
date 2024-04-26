@@ -191,7 +191,7 @@
 "cdw_txt_intro_egk_checkmark" = "NFC-enabled medical card";
 "cdw_txt_intro_footnote" = "Don't have an NFC-enabled medical card and PIN yet?";
 "cdw_txt_intro_header_bottom" = "Use all functions now";
-"cdw_txt_intro_header_top" = "Login";
+"cdw_txt_intro_header_top" = "Register";
 "cdw_txt_intro_list_title" = "What you need:";
 "cdw_txt_intro_needed_subheadline" = "What you need:";
 "cdw_txt_intro_pin_checkmark" = "Medical card PIN";
@@ -327,6 +327,8 @@
 "dav_txt_direct_assignment_hint" = "With direct referral, a prescription from a practice or hospital is filled directly at a pharmacy. Insured persons do not have to take any action and cannot intervene in the redemption process. \n\n Direct referrals are listed in the e-prescription app to make your treatment more transparent for you.";
 "dav_txt_direct_assignment_title" = "What is a direct assignment?";
 "dmc_btn_close" = "Done";
+"dmc_txt_code_multiple" = "Collection code";
+"dmc_txt_code_single" = "Single code";
 "dtl_btn_copy_clipboard" = "Copy";
 "dtl_btn_delete_disabled_note" = "The prescription is currently being processed by a pharmacy and cannot be deleted.";
 "dtl_btn_delete_medication" = "Delete from this device";
@@ -973,7 +975,7 @@
 "pha_search_txt_quick_filter_open_filters" = "Filter by ...";
 "pha_search_txt_quick_filter_section_title" = "Filters";
 "pha_search_txt_quick_filter_shipment" = "Mail order";
-"pha_search_txt_search_hint" = "Search for name or address";
+"pha_search_txt_search_hint" = "Search";
 "pha_search_txt_title" = "Select pharmacy";
 "pha_success_redeem_title" = "Done! 🎉";
 "pro_btn_selection_close" = "Done";
@@ -1003,8 +1005,10 @@
 "prsc_dtl_btn_medication_reminder" = "Revenue reminder";
 "prsc_dtl_btn_pkv_hint_activate" = "Enable";
 "prsc_dtl_btn_pkv_invoice" = "Cost receipt";
+"prsc_dtl_btn_redeem" = "Send to pharmacy";
 "prsc_dtl_btn_share" = "Split";
 "prsc_dtl_btn_share_title" = "Split";
+"prsc_dtl_btn_show_matrix_code" = "Show code";
 "prsc_dtl_btn_technical_informations" = "Technical information";
 "prsc_dtl_btn_work_related_accident" = "Accident at work";
 "prsc_dtl_dr_co_payment_no_description" = "You are exempt from paying a co-payment for this medication. Your health insurance company will cover the cost of the medication.";

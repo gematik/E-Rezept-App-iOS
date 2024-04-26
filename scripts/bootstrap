@@ -27,3 +27,7 @@ if [ -f "Gemfile" ]; then
   echo "==> Installing gem dependencies…"
   bundle install --system
 fi
+
+if [ -f "Mintfile" ]; then
+  mint bootstrap
+fi

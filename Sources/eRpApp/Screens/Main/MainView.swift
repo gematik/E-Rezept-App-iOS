@@ -110,9 +110,8 @@ struct MainView: View {
                 let navigationBarAppearance = UINavigationBarAppearance()
                 navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
 
-                if viewStore.isDemoModeEnabled,
-                   let yellow = UIColor(named: Asset.Colors.yellow500.name) {
-                    navigationBarAppearance.backgroundColor = yellow
+                if viewStore.isDemoModeEnabled {
+                    navigationBarAppearance.backgroundColor = UIColor(Colors.yellow500)
                 } else {
                     navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
                 }

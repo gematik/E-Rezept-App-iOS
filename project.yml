@@ -17,6 +17,18 @@ schemes:
         - variable: UITEST.RECORD_MOCKS
           value: 1
           isEnabled: false
+        - variable: UITEST.RESET
+          value: 1
+          isEnabled: false
+        - variable: UITEST.DISABLE_ANIMATIONS
+          value: YES
+          isEnabled: false
+        - variable: UITEST.DISABLE_AUTHENTICATION
+          value: YES
+          isEnabled: false
+        - variable: UITEST.SCENARIO_NAME
+          value: <SCENARIO>UITests
+          isEnabled: false
     test:
       language: de
       region: DE
@@ -41,33 +53,33 @@ schemes:
       targets:
         - eRpAppTests
         - eRpAppStoreScreenshots
-        - eRpKitTests_iOS
-        - eRpStyleKitTests_iOS
-        - eRpLocalStorageTests_iOS
-        - eRpRemoteStorageTests_iOS
-        - PharmacyTests_iOS
+        - package: eRpKit/eRpStyleKitTests
+        - package: eRpKit/eRpKitTests
+        - package: eRpKit/eRpLocalStorageTests
+        - package: eRpKit/eRpRemoteStorageTests
+        - package: eRpKit/PharmacyTests
         - package: eRpKit/IDPTests
         - package: eRpKit/HTTPClientTests
-        - FHIRClientTests_iOS
+        - package: eRpKit/FHIRClientTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
-        - AVSTests_iOS
+        - package: eRpKit/AVSTests
   AllTests_macOS:
     build:
       targets:
-        eRpKit_macOS: test
+        eRpDummy_macOS: test
     test:
       language: de
       region: DE
       gatherCoverageData: true
       targets:
-        - eRpKitTests_macOS
-        - eRpLocalStorageTests_macOS
-        - eRpRemoteStorageTests_macOS
-        - PharmacyTests_macOS
+        - package: eRpKit/eRpKitTests
+        - package: eRpKit/eRpLocalStorageTests
+        - package: eRpKit/eRpRemoteStorageTests
+        - package: eRpKit/PharmacyTests
         - package: eRpKit/IDPTests
         - package: eRpKit/HTTPClientTests
-        - FHIRClientTests_macOS
+        - package: eRpKit/FHIRClientTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
   AllIntegrationTests_iOS:
@@ -97,7 +109,7 @@ packages:
     path: ./
   OpenHealthCardKit:
     url: https://github.com/gematik/ref-OpenHealthCardKit/
-    majorVersion: 5.3.0
+    majorVersion: 5.6.0   
   ASN1Kit:
     url: https://github.com/gematik/ASN1Kit
     majorVersion: 1.2.0
@@ -110,9 +122,6 @@ packages:
   OpenSSL-Swift:
    url: https://github.com/gematik/OpenSSL-Swift
    majorVersion: 4.1.0
-  BundleKit:
-    url: https://github.com/SwiftCommon/BundleKit
-    majorVersion: 0.0.2
   CasePaths:
     url: https://github.com/pointfreeco/swift-case-paths
     majorVersion: 0.7.0
@@ -171,6 +180,11 @@ settings:
     Debug:
       SWIFT_COMPILATION_MODE: incremental
 targets:
+  eRpDummy:
+    type: framework
+    platform: [macOS]
+    sources:
+      - Sources/eRpApp/Common/ProgressResponse.swift
   eRpApp:
     type: application
     platform: iOS
@@ -185,21 +199,28 @@ targets:
     sources:
       - Sources/eRpApp
     dependencies:
-      - target: eRpStyleKit_iOS
-      - target: eRpRemoteStorage_iOS
-      - target: eRpKit_iOS
-      - target: eRpLocalStorage_iOS
-      - target: Pharmacy_iOS
-      - target: FHIRClient_iOS
-      - target: AVS_iOS
+      - package: eRpKit
+        product: eRpStyleKit
+      - package: eRpKit
+        product: eRpKit
+      - package: eRpKit
+        product: eRpRemoteStorage
+      - package: eRpKit
+        product: eRpLocalStorage
+      - package: eRpKit
+        product: Pharmacy
+      - package: eRpKit
+        product: AVS
       - package: eRpKit
         product: IDP
+      - package: eRpKit
+        product: FHIRClient
+      - package: eRpKit
+        product: HTTPClient
       - package: eRpKit
         product: TrustStore
       - package: eRpKit
         product: VAUClient
-      - package: eRpKit
-        product: HTTPClient
       - package: OpenSSL-Swift
       - package: DataKit
       - package: GemCommonsKit
@@ -238,164 +259,6 @@ targets:
       testTargets:
         - eRpAppTests
       gatherCoverageData: false
-  AVS:
-    settings:
-      PRODUCT_NAME: AVS
-      INFOPLIST_FILE: Sources/AVS/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/AVS
-    dependencies:
-      - package: eRpKit
-        product: HTTPClient
-      - package: ASN1Kit
-      - package: GemCommonsKit
-        product: GemCommonsKit
-      - package: DataKit
-      - package: OpenSSL-Swift
-    scheme:
-      testTargets:
-        - AVSTests_${platform}
-      gatherCoverageData: true
-  eRpStyleKit:
-    settings:
-      PRODUCT_NAME: eRpStyleKit
-      INFOPLIST_FILE: Sources/eRpStyleKit/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/eRpApp/Resources/Assets.xcassets
-      - Sources/eRpApp/Generated/XCAssets+Generated.swift
-      - Sources/eRpApp/Helper/Swiftgen/BundleToken+Helper.swift
-      - Sources/eRpApp/Components/Colors.swift
-      - Sources/eRpApp/Common/SFSymbolName.swift
-      - Sources/eRpStyleKit
-    dependencies:
-      - sdk: SwiftUI.framework
-    scheme:
-      testTargets:
-        - eRpStyleKitTests_${platform}
-      gatherCoverageData: true
-  eRpKit:
-    settings:
-      PRODUCT_NAME: eRpKit
-      INFOPLIST_FILE: Sources/eRpKit/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/eRpKit
-    dependencies:
-      - package: eRpKit
-        product: IDP
-      - target: FHIRClient_${platform}
-      - package: BundleKit
-      - package: IdentifiedCollections
-        product: IdentifiedCollections
-    scheme:
-      testTargets:
-        - eRpKitTests_${platform}
-      gatherCoverageData: true
-  eRpLocalStorage:
-    settings:
-      PRODUCT_NAME: eRpLocalStorage
-      INFOPLIST_FILE: Sources/eRpLocalStorage/Resources/Info.plist
-      configs:
-        Debug:
-          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG ENABLE_DEBUG_VIEW
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/eRpLocalStorage
-    dependencies:
-      - sdk: CoreData.framework
-      - package: GemCommonsKit
-        product: GemCommonsKit
-      - target: eRpKit_${platform}
-      - package: FHIRModels
-        product: ModelsR4
-      - package: IdentifiedCollections
-        product: IdentifiedCollections
-    scheme:
-      testTargets:
-        - eRpLocalStorageTests_${platform}
-      gatherCoverageData: true
-  eRpRemoteStorage:
-    settings:
-      PRODUCT_NAME: eRpRemoteStorage
-      INFOPLIST_FILE: Sources/eRpRemoteStorage/Resources/Info.plist
-    type: library.static
-    platform: [iOS,macOS]
-    sources:
-      - Sources/eRpRemoteStorage
-    dependencies:
-      - target: eRpKit_${platform}
-      - package: FHIRModels
-        product: ModelsR4
-      - package: eRpKit
-        product: HTTPClient
-      - target: FHIRClient_${platform}
-    scheme:
-      testTargets:
-        - eRpRemoteStorageTests_${platform}
-      gatherCoverageData: true
-  Pharmacy:
-    settings:
-      PRODUCT_NAME: Pharmacy
-      INFOPLIST_FILE: Sources/Pharmacy/Resources/Info.plist
-    type: library.static
-    platform: [iOS,macOS]
-    sources:
-      - Sources/Pharmacy
-    dependencies:
-      - package: FHIRModels
-        product: ModelsR4
-      - package: eRpKit
-        product: HTTPClient
-      - target: FHIRClient_${platform}
-      - target: eRpKit_${platform}
-    scheme:
-      testTargets:
-        - PharmacyTests_${platform}
-      gatherCoverageData: true
-  FHIRClient:
-    settings:
-      PRODUCT_NAME: FHIRClient
-      INFOPLIST_FILE: Sources/FHIRClient/Resources/Info.plist
-    type: framework
-    platform: [iOS,macOS]
-    sources:
-      - Sources/FHIRClient
-    dependencies:
-      - package: eRpKit
-        product: HTTPClient
-      - package: FHIRModels
-        product: ModelsR4
-      - package: CombineSchedulers
-      - package: GemCommonsKit
-        product: GemCommonsKit
-    scheme:
-      testTargets:
-        - FHIRClientTests_${platform}
-      gatherCoverageData: true
-  AVSTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/AVSTests/Resources/Info.plist
-    sources:
-      - Tests/AVSTests
-    dependencies:
-      - target: AVS_${platform}
-      - package: eRpKit
-        product: TestUtils
-      - package: DataKit
-      - package: GemCommonsKit
-        product: GemCommonsKit
-      - package: Nimble
-      - package: BundleKit
-      - package: OHHTTPStubs
-        product: OHHTTPStubsSwift
   eRpAppUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -428,11 +291,10 @@ targets:
       - path: Tests/eRpAppTests
         excludes:
           - "**/__Snapshots__/**"
-      - path: Sources/eRpLocalStorage/Prescriptions/ParsingDuplicates
     dependencies:
+      - target: eRpApp
       - package: eRpKit
         product: TestUtils
-      - target: eRpApp
       - package: Nimble
       - package: SnapshotTesting
   eRpAppStoreScreenshots:
@@ -445,90 +307,11 @@ targets:
         excludes:
           - "**/__Snapshots__/**"
     dependencies:
-      - package: eRpKit
-        product: TestUtils
       - target: eRpApp
+      - package: eRpKit
+        product: TestUtils
       - package: Nimble
       - package: SnapshotTesting
-  eRpKitTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/eRpKitTests/Resources/Info.plist
-    sources:
-      - Tests/eRpKitTests
-    dependencies:
-      - target: eRpKit_${platform}
-      - package: eRpKit
-        product: TestUtils
-      - package: Nimble
-  eRpStyleKitTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/eRpStyleKitTests/Resources/Info.plist
-    sources:
-      - Tests/eRpStyleKitTests
-    dependencies:
-      - target: eRpStyleKit_${platform}
-      - package: SnapshotTesting
-  eRpLocalStorageTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/eRpLocalStorageTests/Resources/Info.plist
-    sources:
-      - Tests/eRpLocalStorageTests
-    dependencies:
-      - target: eRpLocalStorage_${platform}
-      - package: eRpKit
-        product: TestUtils
-      - package: Nimble
-  eRpRemoteStorageTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/eRpRemoteStorageTests/Resources/Info.plist
-    sources:
-      - path: Tests/eRpRemoteStorageTests
-    dependencies:
-      - target: eRpRemoteStorage_${platform}
-      - package: eRpKit
-        product: TestUtils
-      - package: BundleKit
-      - package: Nimble
-      - package: OHHTTPStubs
-        product: OHHTTPStubsSwift
-  PharmacyTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/PharmacyTests/Resources/Info.plist
-    sources:
-      - path: Tests/PharmacyTests
-    dependencies:
-      - target: Pharmacy_${platform}
-      - package: eRpKit
-        product: TestUtils
-      - package: BundleKit
-      - package: Nimble
-      - package: OHHTTPStubs
-        product: OHHTTPStubsSwift
-  FHIRClientTests:
-    type: bundle.unit-test
-    platform: [iOS,macOS]
-    settings:
-      INFOPLIST_FILE: Tests/FHIRClientTests/Resources/Info.plist
-    sources:
-      - Tests/FHIRClientTests
-    dependencies:
-      - target: FHIRClient_${platform}
-      - package: eRpKit
-        product: TestUtils
-      - package: BundleKit
-      - package: Nimble
-      - package: OHHTTPStubs
-        product: OHHTTPStubsSwift
   IntegrationTests:
     type: bundle.unit-test
     platform: [iOS]
@@ -537,17 +320,18 @@ targets:
     sources:
       - Tests/IntegrationTests
     dependencies:
-      - target: AVS_${platform}
-      - target: eRpKit_${platform}
       - target: eRpApp
       - package: eRpKit
+        product: eRpKit
+      - package: eRpKit 
+        product: AVS
+      - package: eRpKit  
         product: IDP
-      - package: eRpKit
+      - package: eRpKit 
         product: TrustStore
-      - package: eRpKit
+      - package: eRpKit  
         product: TestUtils
-      - package: eRpKit
+      - package: eRpKit   
         product: VAUClient
-      - package: BundleKit
       - package: Nimble
 buildImplicitDependencies: true

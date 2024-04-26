@@ -18,6 +18,7 @@
 
 import ComposableArchitecture
 import eRpKit
+import eRpStyleKit
 import SwiftUI
 
 // [REQ:BSI-eRp-ePA:O.Resi_1#2] View containing onboarding authentication

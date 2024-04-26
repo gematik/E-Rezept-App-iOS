@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -599,6 +599,7 @@ extension PrescriptionDetailDomain.Destinations.State {
         case toast
         case medicationReminder
         case dosageInstructionsInfo
+        case matrixCode
     }
 
     var tag: Tag {
@@ -643,6 +644,8 @@ extension PrescriptionDetailDomain.Destinations.State {
                 return .medicationReminder
             case .dosageInstructionsInfo:
                 return .dosageInstructionsInfo
+            case .matrixCode:
+                return .matrixCode
         }
     }
 }

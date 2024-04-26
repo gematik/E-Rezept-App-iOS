@@ -18,6 +18,7 @@
 
 #if ENABLE_DEBUG_VIEW
 
+import eRpStyleKit
 import SwiftUI
 
 struct EditUrlView: View {

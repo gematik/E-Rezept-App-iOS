@@ -123,17 +123,19 @@ struct AVSRedeemService: RedeemService {
     }
 }
 
+// `Unimplemented` code generation already done by `public struct RedeemServiceDependency: DependencyKey`
+// sourcery: skipUnimplemented
 extension AVSRedeemService: DependencyKey {
-    static let liveValue = AVSRedeemService(
+    static let liveValue: RedeemService = AVSRedeemService(
         avsSession: UsersSessionContainerDependency.liveValue.userSession.avsSession,
         avsTransactionDataStore: UsersSessionContainerDependency.liveValue.userSession.avsTransactionDataStore
     )
 
-    static let previewValue: AVSRedeemService = liveValue
+    static let previewValue: RedeemService = liveValue
 }
 
 extension DependencyValues {
-    var avsRedeemService: AVSRedeemService {
+    var avsRedeemService: RedeemService {
         get { self[AVSRedeemService.self] }
         set { self[AVSRedeemService.self] = newValue }
     }
@@ -218,11 +220,13 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
 extension ErxTaskRepositoryRedeemService: DependencyKey {
     static let liveValue = {
         @Dependency(\.userSession) var userSession
+        @Dependency(\.loginHandlerServiceFactory) var loginHandlerFactory
+
         return ErxTaskRepositoryRedeemService(
             erxTaskRepository: userSession.erxTaskRepository,
-            loginHandler: DefaultLoginHandler(
-                idpSession: userSession.idpSession,
-                signatureProvider: userSession.secureEnclaveSignatureProvider
+            loginHandler: loginHandlerFactory.construct(
+                userSession.idpSession,
+                userSession.secureEnclaveSignatureProvider
             )
         )
     }()

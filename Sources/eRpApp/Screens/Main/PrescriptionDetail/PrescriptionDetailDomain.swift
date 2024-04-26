@@ -68,9 +68,13 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         case setNavigation(tag: Destinations.State.Tag?)
         case destination(PresentationAction<Destinations.Action>)
 
+        case redeemPressed
+
         enum Delegate: Equatable {
             /// Closes the details page
             case close
+            /// Closes the details page and starts the redeem process
+            case redeem(ErxTask)
         }
 
         enum Response: Equatable {
@@ -332,6 +336,8 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         case .destination(.presented(.alert(.consentServiceErrorAuthenticate))):
             state.destination = .alert(Alerts.missingTokenAlertState())
             return .none
+        case .redeemPressed:
+            return .send(.delegate(.redeem(state.prescription.erxTask)))
         case let .setNavigation(tag: tag):
             switch tag {
             case .chargeItem:
@@ -418,6 +424,14 @@ struct PrescriptionDetailDomain: ReducerProtocol {
                 state
                     .destination = .medicationReminder(MedicationReminderSetupDomain
                         .State(medicationSchedule: schedule))
+            case .matrixCode:
+                state.destination = .matrixCode(
+                    .init(
+                        type: .erxTask,
+                        isShowAlert: false,
+                        erxTasks: [state.prescription.erxTask]
+                    )
+                )
             }
             return .none
         case .openUrlGesundBundDe:

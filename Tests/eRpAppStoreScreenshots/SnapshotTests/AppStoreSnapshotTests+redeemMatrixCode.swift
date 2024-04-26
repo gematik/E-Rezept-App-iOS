@@ -30,7 +30,13 @@ extension AppStoreSnapshotTests {
                 initialState: .init(
                     type: .erxTask,
                     erxTasks: ErxTask.Demo.erxTasks,
-                    loadingState: .value(UIImage(testBundleNamed: "qrcode")!)
+                    loadingState: .value(.init(uniqueElements: [
+                        MatrixCodeDomain.State.IdentifiedImage(
+                            identifier: UUID(),
+                            image: UIImage(testBundleNamed: "qrcode")!,
+                            chunk: []
+                        ),
+                    ]))
                 )
             ) {
                 EmptyReducer()

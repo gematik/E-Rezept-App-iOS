@@ -16,8 +16,12 @@
 //  
 //
 
-import SwiftUI
+#if os(macOS)
+import AppKit
+#elseif os(iOS)
 import UIKit
+#endif
+import SwiftUI
 
 struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
     typealias UIViewType = UIView

@@ -2,36 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ord_detail_txt_presc</key>
+	<key>auth_txt_failed_login_hint_msg</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>
 		<key>variable_0</key>
 		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
 			<key>one</key>
-			<string>Rezept</string>
+			<string>Обнаружена неудачная попытка входа в систему</string>
 			<key>other</key>
-			<string>Rezepte</string>
-		</dict>
-	</dict>
-	<key>ord_list_status_count</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>one</key>
-			<string>%u Rezept</string>
-			<key>other</key>
-			<string>%u Rezepte</string>
+			<string>Обнаружено %u неудачных попыток входа в систему</string>
 		</dict>
 	</dict>
 	<key>erx_txt_accepted_until</key>
@@ -44,14 +32,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>one</key>
-			<string>Осталось дней: %u</string>
 			<key>few</key>
 			<string></string>
 			<key>many</key>
 			<string></string>
+			<key>one</key>
+			<string>Возврат возможен только завтра</string>
 			<key>other</key>
-			<string>Осталось дней: %u</string>
+			<string>Можно погасить в течение %u дней.</string>
 		</dict>
 	</dict>
 	<key>erx_txt_expires_in</key>
@@ -64,17 +52,37 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>one</key>
-			<string>Можно выкупить в качестве самостоятельного плательщика только сегодня</string>
 			<key>few</key>
-			<string>Можно выкупить в качестве самостоятельного плательщика только в течение %u дней</string>
+			<string></string>
 			<key>many</key>
-			<string>Можно выкупить в качестве самостоятельного плательщика только в течение %u дней</string>
+			<string></string>
+			<key>one</key>
+			<string>Можно использовать только завтра как самостоятельный плательщик</string>
 			<key>other</key>
-			<string>Можно выкупить в качестве самостоятельного плательщика только в течение %u дней</string>
+			<string>Можно по-прежнему использовать в качестве самостоятельного плательщика в течение %u дней.</string>
 		</dict>
 	</dict>
-	<key>scn_btn_scanning_done</key>
+	<key>ord_detail_txt_presc</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>Рецепт</string>
+			<key>other</key>
+			<string>Рецепты</string>
+		</dict>
+	</dict>
+	<key>ord_list_status_count</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>
@@ -85,13 +93,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Готово, добавьте рецепт</string>
-			<key>few</key>
-			<string></string>
-			<key>many</key>
 			<string></string>
 			<key>other</key>
-			<string>Готово, добавьте рецепты</string>
+			<string></string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>pha_redeem_alert_title_failure</key>
@@ -104,32 +110,14 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>zero</key>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
 			<string></string>
 			<key>one</key>
-			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
+			<string>Не удалось активировать выбранный рецепт.</string>
 			<key>other</key>
-			<string>%li Rezepte konnten nicht eingelöst werden</string>
-		</dict>
-	</dict>
-	<key>auth_txt_failed_login_hint_msg</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>li</string>
-			<key>one</key>
-			<string>Зафиксирована неудачная попытка входа</string>
-			<key>few</key>
-			<string>Зафиксированы %u неудачные попытки входа</string>
-			<key>many</key>
-			<string>Зафиксировано %u неудачных попыток входа</string>
-			<key>other</key>
-			<string>Зафиксировано %u неудачных попыток входа</string>
+			<string>%li рецептов не удалось обменять</string>
 		</dict>
 	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
@@ -142,43 +130,75 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
 			<key>one</key>
-			<string>Erhaltenes Medikament</string>
+			<string>Получено лекарство</string>
 			<key>other</key>
-			<string>Erhaltene Medikamente</string>
+			<string>Получено лекарство</string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>Готово, добавляю рецепт</string>
+			<key>other</key>
+			<string>Готово, добавляйте рецепты</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@variable_0@</string>
-        <key>variable_0</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>li</string>
-            <key>one</key>
-            <string>Sie haben noch einen Versuch, um die aktuelle PIN einzugeben.</string>
-            <key>other</key>
-            <string>Sie haben noch %u Versuche, um die aktuelle PIN einzugeben.</string>
-        </dict>
-    </dict>
-    <key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@variable_0@</string>
-        <key>variable_0</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>li</string>
-            <key>one</key>
-            <string>Sie haben noch einen Versuch, um die PUK einzugeben.</string>
-            <key>other</key>
-            <string>Sie haben noch %u Versuche, um die PUK einzugeben.</string>
-        </dict>
-    </dict>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>У вас есть еще одна попытка ввести текущий PIN-код.</string>
+			<key>other</key>
+			<string>У вас еще есть %u попыток ввести текущий PIN-код.</string>
+		</dict>
+	</dict>
+	<key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>У вас есть еще одна попытка войти в ПУК.</string>
+			<key>other</key>
+			<string>У вас еще есть %u попыток ввести PUK.</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

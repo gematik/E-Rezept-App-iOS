@@ -29,6 +29,15 @@ extension Extension.ValueX {
             return nil
         }
     }
+
+    var referenceOrNil: Reference? {
+        switch self {
+        case let .reference(value):
+            return value
+        default:
+            return nil
+        }
+    }
 }
 
 extension ModelsR4.Patient {

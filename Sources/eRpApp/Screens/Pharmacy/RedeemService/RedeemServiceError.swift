@@ -21,7 +21,7 @@ import eRpKit
 import Foundation
 
 // sourcery: CodedError = "024"
-enum RedeemServiceError: Swift.Error, Equatable, LocalizedError {
+enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
     // sourcery: errorCode = "01"
     /// When redeeming a task via Fachdienst
     case eRxRepository(ErxRepositoryError)
@@ -143,6 +143,37 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError {
             return serviceError
         } else {
             return .unspecified(error: error)
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case value
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+        let value = try? container.decode(String.self, forKey: .value)
+
+        self = .internalError(.noService)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .eRxRepository:
+            try container.encode("eRxRepository", forKey: .type)
+        case .avs:
+            try container.encode("avs", forKey: .type)
+        case .internalError:
+            try container.encode("internalError", forKey: .type)
+        case .unspecified:
+            try container.encode("unspecified", forKey: .type)
+        case .noTokenAvailable:
+            try container.encode("noTokenAvailable", forKey: .type)
+        case .loginHandler:
+            try container.encode("loginHandler", forKey: .type)
         }
     }
 }

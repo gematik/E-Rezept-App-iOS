@@ -142,6 +142,7 @@ extension ModelsR4.Bundle {
             medication: patientReceiptBundle.parseErxMedication(),
             medicationRequest: patientReceiptBundle.parseErxMedicationRequest(),
             patient: ErxPatient(
+                title: patient?.title,
                 name: patient?.fullName,
                 address: patient?.completeAddress,
                 birthDate: patient?.birthDate?.value?.description,
@@ -151,7 +152,9 @@ extension ModelsR4.Bundle {
                 insuranceId: patient?.insuranceId
             ),
             practitioner: ErxPractitioner(
+                title: practitioner?.title,
                 lanr: practitioner?.lanr,
+                zanr: practitioner?.lanr,
                 name: practitioner?.fullName,
                 qualification: practitioner?.qualificationText,
                 email: practitioner?.email,
@@ -190,6 +193,20 @@ extension ModelsR4.Bundle {
         if let bundle = entry?.compactMap({ $0.resource?.get(if: Resource.self) }),
            let kbvBundle = bundle.first(where: { bundleEntry in newIdentifier == bundleEntry.id }) {
             return kbvBundle
+        }
+
+        return nil
+    }
+
+    func findResource<Resource: ModelsR4.Resource>(for metaProfile: String?,
+                                                   type _: Resource.Type) -> Resource? {
+        guard let metaProfile = metaProfile else { return nil }
+        // try finding it by identifier
+        if let bundle = entry?.compactMap({ $0.resource?.get(if: Resource.self) }),
+           let resource = bundle.first(where: { bundleEntry in
+               bundleEntry.meta?.profile?.compactMap { $0.value?.url.absoluteString }.contains(metaProfile) ?? false
+           }) {
+            return resource
         }
 
         return nil
@@ -376,6 +393,13 @@ extension ModelsR4.Bundle {
             }
             return nil
         }
+    }
+
+    var joinedDosageInstructions: String? {
+        medicationRequest?.dosageInstruction?.compactMap {
+            $0.text?.value?.string
+        }
+        .joined(separator: ",")
     }
 }
 

@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpStyleKit
 import SwiftUI
 
 struct PasswordStrengthView: View {

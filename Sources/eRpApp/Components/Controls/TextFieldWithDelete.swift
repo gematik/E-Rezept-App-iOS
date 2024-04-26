@@ -15,6 +15,8 @@
 //  limitations under the Licence.
 //  
 //
+
+import eRpStyleKit
 import SwiftUI
 
 /// sourcery: StringAssetInitialized

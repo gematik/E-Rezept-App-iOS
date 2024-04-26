@@ -42,7 +42,7 @@ extension ModelsR4.Bundle {
     ///
     /// - Returns: A ErxChargeItem or nil
     /// - Throws: `ModelsR4.Bundle.Error`
-    func parseErxChargeItem( // swiftlint:disable:this function_body_length
+    func parseErxChargeItem( // swiftlint:disable:this function_body_length cyclomatic_complexity
         id: ErxChargeItem.ID,
         with fhirData: Data
     ) throws -> ErxChargeItem? {
@@ -54,6 +54,8 @@ extension ModelsR4.Bundle {
         else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse the charge item.")
         }
+
+        let enteredDate = chargeItem.enteredDate?.value?.description
 
         // MARK: - KBV_PR_ERP_Bundle
 
@@ -90,7 +92,7 @@ extension ModelsR4.Bundle {
             throw RemoteStorageBundleParsingError.parseError("Could not parse organization name.")
         }
 
-        guard let pharmacyAddress = pharmacy?.completeAddress
+        guard let pharmacyAddress = pharmacy?.twoLineAddress
         else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse organization address.")
         }
@@ -100,8 +102,90 @@ extension ModelsR4.Bundle {
             throw RemoteStorageBundleParsingError.parseError("Could not parse organization address country.")
         }
 
+        let fhirPackage = ABDAERezeptAbgabedaten.v1_2_0
+        let fhirAbgabedatenComposition = fhirPackage.dAV_PKV_PR_ERP_AbgabedatenComposition
+        let fhirAbrechnungszeilen = fhirPackage.dAV_EX_ERP_Abrechnungszeilen
+        let fhirZusatzdatenHerstellung = fhirPackage.dAV_EX_ERP_ZusatzdatenHerstellung
+        let fhirZusatzdatenEinheit = fhirPackage.dAV_EX_ERP_ZusatzdatenEinheit
+
         let invoice = dispenseBundle.invoice
-        let chargableItems = try invoice?.chargeableItems() ?? []
+
+        let dispenseComposition = dispenseBundle.findResource(
+            for: fhirAbgabedatenComposition.meta_profile,
+            type: Composition.self
+        )
+
+        let bundleEntry: Reference? = dispenseComposition?.section?.first { section in
+            section.title?.value?.string == fhirAbgabedatenComposition.dispenseInformationKey
+        }?.entry?.first
+
+        var chargeableItems: [DavInvoice.ChargeableItem] = []
+        var productionSteps: [DavInvoice.Production] = []
+
+        let medication = prescriptionBundle.parseErxMedication()
+
+        if let reference = bundleEntry?.reference {
+            let medicationDispense = dispenseBundle.findResource(with: reference, type: MedicationDispense.self)
+
+            let invoice = medicationDispense?.extensions(for: fhirAbrechnungszeilen.meta_profile)
+
+            if let reference = invoice?.first?.value?.referenceOrNil?.reference {
+                let invoice = dispenseBundle.findResource(with: reference, type: Invoice.self)
+                chargeableItems += try invoice?.chargeableItems() ?? []
+            }
+
+            let ext = medicationDispense?.extensions(for: fhirZusatzdatenHerstellung.meta_profile)
+
+            if medication.profile != .compounding {
+                for element in ext ?? [] {
+                    guard let reference = element.value?.referenceOrNil?.reference else { continue }
+
+                    let secondMedicationDispense = dispenseBundle.findResource(
+                        with: reference,
+                        type: MedicationDispense.self
+                    )
+
+                    let invoice = secondMedicationDispense?.extensions(for: fhirZusatzdatenEinheit.meta_profile)
+                    if let reference = invoice?.first?.value?.referenceOrNil?.reference {
+                        let invoice = dispenseBundle.findResource(with: reference, type: Invoice.self)
+                        chargeableItems += try invoice?.chargeableItems(separation: true) ?? []
+                    }
+                }
+            } else {
+                for element in ext ?? [] {
+                    guard let reference = element.value?.referenceOrNil?.reference else { continue }
+
+                    let secondMedicationDispense = dispenseBundle.findResource(
+                        with: reference,
+                        type: MedicationDispense.self
+                    )
+
+                    let invoice = secondMedicationDispense?.extensions(for: fhirZusatzdatenEinheit.meta_profile)
+                    if let reference = invoice?.first?.value?.referenceOrNil?.reference {
+                        let invoice = dispenseBundle.findResource(with: reference, type: Invoice.self)
+                        let ingredients = try invoice?.productionSteps() ?? []
+
+                        let sequence: Int32
+                        if let ext = secondMedicationDispense?.extensions(for: fhirZusatzdatenEinheit.extension_counter)
+                            .first?.value,
+                            case let Extension.ValueX.positiveInt(value) = ext {
+                            sequence = value.value?.integer ?? 0
+                        } else {
+                            sequence = 0
+                        }
+
+                        productionSteps.append(
+                            DavInvoice.Production(
+                                title: "Herstellung \(sequence)",
+                                createdOn: secondMedicationDispense?.whenPrepared?.value?.description ?? "",
+                                sequence: "1",
+                                ingredients: ingredients
+                            )
+                        )
+                    }
+                }
+            }
+        }
 
         guard let totalAdditionalFee = invoice?.totalAdditionalFee
         else {
@@ -120,20 +204,23 @@ extension ModelsR4.Bundle {
 
         // The current dispense bundle v1.3.0 only specifies a single medicationDispense
         let medicationDispense = try dispenseBundle.parseDavMedicationDispenses().first
-        let productionSteps: [DavInvoice.Production] = []
+
+        let taskId = chargeItem.identifier?.first { identifier in
+            Workflow.Key.prescriptionIdKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
+        }?.value?.value?.string
 
         return ErxChargeItem(
             identifier: chargeItemIdentifier,
             fhirData: fhirData,
-            taskId: chargeItem.taskId,
-            enteredDate: chargeItem.enteredDate?.value?.description,
+            taskId: taskId,
+            enteredDate: enteredDate,
             accessCode: chargeItem.accessCode,
-            medication: prescriptionBundle.parseErxMedication(),
+            medication: medication,
             medicationRequest: prescriptionBundle.parseErxMedicationRequest(),
             patient: ErxPatient(
                 title: patient?.title,
                 name: patient?.fullName,
-                address: patient?.completeAddress,
+                address: patient?.singleLineAddress,
                 birthDate: patient?.birthDate?.value?.description,
                 phone: patient?.phone,
                 status: prescriptionBundle.coverageStatus,
@@ -153,7 +240,7 @@ extension ModelsR4.Bundle {
                 name: organization?.name?.value?.string,
                 phone: organization?.phone,
                 email: organization?.email,
-                address: organization?.completeAddress
+                address: organization?.twoLineAddress
             ),
             pharmacy: DavOrganization(
                 identifier: pharmacyId,
@@ -165,7 +252,7 @@ extension ModelsR4.Bundle {
                 totalAdditionalFee: totalAdditionalFee,
                 totalGross: totalGross,
                 currency: currency,
-                chargeableItems: chargableItems,
+                chargeableItems: chargeableItems,
                 productionSteps: productionSteps
             ),
             medicationDispense: medicationDispense,
@@ -173,24 +260,6 @@ extension ModelsR4.Bundle {
             receiptSignature: receiptBundle.parseErxSignature,
             dispenseSignature: dispenseBundle.parseErxSignature
         )
-    }
-}
-
-extension ModelsR4.ChargeItem {
-    var taskId: String? {
-        identifier?.first { identifier in
-            Workflow.Key.prescriptionIdKeys.contains {
-                $0.value == identifier.system?.value?.url.absoluteString
-            }
-        }?.value?.value?.string
-    }
-
-    var accessCode: String? {
-        identifier?.first { identifier in
-            Workflow.Key.accessCodeKeys.contains {
-                $0.value == identifier.system?.value?.url.absoluteString
-            }
-        }?.value?.value?.string
     }
 }
 
@@ -229,6 +298,14 @@ extension ModelsR4.Bundle {
     }
 }
 
+extension ModelsR4.ChargeItem {
+    var accessCode: String? {
+        identifier?.first { identifier in
+            Workflow.Key.accessCodeKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
+        }?.value?.value?.string
+    }
+}
+
 extension ModelsR4.Invoice {
     var totalAdditionalFee: Decimal? {
         totalGross?.extension?.first { total in
@@ -245,7 +322,36 @@ extension ModelsR4.Invoice {
         }
     }
 
-    func chargeableItems() throws -> [DavInvoice.ChargeableItem] {
+    func productionSteps(special _: Bool = false) throws -> [DavInvoice.Production.Ingredient] {
+        try lineItem?.map {
+            let factor = $0.priceComponent?.first?.factor?.value?.decimal
+
+            guard let price = $0.priceComponent?.first?.amount?.value?.value?.decimal
+            else {
+                throw RemoteStorageBundleParsingError.parseError("Could not parse invoice priceComponent amount value.")
+            }
+
+            let mark: String?
+
+            if let value = $0.priceComponent?.first?.extensions( // swiftlint:disable:next line_length
+                for: "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenFaktorkennzeichen"
+            ).first?.value,
+                case let Extension.ValueX.codeableConcept(codeable) = value {
+                mark = codeable.coding?.first?.code?.value?.string
+            } else {
+                mark = nil
+            }
+
+            return DavInvoice.Production.Ingredient(
+                pzn: $0.pzn ?? $0.ta1 ?? "NA",
+                factorMark: mark,
+                factor: factor.map { $0 / 1000 },
+                price: price
+            )
+        } ?? []
+    }
+
+    func chargeableItems(separation: Bool = false) throws -> [DavInvoice.ChargeableItem] {
         try lineItem?.map {
             guard let factor = $0.priceComponent?.first?.factor?.value?.decimal
             else {
@@ -257,10 +363,20 @@ extension ModelsR4.Invoice {
                 throw RemoteStorageBundleParsingError.parseError("Could not parse invoice priceComponent amount value.")
             }
 
+            if separation {
+                return DavInvoice.ChargeableItem(
+                    factor: factor / 1000,
+                    price: nil,
+                    description: $0.chargeItem.chargeItemCodeableConcept?.text?.value?.string,
+                    pzn: $0.pzn,
+                    ta1: $0.ta1,
+                    hmrn: $0.hmrn
+                )
+            }
             return DavInvoice.ChargeableItem(
                 factor: factor,
                 price: price,
-                description: $0.description,
+                description: $0.chargeItem.chargeItemCodeableConcept?.text?.value?.string,
                 pzn: $0.pzn,
                 ta1: $0.ta1,
                 hmrn: $0.hmrn
@@ -270,10 +386,6 @@ extension ModelsR4.Invoice {
 }
 
 extension ModelsR4.InvoiceLineItem {
-    var description: String? {
-        chargeItemCodableConcept?.text?.value?.string
-    }
-
     var pzn: String? {
         coding(for: Dispense.Key.ChargeItem.pzn)?.code?.value?.string
     }
@@ -286,22 +398,25 @@ extension ModelsR4.InvoiceLineItem {
         coding(for: Dispense.Key.ChargeItem.hmnr)?.code?.value?.string
     }
 
-//    var packagingSize: String? {
-//        self.chargeItemCodableConcept?.
-//    }
-
-    var chargeItemCodableConcept: CodeableConcept? {
+    func coding(for keys: [Dispense.Version: String]) -> ModelsR4.Coding? {
         if case let ChargeItemX.codeableConcept(item) = chargeItem {
-            return item
+            return item.coding?.first { coding in
+                keys.contains {
+                    $0.value == coding.system?.value?.url.absoluteString
+                }
+            }
         }
         return nil
     }
+}
 
-    func coding(for keys: [Dispense.Version: String]) -> ModelsR4.Coding? {
-        chargeItemCodableConcept?.coding?.first { coding in
-            keys.contains {
-                $0.value == coding.system?.value?.url.absoluteString
-            }
+extension ModelsR4.InvoiceLineItem.ChargeItemX {
+    var chargeItemCodeableConcept: CodeableConcept? {
+        switch self {
+        case let .codeableConcept(codeableConcept):
+            return codeableConcept
+        default:
+            return nil
         }
     }
 }

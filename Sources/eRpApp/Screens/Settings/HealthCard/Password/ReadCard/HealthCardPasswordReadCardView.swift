@@ -47,7 +47,7 @@ struct HealthCardPasswordReadCardView: View {
                 .frame(width: nil, height: Self.height, alignment: .top)
                 .overlay(
                     HStack {
-                        Image(Asset.CardWall.onScreenEgk)
+                        Image(asset: Asset.CardWall.onScreenEgk)
                             .scaledToFill()
                             .frame(width: nil, height: Self.height, alignment: .bottom)
                     }

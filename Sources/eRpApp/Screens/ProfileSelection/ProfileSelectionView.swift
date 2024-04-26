@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 // TODO: this view is not in use. Can be removed? // swiftlint:disable:this todo
@@ -44,7 +45,7 @@ struct ProfileSelectionView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
                         .font(.body.weight(.semibold))
-                        .foregroundColor(Asset.Colors.primary600.color)
+                        .foregroundColor(Colors.primary600)
                     })
                         .accessibility(identifier: A11y.profileSelection.proBtnSelectionEdit)
                         .padding(.vertical, 16)

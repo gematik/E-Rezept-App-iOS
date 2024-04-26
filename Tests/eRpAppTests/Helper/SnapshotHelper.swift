@@ -70,6 +70,36 @@ extension XCTestCase {
         ]
     }
 
+    func snapshotModiCurrentDevice<T>() -> [String: Snapshotting<T, UIImage>]
+        where T: SwiftUI.View {
+        [
+            "iPhoneXsMax.light":
+                .image(
+                    precision: defaultPrecision,
+                    perceptualPrecision: defaultPerceptualPrecision,
+                    layout: .device(config: ViewImageConfig.iPhone13.noInsets()),
+                    traits: UITraitCollection(preferredContentSizeCategory: .medium)
+                ),
+            "iPhone14.light.xs":
+                .image(
+                    precision: defaultPrecision,
+                    perceptualPrecision: defaultPerceptualPrecision,
+                    layout: .device(config: ViewImageConfig.iPhone13.noInsets()),
+                    traits: UITraitCollection(preferredContentSizeCategory: .extraSmall)
+                ),
+            "iPhone14.dark":
+                .image(
+                    precision: defaultPrecision,
+                    perceptualPrecision: defaultPerceptualPrecision,
+                    layout: .device(config: ViewImageConfig.iPhone13.noInsets()),
+                    traits: UITraitCollection(traitsFrom: [
+                        UITraitCollection(userInterfaceStyle: .dark),
+                        UITraitCollection(preferredContentSizeCategory: .medium),
+                    ])
+                ),
+        ]
+    }
+
     func snapshotModiOnDevices<T>() -> [String: Snapshotting<T, UIImage>]
         where T: SwiftUI.View {
         [

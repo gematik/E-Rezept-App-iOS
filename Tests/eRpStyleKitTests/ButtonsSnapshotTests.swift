@@ -205,4 +205,66 @@ final class ButtonsSnapshotTests: XCTestCase {
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }
+
+    func testImageButtons() {
+        struct TestButton: View {
+            let style: PictureButtonStyle.Style
+            let active: Bool
+
+            var body: some View {
+                Button {} label: {
+                    Label {
+                        Text("Label")
+                    } icon: {
+                        Image(systemName: SFSymbolName.car)
+                            .resizable()
+                            .padding(4)
+                            .background(
+                                .linearGradient(
+                                    Gradient(
+                                        colors: [.brown, .cyan]
+                                    ),
+                                    startPoint: .bottom,
+                                    endPoint: .top
+                                )
+                            )
+                    }
+                }
+                .buttonStyle(.picture(style: style, isActive: active))
+            }
+        }
+
+        let sut = VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                VStack(alignment: .leading, spacing: 16) {
+                    TestButton(style: .default, active: false)
+                    TestButton(style: .default, active: true)
+                }
+
+                VStack(alignment: .leading, spacing: 16) {
+                    TestButton(style: .large, active: false)
+                    TestButton(style: .large, active: true)
+                }
+            }
+
+            HStack {
+                VStack(alignment: .leading, spacing: 16) {
+                    TestButton(style: .supply, active: false)
+                    TestButton(style: .supply, active: true)
+                }
+
+                VStack(alignment: .leading, spacing: 16) {
+                    TestButton(style: .supplyLarge, active: false)
+                    TestButton(style: .supplyLarge, active: true)
+                }
+            }
+
+            Spacer()
+        }
+        .padding()
+        .background(Color(.systemBackground))
+        .frame(width: 375, height: 600)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
 }

@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpStyleKit
 import SwiftUI
 
 struct Backport<Content> {
@@ -31,7 +32,7 @@ extension Backport where Content: View {
         if #available(iOS 16, *) {
             content
                 .toolbarBackground(.visible, for: .tabBar)
-                .toolbarBackground(Asset.Colors.tabViewToolBarBackground.color, for: .tabBar)
+                .toolbarBackground(Colors.tabViewToolBarBackground, for: .tabBar)
         } else {
             content
         }

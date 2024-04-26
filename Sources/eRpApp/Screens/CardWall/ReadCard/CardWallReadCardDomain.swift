@@ -15,7 +15,6 @@
 //  limitations under the Licence.
 //  
 //
-
 import Combine
 import ComposableArchitecture
 import CoreNFC
@@ -175,6 +174,10 @@ struct CardWallReadCardDomain: ReducerProtocol {
                     if let errorAlert = AlertStates.alert(for: tagError) {
                         state.destination = .alert(errorAlert)
                     }
+                case let .signChallengeError(.nfcHealthCardSession(.coreNFC(coreNFCError))):
+                    if let errorAlert = AlertStates.alert(for: coreNFCError) {
+                        state.destination = .alert(errorAlert)
+                    }
                 case let .signChallengeError(.cardConnectionError(nfcError)),
                      let .signChallengeError(.genericError(nfcError)):
                     switch nfcError {
@@ -208,11 +211,7 @@ struct CardWallReadCardDomain: ReducerProtocol {
 
             let environment = environment
             return .run { [profileId = state.profileId] send in
-                let can = await withCheckedContinuation { continuation in
-                    _ = environment.sessionProvider.userDataStore(for: profileId).can.first().sink { can in
-                        continuation.resume(with: .success(can))
-                    }
-                }
+                let can = try await environment.sessionProvider.userDataStore(for: profileId).can.async()
                 guard let can = can else {
                     await send(.response(.state(State.Output.retrievingChallenge(.error(.inputError(.missingCAN))))))
                     return
@@ -227,14 +226,13 @@ struct CardWallReadCardDomain: ReducerProtocol {
                         await send(value)
                     }
                 } else {
-                    for await value in environment.signChallengeWithNFCCard(
+                    await environment.signChallengeWithNFCCard(
                         can: can,
                         pin: pin,
                         profileID: profileID,
-                        challenge: challenge
-                    ) {
-                        await send(value)
-                    }
+                        challenge: challenge,
+                        send: send
+                    )
                 }
             }
         case let .destination(.presented(.alert(.openMail(message)))):
@@ -423,60 +421,81 @@ extension CardWallReadCardDomain.Environment {
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
-    func signChallengeWithNFCCard(can: String,
-                                  pin: String,
-                                  profileID: UUID,
-                                  challenge: IDPChallengeSession) -> AsyncStream<CardWallReadCardDomain.Action> {
-        AsyncStream { continuation in
-            continuation.yield(.response(.state(.signingChallenge(.loading))))
+    func signChallengeWithNFCCard(
+        can: String,
+        pin: String,
+        profileID: UUID,
+        challenge: IDPChallengeSession,
+        send: Send<CardWallReadCardDomain.Action>
+    ) async {
+        await send(.response(.state(.signingChallenge(.loading))))
+        let signedChallengeResult = await nfcSessionProvider.sign(
+            can: can,
+            pin: pin,
+            challenge: challenge
+        )
 
-            let cancellation = self.nfcSessionProvider
-                .sign(can: can, pin: pin, challenge: challenge)
-                .first()
-                .mapError(CardWallReadCardDomain.State.Error.signChallengeError)
-                .receive(on: self.schedulers.main)
-                .flatMap { signedChallenge in
-                    continuation.yield(.response(.state(.verifying(.loading))))
-
-                    return self.verifyResultWithIDP(signedChallenge, can: can, pin: pin, profileID: profileID)
-                }
-                .sink(receiveCompletion: { completion in
-                    if case let .failure(error) = completion {
-                        continuation.yield(.response(.state(.signingChallenge(.error(error)))))
-                    }
-                    continuation.finish()
-                }, receiveValue: { value in
-                    continuation.yield(value)
-                })
-
-            continuation.onTermination = { _ in
-                cancellation.cancel()
-            }
+        let signedChallenge: SignedChallenge
+        switch signedChallengeResult {
+        case let .success(value):
+            signedChallenge = value
+        case let .failure(error):
+            await send(.response(.state(.signingChallenge(.error(CardWallReadCardDomain.State.Error
+                    .signChallengeError(error))))))
+            return
         }
+
+        await send(.response(.state(.verifying(.loading))))
+
+        guard let actionAfterVerify = try? await verifyResultWithIDPAsync(
+            signedChallenge,
+            profileID: profileID
+        )
+        else { return }
+
+        await send(actionAfterVerify)
     }
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
-    private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
-                                     can _: String,
-                                     pin _: String,
-                                     profileID: UUID,
-                                     registerBiometrics _: Bool = false)
-        -> AnyPublisher<CardWallReadCardDomain.Action, Never> {
-        sessionProvider.idTokenValidator(for: profileID)
-            .mapError(CardWallReadCardDomain.State.Error.profileValidation)
-            .flatMap { idTokenValidator in
-                self.sessionProvider.idpSession(for: profileID)
-                    .verify(signedChallenge)
-                    .exchangeIDPToken(
-                        idp: sessionProvider.idpSession(for: profileID),
-                        challengeSession: signedChallenge.originalChallenge,
-                        idTokenValidator: idTokenValidator.validate(idToken:)
-                    )
+    func verifyResultWithIDPAsync(
+        _ signedChallenge: SignedChallenge,
+        profileID: UUID
+    ) async throws -> CardWallReadCardDomain.Action {
+        let idTokenValidator: IDTokenValidator
+        do {
+            idTokenValidator = try await sessionProvider.idTokenValidator(for: profileID)
+                .async(/CardWallReadCardDomain.State.Error.profileValidation)
+        } catch let error as CardWallReadCardDomain.State.Error {
+            return .response(.state(.verifying(.error(error))))
+        } catch {
+            throw error
+        }
+
+        let idpSession = sessionProvider.idpSession(for: profileID)
+
+        let stateOutput: CardWallReadCardDomain.State.Output
+        do {
+            let idpExchangeToken = try await idpSession.verify(signedChallenge).async()
+            let idpToken = try await idpSession.exchange(
+                token: idpExchangeToken,
+                challengeSession: signedChallenge.originalChallenge,
+                idTokenValidator: idTokenValidator.validate(idToken:)
+            )
+            .async()
+            stateOutput = .loggedIn(idpToken)
+        } catch let error as IDPError {
+            let stateError: CardWallReadCardDomain.State.Error
+            if case let .unspecified(error) = error,
+               let validationError = error as? IDTokenValidatorError {
+                stateError = .profileValidation(validationError)
+            } else {
+                stateError = .idpError(error)
             }
-            .eraseToCardWallLoginState()
-            .receive(on: schedulers.main)
-            .map { CardWallReadCardDomain.Action.response(.state($0)) }
-            .eraseToAnyPublisher()
+            stateOutput = .verifying(.error(stateError))
+        } catch {
+            throw error
+        }
+        return .response(.state(stateOutput))
     }
 }

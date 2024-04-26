@@ -446,6 +446,14 @@ extension MainDomain {
                 await environment.router.routeTo(.settings(.unlockCard))
             }
 
+        case let .destination(.presented(.prescriptionDetailAction(action: .delegate(.redeem(task))))):
+            state.destination = .redeem(
+                RedeemMethodsDomain
+                    .State(erxTasks: [task])
+            )
+
+            return .none
+
         case .destination,
              .setNavigation,
              .prescriptionList,

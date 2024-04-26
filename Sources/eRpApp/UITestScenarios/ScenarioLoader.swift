@@ -55,7 +55,7 @@ extension View {
 extension SceneDelegate {
     func setupUITests() {
         if ProcessInfo.processInfo.environment["UITEST.DISABLE_ANIMATIONS"] != nil {
-            mainWindow?.layer.speed = 100
+            mainWindow?.layer.speed = 1000
         }
 
         if ProcessInfo.processInfo.environment["UITEST.RESET"] != nil {
@@ -117,6 +117,8 @@ extension ReducerProtocol {
                         isRecording
                     )
                 }
+
+            dependencies.avsRedeemService = SmartMocks.shared.smartMockRedeemService(scenario, isRecording)
         }
     }
 }
@@ -223,6 +225,22 @@ struct SmartMocks {
         smartMockLoginHandler = mock
         return mock
     }
+
+    private var smartMockRedeemService: SmartMockRedeemService?
+    mutating func smartMockRedeemService(_ scenario: Scenario?, _ isRecording: Bool) -> RedeemService {
+        if let existingMock = smartMockRedeemService {
+            return existingMock
+        }
+        @Dependency(\.redeemService) var redeemService: RedeemService
+        let mock = SmartMockRedeemService(
+            wrapped: redeemService,
+            mocks: scenario?.redeemService,
+            isRecording: isRecording
+        )
+        smartMockRegister.register(mock)
+        smartMockRedeemService = mock
+        return mock
+    }
 }
 
 struct Scenario {
@@ -231,6 +249,7 @@ struct Scenario {
     var erxTaskCoreDataStore: SmartMockErxTaskCoreDataStore.Mocks?
     var erxRemoteDataStore: SmartMockErxRemoteDataStore.Mocks?
     var loginHandler: SmartMockLoginHandler.Mocks?
+    var redeemService: SmartMockRedeemService.Mocks?
 }
 
 struct ScenarioLoader {
@@ -268,13 +287,18 @@ struct ScenarioLoader {
             scenarioUrl: scenarioPath,
             with: "LoginHandler"
         )
+        let redeemService: SmartMockRedeemService.Mocks? = loadMockData(
+            scenarioUrl: scenarioPath,
+            with: "RedeemService"
+        )
 
         return Scenario(
             userDataStore: userDataStoreMock,
             pharmacyRemoteDataStore: pharmacyMock,
             erxTaskCoreDataStore: erxTaskCoreDataStore,
             erxRemoteDataStore: erxRemoteDataStore,
-            loginHandler: loginHandler
+            loginHandler: loginHandler,
+            redeemService: redeemService
         )
     }
 
@@ -286,6 +310,17 @@ struct ScenarioLoader {
         }
         do {
             return try JSONDecoder().decode(T.self, from: jsonData)
+        } catch let error as DecodingError {
+            switch error {
+            case let .valueNotFound(_, context),
+                 let .dataCorrupted(context),
+                 let .typeMismatch(_, context),
+                 let .keyNotFound(_, context):
+                fatalError("Failed to decode scenario file '\(name)': \(error.localizedDescription)" +
+                    "\n\n\t\(context.codingPath.map(\.stringValue).joined(separator: "."))")
+            default:
+                fatalError("failed to decode scenario file '\(name)'. Error: \(error.localizedDescription)")
+            }
         } catch {
             fatalError("failed to decode scenario file '\(name)'. Error: \(error.localizedDescription)")
         }
@@ -434,4 +469,5 @@ extension PharmacyRemoteDataStore {}
 extension ErxTaskCoreDataStore {}
 extension ErxRemoteDataStore {}
 extension LoginHandler {}
+extension RedeemService {}
 // sourcery:end

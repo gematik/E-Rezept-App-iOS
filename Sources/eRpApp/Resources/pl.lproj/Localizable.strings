@@ -191,7 +191,7 @@
 "cdw_txt_intro_egk_checkmark" = "Karta zdrowia obsługująca funkcję NFC";
 "cdw_txt_intro_footnote" = "Nie masz jeszcze karty zdrowia obsługującej funkcję NFC i kodu PIN?";
 "cdw_txt_intro_header_bottom" = "Korzystaj z wszystkich funkcji";
-"cdw_txt_intro_header_top" = "Logowanie";
+"cdw_txt_intro_header_top" = "Rejestr";
 "cdw_txt_intro_list_title" = "Co jest potrzebne:";
 "cdw_txt_intro_needed_subheadline" = "Co jest potrzebne:";
 "cdw_txt_intro_pin_checkmark" = "PIN do karty zdrowia";
@@ -327,6 +327,8 @@
 "dav_txt_direct_assignment_hint" = "W przypadku bezpośredniego skierowania recepta z przychodni lub szpitala realizowana jest bezpośrednio w aptece. Osoby ubezpieczone nie muszą podejmować żadnych działań i nie mogą ingerować w proces umorzenia. \n\n Bezpośrednie skierowania są wymienione w aplikacji do e-recepty, dzięki czemu leczenie jest dla Ciebie bardziej przejrzyste.";
 "dav_txt_direct_assignment_title" = "Co to jest zlecenie bezpośrednie?";
 "dmc_btn_close" = "Gotowe";
+"dmc_txt_code_multiple" = "Kod kolekcji";
+"dmc_txt_code_single" = "Pojedynczy kod";
 "dtl_btn_copy_clipboard" = "Kopiuj";
 "dtl_btn_delete_disabled_note" = "Recepta jest obecnie przetwarzana przez aptekę i nie można jej usunąć.";
 "dtl_btn_delete_medication" = "Usuń z tego urządzenia";
@@ -973,7 +975,7 @@
 "pha_search_txt_quick_filter_open_filters" = "Filtruj według ...";
 "pha_search_txt_quick_filter_section_title" = "Filtr";
 "pha_search_txt_quick_filter_shipment" = "Wysyłka";
-"pha_search_txt_search_hint" = "Szukaj według nazwy lub adresu";
+"pha_search_txt_search_hint" = "Szukać";
 "pha_search_txt_title" = "Wybierz aptekę";
 "pha_success_redeem_title" = "Gotowe! 🎉";
 "pro_btn_selection_close" = "Gotowe";
@@ -1003,8 +1005,10 @@
 "prsc_dtl_btn_medication_reminder" = "Przypomnienie o przychodach";
 "prsc_dtl_btn_pkv_hint_activate" = "Aktywuj";
 "prsc_dtl_btn_pkv_invoice" = "Rachunek kosztów";
+"prsc_dtl_btn_redeem" = "Wyślij do apteki";
 "prsc_dtl_btn_share" = "Podział";
 "prsc_dtl_btn_share_title" = "Podział";
+"prsc_dtl_btn_show_matrix_code" = "Pokaż kod";
 "prsc_dtl_btn_technical_informations" = "Informacje techniczne";
 "prsc_dtl_btn_work_related_accident" = "Wypadek przy pracy";
 "prsc_dtl_dr_co_payment_no_description" = "Jesteś zwolniony z współpłacenia za ten lek. Koszt leku pokryje Twoja firma ubezpieczeniowa.";

@@ -35,7 +35,8 @@ final class MedicationScheduleStoreTest: XCTestCase {
     override func setUp() {
         super.setUp()
         databaseFile = fileManager.temporaryDirectory
-            .appendingPathComponent("testDB_MedicationScheduleCoreDataStoreTest")
+            .appendingPathComponent("testDB_MedicationScheduleCoreDataStoreTest.db")
+        print("database++", databaseFile.absoluteString)
     }
 
     override func tearDown() {
@@ -67,7 +68,7 @@ final class MedicationScheduleStoreTest: XCTestCase {
         return factory
     }
 
-    private func loadErxCoreDataStore() -> MedicationScheduleCoreDataStore {
+    private func loadMedicationScheduleCoreDataStore() -> MedicationScheduleCoreDataStore {
         MedicationScheduleCoreDataStore(
             coreDataControllerFactory: loadFactory(),
             foregroundQueue: .immediate,
@@ -75,17 +76,125 @@ final class MedicationScheduleStoreTest: XCTestCase {
         )
     }
 
+    private func loadErxTaskCoreDataStore(for profileId: UUID? = nil) -> ErxTaskCoreDataStore {
+        DefaultErxTaskCoreDataStore(
+            profileId: profileId,
+            coreDataControllerFactory: loadFactory(),
+            foregroundQueue: .immediate,
+            backgroundQueue: .main,
+            dateProvider: { Date() }
+        )
+    }
+
+    func testSaveUpdatedMedicationSchedules() throws {
+        let taskStore = loadErxTaskCoreDataStore()
+        let sut = loadMedicationScheduleCoreDataStore()
+
+        // each Schedule must have a related Task in store
+        try taskStore.add(tasks: [ErxTask.Fixtures.task_id_1, ErxTask.Fixtures.task_id_2])
+
+        let task1Schedule = MedicationSchedule.Fixtures.medicationScheduleWForTask_id_1
+        let initialSchedules = [
+            task1Schedule,
+            MedicationSchedule.Fixtures.medicationScheduleWForTask_id_2,
+        ]
+
+        let saveResult = try sut.save(medicationSchedules: initialSchedules)
+        expect(saveResult).to(equal(initialSchedules))
+
+        let updatedTask1Schedule = MedicationSchedule(
+            start: "2021-06-11T10:55:06+02:00".date!,
+            end: "2021-07-10T10:55:06+02:00".date!,
+            title: "Test Schedule updated",
+            dosageInstructions: "Two times a day",
+            taskId: task1Schedule.taskId,
+            isActive: true,
+            entries: [
+                task1Schedule.entries.first!,
+                .init(hourComponent: 16, minuteComponent: 50, dosageForm: "Dosis", amount: "2"),
+            ]
+        )
+
+        let updatedSaveResult = try sut.save(medicationSchedules: [updatedTask1Schedule])
+        expect(updatedSaveResult).to(equal([updatedTask1Schedule]))
+
+        let fetchResult = try sut.fetchAll()
+        expect(fetchResult).to(equal([
+            updatedTask1Schedule,
+            MedicationSchedule.Fixtures.medicationScheduleWForTask_id_2,
+        ]))
+    }
+
+    func testFetchById() throws {
+        let taskStore = loadErxTaskCoreDataStore()
+        let sut = loadMedicationScheduleCoreDataStore()
+
+        // each Schedule must have a related Task in store
+        try taskStore.add(tasks: [ErxTask.Fixtures.task_id_1, ErxTask.Fixtures.task_id_2])
+
+        let scheduleInStore = [
+            MedicationSchedule.Fixtures.medicationScheduleWForTask_id_1,
+            MedicationSchedule.Fixtures.medicationScheduleWForTask_id_2,
+        ]
+        let saveResult = try sut.save(medicationSchedules: scheduleInStore)
+        expect(saveResult).to(equal(scheduleInStore))
+
+        let resultByTaskId = try sut.fetch(by: "id_2")
+        expect(resultByTaskId).to(equal(MedicationSchedule.Fixtures.medicationScheduleWForTask_id_2))
+    }
+
+    func testFetchByChildEntryId() throws {
+        let taskStore = loadErxTaskCoreDataStore()
+        let sut = loadMedicationScheduleCoreDataStore()
+
+        let task = ErxTask(
+            identifier: "id_1",
+            status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
+            lastModified: "2021-07-10T10:55:04+02:00",
+            medicationSchedule: MedicationSchedule.Fixtures.medicationScheduleWForTask_id_1
+        )
+        // each Schedule must have a related Task in store
+        try taskStore.add(tasks: [task, ErxTask.Fixtures.task_id_2])
+
+        let scheduleInStore = [
+            MedicationSchedule.Fixtures.medicationScheduleWForTask_id_1,
+            MedicationSchedule.Fixtures.medicationScheduleWForTask_id_2,
+        ]
+        let saveResult = try sut.save(medicationSchedules: scheduleInStore)
+        expect(saveResult).to(equal(scheduleInStore))
+
+        let entryId = task.medicationSchedule!.entries.first!.id
+        let resultByEntityId = try sut.fetch(byEntryId: entryId, dateProvider: { Date() })
+
+        let expectedResult = MedicationScheduleFetchByEntryIdResponse(
+            medicationSchedule: MedicationSchedule.Fixtures.medicationScheduleWForTask_id_1,
+            task: task
+        )
+        expect(resultByEntityId).to(equal(expectedResult))
+    }
+
     func testDeleteMedicationSchedule() throws {
-        let sut = loadErxCoreDataStore()
+        let taskStore = loadErxTaskCoreDataStore()
+        let sut = loadMedicationScheduleCoreDataStore()
+
+        // each Schedule must have a related Task in store
+        try taskStore.add(tasks: [ErxTask.Fixtures.task_id_1, ErxTask.Fixtures.task_id_2])
+
         let expected = [
-            MedicationSchedule.Fixtures.medicationScheduleWFor_taskId_1,
-            MedicationSchedule.Fixtures.medicationScheduleWFor_taskId_2,
+            MedicationSchedule.Fixtures.medicationScheduleWForTask_id_1,
+            MedicationSchedule.Fixtures.medicationScheduleWForTask_id_2,
         ]
 
         let saveResult = try sut.save(medicationSchedules: expected)
         expect(saveResult).to(equal(expected))
 
-        // let fetchResult = try sut.fetchAll()
-        // expect(fetchResult).to(equal(expected))
+        let fetchResult = try sut.fetchAll()
+        expect(fetchResult).to(equal(expected))
+
+        try sut.delete(medicationSchedules: [MedicationSchedule.Fixtures.medicationScheduleWForTask_id_1])
+
+        let fetchAfterDeleteResult = try sut.fetchAll()
+        expect(fetchAfterDeleteResult).to(equal([MedicationSchedule.Fixtures.medicationScheduleWForTask_id_2]))
     }
 }

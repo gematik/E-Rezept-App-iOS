@@ -263,6 +263,10 @@ typealias AnalyticsEvent = String
     struct PrescriptionDetail_errorInfo: AnalyticsScreen {
       let name = "prescriptionDetail:errorInfo"
     }
+    static let prescriptionDetail_matrixCode = PrescriptionDetail_matrixCode()
+    struct PrescriptionDetail_matrixCode: AnalyticsScreen {
+      let name = "prescriptionDetail:matrixCode"
+    }
     static let prescriptionDetail_medication = PrescriptionDetail_medication()
     struct PrescriptionDetail_medication: AnalyticsScreen {
       let name = "prescriptionDetail:medication"

@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -668,6 +668,8 @@ extension PrescriptionDetailDomain.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case .dosageInstructionsInfo:
                 return destination.tag.analyticsName
+            case let .matrixCode(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -1299,6 +1301,8 @@ extension PrescriptionDetailDomain.Destinations.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case .dosageInstructionsInfo:
                 return destination.tag.analyticsName
+            case let .matrixCode(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -1818,6 +1822,8 @@ extension PrescriptionDetailDomain.Destinations.State.Tag {
                 return Analytics.Screens.prescriptionDetail_setupMedicationSchedule.name
             case .dosageInstructionsInfo: 
                 return Analytics.Screens.prescriptionDetail_dosageInstructionsInfo.name
+            case .matrixCode: 
+                return Analytics.Screens.prescriptionDetail_matrixCode.name
         }
     }
 }

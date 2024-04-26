@@ -21,6 +21,20 @@ import Foundation
 
 extension ErxTask {
     enum Fixtures {
+        static let task_id_1 = ErxTask(
+            identifier: "id_1",
+            status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
+            lastModified: "2021-07-10T10:55:04+02:00"
+        )
+
+        static let task_id_2 = ErxTask(
+            identifier: "id_2",
+            status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
+            lastModified: "2021-07-10T10:55:04+02:00"
+        )
+
         // non realistic task
         static let taskWithAllFieldsFilled: ErxTask =
             .init(

@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import AVS
 import Combine
@@ -919,10 +919,10 @@ final class MockNFCSignatureProvider: NFCSignatureProvider {
     }
     var signCanPinChallengeReceivedArguments: (can: String, pin: String, challenge: IDPChallengeSession)?
     var signCanPinChallengeReceivedInvocations: [(can: String, pin: String, challenge: IDPChallengeSession)] = []
-    var signCanPinChallengeReturnValue: AnyPublisher<SignedChallenge, NFCSignatureProviderError>!
-    var signCanPinChallengeClosure: ((String, String, IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError>)?
+    var signCanPinChallengeReturnValue: Result<SignedChallenge, NFCSignatureProviderError>!
+    var signCanPinChallengeClosure: ((String, String, IDPChallengeSession) -> Result<SignedChallenge, NFCSignatureProviderError>)?
 
-    func sign(can: String, pin: String, challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
+    func sign(can: String, pin: String, challenge: IDPChallengeSession) -> Result<SignedChallenge, NFCSignatureProviderError> {
         signCanPinChallengeCallsCount += 1
         signCanPinChallengeReceivedArguments = (can: can, pin: pin, challenge: challenge)
         signCanPinChallengeReceivedInvocations.append((can: can, pin: pin, challenge: challenge))

@@ -19,11 +19,17 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import IdentifiedCollections
 import SwiftUI
 import ZXingObjC
 
 struct MatrixCodeDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
+
+    typealias ImageLoadingState = LoadingState<
+        IdentifiedArrayOf<MatrixCodeDomain.State.IdentifiedImage>,
+        MatrixCodeDomain.LoadingImageError
+    >
 
     // sourcery: CodedError = "023"
     enum LoadingImageError: Error, Equatable, LocalizedError {
@@ -41,20 +47,35 @@ struct MatrixCodeDomain: ReducerProtocol {
         var isShowAlert = false
         var erxTasks: [ErxTask] = []
         var erxChargeItem: ErxChargeItem?
-        var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
-        var isZoomedIn = false
+        var loadingState: ImageLoadingState = .idle
+        var zoomedInto: UUID?
+
+        struct IdentifiedImage: Equatable, Identifiable {
+            let id: UUID
+            let image: UIImage
+
+            // nil means not ErxTask related
+            let chunk: [ErxTask]? // swiftlint:disable:this discouraged_optional_collection
+
+            // swiftlint:disable:next discouraged_optional_collection
+            init(identifier: UUID, image: UIImage, chunk: [ErxTask]?) {
+                id = identifier
+                self.image = image
+                self.chunk = chunk
+            }
+        }
     }
 
     enum Action: Equatable {
         case closeButtonTapped
-        case zoomButtonTapped
+        case zoomButtonTapped(UUID?)
         case closeZoomTapped
         case loadMatrixCodeImage(screenSize: CGSize)
 
         case response(Response)
 
         enum Response: Equatable {
-            case matrixCodeImageReceived(LoadingState<UIImage, LoadingImageError>)
+            case matrixCodeImageReceived(ImageLoadingState)
             case redeemedOnSavedReceived(Bool)
         }
     }
@@ -71,6 +92,8 @@ struct MatrixCodeDomain: ReducerProtocol {
         Reduce(self.core)
     }
 
+    @Dependency(\.uuid) var uuid
+
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
@@ -78,28 +101,38 @@ struct MatrixCodeDomain: ReducerProtocol {
             return .run { _ in
                 await dismiss()
             }
-        case .zoomButtonTapped:
-            state.isZoomedIn = true
+        case let .zoomButtonTapped(imageId):
+            state.zoomedInto = imageId
             return .none
         case .closeZoomTapped:
-            state.isZoomedIn = false
+            state.zoomedInto = nil
             return .none
         case let .loadMatrixCodeImage(screenSize):
             switch state.type {
             case .erxTask:
-                return .publisher(
-                    erxMatrixCodeGenerator.publishedMatrixCode(
-                        for: state.erxTasks,
-                        with: calcMatrixCodeSize(screenSize: screenSize)
-                    )
-                    .mapError { _ in
-                        LoadingImageError.matrixCodeGenerationFailed
+                let chunkedTasks = stride(from: 0, to: state.erxTasks.count, by: 3).map { index in
+                    state.erxTasks[index ..< min(index + 3, state.erxTasks.count)]
+                }
+
+                return .run { send in
+                    var images: IdentifiedArrayOf<State.IdentifiedImage> = []
+                    do {
+                        for chunk in chunkedTasks {
+                            images
+                                .append(try await erxMatrixCodeGenerator.publishedMatrixCode(
+                                    for: Array(chunk),
+                                    with: calcMatrixCodeSize(screenSize: screenSize)
+                                )
+                                .map {
+                                    State.IdentifiedImage(identifier: uuid(), image: $0, chunk: Array(chunk))
+                                }
+                                .async())
+                        }
+                    } catch {
+                        await send(.response(.matrixCodeImageReceived(.error(.matrixCodeGenerationFailed))))
                     }
-                    .catchToLoadingStateEffect()
-                    .map { .response(.matrixCodeImageReceived($0)) }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
-                )
+                    await send(.response(.matrixCodeImageReceived(.value(images))))
+                }
             case .erxChargeItem:
                 guard let chargeItem = state.erxChargeItem
                 else { return .none }
@@ -112,6 +145,7 @@ struct MatrixCodeDomain: ReducerProtocol {
                     .mapError { _ in
                         LoadingImageError.matrixCodeGenerationFailed
                     }
+                    .map { [State.IdentifiedImage(identifier: uuid(), image: $0, chunk: nil)] }
                     .catchToLoadingStateEffect()
                     .map { .response(.matrixCodeImageReceived($0)) }
                     .receive(on: schedulers.main)

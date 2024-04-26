@@ -19,6 +19,20 @@
 import Combine
 import IDP
 
+// extension IDPSession {
+//    func exchangeIDPTokenAsync(
+//    idpExchangeToken: IDPExchangeToken,
+//    challengeSession: IDPChallengeSession,
+//    idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+//    ) async throws -> Result<IDPToken, CardWallReadCardDomain.State.Error> {
+//        try await self.exchange(
+//            token: idpExchangeToken,
+//            challengeSession: challengeSession,
+//            idTokenValidator: idTokenValidator
+//        ).async()
+//    }
+// }
+
 extension Publisher where Self.Output == IDPExchangeToken, Failure == IDPError {
     func exchangeIDPToken(idp: IDPSession,
                           challengeSession: IDPChallengeSession,

@@ -29,9 +29,8 @@ final class ErxTaskTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        let bundle = Bundle(for: DefaultErxTaskCoreDataStore.self)
         // swiftlint:disable force_unwrapping
-        let modelUrl = bundle.url(forResource: "ErxTask", withExtension: "momd")!
+        let modelUrl = Bundle.module.url(forResource: "ErxTask", withExtension: "momd")!
         let mom = NSManagedObjectModel(contentsOf: modelUrl)!
         // swiftlint:enable force_unwrapping
         let container = NSPersistentContainer(name: "ErxTask", managedObjectModel: mom)

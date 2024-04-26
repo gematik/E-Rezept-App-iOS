@@ -63,6 +63,8 @@ screens:
     name: "prescriptionDetail:toast"
   prescriptionDetail_setupMedicationSchedule:
     name: "prescriptionDetail:setupMedicationSchedule"
+  prescriptionDetail_matrixCode:
+    name: "prescriptionDetail:matrixCode"
   redeem_methodSelection:
     name: "redeem:methodSelection"
   redeem_prescriptionAllOrSelection:

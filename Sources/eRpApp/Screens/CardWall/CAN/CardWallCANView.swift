@@ -21,6 +21,7 @@ import CombineSchedulers
 import ComposableArchitecture
 import eRpKit
 import eRpLocalStorage
+import eRpStyleKit
 import SwiftUI
 
 struct CardWallCANView: View {
@@ -110,7 +111,7 @@ struct CardWallCANView: View {
                         if showAnimation {
                             HStack(alignment: .center) {
                                 Spacer()
-                                Image(Asset.CardWall.cardwallCard)
+                                Image(asset: Asset.CardWall.cardwallCard)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(maxWidth: 343, maxHeight: 215, alignment: .center)

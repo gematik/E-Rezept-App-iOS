@@ -81,8 +81,8 @@ extension MedicationReminderParser {
         if #available(iOS 16.0, *) {
             // swiftlint:disable all
             // swiftformat:disable all
-            let abcRegex  = /^\(?(?<morning>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<noon>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<evening>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\)?/
-            let abcdRegex = /^\(?(?<morning>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<noon>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<evening>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<night>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\)?/
+            let abcRegex  = /^[\s<>]*\(?(?<morning>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<noon>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<evening>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\)?[\s<>]*$/
+            let abcdRegex = /^[\s<>]*\(?(?<morning>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<noon>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<evening>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\s*-\s*(?<night>\d*(\s*[\.,]?\s*½)?([.,]\d+)?)\)?[\s<>]*$/
             // swiftformat:enable all
             // swiftlint:enable all
             if let matchResult = try? abcRegex.wholeMatch(in: dosageInstructions) {

@@ -16,7 +16,6 @@
 //  
 //
 
-import BundleKit
 import eRpKit
 @testable import eRpRemoteStorage
 import FHIRClient
@@ -651,10 +650,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         resource name: String,
         directory: FHIRBundleDirectories
     ) -> String {
-        guard let resource = Bundle(for: Self.self).path(
+        guard let resource = Bundle.module.path(
             forResource: name,
             ofType: "json",
-            inDirectory: directory.rawValue
+            inDirectory: "Resources/\(directory.rawValue).bundle"
         ) else {
             fail("Bundle could not find resource \(name)")
             return ""

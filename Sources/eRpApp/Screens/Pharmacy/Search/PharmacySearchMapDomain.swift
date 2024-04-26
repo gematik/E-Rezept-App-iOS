@@ -26,7 +26,7 @@ import IDP
 import MapKit
 import Pharmacy
 import SwiftUI
-
+// swiftlint:disable type_body_length
 struct PharmacySearchMapDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
@@ -36,7 +36,7 @@ struct PharmacySearchMapDomain: ReducerProtocol {
         /// Stores the current device location when determined by Core-Location
         var currentUserLocation: Location?
         /// Map-Location for MapView with the standard value if location is not active
-        var mapLocation: MKCoordinateRegion
+        var mapLocation: MKCoordinateRegionContainer
         /// Store for the remote search result
         var pharmacies: [PharmacyLocationViewModel] = []
         /// Store for the active filter options the user has chosen
@@ -47,6 +47,8 @@ struct PharmacySearchMapDomain: ReducerProtocol {
         var selectedPharmacy: PharmacyLocation?
 
         var pharmacyRedeemState: PharmacyRedeemDomain.State?
+
+        var searchAfterAuthorized = false
     }
 
     struct Destinations: ReducerProtocol {
@@ -95,9 +97,10 @@ struct PharmacySearchMapDomain: ReducerProtocol {
         case quickSearch(filters: [PharmacySearchFilterDomain.PharmacyFilterOption])
         // Map
         case searchWithMap
-        case setCurrentLocation(MKCoordinateRegion)
+        case setCurrentLocation(MKCoordinateRegionContainer)
         case goToUser
         case showCluster(MKClusterAnnotation)
+        case setMapAfterLocationUpdate
         // Pharmacy details
         case showDetails(PharmacyLocationViewModel)
         // Device location
@@ -115,7 +118,7 @@ struct PharmacySearchMapDomain: ReducerProtocol {
         }
 
         enum Response: Equatable {
-            case pharmaciesReceived(Result<[PharmacyLocation], PharmacyRepositoryError>)
+            case pharmaciesReceived(Result<[PharmacyLocation], PharmacyRepositoryError>, CLLocationCoordinate2D)
         }
     }
 
@@ -157,50 +160,67 @@ struct PharmacySearchMapDomain: ReducerProtocol {
                 return Effect.send(.requestLocation)
             } else {
                 return searchPharmacies(
-                    location: Location(rawValue: .init(latitude: state.mapLocation.center.latitude,
-                                                       longitude: state.mapLocation.center.longitude)),
+                    location: Location(rawValue: .init(latitude: state.mapLocation.region.center.latitude,
+                                                       longitude: state.mapLocation.region.center.longitude)),
                     filter: state.pharmacyFilterOptions
                 )
             }
+        case .setMapAfterLocationUpdate:
+            guard let currentUserLocation = state.currentUserLocation else { return .none }
+            if state.searchAfterAuthorized {
+                state.searchAfterAuthorized = false
+                return searchPharmacies(
+                    location: currentUserLocation,
+                    filter: state.pharmacyFilterOptions
+                )
+            }
+            return .none
         case let .setCurrentLocation(newLocation):
             state.mapLocation = newLocation
             return .none
         case .goToUser:
-            guard let currentLocation = state.currentUserLocation else {
+            guard let currentUserLocation = state.currentUserLocation else {
                 return Effect.send(.requestLocation)
             }
-            state.mapLocation = .init(center: currentLocation.coordinate,
-                                      span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-            return .none
+            return searchPharmacies(
+                location: currentUserLocation,
+                filter: state.pharmacyFilterOptions
+            )
         case let .showCluster(cluster):
-            state.mapLocation = .init(center: cluster.coordinate,
-                                      span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+            state.mapLocation = .manual(
+                .init(center: cluster.coordinate,
+                      span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+            )
             return .none
         case .performSearch:
             // [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
             return searchPharmacies(
-                location: Location(rawValue: .init(latitude: state.mapLocation.center.latitude,
-                                                   longitude: state.mapLocation.center.longitude)),
+                location: Location(rawValue: .init(latitude: state.mapLocation.region.center.latitude,
+                                                   longitude: state.mapLocation.region.center.longitude)),
                 filter: state.pharmacyFilterOptions
             )
-        case let .response(.pharmaciesReceived(result)):
+        case let .response(.pharmaciesReceived(result, location)):
             switch result {
             case let .success(pharmacies):
                 // [REQ:gemSpec_eRp_FdV:A_20285] pharmacy order is resolved on server side
                 state.pharmacies = pharmacies.map {
                     PharmacyLocationViewModel(
                         pharmacy: $0,
-                        referenceLocation: state.currentUserLocation,
+                        referenceLocation: Location(rawValue: .init(latitude: location.latitude,
+                                                                    longitude: location.longitude)),
                         referenceDate: referenceDateForOpenHours,
                         timeOnlyFormatter: timeOnlyFormatter
                     )
                 }
                 .filter(by: state.pharmacyFilterOptions)
 
-                state.mapLocation.span = calculate7Span(
-                    pharmacies: state.pharmacies,
-                    currentLocation: state.mapLocation.center
-                )
+                state.mapLocation = .manual(.init(
+                    center: location,
+                    span: calculateSpan(
+                        pharmacies: state.pharmacies,
+                        currentLocation: location
+                    )
+                ))
             case .failure:
                 state.destination = .alert(Self.serverErrorAlertState)
             }
@@ -261,7 +281,6 @@ struct PharmacySearchMapDomain: ReducerProtocol {
                 }
                 .animation()
             }
-
             return .none
         // Location
         case .requestLocation:
@@ -270,6 +289,7 @@ struct PharmacySearchMapDomain: ReducerProtocol {
                  .authorizedWhenInUse:
                 return locationManager.startUpdatingLocation().fireAndForget()
             case .notDetermined:
+                state.currentUserLocation = nil
                 return locationManager.requestWhenInUseAuthorization().fireAndForget()
             case .restricted, .denied:
                 state.currentUserLocation = nil
@@ -280,8 +300,10 @@ struct PharmacySearchMapDomain: ReducerProtocol {
             }
         case .locationManager(.didChangeAuthorization(.authorizedAlways)),
              .locationManager(.didChangeAuthorization(.authorizedWhenInUse)):
+            state.searchAfterAuthorized = true
             return locationManager.startUpdatingLocation().fireAndForget()
         case .locationManager(.didChangeAuthorization(.notDetermined)):
+            state.currentUserLocation = nil
             return .none
         case .locationManager(.didChangeAuthorization(.denied)),
              .locationManager(.didChangeAuthorization(.restricted)):
@@ -290,7 +312,10 @@ struct PharmacySearchMapDomain: ReducerProtocol {
             return .none
         case let .locationManager(.didUpdateLocations(locations)):
             state.currentUserLocation = locations.first
-            return locationManager.stopUpdatingLocation().fireAndForget()
+            return .merge(
+                EffectTask.send(.setMapAfterLocationUpdate),
+                locationManager.stopUpdatingLocation().fireAndForget()
+            )
         case let .setNavigation(tag: tag):
             switch tag {
             case .filter:
@@ -349,15 +374,11 @@ extension PharmacySearchMapDomain {
     }
 
     func searchPharmacies(
-        location: ComposableCoreLocation.Location?,
+        location: ComposableCoreLocation.Location,
         filter: [PharmacySearchFilterDomain.PharmacyFilterOption]
     )
         -> EffectTask<PharmacySearchMapDomain.Action> {
-        var position: Position?
-        if let latitude = location?.coordinate.latitude,
-           let longitude = location?.coordinate.longitude {
-            position = Position(lat: latitude, lon: longitude)
-        }
+        var position = Position(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
         return .publisher(
             pharmacyRepository.searchRemote(
                 searchTerm: "",
@@ -366,25 +387,20 @@ extension PharmacySearchMapDomain {
             )
             .first()
             .catchToPublisher()
-            .map { .response(.pharmaciesReceived($0)) }
+            .map { .response(.pharmaciesReceived($0, location.coordinate)) }
             .receive(on: schedulers.main.animation())
             .eraseToAnyPublisher
         )
     }
 
-    func calculate7Span(pharmacies: [PharmacyLocationViewModel],
-                        currentLocation: CLLocationCoordinate2D) -> MKCoordinateSpan {
+    func calculateSpan(pharmacies: [PharmacyLocationViewModel],
+                       currentLocation: CLLocationCoordinate2D) -> MKCoordinateSpan {
         if let seventhLocation = pharmacies.count >= 7 ? pharmacies[7].position?.coordinate : pharmacies.last?.position?
             .coordinate {
-            let userCLLocation = CLLocation(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
-            let seventhCLLocation = CLLocation(latitude: seventhLocation.latitude, longitude: seventhLocation.longitude)
-
-            let distance = userCLLocation.distance(from: seventhCLLocation)
-            let padding: CLLocationDistance = 2.5
-
-            // min 180 to ensure that the delta doesn't exceed 180° and 111000 is the number of meters in one degree
-            return MKCoordinateSpan(latitudeDelta: min(180.0, distance * padding / 111_000.0),
-                                    longitudeDelta: min(180.0, distance * padding / 111_000.0))
+            return MKCoordinateSpan(
+                latitudeDelta: 2 * abs(currentLocation.latitude - seventhLocation.latitude),
+                longitudeDelta: 2 * abs(currentLocation.longitude - seventhLocation.longitude)
+            )
         }
         return MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
     }
@@ -412,3 +428,5 @@ extension MKCoordinateSpan: Equatable {
         lhs.latitudeDelta == rhs.latitudeDelta && lhs.longitudeDelta == lhs.longitudeDelta
     }
 }
+
+// swiftlint:enable type_body_length

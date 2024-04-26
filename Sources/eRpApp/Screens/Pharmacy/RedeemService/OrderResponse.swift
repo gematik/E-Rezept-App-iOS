@@ -19,7 +19,7 @@
 import Foundation
 import IdentifiedCollections
 
-struct OrderResponse: Identifiable, Equatable {
+struct OrderResponse: Identifiable, Equatable, Codable {
     var id: String {
         requested.taskID
     }
@@ -48,7 +48,7 @@ struct OrderResponse: Identifiable, Equatable {
         return false
     }
 
-    enum Progress: Equatable {
+    enum Progress: Equatable, Codable {
         case loading
         case done
     }

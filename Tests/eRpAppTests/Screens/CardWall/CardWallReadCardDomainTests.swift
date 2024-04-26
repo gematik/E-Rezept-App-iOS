@@ -145,9 +145,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
         ).setFailureType(to: IDTokenValidatorError.self).eraseToAnyPublisher()
         mockProfileBasedIdpSessionProvider.idTokenValidatorForReturnValue = mockProfileValidator
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Just(signedChallenge)
-            .setFailureType(to: NFCSignatureProviderError.self)
-            .eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .success(signedChallenge)
         mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
@@ -232,9 +230,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Just(signedChallenge)
-            .setFailureType(to: NFCSignatureProviderError.self)
-            .eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .success(signedChallenge)
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
@@ -256,7 +252,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testWhenIDPChallengeAvailable_SigningStates_PinError() async {
         let sut = testStore(initialState: defaultState)
         let pinError = NFCSignatureProviderError.verifyCardError(.wrongSecretWarning(retryCount: 2))
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: pinError).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(pinError)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -275,7 +271,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testWhenIDPChallengeAvailable_SigningStates_CanError() async {
         let sut = testStore(initialState: defaultState)
         let canError = NFCSignatureProviderError.wrongCAN(GenericTestError.genericError)
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: canError).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(canError)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -295,7 +291,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testWhenIDPChallengeAvailable_SigningStates_Error_To_Report() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -337,9 +333,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let sut = testStore(initialState: defaultState)
 
         mockProfileDataStore.updateProfileIdMutatingReturnValue = Fail(error: .notImplemented).eraseToAnyPublisher()
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Just(signedChallenge)
-            .setFailureType(to: NFCSignatureProviderError.self)
-            .eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .success(signedChallenge)
 
         let idpToken = IDPSessionMock.fixtureIDPToken
         await sut.send(.signChallenge(challenge))
@@ -373,9 +367,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         idpMock.exchange_Publisher = Fail(
             error: .unspecified(error: expectedInternalError)
         ).eraseToAnyPublisher()
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Just(signedChallenge)
-            .setFailureType(to: NFCSignatureProviderError.self)
-            .eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .success(signedChallenge)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -400,7 +392,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testExpectedErrorAlertForPasswordNotFound() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.verifyCardError(.passwordNotFound)
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -421,7 +413,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testExpectedErrorAlertForPasswordNotUsable() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.verifyCardError(.passwordNotUsable)
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -442,7 +434,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testExpectedErrorAlertForSecurityStatusNotSatisfied() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.verifyCardError(.securityStatusNotSatisfied)
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -463,7 +455,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testExpectedErrorAlertForMemoryFailure() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.verifyCardError(.memoryFailure)
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -483,7 +475,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testExpectedErrorAlertForUnknownFailure() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.verifyCardError(.unknownFailure)
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         await sut.send(.signChallenge(challenge))
         await uiScheduler.advance()
@@ -503,7 +495,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testExpectedErrorAlertForWrongPIN() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.verifyCardError(.wrongSecretWarning(retryCount: 2))
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
         await sut.send(.signChallenge(challenge))
@@ -524,7 +516,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testExpectedErrorAlertForWrongPINAndNoRetry() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.verifyCardError(.wrongSecretWarning(retryCount: 0))
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
         await sut.send(.signChallenge(challenge))
@@ -546,7 +538,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testExpectedErrorAlertForPasswordBlocked() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.verifyCardError(.passwordBlocked)
-        mockNFCSessionProvider.signCanPinChallengeReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
         await sut.send(.signChallenge(challenge))

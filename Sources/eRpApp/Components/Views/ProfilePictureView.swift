@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpStyleKit
 import SwiftUI
 
 struct ProfilePictureView: View {
@@ -96,7 +97,7 @@ struct ProfilePictureView: View {
                             .scaledToFill()
                             .clipShape(Circle())
                     } else if let image = image?.description, !image.name.isEmpty {
-                        Image(image)
+                        Image(asset: image)
                             .resizable()
                             .scaledToFill()
                             .clipShape(Circle())

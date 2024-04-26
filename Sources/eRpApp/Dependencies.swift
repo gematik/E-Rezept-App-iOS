@@ -54,7 +54,7 @@ extension DependencyValues {
 }
 
 // `Unimplemented` code generation already done by `public struct ErxTaskRepositoryDependency: DependencyKey`
-// sourcery: skipUnimplmented
+// sourcery: skipUnimplemented
 public struct EntireErxTaskRepositoryDependency: DependencyKey {
     public static let liveValue: ErxTaskRepository? = nil
 

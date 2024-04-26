@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpStyleKit
 import SwiftUI
 
 struct LinksAwareTextView: UIViewRepresentable {
@@ -49,7 +50,7 @@ struct LinksAwareTextView: UIViewRepresentable {
     func makeUIView(context _: Context) -> UITextView {
         let textView = NonSelectableTextView()
         textView.attributedText = attributedString
-        textView.textColor = UIColor(Asset.Colors.primary900.color)
+        textView.textColor = UIColor(Colors.primary900)
         textView.backgroundColor = UIColor.secondarySystemBackground
 
         return textView

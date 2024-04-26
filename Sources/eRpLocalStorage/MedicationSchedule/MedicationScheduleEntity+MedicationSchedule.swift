@@ -60,8 +60,7 @@ extension MedicationSchedule {
             return MedicationSchedule.Entry(entity: entry)
         } ?? [])
             .sorted {
-                $0.hourComponent < $1.hourComponent ||
-                    $0.hourComponent == $1.hourComponent && $0.minuteComponent < $1.minuteComponent
+                ($0.hourComponent, $0.minuteComponent) < ($1.hourComponent, $1.minuteComponent)
             }
 
         self.init(
@@ -72,7 +71,9 @@ extension MedicationSchedule {
             dosageInstructions: entity.body ?? "",
             taskId: taskId,
             isActive: entity.isActive,
-            entries: IdentifiedArray(uniqueElements: entries)
+            entries: IdentifiedArray(
+                uniqueElements: entries
+            )
         )
     }
 }

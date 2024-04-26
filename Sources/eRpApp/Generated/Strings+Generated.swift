@@ -422,7 +422,7 @@ import SwiftUI
     internal static let cdwTxtIntroFootnote = StringAsset("cdw_txt_intro_footnote")
     /// Use all functions now
     internal static let cdwTxtIntroHeaderBottom = StringAsset("cdw_txt_intro_header_bottom")
-    /// Login
+    /// Register
     internal static let cdwTxtIntroHeaderTop = StringAsset("cdw_txt_intro_header_top")
     /// What you need:
     internal static let cdwTxtIntroListTitle = StringAsset("cdw_txt_intro_list_title")
@@ -702,6 +702,10 @@ import SwiftUI
     internal static let davTxtDirectAssignmentTitle = StringAsset("dav_txt_direct_assignment_title")
     /// Done
     internal static let dmcBtnClose = StringAsset("dmc_btn_close")
+    /// Collection code
+    internal static let dmcTxtCodeMultiple = StringAsset("dmc_txt_code_multiple")
+    /// Single code
+    internal static let dmcTxtCodeSingle = StringAsset("dmc_txt_code_single")
     /// Copy
     internal static let dtlBtnCopyClipboard = StringAsset("dtl_btn_copy_clipboard")
     /// The prescription is currently being processed by a pharmacy and cannot be deleted.
@@ -2044,7 +2048,7 @@ import SwiftUI
     internal static let phaSearchTxtQuickFilterSectionTitle = StringAsset("pha_search_txt_quick_filter_section_title")
     /// Mail order
     internal static let phaSearchTxtQuickFilterShipment = StringAsset("pha_search_txt_quick_filter_shipment")
-    /// Search for name or address
+    /// Search
     internal static let phaSearchTxtSearchHint = StringAsset("pha_search_txt_search_hint")
     /// Select pharmacy
     internal static let phaSearchTxtTitle = StringAsset("pha_search_txt_title")
@@ -2104,10 +2108,14 @@ import SwiftUI
     internal static let prscDtlBtnPkvHintActivate = StringAsset("prsc_dtl_btn_pkv_hint_activate")
     /// Cost receipt
     internal static let prscDtlBtnPkvInvoice = StringAsset("prsc_dtl_btn_pkv_invoice")
+    /// Send to pharmacy
+    internal static let prscDtlBtnRedeem = StringAsset("prsc_dtl_btn_redeem")
     /// Split
     internal static let prscDtlBtnShare = StringAsset("prsc_dtl_btn_share")
     /// Split
     internal static let prscDtlBtnShareTitle = StringAsset("prsc_dtl_btn_share_title")
+    /// Show code
+    internal static let prscDtlBtnShowMatrixCode = StringAsset("prsc_dtl_btn_show_matrix_code")
     /// Technical information
     internal static let prscDtlBtnTechnicalInformations = StringAsset("prsc_dtl_btn_technical_informations")
     /// Accident at work
@@ -3154,5 +3162,9 @@ import SwiftUI
     /// Receive prescriptions digitally?
     internal static let wlcdTxtHeader = StringAsset("wlcd_txt_header")
   }
+  internal extension StringAsset {
+    init(_ string: String, arguments: [CVarArg]? = nil) {
+        self.init(string, arguments: arguments, bundle: Bundle(for: BundleToken.self))
+    }
+  }
   // swiftlint:enable function_parameter_count identifier_name line_length type_body_length
-  

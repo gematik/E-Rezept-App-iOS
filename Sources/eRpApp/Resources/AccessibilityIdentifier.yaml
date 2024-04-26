@@ -378,6 +378,8 @@ prescriptionDetails:
   - prsc_dtl_drawer_error_info
   - prsc_dtl_drawer_scanned_prescription_info
   - prsc_dtl_drawer_prescription_validity_info
+  - prsc_dtl_btn_redeem
+  - prsc_dtl_btn_show_matrix_code
   - prsc_dtl_btn_additional_fee
   - prsc_dtl_btn_emergency_service_fee
   - prsc_dtl_btn_medication
@@ -530,6 +532,8 @@ pharmacyRedeem:
   - pha_redeem_btn_edit_pharmacy
   - pha_redeem_txt_add_pharmacy
   - pha_redeem_btn_add_pharmacy
+pharmacyPrescriptionList:
+  - pha_prescription_list_btn_save
 pharmacyContact:
   - pha_contact_address_name
   - pha_contact_address_street

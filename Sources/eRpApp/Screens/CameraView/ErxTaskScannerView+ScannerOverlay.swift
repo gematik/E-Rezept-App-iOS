@@ -20,6 +20,7 @@ import AVFoundation
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpStyleKit
 import SwiftUI
 
 extension ErxTaskScannerView {

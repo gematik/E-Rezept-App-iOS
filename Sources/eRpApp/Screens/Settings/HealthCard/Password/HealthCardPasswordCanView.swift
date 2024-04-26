@@ -166,7 +166,7 @@ struct HealthCardPasswordCanView: View {
                     if showAnimation {
                         HStack(alignment: .center) {
                             Spacer()
-                            Image(Asset.CardWall.cardwallCard)
+                            Image(asset: Asset.CardWall.cardwallCard)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(maxWidth: 343, maxHeight: 215, alignment: .center)

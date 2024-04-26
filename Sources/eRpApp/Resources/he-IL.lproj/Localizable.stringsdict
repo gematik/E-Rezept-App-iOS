@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>auth_txt_failed_login_hint_msg</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>זוהה ניסיון התחברות לא מוצלח</string>
+			<key>other</key>
+			<string>זוהו %u ניסיונות התחברות לא מוצלחים</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>erx_txt_accepted_until</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@v1_days_variable@</string>
+		<key>v1_days_variable</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>ניתן למימוש רק מחר</string>
+			<key>other</key>
+			<string>עדיין ניתן למימוש למשך %u ימים</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>erx_txt_expires_in</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>ניתן לממש רק מחר כמשלם עצמי</string>
+			<key>other</key>
+			<string>עדיין ניתן לממש אותו בתור משלם עצמי למשך %u ימים</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>ord_detail_txt_presc</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>מתכון</string>
+			<key>other</key>
+			<string>מתכונים</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>ord_list_status_count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string></string>
+			<key>other</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>pha_redeem_alert_title_failure</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>לא ניתן היה לממש את המתכון שנבחר</string>
+			<key>other</key>
+			<string>לא ניתן היה לממש %li מרשמים</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>prsc_fd_txt_details_actual_medication_title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>קיבל תרופות</string>
+			<key>other</key>
+			<string>התקבלה תרופה</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>סיים, הוסף מתכון</string>
+			<key>other</key>
+			<string>סיימת, הוסף מתכונים</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>יש לך ניסיון נוסף להזין את ה-PIN הנוכחי.</string>
+			<key>other</key>
+			<string>עדיין יש לך %u ניסיונות להזין את ה-PIN הנוכחי.</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>יש לך ניסיון נוסף להיכנס ל-PUK.</string>
+			<key>other</key>
+			<string>עדיין יש לך %u ניסיונות להזין את ה-PUK.</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+</dict>
+</plist>

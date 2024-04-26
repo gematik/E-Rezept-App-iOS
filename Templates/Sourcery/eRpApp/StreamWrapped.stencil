@@ -45,8 +45,8 @@ import AVS
             .eraseToAnyPublisher()
 	}
 			{% else %}
-	func {{ method.name }}{% if method.throws %} throws{% endif %} -> {{ method.returnTypeName }} {
-        {% if method.throws %}try {% endif %}current.{{ method.callName }}({% call methodArguments method %}
+	func {{ method.name }}{% if method.isAsync %} async{% endif %}{% if method.throws %} throws{% endif %} -> {{ method.returnTypeName }} {
+        {% if method.throws %}try {% endif %}{% if method.isAsync %}await {% endif %}current.{{ method.callName }}({% call methodArguments method %}
             )
 	}
 			{% endif %}

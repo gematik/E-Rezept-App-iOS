@@ -16,7 +16,6 @@
 //  
 //
 
-import BundleKit
 import Combine
 import eRpKit
 import FHIRClient
@@ -137,10 +136,10 @@ final class PharmacyFHIRClientTests: XCTestCase {
     }
 
     private func path(for resource: String) -> String {
-        guard let path = Bundle(for: Self.self).path(
+        guard let path = Bundle.module.path(
             forResource: resource,
             ofType: "json",
-            inDirectory: "FHIRPharmaciesExampleData.bundle"
+            inDirectory: "Resources/FHIRPharmaciesExampleData.bundle"
         ) else {
             fail("Bundle could not find resource \(resource)")
             return ""

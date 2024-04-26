@@ -39,7 +39,7 @@ struct PharmacySearchMapView: View {
 
     struct ViewState: Equatable {
         let pharmacies: [PharmacyLocationViewModel]
-        let mapLocation: MKCoordinateRegion
+        let mapLocation: MKCoordinateRegionContainer
         let destinationTag: PharmacySearchMapDomain.Destinations.State.Tag?
         init(_ state: PharmacySearchMapDomain.State) {
             pharmacies = state.pharmacies
@@ -52,11 +52,6 @@ struct PharmacySearchMapView: View {
         NavigationView {
             VStack {
                 ZStack(alignment: .top) {
-                    #if targetEnvironment(simulator)
-                    Rectangle()
-                        .foregroundColor(Color.gray)
-                        .ignoresSafeArea()
-                    #else
                     MapViewWithClustering(
                         region: viewStore.binding(
                             get: \.mapLocation,
@@ -77,7 +72,6 @@ struct PharmacySearchMapView: View {
                         }
                     ).ignoresSafeArea(.all, edges: .vertical)
                         .accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapMap)
-                    #endif
                     VStack {
                         HStack {
                             Button(action: { viewStore.send(.delegate(.closeMap)) }, label: {
@@ -169,8 +163,8 @@ struct PharmacySearchMapView: View {
                     state: /PharmacySearchMapDomain.Destinations.State.alert,
                     action: PharmacySearchMapDomain.Destinations.Action.alert
                 )
-                .onAppear {
-                    viewStore.send(.onAppear)
+                .task {
+                    await viewStore.send(.onAppear).finish()
                 }
             }
         }.navigationBarHidden(true)

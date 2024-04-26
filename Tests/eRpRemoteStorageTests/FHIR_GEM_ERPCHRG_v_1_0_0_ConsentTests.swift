@@ -16,10 +16,10 @@
 //  
 //
 
-import BundleKit
 import eRpKit
 @testable import eRpRemoteStorage
 import Foundation
+import GemCommonsKit
 import ModelsR4
 import Nimble
 import XCTest
@@ -45,9 +45,11 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ConsentTests: XCTestCase {
         resource file: String,
         from bundle: FHIRBundleDirectories = .gem_erpChrg_v1_0_0
     ) throws -> ErxConsent? {
-        try Bundle(for: Self.self)
-            .bundleFromResources(name: bundle.rawValue)
-            .decode(ModelsR4.Consent.self, from: file)
+        let data = try Bundle.module
+            .testResourceFilePath(in: "Resources/\(bundle.rawValue)", for: file)
+            .readFileContents()
+        return try JSONDecoder()
+            .decode(ModelsR4.Consent.self, from: data)
             .parseErxConsent()
     }
 }

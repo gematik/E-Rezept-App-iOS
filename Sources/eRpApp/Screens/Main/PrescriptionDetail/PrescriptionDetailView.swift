@@ -41,6 +41,38 @@ struct PrescriptionDetailView: View {
                 ChargeItemHintView(store: store)
             }
 
+            if viewStore.isRedeemable {
+                HStack {
+                    Button {
+                        viewStore.send(.redeemPressed)
+                    } label: {
+                        Label {
+                            Text(L10n.prscDtlBtnRedeem)
+                        } icon: {
+                            Image(asset: Asset.Pharmacy.btnApoSmall)
+                                .resizable()
+                        }
+                    }
+                    .buttonStyle(.picture)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnRedeem)
+
+                    Button {
+                        viewStore.send(.setNavigation(tag: .matrixCode))
+                    } label: {
+                        Label {
+                            Text(L10n.prscDtlBtnShowMatrixCode)
+                        } icon: {
+                            Image(asset: Asset.Prescriptions.datamatrix)
+                                .resizable()
+                        }
+                    }
+                    .buttonStyle(.picture)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnShowMatrixCode)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 40)
+            }
+
             if viewStore.isManualRedeemEnabled {
                 MedicationRedeemView(
                     text: viewStore.medicationRedeemButtonTitle,

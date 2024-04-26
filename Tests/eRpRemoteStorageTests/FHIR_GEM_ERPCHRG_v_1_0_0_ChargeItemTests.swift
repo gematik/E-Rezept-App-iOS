@@ -16,10 +16,10 @@
 //  
 //
 
-import BundleKit
 import eRpKit
 @testable import eRpRemoteStorage
 import Foundation
+import GemCommonsKit
 import ModelsR4
 import Nimble
 import XCTest
@@ -71,7 +71,7 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
         expect(chargeItem.medicationRequest.quantity).to(equal(.init(value: "1", unit: "{Package}")))
         // patient
         expect(chargeItem.patient?.name) == "Günther Angermänn"
-        expect(chargeItem.patient?.address) == "Driescher Hecke 56\n67130 Neu Eladorf"
+        expect(chargeItem.patient?.address) == "Driescher Hecke 56, 67130 Neu Eladorf"
         expect(chargeItem.patient?.birthDate) == "1964-03-10"
         expect(chargeItem.patient?.phone).to(beNil())
         expect(chargeItem.patient?.status) == "1"
@@ -86,12 +86,12 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
         // organization
         expect(chargeItem.organization?.name) == "Arztpraxis Schraßer"
         expect(chargeItem.organization?.phone) == "+49-720-1828263"
-        expect(chargeItem.organization?.address) == "Rudolf-Mann-Platz 5\n83852, Ceylinburg"
+        expect(chargeItem.organization?.address) == "Rudolf-Mann-Platz 5\n83852 Ceylinburg"
         expect(chargeItem.organization?.email) == "dina.assmus@apitz.net"
         expect(chargeItem.organization?.identifier) == "831957093"
         // pharmacy
         expect(chargeItem.pharmacy?.name) == "Adler-Apotheke"
-        expect(chargeItem.pharmacy?.address) == "Taunusstraße 89\n63225, Langen"
+        expect(chargeItem.pharmacy?.address) == "Taunusstraße 89\n63225 Langen"
         expect(chargeItem.pharmacy?.country) == "D"
         expect(chargeItem.pharmacy?.identifier) == "308412345"
         // invoice
@@ -126,8 +126,9 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
         resource file: String,
         from bundle: FHIRBundleDirectories = .gem_erpChrg_v1_0_0
     ) throws -> ModelsR4.Bundle {
-        try Bundle(for: Self.self)
-            .bundleFromResources(name: bundle.rawValue)
-            .decode(ModelsR4.Bundle.self, from: file)
+        let data = try Bundle.module
+            .testResourceFilePath(in: "Resources/\(bundle.rawValue)", for: file)
+            .readFileContents()
+        return try JSONDecoder().decode(ModelsR4.Bundle.self, from: data)
     }
 }

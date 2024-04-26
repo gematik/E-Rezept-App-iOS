@@ -2,36 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ord_detail_txt_presc</key>
+	<key>auth_txt_failed_login_hint_msg</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>
 		<key>variable_0</key>
 		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
 			<key>one</key>
-			<string>Rezept</string>
+			<string>Başarısız bir oturum açma girişimi algılandı</string>
 			<key>other</key>
-			<string>Rezepte</string>
-		</dict>
-	</dict>
-	<key>ord_list_status_count</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>one</key>
-			<string>%u Rezept</string>
-			<key>other</key>
-			<string>%u Rezepte</string>
+			<string>%u başarısız giriş denemesi tespit edildi</string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>erx_txt_accepted_until</key>
@@ -43,11 +29,13 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
+			<string>li</string>
 			<key>one</key>
-			<string>Daha %u gün geçerli</string>
+			<string>Yalnızca yarın kullanılabilir</string>
 			<key>other</key>
-			<string>Daha %u gün geçerli</string>
+			<string>%u gün süreyle hâlâ kullanılabilir</string>
+			<key>zero</key>
+			<string>Yalnızca bugün kullanılabilir</string>
 		</dict>
 	</dict>
 	<key>erx_txt_expires_in</key>
@@ -59,14 +47,16 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
+			<string>li</string>
 			<key>one</key>
-			<string>Nur noch heute als Selbstzahler einlösbar</string>
+			<string>Kendi kendine ödeme yapan kişi olarak yalnızca yarın kullanılabilir</string>
 			<key>other</key>
-			<string>Noch %u Tage als Selbstzahler einlösbar</string>
+			<string>Hala %u gün süreyle kendi kendine ödeme yapan kişi olarak kullanılabilir</string>
+			<key>zero</key>
+			<string>Kendi kendine ödeme yapan biri olarak yalnızca bugün kullanılabilir</string>
 		</dict>
 	</dict>
-	<key>scn_btn_scanning_done</key>
+	<key>ord_detail_txt_presc</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>
@@ -77,9 +67,29 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Tamamlandı, reçete ekle</string>
+			<string>Yemek tarifi</string>
 			<key>other</key>
-			<string>Tamamlandı, reçeteleri ekle</string>
+			<string>Tarifler</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>ord_list_status_count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string></string>
+			<key>other</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>pha_redeem_alert_title_failure</key>
@@ -91,27 +101,13 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
+			<string>li</string>
 			<key>one</key>
-			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
+			<string>Seçilen tarif kullanılamadı</string>
 			<key>other</key>
-			<string>%d Rezepte konnten nicht eingelöst werden</string>
-		</dict>
-	</dict>
-	<key>auth_txt_failed_login_hint_msg</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>one</key>
-			<string>Es wurde ein erfolgloser Anmeldeversuch festgestellt</string>
-			<key>other</key>
-			<string>Es wurden %u erfolglose Anmeldeversuche festgestellt</string>
+			<string>%li reçete kullanılamadı</string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
@@ -125,42 +121,66 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Erhaltenes Medikament</string>
+			<string>Alınan ilaç</string>
 			<key>other</key>
-			<string>Erhaltene Medikamente</string>
+			<string>Alınan ilaç</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Bitti, tarif ekleyin</string>
+			<key>other</key>
+			<string>Bitti, yemek tarifleri ekleyin</string>
+			<key>zero</key>
+			<string>[geçersiz]</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@variable_0@</string>
-        <key>variable_0</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>li</string>
-            <key>one</key>
-            <string>Sie haben noch einen Versuch, um die aktuelle PIN einzugeben.</string>
-            <key>other</key>
-            <string>Sie haben noch %u Versuche, um die aktuelle PIN einzugeben.</string>
-        </dict>
-    </dict>
-    <key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@variable_0@</string>
-        <key>variable_0</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>li</string>
-            <key>one</key>
-            <string>Sie haben noch einen Versuch, um die PUK einzugeben.</string>
-            <key>other</key>
-            <string>Sie haben noch %u Versuche, um die PUK einzugeben.</string>
-        </dict>
-    </dict>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Geçerli PIN'i girmek için bir deneme hakkınız daha var.</string>
+			<key>other</key>
+			<string>Geçerli PIN'i girmek için hâlâ %u deneme hakkınız var.</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>KYB'ye girmek için bir girişiminiz daha var.</string>
+			<key>other</key>
+			<string>PUK'a girmek için hâlâ %u deneme hakkınız var.</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
 </dict>
 </plist>

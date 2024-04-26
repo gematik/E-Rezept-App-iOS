@@ -34,14 +34,22 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
         return Just(signatureSession).setFailureType(to: NFCSignatureProviderError.self).eraseToAnyPublisher()
     }
 
-    func sign(can: String,
-              pin: String,
-              challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
-        openSecureSession(can: can, pin: pin)
-            .flatMap { session in
-                session.sign(challengeSession: challenge)
-            }
-            .eraseToAnyPublisher()
+    func sign(
+        can: String,
+        pin: String,
+        challenge: IDPChallengeSession
+    ) async -> Result<SignedChallenge, NFCSignatureProviderError> {
+        do {
+            let signature = try await openSecureSession(can: can, pin: pin)
+                .flatMap { session in
+                    session.sign(challengeSession: challenge)
+                }
+                .eraseToAnyPublisher()
+                .async()
+            return .success(signature)
+        } catch {
+            return .failure(NFCSignatureProviderError.signingFailure(.certificate(error)))
+        }
     }
 
     class Session: SignatureSession {

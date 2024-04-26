@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -1037,21 +1037,6 @@ extension KeychainAccessHelperError: CodedError {
     }
 }
 
-extension LocalStorageBundleParsingError: CodedError {
-    var erpErrorCode: String {
-        switch self {
-            case .parseError:
-                return "i-59001"
-        }
-    }
-    var erpErrorCodeList: [String] {
-        switch self {
-            case .parseError:
-                return [erpErrorCode]
-        }
-    }
-}
-
 extension LocalStoreError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1297,6 +1282,8 @@ extension NFCSignatureProviderError: CodedError {
                 return "i-00409"
             case .secureEnclaveError:
                 return "i-00410"
+            case .nfcHealthCardSession:
+                return "i-00411"
         }
     }
     var erpErrorCodeList: [String] {
@@ -1325,6 +1312,8 @@ extension NFCSignatureProviderError: CodedError {
                 return [erpErrorCode]
             case let .secureEnclaveError(error):
                 return [erpErrorCode] + error.erpErrorCodeList
+            case .nfcHealthCardSession:
+                return [erpErrorCode]
         }
     }
 }

@@ -1,0 +1,18 @@
+{
+	"isAuthenticatedRecordings":
+    {
+        "type": "repeated",
+        "payload": {
+        	"payload": true,
+    	    "contentType": 0
+    	}
+    },
+    "isAuthenticatedOrAuthenticateRecordings":
+    {
+        "type": "repeated",
+        "payload": {
+        	"payload": true,
+    	    "contentType": 0
+    	}
+    }
+}

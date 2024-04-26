@@ -97,6 +97,7 @@ struct PharmacyPrescriptionSelectionView: View {
                 }, label: {
                     Text(L10n.phaRedeemTxtSelectedPrescriptionSave)
                 })
+                    .accessibility(identifier: A11y.pharmacyPrescriptionList.phaPrescriptionListBtnSave)
             }
         }
     }

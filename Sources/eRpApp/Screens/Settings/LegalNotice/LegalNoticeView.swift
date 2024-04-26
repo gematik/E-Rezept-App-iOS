@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct LegalNoticeView: View {
@@ -91,9 +92,9 @@ extension LegalNoticeView {
                 HStack {
                     Image(systemName: SFSymbolName.network)
                         .frame(width: iconSize)
-                        .foregroundColor(Asset.Colors.primary600.color)
+                        .foregroundColor(Colors.primary600)
                     Link(L10n.stgLnoLinkTextContact, destination: webLink)
-                        .foregroundColor(Asset.Colors.primary600.color)
+                        .foregroundColor(Colors.primary600)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoLinkContact)
                 }
                 .padding(.top, 1)
@@ -102,9 +103,9 @@ extension LegalNoticeView {
                 HStack {
                     Image(systemName: SFSymbolName.mail)
                         .frame(width: iconSize)
-                        .foregroundColor(Asset.Colors.primary600.color)
+                        .foregroundColor(Colors.primary600)
                     Link(L10n.stgLnoMailTextContact, destination: emailLink)
-                        .foregroundColor(Asset.Colors.primary600.color)
+                        .foregroundColor(Colors.primary600)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoMailContact)
                 }
                 .padding(.top, 1)
@@ -113,9 +114,9 @@ extension LegalNoticeView {
                 HStack {
                     Image(systemName: SFSymbolName.phone)
                         .frame(width: iconSize)
-                        .foregroundColor(Asset.Colors.primary600.color)
+                        .foregroundColor(Colors.primary600)
                     Link(L10n.stgLnoPhoneTextContact, destination: phoneLink)
-                        .foregroundColor(Asset.Colors.primary600.color)
+                        .foregroundColor(Colors.primary600)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoPhoneContact)
                 }
                 .padding(.top, 1)
@@ -126,8 +127,8 @@ extension LegalNoticeView {
     struct LegalNoticeFooterView: View {
         var body: some View {
             VStack {
-                Image(Asset.Settings.LegalNotice.gematikLogo)
-                    .foregroundColor(Asset.Colors.primary900.color)
+                Image(asset: Asset.Settings.LegalNotice.gematikLogo)
+                    .foregroundColor(Colors.primary900)
                 Text(L10n.stgLnoYouKnowUs)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .multilineTextAlignment(.center)

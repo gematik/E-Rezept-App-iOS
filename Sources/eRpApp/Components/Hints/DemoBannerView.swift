@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct DemoBannerView<Content: View>: View {
@@ -75,12 +76,10 @@ struct DemoBannerViewModifier<InnerContent: View>: ViewModifier {
             content
                 .introspectNavigationController { navigationController in
 
-                    guard let yellow = UIColor(named: Asset.Colors.yellow500.name) else { return }
-
                     let appearance = UINavigationBarAppearance()
                     appearance.configureWithOpaqueBackground()
                     if visible {
-                        appearance.backgroundColor = yellow
+                        appearance.backgroundColor = UIColor(Colors.yellow500)
                     }
                     navigationController.navigationBar.standardAppearance = appearance
                     navigationController.navigationBar.compactAppearance = appearance

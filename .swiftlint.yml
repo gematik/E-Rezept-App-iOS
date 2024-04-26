@@ -40,6 +40,7 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - vendor/
   - DerivedData/
   - Sources/eRpApp/Generated/*
+  - Sources/eRpStyleKit/Generated/*
   - Sources/eRpApp/UITestScenarios/SmartMock.generated.swift
   - Tests/*/Mocks/Generated/*
 nesting:

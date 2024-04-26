@@ -40,7 +40,7 @@ import XCTestDynamicOverlay
 
 {% macro unimplementedNonOptionalMethodStub method %}
     {% typed method as Method %}
-    func {{ method.name }}{{ ' throws' if method.throws }} -> {{ method.actualReturnTypeName }} {
+    func {{ method.name }}{{ ' async' if method.isAsync }}{{ ' throws' if method.throws }} -> {{ method.actualReturnTypeName }} {
         fatalError("{{ method.selectorName }} has not been implemented")
     }
 {% endmacro %}
@@ -61,7 +61,7 @@ import XCTestDynamicOverlay
 }
 {% endmacro %}
 
-{% for type in types.based.DependencyKey|!annotated:"skipUnimplmented" %}
+{% for type in types.based.DependencyKey|!annotated:"skipUnimplemented" %}
 {% for liveValue in type.staticVariables where liveValue.name == "liveValue"%}
 {% if liveValue.type.kind == "protocol" %}
 {% call unimplementedStubsForProtocol liveValue.type %}

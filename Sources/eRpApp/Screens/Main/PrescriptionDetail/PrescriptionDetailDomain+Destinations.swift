@@ -64,6 +64,8 @@ extension PrescriptionDetailDomain {
             case medicationReminder(MedicationReminderSetupDomain.State)
             // sourcery: AnalyticsScreen = prescriptionDetail_dosageInstructionsInfo
             case dosageInstructionsInfo(DosageInstructionsState)
+            // sourcery: AnalyticsScreen = prescriptionDetail_matrixCode
+            case matrixCode(MatrixCodeDomain.State)
         }
 
         enum Action: Equatable {
@@ -86,6 +88,7 @@ extension PrescriptionDetailDomain {
             case coPaymentInfo(None)
             case emergencyServiceFeeInfo(None)
             case dosageInstructionsInfo(None)
+            case matrixCode(action: MatrixCodeDomain.Action)
 
             case alert(Alert)
             case toast(Toast)
@@ -132,6 +135,10 @@ extension PrescriptionDetailDomain {
                 action: /Action.medicationReminder
             ) {
                 MedicationReminderSetupDomain()
+            }
+
+            Scope(state: /State.matrixCode, action: /Action.matrixCode) {
+                MatrixCodeDomain()
             }
         }
 

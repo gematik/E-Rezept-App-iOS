@@ -30,6 +30,16 @@ extension Screen {
         )
     }
 
+    func textField(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
+                   line: UInt) -> XCUIElement {
+        elements(
+            query: query?.textFields ?? app.textFields,
+            identifier: identifier,
+            file: file,
+            line: line
+        )
+    }
+
     func staticText(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
                     line: UInt) -> XCUIElement {
         elements(

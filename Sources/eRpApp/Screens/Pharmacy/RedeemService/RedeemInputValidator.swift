@@ -270,8 +270,9 @@ extension ErxTaskOrder {
     /// Collection of input validation functions for redeem via ErxTaskRepository. Constraints defined in
     /// [gemILF_PS_eRp]
     struct Validator: RedeemInputValidator, Equatable {
-        static var maxHintLength = 90
+        static var maxHintLength = 500
         static var maxAddressFieldLength = 50
+        static var maxPostcodeFieldLength = 50
         static var maxNameLength = 100
         init() {}
 
@@ -332,8 +333,8 @@ extension ErxTaskOrder {
         }
 
         func isValid(zip: String?) -> Validity {
-            (zip?.countIsLessOrEqual(Validator.maxAddressFieldLength) ?? true) ? .valid :
-                .invalid(L10n.rivTiInvalidZip(String(Validator.maxAddressFieldLength)).text)
+            (zip?.countIsLessOrEqual(Validator.maxPostcodeFieldLength) ?? true) ? .valid :
+                .invalid(L10n.rivTiInvalidZip(String(Validator.maxPostcodeFieldLength)).text)
         }
 
         func isValid(city: String?) -> Validity {
@@ -462,7 +463,7 @@ struct DemoRedeemInputValidator: RedeemInputValidator {
 
 extension String {
     func countIsLessOrEqual(_ limit: Int) -> Bool {
-        count < limit
+        count <= limit
     }
 
     var isValidEmail: Bool {

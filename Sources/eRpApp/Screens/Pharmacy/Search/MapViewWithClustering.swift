@@ -23,8 +23,61 @@ import eRpStyleKit
 import MapKit
 import SwiftUI
 
+enum MKCoordinateRegionContainer: Equatable {
+    /// the region is manually changed
+    case manual(MKCoordinateRegion)
+    /// the region is changed by the delegate
+    case delegate(MKCoordinateRegion)
+
+    var region: MKCoordinateRegion {
+        get {
+            switch self {
+            case let .manual(region),
+                 let .delegate(region):
+                return region
+            }
+        }
+        set {
+            switch self {
+            case .manual:
+                self = .manual(newValue)
+            case .delegate:
+                self = .delegate(newValue)
+            }
+        }
+    }
+}
+
+// swiftlint:disable identifier_name
+extension MKCoordinateRegion {
+    var mapRect: MKMapRect {
+        let topLeft = CLLocationCoordinate2D(
+            latitude: center.latitude + (span.latitudeDelta / 2),
+            longitude: center.longitude - (span.longitudeDelta / 2)
+        )
+        let bottomRight = CLLocationCoordinate2D(
+            latitude: center.latitude - (span.latitudeDelta / 2),
+            longitude: center.longitude + (span.longitudeDelta / 2)
+        )
+
+        let a = MKMapPoint(topLeft)
+        let b = MKMapPoint(bottomRight)
+
+        return MKMapRect(
+            origin: MKMapPoint(x: min(a.x, b.x), y: min(a.y, b.y)),
+            size: MKMapSize(width: abs(a.x - b.x), height: abs(a.y - b.y))
+        )
+    }
+}
+
+// swiftlint:enable identifier_name
+
 struct MapViewWithClustering: UIViewRepresentable {
-    @Binding var region: MKCoordinateRegion
+    static var isTestingEnvironment: Bool = {
+        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    }()
+
+    @Binding var region: MKCoordinateRegionContainer
     var showUserLocation = true
     var annotations: [PlaceholderAnnotation] = []
     var disableUserInteraction = false
@@ -32,6 +85,12 @@ struct MapViewWithClustering: UIViewRepresentable {
     var onClusterTapped: (MKClusterAnnotation) -> Void
 
     class Coordinator: NSObject, MKMapViewDelegate {
+        lazy var greyView: UIView = {
+            let greyView = UIView()
+            greyView.backgroundColor = .gray
+            return greyView
+        }()
+
         var parent: MapViewWithClustering
 
         init(_ parent: MapViewWithClustering) {
@@ -40,7 +99,7 @@ struct MapViewWithClustering: UIViewRepresentable {
 
         /// Handling the update of the region binding
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated _: Bool) {
-            parent.region = mapView.region
+            parent.region = .delegate(mapView.region)
         }
 
         /// Handling the annotation on the map
@@ -69,10 +128,15 @@ struct MapViewWithClustering: UIViewRepresentable {
         MapViewWithClustering.Coordinator(self)
     }
 
-    func makeUIView(context: Context) -> MKMapView {
+    func makeUIView(context: Context) -> UIView {
         let mapView = MKMapView()
+        guard !Self.isTestingEnvironment else {
+            let greyView = context.coordinator.greyView
+
+            return greyView
+        }
         mapView.delegate = context.coordinator
-        mapView.setRegion(region, animated: false)
+        mapView.setRegion(region.region, animated: false)
         mapView.mapType = .standard
         mapView.showsCompass = false
         mapView.showsUserLocation = showUserLocation
@@ -91,8 +155,21 @@ struct MapViewWithClustering: UIViewRepresentable {
         return mapView
     }
 
-    func updateUIView(_ mapView: MKMapView, context _: Context) {
-        mapView.setRegion(region, animated: true)
+    func updateUIView(_ view: UIView, context _: Context) {
+        guard !Self.isTestingEnvironment,
+              let mapView = view as? MKMapView else {
+            return
+        }
+        switch region {
+        case let .manual(region):
+            mapView.setVisibleMapRect(
+                region.mapRect,
+                edgePadding: .init(top: 32, left: 32, bottom: 32, right: 32),
+                animated: true
+            )
+        case let .delegate(region):
+            mapView.setRegion(region, animated: true)
+        }
 
         let exitingAnnotations = mapView.annotations.compactMap { $0 as? PlaceholderAnnotation }
 
@@ -104,7 +181,6 @@ struct MapViewWithClustering: UIViewRepresentable {
             let notNeeded = exitingAnnotations.filter { annotation in
                 !annotations.contains { $0.pharmacy.id == annotation.pharmacy.id }
             }
-
             mapView.removeAnnotations(notNeeded)
             mapView.addAnnotations(newAnnotations)
         }

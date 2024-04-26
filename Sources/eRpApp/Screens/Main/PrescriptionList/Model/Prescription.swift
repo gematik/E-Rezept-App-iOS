@@ -17,6 +17,7 @@
 //
 
 import eRpKit
+import eRpStyleKit
 import Foundation
 import SwiftUI
 
@@ -329,9 +330,9 @@ extension Prescription {
         case (.ready, _): return nil
         case (.inProgress, .archived): return Image(systemName: SFSymbolName.clockWarning)
         case (.inProgress, _): return nil
-        case (.computed(.sent), _): return Image(Asset.Prescriptions.checkmarkDouble)
+        case (.computed(.sent), _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.computed(.waiting), _): return nil
-        case (.completed, _): return Image(Asset.Prescriptions.checkmarkDouble)
+        case (.completed, _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.cancelled, _): return Image(systemName: SFSymbolName.cross)
         case (.draft, _),
              (.undefined, _): return Image(systemName: SFSymbolName.calendarWarning)

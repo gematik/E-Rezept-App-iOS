@@ -70,7 +70,7 @@ extension ErxChargeItem {
             ),
             patient: .init(
                 name: "Günther Angermänn",
-                address: "Weiherstr. 74a\n67411 Büttnerdorf",
+                address: "Weiherstr. 74a, 67411 Büttnerdorf",
                 birthDate: "1976-04-30",
                 status: "1",
                 insurance: "Künstler-Krankenkasse Baden-Württemberg",
@@ -87,12 +87,12 @@ extension ErxChargeItem {
                 name: "Arztpraxis Schraßer",
                 phone: "(05808) 9632619",
                 email: "andre.teufel@xn--schffer-7wa.name",
-                address: "Halligstr. 98\n85005, Alt Mateo"
+                address: "Halligstr. 98\n85005 Alt Mateo"
             ),
             pharmacy: .init(
                 identifier: "012876",
                 name: "Pharmacy Name",
-                address: "Pharmacy Street 2\n13267, Berlin",
+                address: "Pharmacy Street 2\n13267 Berlin",
                 country: "DE"
             ),
             invoice: .init(

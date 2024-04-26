@@ -16,9 +16,9 @@
 //  
 //
 
-import BundleKit
 import eRpKit
 import Foundation
+import GemCommonsKit
 import ModelsR4
 import Nimble
 import OpenSSL
@@ -141,8 +141,9 @@ final class PharmacyBundleTests: XCTestCase {
     }
 
     private func bundle(for source: String) throws -> ModelsR4.Bundle {
-        try Bundle(for: Self.self)
-            .bundleFromResources(name: "FHIRPharmaciesExampleData.bundle")
-            .decode(ModelsR4.Bundle.self, from: source)
+        let data = try Bundle.module
+            .testResourceFilePath(in: "Resources/FHIRPharmaciesExampleData", for: source)
+            .readFileContents()
+        return try JSONDecoder().decode(ModelsR4.Bundle.self, from: data)
     }
 }

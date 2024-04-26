@@ -210,7 +210,7 @@ extension EditProfilePictureView {
                                 viewStore.send(.editPicture(image))
                                 viewStore.send(.setUserImageData(.empty))
                             }, label: {
-                                Image(displayImage)
+                                Image(asset: displayImage)
                                     .resizable()
                                     .frame(width: 80, height: 80)
                                     .background(Circle().foregroundColor(viewStore.color.background))

@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct RedeemMethodsView: View {
@@ -34,7 +35,7 @@ struct RedeemMethodsView: View {
                 VStack(alignment: .center, spacing: 16) {
                     if sizeCategory <= ContentSizeCategory.extraExtraExtraLarge {
                         Spacer()
-                        Image(Asset.Redeem.pharmacistBlue)
+                        Image(asset: Asset.Redeem.pharmacistBlue)
                             .resizable()
                             .scaledToFit()
                             .clipShape(Circle())

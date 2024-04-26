@@ -191,7 +191,7 @@
 "cdw_txt_intro_egk_checkmark" = "NFC-fähige Gesundheitskarte";
 "cdw_txt_intro_footnote" = "Sie verfügen noch nicht über eine NFC-fähige Gesundheitskarte und PIN?";
 "cdw_txt_intro_header_bottom" = "Jetzt alle Funktionen nutzen";
-"cdw_txt_intro_header_top" = "Anmeldung";
+"cdw_txt_intro_header_top" = "Anmelden";
 "cdw_txt_intro_list_title" = "Was Sie benötigen:";
 "cdw_txt_intro_needed_subheadline" = "Was Sie benötigen:";
 "cdw_txt_intro_pin_checkmark" = "PIN zur Gesundheitskarte";
@@ -327,6 +327,8 @@
 "dav_txt_direct_assignment_hint" = "Bei einer Direktzuweisungen wird ein Rezept von einer Praxis oder einem Krankenhaus direkt bei einer Apotheke eingelöst. Versicherte müssen hierbei nicht tätig werden und können nicht in den Einlösungsprozess eingreifen.\n\nDirektzuweisungen werden in der E-Rezept App aufgeführt, um Ihre Behandlung für Sie transparenter zu machen.";
 "dav_txt_direct_assignment_title" = "Was ist eine Direktzuweisung?";
 "dmc_btn_close" = "Fertig";
+"dmc_txt_code_multiple" = "Sammelcode";
+"dmc_txt_code_single" = "Einzelcode";
 "dtl_btn_copy_clipboard" = "Kopieren";
 "dtl_btn_delete_disabled_note" = "Das Rezept ist gerade in Bearbeitung durch eine Apotheke und kann nicht gelöscht werden.";
 "dtl_btn_delete_medication" = "Von diesem Gerät löschen";
@@ -973,7 +975,7 @@
 "pha_search_txt_quick_filter_open_filters" = "Filtern nach ...";
 "pha_search_txt_quick_filter_section_title" = "Filter";
 "pha_search_txt_quick_filter_shipment" = "Versand";
-"pha_search_txt_search_hint" = "Nach Name oder Adresse suchen";
+"pha_search_txt_search_hint" = "Suchen";
 "pha_search_txt_title" = "Apotheke wählen";
 "pha_success_redeem_title" = "Geschafft! 🎉";
 "pro_btn_selection_close" = "Fertig";
@@ -1003,8 +1005,10 @@
 "prsc_dtl_btn_medication_reminder" = "Einnahmeerinnerung";
 "prsc_dtl_btn_pkv_hint_activate" = "Aktivieren";
 "prsc_dtl_btn_pkv_invoice" = "Kostenbeleg";
+"prsc_dtl_btn_redeem" = "An Apotheke senden";
 "prsc_dtl_btn_share" = "Teilen";
 "prsc_dtl_btn_share_title" = "Teilen";
+"prsc_dtl_btn_show_matrix_code" = "Code vorzeigen";
 "prsc_dtl_btn_technical_informations" = "Technische Informationen";
 "prsc_dtl_btn_work_related_accident" = "Arbeitsunfall";
 "prsc_dtl_dr_co_payment_no_description" = "Sie sind von der Zuzahlung von diesem Medikament befreit. Die Kosten für das Medikament übernimmt Ihre Krankenkasse.";

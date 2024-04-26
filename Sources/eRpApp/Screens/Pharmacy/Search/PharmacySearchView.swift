@@ -201,7 +201,9 @@ struct PharmacySearchView: View {
         .task {
             await viewStore.send(.task).finish()
         }
-        .onAppear { viewStore.send(.onAppear) }
+        .task {
+            await viewStore.send(.onAppear).finish()
+        }
         .onReceive(NotificationCenter.default
             .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 viewStore.send(.task)

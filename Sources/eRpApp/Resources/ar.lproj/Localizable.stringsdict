@@ -2,36 +2,28 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ord_detail_txt_presc</key>
+	<key>auth_txt_failed_login_hint_msg</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>
 		<key>variable_0</key>
 		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
 			<key>one</key>
-			<string>Rezept</string>
+			<string>تم اكتشاف محاولة تسجيل دخول غير ناجحة</string>
 			<key>other</key>
-			<string>Rezepte</string>
-		</dict>
-	</dict>
-	<key>ord_list_status_count</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>one</key>
-			<string>%u Rezept</string>
-			<key>other</key>
-			<string>%u Rezepte</string>
+			<string>تم اكتشاف %u من محاولات تسجيل الدخول غير الناجحة</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>erx_txt_accepted_until</key>
@@ -44,18 +36,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>zero</key>
-			<string>سار اليوم فقط</string>
-			<key>one</key>
-			<string>سار لمدة  %u يوم فقط</string>
-			<key>two</key>
-			<string>فارغ</string>
 			<key>few</key>
-			<string>فارغ</string>
+			<string></string>
 			<key>many</key>
-			<string>فارغ</string>
+			<string></string>
+			<key>one</key>
+			<string>قابلة للاسترداد فقط غدا</string>
 			<key>other</key>
-			<string>سار لمدة  %u أيام فقط</string>
+			<string>لا يزال قابلاً للاسترداد لمدة %u من الأيام</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string>قابلة للاسترداد فقط اليوم</string>
 		</dict>
 	</dict>
 	<key>erx_txt_expires_in</key>
@@ -68,21 +60,21 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>zero</key>
-			<string>فارغ</string>
-			<key>one</key>
-			<string>قابل للصرف اليوم فقط كدافع ذاتي</string>
-			<key>two</key>
-			<string>فارغ</string>
 			<key>few</key>
-			<string>فارغ</string>
+			<string></string>
 			<key>many</key>
-			<string>فارغ</string>
+			<string></string>
+			<key>one</key>
+			<string>لا يمكن استبدالها إلا غدًا كدافع ذاتي</string>
 			<key>other</key>
-			<string>قابل للصرف فقط حتى %u كدافع ذاتي</string>
+			<string>لا يزال من الممكن استردادها كدافع ذاتي لمدة %u يوم</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string>يمكن استردادها اليوم فقط كدافع ذاتي</string>
 		</dict>
 	</dict>
-	<key>scn_btn_scanning_done</key>
+	<key>ord_detail_txt_presc</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>
@@ -92,18 +84,36 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>zero</key>
-			<string>فارغ</string>
-			<key>one</key>
-			<string>انتهى، إضافة وصفة طبية</string>
-			<key>two</key>
-			<string>فارغ</string>
 			<key>few</key>
-			<string>فارغ</string>
+			<string></string>
 			<key>many</key>
-			<string>.</string>
+			<string></string>
+			<key>one</key>
+			<string>وصفة</string>
 			<key>other</key>
-			<string>انتهى، إضافة وصفات طبية</string>
+			<string>وصفات</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>ord_list_status_count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string></string>
+			<key>other</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>pha_redeem_alert_title_failure</key>
@@ -116,36 +126,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>zero</key>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
 			<string></string>
 			<key>one</key>
-			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
+			<string>لا يمكن استرداد الوصفة المحددة</string>
 			<key>other</key>
-			<string>%li Rezepte konnten nicht eingelöst werden</string>
-		</dict>
-	</dict>
-	<key>auth_txt_failed_login_hint_msg</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>li</string>
-			<key>zero</key>
-			<string>فارغ</string>
-			<key>one</key>
-			<string>تبين وجود محاولة تسجيل خاطئة</string>
+			<string>تعذر استرداد %li الوصفات الطبية</string>
 			<key>two</key>
-			<string>فارغ</string>
-			<key>few</key>
-			<string>فارغ</string>
-			<key>many</key>
-			<string>فارغ</string>
-			<key>other</key>
-			<string>تبين وجود عدد %u محاولة تسجيل خاطئة</string>
+			<string></string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
@@ -158,43 +150,91 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
 			<key>one</key>
-			<string>Erhaltenes Medikament</string>
+			<string>تلقى الدواء</string>
 			<key>other</key>
-			<string>Erhaltene Medikamente</string>
+			<string>تلقى الدواء</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>تم، أضف الوصفة</string>
+			<key>other</key>
+			<string>تم، إضافة وصفات</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string>[فارغ]</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@variable_0@</string>
-        <key>variable_0</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>li</string>
-            <key>one</key>
-            <string>Sie haben noch einen Versuch, um die aktuelle PIN einzugeben.</string>
-            <key>other</key>
-            <string>Sie haben noch %u Versuche, um die aktuelle PIN einzugeben.</string>
-        </dict>
-    </dict>
-    <key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
-    <dict>
-        <key>NSStringLocalizedFormatKey</key>
-        <string>%#@variable_0@</string>
-        <key>variable_0</key>
-        <dict>
-            <key>NSStringFormatSpecTypeKey</key>
-            <string>NSStringPluralRuleType</string>
-            <key>NSStringFormatValueTypeKey</key>
-            <string>li</string>
-            <key>one</key>
-            <string>Sie haben noch einen Versuch, um die PUK einzugeben.</string>
-            <key>other</key>
-            <string>Sie haben noch %u Versuche, um die PUK einzugeben.</string>
-        </dict>
-    </dict>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>لديك محاولة أخرى لإدخال رقم التعريف الشخصي الحالي.</string>
+			<key>other</key>
+			<string>لا يزال لديك %u من المحاولات لإدخال رقم التعريف الشخصي الحالي.</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>لديك محاولة أخرى للدخول إلى رمز PUK.</string>
+			<key>other</key>
+			<string>لا يزال لديك %u من المحاولات للدخول إلى رمز PUK.</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
 </dict>
 </plist>

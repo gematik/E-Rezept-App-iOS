@@ -21,6 +21,7 @@ import CombineSchedulers
 import CoreData
 import eRpKit
 @testable import eRpLocalStorage
+import eRpRemoteStorage
 import Foundation
 import Nimble
 import TestUtils
@@ -34,7 +35,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB_ErxTaskCoreDataStoreTest")
+        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB_ErxTaskCoreDataStoreTest.db")
     }
 
     override func tearDown() {
@@ -109,6 +110,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
             accessCode: "access"
         )
         try store.add(tasks: [task])
+
+        _ = try awaitPublisher(store.delete(tasks: [task]))
     }
 
     func testSavingTaskWithAllPropertiesSet() throws {
@@ -133,6 +136,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(receivedFetchResult).toEventually(equal(taskToFetch))
 
         cancellable.cancel()
+        _ = try awaitPublisher(store.delete(tasks: [taskToFetch]))
     }
 
     func testUpdatingPreviouslySavedTask() throws {
@@ -251,7 +255,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     func testFetchTaskByIdNoResults() throws {
         let store = loadErxCoreDataStore()
-        let taskToFetch = ErxTask(identifier: "id_1", status: .ready, flowType: .pharmacyOnly)
+        let taskToFetch = ErxTask(identifier: "not_in_store_id", status: .ready, flowType: .pharmacyOnly)
 
         var receivedNoResult = false
         // when fetching a profile that has not been added to the store
@@ -968,6 +972,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
             enteredDate: "2023-01-12T14:42:32+00:00"
         )
         try store.add(chargeItems: [item])
+
+        _ = try awaitPublisher(store.delete(chargeItems: [item]))
     }
 
     func testSavingSparseChargeItem() throws {
@@ -989,6 +995,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(receivedFetchResult.first).toEventually(equal(chargeItemToFetch))
 
         cancellable.cancel()
+
+        _ = try awaitPublisher(store.delete(chargeItems: [chargeItemToFetch]))
     }
 
     func testUpdatingChargeItemIsRead() throws {
@@ -1034,6 +1042,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(receivedValues[1].first?.invoice) == chargeItemInStore.invoice
 
         cancellable.cancel()
+
+        _ = try awaitPublisher(store.delete(chargeItems: [chargeItemInStore]))
     }
 
     func testListingOnlyChargeItemsWithRelationshipToProfile() throws {
@@ -1061,6 +1071,9 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(receivedListAllValues[0].first) == ErxSparseChargeItem.Fixtures.chargeItem3
 
         cancellable.cancel()
+
+        _ = try awaitPublisher(store.delete(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                                                          ErxSparseChargeItem.Fixtures.chargeItem2]))
     }
 
     func testFetchingLatestChargeItem() throws {
@@ -1095,6 +1108,9 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(receivedValues[0].count) == 2
 
         cancellable.cancel()
+
+        _ = try awaitPublisher(store.delete(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                                                          ErxSparseChargeItem.Fixtures.chargeItem2]))
     }
 
     func testFetchingLatestChargeItemWithProfileRelationship() throws {
@@ -1122,6 +1138,12 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(ErxSparseChargeItem.Fixtures.chargeItem3.enteredDate?.date) < ErxSparseChargeItem.Fixtures.chargeItem1
             .enteredDate!
             .date!
+
+        _ = try awaitPublisher(store.delete(
+            chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                          ErxSparseChargeItem.Fixtures.chargeItem2,
+                          ErxSparseChargeItem.Fixtures.chargeItem3]
+        ))
     }
 
     func testFetchChargeItemByIDWithFullDetail() throws {
@@ -1145,6 +1167,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         expect(receivedFetchResult?.chargeItem).to(nodiff(chargeItemToFetch))
 
         cancellable.cancel()
+
+        _ = try awaitPublisher(store.delete(chargeItems: [chargeItemToFetch.sparseChargeItem]))
     }
 
     private func prepareStores(

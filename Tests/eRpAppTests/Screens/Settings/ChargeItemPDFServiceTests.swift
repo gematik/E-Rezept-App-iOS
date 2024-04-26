@@ -18,16 +18,16 @@
 
 import Combine
 import ComposableArchitecture
+import CustomDump
 @testable import eRpApp
 import eRpKit
+@testable import eRpRemoteStorage
+import GemCommonsKit
 import GemPDFKit
-import Nimble
-import XCTest
-
-import BundleKit
-import CustomDump
 import ModelsR4
+import Nimble
 import TestUtils
+import XCTest
 
 final class ChargeItemPDFServiceTests: XCTestCase {
     func testGeneratePDF() throws {
@@ -883,18 +883,15 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     private func chargeItemFromFile(_ file: String, identifier: String) throws -> ErxChargeItem? {
-        try decode(resource: file)
+        let data = try Bundle(for: Self.self)
+            .testResourceFilePath(in: "PDF", for: file)
+            .readFileContents()
+        return try JSONDecoder()
+            .decode(ModelsR4.Bundle.self, from: data)
             .parseErxChargeItem(
                 id: identifier,
                 with: "fhirData".data(using: .utf8)!
             )
-    }
-
-    private func decode(
-        resource file: String
-    ) throws -> ModelsR4.Bundle {
-        try Bundle(for: Self.self)
-            .decode(ModelsR4.Bundle.self, from: file)
     }
 }
 
@@ -1029,7 +1026,7 @@ extension ErxChargeItem.Fixtures {
         ),
         patient: .init(
             name: "Günther Angermänn",
-            address: "Weiherstr. 74a\n67411 Büttnerdorf",
+            address: "Weiherstr. 74a, 67411 Büttnerdorf",
             birthDate: "1976-04-30",
             status: "1",
             insurance: "Künstler-Krankenkasse Baden-Württemberg",
@@ -1046,12 +1043,12 @@ extension ErxChargeItem.Fixtures {
             name: "Arztpraxis Schraßer",
             phone: "(05808) 9632619",
             email: "andre.teufel@xn--schffer-7wa.name",
-            address: "Halligstr. 98\n85005, Alt Mateo"
+            address: "Halligstr. 98\n85005 Alt Mateo"
         ),
         pharmacy: .init(
             identifier: "012876",
             name: "Pharmacy Name",
-            address: "Pharmacy Street 2\n13267, Berlin",
+            address: "Pharmacy Street 2\n13267 Berlin",
             country: "DE"
         ),
         invoice: .init(

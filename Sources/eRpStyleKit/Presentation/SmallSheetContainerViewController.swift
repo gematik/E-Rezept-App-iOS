@@ -16,7 +16,11 @@
 //  
 //
 
+#if os(macOS)
+import AppKit
+#elseif os(iOS)
 import UIKit
+#endif
 
 class SmallSheetContainerViewController: UIViewController {
     let dismiss: () -> Void

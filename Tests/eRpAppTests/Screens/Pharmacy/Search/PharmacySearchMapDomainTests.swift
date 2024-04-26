@@ -59,32 +59,50 @@ class PharmacySearchMapDomainTests: XCTestCase {
         }
     }
 
+    /*
+     List of Test:
+     Normal Search - D
+     First Allow Location - D (maybe include changing position)
+     First Denied Location -
+     Allow Location -
+     Denied Location -
+     Filter Tapped Search -
+     SearchCustomPosition
+     UI-Test - Serach/GoToUser while swiping ?
+     */
     func testSearchForPharmacies() async {
         // given
         let mockPharmacyRepo = MockPharmacyRepository()
-        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmacies)
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         let sut = testStore(for: TestData.stateWithNoLocation, pharmacyRepository: mockPharmacyRepo)
-        let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmacies)
+        let expectedLocation =
+            Location(rawValue: CLLocation(latitude: MKCoordinateRegion.gematikHQRegion.center.latitude,
+                                          longitude: MKCoordinateRegion.gematikHQRegion.center.longitude))
+
+        let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
 
         await sut.send(.performSearch)
         await testScheduler.advance()
-        await sut.receive(.response(.pharmaciesReceived(expected))) { state in
-            state.mapLocation = MKCoordinateRegion(center: state.mapLocation.center,
-                                                   span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+        await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate))) { state in
+            state.mapLocation = .manual(MKCoordinateRegion(center: expectedLocation.coordinate,
+                                                           span: MKCoordinateSpan(
+                                                               latitudeDelta: 5.991751000000008,
+                                                               longitudeDelta: 9.841382800000005
+                                                           )))
         }
     }
 
-    func test_SearchMapWithPermission() async {
+    func test_FirstOpenAndAllowingLocation() async {
         // given
         let mockPharmacyRepo = MockPharmacyRepository()
-        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmacies)
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
-        let sut = testStore(for: TestData.stateWithNoLocation, pharmacyRepository: mockPharmacyRepo)
+        let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .notDetermined }
         sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
@@ -93,43 +111,112 @@ class PharmacySearchMapDomainTests: XCTestCase {
         sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
         sut.dependencies.locationManager.startUpdatingLocation = { .run { _ in } }
         sut.dependencies.locationManager.stopUpdatingLocation = { .run { _ in } }
+        let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
+        let expectedLocation = TestData.testLocation
+
+        await sut.send(.onAppear)
+        await sut.receive(.searchWithMap)
+        await sut.receive(.requestLocation) { state in
+            state.currentUserLocation = nil
+        }
+
+        locationManagerSubject.send(.didChangeAuthorization(.authorizedWhenInUse))
+        await sut.receive(.locationManager(.didChangeAuthorization(.authorizedWhenInUse))) { state in
+            state.searchAfterAuthorized = true
+        }
+        sut.dependencies.locationManager.authorizationStatus = { .authorizedAlways }
+        locationManagerSubject.send(completion: .finished)
+
+        locationManagerSubject.send(.didUpdateLocations([expectedLocation]))
+        await sut.send(.locationManager(.didUpdateLocations([expectedLocation]))) { state in
+            state.currentUserLocation = expectedLocation
+        }
+        locationManagerSubject.send(completion: .finished)
+
+        await sut.receive(.setMapAfterLocationUpdate) { state in
+            state.searchAfterAuthorized = false
+        }
+
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate))) { state in
+            state.mapLocation = .manual(MKCoordinateRegion(center: expectedLocation.coordinate,
+                                                           span: MKCoordinateSpan(
+                                                               latitudeDelta: 0.00,
+                                                               longitudeDelta: 3.552713678800501e-15
+                                                           )))
+        }
+
+        await sut.send(.goToUser)
+
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate)))
+    }
+
+    func test_AlreadyAllowingLocation() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .authorizedAlways }
+        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
+        let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
+        let expectedLocation = TestData.testLocation
+        sut.dependencies.locationManager.location = { expectedLocation }
+
+        await sut.send(.onAppear)
+        locationManagerSubject.send(completion: .finished)
+        await sut.receive(.searchWithMap)
+
+        await testScheduler.advance()
+        await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate))) { state in
+            state.mapLocation = .manual(.init(center: expectedLocation.coordinate,
+                                              span: MKCoordinateSpan(
+                                                  latitudeDelta: 0.0,
+                                                  longitudeDelta: 3.552713678800501e-15
+                                              )))
+        }
+
+        await sut.send(.goToUser)
+
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate)))
+    }
+
+    func test_FirstOpenAndDeniedLocation() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let sut = testStore(for: TestData.stateWithNoLocation, pharmacyRepository: mockPharmacyRepo)
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .notDetermined }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
+        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
+        let expectedLocation = Location(rawValue:
+            CLLocation(latitude: MKCoordinateRegion.gematikHQRegion.center.latitude,
+                       longitude: MKCoordinateRegion.gematikHQRegion.center.longitude))
 
         await sut.send(.onAppear)
         await sut.receive(.searchWithMap)
         await sut.receive(.requestLocation)
 
-        locationManagerSubject.send(.didChangeAuthorization(.authorizedWhenInUse))
-        await sut.receive(.locationManager(.didChangeAuthorization(.authorizedWhenInUse)))
-        locationManagerSubject.send(completion: .finished)
-
-        locationManagerSubject.send(.didUpdateLocations([TestData.testLocation]))
-        await sut.send(.locationManager(.didUpdateLocations([TestData.testLocation]))) { state in
-            state.currentUserLocation = TestData.testLocation
-        }
-        locationManagerSubject.send(completion: .finished)
-
-        await sut.send(.goToUser) { state in
-            state.mapLocation = MKCoordinateRegion(center: TestData.testLocation.coordinate,
-                                                   span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-        }
-    }
-
-    func test_MapSearchWithoutPermission() async {
-        // given
-        let mockPharmacyRepo = MockPharmacyRepository()
-        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmacies)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
-
-        let sut = testStore(for: TestData.stateWithWithLocation, pharmacyRepository: mockPharmacyRepo)
-        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
-        sut.dependencies.locationManager.authorizationStatus = { .denied }
-        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
-
-        await sut.send(.requestLocation) { state in
-            state.currentUserLocation = nil
+        locationManagerSubject.send(.didChangeAuthorization(.denied))
+        await sut.receive(.locationManager(.didChangeAuthorization(.denied))) { state in
             state.destination = .alert(PharmacySearchMapDomain.locationPermissionAlertState)
         }
+        sut.dependencies.locationManager.authorizationStatus = { .denied }
+        locationManagerSubject.send(completion: .finished)
 
         await sut.send(.destination(.presented(.alert(.close)))) { state in
             state.destination = nil
@@ -139,6 +226,97 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
         await sut.receive(.requestLocation) { state in
             state.destination = .alert(PharmacySearchMapDomain.locationPermissionAlertState)
+        }
+
+        await sut.send(.performSearch)
+
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate))) { state in
+            state.mapLocation = .manual(MKCoordinateRegion(center: state.mapLocation.region.center,
+                                                           span: MKCoordinateSpan(
+                                                               latitudeDelta: 5.991751000000008,
+                                                               longitudeDelta: 9.841382800000005
+                                                           )))
+        }
+    }
+
+    func test_AlreadyDeniedLocation() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let sut = testStore(for: TestData.stateWithNoLocation, pharmacyRepository: mockPharmacyRepo)
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .denied }
+        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
+        let expectedLocation = Location(rawValue:
+            CLLocation(latitude: MKCoordinateRegion.gematikHQRegion.center.latitude,
+                       longitude: MKCoordinateRegion.gematikHQRegion.center.longitude))
+
+        await sut.send(.onAppear)
+        locationManagerSubject.send(completion: .finished)
+        await sut.receive(.searchWithMap)
+
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate))) { state in
+            state.mapLocation = .manual(MKCoordinateRegion(center: state.mapLocation.region.center,
+                                                           span: MKCoordinateSpan(
+                                                               latitudeDelta: 5.991751000000008,
+                                                               longitudeDelta: 9.841382800000005
+                                                           )))
+        }
+
+        await sut.send(.goToUser)
+
+        await sut.receive(.requestLocation) { state in
+            state.destination = .alert(PharmacySearchMapDomain.locationPermissionAlertState)
+        }
+    }
+
+    func test_FilterTapedSearch() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .authorizedAlways }
+        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
+        let expectedLocation = TestData.testLocation
+
+        await sut.send(.setNavigation(tag: .filter)) { state in
+            state.destination = .filter(.init(pharmacyFilterShow: [.open, .delivery, .shipment]))
+        }
+
+        await sut.send(.destination(.presented(.pharmacyFilterView(action: .toggleFilter(.delivery))))) { state in
+            state.destination = .filter(.init(pharmacyFilterOptions: [.delivery],
+                                              pharmacyFilterShow: [.open, .delivery, .shipment]))
+        }
+
+        await testScheduler.run()
+
+        await sut.receive(.quickSearch(filters: [.delivery])) { state in
+            state.pharmacyFilterOptions = [.delivery]
+        }
+
+        await sut.receive(.performSearch)
+
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate))) { state in
+            state.mapLocation = .manual(MKCoordinateRegion(center: state.mapLocation.region.center,
+                                                           span: MKCoordinateSpan(
+                                                               latitudeDelta: 0.0,
+                                                               longitudeDelta: 3.552713678800501e-15
+                                                           )))
         }
     }
 }
@@ -164,31 +342,37 @@ extension PharmacySearchMapDomainTests {
         public static let stateWithNoLocation =
             PharmacySearchMapDomain.State(
                 erxTasks: [ErxTask.Fixtures.erxTaskReady],
-                mapLocation: MKCoordinateRegion.gematikHQRegion,
-                pharmacies: pharmacies.map { pharmacies in
+                currentUserLocation: nil,
+                mapLocation: .manual(MKCoordinateRegion.gematikHQRegion),
+                pharmacies: pharmaciesWithLocations.map { pharmacies in
                     PharmacyLocationViewModel(
                         pharmacy: pharmacies,
-                        referenceLocation: nil,
+                        referenceLocation: Location(rawValue: CLLocation(latitude: MKCoordinateRegion.gematikHQRegion
+                                .center.latitude,
+                            longitude: MKCoordinateRegion.gematikHQRegion
+                                .center.longitude)),
                         referenceDate: TestData.openHoursTestReferenceDate
                     )
                 }
             )
         /// Test-Data PharmacyDomain.State
-        public static let stateWithWithLocation =
+        public static let stateWithLocation =
             PharmacySearchMapDomain.State(
                 erxTasks: [ErxTask.Fixtures.erxTaskReady],
-                mapLocation: TestData.testMapLocation,
-                pharmacies: pharmacies.map { pharmacies in
+                currentUserLocation: TestData.testLocation,
+                mapLocation: .manual(.init(center: TestData.testLocation.coordinate,
+                                           span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))),
+                pharmacies: pharmaciesWithLocations.map { pharmacies in
                     PharmacyLocationViewModel(
                         pharmacy: pharmacies,
-                        referenceLocation: nil,
+                        referenceLocation: TestData.testLocation,
                         referenceDate: TestData.openHoursTestReferenceDate
                     )
                 }
             )
         /// Test location
         public static let testLocation = Location(
-            rawValue: CLLocation(latitude: 49.2470345, longitude: 8.8668786)
+            rawValue: CLLocation(latitude: 49.5270345, longitude: 8.4668786)
         )
         /// Test Maplocation
         public static let testMapLocation = MKCoordinateRegion(
@@ -293,6 +477,10 @@ extension PharmacySearchMapDomainTests {
             pharmacy2,
             pharmacy3,
             pharmacy4,
+        ]
+        /// Test-Data array of pharmacies with a location
+        public static let pharmaciesWithLocations = [
+            pharmacy1,
         ]
     }
 }

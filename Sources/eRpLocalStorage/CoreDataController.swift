@@ -57,8 +57,7 @@ public class CoreDataController {
         excludeFromBackup: Bool,
         fileProtectionType: FileProtectionType
     ) throws -> NSPersistentContainer {
-        let bundle = Bundle(for: DefaultErxTaskCoreDataStore.self)
-        guard let modelUrl = bundle.url(forResource: "ErxTask", withExtension: "momd") else {
+        guard let modelUrl = Bundle.module.url(forResource: "ErxTask", withExtension: "momd") else {
             preconditionFailure("Unable to locate ErxTask momd file in Bundle")
         }
         guard let mom = NSManagedObjectModel(contentsOf: modelUrl) else {

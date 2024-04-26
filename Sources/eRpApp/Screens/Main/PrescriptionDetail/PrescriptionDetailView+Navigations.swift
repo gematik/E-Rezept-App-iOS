@@ -18,6 +18,7 @@
 
 import ComposableArchitecture
 import eRpKit
+import eRpStyleKit
 import SwiftUI
 
 extension PrescriptionDetailView {
@@ -161,6 +162,16 @@ extension PrescriptionDetailView {
                 action: PrescriptionDetailDomain.Destinations.Action.medicationReminder(action:),
                 onTap: { viewStore.send(.setNavigation(tag: .medicationReminder)) },
                 destination: MedicationReminderSetupView.init(store:),
+                label: { EmptyView() }
+            ).accessibility(hidden: true)
+
+            // MatrixCode
+            NavigationLinkStore(
+                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
+                state: /PrescriptionDetailDomain.Destinations.State.matrixCode,
+                action: PrescriptionDetailDomain.Destinations.Action.matrixCode(action:),
+                onTap: {},
+                destination: MatrixCodeView.init(store:),
                 label: { EmptyView() }
             ).accessibility(hidden: true)
         }

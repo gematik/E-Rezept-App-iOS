@@ -16,7 +16,6 @@
 //  
 //
 
-import BundleKit
 @testable import eRpLocalStorage
 import Foundation
 import Nimble

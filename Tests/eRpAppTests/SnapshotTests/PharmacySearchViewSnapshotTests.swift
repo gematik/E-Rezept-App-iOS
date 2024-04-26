@@ -46,7 +46,7 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
                     EmptyReducer()
                 }
             )
-            .navigationTitle("⚕︎ Redeem")
+            .navigationTitle("Redeem")
         }
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -132,7 +132,7 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             store: .init(
                 initialState: .init(
                     erxTasks: [ErxTask](),
-                    mapLocation: MKCoordinateRegion.gematikHQRegion,
+                    mapLocation: .manual(MKCoordinateRegion.gematikHQRegion),
                     pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies
                 )
             ) {

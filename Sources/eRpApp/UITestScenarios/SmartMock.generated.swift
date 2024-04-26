@@ -1,14 +1,15 @@
-// Generated using Sourcery 2.1.3 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 /// Use sourcery to update this file.
 
-import Pharmacy
+import Combine
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
-import Combine
-import OpenSSL
 import Foundation
+import IdentifiedCollections
+import OpenSSL
+import Pharmacy
 
 // MARK: - SmartMockErxRemoteDataStore -
 
@@ -1123,6 +1124,57 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
                 searchPharmaciesByPositionFilterRecordings: searchPharmaciesByPositionFilterRecordings,
                 fetchPharmacyByRecordings: fetchPharmacyByRecordings,
                 loadAvsCertificatesForRecordings: loadAvsCertificatesForRecordings
+            )
+        )
+    }
+}
+
+
+// MARK: - SmartMockRedeemService -
+
+class SmartMockRedeemService: RedeemService, SmartMock {
+    private var wrapped: RedeemService
+    private var isRecording: Bool
+
+    init(wrapped: RedeemService, mocks: Mocks?, isRecording: Bool = false) {
+        self.wrapped = wrapped
+        self.isRecording = isRecording
+
+        redeemRecordings = mocks?.redeemRecordings ?? .delegate
+    }
+
+    var redeemRecordings: MockAnswer<IdentifiedArrayOf<OrderResponse>>
+
+    func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+        guard !isRecording else {
+            let result = wrapped.redeem(
+                    orders
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.redeemRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = redeemRecordings.next() {
+            return Just(value)
+                .setFailureType(to: RedeemServiceError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.redeem(
+                    orders
+            )
+        }
+    }
+
+    struct Mocks: Codable {
+        var redeemRecordings: MockAnswer<IdentifiedArrayOf<OrderResponse>>? = .delegate
+    }
+    func recordedData() throws -> CodableMock {
+        return try CodableMock(
+            "RedeemService",
+            Mocks(
+                redeemRecordings: redeemRecordings
             )
         )
     }

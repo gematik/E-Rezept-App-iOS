@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 // [REQ:gemSpec_eRp_FdV:A_19177#1,A_19185#2] View displaying the audit events

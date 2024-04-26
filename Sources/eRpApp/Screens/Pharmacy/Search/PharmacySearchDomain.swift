@@ -148,15 +148,18 @@ struct PharmacySearchDomain: ReducerProtocol {
         case .showMap:
             state.destination = .mapSearch(.init(erxTasks: state.erxTasks,
                                                  currentUserLocation: state.currentLocation,
-                                                 mapLocation: state.mapLocation))
+                                                 mapLocation: .manual(state.mapLocation)))
             return .none
         case .mapSetUp:
+            guard state.destination == nil else { return .none }
+
             guard let currentLocation = locationManager.location() else {
                 state.mapLocation = MKCoordinateRegion.gematikHQRegion
                 return .none
             }
             state.currentLocation = currentLocation
-            state.mapLocation.center = currentLocation.coordinate
+            state.mapLocation = MKCoordinateRegion(center: currentLocation.coordinate,
+                                                   span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
             return .none
         case let .destination(.presented(.pharmacyMapSearch(action: .delegate(action)))):
             switch action {
@@ -370,27 +373,36 @@ struct PharmacySearchDomain: ReducerProtocol {
             @unknown default:
                 return .none
             }
-        case .locationManager(.didChangeAuthorization(.authorizedAlways)),
-             .locationManager(.didChangeAuthorization(.authorizedWhenInUse)):
-            if state.searchState == .searchAfterLocalizationWasAuthorized {
-                return locationManager.startUpdatingLocation().fireAndForget()
+        case let .locationManager(action):
+            if state.destination != nil {
+                return .none
             }
-            return .none
-        case .locationManager(.didChangeAuthorization(.notDetermined)):
-            return .none
-        case .locationManager(.didChangeAuthorization(.denied)),
-             .locationManager(.didChangeAuthorization(.restricted)):
-            state.currentLocation = nil
-            if state.searchState == .searchAfterLocalizationWasAuthorized {
-                state.destination = .alert(Self.locationPermissionAlertState)
+            switch action {
+            case .didChangeAuthorization(.authorizedAlways),
+                 .didChangeAuthorization(.authorizedWhenInUse):
+                if state.searchState == .searchAfterLocalizationWasAuthorized {
+                    return locationManager.startUpdatingLocation().fireAndForget()
+                }
+                return Effect.send(.mapSetUp)
+            case .didChangeAuthorization(.notDetermined):
+                state.currentLocation = nil
+                return Effect.send(.mapSetUp)
+            case .didChangeAuthorization(.denied),
+                 .didChangeAuthorization(.restricted):
+                state.currentLocation = nil
+                if state.searchState == .searchAfterLocalizationWasAuthorized {
+                    state.destination = .alert(Self.locationPermissionAlertState)
+                }
+                return Effect.send(.mapSetUp)
+            case let .didUpdateLocations(locations):
+                state.currentLocation = locations.first
+                return .concatenate(
+                    locationManager.stopUpdatingLocation().fireAndForget(),
+                    EffectTask.send(.performSearch)
+                )
+            default:
+                return .none
             }
-            return .none
-        case let .locationManager(.didUpdateLocations(locations)):
-            state.currentLocation = locations.first
-            return .concatenate(
-                locationManager.stopUpdatingLocation().fireAndForget(),
-                EffectTask.send(.performSearch)
-            )
         case let .setNavigation(tag: tag):
             switch tag {
             case .filter:
@@ -432,7 +444,7 @@ struct PharmacySearchDomain: ReducerProtocol {
         case .destination(.presented(.alert(.openAppSpecificSettings))):
             openSettings()
             return .none
-        case .destination, .locationManager, .nothing:
+        case .destination, .nothing:
             return .none
         }
     }

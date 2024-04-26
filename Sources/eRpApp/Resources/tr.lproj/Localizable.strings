@@ -191,7 +191,7 @@
 "cdw_txt_intro_egk_checkmark" = "NFC özellikli sağlık kartı";
 "cdw_txt_intro_footnote" = "PIN dahil NFC özellikli bir sağlık kartınız yok mu?";
 "cdw_txt_intro_header_bottom" = "Tüm fonksiyonları şimdi kullan";
-"cdw_txt_intro_header_top" = "Oturum açma";
+"cdw_txt_intro_header_top" = "Kayıt olmak";
 "cdw_txt_intro_list_title" = "Şunlara ihtiyacınız var:";
 "cdw_txt_intro_needed_subheadline" = "Şunlara ihtiyacınız var:";
 "cdw_txt_intro_pin_checkmark" = "Sağlık kartının PIN'i";
@@ -327,6 +327,8 @@
 "dav_txt_direct_assignment_hint" = "Doğrudan yönlendirmede, bir muayenehaneden veya hastaneden alınan reçete doğrudan eczanede doldurulur. Sigortalıların herhangi bir işlem yapmasına gerek yoktur ve geri ödeme sürecine müdahale edemezler. \n\n Tedavinizi sizin için daha şeffaf hale getirmek için e-reçete uygulamasında doğrudan yönlendirmeler listelenir.";
 "dav_txt_direct_assignment_title" = "Doğrudan görev nedir?";
 "dmc_btn_close" = "Hazır";
+"dmc_txt_code_multiple" = "Koleksiyon kodu";
+"dmc_txt_code_single" = "Tek kod";
 "dtl_btn_copy_clipboard" = "Kopyala";
 "dtl_btn_delete_disabled_note" = "Reçete şu anda eczanede işleniyor ve silinemiyor.";
 "dtl_btn_delete_medication" = "Bu cihazdan sil";
@@ -973,7 +975,7 @@
 "pha_search_txt_quick_filter_open_filters" = "Tarafından filtre ...";
 "pha_search_txt_quick_filter_section_title" = "Filtre";
 "pha_search_txt_quick_filter_shipment" = "Kargo";
-"pha_search_txt_search_hint" = "Bir ad veya adres arayın";
+"pha_search_txt_search_hint" = "Aramak";
 "pha_search_txt_title" = "Eczane seç";
 "pha_success_redeem_title" = "Tamamlandı! 🎉";
 "pro_btn_selection_close" = "Hazır";
@@ -1003,8 +1005,10 @@
 "prsc_dtl_btn_medication_reminder" = "Gelir hatırlatıcısı";
 "prsc_dtl_btn_pkv_hint_activate" = "Etkinleştir";
 "prsc_dtl_btn_pkv_invoice" = "Maliyet makbuzu";
+"prsc_dtl_btn_redeem" = "Eczaneye gönder";
 "prsc_dtl_btn_share" = "Bölmek";
 "prsc_dtl_btn_share_title" = "Bölmek";
+"prsc_dtl_btn_show_matrix_code" = "Kodu göster";
 "prsc_dtl_btn_technical_informations" = "Teknik bilgiler";
 "prsc_dtl_btn_work_related_accident" = "İş kazası";
 "prsc_dtl_dr_co_payment_no_description" = "Bu ilaç için katkı payı ödemekten muafsınız. İlaç masraflarını sağlık sigortanız karşılayacaktır.";

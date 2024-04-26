@@ -29,30 +29,18 @@ class DemoSignatureProvider: NFCSignatureProvider {
     }
 
     func sign(can _: String, pin _: String,
-              challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
-        do {
-            let jwt = try JWT(
-                header: JWT.Header(),
-                payload: DemoIDPSession.DemoPayload()
-            )
-
-            return Just(SignedChallenge(
-                originalChallenge: challenge,
-                signedChallenge: jwt
-            ))
-                .setFailureType(to: NFCSignatureProviderError.self)
-                .delay(for: 3, scheduler: DispatchQueue.main)
-                .eraseToAnyPublisher()
-        } catch {
-            return Fail(error: NFCSignatureProviderError.genericError(DemoError.demo)).eraseToAnyPublisher()
+              challenge: IDPChallengeSession) async -> Result<SignedChallenge, NFCSignatureProviderError> {
+        guard let jwt = try? JWT(
+            header: JWT.Header(),
+            payload: DemoIDPSession.DemoPayload()
+        )
+        else {
+            return .failure(NFCSignatureProviderError.genericError(DemoError.demo))
         }
-    }
-
-    func sign(can _: String, pin _: String,
-              registrationDataProvider _: SecureEnclaveSignatureProvider)
-        -> AnyPublisher<RegistrationData, NFCSignatureProviderError> {
-        Fail(error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm))
-            .delay(for: 3, scheduler: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        Task { @MainActor in try await Task.sleep(nanoseconds: NSEC_PER_SEC * 3) }
+        return .success(SignedChallenge(
+            originalChallenge: challenge,
+            signedChallenge: jwt
+        ))
     }
 }

@@ -24,3 +24,5 @@ enum ProgressResponse<Result: Equatable, Failure: Swift.Error, Progress: Equatab
     case progress(Progress)
     case failure(Failure)
 }
+
+extension ProgressResponse: Codable where Result: Codable, Failure: Codable, Progress: Codable {}

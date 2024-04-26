@@ -160,6 +160,7 @@ final class DefaultOrdersRepositoryTests: XCTestCase {
         for try await orders in sut.loadAllOrders() {
             expect(orders.count) == 2
             expect(orders).to(equal(expectedOrders))
+            expect(orders).to(nodiff(expectedOrders))
             expect(self.mockErxTaskRepository.listCommunicationsCallsCount) == 1
             expect(self.mockPharmacyRepository.loadCachedByCallsCount) == 2
             expect(self.mockErxTaskRepository.loadLocalChargeItemsCallsCount) == 4 // for 4 different task_ids

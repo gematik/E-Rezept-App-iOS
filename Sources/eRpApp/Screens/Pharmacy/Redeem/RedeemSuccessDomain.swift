@@ -36,9 +36,13 @@ struct RedeemSuccessDomain: ReducerProtocol {
         }
     }
 
+    @Dependency(\.reviewRequester) var reviewRequester
+
     func reduce(into _: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .closeButtonTapped:
+            reviewRequester.requestReview()
+
             return EffectTask.send(.delegate(.close))
         case .delegate:
             return .none

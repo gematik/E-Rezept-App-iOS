@@ -16,10 +16,10 @@
 //  
 //
 
-import BundleKit
 import Combine
 @testable import FHIRClient
 import Foundation
+import GemCommonsKit
 import HTTPClient
 import ModelsR4
 import Nimble
@@ -93,7 +93,7 @@ final class FHIRClientTests: XCTestCase {
 
     func testFHIRClientWithSuccess() {
         let mockOperation = MockFHIRClientOperation(relativeUrlString: "/path/to/operation")
-        let url = resourceUrl(for: "emptyResponse.json")
+        let url = resourceUrl(for: "emptyResponse", type: "json")
         var counter = 0
 
         stub(condition: isHost(host)
@@ -119,7 +119,7 @@ final class FHIRClientTests: XCTestCase {
 
     func testFHIRClientWithOperationOutcomeResponse() {
         let mockOperation = MockFHIRClientOperation(relativeUrlString: "/path/to/operation")
-        let url = resourceUrl(for: "errorFHIRResponse.json")
+        let url = resourceUrl(for: "errorFHIRResponse", type: "json")
 
         let responseData = try! Data(contentsOf: url)
         let outcome = try! JSONDecoder().decode(ModelsR4.OperationOutcome.self, from: responseData)
@@ -148,9 +148,11 @@ final class FHIRClientTests: XCTestCase {
             })
     }
 
-    private func resourceUrl(for file: String) -> URL {
-        guard let bundle = try? Bundle(for: Self.self).bundleFromResources(name: "FHIRExampleData.bundle"),
-              let url = bundle.url(forResource: file, withExtension: nil) else {
+    private func resourceUrl(for file: String, type: String) -> URL {
+        guard let url = Bundle.module
+            .path(forResource: file, ofType: type, inDirectory: "Resources/FHIRExampleData.bundle")?
+            .asURL
+        else {
             fail("Could not decode example file.")
             return URL(fileURLWithPath: "")
         }

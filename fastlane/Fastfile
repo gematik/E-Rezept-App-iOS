@@ -378,7 +378,6 @@ lane :uitests_ios do |options|
   scan(
     scheme: scheme,
     sdk: sdk,
-    destination: "platform=iOS Simulator,name=iPhone 14",
     configuration: "Debug",
     prelaunch_simulator: true
   )
@@ -567,6 +566,7 @@ lane :cibuild do |options|
   setup options
   static_code_analysis options
   build_all options
+  integration_tests_setup
   generate_documentation options
 end
 

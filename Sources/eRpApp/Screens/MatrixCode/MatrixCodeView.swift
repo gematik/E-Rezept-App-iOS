@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 // [REQ:gemSpec_eRp_FdV:A_20181#1] Screen that presents the DataMatrix code for redeeming a prescription only contains
@@ -26,6 +27,8 @@ struct MatrixCodeView: View {
     @State var originalBrightness: CGFloat?
     @ObservedObject var viewStore: ViewStore<ViewState, MatrixCodeDomain.Action>
 
+    @State var page = 0
+
     init(store: MatrixCodeDomain.Store) {
         self.store = store
         viewStore = ViewStore(store, observe: ViewState.init)
@@ -33,14 +36,17 @@ struct MatrixCodeView: View {
 
     struct ViewState: Equatable {
         let isShowAlert: Bool
-        let isZoomedIn: Bool
-        let loadingState: LoadingState<UIImage, MatrixCodeDomain.LoadingImageError>
+        let zoomedInto: UUID?
+        let loadingState: LoadingState<
+            IdentifiedArrayOf<MatrixCodeDomain.State.IdentifiedImage>,
+            MatrixCodeDomain.LoadingImageError
+        >
         let matrixCodeType: MatrixCodeDomain.MatrixCodeType
         let medicationName: String
 
         init(state: MatrixCodeDomain.State) {
             isShowAlert = state.isShowAlert
-            isZoomedIn = state.isZoomedIn
+            zoomedInto = state.zoomedInto
             loadingState = state.loadingState
             matrixCodeType = state.type
             medicationName = state.erxChargeItem?.medication?.name ?? "-"
@@ -61,8 +67,15 @@ struct MatrixCodeView: View {
         }
     }
 
+    // TabView used for creating the paging effect is very greedy with space. We calculate the size beforehand to
+    // accomodate that.
+    static let deviceWidth: CGFloat = UIScreen.main.bounds.width
+    static let pagedPartHeight: CGFloat = {
+        deviceWidth + 33
+    }()
+
     var body: some View {
-        VStack {
+        ScrollView {
             if viewStore.matrixCodeType == .erxTask {
                 Text(title)
                     .foregroundColor(Colors.systemLabel)
@@ -75,40 +88,75 @@ struct MatrixCodeView: View {
                 .padding()
                 .foregroundColor(Colors.systemLabelSecondary)
                 .accessibility(identifier: A18n.matrixCode.dmcTxtSubtitle)
-            VStack(alignment: .trailing) {
-                switch viewStore.state.loadingState {
-                case .loading:
-                    ProgressView()
-                        .accessibility(identifier: A18n.matrixCode.dmcImgLoadingIndicator)
-                case let .value(value):
-                    Image(uiImage: value)
-                        .resizable()
-                        .scaledToFit()
-                        .padding(64)
-                        .accessibility(label: Text(L10n.rphTxtMatrixcodeHint))
-                        .accessibility(identifier: A18n.matrixCode.dmcImgMatrixcode)
 
-                    Button {
-                        viewStore.send(.zoomButtonTapped, animation: .default)
-                    } label: {
-                        Image(systemName: SFSymbolName.magnifyingGlasPlus)
-                            .font(Font.body.bold())
-                            .foregroundColor(Colors.primary)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
+            switch viewStore.state.loadingState {
+            case .loading:
+                ProgressView()
+                    .accessibility(identifier: A18n.matrixCode.dmcImgLoadingIndicator)
+            case let .value(images):
+                if let singleImage = images.first,
+                   images.count == 1 {
+                    VStack(spacing: 0) {
+                        SingleMatrixCode(image: singleImage.image) {
+                            viewStore.send(.zoomButtonTapped(singleImage.id), animation: .default)
+                        }
+
+                        if let chunk = singleImage.chunk {
+                            Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
+                                .font(.headline)
+                                .padding(.bottom, 8)
+
+                            HStack {
+                                Text("\(chunk.compactMap { $0.medication?.displayName }.joined(separator: ", "))")
+                                    .padding(.horizontal)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .multilineTextAlignment(.center)
+                            .animation(.easeInOut.delay(0.2), value: page)
+                        }
+
+                        Spacer()
                     }
-                    .background(Colors.backgroundSecondary)
-                    .border(Colors.separator, cornerRadius: 8)
-                    .frame(alignment: .bottomTrailing)
-                    .padding(.horizontal)
-                    .padding(.bottom)
-                default:
-                    EmptyView()
+                } else {
+                    VStack(spacing: 0) {
+                        TabView(selection: $page) {
+                            ForEach(Array(images.enumerated()), id: \.element.id) { index, image in
+                                SingleMatrixCode(image: image.image) {
+                                    viewStore.send(.zoomButtonTapped(image.id), animation: .default)
+                                }
+                                .tag(index)
+                            }
+                        }
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .frame(width: Self.deviceWidth, height: Self.pagedPartHeight)
+
+                        HStack {
+                            Spacer()
+                            PageControl(numberOfPages: images.count, currentPage: $page)
+                            Spacer()
+                        }
+                        .padding(.bottom, 40)
+
+                        if let chunk = images[page].chunk {
+                            Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
+                                .font(.headline)
+                                .padding(.bottom, 8)
+
+                            HStack {
+                                Text("\(chunk.compactMap { $0.medication?.displayName }.joined(separator: ", "))")
+                                    .padding(.horizontal)
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .multilineTextAlignment(.center)
+                            .animation(.easeInOut.delay(0.2), value: page)
+                        }
+
+                        Spacer()
+                    }
                 }
+            default:
+                EmptyView()
             }
-            .background(Colors.systemColorWhite) // No darkmode to get contrast
-            .border(Colors.separator, cornerRadius: 16)
-            .padding()
 
             if viewStore.matrixCodeType == .erxChargeItem {
                 Text(title)
@@ -154,7 +202,9 @@ struct MatrixCodeView: View {
             originalBrightness = UIScreen.main.brightness
         }
         .overlay {
-            if viewStore.isZoomedIn, let image = viewStore.loadingState.value {
+            if let imageId = viewStore.zoomedInto,
+               let images = viewStore.loadingState.value,
+               let image = images[id: imageId]?.image {
                 Button {
                     viewStore.send(.closeZoomTapped)
                 } label: {
@@ -177,6 +227,45 @@ struct MatrixCodeView: View {
                 }
             }
         }
+    }
+}
+
+struct SingleMatrixCode: View {
+    let image: UIImage
+    let action: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .padding(16)
+                .accessibility(label: Text(L10n.rphTxtMatrixcodeHint))
+                .accessibility(identifier: A18n.matrixCode.dmcImgMatrixcode)
+
+            HStack {
+                Spacer()
+
+                Button {
+                    action()
+                } label: {
+                    Image(systemName: SFSymbolName.magnifyingGlasPlus)
+                        .font(Font.body.bold())
+                        .foregroundColor(Colors.primary)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                }
+                .background(Colors.backgroundSecondary)
+                .border(Colors.separator, cornerRadius: 8)
+                .frame(width: 55, height: 33)
+                .padding(.horizontal, 16)
+                .padding(.bottom)
+            }
+        }
+        .background(Colors.backgroundNeutral)
+        .border(Colors.separator, cornerRadius: 16)
+        .environment(\.colorScheme, .light)
+        .padding()
     }
 }
 

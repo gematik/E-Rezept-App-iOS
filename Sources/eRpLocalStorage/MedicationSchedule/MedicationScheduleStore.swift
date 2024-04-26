@@ -24,7 +24,7 @@ import Foundation
 import GemCommonsKit
 
 /// Handle for `MedicationSchedule` and `ErxTask` associated to a `MedicationSchedule.Entry.id`
-public struct MedicationScheduleFetchByEntryIdResponse {
+public struct MedicationScheduleFetchByEntryIdResponse: Equatable {
     /// The `entryId`'s associated `MedicationSchedule`
     public var medicationSchedule: MedicationSchedule?
     /// An `MedicationSchedule`'s associated `ErxTask`
@@ -136,12 +136,13 @@ public class MedicationScheduleCoreDataStore: CoreDataCrudable, MedicationSchedu
         request.sortDescriptors = [
             NSSortDescriptor(key: #keyPath(MedicationScheduleEntity.start), ascending: false),
         ]
+        request.relationshipKeyPathsForPrefetching = ["entries"]
         let result: [MedicationScheduleEntity] = try fetch(request)
         return result.compactMap(MedicationSchedule.init(entity:))
     }
 
     public func save(medicationSchedules: [MedicationSchedule]) throws -> [MedicationSchedule] {
-        // Delete the whole schedule to drop existing relations to EventEntities
+        // Delete existing schedules and always create new entities
         for schedule in medicationSchedules {
             let request: NSFetchRequest<MedicationScheduleEntity> = MedicationScheduleEntity.fetchRequest()
             let predicate = NSPredicate(format: "%K == %@", #keyPath(MedicationScheduleEntity.taskId), schedule.taskId)

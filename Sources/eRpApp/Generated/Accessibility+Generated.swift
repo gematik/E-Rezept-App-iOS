@@ -306,6 +306,9 @@ internal enum A11y {
       static let phaDetailMail = "pha_detail_mail"
       static let phaDetailPhone = "pha_detail_phone"
   }
+    internal enum pharmacyPrescriptionList {
+      static let phaPrescriptionListBtnSave = "pha_prescription_list_btn_save"
+  }
     internal enum pharmacyRedeem {
       static let phaRedeemTxtTitle = "pha_redeem_txt_title"
       static let phaRedeemTxtSubtitle = "pha_redeem_txt_subtitle"
@@ -390,6 +393,8 @@ internal enum A11y {
       static let prscDtlDrawerErrorInfo = "prsc_dtl_drawer_error_info"
       static let prscDtlDrawerScannedPrescriptionInfo = "prsc_dtl_drawer_scanned_prescription_info"
       static let prscDtlDrawerPrescriptionValidityInfo = "prsc_dtl_drawer_prescription_validity_info"
+      static let prscDtlBtnRedeem = "prsc_dtl_btn_redeem"
+      static let prscDtlBtnShowMatrixCode = "prsc_dtl_btn_show_matrix_code"
       static let prscDtlBtnAdditionalFee = "prsc_dtl_btn_additional_fee"
       static let prscDtlBtnEmergencyServiceFee = "prsc_dtl_btn_emergency_service_fee"
       static let prscDtlBtnMedication = "prsc_dtl_btn_medication"

@@ -18,7 +18,6 @@
 
 // swiftlint:disable line_length discouraged_optional_collection
 
-import BundleKit
 import UIKit
 
 @UIApplicationMain

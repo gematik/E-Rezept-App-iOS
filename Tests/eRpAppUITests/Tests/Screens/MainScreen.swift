@@ -39,6 +39,12 @@ struct MainScreen: Screen {
         return PrescriptionDetailsScreen(app: app)
     }
 
+    func tapRedeem(file: StaticString = #file, line: UInt = #line) -> RedeemSelectionScreen {
+        button(by: A11y.mainScreen.erxBtnRedeemPrescriptions, file: file, line: line).tap()
+
+        return RedeemSelectionScreen(app: app)
+    }
+
     func tapArchive(file: StaticString = #file, line: UInt = #line) -> ArchiveScreen {
         app.scrollViews.firstMatch.swipeUp(velocity: 2000.0)
 

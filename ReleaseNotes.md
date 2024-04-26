@@ -1,3 +1,29 @@
+# Release 1.21.0
+
+### added (7 changes)
+
+ - Add tests for MedicationScheduleStore
+ - Add more interpretations for dosage instructions
+ - Reintroduce redeem buttons within prescription details
+ - Add PictureButtonStyle
+ - Add trigger for rating dialog after successful redeeming a prescription
+ - Add UITest Helpers & Convenience to support testing redeeming
+ - Add localization for "bg", "da", "he_IL", "cs", "nl", "it", "ro"
+
+### fixed (2 changes)
+
+ - Fix generated DMC codes to only contain 3 prescriptions
+ - Fix address validation against specification
+
+### other (1 change)
+
+ - Refactor ReadCardDomain to use NFCHealthCardSession API Part 1 (w/o biometrics)
+
+### changed (2 changes)
+
+ - Moved eRpStyleKit to SPM
+ - Moved FHIRClient AVS Pharmacy eRpRemoteStorage eRpLocalStorage and eRpKit to SPM
+
 # Release 1.20.0
 
 ### fixed (6 changes)

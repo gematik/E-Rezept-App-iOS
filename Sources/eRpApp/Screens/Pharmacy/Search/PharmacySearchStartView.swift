@@ -39,11 +39,11 @@ struct PharmacySearchStartView: View {
     struct ViewState: Equatable {
         let isLoading: Bool
         let localPharmacies: [PharmacyLocationViewModel]
-        let mapLocation: MKCoordinateRegion
+        let mapLocation: MKCoordinateRegionContainer
         init(_ state: PharmacySearchDomain.State) {
             isLoading = state.searchState.isStartViewLoading
             localPharmacies = state.localPharmacies
-            mapLocation = state.mapLocation
+            mapLocation = .manual(state.mapLocation)
         }
     }
 
@@ -55,14 +55,6 @@ struct PharmacySearchStartView: View {
             },
             content: {
                 VStack {
-                    #if targetEnvironment(simulator)
-                    Rectangle()
-                        .foregroundColor(Color.gray)
-                        .frame(maxWidth: nil, maxHeight: Self.height)
-                        .scaledToFill()
-                        .clipShape(RoundedRectangle(cornerRadius: 16,
-                                                    style: .continuous))
-                    #else
                     MapViewWithClustering(region: viewStore.binding(
                         get: \.mapLocation,
                         send: PharmacySearchDomain.Action.nothing
@@ -77,8 +69,6 @@ struct PharmacySearchStartView: View {
                         .scaledToFill()
                         .clipShape(RoundedRectangle(cornerRadius: 16,
                                                     style: .continuous))
-
-                    #endif
                 }
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity, alignment: .center)

@@ -1,0 +1,38 @@
+{
+    "redeemRecordings":
+    {
+        "payload":
+        [
+            {
+                "requested":
+                {
+                    "orderID": "123e4567-e89b-12d3-a456-426614174000",
+                    "version": "1",
+                    "redeemType": "shipment",
+                    "name": "Max Mustermann",
+                    "address":
+                    {
+                        "street": "Musterstraße 1",
+                        "zip": "12345",
+                        "city": "Musterstadt"
+                    },
+                    "hint": "Bitte klingeln",
+                    "phone": "0123456789",
+                    "mail": "max@mustermann",
+                    "transactionID": "123e4567-e89b-12d3-a456-426614174000",
+                    "taskID": "123e4567-e89b-12d3-a456-426614174000",
+                    "accessCode": "123456",
+                    "telematikId": "123456789",
+                    "recipients": []
+                },
+                "result":
+                {
+                    "success": {
+                        "_0": true
+                    }
+                }
+            }
+        ],
+        "type": "repeated"
+    }
+}

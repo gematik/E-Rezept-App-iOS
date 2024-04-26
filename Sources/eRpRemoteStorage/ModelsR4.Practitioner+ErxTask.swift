@@ -66,6 +66,12 @@ extension ModelsR4.Practitioner {
         }?.value?.value?.string
     }
 
+    var zanr: String? {
+        identifier?.first {
+            $0.type?.coding?.first?.code?.value?.string == "ZANR"
+        }?.value?.value?.string
+    }
+
     var phone: String? {
         telecom?.first {
             if case $0.system?.value = ContactPointSystem.phone {

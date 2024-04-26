@@ -16,6 +16,11 @@
 //  
 //
 
+#if os(macOS)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
 import SwiftUI
 
 extension View {
@@ -142,8 +147,6 @@ public struct ToastContainerView: View {
         .frame(maxWidth: .infinity, alignment: .center)
     }
 }
-
-import UIKit
 
 struct Toast_PreviewProvider: PreviewProvider {
     struct Preview: View {

@@ -51,6 +51,14 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         }
     }
 
+    func testPrescriptionDetail_Ready() {
+        let store = store(with: ErxTask.Fixtures.erxTaskReady)
+        let sut = PrescriptionDetailView(store: store)
+            .frame(width: 320, height: 1100)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
     func testPrescriptionDetail_WithSubstitutionAllowedPrescription() {
         let store = store(with: ErxTask.Fixtures.erxTaskSubstitutionAllowed)
         let sut = PrescriptionDetailView(store: store)

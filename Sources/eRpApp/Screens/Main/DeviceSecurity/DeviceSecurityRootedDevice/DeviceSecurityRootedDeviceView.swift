@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpStyleKit
 import SwiftUI
 
 // [REQ:BSI-eRp-ePA:O.Arch_6#5,O.Resi_2#5] Jailbreak information view

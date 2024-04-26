@@ -35,7 +35,7 @@ final class MatrixCodeDomainTests: XCTestCase {
 
     func testStore(
         with type: MatrixCodeDomain.MatrixCodeType,
-        isZoomedIn: Bool = false
+        zoomedInto: UUID? = nil
     ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
 
@@ -43,7 +43,7 @@ final class MatrixCodeDomainTests: XCTestCase {
             type: type,
             erxTasks: [ErxTask.Fixtures.erxTaskRedeemed],
             erxChargeItem: ErxChargeItem.Fixtures.chargeItem1,
-            isZoomedIn: isZoomedIn
+            zoomedInto: zoomedInto
         )
         let savingError: ErxRepositoryError = .local(.notImplemented)
         let saveErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
@@ -63,11 +63,12 @@ final class MatrixCodeDomainTests: XCTestCase {
             dependencies.erxTaskRepository = mockRepository
             dependencies.fhirDateFormatter = FHIRDateFormatter.shared
             dependencies.dismiss = DismissEffect { self.isDismissInvoked.setValue(true) }
+            dependencies.uuid = UUIDGenerator.incrementing
         }
     }
 
     /// Use DMC publisher to generate an exact same image
-    func generateMockDMCImage() -> UIImage {
+    func generateMockDMCImage(uuid: UUID, includeChunk: Bool = true) -> MatrixCodeDomain.State.IdentifiedImage {
         var generatedImage: UIImage?
         _ = mockDMCGenerator.matrixCodePublisher(
             for: [ErxTask.Fixtures.erxTaskRedeemed],
@@ -79,7 +80,11 @@ final class MatrixCodeDomainTests: XCTestCase {
                 generatedImage = image
             }
         )
-        return generatedImage!
+        return .init(
+            identifier: uuid,
+            image: generatedImage!,
+            chunk: includeChunk ? [ErxTask.Fixtures.erxTaskRedeemed] : nil
+        )
     }
 
     /// Tests the case when DMC code for scanned/low-detail prescriptions is generated and a redeemedOn
@@ -87,8 +92,8 @@ final class MatrixCodeDomainTests: XCTestCase {
     func testGenerateErxTaskDataMatrixCodeAndRedeemedOnSaveReceived() async {
         let store = testStore(with: .erxTask)
 
-        let expected: LoadingState<UIImage, MatrixCodeDomain.LoadingImageError> =
-            .value(generateMockDMCImage())
+        let expected: MatrixCodeDomain.ImageLoadingState =
+            .value(IdentifiedArray(uniqueElements: [generateMockDMCImage(uuid: UUID(0))]))
 
         // when
         await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800)))
@@ -102,8 +107,8 @@ final class MatrixCodeDomainTests: XCTestCase {
     func testGenerateErxChargeItemDataMatrixCodeDoesNotRedeem() async {
         let store = testStore(with: .erxChargeItem)
 
-        let expected: LoadingState<UIImage, MatrixCodeDomain.LoadingImageError> =
-            .value(generateMockDMCImage())
+        let expected: MatrixCodeDomain.ImageLoadingState =
+            .value(IdentifiedArray(uniqueElements: [generateMockDMCImage(uuid: UUID(0), includeChunk: false)]))
 
         // when
         await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800)))
@@ -116,16 +121,18 @@ final class MatrixCodeDomainTests: XCTestCase {
     func testZoomDataMatrixCode() async {
         let store = testStore(with: .erxTask)
 
-        await store.send(.zoomButtonTapped) {
-            $0.isZoomedIn = true
+        let uuid = UUID()
+
+        await store.send(.zoomButtonTapped(uuid)) {
+            $0.zoomedInto = uuid
         }
     }
 
     func testCloseZoomDataMatrixCode() async {
-        let store = testStore(with: .erxTask, isZoomedIn: true)
+        let store = testStore(with: .erxTask, zoomedInto: UUID())
 
         await store.send(.closeZoomTapped) {
-            $0.isZoomedIn = false
+            $0.zoomedInto = nil
         }
     }
 
@@ -134,5 +141,69 @@ final class MatrixCodeDomainTests: XCTestCase {
 
         await store.send(.closeButtonTapped)
         XCTAssertEqual(isDismissInvoked.value, true)
+    }
+
+    func testChunkingOfErxTasks() async {
+        let tasks = [
+            ErxTask.Fixtures.erxTask1,
+            ErxTask.Fixtures.erxTask2,
+            ErxTask.Fixtures.erxTask3,
+            ErxTask.Fixtures.erxTask4,
+            ErxTask.Fixtures.erxTask5,
+        ]
+        let mockRepository = MockErxTaskRepository(
+            stored: [],
+            saveErxTasks: Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        )
+
+        let store = TestStore(
+            initialState: MatrixCodeDomain.State(
+                type: .erxTask,
+                isShowAlert: false,
+                erxTasks: tasks,
+                erxChargeItem: nil,
+                loadingState: .idle,
+                zoomedInto: nil
+            )
+        ) {
+            MatrixCodeDomain()
+        } withDependencies: { dependencies in
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.erxMatrixCodeGenerator = mockDMCGenerator
+            dependencies.erxTaskRepository = mockRepository
+            dependencies.fhirDateFormatter = FHIRDateFormatter.shared
+            dependencies.uuid = UUIDGenerator.incrementing
+        }
+
+        await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 100, height: 100)))
+        await testScheduler.advance()
+
+        let expectedElements: [MatrixCodeDomain.State.IdentifiedImage] = [
+            .init(
+                identifier: UUID(0),
+                image: mockDMCGenerator.uiImage,
+                chunk: [
+                    ErxTask.Fixtures.erxTask1,
+                    ErxTask.Fixtures.erxTask2,
+                    ErxTask.Fixtures.erxTask3,
+                ]
+            ),
+            .init(
+                identifier: UUID(1),
+                image: mockDMCGenerator.uiImage,
+                chunk: [
+                    ErxTask.Fixtures.erxTask4,
+                    ErxTask.Fixtures.erxTask5,
+                ]
+            ),
+        ]
+        let expected: MatrixCodeDomain.ImageLoadingState = .value(.init(uniqueElements: expectedElements))
+        await store.receive(.response(.matrixCodeImageReceived(expected))) { state in
+            state.loadingState = expected
+        }
+
+        await store.receive(.response(.redeemedOnSavedReceived(true)))
+
+        await store.finish()
     }
 }

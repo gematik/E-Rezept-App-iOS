@@ -2,36 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ord_detail_txt_presc</key>
+	<key>auth_txt_failed_login_hint_msg</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>
 		<key>variable_0</key>
 		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
 			<key>one</key>
-			<string>Rezept</string>
+			<string>An unsuccessful login attempt was detected</string>
 			<key>other</key>
-			<string>Rezepte</string>
-		</dict>
-	</dict>
-	<key>ord_list_status_count</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>one</key>
-			<string>%u Rezept</string>
-			<key>other</key>
-			<string>%u Rezepte</string>
+			<string>%u unsuccessful login attempts were detected</string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>erx_txt_accepted_until</key>
@@ -43,11 +29,13 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
+			<string>li</string>
 			<key>one</key>
-			<string>Still valid for today</string>
+			<string>Only redeemable tomorrow</string>
 			<key>other</key>
-			<string>Still valid for %u days</string>
+			<string>Still redeemable for %u days</string>
+			<key>zero</key>
+			<string>Only redeemable today</string>
 		</dict>
 	</dict>
 	<key>erx_txt_expires_in</key>
@@ -59,16 +47,16 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>zero</key>
-			<string>Nur noch heute als Selbstzahlender einlösbar</string>
+			<string>li</string>
 			<key>one</key>
-			<string>Nur noch morgen als Selbstzahlender einlösbar</string>
+			<string>Can only be redeemed tomorrow as a self-payer</string>
 			<key>other</key>
-			<string>Noch %u Tage als Selbstzahlender einlösbar</string>
+			<string>Can still be redeemed as a self-payer for %u days</string>
+			<key>zero</key>
+			<string>Only redeemable today as a self-payer</string>
 		</dict>
 	</dict>
-	<key>scn_btn_scanning_done</key>
+	<key>ord_detail_txt_presc</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>
@@ -79,9 +67,29 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Ready, add prescription</string>
+			<string>Recipe</string>
 			<key>other</key>
-			<string>Ready, add prescriptions</string>
+			<string>Recipes</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>ord_list_status_count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string></string>
+			<key>other</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>pha_redeem_alert_title_failure</key>
@@ -93,27 +101,13 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
+			<string>li</string>
 			<key>one</key>
-			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
+			<string>The selected recipe could not be redeemed</string>
 			<key>other</key>
-			<string>%d Rezepte konnten nicht eingelöst werden</string>
-		</dict>
-	</dict>
-	<key>auth_txt_failed_login_hint_msg</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>one</key>
-			<string>Es wurde ein erfolgloser Anmeldeversuch festgestellt</string>
-			<key>other</key>
-			<string>Es wurden %u erfolglose Anmeldeversuche festgestellt</string>
+			<string>%li prescriptions could not be redeemed</string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
@@ -127,9 +121,29 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Erhaltenes Medikament</string>
+			<string>Received medication</string>
 			<key>other</key>
-			<string>Erhaltene Medikamente</string>
+			<string>Medication received</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Done, add recipe</string>
+			<key>other</key>
+			<string>Done, add recipes</string>
+			<key>zero</key>
+			<string>[void]</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>
@@ -143,9 +157,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Sie haben noch einen Versuch, um die aktuelle PIN einzugeben.</string>
+			<string>You have one more attempt to enter the current PIN.</string>
 			<key>other</key>
-			<string>Sie haben noch %u Versuche, um die aktuelle PIN einzugeben.</string>
+			<string>You still have %u attempts to enter the current PIN.</string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
@@ -159,9 +175,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Sie haben noch einen Versuch, um die PUK einzugeben.</string>
+			<string>You have one more attempt to enter the PUK.</string>
 			<key>other</key>
-			<string>Sie haben noch %u Versuche, um die PUK einzugeben.</string>
+			<string>You still have %u attempts to enter the PUK.</string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 </dict>

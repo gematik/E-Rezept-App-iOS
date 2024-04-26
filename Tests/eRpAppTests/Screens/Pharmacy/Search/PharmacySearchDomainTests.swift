@@ -275,6 +275,7 @@ class PharmacySearchDomainTests: XCTestCase {
         sut.dependencies.locationManager.authorizationStatus = { .notDetermined }
         sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
         sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
+        sut.dependencies.locationManager.location = { TestData.testLocation }
         // when
         await sut.send(.onAppear)
         await sut.send(.requestLocation)
@@ -282,6 +283,11 @@ class PharmacySearchDomainTests: XCTestCase {
         // then
         await sut.receive(.locationManager(.didChangeAuthorization(.authorizedWhenInUse)))
         locationManagerSubject.send(completion: .finished)
+        await sut.receive(.mapSetUp) { state in
+            state.currentLocation = TestData.testLocation
+            state.mapLocation = MKCoordinateRegion(center: TestData.testLocation.coordinate,
+                                                   span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+        }
     }
 
     func test_requestAuthorization_Denied() async {
@@ -511,9 +517,6 @@ class PharmacySearchDomainTests: XCTestCase {
         // given
         let state = TestData.stateWithStartView
         let mockPharmacyRepo = MockPharmacyRepository()
-        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmacies)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
@@ -524,22 +527,13 @@ class PharmacySearchDomainTests: XCTestCase {
 
         // then
         await sut.send(.onAppear)
+        locationManagerSubject.send(completion: .finished)
         await sut.send(.mapSetUp) { state in
             state.currentLocation = TestData.testLocation
             state.mapLocation = MKCoordinateRegion(
                 center: TestData.testLocation.coordinate,
-                span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5)
+                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
             )
-        }
-        locationManagerSubject.send(.didChangeAuthorization(.denied))
-        await sut.receive(.locationManager(.didChangeAuthorization(.denied))) { state in
-            state.currentLocation = nil
-        }
-        sut.dependencies.locationManager.location = { nil }
-        locationManagerSubject.send(completion: .finished)
-
-        await sut.send(.mapSetUp) { state in
-            state.mapLocation = MKCoordinateRegion.gematikHQRegion
         }
     }
 }

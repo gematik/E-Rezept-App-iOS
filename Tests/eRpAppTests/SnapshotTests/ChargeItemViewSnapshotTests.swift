@@ -28,7 +28,6 @@ final class ChargeItemViewSnapshotTests: ERPSnapshotTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
-//        isRecording = true
     }
 
     override func tearDown() {
@@ -71,15 +70,19 @@ final class ChargeItemViewSnapshotTests: ERPSnapshotTestCase {
                 initialState: .init(
                     type: .erxChargeItem,
                     erxChargeItem: ErxChargeItem.Dummies.dummy,
-                    loadingState: .value(UIImage(testBundleNamed: "qrcode")!)
+                    loadingState: .value(.init(uniqueElements: [
+                        MatrixCodeDomain.State.IdentifiedImage(
+                            identifier: UUID(),
+                            image: UIImage(testBundleNamed: "qrcode")!,
+                            chunk: []
+                        ),
+                    ]))
                 )
             ) {
                 EmptyReducer()
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiCurrentDevice())
     }
 }

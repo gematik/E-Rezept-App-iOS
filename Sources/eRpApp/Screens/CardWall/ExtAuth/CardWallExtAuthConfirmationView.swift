@@ -111,7 +111,7 @@ struct CardWallExtAuthConfirmationView: View {
                 ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
                     HStack(alignment: .top, spacing: 16) {
                         VStack(spacing: 4) {
-                            Image(Asset.CardWall.appIconPlaceholder)
+                            Image(asset: Asset.CardWall.appIconPlaceholder)
                                 .resizable()
                                 .frame(width: 56, height: 56)
                                 .background(Color.green)
@@ -125,7 +125,7 @@ struct CardWallExtAuthConfirmationView: View {
                         .frame(width: 56, alignment: .center)
 
                         VStack(spacing: 4) {
-                            Image(Asset.CardWall.previewAppIcon)
+                            Image(asset: Asset.CardWall.previewAppIcon)
 
                             Text(L10n.cdwTxtExtauthConfirmOwnAppname)
                                 .font(.caption)
@@ -140,7 +140,7 @@ struct CardWallExtAuthConfirmationView: View {
                     .padding(.bottom, 86)
                     .padding(.top, 20)
                 }
-                .background(Image(Asset.CardWall.homescreenBg)
+                .background(Image(asset: Asset.CardWall.homescreenBg)
                     .ignoresSafeArea(.all, edges: .top),
                     alignment: .bottom)
             }

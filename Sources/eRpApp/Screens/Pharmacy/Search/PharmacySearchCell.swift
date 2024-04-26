@@ -28,7 +28,7 @@ struct PharmacySearchCell: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Image(Asset.Pharmacy.pharmacyPlaceholder)
+            Image(asset: Asset.Pharmacy.pharmacyPlaceholder)
                 .frame(width: 64, height: 64, alignment: .center)
                 .cornerRadius(8)
 

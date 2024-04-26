@@ -240,13 +240,14 @@ class SmartMock{{ type.name }}: {{ type.name }}, SmartMock {
 // sourcery:file:eRpApp/UITestScenarios/SmartMock
 /// Use sourcery to update this file.
 
-import Pharmacy
+import Combine
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
-import Combine
-import OpenSSL
 import Foundation
+import IdentifiedCollections
+import OpenSSL
+import Pharmacy
 {% for type in types.protocols where type.based.SmartMock or type|annotated:"SmartMock" %}
 {% if type.name != "SmartMock" %}
 

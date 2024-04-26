@@ -78,6 +78,18 @@ final class MedicationReminderParserTests: XCTestCase {
             test9,
             [MedicationReminderParser.Instruction(amount: "1", time: .noon)]
         )
+
+        let test10 = MedicationReminderParser.parseFromDosageInstructions("<<1-0-0>>")
+        XCTAssertEqual(
+            test10,
+            [MedicationReminderParser.Instruction(amount: "1", time: .morning)]
+        )
+
+        let test11 = MedicationReminderParser.parseFromDosageInstructions(" >> << 1-0-0 <<> > ")
+        XCTAssertEqual(
+            test11,
+            [MedicationReminderParser.Instruction(amount: "1", time: .morning)]
+        )
     }
 
     func testParseDosagePatternABCD() async {
@@ -137,6 +149,20 @@ final class MedicationReminderParserTests: XCTestCase {
         XCTAssertEqual(
             test8,
             [MedicationReminderParser.Instruction(amount: "2", time: .noon)]
+        )
+
+        let test9 = MedicationReminderParser.parseFromDosageInstructions("<<1-0-0-1>>")
+        XCTAssertEqual(
+            test9,
+            [MedicationReminderParser.Instruction(amount: "1", time: .morning),
+             MedicationReminderParser.Instruction(amount: "1", time: .night)]
+        )
+
+        let test10 = MedicationReminderParser.parseFromDosageInstructions("> <<> 1-0-0-1 >> <")
+        XCTAssertEqual(
+            test10,
+            [MedicationReminderParser.Instruction(amount: "1", time: .morning),
+             MedicationReminderParser.Instruction(amount: "1", time: .night)]
         )
     }
 
