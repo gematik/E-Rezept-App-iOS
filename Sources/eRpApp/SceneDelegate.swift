@@ -34,8 +34,8 @@ extension View {
     }
 }
 
-extension ReducerProtocol {
-    func prepareUITestsDependencies() -> some ReducerProtocol<Self.State, Self.Action> {
+extension Reducer {
+    func prepareUITestsDependencies() -> some Reducer<Self.State, Self.Action> {
         #if DEBUG
         setupUITests()
         #else
@@ -54,10 +54,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     @Dependency(\.tracker) var tracker
     @Dependency(\.profileCoreDataStore) var profileCoreDataStore
 
-    lazy var routerStore: RouterStore<some ReducerProtocol<AppStartDomain.State, AppStartDomain.Action>> =
+    lazy var routerStore: RouterStore<some Reducer<AppStartDomain.State, AppStartDomain.Action>> =
         RouterStore(
             initialState: .init(),
-            // [REQ:BSI-eRp-ePA:O.Auth_8#5] Concat the user interaction reducer to the normal application reducer
+            // [REQ:BSI-eRp-ePA:O.Auth_9#5] Concat the user interaction reducer to the normal application reducer
             reducer: AppStartDomain().analytics().notifyUserInteraction().prepareUITestsDependencies(),
             router: AppStartDomain.router
         )
@@ -171,7 +171,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         }
         #endif
 
-        // [REQ:BSI-eRp-ePA:O.Data_13#3,O.Plat_12#3] Moving the application to the foreground removes the blur.
+        // [REQ:BSI-eRp-ePA:O.Data_13#3,O.Plat_9#3] Moving the application to the foreground removes the blur.
         removeBlurOverlayFromWindow()
 
         #if DEBUG
@@ -183,7 +183,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         guard !migrationCoordinator.isMigrating else { return }
 
         willPresentAppAuthenticationDialog = true
-        // [REQ:BSI-eRp-ePA:O.Auth_7#2] Present the authentication window
+        // [REQ:BSI-eRp-ePA:O.Auth_8#2] Present the authentication window
+        // [REQ:gemSpec_eRp_FdV:A_24857#2] Present the authentication window upon every startup
         // dispatching necessary to prevents keyboard not showing on iOS 16
         DispatchQueue.main.async { [weak self] in
             self?.presentAppAuthenticationDomain(scene: scene)
@@ -249,7 +250,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     func sceneDidEnterBackground(_: UIScene) {
         authenticationWindow = nil
-        // [REQ:BSI-eRp-ePA:O.Data_13#2,O.Plat_12#2] Moving the application to the background blurs the application
+        // [REQ:BSI-eRp-ePA:O.Data_13#2,O.Plat_9#2] Moving the application to the background blurs the application
         // window.
         addBlurOverlayToWindow()
     }
@@ -303,7 +304,7 @@ extension SceneDelegate {
         let hasProfile = (try? store.hasProfile()) ?? false
         if !hasProfile {
             userDataStore.set(hideOnboarding: false)
-            // [REQ:gemSpec_eRp_FdV:A_19090] activate after optIn is granted
+            // [REQ:gemSpec_eRp_FdV:A_19090-01] activate after optIn is granted
             tracker.stopTracking()
 
             let profile = try store.createProfile(with: L10n.onbProfileName.text)
@@ -321,7 +322,7 @@ extension SceneDelegate {
             object: nil,
             queue: OperationQueue.main
         ) { [weak self, weak scene] _ in
-            // [REQ:BSI-eRp-ePA:O.Auth_8#3] the timer is reset on user interaction
+            // [REQ:BSI-eRp-ePA:O.Auth_9#3] The timer is reset on user interaction
             self?.setupTimer(scene: scene)
         }
     }
@@ -340,16 +341,16 @@ extension SceneDelegate {
         ) { [weak self, weak scene] timer in
             timer.invalidate()
 
-            // [REQ:BSI-eRp-ePA:O.Auth_8#2] A timer is used to determine inactive users
+            // [REQ:BSI-eRp-ePA:O.Auth_9#2] The timer used to determine inactivity
             self?.presentAppAuthenticationDomain(scene: scene)
         }
     }
 }
 
-extension ReducerProtocol where Action: Equatable {
-    func notifyUserInteraction() -> some ReducerProtocol<Self.State, Self.Action> {
+extension Reducer where Action: Equatable {
+    func notifyUserInteraction() -> some Reducer<Self.State, Self.Action> {
         Reduce { state, action in
-            // [REQ:BSI-eRp-ePA:O.Auth_8#4] User interaction is determined by using a higher order reducer watching all
+            // [REQ:BSI-eRp-ePA:O.Auth_9#4] User interaction is determined by using a higher order reducer watching all
             // actions
             NotificationCenter.default.post(name: .userInteractionDetected, object: nil, userInfo: nil)
 

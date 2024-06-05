@@ -20,65 +20,51 @@ import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
 
+extension AppAuthenticationPasswordDomain.State {
+    var showUnsuccessfulAttemptMessage: Bool {
+        !(lastMatchResultSuccessful ?? true)
+    }
+}
+
 struct AppAuthenticationPasswordView: View {
-    var store: AppAuthenticationPasswordDomain.Store
-    @ObservedObject private var viewStore: ViewStore<ViewState, AppAuthenticationPasswordDomain.Action>
-
-    struct ViewState: Equatable {
-        let password: String
-        let isEmptyPassword: Bool
-        let showUnsuccessfulAttemptMessage: Bool
-
-        init(state: AppAuthenticationPasswordDomain.State) {
-            password = state.password
-            isEmptyPassword = state.password.isEmpty
-            showUnsuccessfulAttemptMessage = !(state.lastMatchResultSuccessful ?? true)
-        }
-    }
-
-    init(store: AppAuthenticationPasswordDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    var password: Binding<String> {
-        viewStore.binding(get: \.password, send: AppAuthenticationPasswordDomain.Action.setPassword)
-    }
+    @Perception.Bindable var store: StoreOf<AppAuthenticationPasswordDomain>
 
     var body: some View {
-        VStack(alignment: .leading) {
-            SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
-                                  accessibilityLabelKey: L10n.authTxtPasswordLabel,
-                                  text: password,
-                                  textContentType: .password) {
-                viewStore.send(.loginButtonTapped, animation: .default)
-            }
-            .padding()
-            .font(Font.body)
-            .background(Color(.systemBackground))
-            .padding(.vertical, 1)
-            .background(Colors.systemGray3)
-            .accessibility(identifier: A11y.auth.authEdtPasswordInput)
+        WithPerceptionTracking {
+            VStack(alignment: .leading) {
+                SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
+                                      accessibilityLabelKey: L10n.authTxtPasswordLabel,
+                                      text: $store.password.sending(\.setPassword),
+                                      textContentType: .password) {
+                    store.send(.loginButtonTapped, animation: .default)
+                }
+                .padding()
+                .font(Font.body)
+                .background(Color(.systemBackground))
+                .padding(.vertical, 1)
+                .background(Colors.systemGray3)
+                .accessibility(identifier: A11y.auth.authEdtPasswordInput)
 
-            if viewStore.showUnsuccessfulAttemptMessage {
-                UnsuccessfulAttemptMessageView()
-                    .padding(.horizontal)
-            }
+                if store.showUnsuccessfulAttemptMessage {
+                    UnsuccessfulAttemptMessageView()
+                        .padding(.horizontal)
+                }
 
-            PrimaryTextButton(
-                text: L10n.authBtnPasswordContinue,
-                a11y: A11y.auth.authBtnPasswordContinue,
-                isEnabled: !viewStore.isEmptyPassword
-            ) {
-                viewStore.send(.loginButtonTapped, animation: .default)
-            }
-            .padding()
+                PrimaryTextButton(
+                    text: L10n.authBtnPasswordContinue,
+                    a11y: A11y.auth.authBtnPasswordContinue,
+                    isEnabled: !store.password.isEmpty
+                ) {
+                    store.send(.loginButtonTapped, animation: .default)
+                }
+                .padding()
 
-            if viewStore.showUnsuccessfulAttemptMessage {
-                FooterView()
+                if store.showUnsuccessfulAttemptMessage {
+                    FooterView()
+                }
             }
+            .padding(.vertical)
         }
-        .padding(.vertical)
     }
 
     private struct UnsuccessfulAttemptMessageView: View {

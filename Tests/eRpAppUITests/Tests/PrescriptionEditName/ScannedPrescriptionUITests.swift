@@ -64,11 +64,11 @@ final class ScannedPrescriptionUITests: XCTestCase {
         // when editing a prescription's name 1st time
         app.staticTexts.containing(NSPredicate(format: "label like '\(medicine223)'")).element.tap()
         app.buttons[A11y.prescriptionDetails.prscDtlBtnEditTitle].tap()
-        for _ in 0 ..< "Medicine 223".count {
+        for _ in 1 ..< "Medicine 223".count {
             app.typeText(XCUIKeyboardKey.delete.rawValue)
         }
         let emtriva200 = "EMTRIVA 200 mg Hartkapseln :)"
-        app.typeText(emtriva200)
+        app.typeText(XCUIKeyboardKey.delete.rawValue + emtriva200)
         app.typeText(XCUIKeyboardKey.enter.rawValue)
 
         // (go back)
@@ -111,11 +111,11 @@ final class ScannedPrescriptionUITests: XCTestCase {
         app.staticTexts.containing(NSPredicate(format: "label like '\(emtriva250)'")).element.tap()
 
         app.buttons[A11y.prescriptionDetails.prscDtlBtnEditTitle].tap()
-        for _ in 0 ..< emtriva250.count {
+        for _ in 1 ..< emtriva250.count {
             app.typeText(XCUIKeyboardKey.delete.rawValue)
         }
         let noName250 = "250 mg Hartkapseln :)"
-        app.typeText(noName250)
+        app.typeText(XCUIKeyboardKey.delete.rawValue + noName250)
 
         // (go back)
         app.navigationBars.buttons.firstMatch.tap()

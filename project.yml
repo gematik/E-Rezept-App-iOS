@@ -119,7 +119,7 @@ packages:
     majorVersion: 4.1.0
   IdentifiedCollections:
     url: https://github.com/pointfreeco/swift-identified-collections.git
-    minorVersion: 0.8.0
+    minorVersion: 1.0.0
   Nimble:
     url: https://github.com/Quick/Nimble
     majorVersion: 9.2.0
@@ -236,30 +236,8 @@ targets:
     dependencies:
       - target: eRpApp
       - package: eRpKit
-        product: eRpKit
-      - package: eRpKit
-        product: eRpRemoteStorage
-      - package: eRpKit
-        product: eRpLocalStorage
-      - package: eRpKit
-        product: Pharmacy
-      - package: eRpKit
-        product: AVS
-      - package: eRpKit
-        product: IDP
-      - package: eRpKit
-        product: FHIRClient
-      - package: eRpKit
-        product: HTTPClient
-      - package: eRpKit
-        product: TrustStore
-      - package: eRpKit
-        product: VAUClient
+        product: eRpFeatures
       - package: eRpKit
         product: TestUtils
-      - package: OpenSSL-Swift
-      - package: DataKit
-      - package: ASN1Kit
       - package: Nimble
-      - package: IdentifiedCollections
 buildImplicitDependencies: true

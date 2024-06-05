@@ -20,134 +20,110 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
-import Introspect
+import Perception
 import SwiftUI
+import SwiftUIIntrospect
 
 struct MainView: View {
-    let store: MainDomain.Store
+    @Perception.Bindable var store: StoreOf<MainDomain>
 
-    @ObservedObject var viewStore: ViewStore<ViewState, MainDomain.Action>
     @State var scrollOffset: CGFloat = 0
-
-    init(store: MainDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
 
     struct ViewState: Equatable {
         let isDemoModeEnabled: Bool
-        let destinationTag: MainDomain.Destination.State.Tag?
         let showTooltips: Bool
 
         init(state: MainDomain.State) {
             isDemoModeEnabled = state.isDemoMode
-            destinationTag = state.destination?.tag
             showTooltips = state.destination == nil
         }
     }
 
     var body: some View {
-        NavigationView {
-            ZStack(alignment: .topLeading) {
-                PrescriptionListView(
-                    store: store.scope(
-                        state: \.prescriptionListState,
-                        action: MainDomain.Action.prescriptionList(action:)
-                    )
-                ) {
-                    HorizontalProfileSelectionView(
+        WithPerceptionTracking {
+            NavigationView {
+                ZStack(alignment: .topLeading) {
+                    PrescriptionListView(
+                        store: store.scope(state: \.prescriptionListState, action: \.prescriptionList)
+                    ) {
+                        HorizontalProfileSelectionView(
+                            store: store.scope(
+                                state: \.horizontalProfileSelectionState,
+                                action: \.horizontalProfileSelection
+                            )
+                        )
+                        .accessibility(identifier: A11y.mainScreen.erxBtnProfile)
+                    }
+
+                    ExtAuthPendingView(
                         store: store.scope(
-                            state: \.horizontalProfileSelectionState,
-                            action: MainDomain.Action.horizontalProfileSelection(action:)
+                            state: \.extAuthPendingState,
+                            action: \.extAuthPending
                         )
                     )
-                    .accessibility(identifier: A11y.mainScreen.erxBtnProfile)
+
+                    MainViewNavigation(store: store)
                 }
-                // Workaround to get correct accessibility while activating voice over *after*
-                // presentation of settings dialog. As soon as we can use multiple `fullScreenCover`
-                // (drop iOS <= ~14.4) we may omit this modifier and the `EmptyView()`.
-                .accessibility(hidden: viewStore.destinationTag != nil)
-
-                ExtAuthPendingView(
-                    store: store.scope(
-                        state: \.extAuthPendingState,
-                        action: MainDomain.Action.extAuthPending(action:)
-                    )
-                )
-
-                MainViewNavigation(store: store)
-            }
-            .demoBanner(isPresented: viewStore.isDemoModeEnabled) {
-                viewStore.send(MainDomain.Action.turnOffDemoMode)
-            }
-            .smallSheet(
-                isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .grantChargeItemConsentDrawer },
-                    set: { show in
-                        if !show,
-                           // this distinction is necessary or else .toast state would be nilled out unwantedly
-                           viewStore.destinationTag == .grantChargeItemConsentDrawer {
-                            viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
-                        }
-                    }
-                ),
-                onDismiss: {},
-                content: {
+                .demoBanner(isPresented: store.isDemoMode) {
+                    store.send(MainDomain.Action.turnOffDemoMode)
+                }
+                .smallSheet($store.scope(
+                    state: \.destination?.grantChargeItemConsentDrawer,
+                    action: \.destination.toast
+                )) { _ in
                     GrantChargeItemConsentDrawerView(store: store)
                 }
-            )
-            .toast(
-                store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                state: /MainDomain.Destination.State.toast,
-                action: MainDomain.Destination.Action.toast
-            )
+                .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
+                .navigationTitle(Text(L10n.erxTitle))
+                .navigationBarTitleDisplayMode(.automatic)
+                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17)) { navigationController in
+                    let navigationBar = navigationController.navigationBar
+                    navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                    let navigationBarAppearance = UINavigationBarAppearance()
+                    navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
 
-            .navigationTitle(Text(L10n.erxTitle))
-            .navigationBarTitleDisplayMode(.automatic)
-            .introspectNavigationController { navigationController in
-                let navigationBar = navigationController.navigationBar
-                navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                let navigationBarAppearance = UINavigationBarAppearance()
-                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-
-                if viewStore.isDemoModeEnabled {
-                    navigationBarAppearance.backgroundColor = UIColor(Colors.yellow500)
-                } else {
-                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                    if store.isDemoMode {
+                        navigationBarAppearance.backgroundColor = UIColor(Colors.yellow500)
+                    } else {
+                        navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                    }
+                    navigationBar.standardAppearance = navigationBarAppearance
+                    navigationBar.compactAppearance = navigationBarAppearance
                 }
-                navigationBar.standardAppearance = navigationBarAppearance
-                navigationBar.compactAppearance = navigationBarAppearance
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    ScanItem { viewStore.send(.showScannerView) }
-                        .embedToolbarContent()
-                        .tooltip(tooltip: MainViewTooltip.scan)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        ScanItem { store.send(.showScannerView) }
+                            .embedToolbarContent()
+                            .tooltip(tooltip: MainViewTooltip.scan)
+                    }
                 }
-            }
-            .task {
-                await viewStore.send(.subscribeToDemoModeChange).finish()
-            }
-            .task {
-                await viewStore.send(.checkForForcedUpdates).finish()
-            }
-            .onAppear {
-                // [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
-                viewStore.send(.loadDeviceSecurityView)
-                // Delay sheet animation to not interfere with Onboarding navigation
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    viewStore.send(.showDrawer)
+                .task {
+                    await store.send(.subscribeToDemoModeChange).finish()
                 }
+                .task {
+                    // [REQ:BSI-eRp-ePA:O.Arch_10#2] Trigger for the update check
+                    await store.send(.checkForForcedUpdates).finish()
+                }
+                .onAppear {
+                    // [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
+                    store.send(.loadDeviceSecurityView)
+                    // Delay sheet animation to not interfere with Onboarding navigation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        store.send(.showDrawer)
+                    }
+                }
+                .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             }
-            .alert(
-                store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                state: /MainDomain.Destination.State.alert,
-                action: MainDomain.Destination.Action.alert
-            )
+            .accentColor(Colors.primary600)
+            .navigationViewStyle(StackNavigationViewStyle())
+            .tooltipContainer(enabled: store.showTooltips)
         }
-        .accentColor(Colors.primary600)
-        .navigationViewStyle(StackNavigationViewStyle())
-        .tooltipContainer(enabled: viewStore.showTooltips)
+    }
+}
+
+extension MainDomain.State {
+    var showTooltips: Bool {
+        destination == nil
     }
 }
 
@@ -171,251 +147,155 @@ private extension MainView {
     }
 
     struct MainViewNavigation: View {
-        let store: MainDomain.Store
-        @ObservedObject var viewStore: ViewStore<ViewState, MainDomain.Action>
-
-        init(store: MainDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store, observe: ViewState.init)
-        }
-
-        struct ViewState: Equatable {
-            let destinationTag: MainDomain.Destination.State.Tag?
-
-            init(state: MainDomain.State) {
-                destinationTag = state.destination?.tag
-            }
-        }
+        @Perception.Bindable var store: StoreOf<MainDomain>
 
         var body: some View {
-            // WelcomeDrawerView small sheet presentation
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .welcomeDrawer },
-                    set: { show in
-                        if !show {
-                            viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
-                        }
-                    }
-                ),
-                onDismiss: {},
-                content: {
-                    WelcomeDrawerView(store: store)
-                })
-                .accessibilityHidden(true)
-
-            // ScannerView sheet presentation; Work around not being able to use multiple
-            // `fullScreenCover` modifier at once. As soon as we drop iOS <= ~14.4, we may omit this.
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .scanner },
-                    set: { show in
-                        if !show {
-                            viewStore.send(.setNavigation(tag: nil))
-                        }
-                    }
-                ),
-                onDismiss: {},
-                content: {
-                    IfLetStore(
-                        store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                        state: /MainDomain.Destination.State.scanner,
-                        action: MainDomain.Destination.Action.scanner(action:),
-                        then: ErxTaskScannerView.init(store:)
-                    )
-                })
-                .hidden()
-                .accessibility(hidden: true)
-
-            // Device security sheet presentation; Work around not being able to use multiple
-            // `fullScreenCover` modifier at once. As soon as we drop iOS <= ~14.4, we may omit this.
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .sheet(
-                    isPresented: Binding<Bool>(
-                        get: { viewStore.destinationTag == .deviceSecurity },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil))
-                            }
-                        }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        IfLetStore(
-                            store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                            state: /MainDomain.Destination.State.deviceSecurity,
-                            action: MainDomain.Destination.Action.deviceSecurity(action:),
-                            then: DeviceSecurityView.init(store:)
+            WithPerceptionTracking {
+                // WelcomeDrawerView small sheet presentation
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet(
+                        $store.scope(
+                            state: \.destination?.welcomeDrawer,
+                            action: \.destination.toast
                         )
+                    ) { _ in
+                        WelcomeDrawerView(store: store)
                     }
-                )
-                .hidden()
-                .accessibility(hidden: true)
+                    .accessibilityHidden(true)
 
-            // Navigation into details
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                state: /MainDomain.Destination.State.prescriptionDetail,
-                action: MainDomain.Destination.Action.prescriptionDetailAction(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .prescriptionDetail)) },
-                destination: PrescriptionDetailView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // Navigation into archived prescriptions
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                state: /MainDomain.Destination.State.prescriptionArchive,
-                action: MainDomain.Destination.Action.prescriptionArchiveAction(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .prescriptionArchive)) },
-                destination: PrescriptionArchiveView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // RedeemMethodsView sheet presentation
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .redeemMethods },
-                    set: { show in
-                        if !show {
-                            viewStore.send(.setNavigation(tag: nil))
-                        }
-                    }
-                ),
-                onDismiss: {},
-                content: {
-                    IfLetStore(
-                        store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                        state: /MainDomain.Destination.State.redeemMethods,
-                        action: MainDomain.Destination.Action.redeemMethods(action:),
-                        then: RedeemMethodsView.init(store:)
-                    )
-                })
-                .accessibility(hidden: true)
-                .hidden()
-
-            // CardWallIntroductionView sheet presentation
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .cardWall },
-                    set: { show in
-                        if !show {
-                            viewStore.send(.setNavigation(tag: nil))
-                        }
-                    }
-                ),
-                onDismiss: {},
-                content: {
-                    IfLetStore(
-                        store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                        state: /MainDomain.Destination.State.cardWall,
-                        action: MainDomain.Destination.Action.cardWall(action:),
-                        then: CardWallIntroductionView.init(store:)
-                    )
-                })
-                .accessibility(hidden: true)
-                .hidden()
-
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(
-                    isPresented: Binding<Bool>(
-                        get: { viewStore.destinationTag == .createProfile },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
-                            }
-                        }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        ZStack {
-                            IfLetStore(
-                                store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                                state: /MainDomain.Destination.State.createProfile,
-                                action: MainDomain.Destination.Action.createProfileAction(action:),
-                                then: CreateProfileView.init(store:)
-                            )
-                        }
-                    }
-                )
-                .accessibility(hidden: true)
-
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(
-                    isPresented: Binding<Bool>(
-                        get: { viewStore.destinationTag == .editName },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
-                            }
-                        }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        ZStack {
-                            IfLetStore(
-                                store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                                state: /MainDomain.Destination.State.editName,
-                                action: MainDomain.Destination.Action.editProfileNameAction(action:),
-                                then: EditProfileNameView.init(store:)
-                            )
-                        }
-                    }
-                )
-                .accessibility(hidden: true)
-
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(
-                    isPresented: Binding<Bool>(
-                        get: { viewStore.destinationTag == .editProfilePicture },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
-                            }
-                        }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        IfLetStore(
-                            store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                            state: /MainDomain.Destination.State.editProfilePicture,
-                            action: MainDomain.Destination.Action.editProfilePictureAction(action:),
-                            then: EditProfilePictureView.init(store:)
+                // ScannerView sheet presentation; Work around not being able to use multiple
+                // `fullScreenCover` modifier at once. As soon as we drop iOS <= ~14.4, we may omit this.
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(
+                        item: $store.scope(
+                            state: \.destination?.scanner,
+                            action: \.destination.scanner
                         )
+                    ) { store in
+                        ErxTaskScannerView(store: store)
                     }
-                )
+                    .hidden()
+                    .accessibility(hidden: true)
+
+                // Device security sheet presentation; Work around not being able to use multiple
+                // `fullScreenCover` modifier at once. As soon as we drop iOS <= ~14.4, we may omit this.
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .sheet(
+                        item: $store.scope(
+                            state: \.destination?.deviceSecurity,
+                            action: \.destination.deviceSecurity
+                        )
+                    ) { store in
+                        DeviceSecurityView(store: store)
+                    }
+                    .hidden()
+                    .accessibility(hidden: true)
+
+                // Navigation into details
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.prescriptionDetail,
+                        action: \.destination.prescriptionDetail
+                    )
+                ) { store in
+                    PrescriptionDetailView(store: store)
+                } label: {
+                    EmptyView()
+                }
                 .accessibility(hidden: true)
 
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(
-                    isPresented: Binding<Bool>(
-                        get: { viewStore.destinationTag == .medicationReminder },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
-                            }
-                        }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        IfLetStore(
-                            store.scope(state: \.$destination, action: MainDomain.Action.destination),
-                            state: /MainDomain.Destination.State.medicationReminder,
-                            action: MainDomain.Destination.Action.medicationReminder(action:),
-                            then: MedicationReminderOneDaySummaryView.init(store:)
-                        )
-                    }
-                )
+                // Navigation into archived prescriptions
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.prescriptionArchive,
+                        action: \.destination.prescriptionArchive
+                    )
+                ) { store in
+                    PrescriptionArchiveView(store: store)
+                } label: {
+                    EmptyView()
+                }
                 .accessibility(hidden: true)
+
+                // RedeemMethodsView sheet presentation
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(
+                        item: $store.scope(
+                            state: \.destination?.redeemMethods,
+                            action: \.destination.redeemMethods
+                        )
+                    ) { store in
+                        RedeemMethodsView(store: store)
+                    }
+                    .accessibility(hidden: true)
+                    .hidden()
+
+                // CardWallIntroductionView sheet presentation
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(
+                        item: $store.scope(
+                            state: \.destination?.cardWall,
+                            action: \.destination.cardWall
+                        )
+                    ) { store in
+                        CardWallIntroductionView(store: store)
+                    }
+                    .accessibility(hidden: true)
+                    .hidden()
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet(
+                        $store.scope(
+                            state: \.destination?.createProfile,
+                            action: \.destination.createProfile
+                        )
+                    ) { store in
+                        CreateProfileView(store: store)
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet(
+                        $store.scope(
+                            state: \.destination?.editProfileName,
+                            action: \.destination.editProfileName
+                        )
+                    ) { store in
+                        EditProfileNameView(store: store)
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet(
+                        $store.scope(
+                            state: \.destination?.editProfilePicture,
+                            action: \.destination.editProfilePicture
+                        )
+                    ) { store in
+                        EditProfilePictureView(store: store)
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet(
+                        $store.scope(
+                            state: \.destination?.medicationReminder,
+                            action: \.destination.medicationReminder
+                        )
+                    ) { store in
+                        MedicationReminderOneDaySummaryView(store: store)
+                    }
+                    .accessibility(hidden: true)
+            }
         }
     }
 }
@@ -424,7 +304,7 @@ struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MainView(
-                store: MainDomain.Store(
+                store: StoreOf<MainDomain>(
                     initialState: .init(
                         destination: .createProfile(CreateProfileDomain.State()),
                         prescriptionListState: PrescriptionListDomain.State(),
@@ -437,7 +317,7 @@ struct MainView_Previews: PreviewProvider {
             .preferredColorScheme(.light)
 
             MainView(
-                store: MainDomain.Store(
+                store: StoreOf<MainDomain>(
                     initialState: .init(
                         prescriptionListState: PrescriptionListDomain.State(
                             prescriptions: Prescription.Dummies.prescriptions

@@ -21,12 +21,12 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-struct PharmacyContactDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct PharmacyContactDomain {
+    @ObservableState
     struct State: Equatable {
         var contactInfo: ContactInfo
-        @PresentationState var alertState: AlertState<Action.Alert>?
+        @Presents var alertState: AlertState<Action.Alert>?
         let service: RedeemServiceOption
 
         private let originalContactInfo: ContactInfo?
@@ -42,14 +42,8 @@ struct PharmacyContactDomain: ReducerProtocol {
         }
     }
 
-    enum Action: Equatable {
-        case setName(String)
-        case setStreet(String)
-        case setZip(String)
-        case setCity(String)
-        case setPhone(String)
-        case setMail(String)
-        case setDeliveryInfo(String)
+    enum Action: BindableAction, Equatable {
+        case binding(BindingAction<State>)
         case save
         case closeButtonTapped
 
@@ -72,13 +66,14 @@ struct PharmacyContactDomain: ReducerProtocol {
     @Dependency(\.shipmentInfoDataStore) var shipmentInfoStore: ShipmentInfoDataStore
     @Dependency(\.redeemInputValidator) var validator: RedeemInputValidator
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
+        BindingReducer()
         Reduce(core)
             .ifLet(\.$alertState, action: /Action.alert)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .save:
             if case let .invalid(errorMessage) = validator.validate(state.contactInfo) {
@@ -97,7 +92,7 @@ struct PharmacyContactDomain: ReducerProtocol {
             if let identifier = info?.identifier {
                 shipmentInfoStore.set(selectedShipmentInfoId: identifier)
             }
-            return EffectTask.send(.delegate(.close))
+            return Effect.send(.delegate(.close))
         case let .response(.shipmentInfoSaved(.failure(error))):
             state.alertState = AlertState(
                 title: { TextState(L10n.alertErrorTitle) },
@@ -110,51 +105,35 @@ struct PharmacyContactDomain: ReducerProtocol {
             )
             return .none
         case .closeButtonTapped:
-            return EffectTask.send(.delegate(.close))
+            return Effect.send(.delegate(.close))
         case .delegate:
             return .none
-        case let .setName(name):
-            if case let .invalid(error) = validator.isValid(name: name) {
+        case .binding(\.contactInfo.name):
+            if case let .invalid(error) = validator.isValid(name: state.contactInfo.name) {
                 state.alertState = Self.invalidInputAlert(with: error)
-                return .none
             }
-            state.contactInfo.name = name
             return .none
-        case let .setStreet(street):
-            if case let .invalid(error) = validator.isValid(street: street) {
+        case .binding(\.contactInfo.street):
+            if case let .invalid(error) = validator.isValid(street: state.contactInfo.street) {
                 state.alertState = Self.invalidInputAlert(with: error)
-                return .none
             }
-            state.contactInfo.street = street
             return .none
-        case let .setZip(zip):
-            if case let .invalid(error) = validator.isValid(zip: zip) {
+        case .binding(\.contactInfo.zip):
+            if case let .invalid(error) = validator.isValid(zip: state.contactInfo.zip) {
                 state.alertState = Self.invalidInputAlert(with: error)
-                return .none
             }
-            state.contactInfo.zip = zip
             return .none
-        case let .setCity(city):
-            if case let .invalid(error) = validator.isValid(city: city) {
+        case .binding(\.contactInfo.city):
+            if case let .invalid(error) = validator.isValid(city: state.contactInfo.city) {
                 state.alertState = Self.invalidInputAlert(with: error)
-                return .none
             }
-            state.contactInfo.city = city
             return .none
-        case let .setPhone(phone):
-            state.contactInfo.phone = phone
-            return .none
-        case let .setMail(mail):
-            state.contactInfo.mail = mail
-            return .none
-        case let .setDeliveryInfo(info):
-            if case let .invalid(error) = validator.isValid(hint: info) {
+        case .binding(\.contactInfo.deliveryInfo):
+            if case let .invalid(error) = validator.isValid(hint: state.contactInfo.deliveryInfo) {
                 state.alertState = Self.invalidInputAlert(with: error)
-                return .none
             }
-            state.contactInfo.deliveryInfo = info
             return .none
-        case .alert:
+        case .alert, .binding:
             return .none
         }
     }
@@ -170,52 +149,8 @@ struct PharmacyContactDomain: ReducerProtocol {
             message: { TextState(message) }
         )
     }
-}
 
-extension RedeemInputValidator {
-    func validate(_ contactInfo: PharmacyContactDomain.State.ContactInfo) -> Validity {
-        if isValid(name: contactInfo.name) != .valid {
-            return isValid(name: contactInfo.name)
-        }
-        if isValid(street: contactInfo.street) != .valid {
-            return isValid(street: contactInfo.street)
-        }
-        if isValid(zip: contactInfo.zip) != .valid {
-            return isValid(zip: contactInfo.zip)
-        }
-        if isValid(city: contactInfo.city) != .valid {
-            return isValid(city: contactInfo.city)
-        }
-        if isValid(hint: contactInfo.deliveryInfo) != .valid {
-            return isValid(hint: contactInfo.deliveryInfo)
-        }
-        if isValid(phone: contactInfo.phone) != .valid {
-            return isValid(phone: contactInfo.phone)
-        }
-        if isValid(mail: contactInfo.mail) != .valid {
-            return isValid(mail: contactInfo.mail)
-        }
-
-        return .valid
-    }
-}
-
-extension PharmacyContactDomain.State {
     struct ContactInfo: Equatable {
-        static func ==(
-            lhs: PharmacyContactDomain.State.ContactInfo,
-            rhs: PharmacyContactDomain.State.ContactInfo
-        ) -> Bool {
-            lhs.identifier == rhs.identifier &&
-                lhs.name == rhs.name &&
-                lhs.street == rhs.street &&
-                lhs.zip == rhs.zip &&
-                lhs.city == rhs.city &&
-                lhs.phone == rhs.phone &&
-                lhs.mail == rhs.mail &&
-                lhs.deliveryInfo == rhs.deliveryInfo
-        }
-
         let identifier: UUID
         var name: String
         var street: String
@@ -246,6 +181,48 @@ extension PharmacyContactDomain.State {
                          mail: mail.isEmpty ? nil : mail,
                          deliveryInfo: deliveryInfo.isEmpty ? nil : deliveryInfo)
         }
+
+        static func ==(
+            lhs: PharmacyContactDomain.ContactInfo,
+            rhs: PharmacyContactDomain.ContactInfo
+        ) -> Bool {
+            lhs.identifier == rhs.identifier &&
+                lhs.name == rhs.name &&
+                lhs.street == rhs.street &&
+                lhs.zip == rhs.zip &&
+                lhs.city == rhs.city &&
+                lhs.phone == rhs.phone &&
+                lhs.mail == rhs.mail &&
+                lhs.deliveryInfo == rhs.deliveryInfo
+        }
+    }
+}
+
+extension RedeemInputValidator {
+    func validate(_ contactInfo: PharmacyContactDomain.ContactInfo) -> Validity {
+        if isValid(name: contactInfo.name) != .valid {
+            return isValid(name: contactInfo.name)
+        }
+        if isValid(street: contactInfo.street) != .valid {
+            return isValid(street: contactInfo.street)
+        }
+        if isValid(zip: contactInfo.zip) != .valid {
+            return isValid(zip: contactInfo.zip)
+        }
+        if isValid(city: contactInfo.city) != .valid {
+            return isValid(city: contactInfo.city)
+        }
+        if isValid(hint: contactInfo.deliveryInfo) != .valid {
+            return isValid(hint: contactInfo.deliveryInfo)
+        }
+        if isValid(phone: contactInfo.phone) != .valid {
+            return isValid(phone: contactInfo.phone)
+        }
+        if isValid(mail: contactInfo.mail) != .valid {
+            return isValid(mail: contactInfo.mail)
+        }
+
+        return .valid
     }
 }
 

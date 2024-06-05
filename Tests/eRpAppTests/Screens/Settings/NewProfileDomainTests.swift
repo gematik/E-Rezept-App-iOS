@@ -50,7 +50,7 @@ final class NewProfileDomainTests: XCTestCase {
         let sut = testStore(for: .init(name: "", color: .red))
 
         await sut.send(.save) { state in
-            state.destination = .alert(NewProfileDomain.AlertStates.emptyName)
+            state.destination = .alert(.info(NewProfileDomain.AlertStates.emptyName))
         }
     }
 
@@ -73,7 +73,7 @@ final class NewProfileDomainTests: XCTestCase {
     func testSetName() async {
         let sut = testStore(for: .init(name: "", color: .red))
 
-        await sut.send(.setName("Test")) { state in
+        await sut.send(\.binding.name, "Test") { state in
             state.name = "Test"
         }
     }

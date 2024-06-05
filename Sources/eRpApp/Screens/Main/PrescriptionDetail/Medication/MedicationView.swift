@@ -22,36 +22,32 @@ import eRpStyleKit
 import SwiftUI
 
 struct MedicationView: View {
-    let store: StoreOf<MedicationDomain>
-    @ObservedObject var viewStore: ViewStore<MedicationDomain.State, MedicationDomain.Action>
-
-    init(store: StoreOf<MedicationDomain>) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
+    @Perception.Bindable var store: StoreOf<MedicationDomain>
 
     var body: some View {
-        ScrollView(.vertical) {
-            switch viewStore.medication?.profile {
-            case .pzn, .unknown, .none:
-                PznMedicationView(medication: viewStore.medication, dispenseState: viewStore.dispenseState)
-            case .freeText:
-                FreeTextMedicationView(medication: viewStore.medication, dispenseState: viewStore.dispenseState)
-            case .ingredient, .compounding:
-                CompoundingMedicationView(store: store)
-            }
+        WithPerceptionTracking {
+            ScrollView(.vertical) {
+                switch store.medication?.profile {
+                case .pzn, .unknown, .none:
+                    PznMedicationView(medication: store.medication, dispenseState: store.dispenseState)
+                case .freeText:
+                    FreeTextMedicationView(medication: store.medication, dispenseState: store.dispenseState)
+                case .ingredient, .compounding:
+                    CompoundingMedicationView(store: store)
+                }
 
-            // IngredientView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: MedicationDomain.Action.destination),
-                state: /MedicationDomain.Destinations.State.ingredient,
-                action: MedicationDomain.Destinations.Action.ingredient,
-                onTap: { viewStore.send(.setNavigation(tag: .ingredient)) },
-                destination: IngredientView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                // IngredientView
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.ingredient, action: \.destination.ingredient)
+                ) { store in
+                    IngredientView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
+            }
+            .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
         }
-        .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
     }
 
     struct PznMedicationView: View {
@@ -154,70 +150,68 @@ struct MedicationView: View {
     }
 
     struct CompoundingMedicationView: View {
-        @ObservedObject var viewStore: ViewStore<MedicationDomain.State, MedicationDomain.Action>
-
-        init(store: Store<MedicationDomain.State, MedicationDomain.Action>) {
-            viewStore = ViewStore(store) { $0 }
-        }
+        @Perception.Bindable var store: StoreOf<MedicationDomain>
 
         var body: some View {
-            SectionContainer {
-                if let ingredients = viewStore.medication?.ingredients {
-                    ForEach(ingredients, id: \.self) { ingredient in
-                        Button(action: { viewStore.send(.showIngredient(ingredient)) }, label: {
-                            SubTitle(
-                                title: ingredient.text ?? L10n.prscTxtFallbackName.text,
-                                details: L10n.prscDtlMedIngredientName
-                            )
-                        })
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedBtnIngredient)
+            WithPerceptionTracking {
+                SectionContainer {
+                    if let ingredients = store.medication?.ingredients {
+                        ForEach(ingredients, id: \.self) { ingredient in
+                            Button(action: { store.send(.showIngredient(ingredient)) }, label: {
+                                SubTitle(
+                                    title: ingredient.text ?? L10n.prscTxtFallbackName.text,
+                                    details: L10n.prscDtlMedIngredientName
+                                )
+                            })
+                                .buttonStyle(.navigation)
+                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedBtnIngredient)
+                        }
                     }
-                }
 
-                if let amount = viewStore.medication?.amount?.description {
-                    SubTitle(title: amount, description: L10n.prscDtlMedTxtAmount)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedAmount)
-                }
+                    if let amount = store.medication?.amount?.description {
+                        SubTitle(title: amount, description: L10n.prscDtlMedTxtAmount)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedAmount)
+                    }
 
-                if let normSizeCode = viewStore.medication?.normSizeCode {
-                    SubTitle(title: normSizeCode, description: L10n.prscFdTxtDetailsDose)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedNormSizeCode)
-                }
+                    if let normSizeCode = store.medication?.normSizeCode {
+                        SubTitle(title: normSizeCode, description: L10n.prscFdTxtDetailsDose)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedNormSizeCode)
+                    }
 
-                if let dosageForm = viewStore.medication?.localizedDosageForm {
-                    SubTitle(title: dosageForm, description: L10n.prscFdTxtDetailsDosageForm)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDosageForm)
-                }
+                    if let dosageForm = store.medication?.localizedDosageForm {
+                        SubTitle(title: dosageForm, description: L10n.prscFdTxtDetailsDosageForm)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDosageForm)
+                    }
 
-                if let drugCategory = viewStore.medication?.drugCategory?.localizedName {
-                    SubTitle(title: drugCategory, description: L10n.prscDtlMedTxtDrugCategory)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDrugCategory)
-                }
+                    if let drugCategory = store.medication?.drugCategory?.localizedName {
+                        SubTitle(title: drugCategory, description: L10n.prscDtlMedTxtDrugCategory)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedDrugCategory)
+                    }
 
-                if let isVaccine = viewStore.medication?.isVaccine {
-                    SubTitle(
-                        title: isVaccine ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
-                        description: L10n.prscDtlMedTxtDrugVaccine
-                    )
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedVaccine)
-                }
+                    if let isVaccine = store.medication?.isVaccine {
+                        SubTitle(
+                            title: isVaccine ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
+                            description: L10n.prscDtlMedTxtDrugVaccine
+                        )
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedVaccine)
+                    }
 
-                if let instructions = viewStore.medication?.manufacturingInstructions {
-                    SubTitle(title: instructions, description: L10n.prscDtlMedManufacturingInstructions)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedManufacturingInstructions)
-                }
+                    if let instructions = store.medication?.manufacturingInstructions {
+                        SubTitle(title: instructions, description: L10n.prscDtlMedManufacturingInstructions)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedManufacturingInstructions)
+                    }
 
-                if let packaging = viewStore.medication?.packaging {
-                    SubTitle(title: packaging, description: L10n.prscDtlMedTxtPackaging)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedPackaging)
-                }
+                    if let packaging = store.medication?.packaging {
+                        SubTitle(title: packaging, description: L10n.prscDtlMedTxtPackaging)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedPackaging)
+                    }
 
-                if let dispenseState = viewStore.dispenseState {
-                    DispenseDetailView(dispenseDetail: dispenseState)
-                }
+                    if let dispenseState = store.dispenseState {
+                        DispenseDetailView(dispenseDetail: dispenseState)
+                    }
 
-            }.sectionContainerStyle(.inline)
+                }.sectionContainerStyle(.inline)
+            }
         }
     }
 

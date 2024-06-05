@@ -23,9 +23,9 @@ import eRpKit
 import Foundation
 import IDP
 
-struct HorizontalProfileSelectionDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct HorizontalProfileSelectionDomain {
+    @ObservableState
     struct State: Equatable {
         var profiles: [UserProfile] = []
         var selectedProfileId: UUID?
@@ -50,7 +50,7 @@ struct HorizontalProfileSelectionDomain: ReducerProtocol {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .registerListener:
             return .merge(
@@ -86,8 +86,8 @@ struct HorizontalProfileSelectionDomain: ReducerProtocol {
             return .none
         case let .profileButtonLongPressed(profile):
             return .concatenate(
-                EffectTask.send(.selectProfile(profile)),
-                EffectTask.send(.showEditProfileNameView(profile.id, profile.name))
+                Effect.send(.selectProfile(profile)),
+                Effect.send(.showEditProfileNameView(profile.id, profile.name))
             )
         case .showEditProfileNameView:
             return .none
@@ -108,7 +108,7 @@ extension HorizontalProfileSelectionDomain {
             selectedProfileId: UserProfile.Dummies.profileA.id
         )
 
-        static let store = Store(
+        static let store = StoreOf<HorizontalProfileSelectionDomain>(
             initialState: state
         ) {
             EmptyReducer()

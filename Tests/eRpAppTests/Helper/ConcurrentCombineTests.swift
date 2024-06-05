@@ -88,9 +88,9 @@ final class ConcurrentCombineTests: XCTestCase {
         let cancellable = publisher
             .sink { temperatures in
                 expect(temperatures.count) == 10
-                exp.fulfill()
                 valuesReceived += 1
                 runSuccess = true
+                exp.fulfill()
             }
 
         waitForExpectations(timeout: 2)
@@ -124,9 +124,9 @@ final class ConcurrentCombineTests: XCTestCase {
         let cancellable = publisher
             .sink { date in
                 expect(date) == Date(timeIntervalSinceReferenceDate: 0)
-                exp.fulfill()
                 valuesReceived += 1
                 runSuccess = true
+                exp.fulfill()
             }
 
         waitForExpectations(timeout: 2)

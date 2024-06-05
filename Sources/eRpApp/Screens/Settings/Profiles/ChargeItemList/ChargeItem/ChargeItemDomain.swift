@@ -21,9 +21,9 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-struct ChargeItemDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct ChargeItemDomain {
+    @ObservableState
     struct State: Equatable {
         enum AuthenticationState: Equatable {
             /// When the user is authenticated
@@ -41,7 +41,7 @@ struct ChargeItemDomain: ReducerProtocol {
         var showRouteToChargeItemListButton = false
         var authenticationState: AuthenticationState = .notAuthenticated
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     enum Action: Equatable {
@@ -52,9 +52,8 @@ struct ChargeItemDomain: ReducerProtocol {
         // Needs to be enhanced if chargeItem can be altered inApp
         case alterChargeItem
         case routeToChargeItemList
-
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case destination(PresentationAction<Destination.Action>)
 
         case response(Response)
 
@@ -64,47 +63,23 @@ struct ChargeItemDomain: ReducerProtocol {
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            case shareSheet([URL])
-            case idpCardWall(IDPCardWallDomain.State)
-            case alterChargeItem(MatrixCodeDomain.State)
-            case alert(ErpAlertState<Action.Alert>)
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        case shareSheet(ShareSheetDomain)
+        case idpCardWall(IDPCardWallDomain)
+        case alterChargeItem(MatrixCodeDomain)
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
 
-        enum Action: Equatable {
-            case shareSheet(Sheet)
-            case idpCardWallAction(IDPCardWallDomain.Action)
-            case alterChargeItem(MatrixCodeDomain.Action)
-            case alert(Alert)
-
-            enum Sheet: Equatable {}
-
-            enum Alert: Equatable {
-                case deleteConfirm
-                case deleteCancel
-                case deleteAuthenticateConnect
-                case deleteAuthenticateCancel
-                case authenticateRetry
-                case authenticateOkay
-                case deleteChargeItemsErrorRetry
-                case deleteChargeItemsErrorOkay
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.idpCardWall,
-                action: /Action.idpCardWallAction
-            ) {
-                IDPCardWallDomain()
-            }
-            Scope(
-                state: /State.alterChargeItem,
-                action: /Action.alterChargeItem
-            ) {
-                MatrixCodeDomain()
-            }
+        enum Alert: Equatable {
+            case deleteConfirm
+            case deleteCancel
+            case deleteAuthenticateConnect
+            case deleteAuthenticateCancel
+            case authenticateRetry
+            case authenticateOkay
+            case deleteChargeItemsErrorRetry
+            case deleteChargeItemsErrorOkay
         }
     }
 
@@ -115,20 +90,18 @@ struct ChargeItemDomain: ReducerProtocol {
     @Dependency(\.router) var router: Routing
     @Dependency(\.dismiss) var dismiss
 
-    var body: some ReducerProtocol<State, Action> {
-        Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+    var body: some Reducer<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .redeem:
             do {
                 let url = try pdfService.loadPDFOrGenerate(for: state.chargeItem)
-                state.destination = .shareSheet([url])
+                state.destination = .shareSheet(.init(url: url, dataMatrixCodeImage: nil))
                 return .none
             } catch let error as CodedError {
                 state.destination = .alert(.init(for: error, title: nil))
@@ -185,23 +158,7 @@ struct ChargeItemDomain: ReducerProtocol {
             state.destination = nil
             return .send(.destination(.presented(.alert(.deleteConfirm))))
         case .destination(.presented(.alert(.deleteChargeItemsErrorOkay))):
-            let userSession = userSessionProvider.userSession(for: state.profileId)
-            state.destination = .idpCardWall(
-                .init(
-                    profileId: state.profileId,
-                    can: .init(
-                        isDemoModus: userSession.isDemoMode,
-                        profileId: state.profileId,
-                        can: ""
-                    ),
-                    pin: .init(
-                        isDemoModus: userSession.isDemoMode,
-                        profileId: state.profileId,
-                        pin: "",
-                        transition: .fullScreenCover
-                    )
-                )
-            )
+            state.destination = .idpCardWall(.init(profileId: state.profileId))
             return .none
         case .destination(.presented(.alert(.deleteAuthenticateCancel))):
             state.destination = nil
@@ -229,13 +186,12 @@ struct ChargeItemDomain: ReducerProtocol {
                 state.destination = .alert(AlertStates.authenticateErrorFor(error: error))
                 return .none
             }
-        case .destination(.presented(.idpCardWallAction)):
-            return .none
-        case .setNavigation(tag: .none):
+        case .resetNavigation:
             state.destination = nil
             return .none
-        case .setNavigation,
-             .destination:
+        case .destination(.presented(.idpCardWall)):
+            return .none
+        case .destination:
             return .none
         }
     }
@@ -243,7 +199,7 @@ struct ChargeItemDomain: ReducerProtocol {
 
 extension ChargeItemDomain {
     enum AlertStates {
-        typealias Action = ChargeItemDomain.Destinations.Action.Alert
+        typealias Action = ChargeItemDomain.Destination.Alert
 
         static let deleteConfirm: ErpAlertState<Action> = .init(
             title: L10n.stgTxtChargeItemAlertDeleteConfirmTitle,

@@ -24,8 +24,18 @@ import Foundation
 import IDP
 import UserNotifications
 
-struct MedicationReminderSetupDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct MedicationReminderSetupDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = alert
+        case alert(ErpAlertState<Never>)
+        // sourcery: AnalyticsScreen = medicationReminder_repetitionDetails
+        case repetitionDetails(EmptyDomain)
+        // sourcery: AnalyticsScreen = medicationReminder_dosageInstruction
+        case dosageInstructionsInfo(DosageInstructionsDomain)
+    }
 
     // sourcery: CodedError = "036"
     enum Error: Swift.Error, Equatable {
@@ -33,78 +43,24 @@ struct MedicationReminderSetupDomain: ReducerProtocol {
         case generic(String)
     }
 
+    @ObservableState
     struct State: Equatable {
         init(
             medicationSchedule: MedicationSchedule,
-            destination: Destinations.State? = nil
+            destination: Destination.State? = nil
         ) {
             self.destination = destination
             self.medicationSchedule = medicationSchedule
         }
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
 
-        @BindingState var medicationSchedule: MedicationSchedule
-
-        @BindingState var focus: Field?
+        var medicationSchedule: MedicationSchedule
+        var focus: Field?
 
         enum Field: Hashable {
             case time(UUID)
             case dose(UUID)
-        }
-    }
-
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<Action.Alert>)
-            // sourcery: AnalyticsScreen = medicationReminder_repetitionDetails
-            case repetitionDetails
-            // sourcery: AnalyticsScreen = medicationReminder_dosageInstruction
-            case dosageInstructionsInfo(DosageInstructionsState)
-        }
-
-        enum Action: Equatable {
-            case alert(Alert)
-            case repetitionDetails(None)
-            case dosageInstructionsInfo(None)
-
-            enum None: Equatable {}
-
-            enum Alert {
-                case authorization
-                case dismiss
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            EmptyReducer()
-        }
-
-        struct DosageInstructionsState: Equatable {
-            let title: String
-            let description: String
-
-            init(dosageInstructions: String?) {
-                title = L10n.prscDtlTxtDosageInstructions.text
-
-                guard let dosageInstructions = dosageInstructions, !dosageInstructions.isEmpty else {
-                    description = L10n.prscDtlTxtMissingDosageInstructions.text
-                    return
-                }
-                let instructions = MedicationReminderParser.parseFromDosageInstructions(dosageInstructions)
-
-                if !instructions.isEmpty {
-                    var description = L10n.prscDtlTxtDosageInstructionsFormatted.text + "\n\n"
-                    description += instructions.map(\.description).joined(separator: "\n")
-                    self.description = description
-                } else if dosageInstructions
-                    .localizedCaseInsensitiveContains(ErpPrescription.Key.MedicationRequest.dosageInstructionDj) {
-                    description = L10n.prscDtlTxtDosageInstructionsDf.text
-                } else {
-                    description = L10n.prscDtlTxtDosageInstructionsNote.text
-                }
-            }
         }
     }
 
@@ -113,27 +69,26 @@ struct MedicationReminderSetupDomain: ReducerProtocol {
         case delete(IndexSet)
         case repetitionTypeChanged(MedicationSchedule.RepetitionType)
         case save
-        case binding(BindingAction<State>)
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+
+        case showRepetitionDetails
+        case showDosageInstructionsInfo
 
         // testing example, should be moved to appDelegate didFinishLaunching
         case authorizationErrorReceived(Error)
 
         case delegate(Delegate)
+        case binding(BindingAction<State>)
+        case destination(PresentationAction<Destination.Action>)
 
         enum Delegate: Equatable {
             case saveButtonTapped(MedicationSchedule)
         }
     }
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some ReducerOf<Self> {
         BindingReducer()
-
         Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     @Dependency(\.uuid) var uuid
@@ -143,7 +98,7 @@ struct MedicationReminderSetupDomain: ReducerProtocol {
     @Dependency(\.medicationScheduleRepository) var medicationScheduleRepository
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .addButtonPressed:
             let hourComponentSuggestion: Int
@@ -174,7 +129,7 @@ struct MedicationReminderSetupDomain: ReducerProtocol {
             return .none
         case let .binding(action):
             switch action {
-            case \.$medicationSchedule:
+            case \.medicationSchedule:
                 // Prevents that the user can set a start date after the end date
                 if state.medicationSchedule.end < state.medicationSchedule.start {
                     state.medicationSchedule.end = state.medicationSchedule.start
@@ -190,7 +145,7 @@ struct MedicationReminderSetupDomain: ReducerProtocol {
             state.destination = .alert(.error(
                 error: error,
                 alertState: .init(for: error, actions: {
-                    ButtonState(role: .cancel, action: .dismiss) {
+                    ButtonState(role: .cancel) {
                         .init(L10n.alertBtnOk)
                     }
                 })
@@ -221,19 +176,14 @@ struct MedicationReminderSetupDomain: ReducerProtocol {
                 state.medicationSchedule.end = Date.distantFuture
             }
             return .none
-        case let .setNavigation(tag: tag):
-            switch tag {
-            case .repetitionDetails:
-                state.destination = .repetitionDetails
-            case .dosageInstructionsInfo:
-                let dosageInstructionsState = Destinations.DosageInstructionsState(
-                    dosageInstructions: state.medicationSchedule.dosageInstructions
-                )
-                state.destination = .dosageInstructionsInfo(dosageInstructionsState)
-            case .none:
-                state.destination = nil
-            default: break
-            }
+        case .showRepetitionDetails:
+            state.destination = .repetitionDetails(.init())
+            return .none
+        case .showDosageInstructionsInfo:
+            let dosageInstructionsState = DosageInstructionsDomain.State(
+                dosageInstructions: state.medicationSchedule.dosageInstructions
+            )
+            state.destination = .dosageInstructionsInfo(dosageInstructionsState)
             return .none
         case .delegate:
             return .none
@@ -252,6 +202,42 @@ extension MedicationSchedule {
     }
 }
 
+@Reducer
+struct DosageInstructionsDomain {
+    @ObservableState
+    struct State: Equatable {
+        let title: String
+        let description: String
+
+        init(dosageInstructions: String?) {
+            title = L10n.prscDtlTxtDosageInstructions.text
+
+            guard let dosageInstructions = dosageInstructions, !dosageInstructions.isEmpty else {
+                description = L10n.prscDtlTxtMissingDosageInstructions.text
+                return
+            }
+            let instructions = MedicationReminderParser.parseFromDosageInstructions(dosageInstructions)
+
+            if !instructions.isEmpty {
+                var description = L10n.prscDtlTxtDosageInstructionsFormatted.text + "\n\n"
+                description += instructions.map(\.description).joined(separator: "\n")
+                self.description = description
+            } else if dosageInstructions
+                .localizedCaseInsensitiveContains(ErpPrescription.Key.MedicationRequest.dosageInstructionDj) {
+                description = L10n.prscDtlTxtDosageInstructionsDf.text
+            } else {
+                description = L10n.prscDtlTxtDosageInstructionsNote.text
+            }
+        }
+    }
+
+    enum Action: Equatable {}
+
+    var body: some ReducerOf<Self> {
+        EmptyReducer()
+    }
+}
+
 extension MedicationReminderSetupDomain {
     enum Dummies {
         static let state = State(medicationSchedule: MedicationSchedule.mock1)
@@ -262,7 +248,7 @@ extension MedicationReminderSetupDomain {
             MedicationReminderSetupDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<MedicationReminderSetupDomain> {
             Store(
                 initialState: state
             ) {

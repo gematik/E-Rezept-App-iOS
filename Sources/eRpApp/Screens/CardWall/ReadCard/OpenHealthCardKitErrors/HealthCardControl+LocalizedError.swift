@@ -39,8 +39,6 @@ extension KeyAgreement.Error: LocalizedError {
             return "efCardAccessNotAvailable"
         case let .unsupportedKeyAgreementAlgorithm(identifier):
             return "unsupportedKeyAgreementAlgorithm with identifeir: \(identifier)"
-        @unknown default:
-            return "unknown KeyAgreement error"
         }
     }
 }

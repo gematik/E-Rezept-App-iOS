@@ -23,9 +23,8 @@ import IdentifiedCollections
 import SwiftUI
 import ZXingObjC
 
-struct MatrixCodeDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct MatrixCodeDomain {
     typealias ImageLoadingState = LoadingState<
         IdentifiedArrayOf<MatrixCodeDomain.State.IdentifiedImage>,
         MatrixCodeDomain.LoadingImageError
@@ -42,6 +41,7 @@ struct MatrixCodeDomain: ReducerProtocol {
         case erxChargeItem
     }
 
+    @ObservableState
     struct State: Equatable {
         let type: MatrixCodeType
         var isShowAlert = false
@@ -88,14 +88,14 @@ struct MatrixCodeDomain: ReducerProtocol {
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.dismiss) var dismiss
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
     }
 
     @Dependency(\.uuid) var uuid
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .closeButtonTapped:
             return .run { _ in
@@ -178,7 +178,7 @@ extension MatrixCodeDomain {
     }
 
     func redeemAndSaveErxTasks(erxTasks: [ErxTask])
-        -> EffectTask<MatrixCodeDomain.Action> {
+        -> Effect<MatrixCodeDomain.Action> {
         let redeemedErxTasks = erxTasks
             .filter { $0.source == .scanner }
             .map { erxTask -> ErxTask in
@@ -217,7 +217,7 @@ extension MatrixCodeDomain {
             MatrixCodeDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<MatrixCodeDomain> {
             Store(
                 initialState: state
             ) {

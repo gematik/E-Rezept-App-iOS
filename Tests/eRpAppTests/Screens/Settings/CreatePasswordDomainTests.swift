@@ -54,7 +54,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         let store = testStore(for: emptyPasswords)
         mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
 
-        await store.send(.setPasswordA("MyPasswordA")) { state in
+        await store.send(\.binding.passwordA, "MyPasswordA") { state in
             state.passwordA = "MyPasswordA"
         }
         await testScheduler.run()
@@ -69,7 +69,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         let store = testStore(for: emptyPasswords)
         mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
 
-        await store.send(.setPasswordB("MyPasswordB")) { state in
+        await store.send(\.binding.passwordB, "MyPasswordB") { state in
             state.passwordB = "MyPasswordB"
         }
         await testScheduler.run()
@@ -80,7 +80,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         let store = testStore(for: emptyPasswords)
         mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
 
-        await store.send(.setPasswordA("MyPassword")) { state in
+        await store.send(\.binding.passwordA, "MyPassword") { state in
             state.passwordA = "MyPassword"
         }
         await testScheduler.run()
@@ -91,7 +91,7 @@ final class CreatePasswordDomainTests: XCTestCase {
             expect(message) == L10n.cpwTxtPasswordStrengthInsufficient.text
         }
         mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.strong
-        await store.send(.setPasswordA("Secure password")) { state in
+        await store.send(\.binding.passwordA, "Secure password") { state in
             state.passwordA = "Secure password"
             state.passwordStrength = .strong
         }
@@ -99,13 +99,13 @@ final class CreatePasswordDomainTests: XCTestCase {
         await testScheduler.run()
         await store.receive(.comparePasswords)
 
-        await store.send(.setPasswordB("MyPasswordB")) { state in
+        await store.send(\.binding.passwordB, "MyPasswordB") { state in
             state.passwordB = "MyPasswordB"
         }
         await testScheduler.run()
         await store.receive(.comparePasswords)
 
-        await store.send(.setPasswordB("Secure password")) { state in
+        await store.send(\.binding.passwordB, "Secure password") { state in
             state.passwordB = "Secure password"
         }
         await testScheduler.run()
@@ -119,11 +119,11 @@ final class CreatePasswordDomainTests: XCTestCase {
                                          passwordA: "ABC",
                                          passwordB: "ABC"))
 
-        await store.send(.setPasswordB("ABCD")) { state in
+        await store.send(\.binding.passwordB, "ABCD") { state in
             state.passwordB = "ABCD"
         }
         await testScheduler.advance(by: .seconds(0.49))
-        await store.send(.setPasswordB("ABCDE")) { state in
+        await store.send(\.binding.passwordB, "ABCDE") { state in
             state.passwordB = "ABCDE"
         }
         await testScheduler.advance(by: .seconds(0.5))
@@ -157,7 +157,7 @@ final class CreatePasswordDomainTests: XCTestCase {
             )
         )
 
-        await store.send(.setPasswordB("ABCD")) { state in
+        await store.send(\.binding.passwordB, "ABCD") { state in
             state.passwordB = "ABCD"
         }
         await testScheduler.run()
@@ -180,7 +180,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 
         await store.send(.saveButtonTapped)
 
-        await store.receive(.delegate(.closeAfterPasswordSaved))
+        await store.receive(.delegate(.closeAfterPasswordSaved(mode: .create)))
 
         expect(self.mockPasswordManager.savePasswordCalled) == true
         expect(self.mockPasswordManager.savePasswordCallsCount) == 1
@@ -229,7 +229,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         mockPasswordManager.savePasswordReturnValue = true
 
         await store.send(.saveButtonTapped)
-        await store.receive(.delegate(.closeAfterPasswordSaved))
+        await store.receive(.delegate(.closeAfterPasswordSaved(mode: .create)))
     }
 
     func testUpdatePasswordChecksPassword() async {
@@ -248,7 +248,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         expect(self.mockPasswordManager.matchesPasswordCalled).to(beFalse())
         expect(self.mockPasswordManager.savePasswordCalled).to(beFalse())
         await store.send(.saveButtonTapped)
-        await store.receive(.delegate(.closeAfterPasswordSaved))
+        await store.receive(.delegate(.closeAfterPasswordSaved(mode: .update)))
         expect(self.mockPasswordManager.matchesPasswordCalled).to(beTrue())
         expect(self.mockPasswordManager.savePasswordCalled).to(beTrue())
     }
@@ -331,7 +331,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.excellent
 
-        await store.send(.setPasswordA("abc")) { state in
+        await store.send(\.binding.passwordA, "abc") { state in
             state.passwordA = "abc"
             state.passwordStrength = .excellent
         }

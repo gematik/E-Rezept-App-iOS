@@ -74,15 +74,13 @@ final class AppStartDomainTests: XCTestCase {
             $0.destination = .app(
                 AppDomain.State(
                     destination: .main,
-                    subdomains: .init(
-                        main: MainDomain.State(
-                            prescriptionListState: PrescriptionListDomain.State(),
-                            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
-                        ),
-                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                        orders: OrdersDomain.State(orders: []),
-                        settings: SettingsDomain.State(isDemoMode: false)
+                    main: MainDomain.State(
+                        prescriptionListState: PrescriptionListDomain.State(),
+                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
+                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                    orders: OrdersDomain.State(orders: []),
+                    settings: SettingsDomain.State(isDemoMode: false),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
@@ -102,15 +100,13 @@ final class AppStartDomainTests: XCTestCase {
             $0.destination = .app(
                 AppDomain.State(
                     destination: .main,
-                    subdomains: .init(
-                        main: MainDomain.State(
-                            prescriptionListState: PrescriptionListDomain.State(),
-                            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
-                        ),
-                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                        orders: OrdersDomain.State(orders: []),
-                        settings: .init(isDemoMode: false)
+                    main: MainDomain.State(
+                        prescriptionListState: PrescriptionListDomain.State(),
+                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
+                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                    orders: OrdersDomain.State(orders: []),
+                    settings: .init(isDemoMode: false),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
@@ -127,9 +123,9 @@ final class AppStartDomainTests: XCTestCase {
             let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/prescription#")!
 
             let expected1 = AppStartDomain.Action
-                .destination(.app(.subdomains(.main(action: .setNavigation(tag: nil)))))
+                .destination(.app(.main(action: .setNavigation(tag: nil))))
             let expected2 = AppStartDomain.Action.destination(.app(.setNavigation(.main)))
-            let expected3 = AppStartDomain.Action.destination(.app(.subdomains(.main(action: .importTaskByUrl(url)))))
+            let expected3 = AppStartDomain.Action.destination(.app(.main(action: .importTaskByUrl(url))))
             let expectedActions = [expected1, expected2, expected3]
 
             var receivedActions: [AppStartDomain.Action] = []
@@ -151,9 +147,9 @@ final class AppStartDomainTests: XCTestCase {
             let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth/")!
 
             let expected1 = AppStartDomain.Action
-                .destination(.app(.subdomains(.main(action: .setNavigation(tag: nil)))))
+                .destination(.app(.main(action: .setNavigation(tag: nil))))
             let expected2 = AppStartDomain.Action.destination(.app(.setNavigation(.main)))
-            let expected3 = AppStartDomain.Action.destination(.app(.subdomains(.main(action: .externalLogin(url)))))
+            let expected3 = AppStartDomain.Action.destination(.app(.main(action: .externalLogin(url))))
             let expectedActions = [expected1, expected2, expected3]
 
             var receivedActions: [AppStartDomain.Action] = []
@@ -173,10 +169,10 @@ final class AppStartDomainTests: XCTestCase {
             let sut = AppStartDomain.router
 
             let expected1 = AppStartDomain.Action
-                .destination(.app(.subdomains(.main(action: .setNavigation(tag: nil)))))
+                .destination(.app(.main(action: .setNavigation(tag: nil))))
             let expected2 = AppStartDomain.Action.destination(.app(.setNavigation(.main)))
             let expected3 = AppStartDomain.Action
-                .destination(.app(.subdomains(.main(action: .prescriptionList(action: .refresh)))))
+                .destination(.app(.main(action: .prescriptionList(action: .refresh))))
             let expectedActions = [expected1, expected2, expected3]
 
             // when
@@ -197,11 +193,11 @@ final class AppStartDomainTests: XCTestCase {
             // given
             let sut = AppStartDomain.router
 
-            let expected1 = AppStartDomain.Action.destination(.app(.subdomains(.settings(action: .popToRootView))))
+            let expected1 = AppStartDomain.Action.destination(.app(.settings(action: .popToRootView)))
             let expected2 = AppStartDomain.Action.destination(.app(.setNavigation(.settings)))
-            let expected3 = AppStartDomain.Action.destination(.app(.subdomains(
-                .settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))
-            )))
+            let expected3 = AppStartDomain.Action.destination(.app(
+                .settings(action: .tappedUnlockCard)
+            ))
             let expectedActions = [expected1, expected2, expected3]
 
             // when

@@ -82,6 +82,7 @@
 "cdw_btn_extauth_fallback_order_egk" = "Objednejte si zdravotní kartu";
 "cdw_btn_extauth_selection_cancel" = "zrušení";
 "cdw_btn_extauth_selection_continue" = "Dále";
+"cdw_btn_extauth_selection_help" = "První pomoc";
 "cdw_btn_extauth_selection_order_egk" = "Objednejte si zdravotní kartu";
 "cdw_btn_extauth_selection_retry" = "Zkus to znovu";
 "cdw_btn_help_next_hint" = "Ihned po stisknutí tohoto tlačítka se zdravotní karta načte přes NFC. Chcete-li to provést, přidržte kartu přímo u zařízení. Pokud je připojení úspěšné, obdržíte hmatovou zpětnou vazbu. Ztráta spojení nebo chyby jsou také sdělovány prostřednictvím haptické zpětné vazby. Komunikace se zdravotní kartou může trvat až deset sekund. Poté vyjměte zdravotní kartu ze zařízení.";
@@ -156,7 +157,7 @@
 "cdw_txt_biometry_subtitle" = "Přejete si uložit své přihlašovací údaje pro budoucí přihlášení?";
 "cdw_txt_biometry_title" = "Registrace";
 "cdw_txt_can_demo_mode_info" = "Můžete zadat libovolné číslice.";
-"cdw_txt_can_description" = "Své přístupové číslo (Card Access Number, zkráceně CAN) najdete v pravém horním rohu své zdravotní karty.";
+"cdw_txt_can_description" = "Své přístupové číslo najdete v pravém horním rohu své zdravotní karty.";
 "cdw_txt_can_subtitle" = "Zadejte přístupové číslo";
 "cdw_txt_can_title" = "Registrace";
 "cdw_txt_can_title_hint" = "Přístupové číslo vaší karty (zkráceně CAN) má 6 číslic. CAN najdete v pravém horním rohu přední strany vaší zdravotní karty. Pokud zde není šestimístné přístupové číslo, budete potřebovat nový zdravotní průkaz vaší zdravotní pojišťovny.";
@@ -177,10 +178,18 @@
 "cdw_txt_extauth_fallback_description2" = "Nechce se vám čekat? Registraci se zdravotním průkazem již podporuje každá zdravotní pojišťovna.";
 "cdw_txt_extauth_fallback_headline" = "Vyberte pojištění";
 "cdw_txt_extauth_fallback_title" = "Zaregistrujte se pomocí aplikace";
+"cdw_txt_extauth_help_caption" = "Tipy pro registraci v aplikaci pojištění";
+"cdw_txt_extauth_help_description" = "Za zdravotní průkaz odpovídá vaše pojišťovna. Pokud máte nějaké dotazy ohledně registrace, kontaktujte je. Zde je několik osvědčených tipů:";
+"cdw_txt_extauth_help_info_1" = "Upozorňujeme, že v závislosti na vašem pojištění může být vyžadována samostatná aplikace. Obraťte se prosím u své pojišťovny, co to je.";
+"cdw_txt_extauth_help_info_2" = "Spusťte aplikaci pokladny a před zahájením registrace v aplikaci e-recept se tam jednou přihlaste.";
+"cdw_txt_extauth_help_info_3" = "Přepínání mezi přihlášením pomocí zdravotního ID a zdravotní kartou může vést k problémům. Před změnou možnosti přihlášení se proto nejprve aktivně odhlaste ze svého profilu.";
+"cdw_txt_extauth_help_info_4" = "Pokud vaše pojištění není na seznamu, můžete se alternativně zaregistrovat pomocí zdravotní karty a příslušného PIN.";
+"cdw_txt_extauth_help_info_5" = "Pokud vás pokladní aplikace nepřesměruje zpět do aplikace e-receptu, nezapomeňte tuto chybu nahlásit své pojišťovně.";
+"cdw_txt_extauth_help_title" = "Pomoc";
 "cdw_txt_extauth_noresults" = "Pro tento hledaný výraz jsme nenašli žádné výsledky.";
 "cdw_txt_extauth_noresults_title" = "Žádné výsledky";
 "cdw_txt_extauth_searchprompt" = "Hledat podle jména";
-"cdw_txt_extauth_selection_description" = "Nenašli jste, co jste hledali? Tento seznam se neustále rozšiřuje. Registraci se zdravotním průkazem již podporuje každá zdravotní pojišťovna.";
+"cdw_txt_extauth_selection_description" = "Pokud přihlášení pomocí Health ID neproběhne podle očekávání, jsou k dispozici pokyny pro první pomoc.";
 "cdw_txt_extauth_selection_empty_list_description" = "Tato funkce vám bude k dispozici za několik dní. Prosím zkuste to znovu později.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Ještě není dostupný";
 "cdw_txt_extauth_selection_error_fallback" = "Prosím zkuste to znovu později.";
@@ -262,7 +271,7 @@
 "cdw_txt_rc_nfc_message_noCardMessage" = "Nebyl nalezen žádný zdravotní průkaz";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Tento typ karty není podporován";
 "cdw_txt_rc_placement" = "Tvořte zde 👆";
-"cdw_txt_rc_position_content" = "Vyzkoušejte také tuto polohu mapy a iPhonu. Ukázalo se, že tato poloha poskytuje lepší připojení na některých iPhonech.";
+"cdw_txt_rc_position_content" = "Posuňte kartu tak, aby byl zlatý čip nad přední kamerou, nebo kartu přidržte u hlavy iPhonu, jak je znázorněno na obrázku.";
 "cdw_txt_rc_position_header" = "Jiná poloha";
 "cdw_txt_rc_subheadline" = "Následující proces může trvat až 30 sekund.";
 "cdw_txt_rc_tip_four" = "Tip 4 ze 4";
@@ -358,7 +367,9 @@
 "epp_back_button" = "Zadní";
 "epp_btn_alert_abort" = "zrušení";
 "epp_btn_alert_camera" = "Fotoaparát";
+"epp_btn_alert_emoji" = "Emoji";
 "epp_btn_alert_library" = "Vyberte fotografii";
+"epp_btn_emoji_use" = "Použití";
 "epp_txt_alert_header_profile" = "Vyberte profilový obrázek";
 "epp_txt_alert_subheader_choose" = "Jak chcete pokračovat?";
 "erp_txt_tooltips_add_profile" = "Stiskněte zde pro vytvoření nového profilu";
@@ -377,7 +388,7 @@
 "erx_btn_alert_login" = "Registrovat";
 "erx_btn_alert_ok" = "OK";
 "erx_btn_alert_retry" = "Zkus to znovu";
-"erx_btn_redeem" = "Uplatnit všechny";
+"erx_btn_redeem" = "All Redeem";
 "erx_btn_refresh" = "Aktualizovat";
 "erx_btn_scn_prescription" = "Otevřete skener receptů";
 "erx_title" = "Recepty";
@@ -846,7 +857,7 @@
 "ord_txt_title" = "Objednávky";
 "order_egk_btn_info_button" = "Jak rozpoznat zdravotní kartu s podporou NFC";
 "order_egk_pin" = "PIN kód";
-"order_egk_pin_card" = "Pin a zdravotní karta";
+"order_egk_pin_card" = "PIN a zdravotní karta";
 "order_egk_service_subtitle" = "Pro tuto aplikaci potřebujete kartu a související PIN.";
 "order_egk_service_title" = "O co byste se chtěli ucházet?";
 "order_egk_txt_contact_option_mail" = "Pošta";
@@ -945,7 +956,8 @@
 "pha_search_hint_txt_close" = "Zavřete sdílení polohy, nesdílejte polohu";
 "pha_search_map_annotation" = "LÉKÁRNA";
 "pha_search_map_btn_Error_cancel" = "zrušení";
-"pha_search_map_header" = "Blízko";
+"pha_search_map_header" = "Blízko mě";
+"pha_search_map_txt_cluster_header" = "Lékárny";
 "pha_search_txt_closed" = "ZAVŘENO";
 "pha_search_txt_closing_soon" = "Brzy zavíráme";
 "pha_search_txt_error_no_server_response_headline" = "server neodpovídá";
@@ -1022,12 +1034,14 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Poplatek za pohotovostní službu";
 "prsc_dtl_dr_error_info_description" = "Ne všechny informace jsou v tomto receptu uvedeny správně. Stále jej však můžete vykoupit ve své lékárně.";
 "prsc_dtl_dr_error_info_title" = "Recept nesprávný";
+"prsc_dtl_dr_no_substitution_info_describtion" = "Váš lékař rozhodl, že byste měli dostávat předepsané léky. Lékárna by neměla provádět výměnu na základě dohody o slevě („Aut idem“).";
+"prsc_dtl_dr_no_substitution_info_title" = "Není možná náhradní příprava";
 "prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Během tohoto období můžete svůj recept uplatnit v jakékoli lékárně s maximálním doplatkem 10 EUR.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "V této lhůtě ještě můžete recept vyplnit v lékárně, ale celou kupní cenu za léky si budete muset zaplatit sami. Případně můžete požádat svou praxi o opětovné vystavení receptu.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Jak dlouho je tento předpis platný?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Předpisy importované z tištěné kopie nemohou z bezpečnostních důvodů zobrazovat osobní nebo lékařské informace. \n\n Přihlaste se do této aplikace pomocí zdravotní karty nebo pojišťovací aplikace a zobrazte všechny informace obsažené v předpisu.";
 "prsc_dtl_dr_scanned_prescription_info_title" = "Naskenovaný recept";
-"prsc_dtl_dr_substitution_info_description" = "Na základě zákonných požadavků vaší zdravotní pojišťovny vám může být poskytnuta alternativa se stejnou účinnou látkou. \n\n Léky mohou vypadat a jmenovat se různě, mít různé ceny a výrobce, ale stále obsahují stejnou účinnou látku. Pro účinek léků v organismu je rozhodující samotná účinná látka a dávkování. Pacienti často dostanou v lékárně jiný lék, než jaký předepsal lékař – pokud jsou léky srovnatelné. Pro změnu mohou existovat terapeutické a ekonomické důvody.";
+"prsc_dtl_dr_substitution_info_description" = "Lékárníci jsou povinni přednostně vydávat léky, na které má zdravotní pojišťovna pacienta uzavřenu slevovou smlouvu s výrobci léků. To neplatí pouze v případě, že lékař na receptu vyloučí „Aut idem“, což není případ vašeho předpisu.";
 "prsc_dtl_dr_substitution_info_title" = "Možnost přípravy na výměnu";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Otevřete stránku healthy.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Odborně ověřené informace o nemocech, ICD kódech a tématech prevence a péče naleznete v Národním portálu zdraví.";
@@ -1082,6 +1096,7 @@
 "prsc_dtl_txt_missing_dosage_instructions" = "Váš lékař vám neposkytl žádné informace o užívání léků.";
 "prsc_dtl_txt_multi_prescription" = "Vícenásobný recept";
 "prsc_dtl_txt_no" = "Ne";
+"prsc_dtl_txt_no_substitution" = "Není možná náhradní příprava";
 "prsc_dtl_txt_partial" = "Částečně";
 "prsc_dtl_txt_pkv_hint_activate_msg" = "Jakmile budou účtenky aktivovány, najdete je zde po uplatnění svého předpisu.";
 "prsc_dtl_txt_pkv_hint_activate_title" = "Přijímejte potvrzení o nákladech digitálně";
@@ -1090,6 +1105,8 @@
 "prsc_dtl_txt_practitioner_person" = "Předepisující lékař";
 "prsc_dtl_txt_quantity" = "Předepsaný počet balení";
 "prsc_dtl_txt_section_details_header" = "Detailní informace";
+"prsc_dtl_txt_substitution" = "Náhradní příprava (Aut idem)";
+"prsc_dtl_txt_substitution_possible" = "Možnost přípravy na výměnu";
 "prsc_dtl_txt_yes" = "Ano";
 "prsc_fd_btn_error_banner" = "Zpráva";
 "prsc_fd_hint_dosageInstructions_pic" = "doktor";
@@ -1156,7 +1173,7 @@
 "puc_txt_subtitle_%@" = "Ukažte tento kód vyzvednutí na %@ .";
 "puc_txt_title" = "Kód vyzvednutí";
 "rdm_btn_redeem_pharmacy_description" = "Nechte si to naskenovat v lékárně";
-"rdm_btn_redeem_pharmacy_title" = "Uplatnit přímo";
+"rdm_btn_redeem_pharmacy_title" = "Zobrazit kód";
 "rdm_btn_redeem_search_pharmacy_description" = "Rezervujte nebo nechte dovézt";
 "rdm_btn_redeem_search_pharmacy_title" = "Odeslat do lékárny";
 "rdm_scc_btn_return_to_main" = "Na domovskou stránku";
@@ -1165,8 +1182,8 @@
 "rdm_scc_txt_onpremise_content" = "Vaše objednávka bude pro vás obvykle připravena okamžitě. Pro přesný termín se prosím obraťte na lékárnu.";
 "rdm_scc_txt_onpremise_title" = "Úspěšně uplatněno";
 "rdm_scc_txt_shipment_content_1" = "Přejděte na domovskou stránku.";
-"rdm_scc_txt_shipment_content_2" = "Zásilková lékárna vám vytvoří nákupní košík s vašimi léky. Tento proces může trvat několik minut.";
-"rdm_scc_txt_shipment_content_3" = "Klepněte na „Otevřít nákupní košík“ a dokončete objednávku na webu lékárny.";
+"rdm_scc_txt_shipment_content_2" = "Počkejte několik minut, než obdržíte odpověď ze zásilkové lékárny.";
+"rdm_scc_txt_shipment_content_3" = "Lékárna vás pak prostřednictvím aplikace e-receptu informuje o tom, jak objednávku dokončit.";
 "rdm_scc_txt_shipment_title" = "Vaše další kroky";
 "rdm_txt_subtitle" = "Jak byste chtěli uplatnit své předpisy?";
 "rdm_txt_title" = "Jak vykoupit?";
@@ -1285,6 +1302,8 @@
 "stg_btn_edit_profile_login" = "Registrovat";
 "stg_btn_edit_profile_logout" = "Odhlásit se";
 "stg_btn_edit_profile_registered_devices" = "Připojená zařízení";
+"stg_btn_language_settings" = "Jazyk";
+"stg_btn_language_settings_alert_open_settings" = "Otevřete Nastavení";
 "stg_btn_medication_reminder" = "Připomenutí příjmů";
 "stg_btn_new_profile_create" = "Uložit";
 "stg_btn_reg_devices_load" = "Registrovat";
@@ -1471,6 +1490,8 @@
 "stg_txt_header_personal_settings" = "osobní nastavení";
 "stg_txt_header_profiles" = "Profily";
 "stg_txt_header_security" = "Bezpečnostní";
+"stg_txt_language_settings_alert_description" = "Jazyk aplikace můžete změnit v Nastavení systému.";
+"stg_txt_language_settings_alert_title" = "Změňte jazyk aplikace";
 "stg_txt_new_profile_background_section_title" = "barva pozadí";
 "stg_txt_new_profile_error_message_title" = "Chyba";
 "stg_txt_new_profile_missing_name_error" = "Pole názvu nemůže být prázdné";
@@ -1483,6 +1504,7 @@
 "stg_txt_reg_devices_registered_since_%@" = "Registrován od %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Registrováno od %@ (toto zařízení)";
 "stg_txt_reg_devices_title" = "Připojená zařízení";
+"stg_txt_security_option_change_password_title" = "změnit heslo";
 "stg_txt_security_option_faceid_title" = "FaceID";
 "stg_txt_security_option_password_title" = "Heslo";
 "stg_txt_security_option_touchid_title" = "Touch ID";

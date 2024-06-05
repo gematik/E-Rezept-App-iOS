@@ -21,10 +21,10 @@ import eRpStyleKit
 import SwiftUI
 
 struct CapabilitiesView: View {
-    let store: CardWallIntroductionDomain.Store
+    let store: StoreOf<CardWallIntroductionDomain>
     @ObservedObject var viewStore: ViewStoreOf<CardWallIntroductionDomain>
 
-    init(store: CardWallIntroductionDomain.Store) {
+    init(store: StoreOf<CardWallIntroductionDomain>) {
         self.store = store
         viewStore = ViewStore(store) { $0 }
     }

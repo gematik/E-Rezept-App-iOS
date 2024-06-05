@@ -47,6 +47,7 @@ struct DefaultPasswordStrengthTester: PasswordStrengthTester {
 private class LazyZxcvbnDB {
     private(set) lazy var zxcvbn = DBZxcvbn()
 
+    // [REQ:BSI-eRp-ePA:O.Pass_1#2,O.Pass_2#2] We use an additional german word list to check against common passwords
     private(set) lazy var wordList: [String] = {
         guard let url = Bundle.module.url(forResource: "german_dictionary", withExtension: "json"),
               let data = try? Data(contentsOf: url),

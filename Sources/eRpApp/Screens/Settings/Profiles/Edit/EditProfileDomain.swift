@@ -15,7 +15,6 @@
 //  limitations under the Licence.
 //  
 //
-// swiftlint:disable file_length
 
 import Combine
 import ComposableArchitecture
@@ -25,10 +24,10 @@ import eRpLocalStorage
 import Foundation
 import IDP
 
-// swiftlint:disable:next type_body_length
-struct EditProfileDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+// swiftlint:disable type_body_length file_length
+@Reducer
+struct EditProfileDomain {
+    @ObservableState
     struct State: Equatable {
         let profileId: UUID
         var name: String
@@ -44,95 +43,98 @@ struct EditProfileDomain: ReducerProtocol {
         var hasBiometricKeyID: Bool?
         var availableSecurityOptions: [AppSecurityOption] = []
         var securityOptionsError: AppSecurityManagerError?
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
         var insuranceType: Profile.InsuranceType
         var routeToChargeItemList = false
-    }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<Action.Alert>)
-            // sourcery: AnalyticsScreen = profile_token
-            case token(IDPToken)
-            // sourcery: AnalyticsScreen = profile_auditEvents
-            case auditEvents(AuditEventsDomain.State)
-            // sourcery: AnalyticsScreen = profile_registeredDevices
-            case registeredDevices(RegisteredDevicesDomain.State)
-            // sourcery: AnalyticsScreen = chargeItemList
-            case chargeItemList(ChargeItemListDomain.State)
-            case editProfilePicture(EditProfilePictureDomain.State)
+        init(name: String,
+             acronym: String,
+             fullName: String?,
+             insurance: String?,
+             can: String?,
+             insuranceId: String?,
+             image: ProfilePicture?,
+             userImageData _: Data?,
+             color: ProfileColor,
+             profileId: UUID,
+             token: IDPToken? = nil,
+             hasBiometricKeyID: Bool? = nil,
+             destination: EditProfileDomain.Destination.State? = nil,
+             availableSecurityOptions: [AppSecurityOption] = [],
+             securityOptionsError: AppSecurityManagerError? = nil,
+             insuranceType: Profile.InsuranceType = .unknown) {
+            self.name = name
+            self.acronym = acronym
+            self.fullName = fullName
+            self.insurance = insurance
+            self.can = can
+            self.insuranceId = insuranceId
+            self.image = image
+            self.color = color
+            self.profileId = profileId
+            self.destination = destination
+            self.token = token
+            self.hasBiometricKeyID = hasBiometricKeyID
+            self.availableSecurityOptions = availableSecurityOptions
+            self.securityOptionsError = securityOptionsError
+            self.insuranceType = insuranceType
         }
 
-        enum Action: Equatable {
-            case auditEventsAction(AuditEventsDomain.Action)
-            case registeredDevicesAction(RegisteredDevicesDomain.Action)
-            case chargeItemListAction(ChargeItemListDomain.Action)
-            case editProfilePictureAction(action: EditProfilePictureDomain.Action)
-            case token(None)
-            case alert(Alert)
-
-            enum None: Equatable {}
-
-            enum Alert: Equatable {
-                case confirmDeleteProfile
-                case confirmDeleteBiometricPairing
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.auditEvents,
-                action: /Action.auditEventsAction
-            ) {
-                AuditEventsDomain()
-            }
-            Scope(
-                state: /State.registeredDevices,
-                action: /Action.registeredDevicesAction
-            ) {
-                RegisteredDevicesDomain()
-                    .dependency(
-                        \.profileBasedSessionProvider,
-                        {
-                            @Dependency(\.userSessionProvider) var userSessionProvider
-                            @Dependency(\.userSession) var userSession
-
-                            return RegisterSessionProvider(
-                                userSessionProvider: userSessionProvider,
-                                userSession: userSession
-                            )
-                        }()
-                    )
-            }
-            Scope(
-                state: /State.chargeItemList,
-                action: /Action.chargeItemListAction
-            ) {
-                ChargeItemListDomain()
-            }
-            Scope(
-                state: /State.editProfilePicture,
-                action: /Action.editProfilePictureAction
-            ) {
-                EditProfilePictureDomain()
-            }
+        init(
+            profile: UserProfile,
+            routeToChargeItemList: Bool = false
+        ) {
+            profileId = profile.id
+            name = profile.name
+            acronym = profile.name.acronym()
+            fullName = profile.fullName
+            insurance = profile.insurance
+            insuranceId = profile.insuranceId
+            image = profile.image
+            userImageData = profile.userImageData
+            color = profile.color
+            insuranceType = profile.profile.insuranceType
+            self.routeToChargeItemList = routeToChargeItemList
         }
     }
 
-    enum Action: Equatable {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = alert
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
+        // sourcery: AnalyticsScreen = profile_token
+        case token(IDPTokenDomain)
+        // sourcery: AnalyticsScreen = profile_auditEvents
+        case auditEvents(AuditEventsDomain)
+        // sourcery: AnalyticsScreen = profile_registeredDevices
+        case registeredDevices(RegisteredDevicesDomain)
+        // sourcery: AnalyticsScreen = chargeItemList
+        case chargeItemList(ChargeItemListDomain)
+        case editProfilePicture(EditProfilePictureDomain)
+
+        enum Alert: Equatable {
+            case confirmDeleteProfile
+            case confirmDeleteBiometricPairing
+        }
+    }
+
+    enum Action: BindableAction, Equatable {
         case task
         case onAppear
-        case setName(String)
-        case setColor(ProfileColor)
+        case binding(BindingAction<State>)
         case showDeleteProfileAlert
         case login
         case relogin
         case showDeleteBiometricPairingAlert
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
-
+        case destination(PresentationAction<Destination.Action>)
+        case resetNavigation
+        case tokenViewTapped
+        case registeredDevicesTapped
+        case auditEventsTapped
+        case chargeItemListTapped
+        case editProfilePictureTapped
         case response(Response)
         case delegate(Delegate)
 
@@ -159,37 +161,15 @@ struct EditProfileDomain: ReducerProtocol {
     @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
     @Dependency(\.router) var router: Routing
 
-    private var environment: Environment {
-        .init(
-            appSecurityManager: appSecurityManager,
-            schedulers: schedulers,
-            profileDataStore: profileDataStore,
-            userDataStore: userDataStore,
-            profileSecureDataWiper: profileSecureDataWiper,
-            userSessionProvider: userSessionProvider,
-            router: router
-        )
-    }
+    var body: some Reducer<State, Action> {
+        BindingReducer()
 
-    struct Environment {
-        let appSecurityManager: AppSecurityManager
-        let schedulers: Schedulers
-        let profileDataStore: ProfileDataStore
-        let userDataStore: UserDataStore
-        let profileSecureDataWiper: ProfileSecureDataWiper
-        let userSessionProvider: UserSessionProvider
-        let router: Routing
-    }
-
-    var body: some ReducerProtocol<State, Action> {
-        Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+        Reduce(self.core)
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             let availableOptions = appSecurityManager.availableSecurityOptions
@@ -197,9 +177,9 @@ struct EditProfileDomain: ReducerProtocol {
             state.securityOptionsError = availableOptions.error
 
             return .merge(
-                environment.subscribeToTokenUpdates(for: state.profileId),
-                environment.subscribeToBiometricKeyIDUpdates(for: state.profileId),
-                environment.subscribeToCanUpdates(with: state.profileId),
+                subscribeToTokenUpdates(for: state.profileId),
+                subscribeToBiometricKeyIDUpdates(for: state.profileId),
+                subscribeToCanUpdates(with: state.profileId),
                 .publisher(
                     profileDataStore.fetchProfile(by: state.profileId)
                         .first()
@@ -217,7 +197,7 @@ struct EditProfileDomain: ReducerProtocol {
                 state.routeToChargeItemList = false
                 return .run { send in
                     try await schedulers.main.sleep(for: 0.5)
-                    await send(.setNavigation(tag: .chargeItemList))
+                    await send(.chargeItemListTapped)
                 }
             }
             return .none
@@ -240,40 +220,37 @@ struct EditProfileDomain: ReducerProtocol {
             return .none
         case .response(.profileReceived(.failure)):
             return .none
-        case let .setName(name):
-            let name = name.trimmed()
+        case .binding(\.name):
+            let name = state.name.trimmed()
             state.name = name
             state.acronym = name.acronym()
 
             guard name.lengthOfBytes(using: .utf8) > 0 else { return .none }
 
             return .publisher(
-                environment
-                    .updateProfile(with: state.profileId) { profile in
-                        profile.name = name
-                    }
-                    .map(Action.Response.updateProfileReceived)
-                    .map(Action.response)
-                    .eraseToAnyPublisher
+                updateProfile(with: state.profileId) { profile in
+                    profile.name = name
+                }
+                .map(Action.Response.updateProfileReceived)
+                .map(Action.response)
+                .eraseToAnyPublisher
             )
-        case let .setColor(color):
-            state.color = color
+        case .binding(\.color):
+            let color = state.color.erxColor
             return .publisher(
-                environment
-                    .updateProfile(with: state.profileId) { profile in
-                        profile.color = color.erxColor
-                    }
-                    .map(Action.Response.updateProfileReceived)
-                    .map(Action.response)
-                    .eraseToAnyPublisher
+                updateProfile(with: state.profileId) { profile in
+                    profile.color = color
+                }
+                .map(Action.Response.updateProfileReceived)
+                .map(Action.response)
+                .eraseToAnyPublisher
             )
         case .showDeleteProfileAlert:
             state.destination = .alert(AlertStates.deleteProfile)
             return .none
         case .destination(.presented(.alert(.confirmDeleteProfile))):
             return .publisher(
-                environment
-                    .deleteProfile(with: state.profileId)
+                deleteProfile(with: state.profileId)
                     .map { result in
                         switch result {
                         case .success: return Action.delegate(.close)
@@ -290,55 +267,52 @@ struct EditProfileDomain: ReducerProtocol {
         case .delegate(.logout):
             state.token = nil
             // [REQ:gemSpec_IDP_Frontend:A_20499-01#1] Call the SSO_TOKEN removal upon manual logout
-            // [REQ:BSI-eRp-ePA:O.Tokn_6#3] Call the token removal upon manual logout
             return .run { [profileId = state.profileId] _ in
                 try await profileSecureDataWiper.wipeSecureData(of: profileId).async()
             }
         case .login:
             userDataStore.set(selectedProfileId: state.profileId)
             return .run { _ in
-                await environment.router.routeTo(.mainScreen(.login))
+                await router.routeTo(.mainScreen(.login))
             }
         case .relogin:
             state.token = nil
-            return .run { [profileId = state.profileId, environment = environment] _ in
-                try await environment.profileSecureDataWiper.wipeSecureData(of: profileId).async()
+            return .run { [profileId = state.profileId] _ in
+                try await profileSecureDataWiper.wipeSecureData(of: profileId).async()
 
-                environment.userDataStore.set(selectedProfileId: profileId)
-                await environment.router.routeTo(.mainScreen(.login))
+                userDataStore.set(selectedProfileId: profileId)
+                await router.routeTo(.mainScreen(.login))
             }
-        case .setNavigation(tag: .none):
+        case .resetNavigation:
             state.destination = nil
             return .none
-        case .setNavigation(tag: .token):
+        case .tokenViewTapped:
             if let token = state.token {
-                state.destination = .token(token)
+                state.destination = .token(.init(token: token))
             }
             return .none
-        case .setNavigation(tag: .registeredDevices):
+        case .registeredDevicesTapped:
             state.destination = .registeredDevices(.init(profileId: state.profileId))
             return .none
-        case .setNavigation(tag: .auditEvents):
+        case .auditEventsTapped:
             state.destination = .auditEvents(.init(profileUUID: state.profileId))
             return .none
-        case .setNavigation(tag: .chargeItemList):
+        case .chargeItemListTapped:
             state.destination = .chargeItemList(.init(profileId: state.profileId))
             return .none
-        case .setNavigation(tag: .editProfilePicture):
+        case .editProfilePictureTapped:
             state.destination = .editProfilePicture(.init(
                 profileId: state.profileId,
                 color: state.color,
-                picture: state.image,
-                userImageData: state.userImageData,
+                picture: state.image ?? .none,
+                userImageData: state.userImageData ?? .empty,
                 isFullScreenPresented: true
             ))
             return .none
-        case .setNavigation:
-            return .none
-        case .destination(.presented(.auditEventsAction)),
-             .destination(.presented(.registeredDevicesAction)),
-             .destination(.presented(.chargeItemListAction)),
-             .destination(.presented(.editProfilePictureAction)):
+        case .destination(.presented(.auditEvents)),
+             .destination(.presented(.registeredDevices)),
+             .destination(.presented(.chargeItemList)),
+             .destination(.presented(.editProfilePicture)):
             return .none
         case .showDeleteBiometricPairingAlert:
             state.destination = .alert(AlertStates.deleteBiometricPairing)
@@ -346,7 +320,7 @@ struct EditProfileDomain: ReducerProtocol {
         case .destination(.presented(.alert(.confirmDeleteBiometricPairing))):
             state.destination = nil
             return .publisher(
-                environment.deleteBiometricPairing(for: state.profileId)
+                deleteBiometricPairing(for: state.profileId)
                     .eraseToAnyPublisher
             )
         case let .response(.deleteBiometricPairingReceived(result)):
@@ -355,102 +329,22 @@ struct EditProfileDomain: ReducerProtocol {
                 state.destination = nil
                 let profileId = state.profileId
                 return .run { _ in
-                    try await environment.profileSecureDataWiper.wipeSecureData(of: profileId).async()
+                    try await profileSecureDataWiper.wipeSecureData(of: profileId).async()
                 }
             case let .failure(error):
                 state.destination = .alert(AlertStates.deleteBiometricPairingFailed(with: error))
                 return .none
             }
         case .destination,
+             .binding,
              .delegate:
             return .none
         }
     }
 }
 
-extension EditProfileDomain.State {
-    init(name: String,
-         acronym: String,
-         fullName: String?,
-         insurance: String?,
-         can: String?,
-         insuranceId: String?,
-         image: ProfilePicture?,
-         userImageData _: Data?,
-         color: ProfileColor,
-         profileId: UUID,
-         token: IDPToken? = nil,
-         hasBiometricKeyID: Bool? = nil,
-         destination: EditProfileDomain.Destinations.State? = nil,
-         availableSecurityOptions: [AppSecurityOption] = [],
-         securityOptionsError: AppSecurityManagerError? = nil,
-         insuranceType: Profile.InsuranceType = .unknown) {
-        self.name = name
-        self.acronym = acronym
-        self.fullName = fullName
-        self.insurance = insurance
-        self.can = can
-        self.insuranceId = insuranceId
-        self.image = image
-        self.color = color
-        self.profileId = profileId
-        self.destination = destination
-        self.token = token
-        self.hasBiometricKeyID = hasBiometricKeyID
-        self.availableSecurityOptions = availableSecurityOptions
-        self.securityOptionsError = securityOptionsError
-        self.insuranceType = insuranceType
-    }
-
-    init(
-        profile: UserProfile,
-        routeToChargeItemList: Bool = false
-    ) {
-        profileId = profile.id
-        name = profile.name
-        acronym = profile.name.acronym()
-        fullName = profile.fullName
-        insurance = profile.insurance
-        insuranceId = profile.insuranceId
-        image = profile.image
-        userImageData = profile.userImageData
-        color = profile.color
-        insuranceType = profile.profile.insuranceType
-        self.routeToChargeItemList = routeToChargeItemList
-    }
-
-    enum AuthenticationType: Equatable {
-        case biometric
-        case card
-        case biometryNotEnrolled(String)
-        case none
-    }
-
-    var authType: AuthenticationType {
-        if let error = securityOptionsError {
-            return .biometryNotEnrolled(error.localizedDescriptionWithErrorList)
-        }
-        if hasBiometricKeyID == true {
-            return .biometric
-        }
-        if token != nil {
-            return .card
-        }
-        return .none
-    }
-
-    var showChargeItemsSection: Bool {
-        switch insuranceType {
-        case .pKV: return true
-        case .gKV, .unknown: return false
-        }
-    }
-}
-
-extension EditProfileDomain.Environment {
-    typealias Action = EditProfileDomain.Action
-
-    func subscribeToTokenUpdates(for profileId: UUID) -> EffectTask<Action> {
+extension EditProfileDomain {
+    func subscribeToTokenUpdates(for profileId: UUID) -> Effect<Action> {
         .publisher(
             userSessionProvider.userSession(for: profileId).secureUserStore.token
                 .receive(on: schedulers.main.animation())
@@ -460,7 +354,7 @@ extension EditProfileDomain.Environment {
         )
     }
 
-    func subscribeToCanUpdates(with profileId: UUID) -> EffectTask<Action> {
+    func subscribeToCanUpdates(with profileId: UUID) -> Effect<Action> {
         .publisher(
             userSessionProvider.userSession(for: profileId).secureUserStore.can
                 .receive(on: schedulers.main.animation())
@@ -470,7 +364,7 @@ extension EditProfileDomain.Environment {
         )
     }
 
-    func subscribeToBiometricKeyIDUpdates(for profileId: UUID) -> EffectTask<Action> {
+    func subscribeToBiometricKeyIDUpdates(for profileId: UUID) -> Effect<Action> {
         .publisher(
             userSessionProvider.userSession(for: profileId).secureUserStore.keyIdentifier
                 .receive(on: schedulers.main.animation())
@@ -617,7 +511,7 @@ extension Publisher where Failure == LocalStoreError, Output == Bool {
 
 extension EditProfileDomain {
     enum AlertStates {
-        typealias Action = EditProfileDomain.Destinations.Action.Alert
+        typealias Action = EditProfileDomain.Destination.Alert
 
         static let deleteProfile: ErpAlertState<Action> = {
             .init(
@@ -680,3 +574,5 @@ extension EditProfileDomain {
         }
     }
 }
+
+// swiftlint:enable type_body_length

@@ -22,47 +22,27 @@ import eRpKit
 import IDP
 import SwiftUI
 
-struct AppStartDomain: ReducerProtocol {
+@Reducer
+struct AppStartDomain {
     typealias Store = StoreOf<Self>
 
-    struct Destination: ReducerProtocol {
-        enum State: Equatable {
-            case loading
-            case onboarding(OnboardingDomain.State)
-            case app(AppDomain.State)
-        }
-
-        enum Action: Equatable {
-            case app(AppDomain.Action)
-            case onboarding(OnboardingDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.onboarding,
-                action: /Action.onboarding
-            ) {
-                OnboardingDomain()
-            }
-
-            Scope(
-                state: /State.app,
-                action: /Action.app
-            ) {
-                AppDomain()
-            }
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        case loading
+        case onboarding(OnboardingDomain)
+        case app(AppDomain)
     }
 
+    @ObservableState
     struct State: Equatable {
         var destination: Destination.State = .loading
     }
 
     enum Action: Equatable {
-        case destination(Destination.Action)
-
         case refreshOnboardingState
         case refreshOnboardingStateReceived(OnboardingDomain.Composition)
+
+        case destination(Destination.Action)
     }
 
     @Dependency(\.userSession) var userSession: UserSession
@@ -70,84 +50,72 @@ struct AppStartDomain: ReducerProtocol {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
 
-    var body: some ReducerProtocol<State, Action> {
-        Scope(
-            state: \.destination,
-            action: /Action.destination
-        ) {
-            Destination()
+    var body: some Reducer<State, Action> {
+        Scope(state: \.destination, action: \.destination) {
+            Reduce(Destination.body)
         }
 
-        Reduce(self.core)
-    }
-
-    // swiftlint:disable:next function_body_length
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
-        switch action {
-        case .destination(.onboarding(.dismissOnboarding)):
-            state.destination = .app(
-                AppDomain.State(
-                    destination: .main,
-                    subdomains: .init(
+        Reduce { state, action in
+            switch action {
+            case .destination(.onboarding(.dismissOnboarding)):
+                state.destination = .app(
+                    AppDomain.State(
+                        destination: .main,
                         main: .init(
-                            prescriptionListState: .init(),
-                            horizontalProfileSelectionState: .init()
+                            prescriptionListState: PrescriptionListDomain.State(),
+                            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                         ),
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
                         settings: .init(
                             isDemoMode: userSession.isDemoMode
-                        )
-                    ),
-                    unreadOrderMessageCount: 0,
-                    isDemoMode: false
+                        ),
+                        unreadOrderMessageCount: 0,
+                        isDemoMode: false
+                    )
                 )
-            )
-            return .none
-        case .destination:
-            return .none
-        case .refreshOnboardingState:
-            return .publisher(
-                userDataStore.onboardingVersion
-                    .first()
-                    .receive(on: schedulers.main)
-                    .map(OnboardingDomain.Composition.init)
-                    .map(AppStartDomain.Action.refreshOnboardingStateReceived)
-                    .eraseToAnyPublisher
-            )
-
-        case let .refreshOnboardingStateReceived(composition):
-            guard composition.isEmpty else {
-                state.destination = .onboarding(OnboardingDomain.State(composition: composition))
                 return .none
-            }
-            state.destination = .app(
-                AppDomain.State(
-                    destination: .main,
-                    subdomains: .init(
+            case .refreshOnboardingState:
+                return .publisher(
+                    userDataStore.onboardingVersion
+                        .first()
+                        .receive(on: schedulers.main)
+                        .map(OnboardingDomain.Composition.init)
+                        .map(AppStartDomain.Action.refreshOnboardingStateReceived)
+                        .eraseToAnyPublisher
+                )
+
+            case let .refreshOnboardingStateReceived(composition):
+                guard composition.isEmpty else {
+                    state.destination = .onboarding(OnboardingDomain.State(composition: composition))
+                    return .none
+                }
+                state.destination = .app(
+                    AppDomain.State(
+                        destination: .main,
                         main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
-                        settings: .init(
-                            isDemoMode: userSession.isDemoMode
-                        )
-                    ),
-                    unreadOrderMessageCount: 0,
-                    isDemoMode: false
+                        settings: .init(isDemoMode: userSession.isDemoMode),
+                        unreadOrderMessageCount: 0,
+                        isDemoMode: false
+                    )
                 )
-            )
-            return .none
+                return .none
+            case .destination:
+                return .none
+            }
         }
     }
 
-    static let router: (Endpoint) -> EffectTask<Action> = { route in
+    static let router: (Endpoint) -> Effect<Action> = { route in
         switch route {
         case let .settings(endpoint):
             switch endpoint {
             case .unlockCard:
                 return .run { send in
                     // reset destination of settings tab
-                    await send(.destination(.app(.subdomains(.settings(action: .popToRootView)))))
+                    await send(.destination(.app(.settings(action: .popToRootView))))
                     // wait for running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
@@ -156,7 +124,7 @@ struct AppStartDomain: ReducerProtocol {
                     // set actual destination in settings tab
                     await send(
                         .destination(
-                            .app(.subdomains(.settings(action: .setNavigation(tag: .healthCardPasswordUnlockCard))))
+                            .app(.settings(action: .tappedUnlockCard))
                         )
                     )
                 }
@@ -165,7 +133,7 @@ struct AppStartDomain: ReducerProtocol {
                 case let .chargeItemListFor(profileId):
                     return .run { send in
                         // reset destination of settings tab
-                        await send(.destination(.app(.subdomains(.settings(action: .popToRootView)))))
+                        await send(.destination(.app(.settings(action: .popToRootView))))
                         // wait for running effects to finish
                         @Dependency(\.schedulers) var schedulers
                         try await schedulers.main.sleep(for: 0.5)
@@ -174,7 +142,7 @@ struct AppStartDomain: ReducerProtocol {
                         // set actual destination in settings tab
                         await send(
                             .destination(
-                                .app(.subdomains(.settings(action: .showChargeItemListFor(profileId: profileId))))
+                                .app(.settings(action: .showChargeItemListFor(profileId: profileId)))
                             )
                         )
                     }
@@ -182,7 +150,7 @@ struct AppStartDomain: ReducerProtocol {
             case .medicationSchedule:
                 return .run { send in
                     // reset destination of settings tab
-                    await send(.destination(.app(.subdomains(.settings(action: .popToRootView)))))
+                    await send(.destination(.app(.settings(action: .popToRootView))))
                     // wait for running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
@@ -190,12 +158,12 @@ struct AppStartDomain: ReducerProtocol {
                     await send(.destination(.app(.setNavigation(.settings))))
                     // set actual destination in settings tab
                     await send(
-                        .destination(.app(.subdomains(.settings(action: .setNavigation(tag: .medicationReminderList)))))
+                        .destination(.app(.settings(action: .showMedicationReminderList)))
                     )
                 }
             default:
                 return .run { send in
-                    await send(.destination(.app(.subdomains(.settings(action: .popToRootView)))))
+                    await send(.destination(.app(.settings(action: .popToRootView))))
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     await send(.destination(.app(.setNavigation(.settings))))
@@ -205,19 +173,19 @@ struct AppStartDomain: ReducerProtocol {
         case .scanner:
             return .run { send in
                 // reset destination of settings tab
-                await send(.destination(.app(.subdomains(.main(action: .setNavigation(tag: nil))))))
+                await send(.destination(.app(.main(action: .setNavigation(tag: .none)))))
                 // wait for possible running effects to finish
                 @Dependency(\.schedulers) var schedulers
                 try await schedulers.main.sleep(for: 0.5)
                 // switch to main tab
                 await send(.destination(.app(.setNavigation(.main))))
                 // set actual destination in main tab
-                await send(.destination(.app(.subdomains(.main(action: .showScannerView)))))
+                await send(.destination(.app(.main(action: .showScannerView))))
             }
         case .orders:
             return .run { send in
                 // reset destination of orders tab
-                await send(.destination(.app(.subdomains(.orders(action: .setNavigation(tag: nil))))))
+                await send(.destination(.app(.orders(action: .resetNavigation))))
                 // wait for possible running effects to finish
                 @Dependency(\.schedulers) var schedulers
                 try await schedulers.main.sleep(for: 0.5)
@@ -229,31 +197,33 @@ struct AppStartDomain: ReducerProtocol {
             case let .medicationReminder(scheduleEntries):
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.subdomains(.main(action: .setNavigation(tag: nil))))))
+                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
                     await send(.destination(.app(.setNavigation(.main))))
                     // set actual destination in main tab
-                    await send(.destination(.app(.subdomains(.main(action: .showMedicationReminder(scheduleEntries))))))
+                    await send(
+                        .destination(.app(.main(action: .showMedicationReminder(scheduleEntries))))
+                    )
                 }
             case .login:
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.subdomains(.main(action: .setNavigation(tag: nil))))))
+                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
                     await send(.destination(.app(.setNavigation(.main))))
                     // set actual destination in main tab
-                    await send(.destination(.app(.subdomains(.main(action: .prescriptionList(action: .refresh))))))
+                    await send(.destination(.app(.main(action: .prescriptionList(action: .refresh)))))
                 }
             default:
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.subdomains(.main(action: .setNavigation(tag: nil))))))
+                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
@@ -267,37 +237,37 @@ struct AppStartDomain: ReducerProtocol {
             case "/extauth":
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.subdomains(.main(action: .setNavigation(tag: nil))))))
+                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
                     await send(.destination(.app(.setNavigation(.main))))
                     // set actual destination in main tab
-                    await send(.destination(.app(.subdomains(.main(action: .externalLogin(url))))))
+                    await send(.destination(.app(.main(action: .externalLogin(url)))))
                 }
             case "/pharmacies/index.html",
                  "/pharmacies":
                 return .run { send in
                     // reset destination of pharmacy tab
-                    await send(.destination(.app(.subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))))
+                    await send(.destination(.app(.pharmacySearch(action: .resetNavigation))))
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     await send(.destination(.app(.setNavigation(.pharmacySearch))))
                     // set actual destination in pharmacy tab
-                    await send(.destination(.app(.subdomains(.pharmacySearch(action: .universalLink(url))))))
+                    await send(.destination(.app(.pharmacySearch(action: .universalLink(url)))))
                 }
             case "/prescription":
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.subdomains(.main(action: .setNavigation(tag: nil))))))
+                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
                     await send(.destination(.app(.setNavigation(.main))))
                     // set actual destination in main tab
-                    await send(.destination(.app(.subdomains(.main(action: .importTaskByUrl(url))))))
+                    await send(.destination(.app(.main(action: .importTaskByUrl(url)))))
                 }
             default:
                 return .none

@@ -19,6 +19,7 @@
 import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
+import SwiftUIIntrospect
 
 struct DemoBannerView<Content: View>: View {
     var visible = true
@@ -74,8 +75,7 @@ struct DemoBannerViewModifier<InnerContent: View>: ViewModifier {
                 turnDemoModeOffCallback: turnDemoModeOffCallback
             )
             content
-                .introspectNavigationController { navigationController in
-
+                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17)) { navigationController in
                     let appearance = UINavigationBarAppearance()
                     appearance.configureWithOpaqueBackground()
                     if visible {

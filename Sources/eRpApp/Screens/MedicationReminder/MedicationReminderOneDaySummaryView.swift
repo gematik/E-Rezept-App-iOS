@@ -19,69 +19,70 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import Perception
 import SwiftUI
 
 struct MedicationReminderOneDaySummaryView: View {
-    var store: StoreOf<MedicationReminderOneDaySummaryDomain>
-    @ObservedObject var viewStore: ViewStoreOf<MedicationReminderOneDaySummaryDomain>
+    @Perception.Bindable var store: StoreOf<MedicationReminderOneDaySummaryDomain>
 
     @ScaledMetric var headerPlusBottomPlusSomeHeight = 320 // use this for limiting the ScrollView's height
 
     init(store: StoreOf<MedicationReminderOneDaySummaryDomain>) {
         self.store = store
-        viewStore = ViewStore(store) { $0 }
     }
 
     @Dependency(\.uiDateFormatter) var dateFormatter
 
     var body: some View {
-        VStack(spacing: 40) {
-            HeaderView { viewStore.send(.closeButtonTapped) }
+        WithPerceptionTracking {
+            VStack(spacing: 40) {
+                HeaderView { store.send(.closeButtonTapped) }
 
-            if viewStore.medicationSchedules.isEmpty {
-                EmptyMedicationEvent()
-                    .padding(.horizontal)
-            } else {
-                ScrollView {
-                    VStack(spacing: 40) {
-                        ForEach(viewStore.medicationSchedules) { (schedule: MedicationSchedule) in
-                            VStack(spacing: 8) {
-                                Text(schedule.title)
-                                    .font(.headline)
-                                    .fontWeight(.bold)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                if store.medicationSchedules.isEmpty {
+                    EmptyMedicationEvent()
+                        .padding(.horizontal)
+                } else {
+                    ScrollView {
+                        VStack(spacing: 40) {
+                            ForEach(store.medicationSchedules) { (schedule: MedicationSchedule) in
+                                VStack(spacing: 8) {
+                                    Text(schedule.title)
+                                        .font(.headline)
+                                        .fontWeight(.bold)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                                ForEach(schedule.entries) { (entry: MedicationSchedule.Entry) in
-                                    let formattedHourMinute =
-                                        "\(entry.hourComponent.padWithLeadingZero):" +
-                                        "\(entry.minuteComponent.padWithLeadingZero)"
-                                    let dayTime = MedicationEvent.Daytime.from(hourComponent: entry.hourComponent)
-                                    MedicationEvent(
-                                        daytime: dayTime,
-                                        text: "\(formattedHourMinute) \(entry.amount) \(entry.dosageForm)"
-                                    )
+                                    ForEach(schedule.entries) { (entry: MedicationSchedule.Entry) in
+                                        let formattedHourMinute =
+                                            "\(entry.hourComponent.padWithLeadingZero):" +
+                                            "\(entry.minuteComponent.padWithLeadingZero)"
+                                        let dayTime = MedicationEvent.Daytime.from(hourComponent: entry.hourComponent)
+                                        MedicationEvent(
+                                            daytime: dayTime,
+                                            text: "\(formattedHourMinute) \(entry.amount) \(entry.dosageForm)"
+                                        )
+                                    }
                                 }
                             }
                         }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
+                    .frame(maxHeight: UIScreen.main.bounds.size.height - self.headerPlusBottomPlusSomeHeight)
                 }
-                .frame(maxHeight: UIScreen.main.bounds.size.height - self.headerPlusBottomPlusSomeHeight)
-            }
 
-            Button {
-                viewStore.send(.goToMedicationReminderListButtonTapped)
-            } label: {
-                Text(L10n.medReminderBtnOneDaySummaryGoToRemindersOverviewButton)
-                    .fontWeight(.semibold)
+                Button {
+                    store.send(.goToMedicationReminderListButtonTapped)
+                } label: {
+                    Text(L10n.medReminderBtnOneDaySummaryGoToRemindersOverviewButton)
+                        .fontWeight(.semibold)
+                }
+                .foregroundColor(Colors.primary600)
+                .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnOneDaySummaryGoToRemindersOverviewButton)
             }
-            .foregroundColor(Colors.primary600)
-            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnOneDaySummaryGoToRemindersOverviewButton)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Colors.systemBackground.ignoresSafeArea())
-        .onAppear {
-            viewStore.send(.onAppear)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .background(Colors.systemBackground.ignoresSafeArea())
+            .onAppear {
+                store.send(.onAppear)
+            }
         }
     }
 

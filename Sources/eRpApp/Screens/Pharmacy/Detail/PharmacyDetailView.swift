@@ -19,177 +19,181 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
-import Introspect
 import MapKit
+import Perception
 import SwiftUI
+import SwiftUIIntrospect
 
 struct PharmacyDetailView: View {
-    let store: PharmacyDetailDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, PharmacyDetailDomain.Action>
+    @Perception.Bindable var store: StoreOf<PharmacyDetailDomain>
     let isRedeemRecipe: Bool
 
-    init(store: PharmacyDetailDomain.Store, isRedeemRecipe: Bool = true) {
+    init(store: StoreOf<PharmacyDetailDomain>, isRedeemRecipe: Bool = true) {
         self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
         self.isRedeemRecipe = isRedeemRecipe
-    }
-
-    struct ViewState: Equatable {
-        let hasTasks: Bool
-        let pharmacy: PharmacyLocation
-        let reservationService: RedeemServiceOption
-        let deliveryService: RedeemServiceOption
-        let shipmentService: RedeemServiceOption
-        let openingHours: [PharmacyLocationViewModel.OpeningHoursDay]
-        let isFavorite: Bool
-
-        init(state: PharmacyDetailDomain.State) {
-            hasTasks = !state.erxTasks.isEmpty
-            pharmacy = state.pharmacy
-            reservationService = state.reservationService
-            deliveryService = state.deliveryService
-            shipmentService = state.shipmentService
-            openingHours = state.pharmacyViewModel.openingHours
-            isFavorite = state.pharmacy.isFavorite
-        }
     }
 
     static let uiTestsRunning = ProcessInfo.processInfo.environment["UITEST.SCENARIO_NAME"] != nil
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(viewStore.pharmacy.name ?? L10n.phaDetailTxtSubtitleFallback.text)
-                    .foregroundColor(Colors.systemLabel)
-                    .font(.title2)
-                    .bold()
-                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailTxtSubtitle)
+        WithPerceptionTracking {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(store.pharmacy.name ?? L10n.phaDetailTxtSubtitleFallback.text)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.title2)
+                        .bold()
+                        .accessibility(identifier: A11y.pharmacyDetail.phaDetailTxtSubtitle)
 
-                if let address = viewStore.pharmacy.address?.fullAddress {
-                    TertiaryButton(text: LocalizedStringKey(address),
-                                   isEnabled: viewStore.pharmacy.canBeDisplayedInMap,
-                                   imageName: SFSymbolName.map) {
-                        viewStore.send(.openMapApp)
+                    if let address = store.pharmacy.address?.fullAddress {
+                        TertiaryButton(text: LocalizedStringKey(address),
+                                       isEnabled: store.pharmacy.canBeDisplayedInMap,
+                                       imageName: SFSymbolName.map) {
+                            store.send(.openMapApp)
+                        }
+                        .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
+                        .padding(.bottom, 24)
                     }
-                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
-                    .padding(.bottom, 24)
-                }
 
-                // TODO: this is currently wrong but necessary to showcase the tests swiftlint:disable:this todo
-                if viewStore.hasTasks || PharmacyDetailView.uiTestsRunning {
-                    VStack(spacing: 8) {
-                        if viewStore.reservationService.hasService {
-                            if viewStore.reservationService.hasServiceAfterLogin {
-                                PrimaryTextButtonBorder(
-                                    text: L10n.phaDetailBtnLocation.key,
-                                    note: L10n.phaDetailBtnLoginNote.key
-                                ) {
-                                    viewStore.send(.showPharmacyRedeemOption(.onPremise))
-                                }
-                                .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnPickupViaLogin)
-                            } else {
-                                DefaultTextButton(text: L10n.phaDetailBtnLocation,
-                                                  a11y: A11y.pharmacyDetail.phaDetailBtnPickup,
-                                                  style: .primary) {
-                                    viewStore.send(.showPharmacyRedeemOption(.onPremise))
+                    // TODO: this is currently wrong but necessary to showcase the tests swiftlint:disable:this todo
+                    if !store.erxTasks.isEmpty || PharmacyDetailView.uiTestsRunning {
+                        VStack(spacing: 8) {
+                            if store.reservationService.hasService {
+                                if store.reservationService.hasServiceAfterLogin {
+                                    PrimaryTextButtonBorder(
+                                        text: L10n.phaDetailBtnLocation.key,
+                                        note: L10n.phaDetailBtnLoginNote.key
+                                    ) {
+                                        store.send(.showPharmacyRedeemOption(.onPremise))
+                                    }
+                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnPickupViaLogin)
+                                } else {
+                                    DefaultTextButton(text: L10n.phaDetailBtnLocation,
+                                                      a11y: A11y.pharmacyDetail.phaDetailBtnPickup,
+                                                      style: .primary) {
+                                        store.send(.showPharmacyRedeemOption(.onPremise))
+                                    }
                                 }
                             }
-                        }
-                        if viewStore.deliveryService.hasService {
-                            if viewStore.deliveryService.hasServiceAfterLogin {
-                                PrimaryTextButtonBorder(
-                                    text: L10n.phaDetailBtnHealthcareService.key,
-                                    note: L10n.phaDetailBtnLoginNote.key
-                                ) {
-                                    viewStore.send(.showPharmacyRedeemOption(.delivery))
-                                }
-                                .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnDeliveryViaLogin)
-                            } else {
-                                DefaultTextButton(
-                                    text: L10n.phaDetailBtnHealthcareService,
-                                    a11y: A11y.pharmacyDetail.phaDetailBtnDelivery,
-                                    style: viewStore.reservationService.hasService ? .secondary : .primary
-                                ) {
-                                    viewStore.send(.showPharmacyRedeemOption(.delivery))
+                            if store.deliveryService.hasService {
+                                if store.deliveryService.hasServiceAfterLogin {
+                                    PrimaryTextButtonBorder(
+                                        text: L10n.phaDetailBtnHealthcareService.key,
+                                        note: L10n.phaDetailBtnLoginNote.key
+                                    ) {
+                                        store.send(.showPharmacyRedeemOption(.delivery))
+                                    }
+                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnDeliveryViaLogin)
+                                } else {
+                                    DefaultTextButton(
+                                        text: L10n.phaDetailBtnHealthcareService,
+                                        a11y: A11y.pharmacyDetail.phaDetailBtnDelivery,
+                                        style: store.reservationService.hasService ? .secondary : .primary
+                                    ) {
+                                        store.send(.showPharmacyRedeemOption(.delivery))
+                                    }
                                 }
                             }
-                        }
 
-                        if viewStore.shipmentService.hasService {
-                            if viewStore.shipmentService.hasServiceAfterLogin {
-                                PrimaryTextButtonBorder(
-                                    text: L10n.phaDetailBtnOrganization.key,
-                                    note: L10n.phaDetailBtnLoginNote.key
-                                ) {
-                                    viewStore.send(.showPharmacyRedeemOption(.shipment))
-                                }
-                                .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnShipmentViaLogin)
-                            } else {
-                                DefaultTextButton(
-                                    text: L10n.phaDetailBtnOrganization,
-                                    a11y: A11y.pharmacyDetail.phaDetailBtnShipment,
-                                    style: (!viewStore.reservationService.hasService &&
-                                        !viewStore.deliveryService.hasService) ? .primary : .secondary
-                                ) {
-                                    viewStore.send(.showPharmacyRedeemOption(.shipment))
+                            if store.shipmentService.hasService {
+                                if store.shipmentService.hasServiceAfterLogin {
+                                    PrimaryTextButtonBorder(
+                                        text: L10n.phaDetailBtnOrganization.key,
+                                        note: L10n.phaDetailBtnLoginNote.key
+                                    ) {
+                                        store.send(.showPharmacyRedeemOption(.shipment))
+                                    }
+                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnShipmentViaLogin)
+                                } else {
+                                    DefaultTextButton(
+                                        text: L10n.phaDetailBtnOrganization,
+                                        a11y: A11y.pharmacyDetail.phaDetailBtnShipment,
+                                        style: (!store.reservationService.hasService &&
+                                            !store.deliveryService.hasService) ? .primary : .secondary
+                                    ) {
+                                        store.send(.showPharmacyRedeemOption(.shipment))
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                if isRedeemRecipe {
-                    HintView<PharmacyDetailDomain.Action>(
-                        hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
-                                   message: L10n.phaDetailHintMessage.text,
-                                   image: .init(name: Asset.Illustrations.infoLogo.name))
+                    if isRedeemRecipe {
+                        HintView<PharmacyDetailDomain.Action>(
+                            hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
+                                       message: L10n.phaDetailHintMessage.text,
+                                       image: .init(name: Asset.Illustrations.infoLogo.name))
+                        )
+                        .padding(.top, 12)
+                        .padding(.bottom, 32)
+                    }
+
+                    if !store.state.pharmacy.hoursOfOperation.isEmpty {
+                        OpeningHoursView(dailyOpenHours: store.pharmacyViewModel.openingHours)
+                            .padding(.bottom, 8)
+                    }
+
+                    ContactView(store: store)
+
+                    Footer()
+                        .padding(.top, 4)
+
+                    NavigationLink(
+                        item: $store.scope(
+                            state: \.destination?.redeemViaAVS,
+                            action: \.destination.redeemViaAVS
+                        )
+                    ) { store in
+                        PharmacyRedeemView(store: store)
+                    } label: {
+                        EmptyView()
+                    }
+                    .accessibility(hidden: true)
+                    .hidden()
+
+                    NavigationLink(
+                        item: $store.scope(
+                            state: \.destination?.redeemViaErxTaskRepository,
+                            action: \.destination.redeemViaErxTaskRepository
+                        )
+                    ) { store in
+                        PharmacyRedeemView(store: store)
+                    } label: {
+                        EmptyView()
+                    }
+                    .accessibility(hidden: true)
+                    .hidden()
+                }.padding()
+            }
+            .task {
+                await store.send(.loadCurrentProfile).finish()
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(
+                        action: { store.send(.toggleIsFavorite) },
+                        label: {
+                            Image(systemName: store.pharmacy.isFavorite ? SFSymbolName.starFill : SFSymbolName.star)
+                                .foregroundColor(Colors.starYellow)
+                        }
                     )
-                    .padding(.top, 12)
-                    .padding(.bottom, 32)
                 }
-
-                if !viewStore.state.pharmacy.hoursOfOperation.isEmpty {
-                    OpeningHoursView(dailyOpenHours: viewStore.openingHours)
-                        .padding(.bottom, 8)
-                }
-
-                ContactView(store: store)
-
-                Footer()
-                    .padding(.top, 4)
-
-                RedeemViewViaErxTaskRepoNavigation(store: store).accessibility(hidden: true)
-                RedeemViewViaAVSNavigation(store: store).accessibility(hidden: true)
-            }.padding()
-        }
-        .task {
-            await viewStore.send(.loadCurrentProfile).finish()
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(
-                    action: { viewStore.send(.toggleIsFavorite) },
-                    label: {
-                        Image(systemName: viewStore.isFavorite ? SFSymbolName.starFill : SFSymbolName.star)
-                            .foregroundColor(Colors.starYellow)
-                    }
-                )
-            }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if isRedeemRecipe {
-                    NavigationBarCloseItem {
-                        viewStore.send(.delegate(.close))
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    if isRedeemRecipe {
+                        NavigationBarCloseItem {
+                            store.send(.delegate(.close))
+                        }
                     }
                 }
             }
-        }
-        .introspectNavigationController { navigationController in
-            let navigationBar = navigationController.navigationBar
-            navigationBar.barTintColor = UIColor(Colors.systemBackground)
-            let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-            navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-            navigationBar.standardAppearance = navigationBarAppearance
+            .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17)) { navigationController in
+                let navigationBar = navigationController.navigationBar
+                navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                let navigationBarAppearance = UINavigationBarAppearance()
+                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                navigationBar.standardAppearance = navigationBarAppearance
+            }
         }
     }
 }
@@ -242,14 +246,15 @@ extension PharmacyDetailView {
     }
 
     struct ContactView: View {
-        let store: PharmacyDetailDomain.Store
+        @Perception.Bindable var store: StoreOf<PharmacyDetailDomain>
+
         var body: some View {
-            store.withState { state in
+            WithPerceptionTracking {
                 VStack {
                     SectionHeaderView(text: L10n.phaDetailContact,
                                       a11y: A11y.pharmacyDetail.phaDetailContact)
 
-                    if let phone = state.pharmacy.telecom?.phone {
+                    if let phone = store.pharmacy.telecom?.phone {
                         Button(action: { store.send(.openPhoneApp) }, label: {
                             DetailedIconCellView(title: L10n.phaDetailPhone,
                                                  value: phone,
@@ -257,7 +262,7 @@ extension PharmacyDetailView {
                                                  a11y: A11y.pharmacyDetail.phaDetailPhone)
                         })
                     }
-                    if let email = state.pharmacy.telecom?.email {
+                    if let email = store.pharmacy.telecom?.email {
                         Button(action: { store.send(.openMailApp) }, label: {
                             DetailedIconCellView(title: L10n.phaDetailMail,
                                                  value: email,
@@ -265,7 +270,7 @@ extension PharmacyDetailView {
                                                  a11y: A11y.pharmacyDetail.phaDetailMail)
                         })
                     }
-                    if let web = state.pharmacy.telecom?.web {
+                    if let web = store.pharmacy.telecom?.web {
                         Button(action: { store.send(.openBrowserApp) }, label: {
                             DetailedIconCellView(title: L10n.phaDetailWeb,
                                                  value: web,
@@ -274,42 +279,6 @@ extension PharmacyDetailView {
                         })
                     }
                 }
-            }
-        }
-    }
-
-    struct RedeemViewViaAVSNavigation: View {
-        let store: PharmacyDetailDomain.Store
-        var body: some View {
-            WithViewStore(store, observe: \.destination?.tag) { viewStore in
-                NavigationLinkStore(
-                    store.scope(state: \.$destination, action: PharmacyDetailDomain.Action.destination),
-                    state: /PharmacyDetailDomain.Destinations.State.redeemViaAVS,
-                    action: PharmacyDetailDomain.Destinations.Action.pharmacyRedeemViaAVS(action:),
-                    onTap: { viewStore.send(.setNavigation(tag: .redeemViaAVS)) },
-                    destination: PharmacyRedeemView.init(store:),
-                    label: {}
-                )
-                .hidden()
-                .accessibility(hidden: true)
-            }
-        }
-    }
-
-    struct RedeemViewViaErxTaskRepoNavigation: View {
-        let store: PharmacyDetailDomain.Store
-        var body: some View {
-            WithViewStore(store, observe: \.destination?.tag) { viewStore in
-                NavigationLinkStore(
-                    store.scope(state: \.$destination, action: PharmacyDetailDomain.Action.destination),
-                    state: /PharmacyDetailDomain.Destinations.State.redeemViaErxTaskRepository,
-                    action: PharmacyDetailDomain.Destinations.Action.pharmacyRedeemViaErxTaskRepository(action:),
-                    onTap: { viewStore.send(.setNavigation(tag: .redeemViaErxTaskRepository)) },
-                    destination: PharmacyRedeemView.init(store:),
-                    label: {}
-                )
-                .hidden()
-                .accessibility(hidden: true)
             }
         }
     }
@@ -358,7 +327,7 @@ struct PharmacyDetailView_Previews: PreviewProvider {
 
         NavigationView {
             PharmacyDetailView(
-                store: PharmacyDetailDomain.Store(
+                store: StoreOf<PharmacyDetailDomain>(
                     initialState: PharmacyDetailDomain.State(
                         erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
                         pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
@@ -371,7 +340,7 @@ struct PharmacyDetailView_Previews: PreviewProvider {
 
         NavigationView {
             PharmacyDetailView(
-                store: PharmacyDetailDomain.Store(
+                store: StoreOf<PharmacyDetailDomain>(
                     initialState: .init(
                         erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
                         pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel

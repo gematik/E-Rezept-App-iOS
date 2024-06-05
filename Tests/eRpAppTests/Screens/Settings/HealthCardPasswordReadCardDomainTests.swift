@@ -69,6 +69,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
         await sut.send(.destination(.presented(.alert(.settings)))) {
             $0.destination = nil
         }
+        await uiScheduler.run()
         await sut.receive(.delegate(.navigateToSettings))
     }
 
@@ -90,6 +91,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
         await sut.send(.destination(.presented(.alert(.settings)))) {
             $0.destination = nil
         }
+        await uiScheduler.run()
         await sut.receive(.delegate(.navigateToSettings))
     }
 
@@ -111,6 +113,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
         await sut.send(.destination(.presented(.alert(.settings)))) {
             $0.destination = nil
         }
+        await uiScheduler.run()
         await sut.receive(.delegate(.navigateToSettings))
     }
 }

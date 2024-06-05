@@ -114,7 +114,7 @@ extension PharmacySearchDomain {
             referenceDateForOpenHours: openHoursReferenceDate
         )
 
-        static func storeOf(_ state: State) -> Store {
+        static func storeOf(_ state: State) -> StoreOf<PharmacySearchDomain> {
             Store(
                 initialState: state
             ) {

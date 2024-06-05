@@ -153,8 +153,8 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let type = try container.decode(String.self, forKey: .type)
-        let value = try? container.decode(String.self, forKey: .value)
+        _ = try container.decode(String.self, forKey: .type)
+        _ = try? container.decode(String.self, forKey: .value)
 
         self = .internalError(.noService)
     }

@@ -21,9 +21,11 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-struct DeviceSecurityDomain: ReducerProtocol {
+@Reducer
+struct DeviceSecurityDomain {
     typealias Store = StoreOf<Self>
 
+    @ObservableState
     struct State: Equatable {
         let warningType: DeviceSecurityWarningType
     }
@@ -41,20 +43,20 @@ struct DeviceSecurityDomain: ReducerProtocol {
 
     @Dependency(\.deviceSecurityManager) var deviceSecurityManager: DeviceSecurityManager
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
     }
 
-    private func core(state _: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state _: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .acceptRootedDevice:
             deviceSecurityManager.set(ignoreRootedDeviceWarningForSession: true)
-            return EffectTask.send(.delegate(.close))
+            return Effect.send(.delegate(.close))
         case let .acceptMissingPin(permanently):
             deviceSecurityManager.set(ignoreDeviceSystemPinWarningForSession: true)
             deviceSecurityManager
                 .set(ignoreDeviceSystemPinWarningPermanently: permanently)
-            return EffectTask.send(.delegate(.close))
+            return Effect.send(.delegate(.close))
         case .delegate(.close):
             // Handled by parent domain
             return .none

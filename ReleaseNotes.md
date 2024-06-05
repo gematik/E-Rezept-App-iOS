@@ -1,3 +1,51 @@
+# Release 1.23.1
+
+### added (12 changes)
+
+ - Add alert before deleting prescriptions with charge item
+ - Add Switch to map from searchresult
+ - Add waiting status for remote prescription
+ - Add uitests for ChangePasswordView
+ - Add and improve AFO references and generation script
+ - Add a help screen for GID login
+ - Add uitests for prescription detail testing aut idem
+ - Add auto trigger for biometrics when password is also setup
+ - Add share functionallity to prescription detail
+ - Add item based backport for NavigationLink supporting onTap
+ - Add language settings button to settings
+ - Add Emoji and Memoji (via Stickers) support for profile avatars
+
+### internal (7 changes)
+
+ - Refactor environment configuration of App/IntergrationTests
+ - Replace zxingify-objc dependency with zxing-cpp
+ - Change SAST and SCA to Snyk
+ - Update to SwiftUI Introspect v1.1.3
+ - Fix warnings with unknown and default enum cases
+ - Add automated E2E Test builds to Release and MR builds
+ - Automate Health Insurance contact list pulling
+
+### removed (1 change)
+
+ - Remove TLS Pinning in favor of Certificate Transparency (agreed upon with BSI)
+
+### fixed (5 changes)
+
+ - Fix localization for toasts
+ - Fix snapshot tests using current date instead of static one
+ - Fix additional string localizations
+ - Use correct Dates for MVO
+ - Fix manual logout sometimes not removing biometrics.
+
+### changed (6 changes)
+
+ - Upgrade Swift-OpenSSL dependency (OpenSSL 3.2.1)
+ - Avoid reading the Authentication certificate from HealthCard when the one read...
+ - Add extra aut idem entry to PrescriptionDetailView
+ - Bump TCA Version to 1.9.1
+ - Add password change option in security settings
+ - Main Screen NewProfile and EditProfileName
+
 # Release 1.22.1
 
 ### internal (6 changes)

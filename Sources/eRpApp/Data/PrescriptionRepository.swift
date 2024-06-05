@@ -143,7 +143,7 @@ class DefaultPrescriptionRepository: PrescriptionRepository, ActivityIndicating 
             .isAuthenticatedOrAuthenticate()
             .first()
             .flatMap { isAuthenticated in
-                // [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
+                // [REQ:gemSpec_eRp_FdV:A_20167-02#2,A_20172] no token/not authorized, show authenticator module
                 if Result.success(false) == isAuthenticated {
                     return Just(PrescriptionRepositoryLoadRemoteResult.authenticationRequired)
                         .setFailureType(to: PrescriptionRepositoryError.self)

@@ -33,7 +33,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         SnapshotHelper.fixOffsetProblem()
     }
 
-    let debugStore = DebugDomain.Store(
+    let debugStore = StoreOf<DebugDomain>(
         initialState: DebugDomain.State(trackingOptIn: true)
     ) {
         DebugDomain()
@@ -70,7 +70,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
             ),
         ]
 
-        let sut = SettingsView(store: SettingsDomain.Store(
+        let sut = SettingsView(store: StoreOf<SettingsDomain>(
             initialState: configuredSettingsDomainState(
                 profiles: profiles,
                 withAvailableSecurityOptions: [.biometry(.faceID), .password],
@@ -98,7 +98,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
             ),
         ]
 
-        let sut = SettingsView(store: SettingsDomain.Store(
+        let sut = SettingsView(store: StoreOf<SettingsDomain>(
             initialState: configuredSettingsDomainState(
                 profiles: profiles,
                 isDemoMode: true,
@@ -117,7 +117,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testSettingsView_DemoMode_Disabled() {
-        let sut = SettingsView(store: SettingsDomain.Store(
+        let sut = SettingsView(store: StoreOf<SettingsDomain>(
             initialState: configuredSettingsDomainState(
                 withAvailableSecurityOptions: [.biometry(.faceID), .password],
                 andSelectedSecurityOption: nil
@@ -132,7 +132,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testSettingsView_DemoMode_Enabled() {
-        let sut = SettingsView(store: SettingsDomain.Store(
+        let sut = SettingsView(store: StoreOf<SettingsDomain>(
             initialState: SettingsDomain.State(isDemoMode: true,
                                                appVersion: appVersion)
 
@@ -145,10 +145,10 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testSettingsView_ComplyTrackingView() {
-        let sut = SettingsView.TrackingComplyView(store: SettingsDomain.Store(
+        let sut = SettingsView.TrackingComplyView(store: StoreOf<SettingsDomain>(
             initialState: SettingsDomain.State(
                 isDemoMode: false,
-                destination: .complyTracking
+                destination: .complyTracking(.init())
             )
 
         ) {

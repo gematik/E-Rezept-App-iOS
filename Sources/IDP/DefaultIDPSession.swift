@@ -163,7 +163,7 @@ public class DefaultIDPSession: IDPSession {
                 guard let self = self else {
                     return Fail(error: IDPError.internal(error: .verifyUnexpectedNil)).eraseToAnyPublisher()
                 }
-                // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Encryption with JWE
+                // [REQ:gemSpec_IDP_Frontend:A_20526-01] Encryption with JWE
                 guard let jwe = try? signedChallenge.encrypt(with: document.encryptionPublicKey,
                                                              using: self.cryptoBox) else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
@@ -245,7 +245,6 @@ public class DefaultIDPSession: IDPSession {
                 .eraseToAnyPublisher()
             }
             .handleEvents(receiveOutput: { [weak self] token in
-                // [REQ:BSI-eRp-ePA:O.Tokn_1#5] Storing the token from a successfull login
                 self?.storage.set(token: token)
             })
             .eraseToAnyPublisher()
@@ -429,6 +428,7 @@ public class DefaultIDPSession: IDPSession {
                 return self.client.loadDirectoryKKApps(using: document)
                     .tryMap { jwtContainer in
                         // [REQ:gemSpec_IDP_Sek:A_22296] Signature verification
+                        // [REQ:gemSpec_IDP_Frontend:A_23082#3] Signature verification
                         // [REQ:BSI-eRp-ePA:O.Resi_6#3] Discovery Document signature verification
                         guard try jwtContainer.verify(with: document.discKey) == true else {
                             throw IDPError.invalidSignature("kk_apps document signature wrong")
@@ -507,7 +507,7 @@ public class DefaultIDPSession: IDPSession {
 
         let verify = IDPExtAuthVerify(code: code, state: state)
 
-        // [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
+        // [REQ:gemSpec_IDP_Sek:A_22301-01] Send authorization request
         return extAuthVerify(verify)
             .flatMap { [weak self] token -> AnyPublisher<IDPToken, IDPError> in
                 guard let self = self else {
@@ -788,7 +788,7 @@ extension Publisher where Output == IDPToken?, Failure == Never {
                 guard let token = token else {
                     return Just(nil).setFailureType(to: IDPError.self).eraseToAnyPublisher()
                 }
-                // [REQ:BSI-eRp-ePA:O.Auth_9#2] application is also checking for expiration
+                // [REQ:BSI-eRp-ePA:O.Auth_10#2] The application is also checking for Access-Token expiration
                 guard token.expires > time() else {
                     // [REQ:gemSpec_eRp_FdV:A_21326#5,A_21327#5] Either return a refreshed IDPToken
                     //  (or nil in case of error) to overwrite the current one

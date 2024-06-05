@@ -19,13 +19,10 @@
 import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
+import SwiftUIIntrospect
 
 struct RedeemMethodsView: View {
-    let store: RedeemMethodsDomain.Store
-
-    init(store: RedeemMethodsDomain.Store) {
-        self.store = store
-    }
+    @Perception.Bindable var store: StoreOf<RedeemMethodsDomain>
 
     @Environment(\.sizeCategory) var sizeCategory
 
@@ -61,7 +58,7 @@ struct RedeemMethodsView: View {
                     }
 
                     Button(
-                        action: { store.send(.setNavigation(tag: .matrixCode)) },
+                        action: { store.send(.showMatrixCodeTapped) },
                         label: {
                             Tile(
                                 title: L10n.rdmBtnRedeemPharmacyTitle,
@@ -75,7 +72,7 @@ struct RedeemMethodsView: View {
                     .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
 
                     Button(
-                        action: { store.send(.setNavigation(tag: .pharmacySearch)) },
+                        action: { store.send(.showPharmacySearchTapped) },
                         label: {
                             Tile(
                                 title: L10n.rdmBtnRedeemSearchPharmacyTitle,
@@ -98,7 +95,7 @@ struct RedeemMethodsView: View {
                     .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
             )
             .navigationBarTitleDisplayMode(.inline)
-            .introspectNavigationController { navigationController in
+            .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17)) { navigationController in
                 let navigationBar = navigationController.navigationBar
                 navigationBar.barTintColor = UIColor(Colors.systemBackground)
                 let navigationBarAppearance = UINavigationBarAppearance()
@@ -112,44 +109,30 @@ struct RedeemMethodsView: View {
     }
 
     struct RedeemMethodsViewNavigation: View {
-        let store: RedeemMethodsDomain.Store
-        @ObservedObject var viewStore: ViewStore<ViewState, RedeemMethodsDomain.Action>
-
-        init(store: RedeemMethodsDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store, observe: ViewState.init)
-        }
-
-        struct ViewState: Equatable {
-            let destinationTag: RedeemMethodsDomain.Destinations.State.Tag?
-
-            init(state: RedeemMethodsDomain.State) {
-                destinationTag = state.destination?.tag
-            }
-        }
+        @Perception.Bindable var store: StoreOf<RedeemMethodsDomain>
 
         var body: some View {
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: RedeemMethodsDomain.Action.destination),
-                state: /RedeemMethodsDomain.Destinations.State.matrixCode,
-                action: RedeemMethodsDomain.Destinations.Action.redeemMatrixCodeAction(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .matrixCode)) },
-                destination: MatrixCodeView.init(store:),
-                label: {}
-            )
-            .hidden()
-            .accessibility(hidden: true)
+            WithPerceptionTracking {
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.matrixCode, action: \.destination.matrixCode)
+                ) { store in
+                    MatrixCodeView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
+                .accessibility(hidden: true)
 
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: RedeemMethodsDomain.Action.destination),
-                state: /RedeemMethodsDomain.Destinations.State.pharmacySearch,
-                action: RedeemMethodsDomain.Destinations.Action.pharmacySearchAction(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .pharmacySearch)) },
-                destination: PharmacySearchView.init(store:),
-                label: {}
-            )
-            .hidden()
-            .accessibility(hidden: true)
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.pharmacySearch, action: \.destination.pharmacySearch)
+                ) { store in
+                    PharmacySearchView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
+                .accessibility(hidden: true)
+            }
         }
     }
 }

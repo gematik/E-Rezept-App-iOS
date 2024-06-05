@@ -80,7 +80,10 @@ final class AppAuthenticationBiometricPasswordDomainTests: XCTestCase {
         await testScheduler.advance()
         await store.receive(.authenticationChallengeResponse(.failure(.cannotEvaluatePolicy(nil)))) {
             $0.authenticationResult = .failure(.cannotEvaluatePolicy(nil))
-            $0.errorToDisplay = .cannotEvaluatePolicy(nil)
+            $0
+                .destination =
+                .alert(.init(for: AuthenticationChallengeProviderError.cannotEvaluatePolicy(nil),
+                             title: L10n.alertErrorTitle))
         }
     }
 
@@ -94,7 +97,10 @@ final class AppAuthenticationBiometricPasswordDomainTests: XCTestCase {
         await testScheduler.advance()
         await store.receive(.authenticationChallengeResponse(.failure(.failedEvaluatingPolicy(nil)))) {
             $0.authenticationResult = .failure(.failedEvaluatingPolicy(nil))
-            $0.errorToDisplay = .failedEvaluatingPolicy(nil)
+            $0
+                .destination =
+                .alert(.init(for: AuthenticationChallengeProviderError.failedEvaluatingPolicy(nil),
+                             title: L10n.alertErrorTitle))
         }
     }
 

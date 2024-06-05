@@ -141,7 +141,8 @@ public struct PrivateKeyContainer {
                                             // [REQ:gemSpec_IDP_Frontend:A_21587] via `.privateKeyUsage`
                                             [.privateKeyUsage,
                                              // [REQ:gemSpec_IDP_Frontend:A_21586] invalidates biometry after changes
-                                             // [REQ:BSI-eRp-ePA:O.Biom_6#2] invalidates biometry after changes
+                                             // [REQ:BSI-eRp-ePA:O.Auth_5#2] Key invalidates on changes of registered
+                                             // biometric features
                                              .biometryCurrentSet], &error) else {
             guard let error = error else {
                 throw Error.unknownError("Access Control creation failed")

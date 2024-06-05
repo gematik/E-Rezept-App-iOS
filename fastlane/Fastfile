@@ -16,7 +16,11 @@
 # 
 #
 
-xcversion(version: ENV["FL_XCODE_VERSION"] || "15.0.0")
+xcodes(
+  version: ENV["FL_XCODE_VERSION"] || "15.2.0",
+  select_for_current_build_only: true, 
+  update_list: false
+)
 
 fastlane_version "2.187.0"
 
@@ -283,7 +287,8 @@ lane :build_mac do |options|
       project: project,
       sdk: sdk,
       destination: destination,
-      configuration: configuration
+      configuration: configuration,
+      output_directory: "./fastlane/test_output/mac"
     )
   end
 
@@ -294,7 +299,8 @@ lane :build_mac do |options|
         scheme: scheme,
         sdk: sdk,
         destination: destination,
-        configuration: configuration
+        configuration: configuration,
+        output_directory: "./fastlane/test_output/mac/#{scheme}"
       )
     end
   end
@@ -344,7 +350,8 @@ lane :build_ios do |options|
   else
     scan(
       destination: destination,
-      configuration: configuration
+      configuration: configuration,
+      output_directory: "./fastlane/test_output/ios"
     )
   end
 
@@ -353,35 +360,35 @@ lane :build_ios do |options|
       scan(
         scheme: scheme,
         destination: destination,
-        configuration: configuration
+        configuration: configuration,
+        output_directory: "./fastlane/test_output/ios/#{scheme}"
       )
     end
   end
 end
 
 lane :uitests_ios do |options|
-  sdk = "iphonesimulator"
 
   reset_simulator_contents
   scheme = "UITests_iOS"
 
   scan(
     scheme: scheme,
-    sdk: sdk,
     configuration: "Debug",
-    prelaunch_simulator: true
+    prelaunch_simulator: true,
+    output_directory: "./fastlane/test_output/uitests"
   )
 end
 
 desc "Pre-build AllIntegrationTest scheme."
 lane :integration_tests_setup do
-  puts "Build scheme for testing."
+  puts "Build IntegrationTests scheme for testing."
+
   scan(
-    project: "eRp-App.xcodeproj",
     scheme: "AllIntegrationTests_iOS",
-    sdk: "iphonesimulator",
     configuration: "Debug",
-    build_for_testing: true
+    build_for_testing: true,
+    output_directory: "./fastlane/test_output/integration_tests_setup" # default is ./fastlane/test_output
   )
 end
 
@@ -403,9 +410,7 @@ lane :integration_tests do |options|
 
   puts "========== Run the tests for env: #{app_conf} =========="
   scan(
-    project: "eRp-App.xcodeproj",
     scheme: "AllIntegrationTests_iOS",
-    sdk: "iphonesimulator",
     configuration: "Debug",
     test_without_building: true,
     output_directory: "./fastlane/test_output/#{app_conf}" # default is ./fastlane/test_output
@@ -453,6 +458,8 @@ lane :build_all do |options|
   else
     skip_macos = false
   end
+
+  integration_tests_setup
 
   build_mac options unless skip_macos
   build_ios options unless skip_ios
@@ -556,7 +563,6 @@ lane :cibuild do |options|
   setup options
   static_code_analysis options
   build_all options
-  integration_tests_setup
   generate_documentation options
 end
 
@@ -578,8 +584,36 @@ lane :list_errors do |options|
   sh "cd .. && cp doc/errors/generated/errors.csv docs/errors/errors.csv"
 end
 
+require 'nokogiri'
+
+lane :get_specs do |options|
+  spec_urls = JSON.parse(File.read('audit_afos.json'))['specs']
+  spec_htmls = Hash.new
+
+  gitlab_api_token = ENV['GITLAB_API_TOKEN']
+  gitlab_api_token = prompt(text: "GITLAB_API_TOKEN not set, please specify") unless gitlab_api_token
+
+  spec_urls.each do |spec, url|
+    if url.include?('gitlab')
+      html_content = URI.open(url, "PRIVATE-TOKEN" => gitlab_api_token).read
+    else
+      html_content = URI.open(url).read
+    end
+    spec_htmls[spec] = Nokogiri::HTML(html_content)
+  end
+
+  spec_htmls
+end
+
 lane :list_requirements do |options|
+  # remove, as soon as `GEMATIK_COPYRIGHT_STATEMENT` is replaced by actuals license
+  if (!is_ci)
+    sh "cd .. && bash scripts/addEuplLicense.sh" if prompt(text: "Replace Licenses before running?", boolean: true)
+  end
+
   SPECS = Hash.new
+
+  AUDIT_AFOS = JSON.parse(File.read('audit_afos.json'))['audit_afos']
 
   def register(matches, file, line, code = "", source = "code")
     spec = matches[:SPEC]
@@ -677,7 +711,26 @@ lane :list_requirements do |options|
     end
   end
 
+  ORIGINAL_TEXTS = get_specs()
+
+  AFOS = Hash.new
+
+  required_afos = AUDIT_AFOS
+
   # puts SPECS.to_json
+  SPECS = SPECS.each { |spec, afos|
+    afos.each  { |afo, entries|
+        required_afos = required_afos.difference([afo])
+        if (ORIGINAL_TEXTS[spec])
+          AFOS[afo] = ORIGINAL_TEXTS[spec].at_css("\##{afo.sub(".", "")}").to_s
+        else
+          print("no spec")
+        end
+      }
+    }
+
+  # binding for erb
+  REQUIRED_AFOS = required_afos
 
   SORTED_SPECS = SPECS.transform_values { |afos|
     afos
@@ -695,7 +748,7 @@ lane :list_requirements do |options|
       .to_h
   }.sort_by {|k, v| k}
 
-  sh "mkdir -p ../build/docs/generated"
+    sh "mkdir -p ../build/docs/generated"
 
   erb_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.csv.erb')
   erb_out_path = erb_path.sub('.erb','').sub('/Templates/ERB','')
@@ -708,6 +761,10 @@ lane :list_requirements do |options|
   erb3_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.html.erb')
   erb3_out_path = erb3_path.sub('.erb','').sub('/Templates/ERB','')
   erb3 = ERB.new(File.read(erb3_path))
+
+  erb4_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements_filtered.html.erb')
+  erb4_out_path = erb4_path.sub('.erb','').sub('/Templates/ERB','')
+  erb4 = ERB.new(File.read(erb4_path))
 
   UI.message("Writing AFOs to #{erb_out_path}")
 
@@ -725,6 +782,12 @@ lane :list_requirements do |options|
 
   File.open(erb3_out_path, 'w+') do |file|
     file.write(erb3.result(binding))
+  end
+
+  UI.message("Writing AFOs to #{erb4_out_path}")
+
+  File.open(erb4_out_path, 'w+') do |file|
+    file.write(erb4.result(binding))
   end
 
   `which pandoc`

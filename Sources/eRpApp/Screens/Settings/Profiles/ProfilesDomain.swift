@@ -22,9 +22,9 @@ import eRpKit
 import Foundation
 import IDP
 
-struct ProfilesDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct ProfilesDomain {
+    @ObservableState
     struct State: Equatable {
         var profiles: [UserProfile]
         var selectedProfileId: UUID?
@@ -53,11 +53,11 @@ struct ProfilesDomain: ReducerProtocol {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(core)
     }
 
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .registerListener:
             return .merge(

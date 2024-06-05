@@ -17,9 +17,10 @@
 //
 
 import Foundation
+import SwiftUI
 
 @frozen
-public enum AppSecurityOption: Codable, Identifiable, Equatable {
+public enum AppSecurityOption: Codable, Identifiable, Equatable, Hashable {
     case unsecured
     case biometry(BiometryType)
     case password
@@ -76,6 +77,11 @@ public enum AppSecurityOption: Codable, Identifiable, Equatable {
         var container = try decoder.unkeyedContainer()
         let id = try container.decode(Int.self)
         self.init(fromId: id)
+    }
+
+    public var intValue: Int {
+        get { id }
+        set { self = AppSecurityOption(fromId: newValue) }
     }
 }
 

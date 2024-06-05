@@ -21,7 +21,7 @@ import Foundation
 import OpenSSL
 
 /// Structure for registering a biometric key. See `SignedPairingData` for sigend representation.
-/// [REQ:gemF_Biometrie:A_21415:Pairing_Data]
+/// [REQ:gemSpec_IDP_Dienst:A_21415:Pairing_Data]
 public struct PairingData: Claims, Codable {
     public init(
         authCertSubjectPublicKeyInfo: String,

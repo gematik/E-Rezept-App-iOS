@@ -62,16 +62,26 @@ final class RedeemUITests: XCTestCase {
             .tapEditAddress()
 
         editAdressScreen.setPhoneNumber("1234567890")
-        editAdressScreen.tapSave()
+        try await editAdressScreen.tapSave()
 
         try await redeemScreen
             .tapRedeem()
             .tapClose()
 
-        let de = app.staticTexts["Gefällt dir E-Rezept?"].exists
-        let en = app.staticTexts["Enjoying E-prescription?"].exists
+        let de = app.staticTexts["Gefällt dir E-Rezept?"]
+        let en = app.staticTexts["Enjoying E-prescription?"]
 
-        expect(de || en).to(beTrue())
+        var result = false
+
+        for _ in 1 ... 10 {
+            if !result {
+                try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 200)
+                result = de.exists || en.exists
+            } else {
+                break
+            }
+        }
+        expect(result).to(beTrue())
         if app.buttons["Not Now"].exists {
             app.buttons["Not Now"].tap()
         }

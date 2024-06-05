@@ -39,7 +39,7 @@ extension Publisher {
     /// Use for awaiting exactly one value (as with `Publisher.first()`)
     ///
     /// - Parameter: use `transformError` to try to embed the thrown error into another one
-    func async<E2: Swift.Error>(_ transformError: CasePath<E2, Self.Failure>) async throws -> Output {
+    func async<E2: Swift.Error>(_ transformError: AnyCasePath<E2, Self.Failure>) async throws -> Output {
         do {
             return try await _async()
         } catch let error as Self.Failure {
@@ -54,7 +54,7 @@ extension Publisher {
     ///
     /// - Parameter: use `transformError` to try to embed the thrown error into another one
     /// - Returns: Result type of output and transformed error or throws if unable to transform the error
-    func asyncResult<E2: Swift.Error>(_ transformError: CasePath<E2, Self.Failure>) async throws
+    func asyncResult<E2: Swift.Error>(_ transformError: AnyCasePath<E2, Self.Failure>) async throws
         -> Result<Self.Output, E2> {
         do {
             let result = try await _async()

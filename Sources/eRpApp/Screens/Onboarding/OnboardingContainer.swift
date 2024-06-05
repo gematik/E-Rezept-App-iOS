@@ -21,110 +21,86 @@ import eRpStyleKit
 import SwiftUI
 
 struct OnboardingContainer: View, KeyboardReadable {
-    let store: Store<OnboardingDomain.State, OnboardingDomain.Action>
-
-    @ObservedObject var viewStore: ViewStore<ViewState, OnboardingDomain.Action>
+    @Perception.Bindable var store: StoreOf<OnboardingDomain>
     @State var isKeyboardVisible = false
 
-    init(store: Store<OnboardingDomain.State, OnboardingDomain.Action>) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let composition: OnboardingDomain.Composition
-        let isShowingNextButton: Bool
-        let hasValidAuthenticationSelection: Bool
-        let legalConfirmed: Bool
-        let showTermsOfPrivacy: Bool
-        let showTermsOfUse: Bool
-
-        init(state: OnboardingDomain.State) {
-            composition = state.composition
-            isShowingNextButton = state.isShowingNextButton
-            hasValidAuthenticationSelection = state.registerAuthenticationState.hasValidSelection
-            legalConfirmed = state.legalConfirmed
-            showTermsOfPrivacy = state.showTermsOfPrivacy
-            showTermsOfUse = state.showTermsOfUse
-        }
-    }
-
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            TabView(
-                selection: viewStore.binding(
-                    get: { $0.composition.currentPageIndex },
-                    send: OnboardingDomain.Action.setPage(index:)
-                )
-            ) {
-                ForEach(viewStore.composition.pages, id: \.self) { page in
-                    switch page {
-                    case .start:
-                        OnboardingStartView()
-                            .tag(0)
-                    case .legalInfo:
-                        OnboardingLegalInfoView(isAllAccepted: viewStore.binding(get: \.legalConfirmed,
-                                                                                 send: OnboardingDomain.Action
-                                                                                     .setConfirmLegal),
-                                                showTermsOfUse: { viewStore.send(.setShowUse(true)) },
-                                                showTermsOfPrivacy: { viewStore.send(.setShowPrivacy(true)) },
-                                                action: { viewStore.send(.nextPage, animation: .default) })
-                            .tag(1)
-                    case .registerAuthentication:
-                        OnboardingRegisterAuthenticationView(
-                            store: store.scope(state: { $0.registerAuthenticationState },
-                                               action: { .registerAuthentication(action: $0) })
-                        )
-                        .tag(2)
-                    case .analytics:
-                        OnboardingAnalyticsView {
-                            // [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
-                            viewStore.send(.showTracking)
+        WithPerceptionTracking {
+            ZStack(alignment: .bottomTrailing) {
+                TabView(
+                    selection: $store.composition.currentPageIndex.sending(\.setPage)
+                ) {
+                    ForEach(store.composition.pages, id: \.self) { page in
+                        switch page {
+                        case .start:
+                            OnboardingStartView()
+                                .tag(0)
+                        case .legalInfo:
+                            OnboardingLegalInfoView(isAllAccepted: $store.legalConfirmed.sending(\.setConfirmLegal),
+                                                    showTermsOfUse: { store.send(.setShowUse(true)) },
+                                                    showTermsOfPrivacy: { store.send(.setShowPrivacy(true)) },
+                                                    action: { store.send(.nextPage, animation: .default) })
+                                .tag(1)
+                        case .registerAuthentication:
+                            OnboardingRegisterAuthenticationView(
+                                store: store.scope(state: \.registerAuthenticationState,
+                                                   action: \.registerAuthentication)
+                            )
+                            .tag(2)
+                        case .analytics:
+                            OnboardingAnalyticsView {
+                                // [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
+                                store.send(.showTracking)
+                            }
+                            .tag(3)
                         }
-                        .tag(3)
                     }
                 }
-            }
-            // [REQ:BSI-eRp-ePA:O.Arch_9#2] DataPrivacy display within Onboarding
-            .sheet(isPresented: viewStore.binding(get: \.showTermsOfPrivacy,
-                                                  send: OnboardingDomain.Action.setShowPrivacy)) {
-                NavigationView {
-                    DataPrivacyView()
-                        .toolbar {
-                            CloseButton { viewStore.send(.setShowPrivacy(false)) }
-                                .embedToolbarContent()
-                                .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
-                        }
+                // [REQ:BSI-eRp-ePA:O.Arch_9#2] DataPrivacy display within Onboarding
+                .sheet(isPresented: $store.showTermsOfPrivacy.sending(\.setShowPrivacy)) {
+                    NavigationView {
+                        DataPrivacyView()
+                            .toolbar {
+                                CloseButton { store.send(.setShowPrivacy(false)) }
+                                    .embedToolbarContent()
+                                    .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
+                            }
+                    }
+                    .accentColor(Colors.primary600)
+                    .navigationViewStyle(StackNavigationViewStyle())
                 }
-                .accentColor(Colors.primary600)
-                .navigationViewStyle(StackNavigationViewStyle())
-            }
-            // [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
-            .sheet(isPresented: viewStore.binding(get: \.showTermsOfUse,
-                                                  send: OnboardingDomain.Action.setShowUse)) {
-                NavigationView {
-                    TermsOfUseView()
-                        .toolbar {
-                            CloseButton { viewStore.send(.setShowUse(false)) }
-                                .embedToolbarContent()
-                                .accessibilityIdentifier(A11y.settings.termsOfUse.stgBtnTermsOfUseClose)
-                        }
+                // [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
+                .sheet(isPresented: $store.showTermsOfUse.sending(\.setShowUse)) {
+                    NavigationView {
+                        TermsOfUseView()
+                            .toolbar {
+                                CloseButton { store.send(.setShowUse(false)) }
+                                    .embedToolbarContent()
+                                    .accessibilityIdentifier(A11y.settings
+                                        .termsOfUse.stgBtnTermsOfUseClose)
+                            }
+                    }
+                    .accentColor(Colors.primary600)
+                    .navigationViewStyle(StackNavigationViewStyle())
                 }
-                .accentColor(Colors.primary600)
-                .navigationViewStyle(StackNavigationViewStyle())
-            }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
-            .background(Colors.systemBackground)
-            .alert(store: store.scope(state: \.$alertState, action: OnboardingDomain.Action.alert))
+                .tabViewStyle(
+                    PageTabViewStyle(indexDisplayMode: .never)
+                )
+                .indexViewStyle(
+                    PageIndexViewStyle(backgroundDisplayMode: .never)
+                )
+                .background(Colors
+                    .systemBackground)
+                .alert($store.scope(state: \.alertState, action: \.alert))
 
-            ZStack {
-                if viewStore.isShowingNextButton {
-                    OnboardingNextButton(isEnabled: true) {
-                        viewStore.send(
-                            .nextPage,
-                            animation: .default
-                        )
+                ZStack {
+                    if store.isShowingNextButton {
+                        OnboardingNextButton(isEnabled: true) {
+                            store.send(
+                                .nextPage,
+                                animation: .default
+                            )
+                        }
                     }
                 }
             }

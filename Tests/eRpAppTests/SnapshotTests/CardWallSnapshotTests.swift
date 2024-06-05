@@ -33,7 +33,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testSelectionView() {
         let sut = CardWallIntroductionView(
-            store: CardWallIntroductionDomain.Store(
+            store: StoreOf<CardWallIntroductionDomain>(
                 initialState: .init(
                     isNFCReady: true,
                     profileId: UUID()
@@ -70,7 +70,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testIntroductionViewWithCapabilties() {
         let sut = CardWallIntroductionView(
-            store: CardWallIntroductionDomain.Store(
+            store: StoreOf<CardWallIntroductionDomain>(
                 initialState: CardWallIntroductionDomain
                     .State(
                         isNFCReady: false,
@@ -88,7 +88,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testCANInputView() {
         let sut = CardWallCANView(
-            store: CardWallCANDomain.Store(
+            store: StoreOf<CardWallCANDomain>(
                 initialState: CardWallCANDomain.State(
                     isDemoModus: false,
                     profileId: UUID(),
@@ -106,7 +106,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testCANInputViewInDemoMode() {
         let sut = CardWallCANView(
-            store: CardWallCANDomain.Store(
+            store: StoreOf<CardWallCANDomain>(
                 initialState: CardWallCANDomain.State(
                     isDemoModus: true,
                     profileId: UUID(),
@@ -124,7 +124,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testCANInputWrongCANEnteredView() {
         let sut = CardWallCANView(
-            store: CardWallCANDomain.Store(
+            store: StoreOf<CardWallCANDomain>(
                 initialState: CardWallCANDomain.State(isDemoModus: false,
                                                       profileId: UUID(),
                                                       can: "",
@@ -141,7 +141,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testPINInputView() {
         let sut = CardWallPINView(
-            store: CardWallPINDomain.Store(
+            store: StoreOf<CardWallPINDomain>(
                 initialState: CardWallPINDomain.State(
                     isDemoModus: false,
                     profileId: UUID(),
@@ -160,7 +160,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testPINInputViewInDemoMode() {
         let sut = CardWallPINView(
-            store: CardWallPINDomain.Store(
+            store: StoreOf<CardWallPINDomain>(
                 initialState: CardWallPINDomain.State(
                     isDemoModus: true,
                     profileId: UUID(),
@@ -184,7 +184,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
                                             transition: .fullScreenCover)
         state.wrongPinEntered = true
         let sut = CardWallPINView(
-            store: CardWallPINDomain.Store(
+            store: StoreOf<CardWallPINDomain>(
                 initialState: state
             ) {
                 CardWallPINDomain()
@@ -198,7 +198,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testLoginOptionView() {
         let sut = CardWallLoginOptionView(
-            store: CardWallLoginOptionDomain.Store(
+            store: StoreOf<CardWallLoginOptionDomain>(
                 initialState: CardWallLoginOptionDomain.State(isDemoModus: false,
                                                               profileId: UUID(),
                                                               selectedLoginOption: .withoutBiometry)
@@ -215,7 +215,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testLoginOptionViewInDemoMode() {
         let sut = CardWallLoginOptionView(
-            store: CardWallLoginOptionDomain.Store(
+            store: StoreOf<CardWallLoginOptionDomain>(
                 initialState: CardWallLoginOptionDomain.State(isDemoModus: true,
                                                               profileId: UUID(),
                                                               selectedLoginOption: .withoutBiometry)
@@ -313,7 +313,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testReadCardHelpCardView() {
         let sut =
-            ReadCardHelpView(store: .init(initialState: .first) {
+            ReadCardHelpView(store: .init(initialState: .init(destination: .first)) {
                 EmptyReducer()
             })
 
@@ -321,7 +321,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testReadCardHelpPositionView() {
-        let sut = ReadCardHelpView(store: .init(initialState: .second) {
+        let sut = ReadCardHelpView(store: .init(initialState: .init(destination: .second)) {
             EmptyReducer()
         })
 
@@ -330,7 +330,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testReadCardHelpListView() {
         let sut =
-            ReadCardHelpView(store: .init(initialState: .fourth) {
+            ReadCardHelpView(store: .init(initialState: .init(destination: .fourth)) {
                 EmptyReducer()
             })
 
@@ -338,7 +338,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testReadCardHelpVideoView() {
-        let sut = ReadCardHelpView(store: .init(initialState: .third) {
+        let sut = ReadCardHelpView(store: .init(initialState: .init(destination: .third)) {
             EmptyReducer()
         })
 

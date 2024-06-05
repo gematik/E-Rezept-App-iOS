@@ -71,7 +71,7 @@ final class EditProfileDomainTests: XCTestCase {
     func testSavingAnEmptyNameDisplaysError() async {
         let sut = testStore(for: Fixtures.profileA)
 
-        await sut.send(.setName("")) { state in
+        await sut.send(\.binding.name, "") { state in
             state.name = ""
             state.acronym = ""
 
@@ -88,7 +88,7 @@ final class EditProfileDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        await sut.send(.setName("Anna Vette")) { state in
+        await sut.send(\.binding.name, "Anna Vette") { state in
             state.name = "Anna Vette"
 
             let showEmptyNameWarning = state.name.lengthOfBytes(using: .utf8) == 0
@@ -107,13 +107,13 @@ final class EditProfileDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
-        await sut.send(.setColor(.green)) { state in
+        await sut.send(\.binding.color, .green) { state in
             state.color = .green
         }
 
         await sut.receive(.response(.updateProfileReceived(.success(true))))
 
-        await sut.send(.setColor(.blue)) { state in
+        await sut.send(\.binding.color, .blue) { state in
             state.color = .blue
         }
 
@@ -130,7 +130,7 @@ final class EditProfileDomainTests: XCTestCase {
         mockProfileDataStore.updateProfileIdMutatingReturnValue = Fail(error: error)
             .eraseToAnyPublisher()
 
-        await sut.send(.setColor(.green)) { state in
+        await sut.send(\.binding.color, .green) { state in
             state.color = .green
         }
 

@@ -30,7 +30,7 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
 
     func testOrderHealthCardView() {
         let sut = OrderHealthCardListView(store:
-            OrderHealthCardDomain.Store(
+            StoreOf<OrderHealthCardDomain>(
                 initialState: .init(searchText: "EmptyKK")
 
             ) {
@@ -44,7 +44,7 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
 
     func testOrderHealthCardView_SelectedInsuranceNoContact() {
         let sut = OrderHealthCardInquiryView(store:
-            OrderHealthCardDomain.Store(
+            StoreOf<OrderHealthCardInquiryDomain>(
                 initialState: .init(insuranceCompany: OrderHealthCardDomain
                     .HealthInsuranceCompany(name: "EmptyKK",
                                             healthCardAndPinPhone: "",
@@ -66,9 +66,8 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
 
     func testOrderHealthCardView_SelectedInsurance() {
         let sut = OrderHealthCardInquiryView(store:
-            OrderHealthCardDomain.Store(
-                initialState: OrderHealthCardDomain.Dummies.state
-
+            StoreOf<OrderHealthCardInquiryDomain>(
+                initialState: OrderHealthCardInquiryDomain.Dummies.state
             ) {
                 EmptyReducer()
             })
@@ -79,7 +78,7 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
 
     func testOrderHealthCardView_ContactFull() {
         let sut = OrderHealthCardContactView(store:
-            OrderHealthCardDomain.Store(
+            StoreOf<OrderHealthCardContactDomain>(
                 initialState: .init(insuranceCompany: .dummyHealthInsuranceCompany,
                                     serviceInquiry: .healthCardAndPin)
 
@@ -93,7 +92,7 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
 
     func testOrderHealthCardView_ContactEmpty() {
         let sut = OrderHealthCardContactView(store:
-            OrderHealthCardDomain.Store(
+            StoreOf<OrderHealthCardContactDomain>(
                 initialState: .init(insuranceCompany: OrderHealthCardDomain
                     .HealthInsuranceCompany(name: "EmptyKK",
                                             healthCardAndPinPhone: "",
@@ -103,7 +102,8 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
                                             subjectCardAndPinMail: "",
                                             bodyCardAndPinMail: "",
                                             subjectPinMail: "",
-                                            bodyPinMail: ""))
+                                            bodyPinMail: ""),
+                    serviceInquiry: .healthCardAndPin)
 
             ) {
                 EmptyReducer()

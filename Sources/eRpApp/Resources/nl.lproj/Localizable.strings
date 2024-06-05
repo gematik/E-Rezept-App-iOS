@@ -82,6 +82,7 @@
 "cdw_btn_extauth_fallback_order_egk" = "Bestel een gezondheidskaart";
 "cdw_btn_extauth_selection_cancel" = "Annuleren";
 "cdw_btn_extauth_selection_continue" = "Verder";
+"cdw_btn_extauth_selection_help" = "E.H.B.O.";
 "cdw_btn_extauth_selection_order_egk" = "Bestel een gezondheidskaart";
 "cdw_btn_extauth_selection_retry" = "Probeer het nog eens";
 "cdw_btn_help_next_hint" = "Direct na het indrukken van deze knop wordt de zorgkaart via NFC gelezen. Houd hiervoor de kaart rechtstreeks tegen het apparaat. Als de verbinding tot stand is gebracht, ontvang je haptische feedback. Ook verbindingsverlies of fouten worden via haptische feedback gecommuniceerd. De communicatie met de zorgkaart kan maximaal tien seconden duren. Verwijder vervolgens de gezondheidskaart uit het apparaat.";
@@ -156,7 +157,7 @@
 "cdw_txt_biometry_subtitle" = "Wilt u uw inloggegevens bewaren voor toekomstige logins?";
 "cdw_txt_biometry_title" = "Registratie";
 "cdw_txt_can_demo_mode_info" = "U kunt alle cijfers opgeven.";
-"cdw_txt_can_description" = "Uw toegangsnummer (Card Access Number, kortweg CAN) vindt u rechtsboven op uw zorgkaart.";
+"cdw_txt_can_description" = "U vindt uw toegangsnummer rechtsboven op uw zorgkaart.";
 "cdw_txt_can_subtitle" = "Toegangsnummer invoeren";
 "cdw_txt_can_title" = "Registratie";
 "cdw_txt_can_title_hint" = "Uw kaarttoegangsnummer (afgekort CAN) bestaat uit 6 cijfers. U vindt het CAN rechtsboven op de voorkant van uw zorgkaart. Staat hier geen zescijferig toegangsnummer, dan heeft u een nieuwe zorgpas nodig van uw zorgverzekeraar.";
@@ -177,10 +178,18 @@
 "cdw_txt_extauth_fallback_description2" = "Wil je niet wachten? Registratie met een zorgkaart wordt al door elke zorgverzekeraar ondersteund.";
 "cdw_txt_extauth_fallback_headline" = "Kies een verzekering";
 "cdw_txt_extauth_fallback_title" = "Registreren met app";
+"cdw_txt_extauth_help_caption" = "Tips voor het aanmelden bij de verzekeringenapp";
+"cdw_txt_extauth_help_description" = "Uw verzekeringsmaatschappij is verantwoordelijk voor de Health ID. Als u vragen heeft over de registratie, kunt u contact met hen opnemen. Hier zijn enkele beproefde tips:";
+"cdw_txt_extauth_help_info_1" = "Houd er rekening mee dat, afhankelijk van uw verzekering, een aparte app nodig kan zijn. Vraag bij uw verzekeraar na wat dit is.";
+"cdw_txt_extauth_help_info_2" = "Start de kassa-app en log daar eenmalig in voordat u begint met registreren in de e-recepten-app.";
+"cdw_txt_extauth_help_info_3" = "Het wisselen tussen inloggen met de zorgpas en de zorgpas kan tot problemen leiden. Meld u daarom eerst actief af bij uw profiel voordat u de inlogmogelijkheid wijzigt.";
+"cdw_txt_extauth_help_info_4" = "Staat uw verzekering niet op de lijst, dan kunt u zich ook aanmelden met uw zorgpas en de bijbehorende pincode.";
+"cdw_txt_extauth_help_info_5" = "Indien de kassa-app u niet terugstuurt naar de e-recepten-app, meld deze fout dan zeker bij uw verzekeringsmaatschappij.";
+"cdw_txt_extauth_help_title" = "Hulp";
 "cdw_txt_extauth_noresults" = "We konden geen resultaten vinden voor deze zoekterm.";
 "cdw_txt_extauth_noresults_title" = "Geen resultaten";
 "cdw_txt_extauth_searchprompt" = "Zoek op naam";
-"cdw_txt_extauth_selection_description" = "Niet gevonden wat u zocht? Deze lijst wordt voortdurend uitgebreid. Registratie met een zorgkaart wordt al door elke zorgverzekeraar ondersteund.";
+"cdw_txt_extauth_selection_description" = "Mocht het inloggen met de Health ID niet naar verwachting verlopen, dan zijn er EHBO-instructies beschikbaar.";
 "cdw_txt_extauth_selection_empty_list_description" = "Deze functie zal over een paar dagen voor u beschikbaar zijn. Probeer het later opnieuw.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Nog niet beschikbaar";
 "cdw_txt_extauth_selection_error_fallback" = "Probeer het later opnieuw.";
@@ -262,7 +271,7 @@
 "cdw_txt_rc_nfc_message_noCardMessage" = "Geen gezondheidskaart gevonden";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Dit kaarttype wordt niet ondersteund";
 "cdw_txt_rc_placement" = "Maak hier 👆";
-"cdw_txt_rc_position_content" = "Probeer ook deze positie van de kaart en iPhone. Het is aangetoond dat deze positie op bepaalde iPhones een betere verbinding oplevert.";
+"cdw_txt_rc_position_content" = "Verplaats de kaart zo dat de gouden chip zich boven de camera aan de voorkant bevindt of houd de kaart tegen de kop van de iPhone, zoals weergegeven in de afbeelding.";
 "cdw_txt_rc_position_header" = "Andere positie";
 "cdw_txt_rc_subheadline" = "Het volgende proces kan maximaal 30 seconden duren.";
 "cdw_txt_rc_tip_four" = "Tip 4 van 4";
@@ -358,7 +367,9 @@
 "epp_back_button" = "Rug";
 "epp_btn_alert_abort" = "Annuleren";
 "epp_btn_alert_camera" = "camera";
+"epp_btn_alert_emoji" = "Emoji";
 "epp_btn_alert_library" = "Selecteer foto";
+"epp_btn_emoji_use" = "Gebruik";
 "epp_txt_alert_header_profile" = "Kies profielfoto";
 "epp_txt_alert_subheader_choose" = "Hoe wil je verder?";
 "erp_txt_tooltips_add_profile" = "Druk hier om een ​​nieuw profiel aan te maken";
@@ -377,7 +388,7 @@
 "erx_btn_alert_login" = "Register";
 "erx_btn_alert_ok" = "OK";
 "erx_btn_alert_retry" = "Probeer het nog eens";
-"erx_btn_redeem" = "Alles inwisselen";
+"erx_btn_redeem" = "Allemaal inwisselen";
 "erx_btn_refresh" = "Updaten";
 "erx_btn_scn_prescription" = "Receptenscanner openen";
 "erx_title" = "Recepten";
@@ -845,8 +856,8 @@
 "ord_txt_no_pharmacy_name" = "Onbekende apotheek";
 "ord_txt_title" = "Bestellingen";
 "order_egk_btn_info_button" = "Hoe u een NFC-compatibele zorgkaart kunt herkennen";
-"order_egk_pin" = "Pincode";
-"order_egk_pin_card" = "Pin en gezondheidskaart";
+"order_egk_pin" = "pincode";
+"order_egk_pin_card" = "Pincode en zorgpas";
 "order_egk_service_subtitle" = "Voor deze app heb je een kaart en een bijbehorende pincode nodig.";
 "order_egk_service_title" = "Wat wilt u aanvragen?";
 "order_egk_txt_contact_option_mail" = "Mail";
@@ -945,7 +956,8 @@
 "pha_search_hint_txt_close" = "Locatie delen sluiten, locatie niet delen";
 "pha_search_map_annotation" = "Apotheek";
 "pha_search_map_btn_Error_cancel" = "Annuleren";
-"pha_search_map_header" = "Dichtbij";
+"pha_search_map_header" = "Dicht bij mij";
+"pha_search_map_txt_cluster_header" = "Apotheken";
 "pha_search_txt_closed" = "Gesloten";
 "pha_search_txt_closing_soon" = "Binnenkort gesloten";
 "pha_search_txt_error_no_server_response_headline" = "server reageert niet";
@@ -1022,12 +1034,14 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Kosten voor noodservice";
 "prsc_dtl_dr_error_info_description" = "Niet alle informatie wordt correct weergegeven in dit recept. U kunt het echter nog steeds inwisselen bij uw apotheek.";
 "prsc_dtl_dr_error_info_title" = "Recept onjuist";
+"prsc_dtl_dr_no_substitution_info_describtion" = "Uw arts heeft bepaald dat u de voorgeschreven medicijnen moet krijgen. De apotheek mag geen omruiling uitvoeren op basis van een kortingsovereenkomst (“Aut idem”).";
+"prsc_dtl_dr_no_substitution_info_title" = "Geen vervangende bereiding mogelijk";
 "prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Tijdens deze periode kunt u uw recept in elke apotheek inwisselen tegen een maximale bijbetaling van € 10,-.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Binnen deze termijn kunt u het recept nog steeds bij een apotheek invullen, maar u moet dan wel de volledige aankoopprijs van het medicijn zelf betalen. U kunt ook uw praktijk vragen om het recept opnieuw te laten verstrekken.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Hoe lang is dit recept geldig?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Recepten die van een papieren versie zijn geïmporteerd, kunnen om veiligheidsredenen geen persoonlijke of medische informatie weergeven. \n\n Log in op deze app met zorgpas of verzekeringsapp om alle informatie op het recept te bekijken.";
 "prsc_dtl_dr_scanned_prescription_info_title" = "Gescand recept";
-"prsc_dtl_dr_substitution_info_description" = "Vanwege wettelijke eisen van uw zorgverzekeraar kan het zijn dat u een alternatief krijgt met dezelfde werkzame stof. \n\n Geneesmiddelen kunnen er anders uitzien en anders heten, verschillende prijzen en fabrikanten hebben, maar toch dezelfde werkzame stof bevatten. De werkzame stof zelf en de dosering zijn cruciaal voor de werking van medicijnen in het lichaam. Vaak krijgen patiënten bij de apotheek een ander medicijn dan de arts heeft voorgeschreven, mits de medicijnen vergelijkbaar zijn. Er kunnen therapeutische en economische redenen zijn voor de verandering.";
+"prsc_dtl_dr_substitution_info_description" = "Apothekers zijn verplicht voorrang te geven aan de verstrekking van geneesmiddelen waarvoor de zorgverzekeraar van de patiënt een kortingsovereenkomst heeft gesloten met de geneesmiddelenfabrikanten. Dit geldt alleen niet als de arts ‘Aut idem’ op het recept uitsluit, wat bij uw recept niet het geval is.";
 "prsc_dtl_dr_substitution_info_title" = "Vervangingsvoorbereiding mogelijk";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Open healthy.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Op het Nationaal Gezondheidsportaal vindt u deskundig geverifieerde informatie over ziekten, ICD-codes en preventie- en zorgonderwerpen.";
@@ -1082,6 +1096,7 @@
 "prsc_dtl_txt_missing_dosage_instructions" = "Uw arts heeft u geen informatie gegeven over het innemen van de medicatie.";
 "prsc_dtl_txt_multi_prescription" = "Meerdere recepten";
 "prsc_dtl_txt_no" = "Nee";
+"prsc_dtl_txt_no_substitution" = "Geen vervangende bereiding mogelijk";
 "prsc_dtl_txt_partial" = "Gedeeltelijk";
 "prsc_dtl_txt_pkv_hint_activate_msg" = "Zodra de kostenbewijzen zijn geactiveerd, vindt u deze hier na het inwisselen van uw recept.";
 "prsc_dtl_txt_pkv_hint_activate_title" = "Ontvang kostenberekeningen digitaal";
@@ -1090,6 +1105,8 @@
 "prsc_dtl_txt_practitioner_person" = "Voorschrijver";
 "prsc_dtl_txt_quantity" = "Aantal voorgeschreven verpakkingen";
 "prsc_dtl_txt_section_details_header" = "Gedetailleerde informatie";
+"prsc_dtl_txt_substitution" = "Vervangingsbereiding (Aut idem)";
+"prsc_dtl_txt_substitution_possible" = "Vervangingsvoorbereiding mogelijk";
 "prsc_dtl_txt_yes" = "Ja";
 "prsc_fd_btn_error_banner" = "Rapport";
 "prsc_fd_hint_dosageInstructions_pic" = "arts";
@@ -1156,7 +1173,7 @@
 "puc_txt_subtitle_%@" = "Toon deze afhaalcode op %@ .";
 "puc_txt_title" = "Ophaalcode";
 "rdm_btn_redeem_pharmacy_description" = "Laat het scannen bij de apotheek";
-"rdm_btn_redeem_pharmacy_title" = "Direct inwisselen";
+"rdm_btn_redeem_pharmacy_title" = "Toon code";
 "rdm_btn_redeem_search_pharmacy_description" = "Reserveer of laat het bezorgen";
 "rdm_btn_redeem_search_pharmacy_title" = "Naar apotheek sturen";
 "rdm_scc_btn_return_to_main" = "Naar de startpagina";
@@ -1165,8 +1182,8 @@
 "rdm_scc_txt_onpremise_content" = "Uw bestelling staat doorgaans snel voor u klaar. Voor een exacte afspraak kunt u contact opnemen met de apotheek.";
 "rdm_scc_txt_onpremise_title" = "Succesvol ingewisseld";
 "rdm_scc_txt_shipment_content_1" = "Ga naar de startpagina.";
-"rdm_scc_txt_shipment_content_2" = "De postorderapotheek maakt voor u een winkelwagentje aan met uw medicijnen. Dit proces kan enkele minuten duren.";
-"rdm_scc_txt_shipment_content_3" = "Tik op “Winkelwagen openen” en rond uw bestelling af op de website van de apotheek.";
+"rdm_scc_txt_shipment_content_2" = "Wacht een paar minuten totdat u een reactie ontvangt van de postorderapotheek.";
+"rdm_scc_txt_shipment_content_3" = "De apotheek informeert u vervolgens via de e-receptenapp over hoe u de bestelling kunt afronden.";
 "rdm_scc_txt_shipment_title" = "Jouw volgende stappen";
 "rdm_txt_subtitle" = "Hoe wilt u uw recepten inwisselen?";
 "rdm_txt_title" = "Hoe inwisselen?";
@@ -1285,6 +1302,8 @@
 "stg_btn_edit_profile_login" = "Register";
 "stg_btn_edit_profile_logout" = "Uitloggen";
 "stg_btn_edit_profile_registered_devices" = "Verbonden apparaten";
+"stg_btn_language_settings" = "Taal";
+"stg_btn_language_settings_alert_open_settings" = "Open instellingen";
 "stg_btn_medication_reminder" = "Herinnering aan inkomsten";
 "stg_btn_new_profile_create" = "Redden";
 "stg_btn_reg_devices_load" = "Register";
@@ -1471,6 +1490,8 @@
 "stg_txt_header_personal_settings" = "persoonlijke instellingen";
 "stg_txt_header_profiles" = "Profielen";
 "stg_txt_header_security" = "Beveiliging";
+"stg_txt_language_settings_alert_description" = "U kunt de app-taal wijzigen in Systeeminstellingen.";
+"stg_txt_language_settings_alert_title" = "Wijzig de taal van de app";
 "stg_txt_new_profile_background_section_title" = "Achtergrond kleur";
 "stg_txt_new_profile_error_message_title" = "Fout";
 "stg_txt_new_profile_missing_name_error" = "Het naamveld mag niet leeg zijn";
@@ -1483,6 +1504,7 @@
 "stg_txt_reg_devices_registered_since_%@" = "Geregistreerd sinds %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Geregistreerd sinds %@ (dit apparaat)";
 "stg_txt_reg_devices_title" = "Verbonden apparaten";
+"stg_txt_security_option_change_password_title" = "verander wachtwoord";
 "stg_txt_security_option_faceid_title" = "FaceID";
 "stg_txt_security_option_password_title" = "wachtwoord";
 "stg_txt_security_option_touchid_title" = "Touch-ID";

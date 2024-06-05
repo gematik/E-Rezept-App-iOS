@@ -19,51 +19,52 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import Perception
 import SwiftUI
 
 struct RedeemSuccessView: View {
-    let store: RedeemSuccessDomain.Store
-    @ObservedObject var viewStore: ViewStoreOf<RedeemSuccessDomain>
+    let store: StoreOf<RedeemSuccessDomain>
 
-    init(store: RedeemSuccessDomain.Store) {
+    init(store: StoreOf<RedeemSuccessDomain>) {
         self.store = store
-        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                if let url = videoURLforSource(viewStore.state.redeemOption) {
-                    LoopingVideoPlayerContainerView(withURL: url)
-                        .frame(
-                            minWidth: 160,
-                            idealWidth: 240,
-                            maxWidth: 300,
-                            minHeight: 160,
-                            idealHeight: 240,
-                            maxHeight: 300
-                        )
-                        .clipShape(Circle())
-                        .padding(.vertical, 8)
+        WithPerceptionTracking {
+            ScrollView {
+                VStack(spacing: 16) {
+                    if let url = videoURLforSource(store.redeemOption) {
+                        LoopingVideoPlayerContainerView(withURL: url)
+                            .frame(
+                                minWidth: 160,
+                                idealWidth: 240,
+                                maxWidth: 300,
+                                minHeight: 160,
+                                idealHeight: 240,
+                                maxHeight: 300
+                            )
+                            .clipShape(Circle())
+                            .padding(.vertical, 8)
+                    }
+
+                    Text(titlelForSource(store.redeemOption), bundle: .module)
+                        .font(Font.title3.bold())
+
+                    ContentView(option: store.state.redeemOption)
+
+                    Spacer()
+
+                    LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
+                                         isLoading: false) {
+                        store.send(.closeButtonTapped)
+                    }
+                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
                 }
-
-                Text(titlelForSource(viewStore.state.redeemOption), bundle: .module)
-                    .font(Font.title3.bold())
-
-                ContentView(option: viewStore.state.redeemOption)
-
-                Spacer()
-
-                LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
-                                     isLoading: false) {
-                    viewStore.send(.closeButtonTapped)
-                }
-                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
+                .navigationBarBackButtonHidden(true)
+                .navigationTitle(L10n.phaSuccessRedeemTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .padding()
             }
-            .navigationBarBackButtonHidden(true)
-            .navigationTitle(L10n.phaSuccessRedeemTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .padding()
         }
     }
 

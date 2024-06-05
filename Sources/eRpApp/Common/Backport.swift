@@ -79,6 +79,38 @@ extension NavigationLink {
     }
 }
 
+// Backport of NavigationLink with Bindings
+// Slightly modified to support onTap action
+// Source: https://pointfreeco.github.io/swift-composable-architecture/1.8.0/documentation/composablearchitecture/treebasednavigation#Backwards-compatible-availability
+// swiftlint:disable:previous line_length
+@available(iOS, introduced: 13, deprecated: 16)
+@available(macOS, introduced: 10.15, deprecated: 13)
+@available(tvOS, introduced: 13, deprecated: 16)
+@available(watchOS, introduced: 6, deprecated: 9)
+extension NavigationLink {
+    init<D, C: View>(
+        item: Binding<D?>,
+        onTap: @escaping () -> Void,
+        @ViewBuilder destination: (D) -> C,
+        @ViewBuilder label: () -> Label
+    ) where Destination == C? {
+        self.init(
+            destination: item.wrappedValue.map(destination),
+            isActive: Binding(
+                get: { item.wrappedValue != nil },
+                set: { isActive, transaction in
+                    if !isActive {
+                        item.transaction(transaction).wrappedValue = nil
+                    } else {
+                        onTap()
+                    }
+                }
+            ),
+            label: label
+        )
+    }
+}
+
 extension Binding {
     func isPresent<Wrapped>() -> Binding<Bool> where Value == Wrapped? {
         // swiftformat:disable all
@@ -94,6 +126,32 @@ extension Optional {
         set {
             guard !newValue else { return }
             self = nil
+        }
+    }
+}
+
+extension View {
+    @MainActor
+    func snapshot() -> UIImage? {
+        if #available(iOS 16.0, *) {
+            let renderer = ImageRenderer(content: self)
+            if let image = renderer.uiImage {
+                return image
+            }
+            return nil
+        } else {
+            let controller = UIHostingController(rootView: self)
+            let view = controller.view
+
+            let targetSize = controller.view.intrinsicContentSize
+            view?.bounds = CGRect(origin: .zero, size: targetSize)
+            view?.backgroundColor = .clear
+
+            let renderer = UIGraphicsImageRenderer(size: targetSize)
+
+            return renderer.image { _ in
+                view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+            }
         }
     }
 }

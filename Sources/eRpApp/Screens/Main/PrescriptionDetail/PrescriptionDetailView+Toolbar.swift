@@ -22,119 +22,68 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct ToolbarViewModifier: ViewModifier {
-        let store: PrescriptionDetailDomain.Store
-        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
-
-        init(store: PrescriptionDetailDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store, observe: ViewState.init)
-        }
-
-        struct ViewState: Equatable {
-            let destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
-
-            init(state: PrescriptionDetailDomain.State) {
-                destinationTag = state.destination?.tag
-            }
-        }
+        @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
 
         func body(content: Content) -> some View {
-            content
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Menu(
-                            content: { ToolbarMenu(store: store) },
-                            label: { Image(systemName: SFSymbolName.ellipsis).padding() }
-                        )
-                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlBtnToolbarItem)
-                    }
-                }
-                .sheet(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .sharePrescription },
-                    set: { show in
-                        if !show {
-                            viewStore.send(.setNavigation(tag: nil))
-                        }
-                    }
-                )) {
-                    IfLetStore(
-                        store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                        state: /PrescriptionDetailDomain.Destinations.State.sharePrescription,
-                        action: PrescriptionDetailDomain.Destinations.Action.sharePrescription
-                    ) { scopedStore in
-                        WithViewStore(scopedStore) { $0 } content: { routeState in
-                            ShareViewController(
-                                itemsToShare: [
-                                    "E-Rezept-App",
-                                    routeState.state.url,
-                                    routeState.state.dataMatrixCodeImage as Any?,
-                                ]
-                                .compactMap { $0 }
+            WithPerceptionTracking {
+                content
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Menu(
+                                content: { ToolbarMenu(store: store) },
+                                label: { Image(systemName: SFSymbolName.ellipsis).padding() }
                             )
+                            .accessibility(identifier: A11y.prescriptionDetails.prscDtlBtnToolbarItem)
                         }
                     }
-                }
+                    .sheet(item: $store
+                        .scope(state: \.destination?.sharePrescription,
+                               action: \.destination.sharePrescription)) { store in
+                            ShareViewController(store: store)
+                    }
+            }
         }
 
         private struct ToolbarMenu: View {
-            @AppStorage("enable_prescription_sharing") var isPrescriptionSharingEnabled = false
-            @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
-
-            init(store: PrescriptionDetailDomain.Store) {
-                viewStore = ViewStore(store, observe: ViewState.init)
-            }
-
-            struct ViewState: Equatable {
-                let isScannedTask: Bool
-                let isArchived: Bool
-                let medicationRedeemButtonTitle: LocalizedStringKey
-
-                init(state: PrescriptionDetailDomain.State) {
-                    isScannedTask = state.prescription.type == .scanned
-                    isArchived = state.prescription.isArchived
-                    medicationRedeemButtonTitle = state.prescription.isArchived ? L10n.dtlBtnToogleMarkedRedeemed
-                        .key : L10n
-                        .dtlBtnToogleMarkRedeemed.key
-                }
-            }
+            @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
 
             var body: some View {
-                VStack {
-                    if isPrescriptionSharingEnabled {
+                WithPerceptionTracking {
+                    VStack {
                         Button(
-                            action: { viewStore.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size)) },
+                            action: { store.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size)) },
                             label: { Label(L10n.prscDtlBtnShare, systemImage: SFSymbolName.share) }
                         )
                         .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnShare)
-                    }
-                    if viewStore.isScannedTask {
-                        Button(
-                            action: { viewStore.send(.toggleRedeemPrescription) },
-                            label: {
-                                if viewStore.isArchived {
-                                    Label(L10n.dtlBtnToogleMarkedRedeemed, systemImage: SFSymbolName.cross)
-                                } else {
-                                    Label(L10n.dtlBtnToogleMarkRedeemed, systemImage: SFSymbolName.checkmark)
+                        if store.prescription.type == .scanned {
+                            Button(
+                                action: { store.send(.toggleRedeemPrescription) },
+                                label: {
+                                    if store.prescription.isArchived {
+                                        Label(L10n.dtlBtnToogleMarkedRedeemed, systemImage: SFSymbolName.cross)
+                                    } else {
+                                        Label(L10n.dtlBtnToogleMarkRedeemed, systemImage: SFSymbolName.checkmark)
+                                    }
                                 }
-                            }
+                            )
+                            .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnRedeem)
+                        }
+                        Button(
+                            role: .destructive,
+                            action: { store.send(.delete) },
+                            label: { Label(L10n.prscDtlBtnDelete, systemImage: SFSymbolName.trash) }
                         )
-                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnRedeem)
+                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnDelete)
                     }
-                    Button(
-                        role: .destructive,
-                        action: { viewStore.send(.delete) },
-                        label: { Label(L10n.prscDtlBtnDelete, systemImage: SFSymbolName.trash) }
-                    )
-                    .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnDelete)
+                    .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenu)
                 }
-                .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenu)
             }
         }
     }
 }
 
 extension View {
-    func prescriptionDetailToolbarItem(store: PrescriptionDetailDomain.Store) -> some View {
+    func prescriptionDetailToolbarItem(store: StoreOf<PrescriptionDetailDomain>) -> some View {
         modifier(
             PrescriptionDetailView.ToolbarViewModifier(store: store)
         )

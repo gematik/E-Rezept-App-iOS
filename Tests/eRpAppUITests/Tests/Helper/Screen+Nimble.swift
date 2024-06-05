@@ -21,19 +21,31 @@ import XCTest
 
 extension Screen {
     func button(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
-                line: UInt) -> XCUIElement {
+                line: UInt, checkExistence: Bool = true) -> XCUIElement {
         elements(
             query: query?.buttons ?? app.buttons,
             identifier: identifier,
             file: file,
-            line: line
+            line: line,
+            checkExistence: checkExistence
         )
     }
 
     func textField(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
-                   line: UInt) -> XCUIElement {
+                   line: UInt, checkExistence: Bool = true) -> XCUIElement {
         elements(
             query: query?.textFields ?? app.textFields,
+            identifier: identifier,
+            file: file,
+            line: line,
+            checkExistence: checkExistence
+        )
+    }
+
+    func secureTextField(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
+                         line: UInt) -> XCUIElement {
+        elements(
+            query: query?.secureTextFields ?? app.secureTextFields,
             identifier: identifier,
             file: file,
             line: line
@@ -41,48 +53,63 @@ extension Screen {
     }
 
     func staticText(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
-                    line: UInt) -> XCUIElement {
+                    line: UInt, checkExistence: Bool = true) -> XCUIElement {
         elements(
             query: query?.staticTexts ?? app.staticTexts,
             identifier: identifier,
             file: file,
-            line: line
+            line: line,
+            checkExistence: checkExistence
         )
     }
 
     func switches(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
-                  line: UInt) -> XCUIElement {
+                  line: UInt, checkExistence: Bool = true) -> XCUIElement {
         elements(
             query: query?.switches ?? app.switches,
             identifier: identifier,
             file: file,
-            line: line
+            line: line,
+            checkExistence: checkExistence
         )
     }
 
     func container(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
-                   line: UInt) -> XCUIElement {
+                   line: UInt, checkExistence: Bool = true) -> XCUIElement {
         elements(
             query: query?.otherElements ?? app.otherElements,
             identifier: identifier,
             file: file,
-            line: line
+            line: line,
+            checkExistence: checkExistence
         )
     }
 
     func datePicker(within query: XCUIElementQuery? = nil, by identifier: String, file: StaticString,
-                    line: UInt) -> XCUIElement {
+                    line: UInt, checkExistence: Bool = true) -> XCUIElement {
         elements(
             query: query?.datePickers ?? app.datePickers,
             identifier: identifier,
             file: file,
-            line: line
+            line: line,
+            checkExistence: checkExistence
         )
     }
 
-    func elements(query: XCUIElementQuery, identifier: String, file: StaticString, line: UInt) -> XCUIElement {
+    func elements(
+        query: XCUIElementQuery,
+        identifier: String,
+        file: StaticString,
+        line: UInt,
+        checkExistence: Bool = true
+    ) -> XCUIElement {
         let element = query[identifier]
-        expect(file: file, line: line, element).to(exist(identifier))
+
+        // additional if instead of direct `waitForExistens` speeds up the UI-Tests
+        if checkExistence, !element.exists {
+            expect(file: file, line: line, element.waitForExistence(timeout: 5.0)).to(beTrue())
+        }
+
         return element
     }
 

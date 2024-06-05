@@ -65,6 +65,59 @@ struct PrescriptionDetailsScreen: Screen {
         return RedeemMatrixCodeScreen(app: app, previous: self)
     }
 
+    func autIdemHeadlineButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        button(
+            by: A11y.prescriptionDetails.prscDtlBtnHeadlineSubstitutionInfo,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
+    }
+
+    func tapAutIdemHeadlineButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
+        button(by: A11y.prescriptionDetails.prscDtlBtnHeadlineSubstitutionInfo, file: file, line: line).tap()
+
+        return Drawer(
+            app: app,
+            identifier: A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo,
+            file: file,
+            line: line
+        )
+    }
+
+    func tapAutIdemInfoButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
+        button(by: A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo, file: file, line: line).tap()
+
+        return Drawer(
+            app: app,
+            identifier: A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo,
+            file: file,
+            line: line
+        )
+    }
+
+    struct Drawer: Screen {
+        let app: XCUIApplication
+        let container: XCUIElement
+
+        init(app: XCUIApplication, identifier: String, file _: StaticString = #file, line _: UInt = #line) {
+            self.app = app
+            container = app.otherElements[identifier]
+        }
+
+        func title(file: StaticString = #file, line: UInt = #line) -> String? {
+            staticText(by: A11y.prescriptionDetails.prscDtlDrawerTitle, file: file, line: line).label
+        }
+
+        func description(file: StaticString = #file, line: UInt = #line) -> String? {
+            staticText(by: A11y.prescriptionDetails.prscDtlDrawerDescription, file: file, line: line).label
+        }
+
+        func close(file _: StaticString = #file, line _: UInt = #line) {
+            container.coordinate(withNormalizedOffset: .zero).tap()
+        }
+    }
+
     struct DosageInstructionsScreen: Screen {
         let app: XCUIApplication
 

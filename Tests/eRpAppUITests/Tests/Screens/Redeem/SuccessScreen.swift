@@ -19,10 +19,19 @@
 import Nimble
 import XCTest
 
-@MainActor
 struct SuccessScreen: Screen {
     let app: XCUIApplication
 
+    init(app: XCUIApplication, file: StaticString = #file, line: UInt = #line) {
+        self.app = app
+
+        if !app.navigationBars["Geschafft! 🎉"].exists {
+            expect(file: file, line: line, app.navigationBars["Geschafft! 🎉"].waitForExistence(timeout: 5))
+                .to(beTrue())
+        }
+    }
+
+    @MainActor
     func tapClose(file: StaticString = #file, line: UInt = #line) async throws {
         button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, file: file, line: line).tap()
 

@@ -17,58 +17,52 @@
 //
 
 import ComposableArchitecture
+import Perception
 import SwiftUI
 
 struct PrescriptionArchiveView: View {
-    let store: PrescriptionArchiveDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionArchiveDomain.Action>
+    @Perception.Bindable var store: StoreOf<PrescriptionArchiveDomain>
 
-    init(store: PrescriptionArchiveDomain.Store) {
+    init(store: StoreOf<PrescriptionArchiveDomain>) {
         self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let prescriptions: [Prescription]
-        let destinationTag: PrescriptionArchiveDomain.Destinations.State.Tag?
-
-        init(state: PrescriptionArchiveDomain.State) {
-            prescriptions = state.prescriptions
-            destinationTag = state.destination?.tag
-        }
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView(.vertical) {
-                VStack(spacing: 16) {
-                    ForEach(viewStore.prescriptions) { prescription in
-                        PrescriptionView(
-                            prescription: prescription
-                        ) {
-                            viewStore.send(.prescriptionDetailViewTapped(
-                                selectedPrescription: prescription
-                            ))
+        WithPerceptionTracking {
+            VStack(spacing: 0) {
+                ScrollView(.vertical) {
+                    VStack(spacing: 16) {
+                        ForEach(store.prescriptions) { prescription in
+                            WithPerceptionTracking {
+                                PrescriptionView(
+                                    prescription: prescription
+                                ) {
+                                    store.send(.prescriptionDetailViewTapped(
+                                        selectedPrescription: prescription
+                                    ))
+                                }
+                            }
                         }
                     }
+                    .padding()
                 }
-                .padding()
             }
+            .navigationBarTitle(Text(L10n.prscArchTxtTitle), displayMode: .inline)
+            .task {
+                await store.send(.loadLocalPrescriptions).finish()
+            }
+            // Navigation into details
+            NavigationLink(item: $store.scope(
+                state: \.destination?.prescriptionDetail,
+                action: \.destination.prescriptionDetail
+            )) { store in
+                PrescriptionDetailView(store: store)
+            } label: {
+                EmptyView()
+            }
+            .accessibility(hidden: true)
+            .hidden()
         }
-        .navigationBarTitle(Text(L10n.prscArchTxtTitle), displayMode: .inline)
-        .task {
-            await viewStore.send(.loadLocalPrescriptions).finish()
-        }
-
-        // Navigation into details
-        NavigationLinkStore(
-            store.scope(state: \.$destination, action: PrescriptionArchiveDomain.Action.destination),
-            state: /PrescriptionArchiveDomain.Destinations.State.prescriptionDetail,
-            action: PrescriptionArchiveDomain.Destinations.Action.prescriptionDetail,
-            onTap: { viewStore.send(.setNavigation(tag: .prescriptionDetail)) },
-            destination: PrescriptionDetailView.init(store:),
-            label: { EmptyView() }
-        ).accessibility(hidden: true)
     }
 }
 

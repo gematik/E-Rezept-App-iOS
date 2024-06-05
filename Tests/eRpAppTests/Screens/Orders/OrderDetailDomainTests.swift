@@ -196,7 +196,7 @@ final class OrderDetailDomainTests: XCTestCase {
                 )
             )
         }
-        await store.send(.setNavigation(tag: .none)) {
+        await store.send(.resetNavigation) {
             $0.order = input
             $0.destination = nil
         }

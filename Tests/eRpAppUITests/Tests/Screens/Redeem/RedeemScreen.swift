@@ -22,10 +22,22 @@ import XCTest
 struct RedeemScreen: Screen {
     let app: XCUIApplication
 
-    func tapRedeem(file: StaticString = #file, line: UInt = #line) -> SuccessScreen {
-        button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, file: file, line: line).tap()
+    init(app: XCUIApplication, file: StaticString = #file, line: UInt = #line) {
+        self.app = app
 
-        return SuccessScreen(app: app)
+        if !app.staticTexts["Meine Bestellung"].exists {
+            expect(file: file, line: line, app.staticTexts["Meine Bestellung"].waitForExistence(timeout: 5))
+                .to(beTrue())
+        }
+    }
+
+    func tapRedeem(file: StaticString = #file, line: UInt = #line) -> SuccessScreen {
+        let button = button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, file: file, line: line)
+
+        print(button.isHittable)
+        button.tap()
+
+        return SuccessScreen(app: app, file: file, line: line)
     }
 
     func tapEditAddress(file: StaticString = #file, line: UInt = #line) -> RedeemEditAddress {

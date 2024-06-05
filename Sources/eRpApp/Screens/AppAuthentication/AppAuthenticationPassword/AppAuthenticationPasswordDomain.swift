@@ -18,10 +18,10 @@
 
 import ComposableArchitecture
 
-// [REQ:BSI-eRp-ePA:O.Auth_6#2] Domain handling App Authentication
-struct AppAuthenticationPasswordDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+// [REQ:BSI-eRp-ePA:O.Auth_7#2] Domain handling App Authentication
+@Reducer
+struct AppAuthenticationPasswordDomain {
+    @ObservableState
     struct State: Equatable {
         var password: String = ""
         var lastMatchResultSuccessful: Bool?
@@ -35,11 +35,11 @@ struct AppAuthenticationPasswordDomain: ReducerProtocol {
 
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
     }
 
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .setPassword(password):
             state.password = password
@@ -47,9 +47,9 @@ struct AppAuthenticationPasswordDomain: ReducerProtocol {
 
         case .loginButtonTapped:
             guard let success = try? appSecurityManager.matches(password: state.password) else {
-                return EffectTask.send(.passwordVerificationReceived(false))
+                return Effect.send(.passwordVerificationReceived(false))
             }
-            return EffectTask.send(.passwordVerificationReceived(success))
+            return Effect.send(.passwordVerificationReceived(success))
 
         case let .passwordVerificationReceived(isLoggedIn):
             state.lastMatchResultSuccessful = isLoggedIn
@@ -62,11 +62,11 @@ extension AppAuthenticationPasswordDomain {
     enum Dummies {
         static let state = State()
 
-        static let store = Store(initialState: state) {
+        static let store = StoreOf<AppAuthenticationPasswordDomain>(initialState: state) {
             AppAuthenticationPasswordDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<AppAuthenticationPasswordDomain> {
             Store(
                 initialState: state
             ) {

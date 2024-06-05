@@ -29,9 +29,28 @@ import OpenSSL
 import Pharmacy
 import SwiftUI
 
-struct PharmacyRedeemDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct PharmacyRedeemDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = redeem_success
+        case redeemSuccess(RedeemSuccessDomain)
+        // sourcery: AnalyticsScreen = redeem_editContactInformation
+        case contact(PharmacyContactDomain)
+        // sourcery: AnalyticsScreen = cardWall
+        case cardWall(CardWallIntroductionDomain)
+        // sourcery: AnalyticsScreen = redeem_prescriptionSelection
+        case prescriptionSelection(PharmacyPrescriptionSelectionDomain)
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = alert
+        case alert(ErpAlertState<Alert>)
 
+        enum Alert {
+            case contact
+        }
+    }
+
+    @ObservableState
     struct State: Equatable {
         var redeemOption: RedeemOption
         var erxTasks: [ErxTask]
@@ -40,7 +59,30 @@ struct PharmacyRedeemDomain: ReducerProtocol {
         var orderResponses: IdentifiedArrayOf<OrderResponse> = []
         var selectedShipmentInfo: ShipmentInfo?
         var profile: Profile?
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
+
+        var orders: [OrderRequest] {
+            selectedErxTasks
+                .asOrders(orderId: UUID(),
+                          option: redeemOption,
+                          for: pharmacy,
+                          with: selectedShipmentInfo)
+        }
+
+        var prescriptions: [Prescription] {
+            selectedErxTasks.map { Prescription($0) }
+        }
+
+        struct Prescription: Equatable, Identifiable {
+            var id: String { taskID }
+            let taskID: String
+            let title: String
+
+            init(_ task: ErxTask) {
+                taskID = task.id
+                title = task.medication?.displayName ?? L10n.prscFdTxtNa.text
+            }
+        }
     }
 
     enum Action: Equatable {
@@ -57,12 +99,21 @@ struct PharmacyRedeemDomain: ReducerProtocol {
         case redeem
         /// Called when redeem network call finishes
         case redeemReceived(Result<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>)
+        /// Navigation actions
+        case showContact
+        case showRedeemSuccess
+        case showCardWall
+        case showPrescriptionSelection
         /// Actions for subdomains and navigation
-        case destination(PresentationAction<Destinations.Action>)
-        /// Save the current State when changing Pharmacy
-        case changePharmacy(PharmacyRedeemDomain.State)
-        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(PresentationAction<Destination.Action>)
+        case delegate(Delegate)
+        case resetNavigation
         case close
+
+        enum Delegate: Equatable {
+            /// Save the current State when changing Pharmacy
+            case changePharmacy(PharmacyRedeemDomain.State)
+        }
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
@@ -73,15 +124,13 @@ struct PharmacyRedeemDomain: ReducerProtocol {
     @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                PharmacyRedeemDomain.Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             return .merge(
@@ -145,13 +194,13 @@ struct PharmacyRedeemDomain: ReducerProtocol {
             return .run { _ in
                 for try await _ in save(pharmacy: pharmacy).values {}
             }
-        case let .destination(.presented(.redeemSuccessView(action: .delegate(action)))):
+        case let .destination(.presented(.redeemSuccess(.delegate(action)))):
             switch action {
             case .close:
                 state.destination = nil
-                return EffectTask.send(.close)
+                return Effect.send(.close)
             }
-        case let .destination(.presented(.pharmacyContact(.delegate(action)))):
+        case let .destination(.presented(.contact(.delegate(action)))):
             switch action {
             case .close:
                 state.destination = nil
@@ -164,33 +213,32 @@ struct PharmacyRedeemDomain: ReducerProtocol {
             state.destination = nil
             state.selectedErxTasks = erxTasks
             return .none
-        case .setNavigation(tag: .contact),
+        case .showContact,
              .destination(.presented(.alert(.contact))):
             state.destination = .contact(
                 .init(shipmentInfo: state.selectedShipmentInfo, service: inputValidator.service)
             )
             return .none
-        case .setNavigation(tag: .redeemSuccess):
+        case .showRedeemSuccess:
             state.destination = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
             return .none
-        case .setNavigation(tag: .cardWall):
+        case .showCardWall:
             state.destination = .cardWall(CardWallIntroductionDomain.State(
                 isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
                 profileId: userSession.profileId
             ))
             return .none
-        case .setNavigation(tag: .prescriptionSelection):
+        case .showPrescriptionSelection:
             state
                 .destination = .prescriptionSelection(PharmacyPrescriptionSelectionDomain
                     .State(erxTasks: state.erxTasks, selectedErxTasks: state.selectedErxTasks, profile: state.profile))
             return .none
-        case .setNavigation(tag: .none),
+        case .resetNavigation,
              .close:
             state.destination = nil
             return .none
         case .destination,
-             .setNavigation,
-             .changePharmacy:
+             .delegate:
             return .none
         }
     }
@@ -198,12 +246,12 @@ struct PharmacyRedeemDomain: ReducerProtocol {
 
 extension PharmacyRedeemDomain {
     enum AlertStates {
-        static func alert(for error: RedeemServiceError) -> AlertState<Destinations.Action.Alert> {
+        static func alert(for error: RedeemServiceError) -> AlertState<Destination.Alert> {
             guard let message = error.recoverySuggestion else {
                 return AlertState(
                     title: { TextState(error.localizedDescriptionWithErrorList) },
                     actions: {
-                        ButtonState(role: .cancel, action: .send(.dismiss)) {
+                        ButtonState(role: .cancel) {
                             TextState(L10n.alertBtnOk)
                         }
                     }
@@ -212,7 +260,7 @@ extension PharmacyRedeemDomain {
             return AlertState(
                 title: { TextState(error.localizedDescriptionWithErrorList) },
                 actions: {
-                    ButtonState(role: .cancel, action: .send(.dismiss)) {
+                    ButtonState(role: .cancel) {
                         TextState(L10n.alertBtnOk)
                     }
                 },
@@ -220,14 +268,14 @@ extension PharmacyRedeemDomain {
             )
         }
 
-        static func missingContactInfo(with localizedMessage: String) -> AlertState<Destinations.Action.Alert> {
+        static func missingContactInfo(with localizedMessage: String) -> AlertState<Destination.Alert> {
             AlertState(
                 title: { TextState(L10n.phaRedeemAlertTitleMissingPhone) },
                 actions: {
                     ButtonState(action: .send(.contact)) {
                         TextState(L10n.phaRedeemBtnAlertComplete)
                     }
-                    ButtonState(role: .cancel, action: .send(.dismiss)) {
+                    ButtonState(role: .cancel) {
                         TextState(L10n.phaRedeemBtnAlertCancel)
                     }
                 },
@@ -235,11 +283,11 @@ extension PharmacyRedeemDomain {
             )
         }
 
-        static func failingRequest(count: Int) -> AlertState<Destinations.Action.Alert> {
+        static func failingRequest(count: Int) -> AlertState<Destination.Alert> {
             AlertState(
                 title: { TextState(L10n.phaRedeemAlertTitleFailure(count)) },
                 actions: {
-                    ButtonState(role: .cancel, action: .send(.dismiss)) {
+                    ButtonState(role: .cancel) {
                         TextState(L10n.alertBtnOk)
                     }
                 },
@@ -249,17 +297,10 @@ extension PharmacyRedeemDomain {
     }
 }
 
-extension PharmacyRedeemDomain.State {
-    var orders: [OrderRequest] {
-        let orderId = UUID()
-        return selectedErxTasks.asOrders(orderId: orderId, redeemOption, for: pharmacy, with: selectedShipmentInfo)
-    }
-}
-
 extension PharmacyRedeemDomain {
     func redeem(
         orders: [OrderRequest]
-    ) -> EffectTask<PharmacyRedeemDomain.Action> {
+    ) -> Effect<PharmacyRedeemDomain.Action> {
         .publisher(
             redeemService.redeem(orders) // -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
                 .receive(on: schedulers.main.animation())
@@ -268,7 +309,7 @@ extension PharmacyRedeemDomain {
                 }
                 .catch { redeemError -> AnyPublisher<PharmacyRedeemDomain.Action, Never> in
                     if redeemError == .noTokenAvailable {
-                        return Just(PharmacyRedeemDomain.Action.setNavigation(tag: .cardWall))
+                        return Just(PharmacyRedeemDomain.Action.showCardWall)
                             .eraseToAnyPublisher()
                     } else {
                         return Just(PharmacyRedeemDomain.Action.redeemReceived(.failure(redeemError)))
@@ -401,7 +442,7 @@ extension PharmacyRedeemDomain {
             PharmacyRedeemDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<PharmacyRedeemDomain> {
             Store(
                 initialState: state
             ) {

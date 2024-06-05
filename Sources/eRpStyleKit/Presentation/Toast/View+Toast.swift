@@ -79,16 +79,16 @@ public struct Toast {
     /// Describes a toast style
     public enum Style {
         /// A simple toast style to display a simple message that will be dismissed after a given time.
-        case simple(LocalizedStringKey, Int)
+        case simple(LocalizedStringKey, Int, Bundle)
         /// A more complex toast style to display a message and a description that will be dismissed after a given time.
-        case twoLines(LocalizedStringKey, LocalizedStringKey, Int)
+        case twoLines(LocalizedStringKey, LocalizedStringKey, Int, Bundle)
         /// A action based toast that must be dismissed by user interaction.
-        case action(LocalizedStringKey, Text, () -> Void)
+        case action(LocalizedStringKey, Text, Bundle, () -> Void)
 
         var duration: Int? {
             switch self {
-            case let .simple(_, duration),
-                 let .twoLines(_, _, duration):
+            case let .simple(_, duration, _),
+                 let .twoLines(_, _, duration, _):
                 return duration
             case .action:
                 return nil
@@ -115,26 +115,26 @@ public struct ToastContainerView: View {
                 if isPresented {
                     ZStack(alignment: .trailing) {
                         switch toast?.style {
-                        case let .simple(text, _):
-                            Text(text, bundle: .module)
+                        case let .simple(text, _, bundle):
+                            Text(text, bundle: bundle)
                                 .font(.subheadline)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: .infinity, alignment: .center)
-                        case let .twoLines(upper, lower, _):
+                        case let .twoLines(upper, lower, _, bundle):
                             VStack {
-                                Text(upper, bundle: .module)
+                                Text(upper, bundle: bundle)
                                     .font(.subheadline)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity, alignment: .center)
 
-                                Text(lower, bundle: .module)
+                                Text(lower, bundle: bundle)
                                     .font(.subheadline)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity, alignment: .center)
                             }
-                        case let .action(text, buttonTitle, action):
+                        case let .action(text, buttonTitle, bundle, action):
                             VStack(alignment: .trailing) {
-                                Text(text, bundle: .module)
+                                Text(text, bundle: bundle)
                                     .font(.subheadline)
                                     .multilineTextAlignment(.center)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -182,17 +182,17 @@ struct Toast_PreviewProvider: PreviewProvider {
                 Spacer()
 
                 Button {
-                    toast = Toast(style: .simple("5 seconds test", 5))
+                    toast = Toast(style: .simple("5 seconds test", 5, .module))
                 } label: {
                     Text("Show Simple")
                 }
                 Button {
-                    toast = Toast(style: .twoLines("upper", "5 seconds test", 5))
+                    toast = Toast(style: .twoLines("upper", "5 seconds test", 5, .module))
                 } label: {
                     Text("Show Two Lines")
                 }
                 Button {
-                    toast = Toast(style: .action("Toast with actions", Text("button title")) {
+                    toast = Toast(style: .action("Toast with actions", Text("button title"), .module) {
                         self.toast = nil
                     })
                 } label: {
@@ -204,7 +204,7 @@ struct Toast_PreviewProvider: PreviewProvider {
             .frame(maxWidth: .infinity)
             .onAppear {
                 withAnimation(.easeInOut) {
-                    toast = Toast(style: .simple("5 seconds test", 2))
+                    toast = Toast(style: .simple("5 seconds test", 2, .module))
                 }
             }
             .toast(

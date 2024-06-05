@@ -22,55 +22,43 @@ import IDP
 import LocalAuthentication
 import UIKit
 
-struct CardWallLoginOptionDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct CardWallLoginOptionDomain {
+    @ObservableState
     struct State: Equatable {
         let isDemoModus: Bool
         let profileId: UUID
         var pin: String = ""
         var selectedLoginOption = LoginOption.notSelected
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<Action.Alert>)
-            // sourcery: AnalyticsScreen = cardWall_readCard
-            case readcard(CardWallReadCardDomain.State)
-            // sourcery: AnalyticsScreen = cardWall_saveLoginSecurityInfo
-            case warning
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = alert
+        case alert(ErpAlertState<Alert>)
+        // sourcery: AnalyticsScreen = cardWall_readCard
+        case readCard(CardWallReadCardDomain)
+        // sourcery: AnalyticsScreen = cardWall_saveLoginSecurityInfo
+        case warning
 
-        enum Action: Equatable {
-            case readcardAction(action: CardWallReadCardDomain.Action)
-            case alert(Alert)
-
-            public enum Alert: Equatable {
-                case dismiss
-                case openAppSpecificSettings
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.readcard,
-                action: /Action.readcardAction
-            ) {
-                CardWallReadCardDomain()
-            }
+        enum Alert: Equatable {
+            case dismiss
+            case openAppSpecificSettings
         }
     }
 
-    indirect enum Action: Equatable {
+    enum Action: BindableAction, Equatable {
+        case binding(BindingAction<State>)
+
         case select(option: LoginOption)
         case advance
         case presentSecurityWarning
         case acceptSecurityWarning
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case destination(PresentationAction<Destination.Action>)
 
         case delegate(Delegate)
 
@@ -94,15 +82,15 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
                                                        error: &error) == true
     }
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
+        BindingReducer()
+
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .select(option: option):
             if state.selectedLoginOption == option, option.hasSelection {
@@ -124,7 +112,7 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
                     return .none
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
-                return EffectTask.send(.presentSecurityWarning)
+                return Effect.send(.presentSecurityWarning)
             }
             state.selectedLoginOption = option
             return .none
@@ -134,7 +122,7 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
             }
             return .none
         case .advance:
-            state.destination = .readcard(.init(isDemoModus: state.isDemoModus,
+            state.destination = .readCard(.init(isDemoModus: state.isDemoModus,
                                                 profileId: state.profileId,
                                                 pin: state.pin,
                                                 loginOption: state.isDemoModus ? .withoutBiometry : state
@@ -148,10 +136,10 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
             state.selectedLoginOption = .withBiometry
             state.destination = nil
             return .none
-        case .setNavigation(tag: .none):
+        case .resetNavigation:
             state.destination = nil
             return .none
-        case let .destination(.presented(.readcardAction(.delegate(destinationAction)))):
+        case let .destination(.presented(.readCard(.delegate(destinationAction)))):
             switch destinationAction {
             case .close:
                 return .run { send in
@@ -169,7 +157,7 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
                     await send(.delegate(.wrongCanClose))
                 }
             case .wrongPIN:
-                return EffectTask.send(.delegate(.wrongPinClose))
+                return Effect.send(.delegate(.wrongPinClose))
             case .navigateToIntro:
                 return .run { send in
                     // Delay for waiting the close animation Workaround for TCA pullback problem
@@ -183,7 +171,7 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
                     await send(.delegate(.unlockCardClose))
                 }
             }
-        case .setNavigation,
+        case .binding,
              .destination,
              .delegate:
             return .none
@@ -201,11 +189,21 @@ enum LoginOption {
     }
 
     var isWithBiometry: Bool {
-        self == .withBiometry
+        get { self == .withBiometry }
+        set {
+            if newValue {
+                self = .withBiometry
+            }
+        }
     }
 
     var isWithoutBiometry: Bool {
-        self == .withoutBiometry
+        get { self == .withoutBiometry }
+        set {
+            if newValue {
+                self = .withoutBiometry
+            }
+        }
     }
 }
 

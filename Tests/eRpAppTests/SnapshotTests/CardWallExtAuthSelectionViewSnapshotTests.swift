@@ -32,7 +32,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
         diffTool = "open"
     }
 
-    func store(for state: CardWallExtAuthSelectionDomain.State) -> CardWallExtAuthSelectionDomain.Store {
+    func store(for state: CardWallExtAuthSelectionDomain.State) -> StoreOf<CardWallExtAuthSelectionDomain> {
         .init(initialState: state) {
             EmptyReducer()
         }
@@ -43,8 +43,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
             store: store(for: .init(
                 kkList: Self.testDirectory,
                 filteredKKList: Self.testDirectory,
-                error: nil,
-                orderEgkVisible: false
+                error: nil
             ))
         )
 
@@ -56,8 +55,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
             store: store(for: .init(
                 kkList: Self.testDirectory,
                 error: IDPError.internal(error: .notImplemented),
-                selectedKK: Self.testEntryB,
-                orderEgkVisible: false
+                selectedKK: Self.testEntryB
             ))
         )
 
@@ -69,8 +67,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
             store: store(for: .init(
                 kkList: Self.testDirectory,
                 error: nil,
-                searchText: "Not existing KK",
-                orderEgkVisible: false
+                searchText: "Not existing KK"
             ))
         )
 

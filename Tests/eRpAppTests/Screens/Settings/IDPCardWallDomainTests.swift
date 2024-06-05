@@ -64,7 +64,7 @@ final class IDPCardWallDomainTests: XCTestCase {
     func testPinActionAdvanceFullscreenCover() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
-            pin: CardWallPINDomain.Dummies.state
+            subdomain: .pin(CardWallPINDomain.Dummies.state)
         ))
 
         var accessibilityAnnouncementCallsCount = 0
@@ -73,15 +73,14 @@ final class IDPCardWallDomainTests: XCTestCase {
         }
 
         expect(accessibilityAnnouncementCallsCount) == 0
-        await store.send(.pinAction(action: .advance(.fullScreenCover))) { state in
-            state.pin.doneButtonPressed = true
-            state.readCard = CardWallReadCardDomain.State(
+        await store.send(.subdomain(.pin(.advance(.fullScreenCover)))) { state in
+            state.subdomain = .readCard(CardWallReadCardDomain.State(
                 isDemoModus: false,
                 profileId: self.testProfileId,
                 pin: "",
                 loginOption: LoginOption.withoutBiometry,
                 output: CardWallReadCardDomain.State.Output.idle
-            )
+            ))
         }
         expect(accessibilityAnnouncementCallsCount) == 1
     }
@@ -89,80 +88,52 @@ final class IDPCardWallDomainTests: XCTestCase {
     func testReadCardActionWrongPIN() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
-            can: nil,
-            pin: .init(
-                isDemoModus: false,
-                profileId: UUID(),
-                transition: .fullScreenCover
-            ),
-            readCard: CardWallReadCardDomain.Dummies.state
+            subdomain: .readCard(CardWallReadCardDomain.Dummies.state)
         ))
 
-        await store.send(.readCard(action: .delegate(.wrongPIN))) { state in
-            state.pin.wrongPinEntered = true
+        await store.send(.subdomain(.readCard(.delegate(.wrongPIN)))) { state in
+            state.subdomain = .pin(CardWallPINDomain.State(isDemoModus: false,
+                                                           profileId: self.testProfileId,
+                                                           wrongPinEntered: true,
+                                                           transition: .fullScreenCover))
         }
     }
 
     func testReadCardActionWrongCAN() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
-            can: nil,
-            pin: .init(
-                isDemoModus: false,
-                profileId: UUID(),
-                transition: .fullScreenCover
-            ),
-            readCard: CardWallReadCardDomain.Dummies.state
+            subdomain: .readCard(CardWallReadCardDomain.Dummies.state)
         ))
 
-        await store.send(.readCard(action: .delegate(.wrongCAN))) { state in
-            state.can = CardWallCANDomain.State(
-                isDemoModus: false,
-                profileId: self.testProfileId,
-                can: "",
-                wrongCANEntered: true,
-                scannedCAN: nil,
-                isFlashOn: false,
-                destination: nil
-            )
-        }
-    }
-
-    func testReadCardActionWrongCANWithEmptyCAN() async {
-        let store = testStore(for: .init(
-            profileId: testProfileId,
-            can: nil,
-            pin: .init(
-                isDemoModus: false,
-                profileId: UUID(),
-                transition: .fullScreenCover
-            ),
-            readCard: CardWallReadCardDomain.Dummies.state
-        ))
-
-        await store.send(.readCard(action: .delegate(.wrongCAN))) { state in
-            state.can = CardWallCANDomain.State(
+        await store.send(.subdomain(.readCard(.delegate(.wrongCAN)))) { state in
+            state.subdomain = .can(CardWallCANDomain.State(
                 isDemoModus: false,
                 profileId: self.testProfileId,
                 can: "",
                 wrongCANEntered: true
-            )
+            ))
         }
     }
 
     func testPINActionClose() async {
-        let store = testStore()
+        let store = testStore(for: .init(
+            profileId: testProfileId,
+            subdomain: .pin(CardWallPINDomain.Dummies.state)
+        ))
 
-        await store.send(.canAction(action: .delegate(.close)))
+        await store.send(.subdomain(.pin(.delegate(.close))))
         await testScheduler.run()
 
         await store.receive(.delegate(.close))
     }
 
     func testCANActionClose() async {
-        let store = testStore()
+        let store = testStore(for: .init(
+            profileId: testProfileId,
+            subdomain: .can(CardWallCANDomain.Dummies.state)
+        ))
 
-        await store.send(.canAction(action: .delegate(.close)))
+        await store.send(.subdomain(.can(.delegate(.close))))
         await testScheduler.run()
 
         await store.receive(.delegate(.close))
@@ -171,16 +142,12 @@ final class IDPCardWallDomainTests: XCTestCase {
     func testReadCardCloseAction() async {
         let store = testStore(for: .init(
             profileId: testProfileId,
-            can: nil,
-            pin: .init(
-                isDemoModus: false,
-                profileId: UUID(),
-                transition: .fullScreenCover
-            ),
-            readCard: CardWallReadCardDomain.Dummies.state
+            subdomain: .readCard(CardWallReadCardDomain.Dummies.state)
         ))
 
-        await store.send(.readCard(action: .delegate(.close)))
+        await store.send(.subdomain(.readCard(.delegate(.close)))) { state in
+            state.subdomain = nil
+        }
         await testScheduler.run()
 
         await store.receive(.delegate(.finished))
@@ -191,14 +158,5 @@ final class IDPCardWallDomainTests: XCTestCase {
 
         await store.send(.delegate(.close))
         await store.send(.delegate(.finished))
-    }
-
-    func testPinCloseActionShouldBeForwarded() async {
-        let store = testStore()
-
-        // when
-        await store.send(.pinAction(action: .delegate(.close)))
-        // then
-        await store.receive(.delegate(.close))
     }
 }

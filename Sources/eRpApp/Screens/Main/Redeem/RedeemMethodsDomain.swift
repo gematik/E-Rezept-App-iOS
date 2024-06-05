@@ -16,6 +16,7 @@
 //  
 //
 
+import CasePaths
 import Combine
 import ComposableArchitecture
 import eRpKit
@@ -23,64 +24,44 @@ import IDP
 import UIKit
 import ZXingObjC
 
-struct RedeemMethodsDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct RedeemMethodsDomain {
+    @ObservableState
     struct State: Equatable {
         var erxTasks: [ErxTask]
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     enum Action: Equatable {
         case closeButtonTapped
-        case destination(PresentationAction<Destinations.Action>)
-        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(PresentationAction<Destination.Action>)
         case delegate(Delegate)
+
+        case resetNavigation
+        case showMatrixCodeTapped
+        case showPharmacySearchTapped
 
         enum Delegate: Equatable {
             case close
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = redeem_matrixCode
-            case matrixCode(MatrixCodeDomain.State)
-            // sourcery: AnalyticsScreen = pharmacySearch
-            case pharmacySearch(PharmacySearchDomain.State)
-        }
-
-        enum Action: Equatable {
-            case redeemMatrixCodeAction(action: MatrixCodeDomain.Action)
-            case pharmacySearchAction(action: PharmacySearchDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.matrixCode,
-                action: /Action.redeemMatrixCodeAction
-            ) {
-                MatrixCodeDomain()
-            }
-            Scope(
-                state: /State.pharmacySearch,
-                action: /Action.pharmacySearchAction
-            ) {
-                PharmacySearchDomain(
-                    referenceDateForOpenHours: nil
-                )
-            }
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = redeem_matrixCode
+        case matrixCode(MatrixCodeDomain)
+        // sourcery: AnalyticsScreen = pharmacySearch
+        case pharmacySearch(PharmacySearchDomain)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .closeButtonTapped:
-                return EffectTask.send(.delegate(.close))
-            case let .destination(.presented(.pharmacySearchAction(action: .delegate(action)))):
+                return Effect.send(.delegate(.close))
+            case let .destination(.presented(.pharmacySearch(.delegate(action)))):
                 switch action {
                 case .close:
                     state.destination = nil
@@ -89,29 +70,25 @@ struct RedeemMethodsDomain: ReducerProtocol {
                         await send(.delegate(.close))
                     }
                 }
-            case let .setNavigation(tag: tag):
-                switch tag {
-                case .matrixCode:
-                    state.destination = .matrixCode(
-                        MatrixCodeDomain.State(
-                            type: .erxTask,
-                            erxTasks: state.erxTasks
-                        )
+            case .showMatrixCodeTapped:
+                state.destination = .matrixCode(
+                    MatrixCodeDomain.State(
+                        type: .erxTask,
+                        erxTasks: state.erxTasks
                     )
-                case .pharmacySearch:
-                    state.destination = .pharmacySearch(PharmacySearchDomain.State(erxTasks: state.erxTasks))
-                case .none:
-                    state.destination = nil
-                    return .none
-                }
+                )
+                return .none
+            case .showPharmacySearchTapped:
+                state.destination = .pharmacySearch(PharmacySearchDomain.State(erxTasks: state.erxTasks))
+                return .none
+            case .resetNavigation:
+                state.destination = nil
                 return .none
             case .destination, .delegate:
                 return .none
             }
         }
-        .ifLet(\.$destination, action: /Action.destination) {
-            Destinations()
-        }
+        .ifLet(\.$destination, action: \.destination)
     }
 }
 

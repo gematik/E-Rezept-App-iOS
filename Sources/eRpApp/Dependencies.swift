@@ -317,23 +317,6 @@ extension DependencyValues {
     }
 }
 
-// MARK: ComposableCoreLocation
-
-import ComposableCoreLocation
-
-extension LocationManager: DependencyKey {
-    public static var liveValue: LocationManager = .live
-    public static var previewValue: LocationManager = .live
-    public static var testValue: LocationManager = .failing
-}
-
-extension DependencyValues {
-    var locationManager: LocationManager {
-        get { self[LocationManager.self] }
-        set { self[LocationManager.self] = newValue }
-    }
-}
-
 // MARK: factories
 
 import FHIRClient

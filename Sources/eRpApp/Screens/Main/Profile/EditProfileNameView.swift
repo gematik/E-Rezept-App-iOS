@@ -20,31 +20,14 @@ import ComposableArchitecture
 import SwiftUI
 
 struct EditProfileNameView: View {
-    let store: EditProfileNameDomain.Store
-
-    @ObservedObject var viewStore: ViewStore<ViewState, EditProfileNameDomain.Action>
-
-    init(store: EditProfileNameDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        var profileName: String
-
-        init(state: EditProfileNameDomain.State) {
-            profileName = state.profileName
-        }
-    }
+    @Perception.Bindable var store: StoreOf<EditProfileNameDomain>
 
     var body: some View {
-        EnterProfileNameSubView(
-            displayName: viewStore.binding(
-                get: \.profileName,
-                send: EditProfileNameDomain.Action.set(profileName:)
-            ),
-            didTapButtonAction: ({ viewStore.send(.saveButtonTapped) })
-        )
+        WithPerceptionTracking {
+            EnterProfileNameSubView(displayName: $store.profileName.sending(\.setProfileName)) {
+                store.send(.saveButtonTapped)
+            }
+        }
     }
 }
 

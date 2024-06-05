@@ -19,85 +19,77 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
-import Introspect
+import Perception
 import Pharmacy
 import SwiftUI
+import SwiftUIIntrospect
 
 struct PharmacyPrescriptionSelectionView: View {
-    let store: PharmacyPrescriptionSelectionDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, PharmacyPrescriptionSelectionDomain.Action>
+    @Perception.Bindable var store: StoreOf<PharmacyPrescriptionSelectionDomain>
 
-    init(store: PharmacyPrescriptionSelectionDomain.Store) {
+    init(store: StoreOf<PharmacyPrescriptionSelectionDomain>) {
         self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
     }
 
-    struct ViewState: Equatable {
-        let prescriptions: [Prescription]
-        let selectedPrescriptions: Set<ErxTask>
-        var profile: Profile?
+    struct Prescription: Hashable, Identifiable {
+        var id: String { taskID }
+        let taskID: String
+        let title: String
+        var isSelected = false
 
-        init(state: PharmacyPrescriptionSelectionDomain.State) {
-            prescriptions = state.erxTasks.map {
-                let isSelected = state.selectedErxTasks.contains($0)
-                return Prescription($0, isSelected: isSelected)
-            }
-            selectedPrescriptions = state.selectedErxTasks
-            profile = state.profile
-        }
-
-        struct Prescription: Equatable, Identifiable {
-            var id: String { taskID }
-            let taskID: String
-            let title: String
-            var isSelected = false
-
-            init(_ task: ErxTask, isSelected: Bool) {
-                taskID = task.id
-                title = task.medication?.displayName ?? L10n.prscFdTxtNa.text
-                self.isSelected = isSelected
-            }
+        init(_ task: ErxTask, isSelected: Bool) {
+            taskID = task.id
+            title = task.medication?.displayName ?? L10n.prscFdTxtNa.text
+            self.isSelected = isSelected
         }
     }
 
     var body: some View {
-        VStack {
-            ScrollView {
-                SingleElementSectionContainer(header: {
-                    if let profile = viewStore.profile {
-                        HStack {
-                            ProfilePictureView(profile: profile)
-                                .frame(width: 40, height: 40, alignment: .center)
-                            Text(profile.name).bold()
+        WithPerceptionTracking {
+            VStack {
+                ScrollView {
+                    SingleElementSectionContainer(header: {
+                        WithPerceptionTracking {
+                            if let profile = store.profile {
+                                HStack {
+                                    ProfilePictureView(profile: profile)
+                                        .frame(width: 40, height: 40, alignment: .center)
+                                    Text(profile.name).bold()
+                                }
+                            }
                         }
-                    }
-                }, content: {
-                    ForEach(viewStore.prescriptions.indices, id: \.self) { index in
-                        Button(action: { viewStore.send(.didSelect(viewStore.prescriptions[index].taskID)) },
-                               label: {
-                                   TitleWithSubtitleCellView(
-                                       title: viewStore.prescriptions[index].title,
-                                       subtitle: "",
-                                       isSelected: viewStore.prescriptions[index].isSelected
-                                   ).multilineTextAlignment(.leading)
-                               })
-                            .sectionContainerIsLastElement(index == viewStore.prescriptions.count - 1)
-                            .padding(.horizontal)
-                    }
-                })
+                    }, content: {
+                        let prescriptions = store.erxTasks.map {
+                            Prescription($0,
+                                         isSelected: store.selectedErxTasks.contains($0))
+                        }
+                        ForEach(Array(prescriptions.enumerated()), id: \.element) { index, prescription in
+                            Button(action: { store.send(.didSelect(prescription.taskID)) },
+                                   label: {
+                                       TitleWithSubtitleCellView(
+                                           title: prescription.title,
+                                           subtitle: "",
+                                           isSelected: prescription.isSelected
+                                       ).multilineTextAlignment(.leading)
+                                   })
+                                .sectionContainerIsLastElement(index == prescriptions.count - 1)
+                                .padding(.horizontal)
+                        }
+                    })
+                }
             }
-        }
-        .background(Color(.secondarySystemBackground))
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(L10n.phaRedeemTxtPrescriptionHeader)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    store.send(.saveSelection(viewStore.selectedPrescriptions))
-                }, label: {
-                    Text(L10n.phaRedeemTxtSelectedPrescriptionSave)
-                })
-                    .accessibility(identifier: A11y.pharmacyPrescriptionList.phaPrescriptionListBtnSave)
+            .background(Color(.secondarySystemBackground))
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(L10n.phaRedeemTxtPrescriptionHeader)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        store.send(.saveSelection(store.selectedErxTasks))
+                    }, label: {
+                        Text(L10n.phaRedeemTxtSelectedPrescriptionSave)
+                    })
+                        .accessibility(identifier: A11y.pharmacyPrescriptionList.phaPrescriptionListBtnSave)
+                }
             }
         }
     }

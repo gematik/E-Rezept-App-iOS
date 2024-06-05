@@ -23,104 +23,77 @@ import SwiftUI
 
 // [REQ:BSI-eRp-ePA:O.Resi_1#2] View containing onboarding authentication
 struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
-    let store: RegisterAuthenticationDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, RegisterAuthenticationDomain.Action>
-
-    init(store: RegisterAuthenticationDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let hasPasswordOption: Bool
-        let hasFaceIdOption: Bool
-        let hasTouchIdOption: Bool
-        let showNoSelectionMessage: Bool
-        let selectedOption: AppSecurityOption?
-        let biometryErrorMessage: String?
-        let biometrySuccessful: Bool
-
-        init(state: RegisterAuthenticationDomain.State) {
-            hasPasswordOption = state.availableSecurityOptions.contains(AppSecurityOption.password)
-            hasFaceIdOption = state.availableSecurityOptions.contains(AppSecurityOption.biometry(.faceID))
-            hasTouchIdOption = state.availableSecurityOptions.contains(AppSecurityOption.biometry(.touchID))
-            showNoSelectionMessage = state.showNoSelectionMessage
-            selectedOption = state.selectedSecurityOption
-            biometryErrorMessage = state.securityOptionsError?.errorDescription
-            biometrySuccessful = state.biometrySuccessful
-        }
-    }
-
-    var selectedOption: Binding<Int> {
-        viewStore.binding(
-            get: { state in
-                state.selectedOption?.id ?? -1
-            },
-            send: { localState in
-                let option = AppSecurityOption(fromId: localState)
-                return RegisterAuthenticationDomain.Action.select(option)
-            }
-        )
-    }
+    @Perception.Bindable var store: StoreOf<RegisterAuthenticationDomain>
 
     var body: some View {
-        VStack {
-            ScrollView(.vertical, showsIndicators: true) {
-                TitleView()
-                    .padding(.top)
-
-                Picker(selection: selectedOption, label: Text("")) {
-                    if viewStore.hasFaceIdOption {
-                        Text(L10n.stgTxtSecurityOptionFaceidTitle).tag(AppSecurityOption.biometry(.faceID).id)
-                    }
-                    if viewStore.hasTouchIdOption {
-                        Text(L10n.stgTxtSecurityOptionTouchidTitle).tag(AppSecurityOption.biometry(.touchID).id)
-                    }
-                    if viewStore.hasPasswordOption {
-                        Text(L10n.stgTxtSecurityOptionPasswordTitle).tag(AppSecurityOption.password.id)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.top, 25)
-
-                if viewStore.showNoSelectionMessage {
-                    Text(L10n.onbAuthTxtNoSelection)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .foregroundColor(Colors.red600)
-                        .font(.body)
-                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtNoSelection)
+        WithPerceptionTracking {
+            VStack {
+                ScrollView(.vertical, showsIndicators: true) {
+                    TitleView()
                         .padding(.top)
-                }
 
-                if viewStore.selectedOption == .password {
-                    PasswordView(store: store)
+                    Picker(
+                        selection: $store.selectedSecurityOption.intValue,
+                        label: Text("")
+                    ) {
+                        if store.hasFaceIdOption {
+                            Text(L10n.stgTxtSecurityOptionFaceidTitle).tag(AppSecurityOption.biometry(.faceID).id)
+                        }
+                        if store.hasTouchIdOption {
+                            Text(L10n.stgTxtSecurityOptionTouchidTitle).tag(AppSecurityOption.biometry(.touchID).id)
+                        }
+                        if store.hasPasswordOption {
+                            Text(L10n.stgTxtSecurityOptionPasswordTitle).tag(AppSecurityOption.password.id)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.top, 25)
+
+                    if store.showNoSelectionMessage {
+                        Text(L10n.onbAuthTxtNoSelection)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .foregroundColor(Colors.red600)
+                            .font(.body)
+                            .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtNoSelection)
+                            .padding(.top)
+                    }
+
+                    if store.selectedSecurityOption == .password {
+                        PasswordView(store: store)
+                    }
+                }
+                switch store.selectedSecurityOption {
+                case .password:
+                    PasswordViewButton(store: store)
+                case .biometry(.faceID):
+                    FaceIDView(
+                        isSelected: store.biometrySuccessful,
+                        message: store.securityOptionsError?.errorDescription
+                    ) {
+                        store.send(
+                            .startBiometry,
+                            animation: Animation.default
+                        )
+                    }
+                case .biometry(.touchID):
+                    TouchIDView(
+                        isSelected: store.biometrySuccessful,
+                        message: store.securityOptionsError?.errorDescription
+                    ) {
+                        store.send(
+                            .startBiometry,
+                            animation: Animation.default
+                        )
+                    }
+                default:
+                    EmptyView()
                 }
             }
-            switch viewStore.selectedOption {
-            case .password:
-                PasswordViewButton(store: store)
-            case .biometry(.faceID):
-                FaceIDView(isSelected: viewStore.biometrySuccessful, message: viewStore.biometryErrorMessage) {
-                    viewStore.send(
-                        .startBiometry,
-                        animation: Animation.default
-                    )
-                }
-            case .biometry(.touchID):
-                TouchIDView(isSelected: viewStore.biometrySuccessful, message: viewStore.biometryErrorMessage) {
-                    viewStore.send(
-                        .startBiometry,
-                        animation: Animation.default
-                    )
-                }
-            default:
-                EmptyView()
+            .padding(.horizontal)
+            .alert($store.scope(state: \.alertState, action: \.alert))
+            .onAppear {
+                store.send(.loadAvailableSecurityOptions)
             }
-        }
-        .padding(.horizontal)
-        .alert(store: store.scope(state: \.$alertState, action: RegisterAuthenticationDomain.Action.alert))
-        .onAppear {
-            viewStore.send(.loadAvailableSecurityOptions)
         }
     }
 }
@@ -241,114 +214,90 @@ extension OnboardingRegisterAuthenticationView {
     }
 
     struct PasswordView: View {
-        let store: RegisterAuthenticationDomain.Store
-        @ObservedObject private var viewStore: ViewStore<
-            RegisterAuthenticationDomain.State,
-            RegisterAuthenticationDomain.Action
-        >
-
-        init(store: RegisterAuthenticationDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store) { $0 }
-        }
-
-        var passwordA: Binding<String> {
-            viewStore.binding(get: \.passwordA, send: RegisterAuthenticationDomain.Action.setPasswordA).animation()
-        }
-
-        var passwordB: Binding<String> {
-            viewStore.binding(get: \.passwordB, send: RegisterAuthenticationDomain.Action.setPasswordB).animation()
-        }
+        @Perception.Bindable var store: StoreOf<RegisterAuthenticationDomain>
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 6) {
-                // This TextField is mandatory to support password autofill from iCloud Keychain, applying  `.hidden()`
-                // lets iOS no longer detect it.
-                TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
-                    .textContentType(.username)
-                    .frame(width: 1, height: 1, alignment: .leading)
-                    .opacity(0.01)
-                    .accessibility(hidden: true)
+            WithPerceptionTracking {
+                VStack(alignment: .leading, spacing: 6) {
+                    // This TextField is mandatory to support password autofill from iCloud Keychain, applying
+                    // `.hidden()` lets iOS no longer detect it.
+                    TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
+                        .textContentType(.username)
+                        .frame(width: 1, height: 1, alignment: .leading)
+                        .opacity(0.01)
+                        .accessibility(hidden: true)
 
-                SecureField(L10n.cpwInpPasswordAPlaceholder, text: passwordA)
-                    .onSubmit { viewStore.send(.enterButtonTapped) }
-                    .padding()
-                    .font(Font.body)
-                    .foregroundColor(Colors.systemLabel)
-                    .background(Colors.systemGray6)
-                    .cornerRadius(16)
-                    .textContentType(.newPassword)
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
+                    SecureField(L10n.cpwInpPasswordAPlaceholder, text: $store.passwordA)
+                        .onSubmit { store.send(.enterButtonTapped) }
+                        .padding()
+                        .font(Font.body)
+                        .foregroundColor(Colors.systemLabel)
+                        .background(Colors.systemGray6)
+                        .cornerRadius(16)
+                        .textContentType(.newPassword)
+                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
 
-                Text(L10n.cpwTxtPasswordRecommendation)
-                    .font(.footnote)
-                    .foregroundColor(Colors.textSecondary)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.bottom, 10)
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
+                    Text(L10n.cpwTxtPasswordRecommendation)
+                        .font(.footnote)
+                        .foregroundColor(Colors.textSecondary)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.bottom, 10)
+                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
 
-                PasswordStrengthView(strength: viewStore.passwordStrength,
-                                     barBackgroundColor: Color(.secondarySystemBackground))
-                    .padding(.bottom, 16)
+                    PasswordStrengthView(strength: store.passwordStrength,
+                                         barBackgroundColor: Color(.secondarySystemBackground))
+                        .padding(.bottom, 16)
+                        .animation(.easeInOut, value: store.passwordA)
 
-                VStack(alignment: .leading, spacing: 11) {
-                    SecureField(
-                        L10n.cpwInpPasswordBPlaceholder,
-                        text: passwordB
-                    )
-                    .onSubmit { viewStore.send(.enterButtonTapped) }
-                    .padding()
-                    .font(Font.body)
-                    .foregroundColor(Colors.systemLabel)
-                    .background(Colors.systemGray6)
-                    .cornerRadius(16)
-                    .textContentType(.newPassword)
-                    .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordB)
+                    VStack(alignment: .leading, spacing: 11) {
+                        SecureField(L10n.cpwInpPasswordBPlaceholder, text: $store.passwordB)
+                            .onSubmit { store.send(.enterButtonTapped) }
+                            .padding()
+                            .font(Font.body)
+                            .foregroundColor(Colors.systemLabel)
+                            .background(Colors.systemGray6)
+                            .cornerRadius(16)
+                            .textContentType(.newPassword)
+                            .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
+                            .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordB)
 
-                    if let message = viewStore.passwordErrorMessage {
-                        Text(message)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .foregroundColor(Colors.red600)
-                            .font(.footnote)
-                            .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordsDontMatch)
+                        if let message = store.passwordErrorMessage {
+                            Text(message)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .foregroundColor(Colors.red600)
+                                .font(.footnote)
+                                .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordsDontMatch)
+                        }
                     }
                 }
+                .padding(.top, 40)
             }
-            .padding(.top, 40)
         }
     }
 
     struct PasswordViewButton: View {
-        let store: RegisterAuthenticationDomain.Store
-        @ObservedObject private var viewStore: ViewStore<
-            RegisterAuthenticationDomain.State,
-            RegisterAuthenticationDomain.Action
-        >
-
-        init(store: RegisterAuthenticationDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store) { $0 }
-        }
+        @Perception.Bindable var store: StoreOf<RegisterAuthenticationDomain>
 
         var body: some View {
-            VStack {
-                Button(action: { viewStore.send(.nextPage) }, label: {
-                    Text(L10n.onbAuthBtnPasswordSave)
-                        .padding(.horizontal, 64)
-                        .padding(.vertical)
-                })
-                    .disabled(!viewStore.hasValidSelection)
-                    .accessibility(identifier: A18n.onboarding.authentication.onbAuthBtnPassword)
-                    .font(Font.body.weight(.semibold))
-                    .foregroundColor(!viewStore.hasValidSelection ? Colors.systemGray : Colors.systemColorWhite)
-                    .background(!viewStore.hasValidSelection ? Colors.systemGray5 : Colors.primary600)
-                    .cornerRadius(16)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .multilineTextAlignment(.center)
-                    .padding()
+            WithPerceptionTracking {
+                VStack {
+                    Button(action: { store.send(.nextPage) }, label: {
+                        Text(L10n.onbAuthBtnPasswordSave)
+                            .padding(.horizontal, 64)
+                            .padding(.vertical)
+                    })
+                        .disabled(!store.hasValidSelection)
+                        .accessibility(identifier: A18n.onboarding.authentication.onbAuthBtnPassword)
+                        .font(Font.body.weight(.semibold))
+                        .foregroundColor(!store.hasValidSelection ? Colors.systemGray : Colors.systemColorWhite)
+                        .background(!store.hasValidSelection ? Colors.systemGray5 : Colors.primary600)
+                        .cornerRadius(16)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
             }
         }
     }

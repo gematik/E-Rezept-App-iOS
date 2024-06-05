@@ -57,6 +57,7 @@ struct PhotoPicker: UIViewControllerRepresentable {
             if provider.canLoadObject(ofClass: UIImage.self) {
                 provider.loadObject(ofClass: UIImage.self) { image, _ in
                     if let tempImage = image as? UIImage {
+                        // [REQ:BSI-eRp-ePA:O.Data_8#3,O.Data_9#2] Meta data is completely removed by converting to jpeg
                         guard let data = tempImage.jpegData(compressionQuality: 0.3) else {
                             // Error
                             return

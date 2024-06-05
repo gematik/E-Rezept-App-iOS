@@ -130,7 +130,7 @@ public struct JWT {
     /// Signs the JWT with a given signer.
     ///
     /// - Parameter signer: `JWTSigner` that is used to create the signature
-    /// - Returns: A stream that publishes the signed `JWT` if successfull, an `Swift.Error` otherwise.
+    /// - Returns: A stream that publishes the signed `JWT` if successful, an `Swift.Error` otherwise.
     public func sign(with signer: JWTSigner) -> AnyPublisher<JWT, Swift.Error> {
         Deferred { () -> AnyPublisher<JWT, Swift.Error> in
             let data = backing.rawHeader + Self.dot + backing.payload

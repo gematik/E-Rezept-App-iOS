@@ -51,10 +51,10 @@ final class CardWallIntroductionDomainTests: XCTestCase {
     }()
 
     func testExtAuthCloseActionShouldBeForwarded() async {
-        let store = testStore(for: .init(isNFCReady: true, profileId: UUID(), destination: .extauth(.init())))
+        let store = testStore(for: .init(isNFCReady: true, profileId: UUID(), destination: .extAuth(.init())))
 
         // when
-        await store.send(.destination(.presented(.extauth(action: .delegate(.close))))) { state in
+        await store.send(.destination(.presented(.extAuth(.delegate(.close))))) { state in
             state.destination = nil
         }
         await uiScheduler.run()
@@ -72,7 +72,7 @@ final class CardWallIntroductionDomainTests: XCTestCase {
         ))
 
         // when
-        await store.send(.destination(.presented(.canAction(action: .delegate(.close))))) { state in
+        await store.send(.destination(.presented(.can(.delegate(.close))))) { state in
             state.destination = nil
         }
         await uiScheduler.run()

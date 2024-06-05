@@ -46,14 +46,11 @@ protocol Routing: AnyObject {
     func routeTo(_ endpoint: Endpoint) async
 }
 
-class RouterStore<ContentReducer: ReducerProtocol>: Routing
+class RouterStore<ContentReducer: Reducer>: Routing
     where ContentReducer.Action: Equatable, ContentReducer.State: Equatable {
     private let store: StoreOf<RouterReducer<_DependencyKeyWritingReducer<ContentReducer>>>
     var wrappedStore: StoreOf<ContentReducer> {
-        store.scope(
-            state: { $0 },
-            action: RouterReducer<_DependencyKeyWritingReducer<ContentReducer>>.Action.action
-        )
+        store.scope(state: \.self, action: \.action)
     }
 
     private let routerInstance = RouterInstance()
@@ -61,7 +58,7 @@ class RouterStore<ContentReducer: ReducerProtocol>: Routing
     init(
         initialState: ContentReducer.State,
         reducer: ContentReducer,
-        router: @escaping (Endpoint) -> EffectTask<ContentReducer.Action>
+        router: @escaping (Endpoint) -> Effect<ContentReducer.Action>
     ) {
         store = Store(
             initialState: initialState
@@ -90,7 +87,8 @@ class RouterStore<ContentReducer: ReducerProtocol>: Routing
     }
 }
 
-struct RouterReducer<ContentReducer: ReducerProtocol>: ReducerProtocol
+@Reducer
+struct RouterReducer<ContentReducer: Reducer>
     where ContentReducer.Action: Equatable {
     typealias State = ContentReducer.State
 
@@ -100,9 +98,9 @@ struct RouterReducer<ContentReducer: ReducerProtocol>: ReducerProtocol
     }
 
     let contentReducer: ContentReducer
-    let router: (Endpoint) -> EffectTask<ContentReducer.Action>
+    let router: (Endpoint) -> Effect<ContentReducer.Action>
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case let .action(action):

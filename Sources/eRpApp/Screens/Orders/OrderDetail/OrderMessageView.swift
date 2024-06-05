@@ -19,40 +19,40 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import Perception
 import SwiftUI
 
 struct OrderMessageView: View {
-    @ObservedObject var viewStore: ViewStore<ViewState, OrderDetailDomain.Action>
+    let store: StoreOf<OrderDetailDomain>
+    let timelineEntry: OrderDetailDomain.TimelineEntry
+    var style: Indicator.Style = .middle
 
-    init(store: OrderDetailDomain.Store,
-         timelineEntry: OrderDetailDomain.State.TimelineEntry,
-         style: Indicator.Style = .middle) {
-        // swiftlint:disable:next trailing_closure
-        viewStore = ViewStore(store, observe: { _ in ViewState(timelineEntry: timelineEntry, style: style) })
-    }
+    @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
     var body: some View {
         HStack(alignment: .center) {
-            Indicator(style: viewStore.style)
+            Indicator(style: style)
                 .frame(maxHeight: .infinity)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(viewStore.timestamp)
+                let timestamp = uiDateFormatter.relativeDateAndTime(timelineEntry.lastUpdated) ?? timelineEntry
+                    .lastUpdated
+                Text(timestamp)
                     .font(Font.subheadline)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(Colors.systemLabel)
                     .padding(.horizontal)
 
-                Text(viewStore.infoText)
+                Text(timelineEntry.text)
                     .font(Font.subheadline)
                     .multilineTextAlignment(.leading)
                     .padding(.horizontal)
                     .foregroundColor(Colors.systemLabelSecondary)
 
-                ForEach(Array(viewStore.actions.keys), id: \.self) { buttonText in
-                    if let action = viewStore.actions[buttonText] {
+                ForEach(Array(timelineEntry.actions.keys), id: \.self) { buttonText in
+                    if let action = timelineEntry.actions[buttonText] {
                         Button {
-                            viewStore.send(action)
+                            store.send(action)
                         } label: {
                             HStack(spacing: 4) {
                                 Text(buttonText)
@@ -67,7 +67,7 @@ struct OrderMessageView: View {
                     }
                 }
 
-                if ![.last, .single].contains(viewStore.style) {
+                if ![.last, .single].contains(style) {
                     Divider()
                         .padding(.top, 8)
                         .padding(.leading)
@@ -84,24 +84,6 @@ struct OrderMessageView: View {
         }
         .fixedSize(horizontal: false, vertical: true)
         .padding(.leading)
-    }
-
-    struct ViewState: Equatable {
-        let timestamp: String
-        let infoText: String
-        var actions: [String: OrderDetailDomain.Action]
-        let style: Indicator.Style
-
-        init(
-            timelineEntry: OrderDetailDomain.State.TimelineEntry,
-            style: Indicator.Style,
-            uiDateFormatter: UIDateFormatter = UIDateFormatter.liveValue
-        ) {
-            timestamp = uiDateFormatter.relativeDateAndTime(timelineEntry.lastUpdated) ?? timelineEntry.lastUpdated
-            infoText = timelineEntry.text
-            actions = timelineEntry.actions
-            self.style = style
-        }
     }
 
     struct Indicator: View {

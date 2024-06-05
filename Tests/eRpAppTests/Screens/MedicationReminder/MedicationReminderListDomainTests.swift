@@ -74,7 +74,7 @@ final class MedicationReminderListDomainTests: XCTestCase {
         await sut.send(.profileMedicationReminderFailed(error)) { state in
             state.destination = .alert(
                 .init(for: error, actions: {
-                    ButtonState(role: .cancel, action: .dismiss) {
+                    ButtonState(role: .cancel) {
                         TextState(L10n.alertBtnOk)
                     }
                 })
@@ -159,7 +159,7 @@ final class MedicationReminderListDomainTests: XCTestCase {
         await sut.send(.loadReceived(.failure(error))) { state in
             state.destination = .alert(
                 .init(for: error, actions: {
-                    ButtonState(role: .cancel, action: .dismiss) {
+                    ButtonState(role: .cancel) {
                         TextState(L10n.alertBtnOk)
                     }
                 })

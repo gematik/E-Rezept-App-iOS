@@ -27,6 +27,18 @@ struct SettingsScreen: Screen {
         return .init(app: app)
     }
 
+    func tapLanguageSettingsButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.settings.security.stgBtnLanguageSettings, file: file, line: line).tap()
+
+        return app.alerts.firstMatch
+    }
+
+    func tapAppSecuritySelection(file: StaticString = #file, line: UInt = #line) -> AppSecuritySelectionScreen {
+        button(by: A11y.settings.security.stgBtnDeviceSecurity, file: file, line: line).tap()
+
+        return .init(app: app)
+    }
+
     func tapDemoMode(file: StaticString = #file, line: UInt = #line) {
         switches(by: A11y.settings.demo.stgTxtDemoMode, file: file, line: line).tap()
     }

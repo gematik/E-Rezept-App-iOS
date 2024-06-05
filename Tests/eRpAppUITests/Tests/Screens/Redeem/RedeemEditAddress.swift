@@ -34,7 +34,14 @@ struct RedeemEditAddress: Screen {
         textField.typeText(phoneNumber)
     }
 
-    func tapSave(file: StaticString = #file, line: UInt = #line) {
+    @discardableResult
+    @MainActor
+    func tapSave(file: StaticString = #file, line: UInt = #line) async throws -> RedeemScreen {
         button(by: A11y.pharmacyContact.phaContactBtnSave, file: file, line: line).tap()
+
+        // closing the edit address screen takes some time to finish animations
+        try await Task.sleep(nanoseconds: NSEC_PER_SEC * 1)
+
+        return RedeemScreen(app: app, file: file, line: line)
     }
 }

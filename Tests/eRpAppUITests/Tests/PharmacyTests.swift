@@ -106,12 +106,15 @@ final class PharmacyTests: XCTestCase {
         }
     }
 
-    func testPharmacyServiceButtons() {
+    @MainActor
+    func testPharmacyServiceButtons() async throws {
         app.buttons.element(matching: .init(format: "label == %@", "Apothekensuche")).tap()
         app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
         app.typeText("A")
 
         XCUIApplication().keyboards.buttons["Suchen"].tap()
+
+        try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 500)
 
         assertPharmacyServices(pharmacyName: "ZoTI_01_TEST-ONLY", services: [])
         assertPharmacyServices(pharmacyName: "ZoTI_02_TEST-ONLY", services: [.pickup])

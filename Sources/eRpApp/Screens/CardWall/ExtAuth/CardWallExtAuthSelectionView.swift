@@ -20,186 +20,158 @@ import ComposableArchitecture
 import eRpStyleKit
 import IDP
 import SwiftUI
+import SwiftUIIntrospect
 
+// [REQ:BSI-eRp-ePA:O.Auth_4#4] View containing the list of insurance companies
 struct CardWallExtAuthSelectionView: View {
-    let store: CardWallExtAuthSelectionDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, CardWallExtAuthSelectionDomain.Action>
-
-    init(store: CardWallExtAuthSelectionDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let routeTag: CardWallExtAuthSelectionDomain.Destinations.State.Tag?
-        let error: IDPError?
-        let kkList: KKAppDirectory?
-        let selectedKK: KKAppDirectory.Entry?
-        var filteredKKList: KKAppDirectory
-        var searchText: String
-
-        init(state: CardWallExtAuthSelectionDomain.State) {
-            routeTag = state.destination?.tag
-            error = state.error
-            kkList = state.kkList
-            selectedKK = state.selectedKK
-            filteredKKList = state.filteredKKList
-            searchText = state.searchText
-        }
-    }
+    @Perception.Bindable var store: StoreOf<CardWallExtAuthSelectionDomain>
 
     var body: some View {
-        VStack(spacing: 0) {
-            if let error = viewStore.error {
-                ErrorView(error: error) {
-                    viewStore.send(.loadKKList, animation: .default)
-                }
-                .padding()
-            } else {
-                if viewStore.kkList == nil {
-                    List {
-                        Section(header: CenteredActivityIndicator()) {}
-                            .listStyle(GroupedListStyle())
-                            .introspectTableView { tableView in
-                                tableView.separatorStyle = .none
-                                tableView.tableHeaderView = nil
-                                tableView.backgroundColor = UIColor.systemBackground
-                            }
-                            .listStyle(PlainListStyle())
-                    }
-                } else if let kkList = viewStore.kkList,
-                          !kkList.apps.isEmpty {
-                    SearchBar(
-                        searchText: viewStore.binding(get: \.searchText) { .updateSearchText(newString: $0) },
-                        prompt: L10n.cdwTxtExtauthSearchprompt.key
-                    ) {}
-                        .padding()
-
-                    List {
-                        Section(header: Header {
-                            viewStore.send(.setNavigation(tag: .egk))
-                        }) {
-                            if !viewStore.filteredKKList.apps.isEmpty {
-                                ForEach(viewStore.filteredKKList.apps) { app in
-                                    Button(action: {
-                                        viewStore.send(.selectKK(app))
-                                    }, label: {
-                                        HStack {
-                                            Text(app.name)
-                                                .foregroundColor(Color(.label))
-
-                                            Spacer()
-
-                                            if viewStore.selectedKK?.identifier == app.identifier {
-                                                Image(systemName: SFSymbolName.checkmark)
-                                            }
-                                        }.contentShape(Rectangle())
-                                    })
-                                }
-                            } else {
-                                VStack {
-                                    Text(L10n.cdwTxtExtauthNoresultsTitle)
-                                        .font(.headline)
-                                        .padding(.bottom, 1)
-                                    Text(L10n.cdwTxtExtauthNoresults)
-                                        .font(.subheadline)
-                                        .foregroundColor(Colors.textSecondary)
-                                        .multilineTextAlignment(.center)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                                .frame(maxWidth: .infinity)
-                            }
-                        }
-                        .textCase(.none)
-                    }
-                    .onAppear {
-                        viewStore.send(.reset)
-                    }
-                    .listStyle(GroupedListStyle())
-                    .introspectTableView { tableView in
-                        tableView.separatorStyle = .none
-                        tableView.tableHeaderView = nil
-                        tableView.backgroundColor = UIColor.systemBackground
-                    }
-                    .listStyle(PlainListStyle())
-                } else {
-                    VStack(spacing: 8) {
-                        Text(L10n.cdwTxtExtauthSelectionEmptyListHeadline)
-                            .multilineTextAlignment(.center)
-                            .font(.headline)
-
-                        Text(L10n.cdwTxtExtauthSelectionEmptyListDescription)
-                            .multilineTextAlignment(.center)
-                            .font(.subheadline)
-                            .foregroundColor(Color(.secondaryLabel))
+        WithPerceptionTracking {
+            VStack(spacing: 0) {
+                if let error = store.error {
+                    ErrorView(error: error) {
+                        store.send(.loadKKList, animation: .default)
                     }
                     .padding()
-                    .frame(maxHeight: .infinity, alignment: .center)
-                }
-
-                Spacer()
-
-                GreyDivider()
-
-                PrimaryTextButton(
-                    text: L10n.cdwBtnExtauthSelectionContinue,
-                    a11y: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionConfirm,
-                    isEnabled: viewStore.state.selectedKK != nil
-                ) {
-                    // workaround: dismiss keyboard to fix safearea bug for iOS 16
-                    if #available(iOS 16, *) {
-                        UIApplication.shared.dismissKeyboard()
-                    }
-                    viewStore.send(.confirmKK)
-                }
-                .padding()
-
-                Rectangle()
-                    .frame(width: 0, height: 0, alignment: .center)
-                    .sheet(isPresented: Binding<Bool>(
-                        get: { viewStore.state.routeTag == .egk },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil))
-                            }
+                } else {
+                    if store.kkList == nil {
+                        List {
+                            Section(header: CenteredActivityIndicator()) {}
                         }
-                    )) {
-                        NavigationView {
-                            IfLetStore(
-                                store.scope(
-                                    state: \.$destination,
-                                    action: CardWallExtAuthSelectionDomain.Action.destination
-                                ),
-                                state: /CardWallExtAuthSelectionDomain.Destinations.State.egk,
-                                action: CardWallExtAuthSelectionDomain.Destinations.Action.egkAction(action:),
-                                then: OrderHealthCardListView.init(store:)
-                            )
-                        }.navigationViewStyle(StackNavigationViewStyle())
-                    }
-                    .hidden()
-                    .accessibility(hidden: true)
-            }
+                        .listStyle(GroupedListStyle())
+                        .introspect(.list, on: .iOS(.v15)) { tableView in
+                            tableView.separatorStyle = .none
+                            tableView.tableHeaderView = nil
+                            tableView.backgroundColor = UIColor.systemBackground
+                        }
+                        .listStyle(PlainListStyle())
+                    } else if let kkList = store.kkList,
+                              !kkList.apps.isEmpty {
+                        SearchBar(
+                            searchText: $store.searchText.sending(\.updateSearchText),
+                            prompt: L10n.cdwTxtExtauthSearchprompt.key
+                        ) {}
+                            .padding()
 
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: CardWallExtAuthSelectionDomain.Action.destination),
-                state: /CardWallExtAuthSelectionDomain.Destinations.State.confirmation,
-                action: CardWallExtAuthSelectionDomain.Destinations.Action.confirmation,
-                onTap: { viewStore.send(.setNavigation(tag: .confirmation)) },
-                destination: CardWallExtAuthConfirmationView.init(store:),
-                label: {}
-            )
-        }
-        .navigationBarItems(
-            trailing: NavigationBarCloseItem {
-                viewStore.send(.delegate(.close))
+                        List {
+                            Section(header: Header {
+                                store.send(.helpButtonTapped)
+                            }) {
+                                // [REQ:gemSpec_IDP_Frontend:A_23082#5] Display of KK apps
+                                if !store.filteredKKList.apps.isEmpty {
+                                    ForEach(store.filteredKKList.apps) { app in
+                                        WithPerceptionTracking {
+                                            // [REQ:BSI-eRp-ePA:O.Auth_4#5] User selection of the insurance company
+                                            Button(action: {
+                                                store.send(.selectKK(app))
+                                            }, label: {
+                                                HStack {
+                                                    Text(app.name)
+                                                        .foregroundColor(Color(.label))
+
+                                                    Spacer()
+
+                                                    if store.selectedKK?.identifier == app.identifier {
+                                                        Image(systemName: SFSymbolName.checkmark)
+                                                    }
+                                                }.contentShape(Rectangle())
+                                            })
+                                        }
+                                    }
+                                } else {
+                                    VStack {
+                                        Text(L10n.cdwTxtExtauthNoresultsTitle)
+                                            .font(.headline)
+                                            .padding(.bottom, 1)
+                                        Text(L10n.cdwTxtExtauthNoresults)
+                                            .font(.subheadline)
+                                            .foregroundColor(Colors.textSecondary)
+                                            .multilineTextAlignment(.center)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                }
+                            }
+                            .textCase(.none)
+                        }
+                        .listStyle(GroupedListStyle())
+                        .introspect(.list, on: .iOS(.v15)) { tableView in
+                            tableView.separatorStyle = .none
+                            tableView.tableHeaderView = nil
+                            tableView.backgroundColor = UIColor.systemBackground
+                        }
+
+                        .listStyle(PlainListStyle())
+                        .onAppear {
+                            store.send(.reset)
+                        }
+
+                    } else {
+                        VStack(spacing: 8) {
+                            Text(L10n.cdwTxtExtauthSelectionEmptyListHeadline)
+                                .multilineTextAlignment(.center)
+                                .font(.headline)
+
+                            Text(L10n.cdwTxtExtauthSelectionEmptyListDescription)
+                                .multilineTextAlignment(.center)
+                                .font(.subheadline)
+                                .foregroundColor(Color(.secondaryLabel))
+                        }
+                        .padding()
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+
+                    Spacer()
+
+                    GreyDivider()
+
+                    PrimaryTextButton(
+                        text: L10n.cdwBtnExtauthSelectionContinue,
+                        a11y: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionConfirm,
+                        isEnabled: store.state.selectedKK != nil
+                    ) {
+                        // workaround: dismiss keyboard to fix safearea bug for iOS 16
+                        if #available(iOS 16, *) {
+                            UIApplication.shared.dismissKeyboard()
+                        }
+                        store.send(.confirmKK)
+                    }
+                    .padding()
+                }
+
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.help, action: \.destination.help)
+                ) { _ in
+                    CardWallExtAuthHelpView()
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
+                .accessibilityHidden(true)
+
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.confirmation, action: \.destination.confirmation)
+                ) { store in
+                    CardWallExtAuthConfirmationView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
+                .accessibilityHidden(true)
             }
-            .accessibility(identifier: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionCancel)
-            .accessibility(label: Text(L10n.cdwBtnExtauthSelectionCancel))
-        )
-        .navigationTitle(L10n.cdwTxtExtauthSelectionTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            viewStore.send(.loadKKList)
+            .navigationBarItems(
+                trailing: NavigationBarCloseItem {
+                    store.send(.delegate(.close))
+                }
+                .accessibility(identifier: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionCancel)
+                .accessibility(label: Text(L10n.cdwBtnExtauthSelectionCancel))
+            )
+            .navigationTitle(L10n.cdwTxtExtauthSelectionTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                store.send(.loadKKList)
+            }
         }
     }
 
@@ -227,13 +199,16 @@ struct CardWallExtAuthSelectionView: View {
                     .foregroundColor(Color(.secondaryLabel))
                     .multilineTextAlignment(.leading)
 
-                TertiaryListButton(
-                    text: L10n.cdwBtnExtauthSelectionOrderEgk,
-                    imageName: nil,
-                    accessibilityIdentifier: A11y.orderEGK.ogkBtnEgkInfo
-                ) {
+                Button {
                     action()
+                } label: {
+                    Label(L10n.cdwBtnExtauthSelectionHelp, systemImage: SFSymbolName.arrowForward)
+                        .labelStyle(.trailingIcon)
                 }
+                .font(.subheadline)
+                .foregroundColor(Colors.primary)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .accessibilityIdentifier(A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionHelp)
             }
             .padding(.bottom, 16)
         }
@@ -282,14 +257,16 @@ struct CardWallExtAuthSelectionView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             CardWallExtAuthSelectionView(
-                store: CardWallExtAuthSelectionDomain.Store(
+                store: StoreOf<CardWallExtAuthSelectionDomain>(
                     initialState: .init(
-                        kkList: .init(apps: [KKAppDirectory.Entry]()),
+                        kkList: .init(apps: [KKAppDirectory.Entry(name: "abc", identifier: "123")]),
+                        filteredKKList: .init(apps: [KKAppDirectory.Entry(name: "abc", identifier: "123")]),
                         error: nil,
                         selectedKK: .init(name: "Other KK", identifier: "def")
                     )
                 ) {
-                    CardWallExtAuthSelectionDomain()
+                    EmptyReducer()
+//                    CardWallExtAuthSelectionDomain()
                 }
             )
         }

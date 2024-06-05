@@ -23,190 +23,163 @@ import eRpStyleKit
 import SwiftUI
 
 struct CardWallIntroductionView: View {
-    let store: CardWallIntroductionDomain.Store
-
-    @ObservedObject var viewStore: ViewStore<ViewState, CardWallIntroductionDomain.Action>
-
-    init(store: CardWallIntroductionDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let routeTag: CardWallIntroductionDomain.Destinations.State.Tag?
-        let isNFCReady: Bool
-
-        init(state: CardWallIntroductionDomain.State) {
-            routeTag = state.destination?.tag
-            isNFCReady = state.isNFCReady
-        }
-    }
+    @Perception.Bindable var store: StoreOf<CardWallIntroductionDomain>
 
     var body: some View {
-        NavigationView {
-            VStack {
-                VStack(alignment: .center, spacing: 0) {
-                    Image(asset: Asset.CardWall.scanningCard)
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(Circle())
+        WithPerceptionTracking {
+            NavigationView {
+                VStack {
+                    VStack(alignment: .center, spacing: 0) {
+                        Image(asset: Asset.CardWall.scanningCard)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
 
-                    Text(L10n.cdwTxtIntroHeaderTop)
-                        .font(Font.largeTitle.weight(.bold))
-                        .foregroundColor(Color(.label))
-                        .padding(.bottom, 8)
+                        Text(L10n.cdwTxtIntroHeaderTop)
+                            .font(Font.largeTitle.weight(.bold))
+                            .foregroundColor(Color(.label))
+                            .padding(.bottom, 8)
 
-                    Text(L10n.cdwTxtIntroSubheader)
-                        .font(.headline)
-                        .foregroundColor(Colors.systemLabelSecondary)
+                        Text(L10n.cdwTxtIntroSubheader)
+                            .font(.headline)
+                            .foregroundColor(Colors.systemLabelSecondary)
 
-                    VStack(spacing: 0) {
-                        if viewStore.isNFCReady {
-                            Text(L10n.cdwBtnIntroRecommendation)
-                                .foregroundColor(Colors.primary)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal)
-                                .font(.body.bold())
+                        VStack(spacing: 0) {
+                            if store.isNFCReady {
+                                Text(L10n.cdwBtnIntroRecommendation)
+                                    .foregroundColor(Colors.primary)
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal)
+                                    .font(.body.bold())
+                            }
+
+                            Button(action: {
+                                store.send(.advance)
+                            }, label: {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(L10n.cdwBtnIntroNfc)
+                                            .font(Font.body.weight(.medium))
+                                            .foregroundColor(!store.isNFCReady ? Colors.disabled : Colors.systemLabel)
+
+                                        Text(!store.isNFCReady ? L10n.cdwBtnSubintroNonfc : L10n.cdwBtnSubintroNfc)
+                                            .font(.subheadline)
+                                            .foregroundColor(Colors.systemLabelSecondary)
+                                    }
+                                    .multilineTextAlignment(.leading)
+
+                                    Spacer(minLength: 8)
+                                    Image(systemName: SFSymbolName.rightDisclosureIndicator)
+                                        .font(Font.headline.weight(.semibold))
+                                        .foregroundColor(store.isNFCReady ? Colors.primary : Colors.systemLabelTertiary)
+                                        .padding(8)
+                                }
+                                .padding()
+                            })
+                                .buttonStyle(DefaultButtonStyle())
+                                .background(Colors.systemBackgroundTertiary)
+                                .border(store.isNFCReady ? Colors.primary : Colors.separator,
+                                        width: store.isNFCReady ? 2.0 : 0.5,
+                                        cornerRadius: 16)
+                                .padding(.bottom)
+                                .disabled(!store.isNFCReady)
+
+                            NavigationLink(
+                                item: $store.scope(state: \.destination?.can, action: \.destination.can)
+                            ) { store in
+                                CardWallCANView(store: store)
+                            } label: {
+                                EmptyView()
+                            }
+                            .hidden()
+                            .accessibility(hidden: true)
+
+                            // [REQ:BSI-eRp-ePA:O.Auth_4#2] Button the user may use to start login via gID
+                            Button(action: {
+                                store.send(.extAuthTapped)
+                            }, label: {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(L10n.cdwBtnIntroExtauth)
+                                            .font(Font.body.weight(.medium))
+                                            .foregroundColor(Colors.systemLabel)
+                                            .multilineTextAlignment(.leading)
+                                            .accessibilityIdentifier(A11y.cardWall.intro.cdwBtnIntroLater)
+
+                                        Text(L10n.cdwBtnIntroExtauthDescription)
+                                            .font(.subheadline)
+                                            .foregroundColor(Colors.systemLabelSecondary)
+                                    }
+                                    .multilineTextAlignment(.leading)
+
+                                    Spacer(minLength: 8)
+                                    Image(systemName: SFSymbolName.rightDisclosureIndicator)
+                                        .font(Font.headline.weight(.semibold))
+                                        .foregroundColor(Color(.tertiaryLabel))
+                                        .padding(8)
+                                }
+                                .padding()
+                            })
+                                .buttonStyle(DefaultButtonStyle())
+                                .background(Colors.systemBackgroundTertiary)
+                                .border(Colors.separator, width: 0.5, cornerRadius: 16)
+
+                            NavigationLink(
+                                item: $store.scope(state: \.destination?.extAuth, action: \.destination.extAuth)
+                            ) { store in
+                                CardWallExtAuthSelectionView(store: store)
+                            } label: {
+                                EmptyView()
+                            }
+                            .hidden()
+                            .accessibility(hidden: true)
                         }
-
-                        Button(action: {
-                            viewStore.send(.advance)
-                        }, label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(L10n.cdwBtnIntroNfc)
-                                        .font(Font.body.weight(.medium))
-                                        .foregroundColor(!viewStore.isNFCReady ? Colors.disabled : Colors.systemLabel)
-
-                                    Text(!viewStore.isNFCReady ? L10n.cdwBtnSubintroNonfc : L10n.cdwBtnSubintroNfc)
-                                        .font(.subheadline)
-                                        .foregroundColor(Colors.systemLabelSecondary)
-                                }
-                                .multilineTextAlignment(.leading)
-
-                                Spacer(minLength: 8)
-                                Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                                    .font(Font.headline.weight(.semibold))
-                                    .foregroundColor(viewStore.isNFCReady ? Colors.primary : Colors.systemLabelTertiary)
-                                    .padding(8)
-                            }
-                            .padding()
-                        })
-                            .buttonStyle(DefaultButtonStyle())
-                            .background(Colors.systemBackgroundTertiary)
-                            .border(viewStore.isNFCReady ? Colors.primary : Colors.separator,
-                                    width: viewStore.isNFCReady ? 2.0 : 0.5,
-                                    cornerRadius: 16)
-                            .padding(.bottom)
-                            .disabled(!viewStore.isNFCReady)
-
-                        NavigationLinkStore(
-                            store.scope(state: \.$destination, action: CardWallIntroductionDomain.Action.destination),
-                            state: /CardWallIntroductionDomain.Destinations.State.extauth,
-                            action: CardWallIntroductionDomain.Destinations.Action.extauth(action:),
-                            onTap: { viewStore.send(.setNavigation(tag: .extauth)) },
-                            destination: CardWallExtAuthSelectionView.init(store:),
-                            label: {}
-                        )
-                        .hidden()
-                        .accessibility(hidden: true)
-
-                        Button(action: {
-                            viewStore.send(.setNavigation(tag: .extauth))
-                        }, label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(L10n.cdwBtnIntroExtauth)
-                                        .font(Font.body.weight(.medium))
-                                        .foregroundColor(Colors.systemLabel)
-                                        .multilineTextAlignment(.leading)
-                                        .accessibilityIdentifier(A11y.cardWall.intro.cdwBtnIntroLater)
-
-                                    Text(L10n.cdwBtnIntroExtauthDescription)
-                                        .font(.subheadline)
-                                        .foregroundColor(Colors.systemLabelSecondary)
-                                }
-                                .multilineTextAlignment(.leading)
-
-                                Spacer(minLength: 8)
-                                Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                                    .font(Font.headline.weight(.semibold))
-                                    .foregroundColor(Color(.tertiaryLabel))
-                                    .padding(8)
-                            }
-                            .padding()
-                        })
-                            .buttonStyle(DefaultButtonStyle())
-                            .background(Colors.systemBackgroundTertiary)
-                            .border(Colors.separator, width: 0.5, cornerRadius: 16)
-
-                        NavigationLinkStore(
-                            store.scope(state: \.$destination, action: CardWallIntroductionDomain.Action.destination),
-                            state: /CardWallIntroductionDomain.Destinations.State.can,
-                            action: CardWallIntroductionDomain.Destinations.Action.canAction(action:),
-                            onTap: { viewStore.send(.setNavigation(tag: .can)) },
-                            destination: CardWallCANView.init(store:),
-                            label: {}
-                        )
-                        .hidden()
-                        .accessibility(hidden: true)
-                    }
-                    .padding()
-                }
-
-                VStack(alignment: .leading) {
-                    Text(L10n.cdwTxtIntroFootnote)
-                        .font(.subheadline)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .padding([.leading, .trailing])
-
-                    Button(action: {
-                        viewStore.send(.setNavigation(tag: .egk))
-                    }, label: {
-                        Text(L10n.cdwBtnIntroFootnote)
-                    })
-
-                        .frame(maxWidth: .infinity, alignment: .trailing)
                         .padding()
-                        .foregroundColor(Colors.primary)
-                        .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
-                        .fullScreenCover(isPresented: Binding<Bool>(
-                            get: { viewStore.state.routeTag == .egk },
-                            set: { show in
-                                if !show {
-                                    viewStore.send(.setNavigation(tag: nil))
-                                }
-                            }
-                        ),
-                        onDismiss: {},
-                        content: {
-                            NavigationView {
-                                IfLetStore(
-                                    store.scope(
-                                        state: \.$destination,
-                                        action: CardWallIntroductionDomain.Action.destination
-                                    ),
-                                    state: /CardWallIntroductionDomain.Destinations.State.egk,
-                                    action: CardWallIntroductionDomain.Destinations.Action.egkAction(action:),
-                                    then: OrderHealthCardListView.init(store:)
-                                )
-                            }
-                            .accentColor(Colors.primary700)
-                            .navigationViewStyle(StackNavigationViewStyle())
+                    }
+
+                    VStack(alignment: .leading) {
+                        Text(L10n.cdwTxtIntroFootnote)
+                            .font(.subheadline)
+                            .foregroundColor(Colors.systemLabelSecondary)
+                            .padding([.leading, .trailing])
+
+                        Button(action: {
+                            store.send(.egkButtonTapped)
+                        }, label: {
+                            Text(L10n.cdwBtnIntroFootnote)
                         })
+
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding()
+                            .foregroundColor(Colors.primary)
+                            .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
+                            .fullScreenCover(
+                                item: $store.scope(state: \.destination?.egk, action: \.destination.egk),
+                                onDismiss: {
+                                    store.send(.resetNavigation)
+                                },
+                                content: { store in
+                                    NavigationView {
+                                        OrderHealthCardListView(store: store)
+                                    }
+                                    .accentColor(Colors.primary700)
+                                    .navigationViewStyle(StackNavigationViewStyle())
+                                }
+                            )
+                    }
                 }
+                .navigationBarItems(
+                    trailing: NavigationBarCloseItem {
+                        store.send(.delegate(.close))
+                    }
+                    .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
+                    .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
+                )
             }
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem {
-                    viewStore.send(.delegate(.close))
-                }
-                .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
-                .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
-            )
+            .accentColor(Colors.primary700)
+            .navigationViewStyle(StackNavigationViewStyle())
         }
-        .accentColor(Colors.primary700)
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

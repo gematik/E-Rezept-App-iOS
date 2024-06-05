@@ -20,10 +20,8 @@ import ComposableArchitecture
 
 extension HealthCardPasswordReadCardDomain {
     enum AlertStates {
-        typealias Action = HealthCardPasswordReadCardDomain.Action
-
         // success
-        static let cardUnlocked: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let cardUnlocked: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertCardUnlockedTitle,
             actions: {
                 .default(
@@ -34,7 +32,7 @@ extension HealthCardPasswordReadCardDomain {
             message: L10n.stgTxtCardResetRcAlertCardUnlockedMessage
         )
 
-        static let cardUnlockedWithSetNewPin: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let cardUnlockedWithSetNewPin: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertCardUnlockedWithPinTitle,
             actions: {
                 ButtonState(action: .settings) {
@@ -44,7 +42,7 @@ extension HealthCardPasswordReadCardDomain {
             message: L10n.stgTxtCardResetRcAlertCardUnlockedWithPinMessage
         )
 
-        static let setNewPin: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let setNewPin: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertCardSetNewPinTitle
         ) {
             ButtonState(action: .settings) {
@@ -53,7 +51,7 @@ extension HealthCardPasswordReadCardDomain {
         }
 
         // error: blocked
-        static let pukCounterExhausted: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let pukCounterExhausted: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertCounterExhaustedTitle,
             actions: {
                 ButtonState(action: .settings) {
@@ -64,7 +62,7 @@ extension HealthCardPasswordReadCardDomain {
         )
 
         // error: password not found
-        static let passwordNotFound: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let passwordNotFound: ErpAlertState<Destination.Alert> = .init(
             title: L10n.cdwTxtRcErrorPasswordMissingDescription,
             actions: {
                 ButtonState(action: .settings) {
@@ -75,7 +73,7 @@ extension HealthCardPasswordReadCardDomain {
         )
 
         // error: security status not satisfied
-        static let securityStatusNotSatisfied: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let securityStatusNotSatisfied: ErpAlertState<Destination.Alert> = .init(
             title: L10n.cdwTxtRcErrorSecStatusDescription,
             actions: {
                 ButtonState(action: .settings) {
@@ -86,7 +84,7 @@ extension HealthCardPasswordReadCardDomain {
         )
 
         // error: memory failure
-        static let memoryFailure: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let memoryFailure: ErpAlertState<Destination.Alert> = .init(
             title: L10n.cdwTxtRcErrorMemoryFailureDescription,
             actions: {
                 ButtonState(action: .settings) {
@@ -97,7 +95,7 @@ extension HealthCardPasswordReadCardDomain {
         )
 
         // error: unknown failure
-        static let unknownFailure: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let unknownFailure: ErpAlertState<Destination.Alert> = .init(
             title: L10n.cdwTxtRcErrorUnknownFailureDescription,
             actions: {
                 ButtonState(action: .settings) {
@@ -107,7 +105,7 @@ extension HealthCardPasswordReadCardDomain {
             message: L10n.cdwTxtRcErrorUnknownFailureRecovery
         )
 
-        static let pukCounterExhaustedWithSetNewPin: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let pukCounterExhaustedWithSetNewPin: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertCounterExhaustedWithPinTitle,
             actions: {
                 ButtonState(action: .settings) {
@@ -117,7 +115,7 @@ extension HealthCardPasswordReadCardDomain {
             message: L10n.stgTxtCardResetRcAlertCounterExhaustedWithPinMessage
         )
 
-        static let pinCounterExhausted: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let pinCounterExhausted: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertPinCounterExhaustedTitle,
             actions: {
                 ButtonState(action: .settings) {
@@ -128,7 +126,7 @@ extension HealthCardPasswordReadCardDomain {
         )
 
         // warning: retry counter
-        static let pukIncorrectZeroRetriesLeft: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let pukIncorrectZeroRetriesLeft: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertWrongPukZeroRetriesTitle,
             actions: {
                 ButtonState(action: .settings) {
@@ -138,7 +136,7 @@ extension HealthCardPasswordReadCardDomain {
             message: L10n.stgTxtCardResetRcAlertWrongPukZeroRetriesMessage
         )
 
-        static func pukIncorrect(retriesLeft: Int) -> ErpAlertState<Destinations.Action.Alert> {
+        static func pukIncorrect(retriesLeft: Int) -> ErpAlertState<Destination.Alert> {
             if retriesLeft == 0 {
                 return Self.pukIncorrectZeroRetriesLeft
             } else {
@@ -149,7 +147,7 @@ extension HealthCardPasswordReadCardDomain {
                             ButtonState(action: .amendPuk) {
                                 .init(L10n.stgBtnCardResetRcAlertAmend)
                             }
-                            ButtonState(role: .cancel, action: .dismiss) {
+                            ButtonState(role: .cancel) {
                                 .init(L10n.stgBtnCardResetRcAlertCancel)
                             }
                         },
@@ -158,7 +156,7 @@ extension HealthCardPasswordReadCardDomain {
             }
         }
 
-        static func pinIncorrect(retriesLeft: Int) -> ErpAlertState<Destinations.Action.Alert> {
+        static func pinIncorrect(retriesLeft: Int) -> ErpAlertState<Destination.Alert> {
             if retriesLeft == 0 {
                 return Self.pinCounterExhausted
             } else {
@@ -168,7 +166,7 @@ extension HealthCardPasswordReadCardDomain {
                         ButtonState(action: .amendPin) {
                             .init(L10n.stgBtnCardResetRcAlertAmend)
                         }
-                        ButtonState(role: .cancel, action: .dismiss) {
+                        ButtonState(role: .cancel) {
                             .init(L10n.stgBtnCardResetRcAlertCancel)
                         }
                     },
@@ -178,20 +176,20 @@ extension HealthCardPasswordReadCardDomain {
         }
 
         // error: others
-        static let wrongCan: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let wrongCan: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertWrongCanTitle,
             actions: {
                 ButtonState(action: .amendCan) {
                     .init(L10n.stgBtnCardResetRcAlertAmend)
                 }
-                ButtonState(role: .cancel, action: .dismiss) {
+                ButtonState(role: .cancel) {
                     .init(L10n.stgBtnCardResetRcAlertCancel)
                 }
             },
             message: L10n.stgTxtCardResetRcAlertWrongCanMessage
         )
 
-        static let unknownError: ErpAlertState<Destinations.Action.Alert> = .init(
+        static let unknownError: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertUnknownErrorTitle,
             actions: {
                 .default(
@@ -203,11 +201,11 @@ extension HealthCardPasswordReadCardDomain {
         )
 
         static func alertFor(_ error: NFCHealthCardPasswordControllerError)
-            -> ErpAlertState<Destinations.Action.Alert> {
+            -> ErpAlertState<Destination.Alert> {
             .init(for: error)
         }
 
-        static func alertFor(_ error: CodedError) -> AlertState<Destinations.Action.Alert> {
+        static func alertFor(_ error: CodedError) -> AlertState<Destination.Alert> {
             .init(for: error)
         }
     }

@@ -31,11 +31,10 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
 
     func testAppAuthenticationViewWithPassword() {
         let sut = AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
+            store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    biometrics: nil,
-                    password: AppAuthenticationPasswordDomain.State(),
+                    subdomain: .password(AppAuthenticationPasswordDomain.State()),
                     failedAuthenticationsCount: 0
                 )
             ) {
@@ -50,11 +49,10 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
 
     func testAppAuthenticationViewWithViewWithPasswordAndFailedAuthentications() {
         let sut = AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
+            store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    biometrics: nil,
-                    password: AppAuthenticationPasswordDomain.State(),
+                    subdomain: .password(AppAuthenticationPasswordDomain.State()),
                     failedAuthenticationsCount: 1
                 )
             ) {
@@ -69,14 +67,13 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
 
     func testAppAuthenticationViewWithFaceID() {
         let sut = AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
+            store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    biometrics: AppAuthenticationBiometricsDomain.State(
+                    subdomain: .biometrics(AppAuthenticationBiometricsDomain.State(
                         biometryType: .faceID,
                         startImmediateAuthenticationChallenge: false
-                    ),
-                    password: nil,
+                    )),
                     failedAuthenticationsCount: 0
                 )
             ) {
@@ -91,14 +88,13 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
 
     func testAppAuthenticationViewWithTouchID() {
         let sut = AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
+            store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    biometrics: AppAuthenticationBiometricsDomain.State(
+                    subdomain: .biometrics(AppAuthenticationBiometricsDomain.State(
                         biometryType: .touchID,
                         startImmediateAuthenticationChallenge: false
-                    ),
-                    password: nil,
+                    )),
                     failedAuthenticationsCount: 0
                 )
             ) {
@@ -113,14 +109,13 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
 
     func testAppAuthenticationViewWithTouchIDWithFailedAuthentications() {
         let sut = AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
+            store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    biometrics: AppAuthenticationBiometricsDomain.State(
+                    subdomain: .biometrics(AppAuthenticationBiometricsDomain.State(
                         biometryType: .touchID,
                         startImmediateAuthenticationChallenge: false
-                    ),
-                    password: nil,
+                    )),
                     failedAuthenticationsCount: 1
                 )
             ) {
@@ -135,16 +130,14 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
 
     func testAppAuthenticationBiometricPasswordView() {
         let sut = AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
+            store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    biometrics: nil,
-                    password: nil,
-                    biometricAndPassword: .init(
+                    subdomain: .biometricAndPassword(.init(
                         biometryType: .faceID,
                         startImmediateAuthenticationChallenge: false,
                         authenticationResult: .success(true)
-                    ),
+                    )),
                     failedAuthenticationsCount: 0
                 )
             ) {
@@ -159,12 +152,13 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
 
     func testAppAuthenticationBiometricPasswordFaceIDFailed() {
         let sut = AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
+            store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    biometrics: nil,
-                    password: nil,
-                    biometricAndPassword: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false),
+                    subdomain: .biometricAndPassword(.init(
+                        biometryType: .faceID,
+                        startImmediateAuthenticationChallenge: false
+                    )),
                     failedAuthenticationsCount: 1
                 )
             ) {
@@ -179,16 +173,14 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
 
     func testAppAuthenticationBiometricPasswordPasswordView() {
         let sut = AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
+            store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    biometrics: nil,
-                    password: nil,
-                    biometricAndPassword: .init(
+                    subdomain: .biometricAndPassword(.init(
                         biometryType: .faceID,
                         startImmediateAuthenticationChallenge: false,
                         showPassword: true
-                    ),
+                    )),
                     failedAuthenticationsCount: 0
                 )
             ) {

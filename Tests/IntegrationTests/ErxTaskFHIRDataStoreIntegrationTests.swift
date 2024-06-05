@@ -194,7 +194,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
     }
 
     func redeem(_ erxTask: ErxTask) -> Bool {
-        let order = erxTask.asOrder(orderId: UUID(), .shipment, for: testPharmacy, with: shipmentInfo)
+        let order = erxTask.asOrder(orderId: UUID(), option: .shipment, for: testPharmacy, with: shipmentInfo)
 
         // eRx task FHIR data store (Fachdienst)
         let erpHttpClient = DefaultHTTPClient(

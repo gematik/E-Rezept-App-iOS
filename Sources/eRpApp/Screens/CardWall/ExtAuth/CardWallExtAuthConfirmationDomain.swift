@@ -21,9 +21,9 @@ import ComposableArchitecture
 import IDP
 import UIKit
 
-struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct CardWallExtAuthConfirmationDomain {
+    @ObservableState
     struct State: Equatable {
         let selectedKK: KKAppDirectory.Entry
 
@@ -31,15 +31,24 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
 
         var error: Error?
 
-        @PresentationState var contactActionSheet: ConfirmationDialogState<Action.ContactSheet>?
+        @Presents var contactActionSheet: ConfirmationDialogState<Action.ContactSheet>?
     }
 
     // sourcery: CodedError = "012"
-    enum Error: Swift.Error, Equatable {
+    enum Error: Swift.Error, Equatable, LocalizedError {
         // sourcery: errorCode = "01"
         case idpError(IDPError)
         // sourcery: errorCode = "02"
         case universalLinkFailed
+
+        var errorDescription: String? {
+            switch self {
+            case let .idpError(error):
+                return error.localizedDescription
+            case .universalLinkFailed:
+                return L10n.cdwTxtExtauthConfirmUniversalLinkFailedError.text
+            }
+        }
     }
 
     enum Action: Equatable {
@@ -81,17 +90,17 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
         .init(idpSession: idpSession, schedulers: schedulers, resourceHandler: resourceHandler)
     }
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .confirmKK:
             state.loading = true
-            // [REQ:gemSpec_IDP_Sek:A_22294] Start login with KK
-            // [REQ:BSI-eRp-ePA:O.Auth_3#2,O.Plat_10#2] Start login with KK
+            // [REQ:gemSpec_IDP_Sek:A_22294] Start login via gID
+            // [REQ:BSI-eRp-ePA:O.Auth_4#9,O.Plat_10#2] Start login via gID
             return .publisher(
                 environment.idpSession.startExtAuth(entry: state.selectedKK)
                     .first()
@@ -112,7 +121,7 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
                         return
                     }
 
-                    // [REQ:gemSpec_IDP_Sek:A_22313] Remember State parameter for later verification
+                    // [REQ:gemSpec_IDP_Sek:A_22313-01] Remember State parameter for later verification
                     environment.resourceHandler.open(url, options: [:]) { result in
                         continuation.resume(returning: Action.response(.openURL(result)))
                     }
@@ -122,7 +131,7 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
         case let .response(.openURL(successful)):
             state.loading = false
             if successful {
-                return EffectTask.send(.delegate(.close))
+                return Effect.send(.delegate(.close))
             } else {
                 state.error = Error.universalLinkFailed
             }
@@ -159,17 +168,6 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
     }
 }
 
-extension CardWallExtAuthConfirmationDomain.Error: LocalizedError {
-    var errorDescription: String? {
-        switch self {
-        case let .idpError(error):
-            return error.localizedDescription
-        case .universalLinkFailed:
-            return L10n.cdwTxtExtauthConfirmUniversalLinkFailedError.text
-        }
-    }
-}
-
 extension CardWallExtAuthConfirmationDomain {
     enum Dummies {
         static let state = State(selectedKK: .init(name: "Dummy KK", identifier: "identifier"),
@@ -179,7 +177,7 @@ extension CardWallExtAuthConfirmationDomain {
             CardWallExtAuthConfirmationDomain()
         }
 
-        static func store(for state: State) -> Store {
+        static func store(for state: State) -> StoreOf<CardWallExtAuthConfirmationDomain> {
             Store(initialState: state) {
                 CardWallExtAuthConfirmationDomain()
             }

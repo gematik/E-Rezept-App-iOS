@@ -26,7 +26,7 @@ import XCTest
 extension AppStoreSnapshotTests {
     func redeemMatrixCode() -> some View {
         let sut = MatrixCodeView(
-            store: MatrixCodeDomain.Store(
+            store: StoreOf<MatrixCodeDomain>(
                 initialState: .init(
                     type: .erxTask,
                     erxTasks: ErxTask.Demo.erxTasks,

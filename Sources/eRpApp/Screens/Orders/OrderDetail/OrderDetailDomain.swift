@@ -23,16 +23,33 @@ import MapKit
 import SwiftUI
 import ZXingObjC
 
-struct OrderDetailDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct OrderDetailDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = orders_pickupCode
+        case pickupCode(PickupCodeDomain)
+        // sourcery: AnalyticsScreen = prescriptionDetail
+        case prescriptionDetail(PrescriptionDetailDomain)
+        // sourcery: AnalyticsScreen = chargeItemDetails
+        case chargeItem(ChargeItemDomain)
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = alert
+        case alert(ErpAlertState<Alert>)
 
+        enum Alert: Equatable {
+            case openMail(message: String)
+        }
+    }
+
+    @ObservableState
     struct State: Equatable {
         var order: Order
         var erxTasks: IdentifiedArrayOf<ErxTask> = []
         var openUrlSheetUrl: URL?
         var timelineEntries: [TimelineEntry] = []
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     enum Action: Equatable {
@@ -54,54 +71,8 @@ struct OrderDetailDomain: ReducerProtocol {
         case openPhoneApp
         case openMailApp
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
-    }
-
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = orders_pickupCode
-            case pickupCode(PickupCodeDomain.State)
-            // sourcery: AnalyticsScreen = prescriptionDetail
-            case prescriptionDetail(PrescriptionDetailDomain.State)
-            // sourcery: AnalyticsScreen = chargeItemDetails
-            case chargeItem(ChargeItemDomain.State)
-            // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<Action.Alert>)
-        }
-
-        enum Action: Equatable {
-            case prescriptionDetail(action: PrescriptionDetailDomain.Action)
-            case pickupCode(action: PickupCodeDomain.Action)
-            case chargeItem(action: ChargeItemDomain.Action)
-            case alert(Alert)
-
-            enum Alert: Equatable {
-                case dismiss
-                case openMail(message: String)
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.prescriptionDetail,
-                action: /Action.prescriptionDetail(action:)
-            ) {
-                PrescriptionDetailDomain()
-            }
-            Scope(
-                state: /State.pickupCode,
-                action: /Action.pickupCode(action:)
-            ) {
-                PickupCodeDomain()
-            }
-            Scope(
-                state: /State.chargeItem,
-                action: /Action.chargeItem(action:)
-            ) {
-                ChargeItemDomain()
-            }
-        }
+        case resetNavigation
+        case destination(PresentationAction<Destination.Action>)
     }
 
     var deviceInfo = DeviceInformations()
@@ -115,15 +86,13 @@ struct OrderDetailDomain: ReducerProtocol {
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             return .merge(
@@ -230,20 +199,19 @@ struct OrderDetailDomain: ReducerProtocol {
                 application.open(url)
             }
             return .none
-        case .setNavigation(tag: .none),
+        case .resetNavigation,
              .destination(.presented(.pickupCode(action: .delegate(.close)))),
              .destination(.presented(.prescriptionDetail(action: .delegate(.close)))):
             state.destination = nil
             return .none
-        case .setNavigation,
-             .destination:
+        case .destination:
             return .none
         }
     }
 }
 
 extension OrderDetailDomain {
-    func loadTasks(_ erxTaskIds: Set<ErxTask.ID>) -> EffectTask<OrderDetailDomain.Action> {
+    func loadTasks(_ erxTaskIds: Set<ErxTask.ID>) -> Effect<OrderDetailDomain.Action> {
         let publishers: [AnyPublisher<ErxTask?, Never>] = erxTaskIds.map {
             erxTaskRepository.loadLocal(by: $0, accessCode: nil)
                 .first()
@@ -297,9 +265,9 @@ extension OrderDetailDomain {
             .eraseToAnyPublisher()
     }
 
-    static func loadTimeline(for order: Order) -> [State.TimelineEntry] {
+    static func loadTimeline(for order: Order) -> [TimelineEntry] {
         let displayedCommunications = IdentifiedArray(uniqueElements: order.communications.filterUnique())
-        var timelineEntries: [State.TimelineEntry] = displayedCommunications.compactMap { communication in
+        var timelineEntries: [TimelineEntry] = displayedCommunications.compactMap { communication in
             switch communication.profile {
             case .dispReq:
                 return .dispReq(communication, pharmacy: order.pharmacy)
@@ -309,12 +277,12 @@ extension OrderDetailDomain {
                 return nil
             }
         }
-        timelineEntries.append(contentsOf: order.chargeItems.map { State.TimelineEntry.chargeItem($0) })
+        timelineEntries.append(contentsOf: order.chargeItems.map { TimelineEntry.chargeItem($0) })
         return timelineEntries.sorted { $0.lastUpdated > $1.lastUpdated }
     }
 }
 
-extension OrderDetailDomain.State {
+extension OrderDetailDomain {
     struct Timeline<T> {
         let value: T
         let name: String
@@ -404,9 +372,7 @@ extension OrderDetailDomain.State {
             }
         }
     }
-}
 
-extension OrderDetailDomain {
     struct DeviceInformations {
         let model: String
         let systemName: String
@@ -465,11 +431,11 @@ extension OrderDetailDomain {
         return urlString?.url
     }
 
-    static var openMailAlertState: ErpAlertState<Destinations.Action.Alert> = {
+    static var openMailAlertState: ErpAlertState<Destination.Alert> = {
         .init(
             title: L10n.ordDetailTxtOpenMailErrorTitle,
             actions: {
-                ButtonState(role: .cancel, action: .dismiss) {
+                ButtonState(role: .cancel) {
                     .init(L10n.alertBtnClose)
                 }
             },
@@ -477,11 +443,11 @@ extension OrderDetailDomain {
         )
     }()
 
-    static func openUrlAlertState(for url: URL) -> ErpAlertState<Destinations.Action.Alert> {
+    static func openUrlAlertState(for url: URL) -> ErpAlertState<Destination.Alert> {
         .init(
             title: L10n.ordDetailTxtErrorTitle,
             actions: {
-                ButtonState(role: .cancel, action: .dismiss) {
+                ButtonState(role: .cancel) {
                     .init(L10n.alertBtnClose)
                 }
                 ButtonState(action: .openMail(message: url.absoluteString)) {
@@ -500,11 +466,11 @@ extension OrderDetailDomain {
             erxTasks: [ErxTask.Demo.erxTask1, ErxTask.Demo.erxTask13]
         )
 
-        static let store = Store(initialState: state) {
+        static let store = StoreOf<OrderDetailDomain>(initialState: state) {
             OrderDetailDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<OrderDetailDomain> {
             Store(initialState: state) {
                 OrderDetailDomain()
             }

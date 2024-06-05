@@ -45,6 +45,12 @@ struct MainScreen: Screen {
         return RedeemSelectionScreen(app: app)
     }
 
+    func tapOpenCardwall(file: StaticString = #file, line: UInt = #line) -> CardWallIntroductionScreen {
+        button(by: A11y.mainScreen.erxBtnLogin, file: file, line: line).tap()
+
+        return .init(app: app)
+    }
+
     func tapArchive(file: StaticString = #file, line: UInt = #line) -> ArchiveScreen {
         app.scrollViews.firstMatch.swipeUp(velocity: 2000.0)
 
@@ -60,6 +66,17 @@ struct MainScreen: Screen {
             let cell = app.buttons.containing(.staticText, identifier: name).element
             expect(file: file, line: line, cell).to(exist(name))
             return cell
+        }
+
+        func detailsForPrescriptionNamed(_ name: String, file: StaticString = #file,
+                                         line: UInt = #line) -> PrescriptionDetailsScreen {
+            staticText(by: name, file: file, line: line).tap()
+
+            // assert label exists that contains the prescription name as a label
+            let title = staticText(by: A11y.prescriptionDetails.prscDtlTxtTitle, file: file, line: line)
+            expect(file: file, line: line, title.label).to(equal(name))
+
+            return PrescriptionDetailsScreen(app: app)
         }
     }
 }

@@ -22,13 +22,13 @@ import eRpKit
 import Foundation
 import Zxcvbn
 
-struct CreatePasswordDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct CreatePasswordDomain: Reducer {
     enum CancelID: CaseIterable, Hashable {
         case comparePasswords
     }
 
+    @ObservableState
     struct State: Equatable {
         let mode: Mode
         var password: String = ""
@@ -69,14 +69,13 @@ struct CreatePasswordDomain: ReducerProtocol {
         }
     }
 
-    enum Action: Equatable {
+    enum Action: BindableAction, Equatable {
         enum Delegate: Equatable {
-            case closeAfterPasswordSaved
+            case closeAfterPasswordSaved(mode: State.Mode)
         }
 
-        case setCurrentPassword(String)
-        case setPasswordA(String)
-        case setPasswordB(String)
+        case binding(BindingAction<State>)
+
         case comparePasswords
         case saveButtonTapped
         case enterButtonTapped
@@ -89,16 +88,20 @@ struct CreatePasswordDomain: ReducerProtocol {
     @Dependency(\.passwordStrengthTester) var passwordStrengthTester: PasswordStrengthTester
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
 
+    var body: some Reducer<State, Action> {
+        BindingReducer()
+
+        Reduce(self.core)
+    }
+
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case let .setCurrentPassword(string):
-            state.password = string
+        case .binding(\.password):
             state.showOriginalPasswordWrong = false
             return .none
-        case let .setPasswordA(string):
-            state.passwordStrength = passwordStrengthTester.passwordStrength(for: string)
-            state.passwordA = string
+        case .binding(\.passwordA):
+            state.passwordStrength = passwordStrengthTester.passwordStrength(for: state.passwordA)
             return .run { send in
                 try await schedulers.main.sleep(for: Self.timeout)
                 await send(.comparePasswords)
@@ -106,8 +109,7 @@ struct CreatePasswordDomain: ReducerProtocol {
             .animation(.default)
             .cancellable(id: CancelID.comparePasswords, cancelInFlight: true)
 
-        case let .setPasswordB(string):
-            state.passwordB = string
+        case .binding(\.passwordB):
             return .run { send in
                 try await schedulers.main.sleep(for: Self.timeout)
                 await send(.comparePasswords)
@@ -155,10 +157,11 @@ struct CreatePasswordDomain: ReducerProtocol {
 
             return .concatenate(
                 .cancel(id: CancelID.comparePasswords),
-                EffectTask.send(.delegate(.closeAfterPasswordSaved))
+                Effect.send(.delegate(.closeAfterPasswordSaved(mode: state.mode)))
             )
 
-        case .delegate:
+        case .delegate,
+             .binding:
             return .none
         }
     }
@@ -170,7 +173,7 @@ extension CreatePasswordDomain {
     enum Dummies {
         static let state = State(mode: .update)
 
-        static let store = Store(
+        static let store = StoreOf<CreatePasswordDomain>(
             initialState: state
         ) {
             CreatePasswordDomain()

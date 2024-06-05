@@ -255,16 +255,16 @@ extension AVSMessage {
 extension Sequence where Self.Element == ErxTask {
     func asOrders(
         orderId: UUID,
-        _ redeemOption: RedeemOption,
+        option redeemOption: RedeemOption,
         for pharmacy: PharmacyLocation,
         with shipmentInfo: ShipmentInfo?
     ) -> [OrderRequest] {
-        map { $0.asOrder(orderId: orderId, redeemOption, for: pharmacy, with: shipmentInfo) }
+        map { $0.asOrder(orderId: orderId, option: redeemOption, for: pharmacy, with: shipmentInfo) }
     }
 }
 
 extension ErxTask {
-    func asOrder(orderId: UUID, _ redeemOption: RedeemOption, for pharmacy: PharmacyLocation,
+    func asOrder(orderId: UUID, option redeemOption: RedeemOption, for pharmacy: PharmacyLocation,
                  with shipmentInfo: ShipmentInfo?) -> OrderRequest {
         let transactionId = UUID()
         return OrderRequest(

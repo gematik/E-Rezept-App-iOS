@@ -38,7 +38,7 @@ final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testRedeemMatrixCodeViewSnapshot() {
         let sut = MatrixCodeView(
-            store: MatrixCodeDomain.Store(
+            store: StoreOf<MatrixCodeDomain>(
                 initialState: .init(
                     type: .erxTask,
                     erxTasks: ErxTask.Demo.erxTasks,
@@ -61,7 +61,7 @@ final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testRedeemMatrixCodeMultiplePrescriptionsViewSnapshot() {
         let sut = MatrixCodeView(
-            store: MatrixCodeDomain.Store(
+            store: StoreOf<MatrixCodeDomain>(
                 initialState: .init(
                     type: .erxTask,
                     erxTasks: ErxTask.Demo.erxTasks,

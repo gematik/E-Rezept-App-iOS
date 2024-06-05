@@ -6,4 +6,5 @@ CODE_SIGN_IDENTITY = iPhone Distribution
 GEM_PROVISIONING_PROFILE_SPECIFIER = match AppStore de.gematik.erp4ios.eRezept
 PROVISIONING_PROFILE_SPECIFIER = ${GEM_PROVISIONING_PROFILE_SPECIFIER}
 
+// [REQ:BSI-eRp-ePA:O.Source_8#5] Exclude UITest Scenarios from production builds
 EXCLUDED_SOURCE_FILE_NAMES = App/Sources/UITestScenarios/**

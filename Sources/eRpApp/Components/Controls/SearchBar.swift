@@ -18,6 +18,7 @@
 
 import eRpStyleKit
 import SwiftUI
+import SwiftUIIntrospect
 
 struct SearchBar: View {
     @Binding var searchText: String
@@ -32,7 +33,7 @@ struct SearchBar: View {
                 Text(prompt, bundle: .module)
             }
             .onSubmit(onSubmit)
-            .introspectTextField { textField in
+            .introspect(.textField, on: .iOS(.v15, .v16, .v17)) { textField in
                 textField.returnKeyType = .go
             }
             .padding(7)

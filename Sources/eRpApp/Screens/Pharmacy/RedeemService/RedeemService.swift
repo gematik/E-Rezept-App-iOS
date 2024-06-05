@@ -136,6 +136,7 @@ extension AVSRedeemService: DependencyKey {
     }
 
     static let previewValue: () -> RedeemService = liveValue
+    static let testValue: () -> RedeemService = { UnimplementedRedeemService() }
 }
 
 extension DependencyValues {
@@ -160,7 +161,7 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
             .isAuthenticatedOrAuthenticate()
             .first()
             .flatMap { authenticated -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> in
-                // [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
+                // [REQ:gemSpec_eRp_FdV:A_20167-02#3,A_20172] no token/not authorized, show authenticator module
                 if Result.success(false) == authenticated {
                     return Fail(error: RedeemServiceError.noTokenAvailable).eraseToAnyPublisher()
                 }
@@ -221,8 +222,9 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
     }
 }
 
+// sourcery: skipUnimplemented
 extension ErxTaskRepositoryRedeemService: DependencyKey {
-    static let liveValue = {
+    static let liveValue: () -> RedeemService = {
         @Dependency(\.userSession) var userSession
         @Dependency(\.loginHandlerServiceFactory) var loginHandlerFactory
 
@@ -234,10 +236,12 @@ extension ErxTaskRepositoryRedeemService: DependencyKey {
             )
         )
     }
+
+    static let testValue: () -> RedeemService = { UnimplementedRedeemService() }
 }
 
 extension DependencyValues {
-    var erxTaskRepositoryRedeemService: () -> ErxTaskRepositoryRedeemService {
+    var erxTaskRepositoryRedeemService: () -> RedeemService {
         get { self[ErxTaskRepositoryRedeemService.self] }
         set { self[ErxTaskRepositoryRedeemService.self] = newValue }
     }

@@ -176,11 +176,11 @@ final class AppSecurityDomainTests: XCTestCase {
 
         await store.send(.togglePasswordSelected)
         await testScheduler.advance()
-        await store.receive(.setNavigation(tag: .appPassword)) {
+        await store.receive(.appPasswordTapped) {
             $0.destination = .appPassword(.init(mode: .create))
         }
 
-        await store.send(.destination(.presented(.appPassword(.delegate(.closeAfterPasswordSaved))))) {
+        await store.send(.destination(.presented(.appPassword(.delegate(.closeAfterPasswordSaved(mode: .create)))))) {
             $0.destination = nil
         }
         await testScheduler.advance()
@@ -228,11 +228,11 @@ final class AppSecurityDomainTests: XCTestCase {
         }
         await store.send(.togglePasswordSelected)
         await testScheduler.advance()
-        await store.receive(.setNavigation(tag: .appPassword)) {
+        await store.receive(.appPasswordTapped) {
             $0.destination = .appPassword(.init(mode: .create))
         }
 
-        await store.send(.setNavigation(tag: nil)) {
+        await store.send(.resetNavigation) {
             $0.destination = nil
             $0.selectedSecurityOption = .biometry(.faceID)
         }

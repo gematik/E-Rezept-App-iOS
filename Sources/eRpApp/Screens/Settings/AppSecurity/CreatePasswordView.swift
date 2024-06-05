@@ -22,115 +22,117 @@ import SwiftUI
 
 // [REQ:BSI-eRp-ePA:O.Pass_3#2] View for changing the user password
 struct CreatePasswordView: View {
-    let store: CreatePasswordDomain.Store
-    @ObservedObject private var viewStore: ViewStore<CreatePasswordDomain.State, CreatePasswordDomain.Action>
-
-    init(store: CreatePasswordDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
-
-    var currentPassword: Binding<String> {
-        viewStore.binding(get: \.password, send: CreatePasswordDomain.Action.setCurrentPassword).animation()
-    }
-
-    var passwordA: Binding<String> {
-        viewStore.binding(get: \.passwordA, send: CreatePasswordDomain.Action.setPasswordA).animation()
-    }
-
-    var passwordB: Binding<String> {
-        viewStore.binding(get: \.passwordB, send: CreatePasswordDomain.Action.setPasswordB).animation()
-    }
+    @Perception.Bindable var store: StoreOf<CreatePasswordDomain>
 
     var updatePassword: Bool {
-        viewStore.mode == .update
+        store.mode == .update
     }
 
     var body: some View {
-        ScrollView {
-            // This TextField is mandatory to support password autofill from iCloud Keychain, applying  `.hidden()`
-            // lets iOS no longer detect it.
-            TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
-                .textContentType(.username)
-                .frame(width: 1, height: 1, alignment: .leading)
-                .opacity(0.01)
-                .accessibility(hidden: true)
+        WithPerceptionTracking {
+            ScrollView {
+                if updatePassword {
+                    SingleElementSectionContainer(
+                        header: {
+                            SectionHeaderView(
+                                text: L10n.cpwTxtSectionUpdateTitle,
+                                a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
+                            ).padding(.bottom, 8)
+                        },
+                        footer: {
+                            WithPerceptionTracking {
+                                if store.showOriginalPasswordWrong {
+                                    VStack(alignment: .leading) {
+                                        Text(L10n.cpwTxtCurrentPasswordWrong)
+                                            .foregroundColor(Colors.red600)
+                                            .font(.footnote)
+                                            .accessibilityIdentifier(A11y.settings.createPassword
+                                                .cpwTxtCurrentPasswordWrong)
+                                    }
+                                } else {
+                                    EmptyView()
+                                }
+                            }
+                        },
+                        content: {
+                            SecureField(
+                                L10n.cpwInpCurrentPasswordPlaceholder,
+                                text: $store.password
+                            )
+                            .textContentType(.password)
+                            .onSubmit { store.send(.enterButtonTapped) }
+                            .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
+                            .padding()
+                        }
+                    )
+                }
 
-            if updatePassword {
+                // This TextField is mandatory to support password autofill from iCloud Keychain, applying  `.hidden()`
+                // lets iOS no longer detect it.
+                TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
+                    .textContentType(.username)
+                    .frame(width: 1, height: 1, alignment: .leading)
+                    .opacity(0.01)
+                    .accessibility(hidden: true)
+
                 SingleElementSectionContainer(
                     header: {
                         SectionHeaderView(
-                            text: L10n.cpwTxtSectionUpdateTitle,
-                            a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
+                            text: L10n.cpwTxtSectionTitle,
+                            a11y: A11y.settings.createPassword.cpwTxtSectionTitle
                         ).padding(.bottom, 8)
                     },
-                    footer: { currentPasswordFooter() },
+                    footer: {
+                        WithPerceptionTracking {
+                            VStack(spacing: 8) {
+                                FootnoteView(
+                                    text: L10n.cpwTxtPasswordRecommendation,
+                                    a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
+                                )
+
+                                PasswordStrengthView(strength: store.passwordStrength)
+                                    .accessibility(identifier: A11y.settings.createPassword.cpwTxtPasswordStrength)
+                            }
+                        }
+                    },
                     content: {
-                        SecureField(
-                            L10n.cpwInpCurrentPasswordPlaceholder,
-                            text: currentPassword
-                        )
-                        .onSubmit { viewStore.send(.enterButtonTapped) }
-                        .textContentType(.password)
-                        .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
-                        .padding()
+                        VStack {
+                            SecureField(
+                                L10n.cpwInpPasswordAPlaceholder,
+                                text: $store.passwordA
+                            )
+                            .textContentType(.newPassword)
+                            .onSubmit { store.send(.enterButtonTapped) }
+                            .padding()
+                            .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
+                        }
                     }
                 )
-            }
 
-            SingleElementSectionContainer(
-                header: {
-                    SectionHeaderView(
-                        text: L10n.cpwTxtSectionTitle,
-                        a11y: A11y.settings.createPassword.cpwTxtSectionTitle
-                    ).padding(.bottom, 8)
-                },
-                footer: {
-                    VStack(spacing: 8) {
-                        FootnoteView(
-                            text: L10n.cpwTxtPasswordRecommendation,
-                            a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
-                        )
-
-                        PasswordStrengthView(strength: viewStore.passwordStrength)
-                    }
-                },
-                content: {
-                    VStack {
-                        SecureField(
-                            L10n.cpwInpPasswordAPlaceholder,
-                            text: passwordA
-                        )
-                        .onSubmit { viewStore.send(.enterButtonTapped) }
-                        .padding()
-                        .textContentType(.newPassword)
-                        .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
-                    }
+                SingleElementSectionContainer {
+                    SecureField(
+                        L10n.cpwInpPasswordBPlaceholder,
+                        text: $store.passwordB
+                    )
+                    .textContentType(.newPassword)
+                    .onSubmit { store.send(.saveButtonTapped) }
+                    .padding()
+                    .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
+                    .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordB)
                 }
-            )
 
-            SingleElementSectionContainer {
-                SecureField(
-                    L10n.cpwInpPasswordBPlaceholder,
-                    text: passwordB
-                )
-                .onSubmit { viewStore.send(.saveButtonTapped) }
-                .padding()
-                .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
-                .textContentType(.newPassword)
-                .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordB)
+                errorFooter()
+                    .accessibilityIdentifier(A11y.settings.createPassword.cpwTxtPasswordStrengthErrorFooter)
+                saveButtonAndError()
+                    .padding()
             }
-
-            errorFooter()
-            saveButtonAndError()
-                .padding()
+            .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
+            .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
         }
-        .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
-        .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
     }
 
     @ViewBuilder private func errorFooter() -> some View {
-        if let error = viewStore.passwordErrorMessage {
+        if let error = store.passwordErrorMessage {
             Text(error)
                 .foregroundColor(Colors.red600)
                 .font(.footnote)
@@ -145,22 +147,10 @@ struct CreatePasswordView: View {
             a11y: updatePassword ?
                 A11y.settings.createPassword.cpwBtnUpdate : A11y.settings.createPassword.cpwBtnSave,
             image: nil,
-            isEnabled: viewStore.hasValidPasswordEntries
+            isEnabled: store.hasValidPasswordEntries
         ) {
             UIApplication.shared.dismissKeyboard()
-            viewStore.send(.saveButtonTapped)
-        }
-    }
-
-    @ViewBuilder private func currentPasswordFooter() -> some View {
-        if viewStore.showOriginalPasswordWrong {
-            VStack(alignment: .leading) {
-                Text(L10n.cpwTxtCurrentPasswordWrong)
-                    .foregroundColor(Colors.red600)
-                    .font(.footnote)
-            }
-        } else {
-            EmptyView()
+            store.send(.saveButtonTapped)
         }
     }
 }

@@ -275,7 +275,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let sut = testStore()
 
         await sut.send(.setNavigation(tag: .directAssignmentInfo)) {
-            $0.destination = .directAssignmentInfo
+            $0.destination = .directAssignmentInfo(.init())
         }
     }
 
@@ -283,7 +283,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let sut = testStore()
 
         await sut.send(.setNavigation(tag: .emergencyServiceFeeInfo)) {
-            $0.destination = .emergencyServiceFeeInfo
+            $0.destination = .emergencyServiceFeeInfo(.init())
         }
     }
 
@@ -298,8 +298,9 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 isArchived: false
             )
         )
-        let expectedCoPaymentState = PrescriptionDetailDomain.Destinations
-            .CoPaymentState(status: erxTaskWithSubjectToChargeStatus.medicationRequest.coPaymentStatus!)
+        let expectedCoPaymentState = CoPaymentDomain.State(
+            status: erxTaskWithSubjectToChargeStatus.medicationRequest.coPaymentStatus!
+        )
 
         await sut.send(.setNavigation(tag: .coPaymentInfo)) {
             $0.destination = .coPaymentInfo(expectedCoPaymentState)
@@ -330,8 +331,9 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 isArchived: false
             )
         )
-        let expectedCoPaymentState = PrescriptionDetailDomain.Destinations
-            .CoPaymentState(status: erxTaskWithNoSubjectToChargeStatus.medicationRequest.coPaymentStatus!)
+        let expectedCoPaymentState = CoPaymentDomain.State(
+            status: erxTaskWithNoSubjectToChargeStatus.medicationRequest.coPaymentStatus!
+        )
 
         await sut.send(.setNavigation(tag: .coPaymentInfo)) {
             $0.destination = .coPaymentInfo(expectedCoPaymentState)
@@ -350,14 +352,15 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testShowPrescriptionValidityInfo() async {
         let sut = testStore()
-        let expectedValidityInfo = PrescriptionDetailDomain.Destinations.PrescriptionValidityState(
+        let expectedValidityInfo = PrescriptionValidityDomain.State(
             acceptBeginDisplayDate: uiDateFormatter.date(sut.state.prescription.authoredOn),
             acceptEndDisplayDate: uiDateFormatter.date(
                 sut.state.prescription.acceptedUntil,
                 advancedBy: -60 * 60 * 24
             ),
             expiresBeginDisplayDate: uiDateFormatter.date(sut.state.prescription.acceptedUntil),
-            expiresEndDisplayDate: uiDateFormatter.date(sut.state.prescription.expiresOn, advancedBy: -60 * 60 * 24)
+            expiresEndDisplayDate: uiDateFormatter.date(sut.state.prescription.expiresOn, advancedBy: -60 * 60 * 24),
+            isMVO: false
         )
 
         await sut.send(.setNavigation(tag: .prescriptionValidityInfo)) {
@@ -369,7 +372,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let sut = testStore()
 
         await sut.send(.setNavigation(tag: .errorInfo)) {
-            $0.destination = .errorInfo
+            $0.destination = .errorInfo(.init())
         }
     }
 
@@ -377,7 +380,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let sut = testStore()
 
         await sut.send(.setNavigation(tag: .substitutionInfo)) {
-            $0.destination = .substitutionInfo
+            $0.destination = .substitutionInfo(.init(substitutionAllowed: true))
         }
     }
 
@@ -385,7 +388,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let sut = testStore()
 
         await sut.send(.setNavigation(tag: .scannedPrescriptionInfo)) {
-            $0.destination = .scannedPrescriptionInfo
+            $0.destination = .scannedPrescriptionInfo(.init())
         }
     }
 
@@ -396,7 +399,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let expectedLoadingState: LoadingState<UIImage, PrescriptionDetailDomain.LoadingImageError> =
             .value(expectedImage)
 
-        let shareState = PrescriptionDetailDomain.Destinations.ShareState(
+        let shareState = ShareSheetDomain.State(
             url: expectedUrl,
             dataMatrixCodeImage: expectedImage
         )
@@ -412,7 +415,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testShowTechnicalInformations() async {
         let sut = testStore()
-        let expectedState = PrescriptionDetailDomain.Destinations.TechnicalInformationsState(
+        let expectedState = TechnicalInformationsDomain.State(
             taskId: sut.state.prescription.erxTask.identifier,
             accessCode: sut.state.prescription.erxTask.accessCode
         )
@@ -424,7 +427,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testShowPatient() async {
         let sut = testStore()
-        let expectedState = PrescriptionDetailDomain.Destinations.PatientState(
+        let expectedState = PatientDomain.State(
             patient: sut.state.prescription.patient!
         )
 
@@ -435,7 +438,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testShowPractitioner() async {
         let sut = testStore()
-        let expectedState = PrescriptionDetailDomain.Destinations.PractitionerState(
+        let expectedState = PractitionerDomain.State(
             practitioner: sut.state.prescription.practitioner!
         )
 
@@ -446,7 +449,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testShowOrganization() async {
         let sut = testStore()
-        let expectedState = PrescriptionDetailDomain.Destinations.OrganizationState(
+        let expectedState = OrganizationDomain.State(
             organization: sut.state.prescription.organization!
         )
 
@@ -457,7 +460,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testShowAccidentInfo() async {
         let sut = testStore()
-        let expectedState = PrescriptionDetailDomain.Destinations.AccidentInfoState(
+        let expectedState = AccidentInfoDomain.State(
             accidentInfo: sut.state.prescription.medicationRequest.accidentInfo!
         )
 

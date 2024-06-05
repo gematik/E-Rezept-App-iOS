@@ -18,8 +18,15 @@
 
 import ComposableArchitecture
 
-struct ReadCardHelpDomain: ReducerProtocol {
-    enum State: Int {
+@Reducer
+struct ReadCardHelpDomain {
+    @ObservableState
+    struct State: Equatable {
+        var destination: Destination.State = .first
+    }
+
+    @Reducer(state: .equatable)
+    enum Destination {
         // sourcery: AnalyticsScreen = troubleShooting_readCardHelp1
         case first
         // sourcery: AnalyticsScreen = troubleShooting_readCardHelp2
@@ -32,26 +39,33 @@ struct ReadCardHelpDomain: ReducerProtocol {
 
     enum Action: Equatable {
         case delegate(Delegate)
+        case updatePageIndex(Destination.State)
     }
 
     enum Delegate: Equatable {
         case close
         case navigateToIntro
-        case updatePageIndex(State)
     }
 
-    var body: some ReducerProtocol<State, Action> {
-        EmptyReducer()
+    var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            switch action {
+            case let .updatePageIndex(pageIndex):
+                state.destination = pageIndex
+                return .none
+            case .delegate:
+                return .none
+            }
+        }
     }
 }
 
 extension ReadCardHelpDomain {
     enum Dummies {
-        static let state = State.first
-
         static let store = Store(
-            initialState: state
-        ) { ReadCardHelpDomain()
+            initialState: State()
+        ) {
+            ReadCardHelpDomain()
         }
     }
 }

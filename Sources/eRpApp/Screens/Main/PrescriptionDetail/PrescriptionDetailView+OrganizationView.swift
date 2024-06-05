@@ -22,41 +22,38 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct OrganizationView: View {
-        let store: Store<
-            PrescriptionDetailDomain.Destinations.OrganizationState,
-            PrescriptionDetailDomain.Destinations.Action.None
-        >
+        @Perception.Bindable var store: StoreOf<OrganizationDomain>
 
         var body: some View {
-            WithViewStore(store) { $0 } content: { viewStore in
+            WithPerceptionTracking {
                 ScrollView(.vertical) {
                     SectionContainer {
                         SubTitle(
-                            title: viewStore.organization.name ?? L10n.prscFdTxtNa.text,
+                            title: store.organization.name ?? L10n.prscFdTxtNa.text,
                             description: L10n.prscFdTxtOrganizationName
                         )
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrName)
 
                         SubTitle(
-                            title: viewStore.organization.identifier ?? L10n.prscFdTxtNa.text,
+                            title: store.organization.identifier ?? L10n.prscFdTxtNa.text,
                             description: L10n.prscFdTxtOrganizationId
                         )
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrIdentifier)
 
                         SubTitle(
-                            title: viewStore.organization.address ?? L10n.prscFdTxtNa.text,
+                            title: store.organization.address ?? L10n.prscFdTxtNa.text,
                             description: L10n.prscFdTxtOrganizationAddress
                         )
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrAddress)
 
                         SubTitle(
-                            title: viewStore.organization.phone ?? L10n.prscFdTxtNa.text,
+                            title: store.organization.phone ?? L10n.prscFdTxtNa.text,
                             description: L10n.prscFdTxtOrganizationPhone
                         )
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrPhone)
 
                         SubTitle(
-                            title: viewStore.organization.email ?? L10n.prscFdTxtNa.text,
+                            title: store.organization.email ?? L10n.prscFdTxtNa.text,
                             description: L10n.prscFdTxtOrganizationEmail
                         )
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrEmail)

@@ -22,55 +22,43 @@ import eRpStyleKit
 import SwiftUI
 
 struct ProfilesView: View {
-    let store: ProfilesDomain.Store
-
-    @ObservedObject private var viewStore: ViewStore<ViewState, ProfilesDomain.Action>
-
-    init(store: ProfilesDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let profiles: [UserProfile]
-        let selectedProfileId: UUID?
-        init(state: ProfilesDomain.State) {
-            profiles = state.profiles
-            selectedProfileId = state.selectedProfileId
-        }
-    }
+    @Perception.Bindable var store: StoreOf<ProfilesDomain>
 
     var body: some View {
-        SectionContainer(
-            header: {
-                Label(title: {
-                    Text(L10n.stgTxtHeaderProfiles)
-                }, icon: {})
-                    .accessibility(identifier: A11y.settings.profiles.stgTxtHeaderProfiles)
-            }, content: {
-                ForEach(viewStore.profiles) { profile in
-                    Button(action: {
-                        viewStore.send(.editProfile(profile))
-                    }, label: {
-                        SingleProfileView(profile: profile, selectedProfileId: viewStore.selectedProfileId)
-                    })
-                        .buttonStyle(.navigation)
-                        .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
-                }
-                .accessibilityElement(children: .contain)
-                .accessibility(identifier: A11y.settings.profiles.stgConProfiles)
+        WithPerceptionTracking {
+            SectionContainer(
+                header: {
+                    Label(title: {
+                        Text(L10n.stgTxtHeaderProfiles)
+                    }, icon: {})
+                        .accessibility(identifier: A11y.settings.profiles.stgTxtHeaderProfiles)
+                }, content: {
+                    ForEach(store.profiles) { profile in
+                        WithPerceptionTracking {
+                            Button(action: {
+                                store.send(.editProfile(profile))
+                            }, label: {
+                                SingleProfileView(profile: profile, selectedProfileId: store.selectedProfileId)
+                            })
+                                .buttonStyle(.navigation)
+                                .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
+                        }
+                    }
+                    .accessibilityElement(children: .contain)
+                    .accessibility(identifier: A11y.settings.profiles.stgConProfiles)
 
-                Button(action: {
-                    viewStore.send(.addNewProfile)
-                }, label: {
-                    Label(L10n.stgBtnAddProfile, systemImage: SFSymbolName.plus)
-                })
-                    .buttonStyle(.simple(showSeparator: false))
-                    .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
+                    Button(action: {
+                        store.send(.addNewProfile)
+                    }, label: {
+                        Label(L10n.stgBtnAddProfile, systemImage: SFSymbolName.plus)
+                    })
+                        .buttonStyle(.simple(showSeparator: false))
+                        .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
+                }
+            )
+            .task {
+                await store.send(.registerListener).finish()
             }
-        )
-        .task {
-            await viewStore.send(.registerListener).finish()
         }
     }
 

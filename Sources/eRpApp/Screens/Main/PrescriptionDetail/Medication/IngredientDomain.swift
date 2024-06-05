@@ -18,9 +18,9 @@
 
 import ComposableArchitecture
 
-struct IngredientDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct IngredientDomain {
+    @ObservableState
     struct State: Equatable {
         let text: String?
         let strength: String?
@@ -30,7 +30,7 @@ struct IngredientDomain: ReducerProtocol {
 
     enum Action: Equatable {}
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         EmptyReducer()
     }
 }

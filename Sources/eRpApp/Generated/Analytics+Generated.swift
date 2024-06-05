@@ -51,6 +51,10 @@ typealias AnalyticsEvent = String
     struct CardWall_extAuthConfirm: AnalyticsScreen {
       let name = "cardWall:extAuthConfirm"
     }
+    static let cardWall_extAuthSelectionHelp = CardWall_extAuthSelectionHelp()
+    struct CardWall_extAuthSelectionHelp: AnalyticsScreen {
+      let name = "cardWall:extAuthSelectionHelp"
+    }
     static let cardWall_introduction = CardWall_introduction()
     struct CardWall_introduction: AnalyticsScreen {
       let name = "cardWall:welcome"
@@ -222,6 +226,10 @@ typealias AnalyticsEvent = String
     static let pharmacySearch = PharmacySearch()
     struct PharmacySearch: AnalyticsScreen {
       let name = "pharmacySearch"
+    }
+    static let pharmacySearch_clusterAnnotation = PharmacySearch_clusterAnnotation()
+    struct PharmacySearch_clusterAnnotation: AnalyticsScreen {
+      let name = "pharmacySearch:clusterAnnotation"
     }
     static let pharmacySearch_detail = PharmacySearch_detail()
     struct PharmacySearch_detail: AnalyticsScreen {

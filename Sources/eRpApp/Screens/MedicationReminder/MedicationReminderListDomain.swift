@@ -23,8 +23,15 @@ import eRpLocalStorage
 import Foundation
 import SwiftUI
 
-struct MedicationReminderListDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct MedicationReminderListDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        case medicationReminder(MedicationReminderSetupDomain)
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = alert
+        case alert(ErpAlertState<Never>)
+    }
 
     // sourcery: CodedError = "036"
     enum Error: Swift.Error, Equatable {
@@ -32,9 +39,10 @@ struct MedicationReminderListDomain: ReducerProtocol {
         case generic(String)
     }
 
+    @ObservableState
     struct State: Equatable {
         var profileMedicationReminder: [ProfileMedicationReminder] = []
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     struct ProfileMedicationReminder: Identifiable, Equatable {
@@ -52,122 +60,92 @@ struct MedicationReminderListDomain: ReducerProtocol {
         case profileMedicationReminderFailed(Error)
 
         case selectMedicationReminder(MedicationSchedule)
-        case destination(PresentationAction<Destinations.Action>)
-        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(PresentationAction<Destination.Action>)
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            case medicationReminder(MedicationReminderSetupDomain.State)
-            case alert(ErpAlertState<Action.Alert>)
-        }
-
-        enum Action: Equatable {
-            case medicationReminderAction(action: MedicationReminderSetupDomain.Action)
-            case alert(Alert)
-
-            enum Alert: Equatable {
-                case dismiss
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.medicationReminder,
-                action: /Action.medicationReminderAction
-            ) {
-                MedicationReminderSetupDomain()
-            }
-        }
-    }
-
-    var body: some ReducerProtocol<State, Action> {
+    var body: some ReducerOf<Self> {
         Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.medicationScheduleRepository) var medicationScheduleRepository: MedicationScheduleRepository
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    var core: some ReducerProtocol<State, Action> {
-        Reduce { state, action in
-            switch action {
-            case .loadAllProfiles:
-                return .publisher(
-                    userProfileService.userProfilesPublisher()
-                        .first()
-                        .catchToPublisher()
-                        .map(Action.loadReceived)
-                        .receive(on: schedulers.main)
-                        .eraseToAnyPublisher
-                )
-            case let .loadReceived(.failure(error)):
-                state.destination = .alert(.error(
-                    error: error,
-                    alertState: .init(for: error, actions: {
-                        ButtonState(role: .cancel, action: .dismiss) {
-                            .init(L10n.alertBtnOk)
-                        }
-                    })
-                ))
-                return .none
-            case let .loadReceived(.success(profiles)):
-                state.profileMedicationReminder = []
-                return .send(.loadProfileMedicationReminder(profiles))
-            case let .loadProfileMedicationReminder(profiles):
-                return .run { send in
-                    do {
-                        for userProfile in profiles {
-                            var schedule: [MedicationSchedule] = []
-                            // sort the schedules in the same order the data store would order the corresponding tasks
-                            // to the MainView
-                            let tasksSorted = userProfile.profile.erxTasks.sorted { task1, task2 in
-                                guard let authoredOn1 = task1.authoredOn,
-                                      let authoredOn2 = task2.authoredOn
-                                else { return true }
-                                return authoredOn1 > authoredOn2
-                            }
-                            for task in tasksSorted {
-                                if let single = try await medicationScheduleRepository.read(task.identifier) {
-                                    schedule.append(single)
-                                }
-                            }
-                            await send(.profileMedicationReminderReceived(schedule, userProfile))
-                        }
-                    } catch {
-                        await send(.profileMedicationReminderFailed(.generic(error.localizedDescription)))
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    private func core(state: inout State, action: Action) -> Effect<Action> {
+        switch action {
+        case .loadAllProfiles:
+            return .publisher(
+                userProfileService.userProfilesPublisher()
+                    .first()
+                    .catchToPublisher()
+                    .map(Action.loadReceived)
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
+        case let .loadReceived(.failure(error)):
+            state.destination = .alert(.error(
+                error: error,
+                alertState: .init(for: error, actions: {
+                    ButtonState(role: .cancel) {
+                        .init(L10n.alertBtnOk)
                     }
-                }
-            case let .profileMedicationReminderReceived(reminder, profile):
-                state.profileMedicationReminder
-                    .append(ProfileMedicationReminder(profile: profile, medicationProfileReminderList: reminder))
-                return .none
-            case let .profileMedicationReminderFailed(error):
-                state.destination = .alert(.error(
-                    error: error,
-                    alertState: .init(for: error, actions: {
-                        ButtonState(role: .cancel, action: .dismiss) {
-                            .init(L10n.alertBtnOk)
+                })
+            ))
+            return .none
+        case let .loadReceived(.success(profiles)):
+            state.profileMedicationReminder = []
+            return .send(.loadProfileMedicationReminder(profiles))
+        case let .loadProfileMedicationReminder(profiles):
+            return .run { send in
+                do {
+                    for userProfile in profiles {
+                        var schedule: [MedicationSchedule] = []
+                        // sort the schedules in the same order the data store would order the corresponding tasks
+                        // to the MainView
+                        let tasksSorted = userProfile.profile.erxTasks.sorted { task1, task2 in
+                            guard let authoredOn1 = task1.authoredOn,
+                                  let authoredOn2 = task2.authoredOn
+                            else { return true }
+                            return authoredOn1 > authoredOn2
                         }
-                    })
-                ))
-                return .none
-            case let .selectMedicationReminder(reminder):
-                state.destination = .medicationReminder(.init(medicationSchedule: reminder))
-                return .none
-            case let .destination(.presented(.medicationReminderAction(.delegate(action)))):
-                switch action {
-                case .saveButtonTapped:
-                    state.destination = nil
-                    return .none
+                        for task in tasksSorted {
+                            if let single = try await medicationScheduleRepository.read(task.identifier) {
+                                schedule.append(single)
+                            }
+                        }
+                        await send(.profileMedicationReminderReceived(schedule, userProfile))
+                    }
+                } catch {
+                    await send(.profileMedicationReminderFailed(.generic(error.localizedDescription)))
                 }
-            case .destination,
-                 .setNavigation:
+            }
+        case let .profileMedicationReminderReceived(reminder, profile):
+            state.profileMedicationReminder
+                .append(ProfileMedicationReminder(profile: profile, medicationProfileReminderList: reminder))
+            return .none
+        case let .profileMedicationReminderFailed(error):
+            state.destination = .alert(.error(
+                error: error,
+                alertState: .init(for: error, actions: {
+                    ButtonState(role: .cancel) {
+                        .init(L10n.alertBtnOk)
+                    }
+                })
+            ))
+            return .none
+        case let .selectMedicationReminder(reminder):
+            state.destination = .medicationReminder(.init(medicationSchedule: reminder))
+            return .none
+        case let .destination(.presented(.medicationReminder(.delegate(action)))):
+            switch action {
+            case .saveButtonTapped:
+                state.destination = nil
                 return .none
             }
+        case .destination:
+            return .none
         }
     }
 }
@@ -178,7 +156,7 @@ extension MedicationReminderListDomain {
 
         static let store = storeFor(state)
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<MedicationReminderListDomain> {
             Store(
                 initialState: state
             ) {

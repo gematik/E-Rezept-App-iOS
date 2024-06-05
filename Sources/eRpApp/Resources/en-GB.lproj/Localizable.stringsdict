@@ -67,9 +67,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Recipe</string>
+			<string>prescription</string>
 			<key>other</key>
-			<string>Recipes</string>
+			<string>prescriptions</string>
 			<key>zero</key>
 			<string></string>
 		</dict>
@@ -103,7 +103,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>The selected recipe could not be redeemed</string>
+			<string>The selected prescription could not be redeemed</string>
 			<key>other</key>
 			<string>%li prescriptions could not be redeemed</string>
 			<key>zero</key>
@@ -139,9 +139,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>li</string>
 			<key>one</key>
-			<string>Done, add recipe</string>
+			<string>Done, add prescription</string>
 			<key>other</key>
-			<string>Done, add recipes</string>
+			<string>Done, add prescription</string>
 			<key>zero</key>
 			<string>[void]</string>
 		</dict>

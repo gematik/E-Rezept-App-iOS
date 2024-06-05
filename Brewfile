@@ -4,3 +4,7 @@ brew 'sourcery'
 brew 'pandoc'
 brew 'graphviz'
 brew 'glab'
+brew 'xcodes'
+
+tap 'snyk/tap'
+brew 'snyk'

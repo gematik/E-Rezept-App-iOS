@@ -116,8 +116,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
             profileId: mockUserSession.profileId,
             destination: nil
         )
-        await sut.receive(.setNavigation(tag: .cardWall)) {
-            $0.destination = PharmacyRedeemDomain.Destinations.State.cardWall(expectedCardWallState)
+        await sut.receive(.showCardWall) {
+            $0.destination = PharmacyRedeemDomain.Destination.State.cardWall(expectedCardWallState)
         }
         expect(self.mockPharmacyRepository.savePharmaciesCallsCount) == 0
     }
@@ -357,12 +357,12 @@ class PharmacyRedeemDomainTests: XCTestCase {
             selectedErxTasks: sut.state.selectedErxTasks
         )
 
-        await sut.send(.setNavigation(tag: .prescriptionSelection)) { sut in
+        await sut.send(.showPrescriptionSelection) { sut in
             sut.destination = .prescriptionSelection(selectionPrescriptionState)
         }
 
         await sut
-            .send(.destination(.presented(.prescriptionSelection(action: .saveSelection(Set<ErxTask>()))))) { sut in
+            .send(.destination(.presented(.prescriptionSelection(.saveSelection(Set<ErxTask>()))))) { sut in
                 sut.destination = nil
                 sut.selectedErxTasks = Set<ErxTask>()
             }

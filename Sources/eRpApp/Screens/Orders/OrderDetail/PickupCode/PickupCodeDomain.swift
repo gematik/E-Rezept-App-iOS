@@ -22,9 +22,9 @@ import eRpKit
 import SwiftUI
 import ZXingObjC
 
-struct PickupCodeDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct PickupCodeDomain {
+    @ObservableState
     struct State: Equatable {
         var pharmacyName: String?
         var pickupCodeHR: String?
@@ -52,11 +52,11 @@ struct PickupCodeDomain: ReducerProtocol {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.matrixCodeGenerator) var matrixCodeGenerator: MatrixCodeGenerator
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
     }
 
-    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .delegate(.close):
             // handled by parent domain
@@ -102,13 +102,13 @@ extension PickupCodeDomain {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(pickupCodeHR: "1234",
                                  pickupCodeDMC: "123456789")
-        static let store = Store(
+        static let store = StoreOf<PickupCodeDomain>(
             initialState: state
         ) {
             PickupCodeDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<PickupCodeDomain> {
             Store(
                 initialState: state
             ) {

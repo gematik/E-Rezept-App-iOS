@@ -20,24 +20,18 @@ import ComposableArchitecture
 import SwiftUI
 
 struct DeviceSecurityView: View {
-    let store: DeviceSecurityDomain.Store
-    @ObservedObject private var viewStore: ViewStore<DeviceSecurityDomain.State, DeviceSecurityDomain.Action>
-
-    init(store: DeviceSecurityDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
+    @State var store: DeviceSecurityDomain.Store
 
     var body: some View {
         VStack {
-            switch viewStore.warningType {
+            switch store.warningType {
             case .jailbreakDetected:
                 DeviceSecurityRootedDeviceView {
-                    viewStore.send(.acceptRootedDevice)
+                    store.send(.acceptRootedDevice)
                 }
             case .devicePinMissing:
                 DeviceSecuritySystemPinView { ignorePermanently in
-                    viewStore.send(.acceptMissingPin(permanently: ignorePermanently))
+                    store.send(.acceptMissingPin(permanently: ignorePermanently))
                 }
             default: EmptyView()
             }

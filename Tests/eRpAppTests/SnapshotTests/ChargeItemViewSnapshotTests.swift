@@ -66,7 +66,7 @@ final class ChargeItemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testChargeItemAlterViaPharmacyMatrixCodeViewSnapshot() {
         let sut = MatrixCodeView(
-            store: MatrixCodeDomain.Store(
+            store: StoreOf<MatrixCodeDomain>(
                 initialState: .init(
                     type: .erxChargeItem,
                     erxChargeItem: ErxChargeItem.Dummies.dummy,

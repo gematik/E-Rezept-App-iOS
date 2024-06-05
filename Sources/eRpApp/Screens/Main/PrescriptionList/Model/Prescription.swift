@@ -425,5 +425,7 @@ extension Prescription {
 
         static let prescriptionsScanned = ErxTask.Demo.erxTasksScanned
             .map { Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue) }
+        static let prescriptionMVO = Prescription(erxTask: ErxTask.Demo.erxTask14,
+                                                  dateFormatter: UIDateFormatter.previewValue)
     }
 }

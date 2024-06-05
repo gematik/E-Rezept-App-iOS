@@ -24,6 +24,10 @@ import SwiftUI
 import ComposableArchitecture
 
 struct ToastState<Action: Equatable>: Equatable, Identifiable {
+    // Support for @Reducer enum macros
+    typealias State = Self
+    typealias Action = Action
+
     let uuid = UUID()
 
     var id: UUID { uuid }
@@ -56,17 +60,20 @@ extension View {
             self.presentation(
                 store: store, state: toDestinationState, action: fromDestinationAction
             ) { _, $isPresented, _ in
-                let toastState: ToastState<ToastAction>? = store.state.value.wrappedValue.flatMap(toDestinationState)
+                let toastState: ToastState<ToastAction>? = store.withState {
+                    $0.wrappedValue.flatMap(toDestinationState)
+                }
                 let toast: Toast? = toastState.map { toast in
                     switch toast.style {
                     case let .simple(text):
-                        return Toast(uuid: toast.uuid, style: .simple(text, 2))
+                        return Toast(uuid: toast.uuid, style: .simple(text, 2, .module))
                     case let .twoLines(upper, lower):
-                        return Toast(uuid: toast.uuid, style: .twoLines(upper, lower, 2))
+                        return Toast(uuid: toast.uuid, style: .twoLines(upper, lower, 2, .module))
                     case let .action(text, buttonState):
                         return Toast(uuid: toast.uuid, style: .action(
                             text,
-                            Text(buttonState.label)
+                            Text(buttonState.label),
+                            .module
                         ) {
                             store.send(
                                 buttonState.action.action.map { .presented(fromDestinationAction($0)) } ?? .dismiss,
@@ -79,35 +86,58 @@ extension View {
             }
         }
     }
+
+    func toast<Action>(_ item: Binding<Store<ToastState<Action>, Action>?>) -> some View {
+        overlay {
+            let store = item.wrappedValue
+            let toastState: ToastState<Action>? = store?.withState { $0 }
+
+            let toast: Toast? = toastState.map { toast in
+                switch toast.style {
+                case let .simple(text):
+                    return Toast(uuid: toast.uuid, style: .simple(text, 2, .module))
+                case let .twoLines(upper, lower):
+                    return Toast(uuid: toast.uuid, style: .twoLines(upper, lower, 2, .module))
+                case let .action(text, buttonState):
+                    return Toast(uuid: toast.uuid, style: .action(
+                        text,
+                        Text(buttonState.label),
+                        .module
+                    ) {
+                        if let action = buttonState.action.action {
+                            store?.send(
+                                action, // .map { .presented($0) } ?? .dismiss,
+                                animation: .easeInOut
+                            )
+                        }
+                    })
+                }
+            }
+            ToastContainerView(isPresented: item.isPresent(), toast: toast)
+        }
+    }
 }
 
 struct TCAToast_PreviewProvider: PreviewProvider {
-    // swiftlint:disable nesting
     // sourcery: SkipSourcery
-    struct Domain: Reducer {
-        struct Destinations: ReducerProtocol {
-            enum State: Equatable {
-                // sourcery: AnalyticsScreen = alert
-                case toast(ToastState<Action.Toast>)
-            }
+    @Reducer
+    struct Domain {
+        @Reducer(state: .equatable, action: .equatable)
+        enum Destination {
+            // sourcery: AnalyticsScreen = alert
+            @ReducerCaseEphemeral
+            case toast(ToastState<Toast>)
 
-            enum Action: Equatable {
-                case toast(Toast)
-
-                enum Toast: Equatable {
-                    case customAction
-                }
-            }
-
-            var body: some ReducerProtocol<State, Action> {
-                EmptyReducer()
+            enum Toast: Equatable {
+                case customAction
             }
         }
 
+        @ObservableState
         struct State: Equatable {
             var someState = "123"
 
-            @PresentationState var destination: Destinations.State?
+            @Presents var destination: Destination.State?
         }
 
         enum Action: Equatable {
@@ -115,7 +145,7 @@ struct TCAToast_PreviewProvider: PreviewProvider {
             case twoLines
             case action
 
-            case destination(PresentationAction<Destinations.Action>)
+            case destination(PresentationAction<Destination.Action>)
         }
 
         var body: some ReducerOf<Self> {
@@ -140,49 +170,43 @@ struct TCAToast_PreviewProvider: PreviewProvider {
                     return .none
                 }
             }
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
         }
     }
 
     struct TestView: View {
-        var store: StoreOf<Domain>
+        @Perception.Bindable var store: StoreOf<Domain>
 
         var body: some View {
-            VStack {
-                Spacer()
-                Button {
-                    store.send(.simpleText, animation: .easeInOut)
-                } label: {
-                    Text("Simple Text")
-                }
-                Button {
-                    store.send(.twoLines, animation: .easeInOut)
-                } label: {
-                    Text("Two Lines")
-                }
-                Button {
-                    store.send(.action, animation: .easeInOut)
-                } label: {
-                    Text("Toast with action")
-                }
+            WithPerceptionTracking {
+                VStack {
+                    Spacer()
+                    Button {
+                        store.send(.simpleText, animation: .easeInOut)
+                    } label: {
+                        Text("Simple Text")
+                    }
+                    Button {
+                        store.send(.twoLines, animation: .easeInOut)
+                    } label: {
+                        Text("Two Lines")
+                    }
+                    Button {
+                        store.send(.action, animation: .easeInOut)
+                    } label: {
+                        Text("Toast with action")
+                    }
 
-                Spacer()
+                    Spacer()
+                }
+                .onAppear {
+                    store.send(.action, animation: .easeInOut)
+                }
+                .frame(maxWidth: .infinity)
+                .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
             }
-            .onAppear {
-                store.send(.action, animation: .easeInOut)
-            }
-            .frame(maxWidth: .infinity)
-            .toast(
-                store.scope(state: \.$destination, action: Domain.Action.destination),
-                state: /Domain.Destinations.State.toast,
-                action: Domain.Destinations.Action.toast
-            )
         }
     }
-
-    // swiftlint:enable nesting
 
     static var previews: some View {
         TestView(store: Store(initialState: .init()) {

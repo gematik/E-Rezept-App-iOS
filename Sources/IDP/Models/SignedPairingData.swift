@@ -21,7 +21,7 @@ import Foundation
 import OpenSSL
 
 /// Signed (with eGK) version of `PairingData`.
-/// [REQ:gemF_Biometrie:A_21415:Signed_Pairing_Data]
+/// [REQ:gemSpec_IDP_Dienst:A_21415:Signed_Pairing_Data]
 public struct SignedPairingData {
     /// original
     public let originalPairingData: PairingData

@@ -20,14 +20,12 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 
-struct AppAuthenticationDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct AppAuthenticationDomain {
+    @ObservableState
     struct State: Equatable {
         var didCompleteAuthentication = false
-        var biometrics: AppAuthenticationBiometricsDomain.State?
-        var password: AppAuthenticationPasswordDomain.State?
-        var biometricAndPassword: AppAuthenticationBiometricPasswordDomain.State?
+        var subdomain: Subdomain.State?
         var failedAuthenticationsCount: Int = 0
     }
 
@@ -35,9 +33,14 @@ struct AppAuthenticationDomain: ReducerProtocol {
         case task
         case failedAppAuthenticationsReceived(Int)
         case loadAppAuthenticationOptionResponse(AppSecurityOption?, Int)
-        case biometrics(action: AppAuthenticationBiometricsDomain.Action)
-        case password(action: AppAuthenticationPasswordDomain.Action)
-        case biometricAndPassword(action: AppAuthenticationBiometricPasswordDomain.Action)
+        case subdomain(Subdomain.Action)
+    }
+
+    @Reducer(state: .equatable, action: .equatable)
+    enum Subdomain {
+        case biometrics(AppAuthenticationBiometricsDomain)
+        case password(AppAuthenticationPasswordDomain)
+        case biometricAndPassword(AppAuthenticationBiometricPasswordDomain)
     }
 
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
@@ -46,21 +49,15 @@ struct AppAuthenticationDomain: ReducerProtocol {
 
     let didCompleteAuthentication: (() -> Void)?
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.biometrics, action: /AppAuthenticationDomain.Action.biometrics(action:)) {
-                AppAuthenticationBiometricsDomain()
-            }
-            .ifLet(\.password, action: /AppAuthenticationDomain.Action.password(action:)) {
-                AppAuthenticationPasswordDomain()
-            }
-            .ifLet(\.biometricAndPassword, action: /AppAuthenticationDomain.Action.biometricAndPassword(action:)) {
-                AppAuthenticationBiometricPasswordDomain()
+            .ifLet(\.subdomain, action: \.subdomain) {
+                Subdomain.body
             }
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             return .merge(
@@ -74,63 +71,68 @@ struct AppAuthenticationDomain: ReducerProtocol {
             guard let authenticationOption = response else {
                 state.didCompleteAuthentication = true
                 didCompleteAuthentication?()
-                state.biometrics = nil
+                state.subdomain = nil
                 return .none
             }
             switch authenticationOption {
             case let .biometry(type):
-                state.biometrics = AppAuthenticationBiometricsDomain.State(
-                    biometryType: type,
-                    startImmediateAuthenticationChallenge: failedAuthenticationsCount == 0
+                state.subdomain = .biometrics(
+                    .init(
+                        biometryType: type,
+                        startImmediateAuthenticationChallenge: failedAuthenticationsCount == 0
+                    )
                 )
             case .unsecured:
                 state.didCompleteAuthentication = true
                 didCompleteAuthentication?()
-                state.biometrics = nil
+                state.subdomain = nil
             case .password:
-                state.password = AppAuthenticationPasswordDomain.State()
+                state.subdomain = .password(.init())
             case let .biometryAndPassword(type):
-                state.biometricAndPassword = AppAuthenticationBiometricPasswordDomain.State(
-                    biometryType: type,
-                    startImmediateAuthenticationChallenge: failedAuthenticationsCount == 0
+                state.subdomain = .biometricAndPassword(
+                    .init(
+                        biometryType: type,
+                        startImmediateAuthenticationChallenge: failedAuthenticationsCount == 0
+                    )
                 )
             }
             return .none
-        case let .biometrics(action: .authenticationChallengeResponse(response)),
-             let .biometricAndPassword(action: .authenticationChallengeResponse(response)):
-            if case .success(true) = response {
-                state.didCompleteAuthentication = true
-                didCompleteAuthentication?()
-                state.biometrics = nil
-                userDataStore.set(failedAppAuthentications: 0)
-            } else {
-                state.failedAuthenticationsCount += 1
-                userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
+        case let .subdomain(action):
+            switch action {
+            case let .biometrics(action: .authenticationChallengeResponse(response)),
+                 let .biometricAndPassword(action: .authenticationChallengeResponse(response)):
+                if case .success(true) = response {
+                    state.didCompleteAuthentication = true
+                    didCompleteAuthentication?()
+                    state.subdomain = nil
+                    userDataStore.set(failedAppAuthentications: 0)
+                } else {
+                    state.failedAuthenticationsCount += 1
+                    userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
+                }
+                return .none
+            case let .password(.passwordVerificationReceived(isLoggedIn)),
+                 let .biometricAndPassword(.passwordVerificationReceived(isLoggedIn)):
+                if isLoggedIn {
+                    state.didCompleteAuthentication = true
+                    didCompleteAuthentication?()
+                    state.subdomain = nil
+                    userDataStore.set(failedAppAuthentications: 0)
+                } else {
+                    // [REQ:BSI-eRp-ePA:O.Pass_4#3] Increase failed attempts count on failed verification
+                    state.failedAuthenticationsCount += 1
+                    userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
+                }
+                return .none
+            default: break
             }
-            return .none
-        case let .password(.passwordVerificationReceived(isLoggedIn)),
-             let .biometricAndPassword(.passwordVerificationReceived(isLoggedIn)):
-            if isLoggedIn {
-                state.didCompleteAuthentication = true
-                didCompleteAuthentication?()
-                state.password = nil
-                userDataStore.set(failedAppAuthentications: 0)
-            } else {
-                state.failedAuthenticationsCount += 1
-                userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
-            }
-
-            return .none
-        case .password,
-             .biometrics,
-             .biometricAndPassword:
             return .none
         }
     }
 }
 
 extension AppAuthenticationDomain {
-    func subscribeToFailedAuthenticationChanges() -> EffectTask<AppAuthenticationDomain.Action> {
+    func subscribeToFailedAuthenticationChanges() -> Effect<AppAuthenticationDomain.Action> {
         .publisher(
             userDataStore.failedAppAuthentications
                 .receive(on: schedulers.main.animation())
@@ -139,8 +141,7 @@ extension AppAuthenticationDomain {
         )
     }
 
-    // [REQ:BSI-eRp-ePA:O.Biom_5#1] Check whether at least one biometric reference is available.
-    func loadAppAuthenticationOption() -> EffectTask<AppAuthenticationDomain.Action> {
+    func loadAppAuthenticationOption() -> Effect<AppAuthenticationDomain.Action> {
         .publisher(
             appAuthenticationProvider
                 .loadAppAuthenticationOption()
@@ -157,11 +158,11 @@ extension AppAuthenticationDomain {
     enum Dummies {
         static let state = State()
 
-        static let store = Store(initialState: state) {
+        static let store = StoreOf<AppAuthenticationDomain>(initialState: state) {
             AppAuthenticationDomain {}
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<AppAuthenticationDomain> {
             Store(initialState: state) {
                 AppAuthenticationDomain {}
             }

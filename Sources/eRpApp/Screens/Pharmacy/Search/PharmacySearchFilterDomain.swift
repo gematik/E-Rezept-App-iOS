@@ -23,9 +23,8 @@ import eRpKit
 import Pharmacy
 import SwiftUI
 
-struct PharmacySearchFilterDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct PharmacySearchFilterDomain {
     /// All filter options used with pharmacies search
     enum PharmacyFilterOption: String, CaseIterable, Hashable, Identifiable {
         case open
@@ -65,6 +64,7 @@ struct PharmacySearchFilterDomain: ReducerProtocol {
         }
     }
 
+    @ObservableState
     struct State: Equatable {
         /// Store for the active filter options the user has chosen
         var pharmacyFilterOptions: [PharmacyFilterOption] = []
@@ -80,7 +80,7 @@ struct PharmacySearchFilterDomain: ReducerProtocol {
         }
     }
 
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .delegate(.close):
             return .none

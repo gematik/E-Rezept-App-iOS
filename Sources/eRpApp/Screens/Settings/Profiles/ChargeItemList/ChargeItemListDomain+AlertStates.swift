@@ -20,18 +20,18 @@ import ComposableArchitecture
 import Foundation
 
 extension ChargeItemConsentService.AlertState {
-    var chargeItemListDomainErpAlertState: ErpAlertState<ChargeItemListDomain.Destinations.Action.Alert> {
+    var chargeItemListDomainErpAlertState: ErpAlertState<ChargeItemListDomain.Destination.Alert> {
         erpAlertState(
-            actionForOkay: ChargeItemListDomain.Destinations.Action.Alert.consentServiceErrorOkay,
-            actionForRetry: ChargeItemListDomain.Destinations.Action.Alert.consentServiceErrorRetry,
-            actionForLogin: ChargeItemListDomain.Destinations.Action.Alert.consentServiceErrorAuthenticate
+            actionForOkay: ChargeItemListDomain.Destination.Alert.consentServiceErrorOkay,
+            actionForRetry: ChargeItemListDomain.Destination.Alert.consentServiceErrorRetry,
+            actionForLogin: ChargeItemListDomain.Destination.Alert.consentServiceErrorAuthenticate
         )
     }
 }
 
 extension ChargeItemListDomain {
     enum AlertStates {
-        typealias Action = ChargeItemListDomain.Destinations.Action.Alert
+        typealias Action = ChargeItemListDomain.Destination.Alert
 
         static let grantConsentRequest: ErpAlertState<Action> = {
             .init(
@@ -136,7 +136,7 @@ extension ChargeItemListDomain {
     }
 
     enum ToastStates {
-        typealias Action = ChargeItemListDomain.Destinations.Action.Toast
+        typealias Action = ChargeItemListDomain.Destination.Toast
 
         static let conflictToast: ToastState<Action> =
             .init(style: .simple(ChargeItemConsentService.ToastState.conflict.message))

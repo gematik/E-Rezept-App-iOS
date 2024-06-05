@@ -37,7 +37,7 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
             profile: UserProfile.Fixtures.theo.profile
         )
         let sut = NavigationView {
-            PharmacyPrescriptionSelectionView(store: PharmacyPrescriptionSelectionDomain.Store(
+            PharmacyPrescriptionSelectionView(store: StoreOf<PharmacyPrescriptionSelectionDomain>(
                 initialState: initialState
 
             ) {
@@ -56,7 +56,7 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
             profile: UserProfile.Fixtures.theo.profile
         )
         let sut = NavigationView {
-            PharmacyPrescriptionSelectionView(store: PharmacyPrescriptionSelectionDomain.Store(
+            PharmacyPrescriptionSelectionView(store: StoreOf<PharmacyPrescriptionSelectionDomain>(
                 initialState: initialState
 
             ) {

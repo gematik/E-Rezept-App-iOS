@@ -22,36 +22,28 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct TechnicalInformationsView: View {
-        @ObservedObject var viewStore: ViewStore<
-            PrescriptionDetailDomain.Destinations.TechnicalInformationsState,
-            PrescriptionDetailDomain.Destinations.Action.None
-        >
-
-        init(store: Store<
-            PrescriptionDetailDomain.Destinations.TechnicalInformationsState,
-            PrescriptionDetailDomain.Destinations.Action.None
-        >) {
-            viewStore = ViewStore(store) { $0 }
-        }
+        @Perception.Bindable var store: StoreOf<TechnicalInformationsDomain>
 
         var body: some View {
-            ScrollView(.vertical) {
-                SectionContainer {
-                    SubTitle(
-                        title: viewStore.accessCode ?? "",
-                        description: L10n.prscDtlTiTxtAccessCode
-                    )
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTiAccessCode)
+            WithPerceptionTracking {
+                ScrollView(.vertical) {
+                    SectionContainer {
+                        SubTitle(
+                            title: store.accessCode ?? "",
+                            description: L10n.prscDtlTiTxtAccessCode
+                        )
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTiAccessCode)
 
-                    SubTitle(
-                        title: viewStore.taskId,
-                        description: L10n.prscDtlTiTxtTaskId
-                    )
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTiTaskId)
+                        SubTitle(
+                            title: store.taskId,
+                            description: L10n.prscDtlTiTxtTaskId
+                        )
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTiTaskId)
 
-                }.sectionContainerStyle(.inline)
+                    }.sectionContainerStyle(.inline)
+                }
+                .navigationBarTitle(Text(L10n.prscDtlTiTxtTitle), displayMode: .inline)
             }
-            .navigationBarTitle(Text(L10n.prscDtlTiTxtTitle), displayMode: .inline)
         }
     }
 }

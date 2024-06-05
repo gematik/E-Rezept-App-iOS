@@ -25,7 +25,6 @@ import OpenSSL
 // [REQ:gemSpec_eRp_FdV:A_19186]
 // [REQ:gemSpec_eRp_FdV:A_19188] Deletion of data saved here is managed by the OS.
 // [REQ:gemSpec_IDP_Frontend:A_21322] Storage implementation uses iOS Keychain
-// [REQ:gemF_Tokenverschlüsselung:A_21322] Storage implementation uses iOS Keychain
 // [REQ:gemSpec_IDP_Frontend:A_21595] Storage Implementation
 // [REQ:BSI-eRp-ePA:O.Purp_8#1,O.Arch_2#5,O.Arch_4#3,O.Source_7#2,O.Data_2#2] Implementation of data storage that is
 // persisted via keychain
@@ -135,7 +134,6 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     func set(token: IDPToken?) {
         // [REQ:gemSpec_eRp_FdV:A_20184]
         // [REQ:gemSpec_eRp_FdV:A_21328#3] KeychainStorage implementation
-        // [REQ:BSI-eRp-ePA:O.Tokn_1#4] KeychainStorage implementation
         let success: Bool
         do {
             if let token = token,
@@ -264,7 +262,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         set(discovery: nil)
         // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
         set(certificate: nil)
-        // `keyIdentifier` is not wiped here because it's deletion is done asynchron
+        // `keyIdentifier` is not wiped here because it's deletion is done asynchronously
         // together with the secure enclave representative in `ProfileSecureDataWiper`
     }
 }

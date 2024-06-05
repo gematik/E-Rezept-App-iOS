@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 /// Use sourcery to update this file.
 
@@ -10,6 +10,7 @@ import eRpLocalStorage
 import eRpRemoteStorage
 import Foundation
 import IdentifiedCollections
+import IDP
 import OpenSSL
 import Pharmacy
 
@@ -943,6 +944,385 @@ class SmartMockErxTaskCoreDataStore: ErxTaskCoreDataStore, SmartMock {
                 listAllChargeItemsRecordings: listAllChargeItemsRecordings,
                 saveChargeItemsRecordings: saveChargeItemsRecordings,
                 deleteChargeItemsRecordings: deleteChargeItemsRecordings
+            )
+        )
+    }
+}
+
+
+// MARK: - SmartMockIDPSession -
+
+class SmartMockIDPSession: IDPSession, SmartMock {
+    private var wrapped: IDPSession
+    private var isRecording: Bool
+
+    init(wrapped: IDPSession, mocks: Mocks?, isRecording: Bool = false) {
+        self.wrapped = wrapped
+        self.isRecording = isRecording
+
+        requestChallengeRecordings = mocks?.requestChallengeRecordings ?? .delegate
+        verifyRecordings = mocks?.verifyRecordings ?? .delegate
+        exchangeTokenChallengeSessionIdTokenValidatorRecordings = mocks?.exchangeTokenChallengeSessionIdTokenValidatorRecordings ?? .delegate
+        refreshTokenRecordings = mocks?.refreshTokenRecordings ?? .delegate
+        pairDeviceWithTokenRecordings = mocks?.pairDeviceWithTokenRecordings ?? .delegate
+        unregisterDeviceTokenRecordings = mocks?.unregisterDeviceTokenRecordings ?? .delegate
+        listDevicesTokenRecordings = mocks?.listDevicesTokenRecordings ?? .delegate
+        altVerifyRecordings = mocks?.altVerifyRecordings ?? .delegate
+        loadDirectoryKKAppsRecordings = mocks?.loadDirectoryKKAppsRecordings ?? .delegate
+        startExtAuthEntryRecordings = mocks?.startExtAuthEntryRecordings ?? .delegate
+        extAuthVerifyAndExchangeIdTokenValidatorRecordings = mocks?.extAuthVerifyAndExchangeIdTokenValidatorRecordings ?? .delegate
+        isLoggedInRecordings = mocks?.isLoggedInRecordings ?? .delegate
+        autoRefreshedTokenRecordings = mocks?.autoRefreshedTokenRecordings ?? .delegate
+    }
+
+    var isLoggedInRecordings: MockAnswer<Bool>
+
+    var isLoggedIn: AnyPublisher<Bool, IDPError> {
+        guard !isRecording else {
+            return wrapped.isLoggedIn
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.isLoggedInRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+        }
+        if let value = isLoggedInRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.isLoggedIn
+        }
+    }
+    var autoRefreshedTokenRecordings: MockAnswer<IDPToken?>
+
+    var autoRefreshedToken: AnyPublisher<IDPToken?, IDPError> {
+        guard !isRecording else {
+            return wrapped.autoRefreshedToken
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.autoRefreshedTokenRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+        }
+        if let value = autoRefreshedTokenRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.autoRefreshedToken
+        }
+    }
+    func invalidateAccessToken() {
+        wrapped.invalidateAccessToken(
+            )
+    }
+
+    var requestChallengeRecordings: MockAnswer<IDPChallengeSession>
+
+    func requestChallenge() -> AnyPublisher<IDPChallengeSession, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.requestChallenge(
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.requestChallengeRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = requestChallengeRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.requestChallenge(
+            )
+        }
+    }
+
+    var verifyRecordings: MockAnswer<IDPExchangeToken>
+
+    func verify(_ signedChallenge: SignedChallenge) -> AnyPublisher<IDPExchangeToken, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.verify(
+                    signedChallenge
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.verifyRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = verifyRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.verify(
+                    signedChallenge
+            )
+        }
+    }
+
+    var exchangeTokenChallengeSessionIdTokenValidatorRecordings: MockAnswer<IDPToken>
+
+    func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.exchange(
+                    token: token,
+                    challengeSession: challengeSession,
+                    idTokenValidator: idTokenValidator
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.exchangeTokenChallengeSessionIdTokenValidatorRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = exchangeTokenChallengeSessionIdTokenValidatorRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.exchange(
+                    token: token,
+                    challengeSession: challengeSession,
+                    idTokenValidator: idTokenValidator
+            )
+        }
+    }
+
+    var refreshTokenRecordings: MockAnswer<IDPToken>
+
+    func refresh(token: IDPToken) -> AnyPublisher<IDPToken, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.refresh(
+                    token: token
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.refreshTokenRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = refreshTokenRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.refresh(
+                    token: token
+            )
+        }
+    }
+
+    var pairDeviceWithTokenRecordings: MockAnswer<PairingEntry>
+
+    func pairDevice(with registrationData: RegistrationData, token: IDPToken) -> AnyPublisher<PairingEntry, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.pairDevice(
+                    with: registrationData,
+                    token: token
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.pairDeviceWithTokenRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = pairDeviceWithTokenRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.pairDevice(
+                    with: registrationData,
+                    token: token
+            )
+        }
+    }
+
+    var unregisterDeviceTokenRecordings: MockAnswer<Bool>
+
+    func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -> AnyPublisher<Bool, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.unregisterDevice(
+                    keyIdentifier,
+                    token: token
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.unregisterDeviceTokenRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = unregisterDeviceTokenRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.unregisterDevice(
+                    keyIdentifier,
+                    token: token
+            )
+        }
+    }
+
+    var listDevicesTokenRecordings: MockAnswer<PairingEntries>
+
+    func listDevices(token: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.listDevices(
+                    token: token
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.listDevicesTokenRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = listDevicesTokenRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.listDevices(
+                    token: token
+            )
+        }
+    }
+
+    var altVerifyRecordings: MockAnswer<IDPExchangeToken>
+
+    func altVerify(_ signedChallenge: SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.altVerify(
+                    signedChallenge
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.altVerifyRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = altVerifyRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.altVerify(
+                    signedChallenge
+            )
+        }
+    }
+
+    var loadDirectoryKKAppsRecordings: MockAnswer<KKAppDirectory>
+
+    func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.loadDirectoryKKApps(
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.loadDirectoryKKAppsRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = loadDirectoryKKAppsRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.loadDirectoryKKApps(
+            )
+        }
+    }
+
+    var startExtAuthEntryRecordings: MockAnswer<URL>
+
+    func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.startExtAuth(
+                    entry: entry
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.startExtAuthEntryRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = startExtAuthEntryRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.startExtAuth(
+                    entry: entry
+            )
+        }
+    }
+
+    var extAuthVerifyAndExchangeIdTokenValidatorRecordings: MockAnswer<IDPToken>
+
+    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
+        guard !isRecording else {
+            let result = wrapped.extAuthVerifyAndExchange(
+                    url,
+                    idTokenValidator: idTokenValidator
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.extAuthVerifyAndExchangeIdTokenValidatorRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = extAuthVerifyAndExchangeIdTokenValidatorRecordings.next() {
+            return Just(value)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.extAuthVerifyAndExchange(
+                    url,
+                    idTokenValidator: idTokenValidator
+            )
+        }
+    }
+
+
+
+
+
+    struct Mocks: Codable {
+        var requestChallengeRecordings: MockAnswer<IDPChallengeSession>? = .delegate
+        var verifyRecordings: MockAnswer<IDPExchangeToken>? = .delegate
+        var exchangeTokenChallengeSessionIdTokenValidatorRecordings: MockAnswer<IDPToken>? = .delegate
+        var refreshTokenRecordings: MockAnswer<IDPToken>? = .delegate
+        var pairDeviceWithTokenRecordings: MockAnswer<PairingEntry>? = .delegate
+        var unregisterDeviceTokenRecordings: MockAnswer<Bool>? = .delegate
+        var listDevicesTokenRecordings: MockAnswer<PairingEntries>? = .delegate
+        var altVerifyRecordings: MockAnswer<IDPExchangeToken>? = .delegate
+        var loadDirectoryKKAppsRecordings: MockAnswer<KKAppDirectory>? = .delegate
+        var startExtAuthEntryRecordings: MockAnswer<URL>? = .delegate
+        var extAuthVerifyAndExchangeIdTokenValidatorRecordings: MockAnswer<IDPToken>? = .delegate
+        var isLoggedInRecordings: MockAnswer<Bool>? = .delegate
+        var autoRefreshedTokenRecordings: MockAnswer<IDPToken?>? = .delegate
+    }
+    func recordedData() throws -> CodableMock {
+        return try CodableMock(
+            "IDPSession",
+            Mocks(
+                requestChallengeRecordings: requestChallengeRecordings,
+                verifyRecordings: verifyRecordings,
+                exchangeTokenChallengeSessionIdTokenValidatorRecordings: exchangeTokenChallengeSessionIdTokenValidatorRecordings,
+                refreshTokenRecordings: refreshTokenRecordings,
+                pairDeviceWithTokenRecordings: pairDeviceWithTokenRecordings,
+                unregisterDeviceTokenRecordings: unregisterDeviceTokenRecordings,
+                listDevicesTokenRecordings: listDevicesTokenRecordings,
+                altVerifyRecordings: altVerifyRecordings,
+                loadDirectoryKKAppsRecordings: loadDirectoryKKAppsRecordings,
+                startExtAuthEntryRecordings: startExtAuthEntryRecordings,
+                extAuthVerifyAndExchangeIdTokenValidatorRecordings: extAuthVerifyAndExchangeIdTokenValidatorRecordings
+,
+                isLoggedInRecordings:isLoggedInRecordings,
+                autoRefreshedTokenRecordings:autoRefreshedTokenRecordings
             )
         )
     }

@@ -30,6 +30,7 @@ import Pharmacy
 import TrustStore
 import VAUClient
 
+// swiftlint:disable:next type_body_length
 class StandardSessionContainer: UserSession {
     private var keychainStorage: KeychainStorage
     private let schedulers: Schedulers
@@ -144,7 +145,7 @@ class StandardSessionContainer: UserSession {
         return switchedSignatureProvider
         #endif
         #else
-        return EGKSignatureProvider()
+        return EGKSignatureProvider(storage: secureUserStore)
         #endif
     }()
 
@@ -154,8 +155,10 @@ class StandardSessionContainer: UserSession {
 
     #if ENABLE_DEBUG_VIEW
     lazy var switchedSignatureProvider: NFCSignatureProvider = {
-        SwitchSignatureProvider(defaultSignatureProvider: EGKSignatureProvider(),
-                                alternativeSignatureProvider: VirtualEGKSignatureProvider())
+        SwitchSignatureProvider(
+            defaultSignatureProvider: EGKSignatureProvider(storage: secureUserStore),
+            alternativeSignatureProvider: VirtualEGKSignatureProvider()
+        )
     }()
     #endif
 

@@ -53,7 +53,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             )
         )
         let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Store(
+            store: StoreOf<RegisterAuthenticationDomain>(
                 initialState: state
 
             ) {
@@ -70,7 +70,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             selectedSecurityOption: AppSecurityOption.biometry(.faceID)
         )
         let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Store(
+            store: StoreOf<RegisterAuthenticationDomain>(
                 initialState: state
 
             ) {
@@ -87,7 +87,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             selectedSecurityOption: AppSecurityOption.password
         )
         let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Store(
+            store: StoreOf<RegisterAuthenticationDomain>(
                 initialState: state
 
             ) {
@@ -99,7 +99,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testOnboardingRegisterAuthenticationView_WithNonEqualPasswords() {
-        let store = RegisterAuthenticationDomain.Store(
+        let store = StoreOf<RegisterAuthenticationDomain>(
             initialState: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.touchID)],
                 selectedSecurityOption: .password,
@@ -119,7 +119,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testOnboardingRegisterAuthenticationView_WithInsufficientPasswordStrength() {
-        let store = RegisterAuthenticationDomain.Store(
+        let store = StoreOf<RegisterAuthenticationDomain>(
             initialState: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.touchID)],
                 selectedSecurityOption: .password,
@@ -145,7 +145,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             showNoSelectionMessage: true
         )
         let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Store(
+            store: StoreOf<RegisterAuthenticationDomain>(
                 initialState: state
 
             ) {

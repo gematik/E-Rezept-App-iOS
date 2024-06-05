@@ -24,7 +24,7 @@ import NFCCardReaderProvider
 // swiftlint:disable trailing_closure
 extension CardWallReadCardDomain {
     enum AlertStates {
-        typealias Action = CardWallReadCardDomain.Destinations.Action.Alert
+        typealias Action = CardWallReadCardDomain.Destination.Alert
         typealias Error = CardWallReadCardDomain.State.Error
 
         static var saveProfile: ErpAlertState<Action> = .info(

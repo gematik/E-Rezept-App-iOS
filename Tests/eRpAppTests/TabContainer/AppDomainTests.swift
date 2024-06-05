@@ -36,14 +36,12 @@ final class AppDomainTests: XCTestCase {
         let testStore = TestStore(
             initialState: .init(
                 destination: .settings,
-                subdomains: .init(
-                    main: Self.Fixtures.mainDomainState,
-                    pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
-                    orders: Self.Fixtures.ordersDomainState,
-                    settings: SettingsDomain.State(
-                        isDemoMode: false,
-                        destination: nil
-                    )
+                main: Self.Fixtures.mainDomainState,
+                pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
+                orders: Self.Fixtures.ordersDomainState,
+                settings: SettingsDomain.State(
+                    isDemoMode: false,
+                    destination: nil
                 ),
                 unreadOrderMessageCount: 0,
                 isDemoMode: false
@@ -60,14 +58,12 @@ final class AppDomainTests: XCTestCase {
         let testStore = TestStore(
             initialState: .init(
                 destination: .settings,
-                subdomains: .init(
-                    main: Self.Fixtures.mainDomainState,
-                    pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
-                    orders: Self.Fixtures.ordersDomainState,
-                    settings: SettingsDomain.State(
-                        isDemoMode: false,
-                        destination: .healthCardPasswordForgotPin(.init(mode: .forgotPin))
-                    )
+                main: Self.Fixtures.mainDomainState,
+                pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
+                orders: Self.Fixtures.ordersDomainState,
+                settings: SettingsDomain.State(
+                    isDemoMode: false,
+                    destination: .healthCardPasswordForgotPin(.init(mode: .forgotPin))
                 ),
                 unreadOrderMessageCount: 0,
                 isDemoMode: false
@@ -77,14 +73,9 @@ final class AppDomainTests: XCTestCase {
         }
 
         await testStore.send(.setNavigation(.settings)) {
-            $0.subdomains = .init(
-                main: Self.Fixtures.mainDomainState,
-                pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
-                orders: Self.Fixtures.ordersDomainState,
-                settings: SettingsDomain.State(
-                    isDemoMode: false,
-                    destination: nil
-                )
+            $0.settings = SettingsDomain.State(
+                isDemoMode: false,
+                destination: nil
             )
         }
     }
@@ -93,21 +84,23 @@ final class AppDomainTests: XCTestCase {
         let testStore = TestStore(
             initialState: .init(
                 destination: .settings,
-                subdomains: .init(
-                    main: Self.Fixtures.mainDomainState,
-                    pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
-                    orders: Self.Fixtures.ordersDomainState,
-                    settings: SettingsDomain.State(
-                        isDemoMode: false,
-                        destination: .healthCardPasswordForgotPin(
-                            .init(
+                main: Self.Fixtures.mainDomainState,
+                pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
+                orders: Self.Fixtures.ordersDomainState,
+                settings: SettingsDomain.State(
+                    isDemoMode: false,
+                    destination: .healthCardPasswordForgotPin(HealthCardPasswordIntroductionDomain.State(
+                        mode: .forgotPin,
+                        destination: .can(HealthCardPasswordCanDomain.State(
+                            mode: .forgotPin,
+                            destination: .puk(HealthCardPasswordPukDomain.State(
                                 mode: .forgotPin,
-                                destination: .readCard(
-                                    .init(mode: .healthCardResetPinCounterNoNewSecret(can: "", puk: ""))
-                                )
-                            )
-                        )
-                    )
+                                destination: .readCard(HealthCardPasswordReadCardDomain.State(
+                                    mode: .healthCardResetPinCounterNoNewSecret(can: "", puk: "")
+                                ))
+                            ))
+                        ))
+                    ))
                 ),
                 unreadOrderMessageCount: 0,
                 isDemoMode: false
@@ -117,14 +110,9 @@ final class AppDomainTests: XCTestCase {
         }
 
         await testStore.send(.setNavigation(.settings)) {
-            $0.subdomains = .init(
-                main: Self.Fixtures.mainDomainState,
-                pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
-                orders: Self.Fixtures.ordersDomainState,
-                settings: SettingsDomain.State(
-                    isDemoMode: false,
-                    destination: nil
-                )
+            $0.settings = SettingsDomain.State(
+                isDemoMode: false,
+                destination: nil
             )
         }
     }

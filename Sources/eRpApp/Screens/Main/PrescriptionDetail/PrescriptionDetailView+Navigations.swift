@@ -23,187 +23,168 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct Navigations: View {
-        let store: StoreOf<PrescriptionDetailDomain>
-        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
-
-        init(store: PrescriptionDetailDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store, observe: ViewState.init)
-        }
-
-        struct ViewState: Equatable {
-            let destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
-
-            init(state: PrescriptionDetailDomain.State) {
-                destinationTag = state.destination?.tag
-            }
-        }
+        @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
 
         var body: some View {
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .coPaymentInfo },
-                    set: { if !$0 { viewStore.send(.setNavigation(tag: nil), animation: .easeInOut) } }
-                )) {
-                    IfLetStore(
-                        store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                        state: /PrescriptionDetailDomain.Destinations.State.coPaymentInfo,
-                        action: PrescriptionDetailDomain.Destinations.Action.coPaymentInfo,
-                        then: CoPaymentDrawerView.init(store:)
-                    )
+            WithPerceptionTracking {
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet(
+                        $store.scope(state: \.destination?.coPaymentInfo, action: \.destination.coPaymentInfo)
+                    ) { store in
+                        CoPaymentDrawerView(store: store)
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet($store
+                        .scope(state: \.destination?.emergencyServiceFeeInfo,
+                               action: \.destination.emergencyServiceFeeInfo)) { _ in
+                            EmergencyServiceFeeDrawerView()
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet(
+                        $store.scope(
+                            state: \.destination?.dosageInstructionsInfo,
+                            action: \.destination.dosageInstructionsInfo
+                        )
+                    ) { store in
+                        DosageInstructionsDrawerView(store: store)
+                    }
+                    .accessibility(hidden: true)
+
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.chargeItem, action: \.destination.chargeItem)
+                ) { store in
+                    ChargeItemView(store: store)
+                } label: {
+                    EmptyView()
                 }
                 .accessibility(hidden: true)
 
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .emergencyServiceFeeInfo },
-                    set: { if !$0 { viewStore.send(.setNavigation(tag: nil), animation: .easeInOut) } }
-                ), content: EmergencyServiceFeeDrawerView.init)
-                .accessibility(hidden: true)
-
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .smallSheet(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .dosageInstructionsInfo },
-                    set: { if !$0 { viewStore.send(.setNavigation(tag: nil), animation: .easeInOut) } }
-                )) {
-                    IfLetStore(
-                        store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                        state: /PrescriptionDetailDomain.Destinations.State.dosageInstructionsInfo,
-                        action: PrescriptionDetailDomain.Destinations.Action.dosageInstructionsInfo,
-                        then: DosageInstructionsDrawerView.init(store:)
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.technicalInformations,
+                        action: \.destination.technicalInformations
                     )
+                ) { store in
+                    TechnicalInformationsView(store: store)
+                } label: {
+                    EmptyView()
                 }
                 .accessibility(hidden: true)
 
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.chargeItem,
-                action: PrescriptionDetailDomain.Destinations.Action.chargeItem(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .chargeItem)) },
-                destination: ChargeItemView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.patient, action: \.destination.patient)
+                ) { store in
+                    PrescriptionDetailView.PatientView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
 
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.technicalInformations,
-                action: PrescriptionDetailDomain.Destinations.Action.technicalInformations,
-                onTap: { viewStore.send(.setNavigation(tag: .technicalInformations)) },
-                destination: TechnicalInformationsView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                // PractitionerView
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.practitioner, action: \.destination.practitioner)
+                ) { store in
+                    PrescriptionDetailView.PractitionerView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
 
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.patient,
-                action: PrescriptionDetailDomain.Destinations.Action.patient,
-                onTap: { viewStore.send(.setNavigation(tag: .patient)) },
-                destination: PrescriptionDetailView.PatientView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                // OrganisationView
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.organization, action: \.destination.organization)
+                ) { store in
+                    PrescriptionDetailView.OrganizationView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
 
-            // PractitionerView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.practitioner,
-                action: PrescriptionDetailDomain.Destinations.Action.practitioner,
-                onTap: { viewStore.send(.setNavigation(tag: .practitioner)) },
-                destination: PrescriptionDetailView.PractitionerView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                // AccidentInfoView
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.accidentInfo, action: \.destination.accidentInfo)
+                ) { store in
+                    PrescriptionDetailView.AccidentInfoView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
 
-            // OrganisationView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.organization,
-                action: PrescriptionDetailDomain.Destinations.Action.organization,
-                onTap: { viewStore.send(.setNavigation(tag: .organization)) },
-                destination: PrescriptionDetailView.OrganizationView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                // MedicationView
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.medication, action: \.destination.medication)
+                ) { store in
+                    MedicationView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
 
-            // AccidentInfoView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.accidentInfo,
-                action: PrescriptionDetailDomain.Destinations.Action.accidentInfo,
-                onTap: { viewStore.send(.setNavigation(tag: .accidentInfo)) },
-                destination: PrescriptionDetailView.AccidentInfoView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                // MedicationOverview
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.medicationOverview,
+                        action: \.destination.medicationOverview
+                    )
+                ) { store in
+                    MedicationOverview(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
 
-            // MedicationView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.medication,
-                action: PrescriptionDetailDomain.Destinations.Action.medication(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .medication)) },
-                destination: MedicationView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                // MedicationReminder
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.medicationReminder,
+                        action: \.destination.medicationReminder
+                    )
+                ) { store in
+                    MedicationReminderSetupView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
 
-            // MedicationOverview
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.medicationOverview,
-                action: PrescriptionDetailDomain.Destinations.Action.medicationOverview(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .medicationOverview)) },
-                destination: MedicationOverview.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // MedicationReminder
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.medicationReminder,
-                action: PrescriptionDetailDomain.Destinations.Action.medicationReminder(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .medicationReminder)) },
-                destination: MedicationReminderSetupView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-
-            // MatrixCode
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: PrescriptionDetailDomain.Action.destination),
-                state: /PrescriptionDetailDomain.Destinations.State.matrixCode,
-                action: PrescriptionDetailDomain.Destinations.Action.matrixCode(action:),
-                onTap: {},
-                destination: MatrixCodeView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                // MatrixCode
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.matrixCode, action: \.destination.matrixCode)
+                ) { store in
+                    MatrixCodeView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
+            }
         }
 
         struct CoPaymentDrawerView: View {
-            @ObservedObject var viewStore: ViewStore<
-                PrescriptionDetailDomain.Destinations.CoPaymentState,
-                PrescriptionDetailDomain.Destinations.Action.None
-            >
-
-            init(store: Store<
-                PrescriptionDetailDomain.Destinations.CoPaymentState,
-                PrescriptionDetailDomain.Destinations.Action.None
-            >) {
-                viewStore = ViewStore(store) { $0 }
-            }
+            @Perception.Bindable var store: StoreOf<CoPaymentDomain>
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(viewStore.title)
-                        .font(.headline)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfoTitle)
+                WithPerceptionTracking {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(store.title)
+                            .font(.headline)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfoTitle)
 
-                    Text(viewStore.description)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfoDescription)
-                    Spacer()
+                        Text(store.description)
+                            .foregroundColor(Colors.systemLabelSecondary)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfoDescription)
+                        Spacer()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Colors.systemBackground.ignoresSafeArea())
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfo)
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Colors.systemBackground.ignoresSafeArea())
-                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerCoPaymentInfo)
             }
         }
 
@@ -225,35 +206,27 @@ extension PrescriptionDetailView {
         }
 
         struct DosageInstructionsDrawerView: View {
-            @ObservedObject var viewStore: ViewStore<
-                PrescriptionDetailDomain.Destinations.DosageInstructionsState,
-                PrescriptionDetailDomain.Destinations.Action.None
-            >
-
-            init(store: Store<
-                PrescriptionDetailDomain.Destinations.DosageInstructionsState,
-                PrescriptionDetailDomain.Destinations.Action.None
-            >) {
-                viewStore = ViewStore(store) { $0 }
-            }
+            @Perception.Bindable var store: StoreOf<PrescriptionDosageInstructionsDomain>
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(viewStore.title)
-                        .font(.headline)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfoTitle)
+                WithPerceptionTracking {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(store.title)
+                            .font(.headline)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfoTitle)
 
-                    Text(viewStore.description)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .accessibilityIdentifier(A11y.prescriptionDetails
-                            .prscDtlDrawerDosageInstructionsInfoDescription)
-                    Spacer()
+                        Text(store.description)
+                            .foregroundColor(Colors.systemLabelSecondary)
+                            .accessibilityIdentifier(A11y.prescriptionDetails
+                                .prscDtlDrawerDosageInstructionsInfoDescription)
+                        Spacer()
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Colors.systemBackground.ignoresSafeArea())
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfo)
                 }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Colors.systemBackground.ignoresSafeArea())
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfo)
             }
         }
     }

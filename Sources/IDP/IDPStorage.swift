@@ -46,7 +46,6 @@ public protocol IDPStorage {
     /// [REQ:gemSpec_eRp_FdV:A_19480] usage of this token is limited to FD/IDP Access.
     var token: AnyPublisher<IDPToken?, Never> { get }
     /// Set and save the IDPToken
-    /// [REQ:BSI-eRp-ePA:O.Tokn_1#2] protocol defintion for token storage
     func set(token: IDPToken?)
 
     /// Retrieve a previously saved DiscoveryDocument

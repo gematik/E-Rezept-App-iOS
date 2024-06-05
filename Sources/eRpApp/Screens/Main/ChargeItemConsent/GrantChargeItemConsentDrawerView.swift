@@ -20,15 +20,11 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
-import Introspect
 import SwiftUI
+import SwiftUIIntrospect
 
 struct GrantChargeItemConsentDrawerView: View {
-    let store: MainDomain.Store
-
-    init(store: MainDomain.Store) {
-        self.store = store
-    }
+    let store: StoreOf<MainDomain>
 
     var body: some View {
         VStack(alignment: .center, spacing: 24) {

@@ -19,97 +19,92 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import Perception
 import SwiftUI
 
 struct MedicationReminderListView: View {
-    let store: MedicationReminderListDomain.Store
+    @Perception.Bindable var store: StoreOf<MedicationReminderListDomain>
 
-    @ObservedObject var viewStore: ViewStore<ViewState, MedicationReminderListDomain.Action>
-
-    init(store: MedicationReminderListDomain.Store) {
+    init(store: StoreOf<MedicationReminderListDomain>) {
         self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        var profileMedicationReminders: [MedicationReminderListDomain.ProfileMedicationReminder]
-        let destinationTag: MedicationReminderListDomain.Destinations.State.Tag?
-
-        init(state: MedicationReminderListDomain.State) {
-            profileMedicationReminders = state.profileMedicationReminder
-            destinationTag = state.destination?.tag
-        }
     }
 
     var body: some View {
-        VStack {
-            if viewStore.profileMedicationReminders.isEmpty ||
-                viewStore.profileMedicationReminders.allSatisfy(\.medicationProfileReminderList.isEmpty) {
-                NoRemindersView()
-                    .padding(.horizontal)
-            } else {
-                ScrollView {
-                    ForEach(viewStore.profileMedicationReminders) { profileMedicationReminder in
-                        if !profileMedicationReminder.medicationProfileReminderList.isEmpty {
-                            SectionContainer(
-                                header: { SectionHeaderView(profile: profileMedicationReminder.profile) },
-                                content: {
-                                    ForEach(profileMedicationReminder
-                                        .medicationProfileReminderList) { medicationProfileReminderListEntry in
-                                            Button {
-                                                viewStore
-                                                    .send(.selectMedicationReminder(medicationProfileReminderListEntry))
-                                            } label: {
-                                                Label(
-                                                    title: {
-                                                        KeyValuePair(
-                                                            key: medicationProfileReminderListEntry.title,
-                                                            value: medicationProfileReminderListEntry.isActive ?
-                                                                L10n.medReminderTxtListPlanActive.text :
-                                                                L10n.medReminderTxtListPlanInactive.text
+        WithPerceptionTracking {
+            VStack {
+                if store.profileMedicationReminder.isEmpty ||
+                    store.profileMedicationReminder.allSatisfy(\.medicationProfileReminderList.isEmpty) {
+                    NoRemindersView()
+                        .padding(.horizontal)
+                } else {
+                    ScrollView {
+                        ForEach(store.profileMedicationReminder) { profileMedicationReminder in
+                            if !profileMedicationReminder.medicationProfileReminderList.isEmpty {
+                                SectionContainer(
+                                    header: { SectionHeaderView(profile: profileMedicationReminder.profile) },
+                                    content: {
+                                        ForEach(profileMedicationReminder
+                                            .medicationProfileReminderList) { medicationProfileReminderListEntry in
+                                                Button {
+                                                    store
+                                                        .send(
+                                                            .selectMedicationReminder(
+                                                                medicationProfileReminderListEntry
+                                                            )
                                                         )
-                                                    },
-                                                    icon: {}
-                                                )
-                                            }
-                                            .buttonStyle(.navigation(
-                                                showSeparator: medicationProfileReminderListEntry !=
-                                                    profileMedicationReminder.medicationProfileReminderList.last
-                                            ))
-                                            .accessibilityIdentifier(A11y.medicationReminderList.medReminderListCell)
-                                    }
+                                                } label: {
+                                                    Label(
+                                                        title: {
+                                                            KeyValuePair(
+                                                                key: medicationProfileReminderListEntry.title,
+                                                                value: medicationProfileReminderListEntry.isActive ?
+                                                                    L10n.medReminderTxtListPlanActive.text :
+                                                                    L10n.medReminderTxtListPlanInactive.text
+                                                            )
+                                                        },
+                                                        icon: {}
+                                                    )
+                                                }
+                                                .buttonStyle(.navigation(
+                                                    showSeparator: medicationProfileReminderListEntry !=
+                                                        profileMedicationReminder.medicationProfileReminderList.last
+                                                ))
+                                                .accessibilityIdentifier(A11y.medicationReminderList
+                                                    .medReminderListCell)
+                                        }
 
-                                    EmptyView()
-                                }
-                            )
+                                        EmptyView()
+                                    }
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            NavigationLinkStore(
-                store.scope(
-                    state: \.$destination,
-                    action: MedicationReminderListDomain.Action.destination
-                ),
-                state: /MedicationReminderListDomain.Destinations.State.medicationReminder,
-                action: MedicationReminderListDomain.Destinations.Action.medicationReminderAction(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .medicationReminder)) },
-                destination: { MedicationReminderSetupView(store: $0) },
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
-        }
-        .navigationTitle(L10n.stgBtnMedicationReminder)
-        .navigationBarTitleDisplayMode(.inline)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(Color(.secondarySystemBackground).ignoresSafeArea())
-        .alert(
-            store.scope(state: \.$destination, action: MedicationReminderListDomain.Action.destination),
-            state: /MedicationReminderListDomain.Destinations.State.alert,
-            action: MedicationReminderListDomain.Destinations.Action.alert
-        )
-        .onAppear {
-            viewStore.send(.loadAllProfiles)
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.medicationReminder,
+                        action: \.destination.medicationReminder
+                    )
+                ) { store in
+                    MedicationReminderSetupView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
+                .hidden()
+            }
+            .navigationTitle(L10n.stgBtnMedicationReminder)
+            .navigationBarTitleDisplayMode(.inline)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(Color(.secondarySystemBackground).ignoresSafeArea())
+            .alert($store.scope(
+                state: \.destination?.alert?.alert,
+                action: \.destination.alert
+            ))
+            .onAppear {
+                store.send(.loadAllProfiles)
+            }
         }
     }
 }

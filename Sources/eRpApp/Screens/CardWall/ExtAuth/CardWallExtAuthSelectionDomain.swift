@@ -20,9 +20,9 @@ import ComposableArchitecture
 import IDP
 import UIKit
 
-struct CardWallExtAuthSelectionDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct CardWallExtAuthSelectionDomain {
+    @ObservableState
     struct State: Equatable {
         var kkList: KKAppDirectory?
         var filteredKKList: KKAppDirectory = .init(apps: [KKAppDirectory.Entry]())
@@ -30,38 +30,15 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
         var selectedKK: KKAppDirectory.Entry?
         var searchText: String = ""
 
-        var orderEgkVisible = false
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardWall_extAuthConfirm
-            case confirmation(CardWallExtAuthConfirmationDomain.State)
-            // sourcery: AnalyticsScreen = contactInsuranceCompany
-            case egk(OrderHealthCardDomain.State)
-        }
-
-        enum Action: Equatable {
-            case egkAction(action: OrderHealthCardDomain.Action)
-            case confirmation(action: CardWallExtAuthConfirmationDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.confirmation,
-                action: /Action.confirmation
-            ) {
-                CardWallExtAuthConfirmationDomain()
-            }
-
-            Scope(
-                state: /State.egk,
-                action: /Action.egkAction(action:)
-            ) {
-                OrderHealthCardDomain()
-            }
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = cardWall_extAuthConfirm
+        case confirmation(CardWallExtAuthConfirmationDomain)
+        // sourcery: AnalyticsScreen = cardWall_extAuthSelectionHelp
+        case help(CardWallExtAuthHelpDomain)
     }
 
     enum Action: Equatable {
@@ -74,8 +51,9 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
         case filteredKKList(search: String)
         case reset
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case helpButtonTapped
+        case destination(PresentationAction<Destination.Action>)
 
         case response(Response)
         case delegate(Delegate)
@@ -92,20 +70,19 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
     @Dependency(\.idpSession) var idpSession: IDPSession
     @Dependency(\.schedulers) var schedulers: Schedulers
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .loadKKList:
             state.error = nil
             state.selectedKK = nil
             // [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
+            // [REQ:gemSpec_IDP_Frontend:A_23082#2] Load available apps
             return .publisher(
                 idpSession.loadDirectoryKKApps()
                     .first()
@@ -122,9 +99,11 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
             state.error = error
             return .none
         case let .selectKK(entry):
+            // [REQ:BSI-eRp-ePA:O.Auth_4#6] Business logic of user selecting the insurance company
             // [REQ:gemSpec_IDP_Sek:A_22294] Select KK
             state.selectedKK = entry
             return .none
+        // [REQ:BSI-eRp-ePA:O.Auth_4#7] Proceed to confirmation screen
         case .confirmKK:
             guard let selectedKK = state.selectedKK else { return .none }
 
@@ -143,20 +122,17 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
         case let .updateSearchText(newString):
             state.searchText = newString.trimmed()
             return state.searchText
-                .isEmpty ? EffectTask.send(.reset) : EffectTask.send(.filteredKKList(search: state.searchText))
-        case .setNavigation(tag: nil),
-             .destination(.presented(.egkAction(action: .delegate(.close)))):
+                .isEmpty ? Effect.send(.reset) : Effect.send(.filteredKKList(search: state.searchText))
+        case .resetNavigation:
             state.destination = nil
             return .none
         case let .error(error):
             state.error = error
             return .none
         case .destination(.presented(.confirmation(action: .delegate(.close)))):
-            return EffectTask.send(.delegate(.close))
-        case .setNavigation(tag: .egk):
-            state.destination = .egk(.init())
-            return .none
-        case .setNavigation:
+            return Effect.send(.delegate(.close))
+        case .helpButtonTapped:
+            state.destination = .help(.init())
             return .none
         case .destination,
              .delegate:

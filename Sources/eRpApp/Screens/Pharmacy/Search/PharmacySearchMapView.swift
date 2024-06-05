@@ -21,43 +21,28 @@ import ComposableCoreLocation
 import CoreLocationUI
 import eRpStyleKit
 import MapKit
+import Perception
 import SwiftUI
 
 struct PharmacySearchMapView: View {
-    var store: Store<PharmacySearchMapDomain.State, PharmacySearchMapDomain.Action>
-    @ObservedObject var viewStore: ViewStore<ViewState, PharmacySearchMapDomain.Action>
+    @Perception.Bindable var store: StoreOf<PharmacySearchMapDomain>
     let isRedeemRecipe: Bool
 
     init(
-        store: PharmacySearchMapDomain.Store,
+        store: StoreOf<PharmacySearchMapDomain>,
         isRedeemRecipe: Bool
     ) {
         self.store = store
         self.isRedeemRecipe = isRedeemRecipe
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let pharmacies: [PharmacyLocationViewModel]
-        let mapLocation: MKCoordinateRegionContainer
-        let destinationTag: PharmacySearchMapDomain.Destinations.State.Tag?
-        init(_ state: PharmacySearchMapDomain.State) {
-            pharmacies = state.pharmacies
-            mapLocation = state.mapLocation
-            destinationTag = state.destination?.tag
-        }
     }
 
     var body: some View {
-        NavigationView {
+        WithPerceptionTracking {
             VStack {
                 ZStack(alignment: .top) {
                     MapViewWithClustering(
-                        region: viewStore.binding(
-                            get: \.mapLocation,
-                            send: PharmacySearchMapDomain.Action.setCurrentLocation
-                        ),
-                        annotations: viewStore.pharmacies.compactMap { pharmacy in
+                        region: $store.mapLocation,
+                        annotations: store.pharmacies.compactMap { pharmacy in
                             guard let pharmacyCoordinate = pharmacy.position?.coordinate else { return nil }
                             return PlaceholderAnnotation(
                                 pharmacy: pharmacy,
@@ -65,16 +50,16 @@ struct PharmacySearchMapView: View {
                             )
                         },
                         onAnnotationTapped: { annotation in
-                            viewStore.send(.showDetails(annotation.pharmacy))
+                            store.send(.showDetails(annotation.pharmacy))
                         },
                         onClusterTapped: { clusterAnnotation in
-                            viewStore.send(.showCluster(clusterAnnotation))
+                            store.send(.showClusterSheet(clusterAnnotation))
                         }
                     ).ignoresSafeArea(.all, edges: .vertical)
                         .accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapMap)
                     VStack {
                         HStack {
-                            Button(action: { viewStore.send(.delegate(.closeMap)) }, label: {
+                            Button(action: { store.send(.delegate(.closeMap)) }, label: {
                                 Image(systemName: SFSymbolName.crossIconPlain)
                                     .font(Font.caption.weight(.bold))
                                     .foregroundColor(Colors.primary)
@@ -86,16 +71,18 @@ struct PharmacySearchMapView: View {
 
                             Spacer()
 
-                            Button(action: { viewStore.send(.setNavigation(tag: .filter)) }, label: {
-                                Image(systemName: SFSymbolName.sliderHorizontal3)
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(Colors.primary)
-                                    .padding(16)
-                                    .background(Circle().foregroundColor(Colors.systemColorWhite))
-                                    .padding(.all, 16)
-                                    .shadow(color: Colors.separator, radius: 4)
-
-                            }).accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapBtnFilter)
+                            Button(
+                                action: { store.send(.showPharmacyFilter) },
+                                label: {
+                                    Image(systemName: SFSymbolName.sliderHorizontal3)
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundColor(Colors.primary)
+                                        .padding(16)
+                                        .background(Circle().foregroundColor(Colors.systemColorWhite))
+                                        .padding(.all, 16)
+                                        .shadow(color: Colors.separator, radius: 4)
+                                }
+                            ).accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapBtnFilter)
                         }
 
                         Spacer()
@@ -103,7 +90,7 @@ struct PharmacySearchMapView: View {
                         VStack(spacing: 0) {
                             HStack {
                                 Spacer()
-                                Button(action: { viewStore.send(.goToUser) }, label: {
+                                Button(action: { store.send(.goToUser) }, label: {
                                     Image(systemName: SFSymbolName.location)
                                         .font(.system(size: 16, weight: .bold))
                                         .foregroundColor(Colors.primary)
@@ -125,48 +112,113 @@ struct PharmacySearchMapView: View {
 
                     Rectangle()
                         .frame(width: 0, height: 0, alignment: .center)
-                        .smallSheet(isPresented: Binding<Bool>(get: {
-                            viewStore.destinationTag == .filter
-                        }, set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
+                        .sheet(item: $store.scope(state: \.destination?.clusterSheet,
+                                                  action: \.destination.clusterSheet)) { store in
+                            if #available(iOS 16, *) {
+                                ClusterView(store: store)
+                                    .presentationDetents([.fraction(0.45), .fraction(0.85), .large])
+                            } else {
+                                ClusterView(store: store)
                             }
-                        }),
-                        onDismiss: {},
-                        content: {
-                            IfLetStore(
-                                store.scope(state: \.$destination, action: PharmacySearchMapDomain.Action.destination),
-                                state: /PharmacySearchMapDomain.Destinations.State.filter,
-                                action: PharmacySearchMapDomain.Destinations.Action.pharmacyFilterView(action:),
-                                then: PharmacySearchFilterView.init(store:)
-                            )
-                            .accentColor(Colors.primary600)
-                        })
+                        }
                         .accessibility(hidden: true)
 
-                    NavigationLinkStore(
-                        store.scope(state: \.$destination, action: PharmacySearchMapDomain.Action.destination),
-                        state: /PharmacySearchMapDomain.Destinations.State.pharmacy,
-                        action: PharmacySearchMapDomain.Destinations.Action.pharmacyDetailView(action:),
-                        onTap: { viewStore.send(.setNavigation(tag: .pharmacy)) },
-                        destination: { scopedStore in
-                            PharmacyDetailView(store: scopedStore, isRedeemRecipe: isRedeemRecipe)
-                                .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
-                        },
-                        label: {}
-                    )
-                    .hidden()
+                    Rectangle()
+                        .frame(width: 0, height: 0, alignment: .center)
+                        .smallSheet($store.scope(
+                            state: \.destination?.filter,
+                            action: \.destination.filter
+                        )) { store in
+                            PharmacySearchFilterView(store: store)
+                                .accentColor(Colors.primary600)
+                        }
+                        .accessibility(hidden: true)
+
+                    NavigationLink(
+                        item: $store.scope(
+                            state: \.destination?.pharmacy,
+                            action: \.destination.pharmacy
+                        )
+                    ) { store in
+                        PharmacyDetailView(store: store, isRedeemRecipe: isRedeemRecipe)
+                            .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
+                    } label: {
+                        EmptyView()
+                    }
                     .accessibility(hidden: true)
                 }
-                .alert(
-                    store.scope(state: \.$destination, action: PharmacySearchMapDomain.Action.destination),
-                    state: /PharmacySearchMapDomain.Destinations.State.alert,
-                    action: PharmacySearchMapDomain.Destinations.Action.alert
-                )
+                .alert($store.scope(
+                    state: \.destination?.alert?.alert,
+                    action: \.destination.alert
+                ))
                 .task {
-                    await viewStore.send(.onAppear).finish()
+                    await store.send(.onAppear).finish()
                 }
             }
         }.navigationBarHidden(true)
+    }
+}
+
+extension PharmacySearchMapView {
+    struct ClusterView: View {
+        @Perception.Bindable var store: StoreOf<PharmacySearchClusterDomain>
+
+        var body: some View {
+            WithPerceptionTracking {
+                VStack(spacing: 0) {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Spacer()
+
+                            Button(action: { store.send(.closeSheet) }, label: {
+                                Image(systemName: SFSymbolName.crossIconPlain)
+                                    .font(Font.caption.weight(.bold))
+                                    .foregroundColor(Colors.primary)
+                                    .padding(12)
+                                    .background(Circle().foregroundColor(Colors.systemGray6))
+                            })
+                                .accessibilityIdentifier(A11y.pharmacySearchMap.phaSearchMapBtnClusterClose)
+                        }
+
+                        Text("\(store.clusterPharmacies.count) \(L10n.phaSearchMapTxtClusterHeader.text)")
+                            .font(.title2)
+                            .accessibilityIdentifier(A11y.pharmacySearchMap.phaSearchMapTxtClusterHeader)
+                    }.padding()
+
+                    ScrollView {
+                        SingleElementSectionContainer {
+                            ForEach(store.clusterPharmacies) { pharmacyViewModel in
+                                WithPerceptionTracking {
+                                    Button(
+                                        action: {
+                                            store.send(.delegate(.showDetails(pharmacyViewModel)))
+                                        },
+                                        label: {
+                                            Label(title: {
+                                                      PharmacySearchCell(
+                                                          pharmacy: pharmacyViewModel,
+                                                          isFavorite: pharmacyViewModel
+                                                              .isFavorite,
+                                                          showDistance: true
+                                                      )
+                                                  },
+                                                  icon: {})
+                                        }
+                                    )
+                                    .buttonStyle(
+                                        .navigation(showSeparator: pharmacyViewModel !=
+                                            store.clusterPharmacies
+                                            .last)
+                                    )
+                                    .modifier(SectionContainerCellModifier())
+                                    .accessibilityIdentifier(A11y.pharmacySearchMap
+                                        .phaSearchMapBtnClusterPharmacy)
+                                }
+                            }
+                        }.sectionContainerStyle(.inline)
+                    }
+                }.navigationBarHidden(true)
+            }
+        }
     }
 }

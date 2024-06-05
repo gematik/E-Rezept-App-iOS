@@ -94,7 +94,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        await store.send(.select(.password)) { state in
+        await store.send(\.binding.selectedSecurityOption, .password) { state in
             state.availableSecurityOptions = [.password, .biometry(.faceID)]
             state.selectedSecurityOption = .password
             state.passwordA = ""
@@ -103,7 +103,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
-        await store.send(.setPasswordA("Strong")) { state in
+        await store.send(\.binding.passwordA, "Strong") { state in
             state.selectedSecurityOption = .password
             state.passwordA = "Strong"
             state.passwordB = ""
@@ -122,7 +122,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message) == L10n.onbAuthTxtPasswordStrengthInsufficient.text
         }
-        await store.send(.setPasswordA("Secure Pass word")) { state in
+        await store.send(\.binding.passwordA, "Secure Pass word") { state in
             state.selectedSecurityOption = .password
             state.passwordA = "Secure Pass word"
             state.passwordB = ""
@@ -153,7 +153,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        await store.send(.setPasswordA("Secure Pass word")) { state in
+        await store.send(\.binding.passwordA, "Secure Pass word") { state in
             state.selectedSecurityOption = .password
             state.passwordA = "Secure Pass word"
             state.passwordB = "ABC"
@@ -172,7 +172,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             let message = state.passwordErrorMessage
             expect(message) == L10n.onbAuthTxtPasswordsDontMatch.text
         }
-        await store.send(.setPasswordB("Secure Pass word")) { state in
+        await store.send(\.binding.passwordB, "Secure Pass word") { state in
             state.selectedSecurityOption = .password
             state.passwordA = "Secure Pass word"
             state.passwordB = "Secure Pass word"
@@ -198,7 +198,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
             .eraseToAnyPublisher()
 
-        await store.send(.select(.biometry(.faceID))) { state in
+        await store.send(\.binding.selectedSecurityOption, .biometry(.faceID)) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
         await store.send(.startBiometry) { state in
@@ -281,7 +281,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
             .eraseToAnyPublisher()
 
-        await store.send(.select(.biometry(.faceID))) { state in
+        await store.send(\.binding.selectedSecurityOption, .biometry(.faceID)) { state in
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
         }
@@ -291,11 +291,11 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.biometrySuccessful = true
             state.showNoSelectionMessage = false
         }
-        await store.send(.select(.password)) { state in
+        await store.send(\.binding.selectedSecurityOption, .password) { state in
             state.selectedSecurityOption = .password
             state.showNoSelectionMessage = false
         }
-        await store.send(.select(.biometry(.faceID))) { state in
+        await store.send(\.binding.selectedSecurityOption, .biometry(.faceID)) { state in
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
         }
@@ -311,7 +311,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password],
-                selectedSecurityOption: nil,
+                selectedSecurityOption: .unsecured,
                 passwordA: "",
                 passwordB: "",
                 showNoSelectionMessage: false,
@@ -388,7 +388,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.biometry(.faceID)],
-                selectedSecurityOption: .none,
+                selectedSecurityOption: .unsecured,
                 passwordA: "",
                 passwordB: "",
                 showPasswordErrorMessage: false,
@@ -398,7 +398,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        await store.send(.select(.biometry(.faceID))) { state in
+        await store.send(\.binding.selectedSecurityOption, .biometry(.faceID)) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
     }
@@ -442,7 +442,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = .veryWeak
 
-        await store.send(.setPasswordA("ABC")) { state in
+        await store.send(\.binding.passwordA, "ABC") { state in
             state.passwordA = "ABC"
             state.passwordB = ""
             state.passwordStrength = .veryWeak
@@ -451,7 +451,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = .medium
 
-        await store.send(.setPasswordA("ABCD")) { state in
+        await store.send(\.binding.passwordA, "ABCD") { state in
             state.passwordA = "ABCD"
             state.passwordStrength = .medium
             state.showPasswordErrorMessage = false

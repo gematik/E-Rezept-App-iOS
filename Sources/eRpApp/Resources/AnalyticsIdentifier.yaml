@@ -91,6 +91,8 @@ screens:
     name: "pharmacySearch:filter"
   pharmacySearch_map:
     name: "pharmacySearch:map"
+  pharmacySearch_clusterAnnotation:
+   name: "pharmacySearch:clusterAnnotation"
   cardWall:
     name: "cardWall"
   cardWall_introduction:
@@ -113,6 +115,8 @@ screens:
     name: "cardWall:extAuth"
   cardWall_extAuthConfirm:
     name: "cardWall:extAuthConfirm"
+  cardWall_extAuthSelectionHelp:
+    name: "cardWall:extAuthSelectionHelp"
   troubleShooting: # not used in iOS
     name: "troubleShooting"
   troubleShooting_readCardHelp1: # Troubleshooting is a section on it's own

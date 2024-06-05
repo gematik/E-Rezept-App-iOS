@@ -20,88 +20,86 @@ import ComposableArchitecture
 import IDP
 import SwiftUI
 
+// [REQ:BSI-eRp-ePA:O.Auth_4#8] Confirmation Dialog with brief explanation
 struct CardWallExtAuthConfirmationView: View {
-    private let store: CardWallExtAuthConfirmationDomain.Store
-    @ObservedObject private var viewStore: ViewStoreOf<CardWallExtAuthConfirmationDomain>
-
-    init(store: CardWallExtAuthConfirmationDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
+    @Perception.Bindable var store: StoreOf<CardWallExtAuthConfirmationDomain>
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView(.vertical) {
-                PhoneWithAppIconView(selectedKKName: viewStore.selectedKK.name)
+        WithPerceptionTracking {
+            VStack(spacing: 0) {
+                ScrollView(.vertical) {
+                    PhoneWithAppIconView(selectedKKName: store.selectedKK.name)
 
-                if let error = viewStore.error {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Group {
-                            Text(error.localizedDescriptionWithErrorList)
+                    if let error = store.error {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Group {
+                                Text(error.localizedDescriptionWithErrorList)
+                                    .font(.headline)
+                                    .fixedSize(horizontal: false, vertical: true)
+
+                                Text(L10n.cdwTxtExtauthConfirmErrorDescription)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(.secondaryLabel))
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            .accessibilityElement(children: .combine)
+
+                            Button(action: {
+                                store.send(.openContactSheet)
+                            }, label: {
+                                Text(L10n.cdwBtnExtauthConfirmContact)
+                            })
+                                .accessibility(identifier: A11y.cardWall.extAuthConfirmation
+                                    .cdwBtnExtauthConfirmContact)
+                                .confirmationDialog(
+                                    $store.scope(state: \.contactActionSheet, action: \.contactSheet)
+                                )
+                        }
+                        .padding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.cdwTxtExtauthConfirmHeadline)
                                 .font(.headline)
                                 .fixedSize(horizontal: false, vertical: true)
 
-                            Text(L10n.cdwTxtExtauthConfirmErrorDescription)
-                                .font(.subheadline)
-                                .foregroundColor(Color(.secondaryLabel))
+                            Text(L10n.cdwTxtExtauthConfirmDescription)
+                                .font(.body)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .accessibilityElement(children: .combine)
-
-                        Button(action: {
-                            viewStore.send(.openContactSheet)
-                        }, label: {
-                            Text(L10n.cdwBtnExtauthConfirmContact)
-                        })
-                            .accessibility(identifier: A11y.cardWall.extAuthConfirmation.cdwBtnExtauthConfirmContact)
-                            .confirmationDialog(store: store.scope(
-                                state: \.$contactActionSheet,
-                                action: CardWallExtAuthConfirmationDomain.Action.contactSheet
-                            ))
+                        .padding(.horizontal)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                } else {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L10n.cdwTxtExtauthConfirmHeadline)
-                            .font(.headline)
-                            .fixedSize(horizontal: false, vertical: true)
 
-                        Text(L10n.cdwTxtExtauthConfirmDescription)
-                            .font(.body)
-                            .fixedSize(horizontal: false, vertical: true)
+                    if store.loading {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .padding()
                     }
-                    .accessibilityElement(children: .combine)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .padding(0)
 
-                if viewStore.loading {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .padding()
+                GreyDivider()
+
+                // [REQ:BSI-eRp-ePA:O.Auth_4#8] User confirms the insurance company
+                PrimaryTextButton(text: L10n.cdwBtnExtauthConfirmSend,
+                                  a11y: A11y.cardWall.extAuthConfirmation.cdwBtnExtauthConfirmSend,
+                                  isEnabled: !store.loading) {
+                    store.send(.confirmKK)
                 }
+                .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             }
-            .padding(0)
-
-            GreyDivider()
-
-            PrimaryTextButton(text: L10n.cdwBtnExtauthConfirmSend,
-                              a11y: A11y.cardWall.extAuthConfirmation.cdwBtnExtauthConfirmSend,
-                              isEnabled: !viewStore.loading) {
-                viewStore.send(.confirmKK)
-            }
-            .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            .navigationBarItems(
+                trailing: NavigationBarCloseItem {
+                    store.send(.delegate(.close))
+                }
+                .accessibility(identifier: A11y.cardWall.extAuthConfirmation.cdwBtnExtauthConfirmCancel)
+                .accessibility(label: Text(L10n.cdwBtnExtauthConfirmCancel))
+            )
+            .navigationTitle(L10n.cdwTxtExtauthConfirmTitle)
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationBarItems(
-            trailing: NavigationBarCloseItem {
-                viewStore.send(.delegate(.close))
-            }
-            .accessibility(identifier: A11y.cardWall.extAuthConfirmation.cdwBtnExtauthConfirmCancel)
-            .accessibility(label: Text(L10n.cdwBtnExtauthConfirmCancel))
-        )
-        .navigationTitle(L10n.cdwTxtExtauthConfirmTitle)
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     private struct PhoneWithAppIconView: View {

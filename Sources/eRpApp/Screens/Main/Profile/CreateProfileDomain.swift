@@ -21,9 +21,11 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
-struct CreateProfileDomain: ReducerProtocol {
+@Reducer
+struct CreateProfileDomain {
     typealias Store = StoreOf<Self>
 
+    @ObservableState
     struct State: Equatable {
         var profileName: String = ""
 
@@ -33,7 +35,7 @@ struct CreateProfileDomain: ReducerProtocol {
     }
 
     enum Action: Equatable {
-        case set(profileName: String)
+        case setProfileName(String)
 
         case createAndSaveProfile(name: String)
         case createAndSaveProfileReceived(Result<UUID, UserProfileServiceError>)
@@ -49,31 +51,33 @@ struct CreateProfileDomain: ReducerProtocol {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
-        switch action {
-        case let .set(profileName):
-            state.profileName = profileName
-            return .none
+    var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            switch action {
+            case let .setProfileName(profileName):
+                state.profileName = profileName
+                return .none
 
-        case let .createAndSaveProfile(name):
-            let displayName = name.trimmed()
-            guard state.isValidName else { return .none }
-            return createAndSaveProfile(name: displayName)
+            case let .createAndSaveProfile(name):
+                let displayName = name.trimmed()
+                guard state.isValidName else { return .none }
+                return createAndSaveProfile(name: displayName)
 
-        case let .createAndSaveProfileReceived(.success(profileId)):
-            userProfileService.set(selectedProfileId: profileId)
-            return .send(.delegate(.close))
-        case let .createAndSaveProfileReceived(.failure(error)):
-            return .send(.delegate(.failure(error)))
+            case let .createAndSaveProfileReceived(.success(profileId)):
+                userProfileService.set(selectedProfileId: profileId)
+                return .send(.delegate(.close))
+            case let .createAndSaveProfileReceived(.failure(error)):
+                return .send(.delegate(.failure(error)))
 
-        case .delegate:
-            return .none
+            case .delegate:
+                return .none
+            }
         }
     }
 }
 
 extension CreateProfileDomain {
-    func createAndSaveProfile(name: String) -> EffectTask<CreateProfileDomain.Action> {
+    func createAndSaveProfile(name: String) -> Effect<CreateProfileDomain.Action> {
         let profile = Profile(name: name)
         return .publisher(
             userProfileService

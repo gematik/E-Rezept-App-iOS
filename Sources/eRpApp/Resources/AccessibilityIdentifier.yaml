@@ -22,6 +22,8 @@ scanner:
 orderEGK:
   - ogk_txt_headline
   - ogk_btn_cancel
+  - ogk_btn_pinOnly
+  - ogk_btn_pinAndCard
   - ogk_btn_phone
   - ogk_btn_web
   - ogk_btn_mail
@@ -42,6 +44,7 @@ cardWall:
     - cdw_btn_extauth_selection_retry
     - cdw_btn_extauth_selection_cancel
     - cdw_btn_extauth_selection_confirm
+    - cdw_btn_extauth_selection_help
   extAuthConfirmation:
     - cdw_btn_extauth_confirm_send
     - cdw_btn_extauth_confirm_cancel
@@ -157,21 +160,27 @@ settings:
     - stg_txt_footnote_demo_mode
   security:
     - stg_txt_header_security
-    - stg_txt_security_faceid
-    - stg_txt_security_touchid
-    - stg_txt_security_password
+    - stg_tgl_security_faceid
+    - stg_tgl_security_touchid
+    - stg_tgl_security_password
+    - stg_btn_security_change_password
     - stg_txt_security_tokens
     - stg_btn_device_security
     - stg_btn_medication_reminder
+    - stg_btn_language_settings
+    - stg_hnt_biometrics_warning
   createPassword:
     - cpw_btn_save
     - cpw_btn_update
     - cpw_inp_current_password
+    - cpw_txt_current_password_wrong
     - cpw_inp_passwordA
     - cpw_inp_passwordB
     - cpw_txt_password_recommendation
     - cpw_txt_section_title
     - cpw_txt_section_update_title
+    - cpw_txt_password_strength
+    - cpw_txt_password_strength_error_footer
   profiles:
     - stg_txt_header_profiles
     - stg_btn_profile
@@ -358,6 +367,7 @@ editProfilePicture:
     - epp_btn_choose_type
     - epp_btn_action_camera
     - epp_btn_action_library
+    - epp_btn_emoji_use
 prescriptionDetails:
   - prsc_dtl_txt_title
   - prsc_dtl_txt_title_input
@@ -371,6 +381,7 @@ prescriptionDetails:
   - prsc_dtl_toolbar_menu_btn_delete
   - prsc_dtl_btn_error_info
   - prsc_dtl_btn_substitution_info
+  - prsc_dtl_btn_headline_substitution_info
   - prsc_dtl_btn_scanned_prescription_info
   - prsc_dtl_btn_direct_assignment_info
   - prsc_dtl_txt_prescription_validity
@@ -379,6 +390,8 @@ prescriptionDetails:
   - prsc_dtl_drawer_error_info
   - prsc_dtl_drawer_scanned_prescription_info
   - prsc_dtl_drawer_prescription_validity_info
+  - prsc_dtl_drawer_title
+  - prsc_dtl_drawer_description
   - prsc_dtl_btn_redeem
   - prsc_dtl_btn_show_matrix_code
   - prsc_dtl_btn_additional_fee
@@ -482,6 +495,9 @@ pharmacySearchMap:
   - pha_search_map_btn_go_to_user
   - pha_search_map_btn_search_here
   - pha_search_map_map
+  - pha_search_map_txt_cluster_header
+  - pha_search_map_btn_cluster_pharmacy
+  - pha_search_map_btn_cluster_close
 pharmacyDetail:
   - pha_detail_txt_subtitle
   - pha_detail_btn_organization

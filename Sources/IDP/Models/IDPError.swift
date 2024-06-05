@@ -95,7 +95,7 @@ public enum IDPError: Swift.Error {
         public let uuid: String
         public let code: String
 
-        // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Error formatting
+        // [REQ:gemSpec_IDP_Frontend:A_19937#3,A_20605,A_20085] Error formatting
         public var description: String {
             "\nError: \(code)\n\(error): \(errorText)\nError-ID: \(uuid)"
         }

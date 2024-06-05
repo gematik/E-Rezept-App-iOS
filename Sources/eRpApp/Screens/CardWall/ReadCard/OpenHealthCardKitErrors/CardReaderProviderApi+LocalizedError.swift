@@ -31,8 +31,6 @@ extension CardError: LocalizedError {
             return error?.localizedDescription ?? "CardError.illegalState \(String(describing: error))"
         case let .objcError(exception):
             return exception?.description ?? "CardError.objcError with exception \(String(describing: exception))"
-        @unknown default:
-            return "unknown CardError error"
         }
     }
 }
@@ -46,8 +44,6 @@ extension APDU.Error: LocalizedError {
             return "expected response length out of bounds"
         case let .insufficientResponseData(data: data):
             return "insufficient response data: \(data)"
-        @unknown default:
-            return "unknown APDU.Error error"
         }
     }
 }

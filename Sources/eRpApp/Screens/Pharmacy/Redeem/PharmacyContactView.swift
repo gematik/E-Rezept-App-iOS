@@ -18,117 +18,115 @@
 
 import ComposableArchitecture
 import eRpStyleKit
+import Perception
 import SwiftUI
 
 // [REQ:BSI-eRp-ePA:O.Purp_2#6,O.Data_6#5] Contact information is collected when needed for redeeming
 struct PharmacyContactView: View {
-    let store: PharmacyContactDomain.Store
-    @ObservedObject var viewStore: ViewStore<PharmacyContactDomain.State, PharmacyContactDomain.Action>
+    @Perception.Bindable var store: StoreOf<PharmacyContactDomain>
 
-    init(store: PharmacyContactDomain.Store) {
+    init(store: StoreOf<PharmacyContactDomain>) {
         self.store = store
-        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        if viewStore.service.isAVS {
-                            SectionContainer(header: {
-                                Text(L10n.phaContactTitleContact)
-                            }, content: {
-                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                                  subtitle: L10n.phaContactTxtPhone,
-                                                  text: viewStore.binding(get: \.contactInfo.phone,
-                                                                          send: PharmacyContactDomain.Action.setPhone))
+        WithPerceptionTracking {
+            NavigationView {
+                VStack(alignment: .leading) {
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            if store.service.isAVS {
+                                SectionContainer(header: {
+                                    Text(L10n.phaContactTitleContact)
+                                }, content: {
+                                    FormTextFieldView(
+                                        placeholder: L10n.phaContactPlaceholder.text,
+                                        subtitle: L10n.phaContactTxtPhone,
+                                        text: $store.contactInfo.phone
+                                    )
                                     .textContentType(.telephoneNumber)
                                     .keyboardType(.phonePad)
                                     .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
 
-                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                                  subtitle: L10n.phaContactTxtMail,
-                                                  text: viewStore.binding(get: \.contactInfo.mail,
-                                                                          send: PharmacyContactDomain.Action.setMail),
-                                                  showSeparator: false)
+                                    FormTextFieldView(
+                                        placeholder: L10n.phaContactPlaceholder.text,
+                                        subtitle: L10n.phaContactTxtMail,
+                                        text: $store.contactInfo.mail,
+                                        showSeparator: false
+                                    )
                                     .textContentType(.emailAddress)
                                     .keyboardType(.emailAddress)
                                     .accessibility(identifier: A11y.pharmacyContact.phaContactAddressMail)
-                            })
-                        } else {
-                            SingleElementSectionContainer(header: {
-                                Text(L10n.phaContactTitleContact)
+                                })
+                            } else {
+                                SingleElementSectionContainer(header: {
+                                    Text(L10n.phaContactTitleContact)
+                                }, content: {
+                                    FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
+                                                      subtitle: L10n.phaContactTxtPhone,
+                                                      text: $store.contactInfo.phone,
+                                                      showSeparator: false)
+                                        .textContentType(.telephoneNumber)
+                                        .keyboardType(.phonePad)
+                                        .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
+                                })
+                            }
+
+                            SectionContainer(header: {
+                                Text(L10n.phaContactTitleAddress)
                             }, content: {
                                 FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                                  subtitle: L10n.phaContactTxtPhone,
-                                                  text: viewStore.binding(get: \.contactInfo.phone,
-                                                                          send: PharmacyContactDomain.Action.setPhone),
+                                                  subtitle: L10n.phaContactTxtName,
+                                                  text: $store.contactInfo.name)
+                                    .textContentType(.name)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressName)
+
+                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
+                                                  subtitle: L10n.phaContactTxtStreet,
+                                                  text: $store.contactInfo.street)
+                                    .textContentType(.streetAddressLine1)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressStreet)
+
+                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
+                                                  subtitle: L10n.phaContactTxtZip,
+                                                  text: $store.contactInfo.zip)
+                                    .textContentType(.postalCode)
+                                    .keyboardType(.numberPad)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressZip)
+
+                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
+                                                  subtitle: L10n.phaContactTxtCity,
+                                                  text: $store.contactInfo.city)
+                                    .textContentType(.addressCity)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressCity)
+
+                                FormTextFieldView(placeholder: L10n.phaContactPlaceholderDeliveryInfo.text,
+                                                  subtitle: L10n.phaContactTxtDeliveryInfo,
+                                                  text: $store.contactInfo.deliveryInfo,
                                                   showSeparator: false)
-                                    .textContentType(.telephoneNumber)
-                                    .keyboardType(.phonePad)
-                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressInfo)
                             })
                         }
-
-                        SectionContainer(header: {
-                            Text(L10n.phaContactTitleAddress)
-                        }, content: {
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                              subtitle: L10n.phaContactTxtName,
-                                              text: viewStore.binding(get: \.contactInfo.name,
-                                                                      send: PharmacyContactDomain.Action.setName))
-                                .textContentType(.name)
-                                .accessibility(identifier: A11y.pharmacyContact.phaContactAddressName)
-
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                              subtitle: L10n.phaContactTxtStreet,
-                                              text: viewStore.binding(get: \.contactInfo.street,
-                                                                      send: PharmacyContactDomain.Action.setStreet))
-                                .textContentType(.streetAddressLine1)
-                                .accessibility(identifier: A11y.pharmacyContact.phaContactAddressStreet)
-
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                              subtitle: L10n.phaContactTxtZip,
-                                              text: viewStore.binding(get: \.contactInfo.zip,
-                                                                      send: PharmacyContactDomain.Action.setZip))
-                                .textContentType(.postalCode)
-                                .keyboardType(.numberPad)
-                                .accessibility(identifier: A11y.pharmacyContact.phaContactAddressZip)
-
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                              subtitle: L10n.phaContactTxtCity,
-                                              text: viewStore.binding(get: \.contactInfo.city,
-                                                                      send: PharmacyContactDomain.Action.setCity))
-                                .textContentType(.addressCity)
-                                .accessibility(identifier: A11y.pharmacyContact.phaContactAddressCity)
-
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholderDeliveryInfo.text,
-                                              subtitle: L10n.phaContactTxtDeliveryInfo,
-                                              text: viewStore.binding(
-                                                  get: \.contactInfo.deliveryInfo,
-                                                  send: PharmacyContactDomain.Action.setDeliveryInfo
-                                              ),
-                                              showSeparator: false)
-                                .accessibility(identifier: A11y.pharmacyContact.phaContactAddressInfo)
-                        })
                     }
+                    .accentColor(Colors.primary600)
+                    .background(Color(.secondarySystemBackground).ignoresSafeArea())
+                    .navigationBarTitle(L10n.phaContactTitleContact, displayMode: .inline)
+                    .navigationBarItems(
+                        leading: NavigationBarCloseItem {
+                            store.send(.closeButtonTapped)
+                        },
+                        trailing: NavigationBarSaveItem(disabled: !store.state.isNewContactInfo) {
+                            store.send(.save)
+                        }
+                    )
+                    .alert($store.scope(
+                        state: \.alertState,
+                        action: \.alert
+                    ))
                 }
-                .accentColor(Colors.primary600)
-                .background(Color(.secondarySystemBackground).ignoresSafeArea())
-                .navigationBarTitle(L10n.phaContactTitleContact, displayMode: .inline)
-                .navigationBarItems(
-                    leading: NavigationBarCloseItem {
-                        viewStore.send(.closeButtonTapped)
-                    },
-                    trailing: NavigationBarSaveItem(disabled: !viewStore.state.isNewContactInfo) {
-                        viewStore.send(.save)
-                    }
-                )
-                .alert(store: store.scope(state: \.$alertState, action: PharmacyContactDomain.Action.alert))
             }
+            .navigationViewStyle(StackNavigationViewStyle())
         }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     private struct NavigationBarSaveItem: View {

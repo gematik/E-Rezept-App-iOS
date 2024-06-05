@@ -21,11 +21,11 @@ import ComposableArchitecture
 import eRpKit
 import eRpLocalStorage
 import Foundation
-// swiftlint:disable file_length
-// swiftlint:disable:next type_body_length
-struct ChargeItemListDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
 
+// swiftlint:disable type_body_length
+@Reducer
+struct ChargeItemListDomain {
+    @ObservableState
     struct State: Equatable {
         enum AuthenticationState: Equatable {
             /// When the user is authenticated
@@ -59,7 +59,7 @@ struct ChargeItemListDomain: ReducerProtocol {
         var grantConsentState: GrantConsentState = .unknown
 
         var bottomBannerState: BottomBannerState?
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
 
         var toolbarMenuState: ToolbarMenuState {
             let entries: [ToolbarMenuState.Entry]
@@ -87,62 +87,40 @@ struct ChargeItemListDomain: ReducerProtocol {
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardWall
-            case idpCardWall(IDPCardWallDomain.State)
-            // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<Action.Alert>)
-            // sourcery: AnalyticsScreen = chargeItemDetails
-            case chargeItem(ChargeItemDomain.State)
-            // sourcery: AnalyticsScreen = chargeItemList_toast
-            case toast(ToastState<Action.Toast>)
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = cardWall
+        case idpCardWall(IDPCardWallDomain)
+        // sourcery: AnalyticsScreen = alert
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
+        // sourcery: AnalyticsScreen = chargeItemDetails
+        case chargeItem(ChargeItemDomain)
+        // sourcery: AnalyticsScreen = chargeItemList_toast
+        @ReducerCaseEphemeral
+        case toast(ToastState<Toast>)
+
+        enum Alert: Equatable {
+            case fetchChargeItemsErrorRetry
+            case fetchChargeItemsErrorOkay
+            case authenticateErrorRetry
+            case authenticateErrorOkay
+            case grantConsent
+            case grantConsentDeny
+            case grantConsentErrorRetry
+            case grantConsentErrorOkay
+            case revokeConsent
+            case revokeConsentCancel
+            case revokeConsentErrorRetry
+            case revokeConsentErrorOkay
+            case deleteChargeItemsErrorRetry
+            case deleteChargeItemsErrorOkay
+            case consentServiceErrorOkay
+            case consentServiceErrorAuthenticate
+            case consentServiceErrorRetry
         }
 
-        enum Action: Equatable {
-            case idpCardWallAction(IDPCardWallDomain.Action)
-            case chargeItem(action: ChargeItemDomain.Action)
-            case alert(Alert)
-            case toast(Toast)
-
-            enum Alert: Equatable {
-                case fetchChargeItemsErrorRetry
-                case fetchChargeItemsErrorOkay
-                case authenticateErrorRetry
-                case authenticateErrorOkay
-                case grantConsent
-                case grantConsentDeny
-                case grantConsentErrorRetry
-                case grantConsentErrorOkay
-                case revokeConsent
-                case revokeConsentCancel
-                case revokeConsentErrorRetry
-                case revokeConsentErrorOkay
-                case deleteChargeItemsErrorRetry
-                case deleteChargeItemsErrorOkay
-                case consentServiceErrorOkay
-                case consentServiceErrorAuthenticate
-                case consentServiceErrorRetry
-            }
-
-            enum Toast: Equatable {}
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.idpCardWall,
-                action: /Action.idpCardWallAction
-            ) {
-                IDPCardWallDomain()
-            }
-
-            Scope(
-                state: /State.chargeItem,
-                action: /Action.chargeItem
-            ) {
-                ChargeItemDomain()
-            }
-        }
+        enum Toast: Equatable {}
     }
 
     enum Action: Equatable {
@@ -161,8 +139,7 @@ struct ChargeItemListDomain: ReducerProtocol {
 
         case select(ChargeItem)
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
         case nothing
 
         case response(Response)
@@ -186,15 +163,13 @@ struct ChargeItemListDomain: ReducerProtocol {
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             return .run { send in
@@ -392,22 +367,7 @@ struct ChargeItemListDomain: ReducerProtocol {
             case .furtherAuthenticationRequired:
                 state.authenticationState = .notAuthenticated
                 state.grantConsentState = .unknown
-                state.destination = .idpCardWall(
-                    .init(
-                        profileId: state.profileId,
-                        can: .init(
-                            isDemoModus: userSession.isDemoMode,
-                            profileId: state.profileId,
-                            can: ""
-                        ),
-                        pin: .init(
-                            isDemoModus: userSession.isDemoMode,
-                            profileId: state.profileId,
-                            pin: "",
-                            transition: .fullScreenCover
-                        )
-                    )
-                )
+                state.destination = .idpCardWall(.init(profileId: state.profileId))
                 return .none
             case let .error(error):
                 state.authenticationState = .error
@@ -509,19 +469,13 @@ struct ChargeItemListDomain: ReducerProtocol {
                 return .none
             }
 
-        case .destination(.presented(.idpCardWallAction(.delegate(.close)))):
+        case .destination(.presented(.idpCardWall(.delegate(.close)))):
             state.destination = nil
             return .send(.fetchChargeItems)
-        case .destination(.presented(.idpCardWallAction)),
+        case .destination(.presented(.idpCardWall)),
              .destination(.presented(.chargeItem)):
             return .none
-
-        case .setNavigation(tag: .none):
-            state.destination = nil
-            return .none
-
-        case .setNavigation,
-             .delegate,
+        case .delegate,
              .destination,
              .nothing:
             return .none
@@ -535,7 +489,7 @@ extension ChargeItemListDomain {
 
         static let store = storeFor(state)
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<ChargeItemListDomain> {
             Store(
                 initialState: state
             ) {
@@ -544,3 +498,5 @@ extension ChargeItemListDomain {
         }
     }
 }
+
+// swiftlint:enable type_body_length

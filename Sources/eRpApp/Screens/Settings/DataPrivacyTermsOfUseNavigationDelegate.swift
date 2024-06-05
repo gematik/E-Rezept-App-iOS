@@ -19,7 +19,7 @@
 import Foundation
 import WebKit
 
-// [REQ:BSI-eRp-ePA:O.Plat_13#2] Delegate disables unused schemes
+// [REQ:BSI-eRp-ePA:O.Plat_10#2] Delegate disables unused schemes
 class DataPrivacyTermsOfUseNavigationDelegate: NSObject, WKNavigationDelegate {
     func webView(_ webView: WKWebView,
                  decidePolicyFor navigationAction: WKNavigationAction,

@@ -20,18 +20,18 @@ import ComposableArchitecture
 import Foundation
 
 extension ChargeItemConsentService.AlertState {
-    var mainDomainErpAlertState: ErpAlertState<MainDomain.Destination.Action.Alert> {
+    var mainDomainErpAlertState: ErpAlertState<MainDomain.Destination.Alert> {
         erpAlertState(
-            actionForOkay: MainDomain.Destination.Action.Alert.consentServiceErrorOkay,
-            actionForRetry: MainDomain.Destination.Action.Alert.consentServiceErrorRetry,
-            actionForLogin: MainDomain.Destination.Action.Alert.consentServiceErrorAuthenticate
+            actionForOkay: MainDomain.Destination.Alert.consentServiceErrorOkay,
+            actionForRetry: MainDomain.Destination.Alert.consentServiceErrorRetry,
+            actionForLogin: MainDomain.Destination.Alert.consentServiceErrorAuthenticate
         )
     }
 }
 
 extension MainDomain {
     enum AlertStates {
-        static func loginNecessaryAlert(for error: LoginHandlerError) -> ErpAlertState<Destination.Action.Alert> {
+        static func loginNecessaryAlert(for error: LoginHandlerError) -> ErpAlertState<Destination.Alert> {
             .init(
                 for: error,
                 title: L10n.errTitleLoginNecessary
@@ -42,7 +42,7 @@ extension MainDomain {
             }
         }
 
-        static func devicePairingInvalid() -> ErpAlertState<Destination.Action.Alert> {
+        static func devicePairingInvalid() -> ErpAlertState<Destination.Alert> {
             .init(
                 title: L10n.errTitlePairingInvalid,
                 actions: {
@@ -57,7 +57,7 @@ extension MainDomain {
             )
         }
 
-        static let grantConsentServiceNotAuthenticated = ErpAlertState<Destination.Action.Alert>(
+        static let grantConsentServiceNotAuthenticated = ErpAlertState<Destination.Alert>(
             title: L10n.mainTxtConsentServiceErrorNotLoggedInTitle,
             actions: {
                 ButtonState(role: .cancel, action: .dismiss) {
@@ -70,7 +70,7 @@ extension MainDomain {
             message: L10n.mainTxtConsentServiceErrorNotLoggedInMessage
         )
 
-        static func grantConsentErrorFor(error: CodedError) -> ErpAlertState<Destination.Action.Alert> {
+        static func grantConsentErrorFor(error: CodedError) -> ErpAlertState<Destination.Alert> {
             .init(
                 for: error,
                 title: L10n.stgTxtChargeItemListErrorAlertGrantConsentTitle
@@ -84,7 +84,7 @@ extension MainDomain {
             }
         }
 
-        static func forcedUpdateAlert() -> ErpAlertState<Destination.Action.Alert> {
+        static func forcedUpdateAlert() -> ErpAlertState<Destination.Alert> {
             .init(
                 title: L10n.erxTxtForcedUpdateAlertTitle,
                 actions: {
@@ -101,7 +101,7 @@ extension MainDomain {
     }
 
     enum ToastStates {
-        typealias Action = MainDomain.Destination.Action.Toast
+        typealias Action = MainDomain.Destination.Toast
 
         static let conflictToast
             = ToastState<Action>(
@@ -113,7 +113,7 @@ extension MainDomain {
                 )
             )
 
-        static let grantConsentSuccess = ToastState<Destination.Action.Toast>(
+        static let grantConsentSuccess = ToastState<Destination.Toast>(
             style: .action(
                 ChargeItemConsentService.ToastState.successfullyGranted.message,
                 .init(action: .routeToChargeItemsList) {

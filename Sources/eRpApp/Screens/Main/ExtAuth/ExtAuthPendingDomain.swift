@@ -22,16 +22,17 @@ import eRpKit
 import Foundation
 import IDP
 
-// swiftlint:disable:next type_body_length
-struct ExtAuthPendingDomain: ReducerProtocol {
+@Reducer
+struct ExtAuthPendingDomain {
     typealias Store = StoreOf<Self>
 
     private enum CancelID {
         case login
     }
 
+    @ObservableState
     struct State: Equatable {
-        @PresentationState var destination: Destination.State?
+        @Presents var destination: Destination.State?
 
         var extAuthState: ExtAuthState
 
@@ -106,22 +107,14 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         }
     }
 
-    struct Destination: ReducerProtocol {
-        enum State: Equatable {
-            case extAuthAlert(ErpAlertState<Action.Alert>)
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        @ReducerCaseEphemeral
+        case extAuthAlert(ErpAlertState<Alert>)
 
-        enum Action: Equatable {
-            case alert(Alert)
-
-            enum Alert: Equatable {
-                case externalLogin(URL)
-                case cancelAllPendingRequests
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            EmptyReducer()
+        enum Alert: Equatable {
+            case externalLogin(URL)
+            case cancelAllPendingRequests
         }
     }
 
@@ -142,63 +135,13 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         )
     }
 
-    struct Environment {
-        let idpSession: IDPSession
-        let schedulers: Schedulers
-        let profileDataStore: ProfileDataStore
-        let extAuthRequestStorage: ExtAuthRequestStorage
-        let currentProfile: AnyPublisher<Profile, LocalStoreError>
-        let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
-
-        func saveProfileWith(
-            insuranceId: String?,
-            insurance: String?,
-            givenName: String?,
-            familyName: String?,
-            overrideInsuranceTypeToPkv: Bool = false
-        ) -> EffectTask<ExtAuthPendingDomain.Action> {
-            .publisher(
-                currentProfile
-                    .first()
-                    .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
-                        profileDataStore.update(profileId: profile.id) { profile in
-                            profile.insuranceId = insuranceId
-                            // This is needed to ensure proper pKV faking.
-                            // It can be removed when the debug option to fake pKV is removed.
-                            if profile.insuranceType == .unknown {
-                                profile.insuranceType = .gKV
-                            }
-                            // This is also temporary code until replaced by a proper implementation
-                            if overrideInsuranceTypeToPkv {
-                                profile.insuranceType = .pKV
-                            }
-                            profile.insurance = insurance
-                            profile.givenName = givenName
-                            profile.familyName = familyName
-                        }
-                        .eraseToAnyPublisher()
-                    }
-                    .map { _ in
-                        ExtAuthPendingDomain.Action.hide
-                    }
-                    .catch { error in
-                        Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
-                    }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
-            )
-        }
-    }
-
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destination()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .registerListener:
             return .publisher(
@@ -224,10 +167,8 @@ struct ExtAuthPendingDomain: ReducerProtocol {
             return .none
         // [REQ:BSI-eRp-ePA:O.Source_1#8] Validate data by parsing url and only allowing predefined variables as String
         case let .externalLogin(url),
-             let .destination(.presented(.alert(.externalLogin(url)))):
+             let .destination(.presented(.extAuthAlert(.externalLogin(url)))):
             let environment = environment
-
-            let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
 
             if let entry = state.extAuthState.entry {
                 state.extAuthState = .extAuthReceived(entry)
@@ -301,12 +242,60 @@ struct ExtAuthPendingDomain: ReducerProtocol {
             state.extAuthState = .empty
             return .none
         case .cancelAllPendingRequests,
-             .destination(.presented(.alert(.cancelAllPendingRequests))):
+             .destination(.presented(.extAuthAlert(.cancelAllPendingRequests))):
             environment.extAuthRequestStorage.reset()
             state.extAuthState = .empty
             return .cancel(id: CancelID.login)
         case .destination:
             return .none
+        }
+    }
+
+    struct Environment {
+        let idpSession: IDPSession
+        let schedulers: Schedulers
+        let profileDataStore: ProfileDataStore
+        let extAuthRequestStorage: ExtAuthRequestStorage
+        let currentProfile: AnyPublisher<Profile, LocalStoreError>
+        let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
+
+        func saveProfileWith(
+            insuranceId: String?,
+            insurance: String?,
+            givenName: String?,
+            familyName: String?,
+            overrideInsuranceTypeToPkv: Bool = false
+        ) -> Effect<ExtAuthPendingDomain.Action> {
+            .publisher(
+                currentProfile
+                    .first()
+                    .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
+                        profileDataStore.update(profileId: profile.id) { profile in
+                            profile.insuranceId = insuranceId
+                            // This is needed to ensure proper pKV faking.
+                            // It can be removed when the debug option to fake pKV is removed.
+                            if profile.insuranceType == .unknown {
+                                profile.insuranceType = .gKV
+                            }
+                            // This is also temporary code until replaced by a proper implementation
+                            if overrideInsuranceTypeToPkv {
+                                profile.insuranceType = .pKV
+                            }
+                            profile.insurance = insurance
+                            profile.givenName = givenName
+                            profile.familyName = familyName
+                        }
+                        .eraseToAnyPublisher()
+                    }
+                    .map { _ in
+                        ExtAuthPendingDomain.Action.hide
+                    }
+                    .catch { error in
+                        Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
+                    }
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         }
     }
 

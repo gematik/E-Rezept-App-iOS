@@ -22,50 +22,63 @@ import eRpKit
 import PhotosUI
 import SwiftUI
 
-struct EditProfilePictureDomain: ReducerProtocol {
+@Reducer
+struct EditProfilePictureDomain {
     typealias Store = StoreOf<Self>
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            case alert(ErpAlertState<Action.Alert>)
-            case cameraPicker
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
+        case cameraPicker
+        case memojiPicker
+        case photoPicker
+
+        enum Alert: Equatable {
             case photoPicker
-        }
-
-        enum Action: Equatable {
-            case alert(Alert)
-
-            enum Alert: Equatable {
-                case photoPicker
-                case cameraPicker
-                case none
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            EmptyReducer()
+            case cameraPicker
+            case memojiPicker
+            case none
         }
     }
 
+    @ObservableState
     struct State: Equatable {
         let profileId: UUID?
-        var color: ProfileColor?
-        var picture: ProfilePicture?
-        var userImageData: Data?
+        var color: ProfileColor = .grey
+        var picture: ProfilePicture = .none
+        var userImageData: Data = .empty
         var isFullScreenPresented = false
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
+
+        init(
+            profileId: UUID? = nil,
+            color: ProfileColor = .grey,
+            picture: ProfilePicture = .none,
+            userImageData: Data = .empty,
+            isFullScreenPresented: Bool = false,
+            destination: Destination.State? = nil
+        ) {
+            self.profileId = profileId
+            self.color = color
+            self.picture = picture
+            self.userImageData = userImageData
+            self.isFullScreenPresented = isFullScreenPresented
+            self.destination = destination
+        }
     }
 
     enum Action: Equatable {
-        case editColor(ProfileColor?)
-        case editPicture(ProfilePicture?)
+        case editColor(ProfileColor)
+        case editPicture(ProfilePicture)
         case delegate(DelegateAction)
         case setUserImageData(Data)
         case resetPictureButtonTapped
         case updateProfileReceived(Result<Bool, UserProfileServiceError>)
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case showImportAlert
+        case destination(PresentationAction<Destination.Action>)
         case nothing
     }
 
@@ -74,25 +87,23 @@ struct EditProfilePictureDomain: ReducerProtocol {
         case failure(UserProfileServiceError)
     }
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .editColor(color):
             state.color = color
             // Check if isNewProfile, because "updateProfile" fails without profileID and then is reversing the change
             if let profileId = state.profileId {
                 return updateProfile(with: profileId) { profile in
-                    profile.color = (color ?? .grey).erxColor
+                    profile.color = color.erxColor
                 }
                 .map(Action.updateProfileReceived)
             }
@@ -102,7 +113,7 @@ struct EditProfilePictureDomain: ReducerProtocol {
             // Check if isNewProfile, because "updateProfile" fails without profileID and then is reversing the change
             if let profileId = state.profileId {
                 return updateProfile(with: profileId) { profile in
-                    profile.image = (picture ?? .none).erxPicture
+                    profile.image = picture.erxPicture
                 }
                 .map(Action.updateProfileReceived)
             }
@@ -113,6 +124,7 @@ struct EditProfilePictureDomain: ReducerProtocol {
             return .send(.delegate(.failure(error)))
         case let .setUserImageData(image):
             state.userImageData = image
+            state.destination = nil
             // Check if isNewProfile, because "updateProfile" fails without profileID and then is reversing the change
             if let profileId = state.profileId {
                 return updateProfile(with: profileId) { profile in
@@ -122,7 +134,7 @@ struct EditProfilePictureDomain: ReducerProtocol {
             }
             return .none
         case .resetPictureButtonTapped:
-            state.picture = nil
+            state.picture = .none
             state.userImageData = .empty
             // Check if isNewProfile, because "updateProfile" fails without profileID and then is reversing the change
             if let profileId = state.profileId {
@@ -136,27 +148,29 @@ struct EditProfilePictureDomain: ReducerProtocol {
         case .destination(.presented(.alert(.cameraPicker))):
             state.destination = .cameraPicker
             return .none
+        case .destination(.presented(.alert(.memojiPicker))):
+            state.destination = .memojiPicker
+            return .none
         case .destination(.presented(.alert(.photoPicker))):
             state.destination = .photoPicker
             return .none
         case .destination(.presented(.alert(.none))):
             state.destination = nil
             return .none
-        case .setNavigation(tag: .alert):
+        case .showImportAlert:
             state.destination = .alert(Self.importAlert)
             return .none
-        case .setNavigation(tag: .none):
+        case .resetNavigation:
             state.destination = nil
             return .none
         case .delegate,
              .nothing,
-             .setNavigation,
              .destination:
             return .none
         }
     }
 
-    static var importAlert: ErpAlertState<EditProfilePictureDomain.Destinations.Action.Alert> = {
+    static var importAlert: ErpAlertState<EditProfilePictureDomain.Destination.Alert> = {
         .init(
             title: L10n.eppTxtAlertHeaderProfile,
             actions: {
@@ -165,6 +179,9 @@ struct EditProfilePictureDomain: ReducerProtocol {
                 }
                 ButtonState(action: .cameraPicker) {
                     .init(L10n.eppBtnAlertCamera)
+                }
+                ButtonState(action: .memojiPicker) {
+                    .init(L10n.eppBtnAlertEmoji)
                 }
                 ButtonState(role: .cancel, action: .none) {
                     .init(L10n.eppBtnAlertAbort)
@@ -179,7 +196,7 @@ extension EditProfilePictureDomain {
     func updateProfile(
         with profileId: UUID,
         mutating: @escaping (inout eRpKit.Profile) -> Void
-    ) -> EffectTask<Result<Bool, UserProfileServiceError>> {
+    ) -> Effect<Result<Bool, UserProfileServiceError>> {
         .publisher(
             userProfileService
                 .update(profileId: profileId, mutating: mutating)

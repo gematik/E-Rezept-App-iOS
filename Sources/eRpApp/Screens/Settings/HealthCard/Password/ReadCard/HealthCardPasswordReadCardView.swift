@@ -23,16 +23,7 @@ import eRpStyleKit
 import SwiftUI
 
 struct HealthCardPasswordReadCardView: View {
-    let store: HealthCardPasswordReadCardDomain.Store
-    @ObservedObject var viewStore: ViewStore<
-        HealthCardPasswordReadCardDomain.State,
-        HealthCardPasswordReadCardDomain.Action
-    >
-
-    init(store: HealthCardPasswordReadCardDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
+    @Perception.Bindable var store: StoreOf<HealthCardPasswordReadCardDomain>
 
     static let height: CGFloat = {
         // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
@@ -40,74 +31,69 @@ struct HealthCardPasswordReadCardView: View {
     }()
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Use overlay to also fill safe area but specify fixed height
+        WithPerceptionTracking {
+            VStack(spacing: 0) {
+                // Use overlay to also fill safe area but specify fixed height
 
-            VStack {}
-                .frame(width: nil, height: Self.height, alignment: .top)
-                .overlay(
-                    HStack {
-                        Image(asset: Asset.CardWall.onScreenEgk)
-                            .scaledToFill()
-                            .frame(width: nil, height: Self.height, alignment: .bottom)
-                    }
+                VStack {}
+                    .frame(width: nil, height: Self.height, alignment: .top)
+                    .overlay(
+                        HStack {
+                            Image(asset: Asset.CardWall.onScreenEgk)
+                                .scaledToFill()
+                                .frame(width: nil, height: Self.height, alignment: .bottom)
+                        }
+                    )
+
+                Line()
+                    .stroke(style: StrokeStyle(lineWidth: 2,
+                                               lineCap: CoreGraphics.CGLineCap.round,
+                                               lineJoin: CoreGraphics.CGLineJoin.round,
+                                               miterLimit: 2,
+                                               dash: [8, 8],
+                                               dashPhase: 0))
+                    .foregroundColor(Color(.opaqueSeparator))
+                    .frame(width: nil, height: 2, alignment: .center)
+
+                Text(L10n.cdwTxtRcPlacement)
+                    .font(.subheadline.bold())
+                    .foregroundColor(Color(.secondaryLabel))
+                    .padding(8)
+                    .padding(.bottom, 16)
+
+                Text(L10n.cdwTxtRcCta)
+                    .font(.title3.bold())
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(16)
+                    .padding()
+
+                Spacer(minLength: 0)
+
+                GreyDivider()
+
+                Button(
+                    action: { store.send(.readCard) },
+                    label: { Text(L10n.stgBtnCardResetRead) }
                 )
+                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: false))
+                .accessibility(identifier: A11y.settings.card.stgBtnCardResetRead)
+                .padding(.horizontal)
+                .padding(.vertical, 8)
 
-            Line()
-                .stroke(style: StrokeStyle(lineWidth: 2,
-                                           lineCap: CoreGraphics.CGLineCap.round,
-                                           lineJoin: CoreGraphics.CGLineJoin.round,
-                                           miterLimit: 2,
-                                           dash: [8, 8],
-                                           dashPhase: 0))
-                .foregroundColor(Color(.opaqueSeparator))
-                .frame(width: nil, height: 2, alignment: .center)
-
-            Text(L10n.cdwTxtRcPlacement)
-                .font(.subheadline.bold())
-                .foregroundColor(Color(.secondaryLabel))
-                .padding(8)
-                .padding(.bottom, 16)
-
-            Text(L10n.cdwTxtRcCta)
-                .font(.title3.bold())
-                .multilineTextAlignment(.center)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(16)
-                .padding()
-
-            Spacer(minLength: 0)
-
-            GreyDivider()
-
-            Button(
-                action: { viewStore.send(.readCard) },
-                label: { Text(L10n.stgBtnCardResetRead) }
-            )
-            .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: false))
-            .accessibility(identifier: A11y.settings.card.stgBtnCardResetRead)
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-
-            Button(
-                action: { viewStore.send(.backButtonTapped) },
-                label: { Label(title: { Text(L10n.cdwBtnRcBack) }, icon: {}) }
-            )
-            .buttonStyle(.secondary)
-            .padding(.horizontal)
+                Button(
+                    action: { store.send(.backButtonTapped) },
+                    label: { Label(title: { Text(L10n.cdwBtnRcBack) }, icon: {}) }
+                )
+                .buttonStyle(.secondary)
+                .padding(.horizontal)
+            }
+            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+            .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
+            .navigationBarHidden(true)
+            .statusBar(hidden: true)
         }
-        .alert(
-            store.scope(
-                state: \.$destination,
-                action: HealthCardPasswordReadCardDomain.Action.destination
-            ),
-            state: /HealthCardPasswordReadCardDomain.Destinations.State.alert,
-            action: HealthCardPasswordReadCardDomain.Destinations.Action.alert
-        )
-        .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
-        .navigationBarHidden(true)
-        .statusBar(hidden: true)
     }
 
     struct Line: Shape {

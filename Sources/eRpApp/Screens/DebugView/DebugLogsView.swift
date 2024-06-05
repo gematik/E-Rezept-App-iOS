@@ -20,11 +20,12 @@ import Combine
 import ComposableArchitecture
 import eRpStyleKit
 import HTTPClient
+import Perception
 import SwiftUI
 
 #if ENABLE_DEBUG_VIEW
 struct DebugLogsView: View {
-    let store: DebugLogDomain.Store
+    @Perception.Bindable var store: StoreOf<DebugLogDomain>
     @State var showShareSheet = false
 
     func background(for log: DebugLiveLogger.RequestLog) -> Color {
@@ -45,54 +46,33 @@ struct DebugLogsView: View {
         }
     }
 
-    func sortBinding(of viewStore: ViewStore<DebugLogDomain.State, DebugLogDomain.Action>)
-        -> Binding<DebugLogDomain.State.Sort> {
-        viewStore
-            .binding(get: \.sort, send: DebugLogDomain.Action.sort(by:))
-            .animation()
-    }
-
-    func filterBinding(of viewStore: ViewStore<DebugLogDomain.State, DebugLogDomain.Action>)
-        -> Binding<String> {
-        viewStore
-            .binding(get: \.filter, send: DebugLogDomain.Action.setFilter)
-            .animation()
-    }
-
     var body: some View {
-        WithViewStore(store) { $0 } content: { viewStore in
+        WithPerceptionTracking {
             List {
                 Section(header: Text("Sort/Filter")) {
-                    Toggle(
-                        "Logging enabled",
-                        isOn: viewStore.binding(
-                            get: \.isLoggingEnabled,
-                            send: DebugLogDomain.Action.toggleLogging(isEnabled:)
-                        )
-                    )
+                    Toggle("Logging enabled", isOn: $store.isLoggingEnabled)
 
-                    TextField("Filter Domain", text: filterBinding(of: viewStore))
-                    Picker("Sortierung",
-                           selection: sortBinding(of: viewStore)) {
+                    TextField("Filter Domain", text: $store.filter)
+                    Picker("Sortierung", selection: $store.sort) {
                         ForEach(DebugLogDomain.State.Sort.allCases, id: \.id) { sortMethod in
                             Text(sortMethod.rawValue).tag(sortMethod)
                         }
                     }.pickerStyle(SegmentedPickerStyle())
                 }
                 Section(header: Text("Logs")) {
-                    ForEach(viewStore.logs) { log in
+                    ForEach(store.logs) { log in
                         NavigationLink(destination: DebugLogView(log: log)) {
                             LogHeader(log: log)
                         }
                         .listRowBackground(self.background(for: log))
                     }
                 }
-                .sheet(isPresented: $showShareSheet) {
-                    ShareViewController(itemsToShare: [DebugLiveLogger.shared.serializedHARFile()])
-                }
+//                .sheet(isPresented: $showShareSheet) {
+//                    ShareViewController(itemsToShare: [DebugLiveLogger.shared.serializedHARFile()])
+//                }
             }
             .onAppear {
-                viewStore.send(.loadLogs)
+                store.send(.loadLogs)
             }
         }
         .navigationTitle("Logs")

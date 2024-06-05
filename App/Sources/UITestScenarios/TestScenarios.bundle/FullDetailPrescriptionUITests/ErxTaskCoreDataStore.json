@@ -117,7 +117,7 @@
 						}
 					},
 					"medicationDispenses": [],
-					"expiresOn": "2024-02-02",
+					"expiresOn": "{{DATE:+5D}}",
 					"accessCode": "258309b44598f4e2a10d9274c9336a4e715233ba1736fd848f542d5894897073",
 					"communications": [],
 					"identifier": "160.000.006.405.283.05",

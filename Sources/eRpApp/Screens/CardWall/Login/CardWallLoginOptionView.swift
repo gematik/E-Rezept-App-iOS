@@ -22,22 +22,10 @@ import SwiftUI
 import UIKit
 
 struct CardWallLoginOptionView: View {
-    let store: StoreOf<CardWallLoginOptionDomain>
-
-    struct ViewState: Equatable {
-        let destinationTag: CardWallLoginOptionDomain.Destinations.State.Tag?
-        let isDemoModus: Bool
-        var selectedLoginOption = LoginOption.notSelected
-
-        init(state: CardWallLoginOptionDomain.State) {
-            destinationTag = state.destination?.tag
-            isDemoModus = state.isDemoModus
-            selectedLoginOption = state.selectedLoginOption
-        }
-    }
+    @Perception.Bindable var store: StoreOf<CardWallLoginOptionDomain>
 
     var body: some View {
-        WithViewStore(store, observe: ViewState.init) { viewStore in
+        WithPerceptionTracking {
             VStack(alignment: .leading) {
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading) {
@@ -54,11 +42,7 @@ struct CardWallLoginOptionView: View {
                         description: L10n.cdwTxtBiometryOptionBiometryDescription,
                         a11y: A11y.cardWall.loginOption.cdwTxtLoginOptionBiometry,
                         systemImage: SFSymbolName.faceId,
-                        isOn: viewStore.binding(
-                            get: { $0.selectedLoginOption.isWithBiometry },
-                            send: .select(option: .withBiometry)
-                        )
-                        .animation()
+                        isOn: $store.selectedLoginOption.isWithBiometry
                     )
                     .padding(.horizontal)
                     .border(Colors.systemGray5, cornerRadius: 16)
@@ -68,11 +52,7 @@ struct CardWallLoginOptionView: View {
                         description: L10n.cdwTxtBiometryOptionNoneDescription,
                         a11y: A11y.cardWall.loginOption.cdwTxtLoginOptionWithoutBiometry,
                         systemImage: SFSymbolName.rollback,
-                        isOn: viewStore.binding(
-                            get: { $0.selectedLoginOption.isWithoutBiometry },
-                            send: .select(option: .withoutBiometry)
-                        )
-                        .animation()
+                        isOn: $store.selectedLoginOption.isWithoutBiometry
                     )
                     .padding(.horizontal)
                     .border(Colors.systemGray5, cornerRadius: 16)
@@ -81,11 +61,8 @@ struct CardWallLoginOptionView: View {
                         .frame(width: 0, height: 0, alignment: .center)
                         .hidden()
                         .accessibility(hidden: true)
-                        .alert(
-                            store.scope(state: \.$destination, action: CardWallLoginOptionDomain.Action.destination),
-                            state: /CardWallLoginOptionDomain.Destinations.State.alert,
-                            action: CardWallLoginOptionDomain.Destinations.Action.alert
-                        )
+                        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+
                     PrivacyWarningViewContainer(store: store)
                 }
                 .padding()
@@ -96,30 +73,29 @@ struct CardWallLoginOptionView: View {
 
                 PrimaryTextButton(text: L10n.cdwBtnBiometryContinue,
                                   a11y: A11y.cardWall.loginOption.cdwBtnLoginOptionContinue,
-                                  isEnabled: viewStore.state.selectedLoginOption.hasSelection) {
-                    viewStore.send(.advance)
+                                  isEnabled: store.state.selectedLoginOption.hasSelection) {
+                    store.send(.advance)
                 }
                 .accessibility(label: Text(L10n.cdwBtnBiometryContinueLabel))
                 .padding([.bottom, .leading, .trailing])
 
-                NavigationLinkStore(
-                    store.scope(state: \.$destination, action: CardWallLoginOptionDomain.Action.destination),
-                    state: /CardWallLoginOptionDomain.Destinations.State.readcard,
-                    action: CardWallLoginOptionDomain.Destinations.Action.readcardAction(action:),
-                    onTap: { viewStore.send(.setNavigation(tag: .readcard)) },
-                    destination: CardWallReadCardView.init(store:),
-                    label: {}
-                )
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.readCard, action: \.destination.readCard)
+                ) { store in
+                    CardWallReadCardView(store: store)
+                } label: {
+                    EmptyView()
+                }
                 .hidden()
                 .accessibility(hidden: true)
             }
-            .demoBanner(isPresented: viewStore.isDemoModus) {
+            .demoBanner(isPresented: store.isDemoModus) {
                 Text(L10n.cdwTxtBiometryDemoModeInfo)
             }
             .navigationBarTitle(L10n.cdwTxtBiometryTitle, displayMode: .inline)
             .navigationBarItems(
                 trailing: NavigationBarCloseItem {
-                    viewStore.send(.delegate(.close))
+                    store.send(.delegate(.close))
                 }
                 .accessibility(identifier: A11y.cardWall.loginOption.cdwBtnLoginOptionCancel)
                 .accessibility(label: Text(L10n.cdwBtnBiometryCancelLabel))
@@ -130,31 +106,23 @@ struct CardWallLoginOptionView: View {
     // [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
     // [REQ:BSI-eRp-ePA:O.Resi_1#3] View containing information regarding the login options.
     struct PrivacyWarningViewContainer: View {
-        let store: StoreOf<CardWallLoginOptionDomain>
-
-        struct ViewState: Equatable {
-            let destinationTag: CardWallLoginOptionDomain.Destinations.State.Tag?
-
-            init(state: CardWallLoginOptionDomain.State) {
-                destinationTag = state.destination?.tag
-            }
-        }
+        @Perception.Bindable var store: StoreOf<CardWallLoginOptionDomain>
 
         var body: some View {
-            WithViewStore(store, observe: ViewState.init) { viewStore in
+            WithPerceptionTracking {
                 VStack(alignment: .leading) {
                     Rectangle()
                         .frame(width: 0, height: 0, alignment: .center)
                         .fullScreenCover(isPresented: Binding<Bool>(
-                            get: { viewStore.state.destinationTag == .warning },
+                            get: { store.destination == .warning },
                             set: { show in
                                 if !show {
-                                    viewStore.send(.setNavigation(tag: nil))
+                                    store.send(.resetNavigation)
                                 }
                             }
                         )) {
                             CardWallLoginOptionView.PrivacyWarningViewContainer.PrivacyWarningView {
-                                viewStore.send(.acceptSecurityWarning)
+                                store.send(.acceptSecurityWarning)
                             }
                         }
                         .hidden()

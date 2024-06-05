@@ -24,9 +24,8 @@ import Foundation
 import HTTPClient
 import IDP
 
-struct PrescriptionListDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct PrescriptionListDomain {
     enum CancelID: CaseIterable, Hashable {
         case loadLocalPrescriptionId
         case fetchPrescriptionId
@@ -35,11 +34,42 @@ struct PrescriptionListDomain: ReducerProtocol {
         case activeUserProfile
     }
 
+    @ObservableState
     struct State: Equatable {
-        var loadingState: LoadingState<[Prescription], PrescriptionRepositoryError> =
-            .idle
-        var prescriptions: [Prescription] = []
+        var loadingState: LoadingState<[Prescription], PrescriptionRepositoryError>
+        var prescriptions: [Prescription] {
+            didSet {
+                openPrescriptions = prescriptions.filter { !$0.isArchived }
+                hasArchivedPrescriptions = openPrescriptions.count != prescriptions.count
+            }
+        }
+
+        private(set) var openPrescriptions: [Prescription] = []
+        private(set) var hasArchivedPrescriptions = false
+
         var profile: UserProfile?
+
+        var showError: Bool {
+            loadingState.error != nil
+        }
+
+        var isConnected: Bool {
+            profile?.connectionStatus == .connected
+        }
+
+        init(
+            loadingState: LoadingState<[Prescription], PrescriptionRepositoryError> = .idle,
+            prescriptions: [Prescription] = [],
+            hasArchivedPrescriptions _: Bool = false,
+            profile: UserProfile? = nil
+        ) {
+            self.loadingState = loadingState
+            self.prescriptions = prescriptions
+            let openPrescriptions = prescriptions.filter { !$0.isArchived }
+            self.openPrescriptions = openPrescriptions
+            hasArchivedPrescriptions = openPrescriptions.count != prescriptions.count
+            self.profile = profile
+        }
     }
 
     enum Action: Equatable {
@@ -100,23 +130,12 @@ struct PrescriptionListDomain: ReducerProtocol {
         )
     }
 
-    struct Environment {
-        var schedulers: Schedulers
-        var serviceLocator: ServiceLocator
-        var userSession: UserSession
-        var userProfileService: UserProfileService
-        var prescriptionRepository: PrescriptionRepository
-        var locale: String?
-    }
-
-    init() {}
-
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
     }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .registerSelectedProfileIDListener:
             return .publisher(
@@ -130,8 +149,8 @@ struct PrescriptionListDomain: ReducerProtocol {
             return .cancel(id: CancelID.selectedProfileId)
         case .response(.selectedProfileIDReceived):
             return .concatenate(
-                EffectTask.send(.loadLocalPrescriptions),
-                EffectTask.send(.loadRemotePrescriptionsAndSave)
+                Effect.send(.loadLocalPrescriptions),
+                Effect.send(.loadRemotePrescriptionsAndSave)
             )
         case .unregisterActiveUserProfileListener:
             return .cancel(id: CancelID.activeUserProfile)
@@ -193,77 +212,86 @@ struct PrescriptionListDomain: ReducerProtocol {
     }
 }
 
-extension PrescriptionListDomain.Environment {
-    typealias Action = PrescriptionListDomain.Action
+extension PrescriptionListDomain {
+    struct Environment {
+        var schedulers: Schedulers
+        var serviceLocator: ServiceLocator
+        var userSession: UserSession
+        var userProfileService: UserProfileService
+        var prescriptionRepository: PrescriptionRepository
+        var locale: String?
 
-    func cardWall() -> AnyPublisher<CardWallIntroductionDomain.State, Never> {
-        let hideCardWallIntro = userSession.localUserStore.hideCardWallIntro
-        let canAvailable = userSession.secureUserStore.can
+        typealias Action = PrescriptionListDomain.Action
 
-        return canAvailable
-            .combineLatest(hideCardWallIntro)
-            .first()
-            .map { _, _ in
-                CardWallIntroductionDomain.State(
-                    isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
-                    profileId: userSession.profileId
-                )
-            }
-            .eraseToAnyPublisher()
-    }
+        func cardWall() -> AnyPublisher<CardWallIntroductionDomain.State, Never> {
+            let hideCardWallIntro = userSession.localUserStore.hideCardWallIntro
+            let canAvailable = userSession.secureUserStore.can
 
-    /// "Silently" try to load ErxTasks if preconditions are met
-    func loadRemoteTasksAndSave() -> EffectTask<PrescriptionListDomain.Action> {
-        .publisher(
-            prescriptionRepository
-                .silentLoadRemote(for: locale)
-                .map { status -> PrescriptionListDomain.Action in
-                    switch status {
-                    case let .prescriptions(value):
-                        return .response(.loadRemotePrescriptionsAndSaveReceived(.value(value)))
-                    case .notAuthenticated,
-                         .authenticationRequired:
-                        return .response(.loadRemotePrescriptionsAndSaveReceived(.value([])))
-                    }
+            return canAvailable
+                .combineLatest(hideCardWallIntro)
+                .first()
+                .map { _, _ in
+                    CardWallIntroductionDomain.State(
+                        isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
+                        profileId: userSession.profileId
+                    )
                 }
-                .catch { _ in Just(.response(.loadRemotePrescriptionsAndSaveReceived(.idle))) }
-                .receive(on: schedulers.main.animation())
-                .eraseToAnyPublisher
-        )
-    }
+                .eraseToAnyPublisher()
+        }
 
-    /// Load ErxTasks if already logged in else show CardWall or error
-    func refreshOrShowCardWall() -> EffectTask<PrescriptionListDomain.Action> {
-        .publisher(
-            prescriptionRepository
-                .forcedLoadRemote(for: locale)
-                .catchUnauthorizedToShowCardwall()
-                .flatMap { status -> AnyPublisher<PrescriptionListDomain.Action, PrescriptionRepositoryError> in
-                    switch status {
-                    case let .prescriptions(value):
-                        return Just(.response(.loadRemotePrescriptionsAndSaveReceived(.value(value))))
-                            .setFailureType(to: PrescriptionRepositoryError.self)
-                            .eraseToAnyPublisher()
-                    case .notAuthenticated,
-                         .authenticationRequired:
-                        return cardWall()
-                            .receive(on: schedulers.main)
-                            .setFailureType(to: PrescriptionRepositoryError.self)
-                            .map { .response(.showCardWallReceived($0)) }
+        /// "Silently" try to load ErxTasks if preconditions are met
+        func loadRemoteTasksAndSave() -> Effect<PrescriptionListDomain.Action> {
+            .publisher(
+                prescriptionRepository
+                    .silentLoadRemote(for: locale)
+                    .map { status -> PrescriptionListDomain.Action in
+                        switch status {
+                        case let .prescriptions(value):
+                            return .response(.loadRemotePrescriptionsAndSaveReceived(.value(value)))
+                        case .notAuthenticated,
+                             .authenticationRequired:
+                            return .response(.loadRemotePrescriptionsAndSaveReceived(.value([])))
+                        }
+                    }
+                    .catch { _ in Just(.response(.loadRemotePrescriptionsAndSaveReceived(.idle))) }
+                    .receive(on: schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
+        }
+
+        /// Load ErxTasks if already logged in else show CardWall or error
+        func refreshOrShowCardWall() -> Effect<PrescriptionListDomain.Action> {
+            .publisher(
+                prescriptionRepository
+                    .forcedLoadRemote(for: locale)
+                    .catchUnauthorizedToShowCardwall()
+                    .flatMap { status -> AnyPublisher<PrescriptionListDomain.Action, PrescriptionRepositoryError> in
+                        switch status {
+                        case let .prescriptions(value):
+                            return Just(.response(.loadRemotePrescriptionsAndSaveReceived(.value(value))))
+                                .setFailureType(to: PrescriptionRepositoryError.self)
+                                .eraseToAnyPublisher()
+                        case .notAuthenticated,
+                             .authenticationRequired:
+                            return cardWall()
+                                .receive(on: schedulers.main)
+                                .setFailureType(to: PrescriptionRepositoryError.self)
+                                .map { .response(.showCardWallReceived($0)) }
+                                .eraseToAnyPublisher()
+                        }
+                    }
+                    .catch { error in
+                        if case let PrescriptionRepositoryError.loginHandler(error) = error {
+                            return Just(Action.response(.errorReceived(error)))
+                                .eraseToAnyPublisher()
+                        }
+                        return Just(Action.response(.loadRemotePrescriptionsAndSaveReceived(.error(error))))
                             .eraseToAnyPublisher()
                     }
-                }
-                .catch { error in
-                    if case let PrescriptionRepositoryError.loginHandler(error) = error {
-                        return Just(Action.response(.errorReceived(error)))
-                            .eraseToAnyPublisher()
-                    }
-                    return Just(Action.response(.loadRemotePrescriptionsAndSaveReceived(.error(error))))
-                        .eraseToAnyPublisher()
-                }
-                .receive(on: schedulers.main)
-                .eraseToAnyPublisher
-        )
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
+        }
     }
 }
 
@@ -310,7 +338,7 @@ extension PrescriptionListDomain {
             PrescriptionListDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<PrescriptionListDomain> {
             Store(
                 initialState: state
             ) {

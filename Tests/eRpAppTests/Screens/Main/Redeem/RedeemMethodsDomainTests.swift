@@ -121,7 +121,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
         )
 
         // when
-        await store.send(.setNavigation(tag: .matrixCode)) { sut in
+        await store.send(.showMatrixCodeTapped) { sut in
             // then
             sut.destination = .matrixCode(expectedState)
         }
@@ -135,7 +135,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
         )
 
         // when
-        await store.send(.setNavigation(tag: .pharmacySearch)) { sut in
+        await store.send(.showPharmacySearchTapped) { sut in
             // then
             sut.destination = .pharmacySearch(expectedState)
         }

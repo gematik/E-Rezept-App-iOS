@@ -40,7 +40,7 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacySearchStartView_WithoutLocalPharmacies() {
         let sut = NavigationView {
             PharmacySearchView(
-                store: PharmacySearchDomain.Store(
+                store: StoreOf<PharmacySearchDomain>(
                     initialState: PharmacySearchDomainTests.TestData.stateWithStartView
                 ) {
                     EmptyReducer()
@@ -71,7 +71,7 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
         )
         let sut = NavigationView {
             PharmacySearchView(
-                store: PharmacySearchDomain.Store(initialState: state) {
+                store: StoreOf<PharmacySearchDomain>(initialState: state) {
                     EmptyReducer()
                 }
             )
@@ -140,6 +140,21 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             },
 
             isRedeemRecipe: false
+        )
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPharmacySearch_mapSearch_ClusterView() {
+        let sut = PharmacySearchMapView.ClusterView(
+            store: .init(
+                initialState: .init(
+                    clusterPharmacies: PharmacyLocationViewModel.Fixtures.pharmacies
+                )
+            ) {
+                EmptyReducer()
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())

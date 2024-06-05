@@ -16,24 +16,89 @@
 //  
 //
 
+import CasePaths
 import Combine
 import ComposableArchitecture
 import eRpKit
 import Foundation
 import IDP
 
-struct MainDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+// swiftlint:disable type_body_length file_length
+@Reducer
+struct MainDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = main_createProfile
+        case createProfile(CreateProfileDomain)
+        // sourcery: AnalyticsScreen = main_editProfilePicture
+        case editProfilePicture(EditProfilePictureDomain)
+        // sourcery: AnalyticsScreen = main_editName
+        case editProfileName(EditProfileNameDomain)
+        // sourcery: AnalyticsScreen = main_scanner
+        case scanner(ScannerDomain)
+        // sourcery: AnalyticsScreen = main_deviceSecurity
+        case deviceSecurity(DeviceSecurityDomain)
+        // sourcery: AnalyticsScreen = cardWall
+        case cardWall(CardWallIntroductionDomain)
+        // sourcery: AnalyticsScreen = main_prescriptionArchive
+        case prescriptionArchive(PrescriptionArchiveDomain)
+        // sourcery: AnalyticsScreen = prescriptionDetail
+        case prescriptionDetail(PrescriptionDetailDomain)
+        // sourcery: AnalyticsScreen = redeem_methodSelection
+        case redeemMethods(RedeemMethodsDomain)
+        // sourcery: AnalyticsScreen = main_medicationReminder
+        case medicationReminder(MedicationReminderOneDaySummaryDomain)
+        // sourcery: AnalyticsScreen = main_welcomeDrawer
+        case welcomeDrawer
+        // sourcery: AnalyticsScreen = main_consentDrawer
+        case grantChargeItemConsentDrawer
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = alert
+        case alert(ErpAlertState<Alert>)
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = alert
+        case toast(ToastState<Toast>)
 
+        enum Alert {
+            case dismiss
+            case cardWall
+            case retryGrantChargeItemConsent
+            case dismissGrantChargeItemConsent
+            case consentServiceErrorOkay
+            case consentServiceErrorAuthenticate
+            case consentServiceErrorRetry
+            case goToAppStore
+        }
+
+        enum Toast {
+            case routeToChargeItemsList
+        }
+    }
+
+    @ObservableState
     struct State: Equatable {
         var isDemoMode = false
-        @PresentationState var destination: Destination.State?
+        @Presents var destination: Destination.State?
 
         // Child domain states
         var prescriptionListState: PrescriptionListDomain.State
         var extAuthPendingState = ExtAuthPendingDomain.State()
         var horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State
         var updateChecked = false
+
+        init(isDemoMode: Bool = false,
+             destination: Destination.State? = nil,
+             prescriptionListState: PrescriptionListDomain.State,
+             extAuthPendingState: ExtAuthPendingDomain.State = ExtAuthPendingDomain.State(),
+             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State,
+             updateChecked: Bool = false) {
+            self.isDemoMode = isDemoMode
+            self.destination = destination
+            self.prescriptionListState = prescriptionListState
+            self.extAuthPendingState = extAuthPendingState
+            self.horizontalProfileSelectionState = horizontalProfileSelectionState
+            self.updateChecked = updateChecked
+        }
     }
 
     enum Action: Equatable {
@@ -55,7 +120,8 @@ struct MainDomain: ReducerProtocol {
         case grantChargeItemsConsentDismiss
         case refreshPrescription
         case destination(PresentationAction<Destination.Action>)
-        case setNavigation(tag: Destination.State.Tag?)
+        case setNavigation(tag: Bool?)
+        case startCardWall
         case response(Response)
 
         // Child Domain Actions
@@ -114,27 +180,23 @@ struct MainDomain: ReducerProtocol {
         )
     }
 
-    var body: some ReducerProtocol<State, Action> {
-        Scope(state: \State.prescriptionListState, action: /Action.prescriptionList(action:)) {
+    var body: some Reducer<State, Action> {
+        Scope(state: \State.prescriptionListState, action: \.prescriptionList) {
             PrescriptionListDomain()
         }
-        Scope(state: \State.horizontalProfileSelectionState, action: /Action.horizontalProfileSelection(action:)) {
+        Scope(state: \State.horizontalProfileSelectionState, action: \.horizontalProfileSelection) {
             HorizontalProfileSelectionDomain()
         }
-        Scope(state: \State.extAuthPendingState, action: /Action.extAuthPending(action:)) {
+        Scope(state: \State.extAuthPendingState, action: \.extAuthPending) {
             ExtAuthPendingDomain()
         }
 
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destination()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
-}
 
-extension MainDomain {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .turnOffDemoMode:
             return .run { _ in
@@ -146,7 +208,7 @@ extension MainDomain {
                     profileId: profile.id,
                     color: profile.color,
                     picture: profile.image,
-                    userImageData: profile.userImageData,
+                    userImageData: profile.userImageData ?? .empty,
                     isFullScreenPresented: false
                 )
             )
@@ -175,6 +237,7 @@ extension MainDomain {
             }
             return .none
         case .checkForForcedUpdates:
+            // [REQ:BSI-eRp-ePA:O.Arch_10#3] The actual business logic for the update check
             return .run(operation: { [updateChecked = state.updateChecked] send in
                 @Dependency(\.userSession.updateChecker) var updateChecker
 
@@ -228,7 +291,7 @@ extension MainDomain {
         case let .showMedicationReminder(scheduleEntries):
             state.destination = .medicationReminder(.init(entries: scheduleEntries))
             return .none
-        case .setNavigation(tag: .cardWall),
+        case .startCardWall,
              .destination(.presented(.alert(.cardWall))):
             environment.userSession.idpSession.invalidateAccessToken()
             state.destination = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
@@ -281,8 +344,8 @@ extension MainDomain {
             state.destination = nil
             return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
         case .destination(.presented(.redeemMethods(action: .delegate(.close)))),
-             .destination(.presented(.prescriptionArchiveAction(action: .delegate(.close)))),
-             .destination(.presented(.prescriptionDetailAction(action: .delegate(.close)))):
+             .destination(.presented(.prescriptionArchive(action: .delegate(.close)))),
+             .destination(.presented(.prescriptionDetail(action: .delegate(.close)))):
             state.destination = nil
             return .none
         case let .horizontalProfileSelection(action: .response(.loadReceived(.failure(error)))):
@@ -374,14 +437,16 @@ extension MainDomain {
             return .none
 
         case .refreshPrescription:
-            return EffectTask.send(.prescriptionList(action: .refresh))
+            return Effect.send(.prescriptionList(action: .refresh))
         case .horizontalProfileSelection(action: .showAddProfileView):
             state.destination = .createProfile(CreateProfileDomain.State())
             return .none
         case let .horizontalProfileSelection(action: .showEditProfileNameView(profileId, profileName)):
-            state.destination = .editName(EditProfileNameDomain.State(profileName: profileName, profileId: profileId))
+            state
+                .destination = .editProfileName(EditProfileNameDomain
+                    .State(profileName: profileName, profileId: profileId))
             return .none
-        case let .destination(.presented(.createProfileAction(action: .delegate(delegateAction)))):
+        case let .destination(.presented(.createProfile(action: .delegate(delegateAction)))):
             switch delegateAction {
             case .close:
                 state.destination = nil
@@ -396,7 +461,7 @@ extension MainDomain {
                 )
                 return .none
             }
-        case let .destination(.presented(.editProfileNameAction(action: .delegate(delegateAction)))):
+        case let .destination(.presented(.editProfileName(action: .delegate(delegateAction)))):
             switch delegateAction {
             case .close:
                 state.destination = nil
@@ -411,7 +476,7 @@ extension MainDomain {
                 )
                 return .none
             }
-        case let .destination(.presented(.editProfilePictureAction(action: .delegate(delegateAction)))):
+        case let .destination(.presented(.editProfilePicture(action: .delegate(delegateAction)))):
             switch delegateAction {
             case .close:
                 state.destination = nil
@@ -432,7 +497,7 @@ extension MainDomain {
                 await environment.router.routeTo(.settings(.unlockCard))
             }
 
-        case let .destination(.presented(.prescriptionDetailAction(action: .delegate(.redeem(task))))):
+        case let .destination(.presented(.prescriptionDetail(action: .delegate(.redeem(task))))):
             state.destination = .redeemMethods(
                 RedeemMethodsDomain
                     .State(erxTasks: [task], destination: .pharmacySearch(.init(erxTasks: [task])))
@@ -449,3 +514,5 @@ extension MainDomain {
         }
     }
 }
+
+// swiftlint:enable type_body_length

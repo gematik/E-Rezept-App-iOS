@@ -32,7 +32,7 @@ final class CardWallExtAuthConfirmationViewSnapshotTests: ERPSnapshotTestCase {
         diffTool = "open"
     }
 
-    func store(for state: CardWallExtAuthConfirmationDomain.State) -> CardWallExtAuthConfirmationDomain.Store {
+    func store(for state: CardWallExtAuthConfirmationDomain.State) -> StoreOf<CardWallExtAuthConfirmationDomain> {
         .init(initialState: state) {
             EmptyReducer()
         }

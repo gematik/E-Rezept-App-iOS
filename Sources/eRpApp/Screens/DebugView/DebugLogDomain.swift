@@ -22,11 +22,11 @@ import Foundation
 import HTTPClient
 
 #if ENABLE_DEBUG_VIEW
-struct DebugLogDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct DebugLogDomain {
     enum Token: CaseIterable, Hashable {}
 
+    @ObservableState
     struct State: Equatable {
         var isLoggingEnabled = false
 
@@ -71,38 +71,36 @@ struct DebugLogDomain: ReducerProtocol {
         }
     }
 
-    enum Action: Equatable {
+    enum Action: BindableAction, Equatable {
+        case binding(BindingAction<State>)
         case loadLogs
-        // swiftlint:disable:next identifier_name
-        case sort(by: State.Sort)
-
-        case setFilter(String)
-        case toggleLogging(isEnabled: Bool)
     }
 
     let loggingStore: DebugLiveLogger
 
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .loadLogs:
             state.updateLogs(from: loggingStore)
             state.isLoggingEnabled = loggingStore.isLoggingEnabled
             return .none
-        case let .sort(by: property):
-            state.sort = property
-
+        case .binding(\.sort):
             state.updateLogs(from: loggingStore)
             return .none
-        case let .setFilter(filter):
-            state.filter = filter
-
+        case .binding(\.filter):
             state.updateLogs(from: loggingStore)
             return .none
-        case let .toggleLogging(isEnabled: isEnabled):
-            state.isLoggingEnabled = isEnabled
-            loggingStore.isLoggingEnabled = isEnabled
+        case .binding(\.isLoggingEnabled):
+            loggingStore.isLoggingEnabled = state.isLoggingEnabled
+            return .none
+        case .binding:
             return .none
         }
+    }
+
+    var body: some ReducerOf<DebugLogDomain> {
+        BindingReducer()
+        Reduce(self.core)
     }
 }
 

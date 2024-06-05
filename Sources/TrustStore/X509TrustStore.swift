@@ -107,7 +107,7 @@ extension X509TrustStore {
     ///   the responses itself.
     ///
     /// [REQ:gemSpec_Krypt:A_21218]
-    /// [REQ:gemSpec_eRp_Fdv:A_20032-01]
+    /// [REQ:gemSpec_eRp_FdV:A_20032-01]
     ///
     /// - Note: This function assumes that up-to-dateness of the responses itself has already been checked.
     ///

@@ -204,4 +204,55 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
+
+    func testPrescriptionDetail_ValidityView() {
+        let acceptBegin = "25.03.2024"
+        let acceptEnd = "25.03.2024"
+        let expiresBegin = "26.03.2024"
+        let expiresEnd = "24.06.2024"
+
+        let sut = NavigationView {
+            PrescriptionDetailView.HeaderView.PrescriptionValidityView(
+                store: Store(initialState: .init(
+                    acceptBeginDisplayDate: acceptBegin,
+                    acceptEndDisplayDate: acceptEnd,
+                    expiresBeginDisplayDate: expiresBegin,
+                    expiresEndDisplayDate: expiresEnd,
+                    isMVO: false
+                )) {
+                    EmptyReducer()
+                }
+            )
+        }
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_MVO() {
+        let prescription = Prescription.Dummies.prescriptionMVO
+        let oneDay: TimeInterval = 60 * 60 * 24
+        let uiDateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
+
+        let sut = NavigationView {
+            PrescriptionDetailView.HeaderView.PrescriptionValidityView(
+                store: Store(initialState: .init(
+                    acceptBeginDisplayDate: uiDateFormatter
+                        .date(prescription.medicationRequest.multiplePrescription?.startPeriod),
+                    acceptEndDisplayDate: uiDateFormatter.date(
+                        prescription.medicationRequest.multiplePrescription?.endPeriod,
+                        advancedBy: -oneDay
+                    ),
+                    expiresBeginDisplayDate: nil,
+                    expiresEndDisplayDate: nil,
+                    isMVO: true
+                )) {
+                    EmptyReducer()
+                }
+            )
+        }
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
 }

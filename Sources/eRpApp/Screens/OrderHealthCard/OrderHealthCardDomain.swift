@@ -21,39 +21,21 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
-struct OrderHealthCardDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct OrderHealthCardDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = contactInsuranceCompany_selectReason
+        case serviceInquiry(OrderHealthCardInquiryDomain)
+    }
 
+    @ObservableState
     struct State: Equatable {
-        var insuranceCompanies = [HealthInsuranceCompany]()
-        var insuranceCompany: HealthInsuranceCompany?
-        var serviceInquiry: ServiceInquiry?
+        var insuranceCompanies: [HealthInsuranceCompany] = []
+        var filteredInsuranceCompanies: [HealthInsuranceCompany] = []
         var searchText: String = ""
-        var searchHealthInsurance = [HealthInsuranceCompany]()
-        var healthInsuranceCompanyId: UUID?
-        var serviceInquiryId: Int = -1
 
-        var hasContactInformation: Bool {
-            insuranceCompany?.hasContactInformation == true
-        }
-
-        var isPinServiceAndContact: Bool {
-            if serviceInquiry == .pin, insuranceCompany?.hasContactInformationForPin == true {
-                return true
-            } else {
-                return false
-            }
-        }
-
-        var isHealthCardAndPinServiceAndContact: Bool {
-            if serviceInquiry == .healthCardAndPin, insuranceCompany?.hasContactInformationForHealthCardAndPin == true {
-                return true
-            } else {
-                return false
-            }
-        }
-
-        @PresentationState var destination: Destinations.State? = .searchPicker
+        @Presents var destination: Destination.State?
     }
 
     enum ServiceInquiry: Int, CaseIterable, Identifiable {
@@ -63,18 +45,15 @@ struct OrderHealthCardDomain: ReducerProtocol {
         var id: Int { rawValue }
     }
 
-    enum Action: Equatable {
+    enum Action: Equatable, BindableAction {
+        case binding(BindingAction<State>)
+
         case loadList
-        case updateSearchText(newPrompt: String)
         case searchList
-        case setService(service: ServiceInquiry)
-        case selectHealthInsurance(id: UUID)
+        case selectHealthInsurance(HealthInsuranceCompany)
         case resetList
-        case advance
 
-        case destination(PresentationAction<Destinations.Action>)
-        case setNavigation(tag: Destinations.State.Tag?)
-
+        case destination(PresentationAction<Destination.Action>)
         case delegate(Delegate)
 
         enum Delegate: Equatable {
@@ -82,32 +61,14 @@ struct OrderHealthCardDomain: ReducerProtocol {
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = contactInsuranceCompany_selectKK
-            case searchPicker
-            // sourcery: AnalyticsScreen = contactInsuranceCompany_selectReason
-            case serviceInquiry
-            // sourcery: AnalyticsScreen = contactInsuranceCompany_selectMethod
-            case contactOptions
-        }
+    var body: some Reducer<State, Action> {
+        BindingReducer()
 
-        enum Action: Equatable {}
-
-        var body: some ReducerProtocol<State, Action> {
-            EmptyReducer()
-        }
-    }
-
-    var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
-    // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .loadList:
             let decoder = JSONDecoder()
@@ -123,61 +84,28 @@ struct OrderHealthCardDomain: ReducerProtocol {
 
             state.insuranceCompanies = insuranceCompanies
             return .none
-        case .setNavigation(tag: .serviceInquiry):
-            state.destination = .serviceInquiry
-            return .none
-        case .setNavigation(tag: .searchPicker):
-            state.destination = .searchPicker
-            return .none
-        case .setNavigation(tag: .contactOptions):
-            state.destination = .contactOptions
-            return .none
-        case .advance:
-            switch state.destination {
-            case .searchPicker:
-                state.destination = .serviceInquiry
-                return .none
-            case .serviceInquiry:
-                state.destination = .contactOptions
-                return .none
-            case .contactOptions,
-                 .none:
-                return .none
-            }
-        case let .updateSearchText(newPrompt):
-            state.searchText = newPrompt
-            return .none
         case .searchList:
             var result = [HealthInsuranceCompany]()
             for insurance in state.insuranceCompanies
                 where insurance.name.lowercased().contains(state.searchText.lowercased()) {
                 result.append(insurance)
             }
-            state.searchHealthInsurance = result
+            state.filteredInsuranceCompanies = result
             return .none
-        case let .setService(service):
-            state.serviceInquiryId = service.id
-            state.serviceInquiry = service
-            return EffectTask.send(.advance)
-        case let .selectHealthInsurance(id):
-            state.healthInsuranceCompanyId = id
-            state.insuranceCompany = state.insuranceCompanies.first { $0.id == state.healthInsuranceCompanyId }
-            if let inquiryId = state.insuranceCompany?.serviceInquiryOptions.first {
-                state.serviceInquiryId = inquiryId.rawValue
-                state.serviceInquiry = ServiceInquiry(rawValue: state.serviceInquiryId)
-            } else {
-                state.serviceInquiryId = -1
-            }
-            return EffectTask.send(.advance)
+        case let .selectHealthInsurance(insuranceCompany):
+            state.destination = .serviceInquiry(.init(insuranceCompany: insuranceCompany))
+            return .none
         case .resetList:
-            state.searchHealthInsurance = state.insuranceCompanies
+            state.filteredInsuranceCompanies = state.insuranceCompanies
             return .none
-        case .setNavigation(tag: nil):
-            state.destination = nil
-            return .none
+        case let .destination(.presented(.serviceInquiry(.delegate(action)))):
+            switch action {
+            case .close:
+                return .send(.delegate(.close))
+            }
         case .delegate,
              .destination,
-             .setNavigation:
+             .binding:
             return .none
         }
     }
@@ -260,36 +188,30 @@ extension OrderHealthCardDomain {
 
             return urlString?.url
         }
-    }
-}
 
-extension OrderHealthCardDomain.HealthInsuranceCompany {
-    static let dummyHealthInsuranceCompany = OrderHealthCardDomain.HealthInsuranceCompany(
-        name: "DummyHealthInsuranceCompany",
-        healthCardAndPinPhone: "003012341234",
-        healthCardAndPinMail: "app-feedback@gematik.de",
-        healthCardAndPinUrl: "",
-        pinUrl: "www.gematik.de",
-        subjectCardAndPinMail: "#eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte und PIN",
-        bodyCardAndPinMail: "",
-        subjectPinMail: "#PIN# Bestellung einer PIN zur Gesundheitskarte",
-        bodyPinMail: ""
-    )
+        static let dummyHealthInsuranceCompany = OrderHealthCardDomain.HealthInsuranceCompany(
+            name: "DummyHealthInsuranceCompany",
+            healthCardAndPinPhone: "003012341234",
+            healthCardAndPinMail: "app-feedback@gematik.de",
+            healthCardAndPinUrl: "",
+            pinUrl: "www.gematik.de",
+            subjectCardAndPinMail: "#eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte und PIN",
+            bodyCardAndPinMail: "",
+            subjectPinMail: "#PIN# Bestellung einer PIN zur Gesundheitskarte",
+            bodyPinMail: ""
+        )
+    }
 }
 
 extension OrderHealthCardDomain {
     enum Dummies {
         static let state = State(
-            insuranceCompanies: [OrderHealthCardDomain.HealthInsuranceCompany.dummyHealthInsuranceCompany],
-            insuranceCompany: OrderHealthCardDomain.HealthInsuranceCompany.dummyHealthInsuranceCompany,
-            serviceInquiry: .healthCardAndPin,
-            healthInsuranceCompanyId: UUID(),
-            serviceInquiryId: 1
+            insuranceCompanies: [OrderHealthCardDomain.HealthInsuranceCompany.dummyHealthInsuranceCompany]
         )
 
         static let store = storeFor(state)
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<OrderHealthCardDomain> {
             Store(
                 initialState: state
             ) {

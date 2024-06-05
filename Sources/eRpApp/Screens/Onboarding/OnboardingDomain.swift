@@ -21,15 +21,15 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
-struct OnboardingDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct OnboardingDomain {
+    @ObservableState
     struct State: Equatable {
         var showTermsOfUse = false
         var showTermsOfPrivacy = false
         var legalConfirmed = false
         var composition: Composition
-        @PresentationState var alertState: AlertState<Action.Alert>?
+        @Presents var alertState: AlertState<Action.Alert>?
         var currentPage: Page {
             composition.currentPage
         }
@@ -131,27 +131,17 @@ struct OnboardingDomain: ReducerProtocol {
     @Dependency(\.tracker) var tracker: Tracker
     @Dependency(\.schedulers) var schedulers: Schedulers
 
-    var environment: Environment {
-        .init(appVersion: appVersion, appSecurityManager: appSecurityManager, localUserStore: localUserStore)
-    }
-
-    struct Environment {
-        let appVersion: AppVersion
-        let appSecurityManager: AppSecurityManager
-        let localUserStore: UserDataStore
-    }
-
-    var body: some ReducerProtocol<State, Action> {
-        Scope(state: \.registerAuthenticationState, action: /OnboardingDomain.Action.registerAuthentication(action:)) {
+    var body: some Reducer<State, Action> {
+        Scope(state: \.registerAuthenticationState, action: \.registerAuthentication) {
             RegisterAuthenticationDomain()
         }
 
         Reduce(core)
-            .ifLet(\.$alertState, action: /OnboardingDomain.Action.alert)
+            .ifLet(\.$alertState, action: \.alert)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .setShowPrivacy(bool):
             state.showTermsOfPrivacy = bool
@@ -175,13 +165,13 @@ struct OnboardingDomain: ReducerProtocol {
             return .none
         case .saveAuthentication:
             guard state.registerAuthenticationState.hasValidSelection,
-                  let selectedOption = state.registerAuthenticationState.selectedSecurityOption else {
+                  state.registerAuthenticationState.selectedSecurityOption != .unsecured else {
                 state.composition.setPage(.registerAuthentication)
                 state.registerAuthenticationState.showNoSelectionMessage = true
                 return .none
             }
 
-            if case .password = selectedOption {
+            if case .password = state.registerAuthenticationState.selectedSecurityOption {
                 guard state.registerAuthenticationState.passwordStrength.passesMinimumThreshold,
                       let success = try? appSecurityManager
                       .save(password: state.registerAuthenticationState.passwordA),
@@ -190,11 +180,11 @@ struct OnboardingDomain: ReducerProtocol {
                     state.registerAuthenticationState.showNoSelectionMessage = true
                     return .none
                 }
-                localUserStore.set(appSecurityOption: selectedOption)
-                return EffectTask.send(.dismissOnboarding)
+                localUserStore.set(appSecurityOption: state.registerAuthenticationState.selectedSecurityOption)
+                return Effect.send(.dismissOnboarding)
             } else {
-                localUserStore.set(appSecurityOption: selectedOption)
-                return EffectTask.send(.dismissOnboarding)
+                localUserStore.set(appSecurityOption: state.registerAuthenticationState.selectedSecurityOption)
+                return Effect.send(.dismissOnboarding)
             }
         case .dismissOnboarding:
             localUserStore.set(hideOnboarding: true)
@@ -203,26 +193,27 @@ struct OnboardingDomain: ReducerProtocol {
         case .registerAuthentication(action: .continueBiometry),
              .registerAuthentication(action: .nextPage),
              .registerAuthentication(action: .saveSelectionSuccess):
-            return EffectTask.send(.nextPage)
+            return Effect.send(.nextPage)
         case .registerAuthentication:
             return .none
-        // [REQ:gemSpec_eRp_FdV:A_19088,A_19091#1,A_19092] Show comply route to display analytics usage within
+        // [REQ:gemSpec_eRp_FdV:A_19088,A_19091-01#1,A_19092-01#2] Show comply route to display analytics usage within
         // onboarding
         // [REQ:BSI-eRp-ePA:O.Purp_3#5] Show comply route to display analytics usage within onboarding
+        // [REQ:gemSpec_eRp_FdV:A_19089-01#2] Show comply route to display analytics usage within onboarding
         case .showTracking:
             state.alertState = Self.trackingAlertState
             return .none
-        // [REQ:gemSpec_eRp_FdV:A_19090,A_19091#2] User confirms the opt in within settings
+        // [REQ:gemSpec_eRp_FdV:A_19090-01,A_19091-01#2] User confirms the opt in within settings
         // [REQ:BSI-eRp-ePA:O.Purp_3#6] Accept usage analytics
         case .alert(.presented(.allowTracking)):
             tracker.optIn = true
-            return EffectTask.send(.saveAuthentication)
-        // [REQ:gemSpec_eRp_FdV:A_19092] User may choose to not accept analytics
+            return Effect.send(.saveAuthentication)
+        // [REQ:gemSpec_eRp_FdV:A_19092-01#3] User may choose to not accept analytics, onboarding will still continue
         // [REQ:BSI-eRp-ePA:O.Purp_3#7] Deny usage analytics
         case .alert(.dismiss):
             tracker.optIn = false
             state.alertState = nil
-            return EffectTask.send(.saveAuthentication)
+            return Effect.send(.saveAuthentication)
         }
     }
 

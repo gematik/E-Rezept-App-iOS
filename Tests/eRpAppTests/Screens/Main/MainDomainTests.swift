@@ -302,7 +302,7 @@ final class MainDomainTests: XCTestCase {
         ))
 
         expect(self.mockUserSession.mockIDPSession.invalidateAccessToken_Called).to(beFalse())
-        await sut.send(.setNavigation(tag: .cardWall)) {
+        await sut.send(.startCardWall) {
             $0.destination = .cardWall(.init(isNFCReady: true, profileId: self.mockUserSession.profileId))
         }
         expect(self.mockUserSession.mockIDPSession.invalidateAccessToken_Called).to(beTrue())

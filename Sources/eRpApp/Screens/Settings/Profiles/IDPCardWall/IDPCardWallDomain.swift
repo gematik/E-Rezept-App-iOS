@@ -21,26 +21,27 @@ import ComposableArchitecture
 import IDP
 import UIKit
 
-struct IDPCardWallDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct IDPCardWallDomain {
+    @ObservableState
     struct State: Equatable {
         let profileId: UUID
+        var subdomain: Subdomain.State?
+        var can: String?
+        var isDemoMode = false
+    }
 
-        var canAvailable: Bool {
-            can == nil
-        }
-
-        var can: CardWallCANDomain.State?
-        var pin: CardWallPINDomain.State
-        var readCard: CardWallReadCardDomain.State?
+    @Reducer(state: .equatable, action: .equatable)
+    enum Subdomain {
+        case can(CardWallCANDomain)
+        case pin(CardWallPINDomain)
+        case readCard(CardWallReadCardDomain)
     }
 
     enum Action: Equatable {
-        case canAction(action: CardWallCANDomain.Action)
-        case pinAction(action: CardWallPINDomain.Action)
-        case readCard(action: CardWallReadCardDomain.Action)
-
+        case task
+        case setCan(String?)
+        case subdomain(Subdomain.Action)
         case delegate(Delegate)
 
         enum Delegate: Equatable {
@@ -50,65 +51,82 @@ struct IDPCardWallDomain: ReducerProtocol {
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
     @Dependency(\.userSession) var userSession: UserSession
 
     static var dismissTimeout: DispatchQueue.SchedulerTimeType.Stride = 0.5
 
-    var body: some ReducerProtocol<State, Action> {
-        Scope(state: \State.pin, action: /Action.pinAction(action:)) {
-            CardWallPINDomain()
-        }
-
-        Reduce(core)
-            .ifLet(\State.can, action: /Action.canAction(action:)) {
-                CardWallCANDomain()
-            }
-            .ifLet(\State.readCard, action: /Action.readCard(action:)) {
-                CardWallReadCardDomain()
+    var body: some Reducer<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.subdomain, action: \.subdomain) {
+                Subdomain.body
             }
     }
 
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    // swiftlint:disable:next function_body_length
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case .pinAction(action: .advance(.fullScreenCover)):
-            state.readCard = CardWallReadCardDomain.State(
-                isDemoModus: userSession.isDemoMode,
+        case .task:
+            state.isDemoMode = userSession.isDemoMode
+            return .publisher(
+                userSessionProvider.userSession(for: state.profileId).secureUserStore.can
+                    .first()
+                    .map(Action.setCan)
+                    .eraseToAnyPublisher
+            )
+        case let .setCan(can):
+            state.can = can
+
+            state.subdomain = .can(CardWallCANDomain.State(
+                isDemoModus: state.isDemoMode,
                 profileId: state.profileId,
-                pin: state.pin.pin,
+                can: can ?? ""
+            ))
+            return .none
+        case .subdomain(.can(.advance)):
+            state.subdomain = .pin(CardWallPINDomain.State(isDemoModus: state.isDemoMode,
+                                                           profileId: state.profileId,
+                                                           transition: .fullScreenCover))
+            return .none
+        case .subdomain(.pin(.advance(.fullScreenCover))):
+            guard let pin = state.subdomain?.pin else {
+                return .none
+            }
+
+            state.subdomain = .readCard(.init(
+                isDemoModus: state.isDemoMode,
+                profileId: state.profileId,
+                pin: pin.pin,
                 loginOption: .withoutBiometry,
                 output: .idle
-            )
+            ))
             return .none
-        case .readCard(action: .delegate(.wrongCAN)):
-            if state.can == nil {
-                state.can = CardWallCANDomain.State(
-                    isDemoModus: false,
-                    profileId: state.profileId,
-                    can: ""
-                )
-            }
-            state.can?.wrongCANEntered = true
-            state.pin.destination = nil
-            state.can?.destination = nil
+        case .subdomain(.readCard(.delegate(.wrongCAN))):
+            state.subdomain = .can(CardWallCANDomain.State(
+                isDemoModus: state.isDemoMode,
+                profileId: state.profileId,
+                can: state.can ?? "",
+                wrongCANEntered: true
+            ))
             return .none
-        case .readCard(action: .delegate(.wrongPIN)):
-            state.pin.wrongPinEntered = true
-            state.pin.destination = nil
+        case .subdomain(.readCard(.delegate(.wrongPIN))):
+            state.subdomain = .pin(CardWallPINDomain.State(isDemoModus: state.isDemoMode,
+                                                           profileId: state.profileId,
+                                                           wrongPinEntered: true,
+                                                           transition: .fullScreenCover))
             return .none
-        case .canAction(action: .delegate(.close)),
-             .pinAction(action: .delegate(.close)):
+        case .subdomain(.can(.delegate(.close))),
+             .subdomain(.pin(.delegate(.close))):
             // closing a subscreen should close the whole stack -> forward to generic `.close`
-            return EffectTask.send(.delegate(.close))
-        case .readCard(action: .delegate(.close)):
-            state.pin.destination = nil
+            return Effect.send(.delegate(.close))
+        case .subdomain(.readCard(.delegate(.close))):
+            state.subdomain = nil
             return .run { send in
                 try await schedulers.main.sleep(for: Self.dismissTimeout)
                 await send(.delegate(.finished))
             }
         case .delegate,
-             .canAction,
-             .pinAction,
-             .readCard:
+             .subdomain:
             return .none
         }
     }
@@ -117,9 +135,7 @@ struct IDPCardWallDomain: ReducerProtocol {
 extension IDPCardWallDomain {
     enum Dummies {
         static let state = State(
-            profileId: DemoProfileDataStore.anna.id,
-            can: CardWallCANDomain.State(isDemoModus: false, profileId: UUID(), can: ""),
-            pin: CardWallPINDomain.State(isDemoModus: false, profileId: UUID(), pin: "", transition: .fullScreenCover)
+            profileId: DemoProfileDataStore.anna.id
         )
 
         static let store = Store(

@@ -23,26 +23,10 @@ import eRpStyleKit
 import SwiftUI
 
 struct CardWallReadCardView: View {
-    let store: StoreOf<CardWallReadCardDomain>
-
-    init(store: StoreOf<CardWallReadCardDomain>) {
-        self.store = store
-    }
-
-    struct ViewState: Equatable {
-        let destinationTag: CardWallReadCardDomain.Destinations.State.Tag?
-        let output: CardWallReadCardDomain.State.Output
-        let isDemoModus: Bool
-
-        init(state: CardWallReadCardDomain.State) {
-            destinationTag = state.destination?.tag
-            output = state.output
-            isDemoModus = state.isDemoModus
-        }
-    }
+    @Perception.Bindable var store: StoreOf<CardWallReadCardDomain>
 
     var body: some View {
-        WithViewStore(store, observe: ViewState.init) { viewStore in
+        WithPerceptionTracking {
             VStack(spacing: 0) {
                 ScrollView {
                     Text(L10n.cdwTxtRcCta)
@@ -68,29 +52,29 @@ struct CardWallReadCardView: View {
                 GreyDivider()
 
                 Button {
-                    viewStore.send(viewStore.output.nextAction)
+                    store.send(store.output.nextAction)
                 } label: {
                     Label {
-                        Text(viewStore.output.buttonTitle, bundle: .module)
+                        Text(store.output.buttonTitle, bundle: .module)
                     } icon: {
-                        if !viewStore.output.nextButtonEnabled {
+                        if !store.output.nextButtonEnabled {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                         }
                     }
                 }
-                .buttonStyle(.primary(isEnabled: viewStore.output.nextButtonEnabled))
+                .buttonStyle(.primary(isEnabled: store.output.nextButtonEnabled))
                 .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcNext)
                 .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
                 .padding(.vertical)
             }
-            .demoBanner(isPresented: viewStore.isDemoModus) {
+            .demoBanner(isPresented: store.isDemoModus) {
                 Text(L10n.cdwTxtRcDemoModeInfo)
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        viewStore.send(.openHelpView)
+                        store.send(.openHelpView)
                     }, label: {
                         HStack(alignment: .center) {
                             Image(systemName: SFSymbolName.questionmarkCircle)
@@ -103,42 +87,20 @@ struct CardWallReadCardView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
                     })
-                        .fullScreenCover(
-                            isPresented: Binding<Bool>(
-                                get: { viewStore.state.destinationTag == .help },
-                                set: { show in
-                                    if !show {
-                                        viewStore.send(.setNavigation(tag: nil))
-                                    }
-                                }
-                            ),
-                            onDismiss: {},
-                            content: {
+                        .fullScreenCover(item: $store
+                            .scope(state: \.destination?.help, action: \.destination.help)) { store in
                                 NavigationView {
-                                    IfLetStore(
-                                        store.scope(
-                                            state: \.$destination,
-                                            action: CardWallReadCardDomain.Action.destination
-                                        ),
-                                        state: /CardWallReadCardDomain.Destinations.State.help,
-                                        action: CardWallReadCardDomain.Destinations.Action.help,
-                                        then: ReadCardHelpView.init(store:)
-                                    )
+                                    ReadCardHelpView(store: store)
                                 }
                                 .accentColor(Colors.primary700)
                                 .navigationViewStyle(StackNavigationViewStyle())
-                            }
-                        )
+                        }
                 }
             }
-            .alert(
-                store.scope(state: \.$destination, action: CardWallReadCardDomain.Action.destination),
-                state: /CardWallReadCardDomain.Destinations.State.alert,
-                action: CardWallReadCardDomain.Destinations.Action.alert
-            )
+            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
             .task {
-                await viewStore.send(.getChallenge).finish()
+                await store.send(.getChallenge).finish()
             }
         }
         .statusBar(hidden: true)

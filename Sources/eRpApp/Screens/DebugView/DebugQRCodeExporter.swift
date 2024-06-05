@@ -19,6 +19,7 @@
 import CoreImage.CIFilterBuiltins
 import eRpStyleKit
 import SwiftUI
+import SwiftUIIntrospect
 
 #if ENABLE_DEBUG_VIEW
 
@@ -50,16 +51,16 @@ struct DebugQRCodeExporter<ContentType: Codable>: View {
                 .padding()
                 .background(Colors.systemBackgroundSecondary)
                 .padding()
-                .introspectTextView { textView in
+                .introspect(.textEditor, on: .iOS(.v15, .v16, .v17)) { textView in
                     textView.backgroundColor = UIColor.secondarySystemBackground
                 }
         }
         .navigationTitle("Export")
-        .sheet(isPresented: $showShareSheet) {
-            if let image = image {
-                ShareViewController(itemsToShare: [image])
-            }
-        }
+//        .sheet(isPresented: $showShareSheet) {
+//            if let image = image {
+//                ShareViewController(itemsToShare: [image])
+//            }
+//        }
         .onAppear {
             DispatchQueue.global().async {
                 let encoder = JSONEncoder()

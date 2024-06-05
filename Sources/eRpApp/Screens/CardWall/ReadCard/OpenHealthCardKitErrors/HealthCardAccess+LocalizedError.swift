@@ -35,8 +35,6 @@ extension HealthCard.Error: LocalizedError {
             return "HealthCard.Error: illegal card generation of version: \(description)"
         case .unsupportedCardType:
             return "HealthCard.Error: unsupported card type"
-        @unknown default:
-            return "unknown HealthCard.Error"
         }
     }
 }
@@ -48,8 +46,6 @@ extension ApplicationIdentifier.Error: LocalizedError {
             return "application identifier has an illegal argument: \(arg)"
         case let .invalidLength(length: length):
             return "application identifier has an invalid length: \(length)"
-        @unknown default:
-            return "unknown ApplicationIdentifier.Error"
         }
     }
 }
@@ -63,8 +59,6 @@ extension FileControlParameter.Error: LocalizedError {
             return "FileControlParameter asn1 (\(asn1))  parser error with reason: \(reason)"
         case let .invalidCard(description):
             return "FileControlParameter invalid card: \(description)"
-        @unknown default:
-            return "unknown FileControlParameter.Error"
         }
     }
 }
@@ -76,8 +70,6 @@ extension FileIdentifier.Error: LocalizedError {
             return "FileIdentifier.Error: illegal argument: \(arg)"
         case let .invalidLength(length: length):
             return "FileIdentifier.Error: invalid length: \(length)"
-        @unknown default:
-            return "unknown FileIdentifier.Error"
         }
     }
 }
@@ -87,8 +79,6 @@ extension Format2Pin.Error: LocalizedError {
         switch self {
         case let .illegalArgument(arg):
             return "Format2Pin.Error: illegal argument: \(arg)"
-        @unknown default:
-            return "unknown Format2Pin.Error"
         }
     }
 }
@@ -102,8 +92,6 @@ extension GemCvCertificate.Error: LocalizedError {
             return "GemCvCertificate.Error: missing tag \(tag) for sourcer \(source)"
         case .missingTagParameter:
             return "GemCvCertificate.Error: missing tag parameter"
-        @unknown default:
-            return "unknown GemCvCertificate.Error"
         }
     }
 }
@@ -113,8 +101,6 @@ extension Key.Error: LocalizedError {
         switch self {
         case let .illegalArgument(arg):
             return "Key.Error: illegal argument \(arg)"
-        @unknown default:
-            return "unknown Key.Error"
         }
     }
 }
@@ -124,8 +110,6 @@ extension Password.Error: LocalizedError {
         switch self {
         case let .illegalArgument(arg):
             return "Password.Error: illegal argument \(arg)"
-        @unknown default:
-            return "unknown Password.Error"
         }
     }
 }
@@ -135,8 +119,6 @@ extension ShortFileIdentifier.Error: LocalizedError {
         switch self {
         case let .illegalArgument(arg):
             return "ShortFileIdentifier.Error: illegal argument \(arg)"
-        @unknown default:
-            return "unknown ShortFileIdentifier.Error"
         }
     }
 }
@@ -146,8 +128,6 @@ extension CardVersion2.Error: LocalizedError {
         switch self {
         case let .parseError(error):
             return "CardVersion2.Error: parser error \(error)"
-        @unknown default:
-            return "unknown CardVersion2.Error"
         }
     }
 }
@@ -182,8 +162,6 @@ extension HealthCardCommandBuilder.InvalidArgument: LocalizedError {
             """
         case let .illegalOid(oid):
             return "HealthCardCommandBuilder.InvalidArgument: illegal Oid \(oid)"
-        @unknown default:
-            return "unknown HealthCardCommandBuilder.InvalidArgument"
         }
     }
 }

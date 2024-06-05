@@ -21,81 +21,57 @@ import eRpStyleKit
 import SwiftUI
 
 struct OrderHealthCardContactView: View {
-    let store: OrderHealthCardDomain.Store
-
-    @ObservedObject var viewStore: ViewStore<ViewState, OrderHealthCardDomain.Action>
-
-    init(store: OrderHealthCardDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        var insuranceCompany: OrderHealthCardDomain.HealthInsuranceCompany?
-        var serviceInquiry: OrderHealthCardDomain.ServiceInquiry?
-        var serviceInquiryId: Int
-        var isPinServiceAndContact: Bool
-        var hasHealthCardAndPinServiceAndContact: Bool
-        let routeTag: OrderHealthCardDomain.Destinations.State.Tag?
-
-        init(state: OrderHealthCardDomain.State) {
-            insuranceCompany = state.insuranceCompany
-            serviceInquiry = state.serviceInquiry
-            serviceInquiryId = state.serviceInquiryId
-            isPinServiceAndContact = state.isPinServiceAndContact
-            hasHealthCardAndPinServiceAndContact = state.isHealthCardAndPinServiceAndContact
-            routeTag = state.destination?.tag
-        }
-    }
+    @Perception.Bindable var store: StoreOf<OrderHealthCardContactDomain>
 
     var body: some View {
-        VStack(alignment: .center) {
-            if viewStore.isPinServiceAndContact || viewStore.hasHealthCardAndPinServiceAndContact {
-                Text(L10n.oderEgkContactTitle)
-                    .font(Font.largeTitle.weight(.bold))
-                    .foregroundColor(Color(.label))
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 8)
-
-                Text(L10n.oderEgkContactSubtitle)
-                    .font(.subheadline)
-                    .foregroundColor(Colors.systemLabelSecondary)
-                    .multilineTextAlignment(.center)
-
-                if let serverInquiry = viewStore.serviceInquiry, let insuranceCompany = viewStore.insuranceCompany {
-                    ContactOptionsRowView(
-                        healthInsuranceCompany: insuranceCompany,
-                        serviceInquiry: serverInquiry
-                    )
-                }
-                Spacer()
-            } else {
-                ZStack(alignment: .bottom) {
-                    Image(asset: Asset.OrderEGK.womanShrug)
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(Circle())
-                        .frame(width: 200, height: 200)
-
-                    Text(L10n.oderEgkContactNoTitle)
-                        .font(Font.body.weight(.bold))
+        WithPerceptionTracking {
+            VStack(alignment: .center) {
+                if store.isPinServiceAndContact || store.isHealthCardAndPinServiceAndContact {
+                    Text(L10n.oderEgkContactTitle)
+                        .font(Font.largeTitle.weight(.bold))
                         .foregroundColor(Color(.label))
                         .multilineTextAlignment(.center)
+                        .padding(.bottom, 8)
+
+                    Text(L10n.oderEgkContactSubtitle)
+                        .font(.subheadline)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .multilineTextAlignment(.center)
+
+                    ContactOptionsRowView(
+                        healthInsuranceCompany: store.insuranceCompany,
+                        serviceInquiry: store.serviceInquiry
+                    )
+
+                    Spacer()
+                } else {
+                    ZStack(alignment: .bottom) {
+                        Image(asset: Asset.OrderEGK.womanShrug)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
+                            .frame(width: 200, height: 200)
+
+                        Text(L10n.oderEgkContactNoTitle)
+                            .font(Font.body.weight(.bold))
+                            .foregroundColor(Color(.label))
+                            .multilineTextAlignment(.center)
+                    }
+                    Text(L10n.oderEgkContactNoSubtitle)
+                        .font(.subheadline)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .multilineTextAlignment(.center)
                 }
-                Text(L10n.oderEgkContactNoSubtitle)
-                    .font(.subheadline)
-                    .foregroundColor(Colors.systemLabelSecondary)
-                    .multilineTextAlignment(.center)
             }
+            .padding()
+            .navigationBarItems(
+                trailing: NavigationBarCloseItem {
+                    store.send(.delegate(.close))
+                }
+                .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
+                .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
+            )
         }
-        .padding()
-        .navigationBarItems(
-            trailing: NavigationBarCloseItem {
-                viewStore.send(.delegate(.close))
-            }
-            .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
-            .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
-        )
     }
 }
 
@@ -124,10 +100,10 @@ extension ContactOptionsRowView {
 struct OrderHealthCardContactView_Preview: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            OrderHealthCardInquiryView(store: OrderHealthCardDomain.Dummies.store)
+            OrderHealthCardContactView(store: OrderHealthCardContactDomain.Dummies.store)
         }
         NavigationView {
-            OrderHealthCardInquiryView(store: OrderHealthCardDomain.Dummies.store)
+            OrderHealthCardContactView(store: OrderHealthCardContactDomain.Dummies.store)
         }
     }
 }

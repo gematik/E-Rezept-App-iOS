@@ -21,9 +21,9 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
-struct PharmacyPrescriptionSelectionDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct PharmacyPrescriptionSelectionDomain {
+    @ObservableState
     struct State: Equatable {
         var erxTasks: [ErxTask]
         var selectedErxTasks: Set<ErxTask> = []
@@ -35,7 +35,7 @@ struct PharmacyPrescriptionSelectionDomain: ReducerProtocol {
         case saveSelection(Set<ErxTask>)
     }
 
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .didSelect(taskID):
             if let erxTask = state.erxTasks.first(where: { $0.id == taskID }) {
@@ -64,7 +64,7 @@ extension PharmacyPrescriptionSelectionDomain {
             PharmacyPrescriptionSelectionDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<PharmacyPrescriptionSelectionDomain> {
             Store(
                 initialState: state
             ) {

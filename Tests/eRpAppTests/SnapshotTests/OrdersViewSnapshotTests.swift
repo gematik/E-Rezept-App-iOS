@@ -34,7 +34,7 @@ final class OrdersViewSnapshotTests: ERPSnapshotTestCase {
 
     func testEmptyOdersView() {
         let sut = OrdersView(
-            store: OrdersDomain.Store(
+            store: StoreOf<OrdersDomain>(
                 initialState: OrdersDomain.State(orders: [])
 
             ) {
@@ -48,7 +48,7 @@ final class OrdersViewSnapshotTests: ERPSnapshotTestCase {
 
     func testOdersView() {
         let sut = OrdersView(
-            store: OrdersDomain.Store(
+            store: StoreOf<OrdersDomain>(
                 initialState: OrdersDomain.Dummies.state
 
             ) {

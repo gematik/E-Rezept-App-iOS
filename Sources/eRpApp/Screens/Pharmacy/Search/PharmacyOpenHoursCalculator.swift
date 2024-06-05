@@ -104,18 +104,26 @@ struct PharmacyOpenHoursCalculator {
         return result
     }
 
-    private func createTimeFormatter() -> DateFormatter {
+    static let timeFormatter = {
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "HH:mm:ss"
         return timeFormatter
+    }()
+
+    private func createTimeFormatter() -> DateFormatter {
+        Self.timeFormatter
     }
 
-    private func weekDayAs3CharString(from date: Date) -> String {
+    static let dateFormatter = {
         let dateFormatter = DateFormatter()
         // weekdays from pharmacy server are always english!
         dateFormatter.locale = Locale(identifier: "en_US")
         dateFormatter.dateFormat = "EEE"
-        return dateFormatter.string(from: date).lowercased()
+        return dateFormatter
+    }()
+
+    private func weekDayAs3CharString(from date: Date) -> String {
+        Self.dateFormatter.string(from: date).lowercased()
     }
 }
 

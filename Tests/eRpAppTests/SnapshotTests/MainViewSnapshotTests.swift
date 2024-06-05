@@ -49,8 +49,8 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
         }
     }
 
-    private func store(for _: UserProfile? = nil) -> HorizontalProfileSelectionDomain.Store {
-        HorizontalProfileSelectionDomain.Store(
+    private func store(for _: UserProfile? = nil) -> StoreOf<HorizontalProfileSelectionDomain> {
+        .init(
             initialState: .init(
                 profiles: [UserProfile](),
                 selectedProfileId: nil

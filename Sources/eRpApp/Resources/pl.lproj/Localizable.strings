@@ -82,6 +82,7 @@
 "cdw_btn_extauth_fallback_order_egk" = "Zamów kartę zdrowia";
 "cdw_btn_extauth_selection_cancel" = "Anuluj";
 "cdw_btn_extauth_selection_continue" = "Dalej";
+"cdw_btn_extauth_selection_help" = "Pierwsza pomoc";
 "cdw_btn_extauth_selection_order_egk" = "Zamów kartę zdrowia";
 "cdw_btn_extauth_selection_retry" = "Spróbuj ponownie";
 "cdw_btn_help_next_hint" = "Po naciśnięciu tego przycisku karta zdrowia jest odczytywana przez NFC. W tym celu przyłóż kartę bezpośrednio do urządzenia. Po nawiązaniu połączenia otrzymasz powiadomienie haptyczne. Przerwanie połączenia lub błąd także zostanie zakomunikowany poprzez powiadomienie haptyczne. Nawiązanie połączenia z kartą zdrowia może trwać do dziesięciu sekund. Następnie odsuń kartę zdrowia od urządzenia.";
@@ -156,7 +157,7 @@
 "cdw_txt_biometry_subtitle" = "Czy chcesz zapisać swoje dane dostępowe do przyszłych logowań?";
 "cdw_txt_biometry_title" = "Logowanie";
 "cdw_txt_can_demo_mode_info" = "Możesz podać dowolne cyfry.";
-"cdw_txt_can_description" = "Numer dostępu do karty (w skrócie CAN) znajdziesz w prawym górnym rogu karty zdrowia.";
+"cdw_txt_can_description" = "Numer dostępu znajdziesz w prawym górnym rogu karty zdrowia.";
 "cdw_txt_can_subtitle" = "Wprowadź numer dostępu";
 "cdw_txt_can_title" = "Logowanie";
 "cdw_txt_can_title_hint" = "Twój numer dostępu karty (Card Access Number, w skrócie: CAN) ma 6 znaków. Numer CAN znajdziesz w prawym górnym rogu z przodu karty zdrowia. Jeżeli nie ma tam sześcioznakowego numeru dostępu, musisz otrzymać nową kartę zdrowia od swojej instytucji ubezpieczenia zdrowotnego.";
@@ -177,10 +178,18 @@
 "cdw_txt_extauth_fallback_description2" = "Nie chcesz czekać? Rejestrację z kartą zdrowia obsługuje już każda kasa chorych.";
 "cdw_txt_extauth_fallback_headline" = "Wybierz ubezpieczenie";
 "cdw_txt_extauth_fallback_title" = "Zaloguj się za pomocą aplikacji";
+"cdw_txt_extauth_help_caption" = "Wskazówki dotyczące rejestracji w aplikacji ubezpieczeniowej";
+"cdw_txt_extauth_help_description" = "Za identyfikator medyczny odpowiedzialna jest Twoja firma ubezpieczeniowa. Skontaktuj się z nimi, jeśli masz jakiekolwiek pytania dotyczące rejestracji. Oto kilka wypróbowanych i przetestowanych wskazówek:";
+"cdw_txt_extauth_help_info_1" = "Należy pamiętać, że w zależności od ubezpieczenia może być wymagana osobna aplikacja. Aby dowiedzieć się, co to jest, skontaktuj się ze swoją firmą ubezpieczeniową.";
+"cdw_txt_extauth_help_info_2" = "Uruchom aplikację kasową i zaloguj się w niej raz, zanim rozpoczniesz rejestrację w aplikacji e-recepta.";
+"cdw_txt_extauth_help_info_3" = "Przełączanie pomiędzy logowaniem za pomocą identyfikatora zdrowotnego i karty zdrowia może powodować problemy. Dlatego przed zmianą opcji logowania prosimy najpierw aktywnie wylogować się ze swojego profilu.";
+"cdw_txt_extauth_help_info_4" = "Jeśli Twojego ubezpieczenia nie ma na liście, możesz alternatywnie zarejestrować się, korzystając ze swojej karty zdrowia i powiązanego z nią kodu PIN.";
+"cdw_txt_extauth_help_info_5" = "Jeśli aplikacja kasowa nie przekieruje Cię z powrotem do aplikacji e-Recepta, pamiętaj o zgłoszeniu tego błędu ubezpieczycielowi.";
+"cdw_txt_extauth_help_title" = "Pomoc";
 "cdw_txt_extauth_noresults" = "To słowo kluczowe nie dało żadnych wyników.";
 "cdw_txt_extauth_noresults_title" = "Brak wyników";
 "cdw_txt_extauth_searchprompt" = "Szukaj według nazwy";
-"cdw_txt_extauth_selection_description" = "Nie znalazłeś tego, czego szukałeś? Lista ta jest stale poszerzana. Rejestrację z kartą zdrowia obsługuje już każda kasa chorych.";
+"cdw_txt_extauth_selection_description" = "Jeśli logowanie przy użyciu identyfikatora zdrowotnego nie przebiegnie zgodnie z oczekiwaniami, dostępne będą instrukcje dotyczące pierwszej pomocy.";
 "cdw_txt_extauth_selection_empty_list_description" = "Funkcja ta zostanie Ci udostępniona za kilka dni. Spróbuj ponownie później.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Funkcja niedostępna";
 "cdw_txt_extauth_selection_error_fallback" = "Spróbuj ponownie później.";
@@ -262,7 +271,7 @@
 "cdw_txt_rc_nfc_message_noCardMessage" = "Nie wykryto karty zdrowia";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Ten typ karty nie jest obsługiwany";
 "cdw_txt_rc_placement" = "Tutaj przyłóż kartę 👆";
-"cdw_txt_rc_position_content" = "Wypróbuj także tę pozycję mapy i iPhone'a. Wykazano, że ta pozycja zapewnia lepsze połączenie na niektórych iPhone'ach.";
+"cdw_txt_rc_position_content" = "Przesuń kartę tak, aby złoty chip znalazł się nad przednim aparatem lub przyłóż kartę do główki iPhone'a, jak pokazano na obrazku.";
 "cdw_txt_rc_position_header" = "Inna pozycja";
 "cdw_txt_rc_subheadline" = "Proces ten może potrwać do 30 sekund.";
 "cdw_txt_rc_tip_four" = "Wskazówka 4 z 4";
@@ -358,7 +367,9 @@
 "epp_back_button" = "Powrót";
 "epp_btn_alert_abort" = "Anuluj";
 "epp_btn_alert_camera" = "kamera";
+"epp_btn_alert_emoji" = "Emoji";
 "epp_btn_alert_library" = "Wybierz zdjęcie";
+"epp_btn_emoji_use" = "Używać";
 "epp_txt_alert_header_profile" = "Wybierz zdjęcie profilowe";
 "epp_txt_alert_subheader_choose" = "Jak chcesz kontynuować?";
 "erp_txt_tooltips_add_profile" = "Naciśnij tutaj, aby utworzyć nowy profil";
@@ -377,7 +388,7 @@
 "erx_btn_alert_login" = "Rejestr";
 "erx_btn_alert_ok" = "OK";
 "erx_btn_alert_retry" = "Spróbuj ponownie";
-"erx_btn_redeem" = "Zrealizuj wszystkie";
+"erx_btn_redeem" = "Wszystko Odkupić";
 "erx_btn_refresh" = "Aktualizuj";
 "erx_btn_scn_prescription" = "Otwórz skaner recept";
 "erx_title" = "Recepty";
@@ -846,7 +857,7 @@
 "ord_txt_title" = "Zamówienia";
 "order_egk_btn_info_button" = "W ten sposób rozpoznasz kartę zdrowia obsługującą funkcję NFC";
 "order_egk_pin" = "PIN";
-"order_egk_pin_card" = "Pin i karta zdrowia";
+"order_egk_pin_card" = "PIN i karta zdrowia";
 "order_egk_service_subtitle" = "Do tej aplikacji potrzebujesz karty i powiązanego z nią kodu PIN.";
 "order_egk_service_title" = "O co chcesz wnioskować?";
 "order_egk_txt_contact_option_mail" = "E-mail";
@@ -945,7 +956,8 @@
 "pha_search_hint_txt_close" = "Zamknij udostępnianie lokalizacji, nie udostępniaj lokalizacji";
 "pha_search_map_annotation" = "Apteka";
 "pha_search_map_btn_Error_cancel" = "Anuluj";
-"pha_search_map_header" = "Tuż obok";
+"pha_search_map_header" = "Blisko mnie";
+"pha_search_map_txt_cluster_header" = "Apteki";
 "pha_search_txt_closed" = "Zamknięte";
 "pha_search_txt_closing_soon" = "Wkrótce zamknięcie";
 "pha_search_txt_error_no_server_response_headline" = "Serwer nie odpowiada";
@@ -1022,12 +1034,14 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Opłata za obsługę w nagłych wypadkach";
 "prsc_dtl_dr_error_info_description" = "Nie wszystkie informacje są podane prawidłowo w tym przepisie. Jednak nadal możesz go zrealizować w swojej aptece.";
 "prsc_dtl_dr_error_info_title" = "Przepis błędny";
+"prsc_dtl_dr_no_substitution_info_describtion" = "Lekarz zadecydował, że powinieneś otrzymać przepisany preparat. Apteka nie powinna przeprowadzać wymiany na podstawie umowy rabatowej („Aut idem”).";
+"prsc_dtl_dr_no_substitution_info_title" = "Nie ma możliwości przygotowania zastępczego";
 "prsc_dtl_dr_prescription_validity_info_accept_date_description" = "W tym okresie możesz zrealizować receptę w dowolnej aptece za maksymalną dopłatą w wysokości 10 €.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "W tym okresie nadal możesz zrealizować receptę w aptece, ale całą cenę zakupu leku będziesz musiał sam zapłacić. Alternatywnie możesz poprosić swoją praktykę o ponowne wystawienie recepty.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Jak długo ważna jest ta recepta?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Ze względów bezpieczeństwa recepty importowane z wersji papierowej nie mogą zawierać danych osobowych ani medycznych. \n\n Zaloguj się do tej aplikacji za pomocą karty zdrowia lub aplikacji ubezpieczeniowej, aby wyświetlić wszystkie informacje zawarte na recepcie.";
 "prsc_dtl_dr_scanned_prescription_info_title" = "Zeskanowana recepta";
-"prsc_dtl_dr_substitution_info_description" = "Ze względu na wymogi prawne nałożone przez firmę ubezpieczeniową możesz otrzymać lek alternatywny zawierający tę samą substancję czynną. \n\n Leki mogą wyglądać i nazywać się inaczej, mieć różnych cen i producentów, a mimo to zawierać tę samą substancję czynną. Decydujące znaczenie dla działania leków na organizm ma sam składnik aktywny oraz jego dawkowanie. Pacjenci często otrzymują w aptece inny lek niż ten przepisany przez lekarza – pod warunkiem, że lek jest porównywalny. Zmiana może mieć podłoże terapeutyczne i ekonomiczne.";
+"prsc_dtl_dr_substitution_info_description" = "Farmaceuci mają obowiązek pierwszeństwa wydawać leki, na które ubezpieczyciel pacjenta zawarł umowę rabatową z producentami leków. Nie dotyczy to sytuacji, gdy lekarz nie umieścił na recepcie słowa „Aut idem”, co nie ma miejsca w przypadku Twojej recepty.";
 "prsc_dtl_dr_substitution_info_title" = "Możliwość wyboru preparatu zastępczego";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Otwórz gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Zweryfikowane przez ekspertów informacje dotyczące chorób, kodów ICD i tematów związanych z profilaktyką i opieką znajdziesz na Krajowym Portalu Zdrowia.";
@@ -1082,6 +1096,7 @@
 "prsc_dtl_txt_missing_dosage_instructions" = "Lekarz nie przekazał Ci żadnych informacji na temat przyjmowania leku.";
 "prsc_dtl_txt_multi_prescription" = "Wielokrotna recepta";
 "prsc_dtl_txt_no" = "NIE";
+"prsc_dtl_txt_no_substitution" = "Nie ma możliwości przygotowania zastępczego";
 "prsc_dtl_txt_partial" = "Częściowo";
 "prsc_dtl_txt_pkv_hint_activate_msg" = "Po aktywowaniu rachunków, znajdziesz je tutaj po zrealizowaniu recepty.";
 "prsc_dtl_txt_pkv_hint_activate_title" = "Otrzymuj rachunki kosztów w formie cyfrowej";
@@ -1090,6 +1105,8 @@
 "prsc_dtl_txt_practitioner_person" = "Osoba wystawiająca receptę";
 "prsc_dtl_txt_quantity" = "Liczba przepisanych opakowań";
 "prsc_dtl_txt_section_details_header" = "Dokładna informacja";
+"prsc_dtl_txt_substitution" = "Przygotowanie zastępcze (Aut idem)";
+"prsc_dtl_txt_substitution_possible" = "Możliwość wyboru preparatu zastępczego";
 "prsc_dtl_txt_yes" = "Tak";
 "prsc_fd_btn_error_banner" = "Zgłoś";
 "prsc_fd_hint_dosageInstructions_pic" = "Lekarka";
@@ -1156,7 +1173,7 @@
 "puc_txt_subtitle_%@" = "Pokaż ten kod odbioru pod %@ .";
 "puc_txt_title" = "Kod odbioru";
 "rdm_btn_redeem_pharmacy_description" = "Zeskanuj go w aptece";
-"rdm_btn_redeem_pharmacy_title" = "Zrealizuj bezpośrednio";
+"rdm_btn_redeem_pharmacy_title" = "Pokaż kod";
 "rdm_btn_redeem_search_pharmacy_description" = "Zarezerwuj lub zleć dostawę";
 "rdm_btn_redeem_search_pharmacy_title" = "Wyślij do apteki";
 "rdm_scc_btn_return_to_main" = "Przejdź do strony startowej";
@@ -1165,8 +1182,8 @@
 "rdm_scc_txt_onpremise_content" = "Twoje zamówienie z reguły jest gotowe do odbioru w krótkim czasie. Aby poznać dokładny termin, skontaktuj się z apteką.";
 "rdm_scc_txt_onpremise_title" = "Zrealizowano pomyślnie";
 "rdm_scc_txt_shipment_content_1" = "Przejdź do strony startowej.";
-"rdm_scc_txt_shipment_content_2" = "Apteka wysyłkowa przygotuje koszyk z Twoimi lekami. Operacja ta może potrwać kilka minut.";
-"rdm_scc_txt_shipment_content_3" = "Kliknij „Otwórz koszyk” i sfinalizuj zamówienie na stronie apteki.";
+"rdm_scc_txt_shipment_content_2" = "Poczekaj kilka minut, aż otrzymasz odpowiedź z apteki wysyłkowej.";
+"rdm_scc_txt_shipment_content_3" = "Apteka poinformuje Cię wówczas za pośrednictwem aplikacji e-recepta o sposobie realizacji zamówienia.";
 "rdm_scc_txt_shipment_title" = "Twoje następne kroki";
 "rdm_txt_subtitle" = "Jak chcesz zrealizować swoje recepty?";
 "rdm_txt_title" = "Jak wykupić?";
@@ -1285,6 +1302,8 @@
 "stg_btn_edit_profile_login" = "Rejestr";
 "stg_btn_edit_profile_logout" = "Wyloguj";
 "stg_btn_edit_profile_registered_devices" = "Podłączone urządzenia";
+"stg_btn_language_settings" = "Język";
+"stg_btn_language_settings_alert_open_settings" = "Otwórz ustawienia";
 "stg_btn_medication_reminder" = "Przypomnienie o przychodach";
 "stg_btn_new_profile_create" = "Zapisz";
 "stg_btn_reg_devices_load" = "Rejestr";
@@ -1471,6 +1490,8 @@
 "stg_txt_header_personal_settings" = "ustawienia osobiste";
 "stg_txt_header_profiles" = "Profile";
 "stg_txt_header_security" = "Bezpieczeństwo";
+"stg_txt_language_settings_alert_description" = "Język aplikacji możesz zmienić w Ustawieniach systemu.";
+"stg_txt_language_settings_alert_title" = "Zmień język aplikacji";
 "stg_txt_new_profile_background_section_title" = "Kolor tła";
 "stg_txt_new_profile_error_message_title" = "Błąd";
 "stg_txt_new_profile_missing_name_error" = "Pole nazwy nie może być puste";
@@ -1483,6 +1504,7 @@
 "stg_txt_reg_devices_registered_since_%@" = "Zarejestrowane od %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Zarejestrowane od %@ (to urządzenie)";
 "stg_txt_reg_devices_title" = "Podłączone urządzenia";
+"stg_txt_security_option_change_password_title" = "Zmień hasło";
 "stg_txt_security_option_faceid_title" = "Face ID";
 "stg_txt_security_option_password_title" = "Hasło";
 "stg_txt_security_option_touchid_title" = "Touch ID";

@@ -26,6 +26,7 @@ struct ProfilePicturePicker: View {
     let borderColor: Color
 
     @State var editEmoji = false
+    @FocusState private var focused: Bool
 
     var body: some View {
         VStack(spacing: 16) {
@@ -66,10 +67,13 @@ struct ProfilePicturePicker: View {
                             }
                             editEmoji = false
                         }
-                        .textFieldKeepFirstResponder()
+                        .focused($focused)
                         .frame(width: 140, height: 140, alignment: .center)
                         .opacity(0)
                         .accessibility(hidden: true)
+                        .onAppear {
+                            focused = true
+                        }
                     }
                 }
 

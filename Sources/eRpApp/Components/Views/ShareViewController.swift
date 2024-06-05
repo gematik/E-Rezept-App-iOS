@@ -16,18 +16,24 @@
 //  
 //
 
+import ComposableArchitecture
 import Foundation
 import SwiftUI
 
 struct ShareViewController: UIViewControllerRepresentable {
-    var itemsToShare: [Any]
+    @Perception.Bindable var store: StoreOf<ShareSheetDomain>
+
+    init(store: StoreOf<ShareSheetDomain>) {
+        self.store = store
+    }
+
     var servicesToShareItem: [UIActivity] = []
 
     func makeUIViewController(
         context _: UIViewControllerRepresentableContext<ShareViewController>
     ) -> UIActivityViewController {
         UIActivityViewController(
-            activityItems: itemsToShare,
+            activityItems: store.state.shareItems(),
             applicationActivities: servicesToShareItem
         )
     }

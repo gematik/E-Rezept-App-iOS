@@ -21,9 +21,9 @@ import ComposableArchitecture
 import IDP
 import SwiftUI
 
-struct CardWallPINDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct CardWallPINDomain {
+    @ObservableState
     struct State: Equatable {
         let isDemoModus: Bool
         let profileId: UUID
@@ -32,45 +32,52 @@ struct CardWallPINDomain: ReducerProtocol {
         var doneButtonPressed = false
         let pinPassRange = (6 ... 8)
         var transition: TransitionMode
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
+
+        var enteredPINNotNumeric: Bool {
+            !CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: pin))
+        }
+
+        var enteredPINTooShort: Bool {
+            pin.lengthOfBytes(using: .utf8) < pinPassRange.lowerBound
+        }
+
+        var enteredPINTooLong: Bool {
+            pin.lengthOfBytes(using: .utf8) > pinPassRange.upperBound
+        }
+
+        var enteredPINValid: Bool {
+            !(enteredPINTooShort || enteredPINTooLong || enteredPINNotNumeric)
+        }
+
+        var showWarning: Bool {
+            enteredPINNotNumeric || enteredPINTooLong || (enteredPINTooShort && doneButtonPressed)
+        }
+
+        var warningMessage: String {
+            if enteredPINNotNumeric {
+                return L10n.cdwTxtPinWarningChar.text
+            } else {
+                return L10n.cdwTxtPinWarningCount("\(pin.lengthOfBytes(using: .utf8))").text
+            }
+        }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardWall_saveLogin
-            case login(CardWallLoginOptionDomain.State)
-            // sourcery: AnalyticsScreen = contactInsuranceCompany
-            case egk(OrderHealthCardDomain.State)
-        }
-
-        enum Action: Equatable {
-            case login(action: CardWallLoginOptionDomain.Action)
-            case egkAction(action: OrderHealthCardDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.login,
-                action: /Action.login
-            ) {
-                CardWallLoginOptionDomain()
-            }
-
-            Scope(
-                state: /State.egk,
-                action: /Action.egkAction(action:)
-            ) {
-                OrderHealthCardDomain()
-            }
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = cardWall_saveLogin
+        case login(CardWallLoginOptionDomain)
+        // sourcery: AnalyticsScreen = contactInsuranceCompany
+        case egk(OrderHealthCardDomain)
     }
 
     indirect enum Action: Equatable {
         case update(pin: String)
         case advance(TransitionMode)
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case egkButtonTapped
+        case destination(PresentationAction<Destination.Action>)
 
         case delegate(Delegate)
 
@@ -92,15 +99,13 @@ struct CardWallPINDomain: ReducerProtocol {
     @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
     @Dependency(\.accessibilityAnnouncementReceiver) var receiver: AccessibilityAnnouncementReceiver
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .update(pin: pin):
             state.pin = pin
@@ -123,16 +128,16 @@ struct CardWallPINDomain: ReducerProtocol {
                 receiver.accessibilityAnnouncement(state.warningMessage)
             }
             return .none
-        case .setNavigation(tag: .egk):
+        case .egkButtonTapped:
             state.destination = .egk(.init())
             return .none
-        case .setNavigation(tag: .none):
+        case .resetNavigation:
             state.destination = nil
             return .none
         case let .destination(.presented(.login(.delegate(delegateAction)))):
             switch delegateAction {
             case .close:
-                return EffectTask.send(.delegate(.close))
+                return Effect.send(.delegate(.close))
             case .wrongCanClose:
                 return .run { send in
                     // Delay for waiting the close animation Workaround for TCA pullback problem
@@ -143,47 +148,16 @@ struct CardWallPINDomain: ReducerProtocol {
                 state.destination = nil
                 return .none
             case .navigateToIntro:
-                return EffectTask.send(.delegate(.navigateToIntro))
+                return Effect.send(.delegate(.navigateToIntro))
             case .unlockCardClose:
-                return EffectTask.send(.delegate(.unlockCardClose))
+                return Effect.send(.delegate(.unlockCardClose))
             }
-        case .destination(.presented(.egkAction(action: .delegate(.close)))):
+        case .destination(.presented(.egk(.delegate(.close)))):
             state.destination = nil
             return .none
-        case .setNavigation,
-             .destination,
+        case .destination,
              .delegate:
             return .none
-        }
-    }
-}
-
-extension CardWallPINDomain.State {
-    var enteredPINNotNumeric: Bool {
-        !CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: pin))
-    }
-
-    var enteredPINTooShort: Bool {
-        pin.lengthOfBytes(using: .utf8) < pinPassRange.lowerBound
-    }
-
-    var enteredPINTooLong: Bool {
-        pin.lengthOfBytes(using: .utf8) > pinPassRange.upperBound
-    }
-
-    var enteredPINValid: Bool {
-        !(enteredPINTooShort || enteredPINTooLong || enteredPINNotNumeric)
-    }
-
-    var showWarning: Bool {
-        enteredPINNotNumeric || enteredPINTooLong || (enteredPINTooShort && doneButtonPressed)
-    }
-
-    var warningMessage: String {
-        if enteredPINNotNumeric {
-            return L10n.cdwTxtPinWarningChar.text
-        } else {
-            return L10n.cdwTxtPinWarningCount("\(pin.lengthOfBytes(using: .utf8))").text
         }
     }
 }
@@ -194,7 +168,7 @@ extension CardWallPINDomain {
 
         static let store = storeFor(state)
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<CardWallPINDomain> {
             Store(initialState: state) {
                 CardWallPINDomain()
             }

@@ -122,7 +122,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         await testScheduler.run()
 
         // when returning from cardwall
-        await store.send(.destination(.presented(.cardWallCAN(action: .delegate(.close))))) {
+        await store.send(.destination(.presented(.cardWallCAN(.delegate(.close))))) {
             $0.destination = nil
         }
 

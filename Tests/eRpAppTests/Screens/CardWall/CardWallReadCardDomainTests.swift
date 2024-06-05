@@ -313,7 +313,14 @@ final class CardWallReadCardDomainTests: XCTestCase {
             dependencies.dateProvider = { Date() }
         } operation: {
             mockResourceHandler.canOpenURLReturnValue = true
-            let sut = testStore(initialState: defaultState)
+            let sut = testStore(initialState: .init(
+                isDemoModus: false,
+                profileId: mockUserSession.profileId,
+                pin: "123456",
+                loginOption: .withoutBiometry,
+                output: .challengeLoaded(challenge),
+                destination: .alert(.info(.init(title: TextState("dummy"))))
+            ))
 
             let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
             let report = CardWallReadCardDomain.createNfcReadingReport(with: error, commands: [])

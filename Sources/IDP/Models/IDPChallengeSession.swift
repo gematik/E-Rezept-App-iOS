@@ -59,7 +59,7 @@ public protocol ExtAuthRequestStorage: AnyObject {
 }
 
 /// All relevant constraints needed for a successful challenge exchange
-public struct IDPChallengeSession: ChallengeSession {
+public struct IDPChallengeSession: ChallengeSession, Codable {
     /// The verified challenge
     public let challenge: IDPChallenge
     /// The verifier code used to request the `challenge`
@@ -96,7 +96,7 @@ public struct IDPChallengeSession: ChallengeSession {
         jsonEncoder _: JSONEncoder = JSONEncoder()
     ) -> AnyPublisher<SignedChallenge, Swift.Error> {
         Deferred { () -> AnyPublisher<SignedChallenge, Swift.Error> in
-            // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Embed certificate
+            // [REQ:gemSpec_IDP_Frontend:A_20526-01] Embed certificate
             let header = JWT.Header(alg: alg, x5c: certificates, typ: "JWT", cty: "NJWT")
             let payload = IDPChallengeResponse(njwt: challenge.challenge.serialize())
             do {

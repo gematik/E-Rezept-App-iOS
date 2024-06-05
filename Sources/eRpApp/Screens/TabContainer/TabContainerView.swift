@@ -23,107 +23,75 @@ import eRpStyleKit
 import SwiftUI
 
 struct TabContainerView: View {
-    let store: AppDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, AppDomain.Action>
-
-    init(store: AppDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let destination: AppDomain.Destinations.State
-        let unreadOrderMessageCount: Int
-
-        init(state: AppDomain.State) {
-            destination = state.destination
-            unreadOrderMessageCount = state.unreadOrderMessageCount
-        }
-    }
+    @Perception.Bindable var store: StoreOf<AppDomain>
 
     var body: some View {
-        ZStack(alignment: .top) {
-            #if ENABLE_DEBUG_VIEW
-            DebugEnvironmentView()
-                .offset(x: 0, y: -12)
-                .zIndex(1000)
-            #endif
+        WithPerceptionTracking {
+            ZStack(alignment: .top) {
+                #if ENABLE_DEBUG_VIEW
+                DebugEnvironmentView()
+                    .offset(x: 0, y: -12)
+                    .zIndex(1000)
+                #endif
 
-            TabView(selection: Binding<AppDomain.Destinations.State>(
-                get: { viewStore.destination },
-                set: { selected in
-                    viewStore.send(.setNavigation(selected))
-                }
-            )) {
-                Group {
-                    MainView(
-                        store: store.scope(
-                            state: \.subdomains.main
-                        ) {
-                            AppDomain.Action.subdomains(.main(action: $0))
+                TabView(selection: $store.destination.sending(\.setNavigation)) {
+                    Group {
+                        MainView(store: store.scope(state: \.main, action: \.main))
+                            .tabItem {
+                                Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
+                            }
+                            .tag(AppDomain.Destinations.State.main)
+
+                        NavigationView {
+                            PharmacySearchView(
+                                store: store.scope(
+                                    state: \.pharmacySearch,
+                                    action: \.pharmacySearch
+                                ),
+                                isRedeemRecipe: false
+                            )
                         }
-                    )
-                    .tabItem {
-                        Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
-                    }
-                    .tag(AppDomain.Destinations.State.main)
+                        .tabItem {
+                            Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
+                        }
+                        .tag(AppDomain.Destinations.State.pharmacySearch)
 
-                    NavigationView {
-                        PharmacySearchView(
-                            store: store.scope(
-                                state: \.subdomains.pharmacySearch
-                            ) {
-                                AppDomain.Action.subdomains(.pharmacySearch(action: $0))
-                            },
-                            isRedeemRecipe: false
+                        OrdersView(store: store.scope(state: \.orders, action: \.orders))
+                            .tabItem {
+                                Label(L10n.tabTxtOrders, image: Asset.TabIcon.bag.name)
+                            }
+                            .badge(store.unreadOrderMessageCount)
+                            .tag(AppDomain.Destinations.State.orders)
+
+                        SettingsView(
+                            store: store.scope(state: \.settings, action: \.settings)
                         )
-                    }
-                    .tabItem {
-                        Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
-                    }
-                    .tag(AppDomain.Destinations.State.pharmacySearch)
-
-                    OrdersView(
-                        store: store.scope(state: \.subdomains.orders) {
-                            AppDomain.Action.subdomains(.orders(action: $0))
+                        .tabItem {
+                            Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                         }
-                    )
-                    .tabItem {
-                        Label(L10n.tabTxtOrders, image: Asset.TabIcon.bag.name)
+                        .tag(AppDomain.Destinations.State.settings)
                     }
-                    .badge(viewStore.unreadOrderMessageCount)
-                    .tag(AppDomain.Destinations.State.orders)
-
-                    SettingsView(
-                        store: store.scope(
-                            state: \.subdomains.settings
-                        ) { AppDomain.Action.subdomains(.settings(action: $0)) }
-                    )
-                    .tabItem {
-                        Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
+                    .backport.tabContainerToolBarBackground()
+                }
+                .task {
+                    await store.send(.task).finish()
+                }
+                // Fix tabbar background becomming 100% transparent for dynamic views, in our case using quick filters
+                // within pharmacy search
+                // Source: https://www.hackingwithswift.com/forums/ios/tab-bar-transparent/10549
+                .onAppear {
+                    if #available(iOS 16.0, *) {
+                        // see `.backport.tabContainerToolBarBackground()` implementation
+                    } else if #available(iOS 15.0, *) {
+                        // correct the transparency bug for Tab bars
+                        let tabBarAppearance = UITabBarAppearance()
+                        tabBarAppearance.configureWithOpaqueBackground()
+                        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
                     }
-                    .tag(AppDomain.Destinations.State.settings)
                 }
-                .backport.tabContainerToolBarBackground()
+                .tint(Colors.primary600)
+                .zIndex(0)
             }
-            .task {
-                await viewStore.send(.task).finish()
-            }
-            // Fix tabbar background becomming 100% transparent for dynamic views, in our case using quick filters
-            // within pharmacy search
-            // Source: https://www.hackingwithswift.com/forums/ios/tab-bar-transparent/10549
-            .onAppear {
-                if #available(iOS 16.0, *) {
-                    // see `.backport.tabContainerToolBarBackground()` implementation
-                } else if #available(iOS 15.0, *) {
-                    // correct the transparency bug for Tab bars
-                    let tabBarAppearance = UITabBarAppearance()
-                    tabBarAppearance.configureWithOpaqueBackground()
-                    UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
-                }
-            }
-            .tint(Colors.primary600)
-            .zIndex(0)
         }
     }
 

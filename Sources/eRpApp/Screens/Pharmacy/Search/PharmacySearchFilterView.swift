@@ -21,12 +21,31 @@ import eRpStyleKit
 import SwiftUI
 
 struct PharmacySearchFilterView: View {
-    let store: PharmacySearchFilterDomain.Store
-    @ObservedObject var viewStore: ViewStore<PharmacySearchFilterDomain.State, PharmacySearchFilterDomain.Action>
+    @Perception.Bindable var store: StoreOf<PharmacySearchFilterDomain>
 
-    init(store: PharmacySearchFilterDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
+    var body: some View {
+        WithPerceptionTracking {
+            VStack(spacing: 24) {
+                Text(L10n.psfTxtTitle)
+                    .font(.subheadline.weight(.bold))
+
+                VStack(alignment: .leading, spacing: 8) {
+                    FilterRow(store: store)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Button(action: {
+                    store.send(.delegate(.close), animation: .easeInOut)
+                }, label: {
+                    Text(L10n.psfBtnAccept)
+                })
+                    .frame(idealWidth: 120, alignment: .center)
+                    .buttonStyle(.secondaryAlt)
+            }
+            .padding()
+            .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
+            .navigationBarTitleDisplayMode(.inline)
+        }
     }
 
     struct FilterView: View {
@@ -46,62 +65,42 @@ struct PharmacySearchFilterView: View {
         }
     }
 
-    typealias Filter = PharmacySearchFilterDomain.PharmacyFilterOption
-
     struct FilterRow: View {
-        @ObservedObject var viewStore: ViewStore<PharmacySearchFilterDomain.State, PharmacySearchFilterDomain.Action>
-
-        let filters: [PharmacySearchFilterDomain.PharmacyFilterOption]
+        @Perception.Bindable var store: StoreOf<PharmacySearchFilterDomain>
 
         var body: some View {
-            HStack {
-                ForEach(filters[0 ..< 2], id: \.self) { filterOption in
-                    FilterView(
-                        title: filterOption.localizedStringKey,
-                        isEnabled: viewStore.binding(get: { state in
-                            state.pharmacyFilterOptions.contains(filterOption)
-                        }, send: { _ in
-                            PharmacySearchFilterDomain.Action.toggleFilter(filterOption)
-                        })
-                    )
+            WithPerceptionTracking {
+                HStack {
+                    ForEach(store.pharmacyFilterShow[0 ..< 2], id: \.self) { filterOption in
+                        WithPerceptionTracking {
+                            let isEnabled = store.pharmacyFilterOptions.contains(filterOption)
+                            FilterView(
+                                title: filterOption.localizedStringKey,
+                                isEnabled: Binding { isEnabled }
+                                set: { _ in
+                                    store.send(.toggleFilter(filterOption))
+                                }
+                            )
+                        }
+                    }
                 }
-            }
-            HStack {
-                ForEach(filters[2 ..< filters.count], id: \.self) { filterOption in
-                    FilterView(
-                        title: filterOption.localizedStringKey,
-                        isEnabled: viewStore.binding(get: { state in
-                            state.pharmacyFilterOptions.contains(filterOption)
-                        }, send: { _ in
-                            PharmacySearchFilterDomain.Action.toggleFilter(filterOption)
-                        })
-                    )
+                HStack {
+                    ForEach(store.pharmacyFilterShow[2 ..< store.pharmacyFilterShow.count],
+                            id: \.self) { filterOption in
+                        WithPerceptionTracking {
+                            let isEnabled = store.pharmacyFilterOptions.contains(filterOption)
+                            FilterView(
+                                title: filterOption.localizedStringKey,
+                                isEnabled: Binding { isEnabled }
+                                set: { _ in
+                                    store.send(.toggleFilter(filterOption))
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
-
-    var body: some View {
-        VStack(spacing: 24) {
-            Text(L10n.psfTxtTitle)
-                .font(.subheadline.weight(.bold))
-
-            VStack(alignment: .leading, spacing: 8) {
-                FilterRow(viewStore: viewStore, filters: viewStore.pharmacyFilterShow)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            Button(action: {
-                viewStore.send(.delegate(.close), animation: .easeInOut)
-            }, label: {
-                Text(L10n.psfBtnAccept)
-            })
-                .frame(idealWidth: 120, alignment: .center)
-                .buttonStyle(.secondaryAlt)
-        }
-        .padding()
-        .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     private struct PharmacyFilterCell: View {

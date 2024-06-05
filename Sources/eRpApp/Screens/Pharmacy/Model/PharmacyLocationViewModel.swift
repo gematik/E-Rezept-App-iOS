@@ -93,18 +93,39 @@ struct PharmacyLocationViewModel: Equatable, Identifiable {
     let todayOpeningState: PharmacyOpenHoursCalculator.TodaysOpeningState
 
     struct OpeningHoursDay: Equatable, Hashable {
+        static let localizesDisplayNameFormatter: DateFormatter = {
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = .current
+            dateFormatter.dateFormat = "EEEE"
+            return dateFormatter
+        }()
+
+        static var dateForDayOfWeek: [String: Date] = [:]
+        static func date(from dayOfWeek: String) -> Date? {
+            if let date = dateForDayOfWeek[dayOfWeek] {
+                return date
+            }
+            let date = PharmacyLocationViewModel.dayNameParseFormatter.date(from: dayOfWeek)
+            dateForDayOfWeek[dayOfWeek] = date
+            return date
+        }
+
+        static var localizedDisplayNameFormatted: [Date: String] = [:]
+        static func localizesDisplayNameFormatter(from date: Date) -> String {
+            if let formatted = localizedDisplayNameFormatted[date] {
+                return formatted
+            }
+            let formatted = Self.localizesDisplayNameFormatter.string(from: date)
+            localizedDisplayNameFormatted[date] = formatted
+            return formatted
+        }
+
         internal init(dayOfWeek: String, entries: [PharmacyLocationViewModel.OpeningHoursDay.Timespan]) {
             self.dayOfWeek = dayOfWeek
             self.entries = entries
 
-            let localizesDisplayNameFormatter: DateFormatter = {
-                let dateFormatter = DateFormatter()
-                dateFormatter.locale = .current
-                dateFormatter.dateFormat = "EEEE"
-                return dateFormatter
-            }()
-            if let date = PharmacyLocationViewModel.dayNameParseFormatter.date(from: dayOfWeek) {
-                dayOfWeekLocalizedDisplayName = localizesDisplayNameFormatter.string(from: date)
+            if let date = Self.date(from: dayOfWeek) {
+                dayOfWeekLocalizedDisplayName = Self.localizesDisplayNameFormatter(from: date)
                 // .weekday starts with 1 being sunday, +5 % 7 to let monday be 0 and the first day
                 dayOfWeekNumber = (Calendar.current.component(.weekday, from: date) + 5) % 7
             } else {

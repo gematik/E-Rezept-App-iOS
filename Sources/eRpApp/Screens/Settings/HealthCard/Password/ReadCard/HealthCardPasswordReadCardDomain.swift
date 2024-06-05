@@ -20,7 +20,8 @@ import Combine
 import ComposableArchitecture
 import HealthCardControl
 
-struct HealthCardPasswordReadCardDomain: ReducerProtocol {
+@Reducer
+struct HealthCardPasswordReadCardDomain {
     typealias Store = StoreOf<Self>
 
     enum Mode: Equatable {
@@ -29,18 +30,19 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
         case healthCardSetNewPinSecret(can: String, oldPin: String, newPin: String)
     }
 
+    @ObservableState
     struct State: Equatable {
         let mode: HealthCardPasswordReadCardDomain.Mode
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     enum Action: Equatable {
         case readCard
         case backButtonTapped
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case destination(PresentationAction<Destination.Action>)
 
         case response(Response)
         case delegate(Delegate)
@@ -61,41 +63,30 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = errorAlert
-            case alert(ErpAlertState<Action.Alert>)
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = errorAlert
+        case alert(ErpAlertState<Alert>)
 
-        enum Action: Equatable {
-            case alert(Alert)
-
-            enum Alert: Equatable {
-                case dismiss
-                case settings
-                case amendPin
-                case amendPuk
-                case amendCan
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            EmptyReducer()
+        enum Alert: Equatable {
+            case settings
+            case amendPin
+            case amendPuk
+            case amendCan
         }
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.nfcHealthCardPasswordController) var nfcSessionController: NFCHealthCardPasswordController
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .readCard:
             return .run { [state = state] send in
@@ -171,20 +162,34 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
             return .send(.delegate(.close))
         case .destination(.presented(.alert(.settings))):
             state.destination = nil
-            return .send(.delegate(.navigateToSettings))
+            return .run { send in
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                try await schedulers.main.sleep(for: 0.5)
+                await send(.delegate(.navigateToSettings))
+            }
         case .destination(.presented(.alert(.amendCan))):
             state.destination = nil
-            return .send(.delegate(.navigateToCanScreen))
+            return .run { send in
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                try await schedulers.main.sleep(for: 0.5)
+                await send(.delegate(.navigateToCanScreen))
+            }
         case .destination(.presented(.alert(.amendPin))):
             state.destination = nil
-            return .send(.delegate(.navigateToOldPinScreen))
+            return .run { send in
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                try await schedulers.main.sleep(for: 0.5)
+                await send(.delegate(.navigateToOldPinScreen))
+            }
         case .destination(.presented(.alert(.amendPuk))):
             state.destination = nil
-            return .send(.delegate(.navigateToPukScreen))
-        case .setNavigation(tag: .none):
+            return .run { send in
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                try await schedulers.main.sleep(for: 0.5)
+                await send(.delegate(.navigateToPukScreen))
+            }
+        case .resetNavigation:
             state.destination = nil
-            return .none
-        case .setNavigation:
             return .none
         case .delegate,
              .destination:
@@ -246,9 +251,7 @@ extension HealthCardPasswordReadCardDomain {
     enum Dummies {
         static let state = State(mode: .healthCardResetPinCounterNoNewSecret(can: "", puk: ""))
 
-        static let store = Store(
-            initialState: state
-        ) {
+        static let store = Store(initialState: state) {
             HealthCardPasswordReadCardDomain()
         }
     }

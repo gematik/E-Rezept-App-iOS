@@ -77,11 +77,17 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(dismissViaSwiftUIEnvironment: onDismiss)
     }
 
     class Coordinator: NSObject, UIAdaptivePresentationControllerDelegate, UIViewControllerTransitioningDelegate {
         var presented = false
+        var dismissViaSwiftUIEnvironment: () -> Void
+
+        init(presented: Bool = false, dismissViaSwiftUIEnvironment: @escaping () -> Void) {
+            self.presented = presented
+            self.dismissViaSwiftUIEnvironment = dismissViaSwiftUIEnvironment
+        }
 
         func animationController(
             forPresented _: UIViewController,
@@ -92,7 +98,11 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
         }
 
         func animationController(forDismissed _: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-            HideAnimationController()
+            // In case of using SwiftUI @Environment(\.dismiss), presented will still be true -> call dismiss manually
+            if presented {
+                dismissViaSwiftUIEnvironment()
+            }
+            return HideAnimationController()
         }
     }
 
@@ -126,6 +136,7 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
                 }
             } completion: { _ in
                 transitionContext.completeTransition(true)
+                contextVC?.dismiss()
             }
             UIView.animate(
                 withDuration: 0.25,

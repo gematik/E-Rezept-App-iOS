@@ -963,6 +963,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     // [REQ:gemSpec_IDP_Sek:A_22296] Test
+    // [REQ:gemSpec_IDP_Frontend:A_23082#4] Test
     func testLoadDirectoryKKAppsInvalidSignature() throws {
         sut = DefaultIDPSession(
             client: idpClientMock,
@@ -1097,7 +1098,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         expect(receivedArguments.redirectURI).to(equal("https://das-e-rezept-fuer-deutschland.de"))
     }
 
-    // [REQ:gemSpec_IDP_Sek:A_22301] Negative Test
+    // [REQ:gemSpec_IDP_Sek:A_22301-01] Negative Test
     func testExtAuthVerifyAndExchangeFailesWithoutReferenceStateGID() throws {
         idpClientMock.extAuthVerifyUsingReturnValue =
             Just(IDPExchangeToken(code: "code",

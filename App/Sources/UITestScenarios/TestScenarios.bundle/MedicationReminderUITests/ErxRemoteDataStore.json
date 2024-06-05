@@ -30,7 +30,7 @@
                             "dosageInstructions": "1-1-1-1",
                             "bvg": true,
                             "coPaymentStatus": "0",
-                            "authoredOn": "2024-01-15",
+                            "authoredOn": "{{DATE}}",
                             "multiplePrescription":
                             {
                                 "mark": false
@@ -64,10 +64,10 @@
                         },
                         "author": "Count Orff",
                         "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.15",
-                        "authoredOn": "2024-01-15T15:15:38.762+00:00",
+                        "authoredOn": "{{DATE:-9D}}",
                         "status": "ready",
-                        "expiresOn": "2024-04-15",
-                        "acceptedUntil": "2024-02-12",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
                         "practitioner":
                         {
                             "qualification": "travel agent",
@@ -98,7 +98,7 @@
                         [],
                         "avsTransactions":
                         [],
-                        "lastModified": "2024-01-15T15:15:39.668+00:00"
+                        "lastModified": "{{DATETIME:-20m}}"
                     },
                     {
                         "flowType":
@@ -153,10 +153,10 @@
                         },
                         "author": "Count Orff",
                         "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.17",
-                        "authoredOn": "2024-01-17T15:15:38.762+00:00",
+                        "authoredOn": "{{DATE:-7D}}",
                         "status": "ready",
-                        "expiresOn": "2024-04-17",
-                        "acceptedUntil": "2024-02-14",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
                         "practitioner":
                         {
                             "qualification": "travel agent",
@@ -187,7 +187,7 @@
                         [],
                         "avsTransactions":
                         [],
-                        "lastModified": "2024-01-17T15:15:39.668+00:00"
+                        "lastModified": "{{DATETIME:-20m}}"
                     },
                     {
                         "flowType":
@@ -242,10 +242,10 @@
                         },
                         "author": "Count Orff",
                         "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.16",
-                        "authoredOn": "2024-01-16T15:15:38.762+00:00",
+                        "authoredOn": "{{DATE:-8D}}",
                         "status": "ready",
-                        "expiresOn": "2024-04-16",
-                        "acceptedUntil": "2024-02-13",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
                         "practitioner":
                         {
                             "qualification": "travel agent",
@@ -276,7 +276,7 @@
                         [],
                         "avsTransactions":
                         [],
-                        "lastModified": "2024-01-16T15:15:39.668+00:00"
+                        "lastModified": "{{DATETIME:-20m}}"
                     }
                 ]
             },

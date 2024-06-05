@@ -18,16 +18,16 @@
 
 import ComposableArchitecture
 
-extension ReducerProtocol
+extension Reducer
     where Self.Action == AppStartDomain.Action, Self.State == AppStartDomain.State {
     func analytics()
-        -> some ReducerProtocol<Self.State, Self.Action> {
+        -> some Reducer<Self.State, Self.Action> {
         AnalyticsReducer(wrapping: self)
     }
 }
 
 // [REQ:BSI-eRp-ePA:O.Purp_2#4,O.Purp_4#1,O.Data_6#6] User interaction analytics trigger ...
-struct AnalyticsReducer<ContentReducer: ReducerProtocol>: ReducerProtocol
+struct AnalyticsReducer<ContentReducer: Reducer>: Reducer
     where ContentReducer.Action == AppStartDomain.Action, ContentReducer.State == AppStartDomain.State {
     typealias State = ContentReducer.State
     typealias Action = ContentReducer.Action
@@ -36,7 +36,7 @@ struct AnalyticsReducer<ContentReducer: ReducerProtocol>: ReducerProtocol
 
     @Dependency(\.tracker) var tracker: Tracker
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             let route = state.routeName()
 
@@ -47,7 +47,7 @@ struct AnalyticsReducer<ContentReducer: ReducerProtocol>: ReducerProtocol
                 #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
                 print("Route tag:", newRoute)
                 #endif
-                // [REQ:gemSpec_eRp_FdV:A_19093#2] Very sparse usage of actual tracking boils down to this call where
+                // [REQ:gemSpec_eRp_FdV:A_19093-01#2] Very sparse usage of actual tracking boils down to this call where
                 // only displayed screens are tracked
                 tracker.track(screen: newRoute)
             }

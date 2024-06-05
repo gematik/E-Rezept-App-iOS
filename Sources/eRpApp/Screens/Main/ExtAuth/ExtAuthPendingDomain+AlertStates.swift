@@ -20,7 +20,7 @@ import ComposableArchitecture
 import Foundation
 
 extension ExtAuthPendingDomain {
-    static func alertState(title: String, message _: String, url: URL) -> ErpAlertState<Destination.Action.Alert> {
+    static func alertState(title: String, message _: String, url: URL) -> ErpAlertState<Destination.Alert> {
         ErpAlertState(
             title: { TextState(L10n.mainTxtPendingextauthFailed(title)) },
             actions: {
@@ -35,7 +35,7 @@ extension ExtAuthPendingDomain {
         )
     }
 
-    static func alertState(title: String, message: String) -> ErpAlertState<Destination.Action.Alert> {
+    static func alertState(title: String, message: String) -> ErpAlertState<Destination.Alert> {
         ErpAlertState(
             title: { TextState(title) },
             actions: {
@@ -47,7 +47,7 @@ extension ExtAuthPendingDomain {
         )
     }
 
-    static var saveProfileAlert: ErpAlertState<Destination.Action.Alert> = {
+    static var saveProfileAlert: ErpAlertState<Destination.Alert> = {
         ErpAlertState(
             title: { TextState(L10n.cdwTxtExtauthAlertTitleSaveProfile) },
             actions: {

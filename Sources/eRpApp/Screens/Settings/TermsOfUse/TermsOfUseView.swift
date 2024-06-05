@@ -21,7 +21,7 @@ import SwiftUI
 import WebKit
 
 // [REQ:BSI-eRp-ePA:O.Purp_3#2] Actual view for the Terms of Use display
-// [REQ:BSI-eRp-ePA:O.Arch_8#1] Webview containint local html without javascript
+// [REQ:BSI-eRp-ePA:O.Arch_8#1] Webview containing local html without javascript
 struct TermsOfUseView: View {
     var body: some View {
         WebView()
@@ -31,7 +31,7 @@ struct TermsOfUseView: View {
 extension TermsOfUseView {
     struct WebView: UIViewRepresentable {
         // swiftlint:disable:next weak_delegate
-        // [REQ:BSI-eRp-ePA:O.Plat_13#5] Usage of the delegate
+        // [REQ:BSI-eRp-ePA:O.Plat_10#5] Usage of the delegate
         let navigationDelegate = DataPrivacyTermsOfUseNavigationDelegate()
 
         func makeUIView(context _: Context) -> WKWebView {

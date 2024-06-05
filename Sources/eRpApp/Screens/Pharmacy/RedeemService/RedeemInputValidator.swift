@@ -254,13 +254,15 @@ extension AVSMessage {
     }
 }
 
+// sourcery: skipUnimplemented
 extension AVSMessage.Validator: DependencyKey {
-    static let liveValue = AVSMessage.Validator()
-    static let previewValue = AVSMessage.Validator()
+    static let liveValue: RedeemInputValidator = AVSMessage.Validator()
+    static let previewValue: RedeemInputValidator = AVSMessage.Validator()
+    static let testValue: RedeemInputValidator = UnimplementedRedeemInputValidator()
 }
 
 extension DependencyValues {
-    var avsMessageValidator: AVSMessage.Validator {
+    var avsMessageValidator: RedeemInputValidator {
         get { self[AVSMessage.Validator.self] }
         set { self[AVSMessage.Validator.self] = newValue }
     }
@@ -401,13 +403,15 @@ extension ErxTaskOrder {
     }
 }
 
+// sourcery: skipUnimplemented
 extension ErxTaskOrder.Validator: DependencyKey {
-    static let liveValue = ErxTaskOrder.Validator()
-    static let previewValue = ErxTaskOrder.Validator()
+    static let liveValue: RedeemInputValidator = ErxTaskOrder.Validator()
+    static let previewValue: RedeemInputValidator = ErxTaskOrder.Validator()
+    static let testValue: RedeemInputValidator = UnimplementedRedeemInputValidator()
 }
 
 extension DependencyValues {
-    var erxTaskOrderValidator: ErxTaskOrder.Validator {
+    var erxTaskOrderValidator: RedeemInputValidator {
         get { self[ErxTaskOrder.Validator.self] }
         set { self[ErxTaskOrder.Validator.self] = newValue }
     }

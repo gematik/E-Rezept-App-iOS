@@ -21,32 +21,32 @@ import eRpStyleKit
 import SwiftUI
 
 struct IngredientView: View {
-    let store: IngredientDomain.Store
+    @Perception.Bindable var store: StoreOf<IngredientDomain>
 
     var body: some View {
-        WithViewStore(store) { $0 } content: { viewStore in
+        WithPerceptionTracking {
             ScrollView(.vertical) {
                 SectionContainer {
                     SubTitle(
-                        title: viewStore.text ?? L10n.prscFdTxtNa.text,
+                        title: store.text ?? L10n.prscFdTxtNa.text,
                         description: L10n.prscDtlMedIngredientName
                     )
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientName)
 
                     SubTitle(
-                        title: viewStore.strength ?? L10n.prscFdTxtNa.text,
+                        title: store.strength ?? L10n.prscFdTxtNa.text,
                         description: L10n.prscDtlMedTxtAmount
                     )
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientStrength)
 
                     SubTitle(
-                        title: viewStore.form ?? L10n.prscFdTxtNa.text,
+                        title: store.form ?? L10n.prscFdTxtNa.text,
                         description: L10n.prscFdTxtDetailsDosageForm
                     )
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientForm)
 
                     SubTitle(
-                        title: viewStore.number ?? L10n.prscFdTxtNa.text,
+                        title: store.number ?? L10n.prscFdTxtNa.text,
                         description: L10n.prscDtlMedTxtIngredinetNumber
                     )
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientNumber)

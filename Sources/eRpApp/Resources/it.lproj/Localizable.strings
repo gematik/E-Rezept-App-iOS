@@ -82,6 +82,7 @@
 "cdw_btn_extauth_fallback_order_egk" = "Ordinare la tessera sanitaria";
 "cdw_btn_extauth_selection_cancel" = "Annulla";
 "cdw_btn_extauth_selection_continue" = "Ulteriore";
+"cdw_btn_extauth_selection_help" = "Primo soccorso";
 "cdw_btn_extauth_selection_order_egk" = "Ordinare la tessera sanitaria";
 "cdw_btn_extauth_selection_retry" = "Riprova";
 "cdw_btn_help_next_hint" = "Subito dopo aver premuto questo pulsante, la tessera sanitaria viene letta tramite NFC. Per fare ciò, avvicina la carta direttamente al dispositivo. Se la connessione ha esito positivo, riceverai un feedback tattile. Una perdita di connessione o errori vengono comunicati anche tramite feedback tattile. La comunicazione con la tessera sanitaria può durare fino a dieci secondi. Rimuovere poi la tessera sanitaria dal dispositivo.";
@@ -156,7 +157,7 @@
 "cdw_txt_biometry_subtitle" = "Desideri salvare i tuoi dati di accesso per accessi futuri?";
 "cdw_txt_biometry_title" = "Registrazione";
 "cdw_txt_can_demo_mode_info" = "È possibile specificare qualsiasi cifra.";
-"cdw_txt_can_description" = "Puoi trovare il tuo numero di accesso (Card Access Number, in breve CAN) nell'angolo in alto a destra della tua tessera sanitaria.";
+"cdw_txt_can_description" = "Puoi trovare il tuo numero di accesso nell'angolo in alto a destra della tua tessera sanitaria.";
 "cdw_txt_can_subtitle" = "Inserisci il numero di accesso";
 "cdw_txt_can_title" = "Registrazione";
 "cdw_txt_can_title_hint" = "Il numero di accesso della tua carta (in breve CAN) è composto da 6 cifre. Puoi trovare la CAN nell'angolo in alto a destra della parte anteriore della tua tessera sanitaria. Se qui non è presente il numero di accesso a sei cifre, avrete bisogno di una nuova tessera sanitaria della vostra cassa malattia.";
@@ -177,10 +178,18 @@
 "cdw_txt_extauth_fallback_description2" = "Non vuoi aspettare? La registrazione con la tessera sanitaria è già supportata da ogni cassa malati.";
 "cdw_txt_extauth_fallback_headline" = "Scegli l'assicurazione";
 "cdw_txt_extauth_fallback_title" = "Registrati con l'app";
+"cdw_txt_extauth_help_caption" = "Consigli per la registrazione all'app Assicurazioni";
+"cdw_txt_extauth_help_description" = "La vostra compagnia assicurativa è responsabile della tessera sanitaria. Si prega di contattarli se avete domande sulla registrazione. Ecco alcuni suggerimenti provati e testati:";
+"cdw_txt_extauth_help_info_1" = "Tieni presente che, a seconda della tua assicurazione, potrebbe essere necessaria un'app separata. Ti invitiamo a verificare con la tua compagnia assicurativa per scoprire di cosa si tratta.";
+"cdw_txt_extauth_help_info_2" = "Avvia l'app del registratore di cassa ed effettua il login una volta prima di iniziare a registrarti nell'app di prescrizione elettronica.";
+"cdw_txt_extauth_help_info_3" = "Il passaggio dal login con la tessera sanitaria a quello con la tessera sanitaria può comportare problemi. Pertanto, prima di modificare l'opzione di accesso, esci attivamente dal tuo profilo.";
+"cdw_txt_extauth_help_info_4" = "Se la tua assicurazione non è presente nell'elenco puoi in alternativa registrarti con la tua tessera sanitaria e il relativo PIN.";
+"cdw_txt_extauth_help_info_5" = "Se l'app del registratore di cassa non ti reindirizza all'app di prescrizione elettronica, assicurati di segnalare questo errore alla tua compagnia assicurativa.";
+"cdw_txt_extauth_help_title" = "Aiuto";
 "cdw_txt_extauth_noresults" = "Non siamo riusciti a trovare alcun risultato per questo termine di ricerca.";
 "cdw_txt_extauth_noresults_title" = "Nessun risultato";
 "cdw_txt_extauth_searchprompt" = "Ricerca per nome";
-"cdw_txt_extauth_selection_description" = "Non hai trovato quello che cercavi? Questo elenco viene costantemente ampliato. La registrazione con la tessera sanitaria è già supportata da ogni cassa malati.";
+"cdw_txt_extauth_selection_description" = "Se l'accesso con l'ID sanitario non va come previsto, sono disponibili istruzioni di primo soccorso.";
 "cdw_txt_extauth_selection_empty_list_description" = "Questa funzionalità sarà disponibile tra pochi giorni. Per favore riprova più tardi.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Non ancora disponibile";
 "cdw_txt_extauth_selection_error_fallback" = "Per favore riprova più tardi.";
@@ -262,7 +271,7 @@
 "cdw_txt_rc_nfc_message_noCardMessage" = "Nessuna tessera sanitaria trovata";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Questo tipo di carta non è supportato";
 "cdw_txt_rc_placement" = "Crea qui 👆";
-"cdw_txt_rc_position_content" = "Prova anche questa posizione della mappa e dell'iPhone. È stato dimostrato che questa posizione fornisce una connessione migliore su alcuni iPhone.";
+"cdw_txt_rc_position_content" = "Sposta la carta in modo che il chip dorato sia sopra la fotocamera anteriore o tieni la carta contro la testa dell'iPhone come mostrato nell'immagine.";
 "cdw_txt_rc_position_header" = "Posizione diversa";
 "cdw_txt_rc_subheadline" = "Il seguente processo potrebbe richiedere fino a 30 secondi.";
 "cdw_txt_rc_tip_four" = "Suggerimento 4 di 4";
@@ -358,7 +367,9 @@
 "epp_back_button" = "Indietro";
 "epp_btn_alert_abort" = "Annulla";
 "epp_btn_alert_camera" = "telecamera";
+"epp_btn_alert_emoji" = "Emoji";
 "epp_btn_alert_library" = "Seleziona foto";
+"epp_btn_emoji_use" = "Utilizzo";
 "epp_txt_alert_header_profile" = "Scegli l'immagine del profilo";
 "epp_txt_alert_subheader_choose" = "Come vuoi continuare?";
 "erp_txt_tooltips_add_profile" = "Premi qui per creare un nuovo profilo";
@@ -377,7 +388,7 @@
 "erx_btn_alert_login" = "Registrati";
 "erx_btn_alert_ok" = "OK";
 "erx_btn_alert_retry" = "Riprova";
-"erx_btn_redeem" = "Riscatta tutto";
+"erx_btn_redeem" = "Tutto Riscatta";
 "erx_btn_refresh" = "Aggiornare";
 "erx_btn_scn_prescription" = "Apri lo scanner delle ricette";
 "erx_title" = "Ricette";
@@ -846,7 +857,7 @@
 "ord_txt_title" = "Ordini";
 "order_egk_btn_info_button" = "Come riconoscere una tessera sanitaria abilitata NFC";
 "order_egk_pin" = "Codice PIN";
-"order_egk_pin_card" = "Pin e tessera sanitaria";
+"order_egk_pin_card" = "PIN e tessera sanitaria";
 "order_egk_service_subtitle" = "Per questa app è necessaria una carta e un PIN associato.";
 "order_egk_service_title" = "Per cosa vorresti candidarti?";
 "order_egk_txt_contact_option_mail" = "Posta";
@@ -945,7 +956,8 @@
 "pha_search_hint_txt_close" = "Chiudi la condivisione della posizione, non condividere la posizione";
 "pha_search_map_annotation" = "Farmacia";
 "pha_search_map_btn_Error_cancel" = "Annulla";
-"pha_search_map_header" = "Vicino a";
+"pha_search_map_header" = "Vicino a me";
+"pha_search_map_txt_cluster_header" = "Farmacie";
 "pha_search_txt_closed" = "Chiuso";
 "pha_search_txt_closing_soon" = "Chiusura prossima";
 "pha_search_txt_error_no_server_response_headline" = "il server non risponde";
@@ -1022,12 +1034,14 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Tassa per il servizio di emergenza";
 "prsc_dtl_dr_error_info_description" = "Non tutte le informazioni sono presentate correttamente in questa ricetta. Puoi comunque riscattarlo presso la tua farmacia.";
 "prsc_dtl_dr_error_info_title" = "Ricetta errata";
+"prsc_dtl_dr_no_substitution_info_describtion" = "Il medico ha stabilito che dovresti ricevere il preparato prescritto. La farmacia non dovrebbe effettuare uno scambio sulla base di un accordo di sconto (“Aut idem”).";
+"prsc_dtl_dr_no_substitution_info_title" = "Non è possibile alcuna preparazione sostitutiva";
 "prsc_dtl_dr_prescription_validity_info_accept_date_description" = "Durante questo periodo puoi riscattare la tua ricetta in qualsiasi farmacia con un pagamento aggiuntivo massimo di 10€.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Entro questo termine potete comunque compilare la ricetta in farmacia, ma dovrete pagare voi stessi l'intero prezzo d'acquisto del medicinale. In alternativa potete chiedere al vostro studio di farvi riemettere la prescrizione.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Per quanto tempo è valida questa prescrizione?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Le prescrizioni importate da una copia cartacea non possono visualizzare informazioni personali o mediche per motivi di sicurezza. \n\n Accedi a questa app con tessera sanitaria o app Assicurazione per visualizzare tutte le informazioni contenute nella ricetta.";
 "prsc_dtl_dr_scanned_prescription_info_title" = "Ricetta scannerizzata";
-"prsc_dtl_dr_substitution_info_description" = "A causa dei requisiti legali della vostra compagnia di assicurazione sanitaria, potrebbe esservi offerta un'alternativa con lo stesso principio attivo. \n\n I medicinali possono apparire ed essere chiamati in modo diverso, hanno prezzi e produttori diversi, ma contengono comunque lo stesso principio attivo. Il principio attivo stesso e il dosaggio sono cruciali per l’effetto dei medicinali nel corpo. Spesso i pazienti ricevono in farmacia un farmaco diverso da quello prescritto dal medico, a condizione che il farmaco sia comparabile. Potrebbero esserci ragioni terapeutiche ed economiche per il cambiamento.";
+"prsc_dtl_dr_substitution_info_description" = "I farmacisti sono tenuti a dare priorità alla dispensazione dei medicinali per i quali la cassa malati del paziente ha stipulato un accordo di sconto con i produttori dei medicinali. Ciò non si applica solo se il medico esclude la dicitura “Aut idem” nella prescrizione, cosa che non è il caso della tua prescrizione.";
 "prsc_dtl_dr_substitution_info_title" = "Possibile preparazione sostitutiva";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Apri healthy.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Puoi trovare informazioni verificate da esperti su malattie, codici ICD e argomenti di prevenzione e cura nel Portale sanitario nazionale.";
@@ -1082,6 +1096,7 @@
 "prsc_dtl_txt_missing_dosage_instructions" = "Il tuo medico non ti ha dato alcuna informazione sull'assunzione del farmaco.";
 "prsc_dtl_txt_multi_prescription" = "Prescrizione multipla";
 "prsc_dtl_txt_no" = "NO";
+"prsc_dtl_txt_no_substitution" = "Non è possibile alcuna preparazione sostitutiva";
 "prsc_dtl_txt_partial" = "Parzialmente";
 "prsc_dtl_txt_pkv_hint_activate_msg" = "Una volta attivate le ricevute di spesa, le troverete qui dopo aver riscattato la vostra ricetta.";
 "prsc_dtl_txt_pkv_hint_activate_title" = "Ricevi le ricevute dei costi in formato digitale";
@@ -1090,6 +1105,8 @@
 "prsc_dtl_txt_practitioner_person" = "Prescrittore";
 "prsc_dtl_txt_quantity" = "Numero di confezioni prescritte";
 "prsc_dtl_txt_section_details_header" = "Informazioni dettagliate";
+"prsc_dtl_txt_substitution" = "Preparazione sostitutiva (Aut idem)";
+"prsc_dtl_txt_substitution_possible" = "Possibile preparazione sostitutiva";
 "prsc_dtl_txt_yes" = "SÌ";
 "prsc_fd_btn_error_banner" = "Rapporto";
 "prsc_fd_hint_dosageInstructions_pic" = "medico";
@@ -1156,7 +1173,7 @@
 "puc_txt_subtitle_%@" = "Mostra questo codice di ritiro a %@ .";
 "puc_txt_title" = "Codice di ritiro";
 "rdm_btn_redeem_pharmacy_description" = "Fatelo scansionare in farmacia";
-"rdm_btn_redeem_pharmacy_title" = "Riscatta direttamente";
+"rdm_btn_redeem_pharmacy_title" = "Mostra codice";
 "rdm_btn_redeem_search_pharmacy_description" = "Prenota o ricevilo";
 "rdm_btn_redeem_search_pharmacy_title" = "Inviare in farmacia";
 "rdm_scc_btn_return_to_main" = "Alla home page";
@@ -1165,8 +1182,8 @@
 "rdm_scc_txt_onpremise_content" = "Il tuo ordine sarà solitamente pronto per te tempestivamente. Per un appuntamento preciso rivolgersi in farmacia.";
 "rdm_scc_txt_onpremise_title" = "Riscattato con successo";
 "rdm_scc_txt_shipment_content_1" = "Vai alla home page.";
-"rdm_scc_txt_shipment_content_2" = "La farmacia per corrispondenza creerà per te un carrello con i tuoi farmaci. Questo processo può richiedere diversi minuti.";
-"rdm_scc_txt_shipment_content_3" = "Tocca \"Apri carrello\" e completa l'ordine sul sito web della farmacia.";
+"rdm_scc_txt_shipment_content_2" = "Attendi qualche minuto finché non riceverai una risposta dalla farmacia per corrispondenza.";
+"rdm_scc_txt_shipment_content_3" = "La farmacia ti informerà quindi tramite l'app e-prescription su come completare l'ordine.";
 "rdm_scc_txt_shipment_title" = "I tuoi prossimi passi";
 "rdm_txt_subtitle" = "Come vorresti riscattare le tue prescrizioni?";
 "rdm_txt_title" = "Come riscattare?";
@@ -1285,6 +1302,8 @@
 "stg_btn_edit_profile_login" = "Registrati";
 "stg_btn_edit_profile_logout" = "Disconnettersi";
 "stg_btn_edit_profile_registered_devices" = "Dispositivi connessi";
+"stg_btn_language_settings" = "Lingua";
+"stg_btn_language_settings_alert_open_settings" = "Apri Impostazioni";
 "stg_btn_medication_reminder" = "Promemoria entrate";
 "stg_btn_new_profile_create" = "Salva";
 "stg_btn_reg_devices_load" = "Registrati";
@@ -1471,6 +1490,8 @@
 "stg_txt_header_personal_settings" = "impostazioni personali";
 "stg_txt_header_profiles" = "Profili";
 "stg_txt_header_security" = "Sicurezza";
+"stg_txt_language_settings_alert_description" = "Puoi cambiare la lingua dell'app nelle Impostazioni di sistema.";
+"stg_txt_language_settings_alert_title" = "Cambia la lingua dell'app";
 "stg_txt_new_profile_background_section_title" = "colore di sfondo";
 "stg_txt_new_profile_error_message_title" = "Errore";
 "stg_txt_new_profile_missing_name_error" = "Il campo del nome non può essere vuoto";
@@ -1483,6 +1504,7 @@
 "stg_txt_reg_devices_registered_since_%@" = "Registrato dal %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Registrato dal %@ (questo dispositivo)";
 "stg_txt_reg_devices_title" = "Dispositivi connessi";
+"stg_txt_security_option_change_password_title" = "cambiare la password";
 "stg_txt_security_option_faceid_title" = "FaceID";
 "stg_txt_security_option_password_title" = "parola d'ordine";
 "stg_txt_security_option_touchid_title" = "Tocca l'ID";

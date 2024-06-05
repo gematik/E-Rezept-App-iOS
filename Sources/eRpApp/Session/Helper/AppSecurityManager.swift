@@ -51,7 +51,7 @@ struct DefaultAppSecurityManager: AppSecurityManager {
         }
     }
 
-    // [REQ:BSI-eRp-ePA:O.Auth_6#3] Actual password check
+    // [REQ:BSI-eRp-ePA:O.Auth_7#3] Actual password check
     func matches(password: String) throws -> Bool {
         guard let data = password.data(using: .utf8) else {
             throw AppSecurityManagerError.retrievePasswordFailed

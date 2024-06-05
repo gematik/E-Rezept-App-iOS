@@ -33,7 +33,7 @@ extension IDPError: LocalizedError {
         case .noCertificateFound: return "IDPError.noCertificateFound"
         case .invalidDiscoveryDocument: return "IDPError.invalidDiscoveryDocument"
         case let .unsupported(string): return "IDPError.unsupported method \(String(describing: string))"
-        // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Localized description of server errors
+        // [REQ:gemSpec_IDP_Frontend:A_19937#1,A_20605,A_20085] Localized description of server errors
         case let .internal(error: error): return error.localizedDescription
         case let .serverError(error): return "IDPError.serverError '\(error)'"
         case .invalidStateParameter:

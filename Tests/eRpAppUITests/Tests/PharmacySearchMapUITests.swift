@@ -30,7 +30,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         notificationAlertMonitor.map { [self] in removeUIInterruptionMonitor($0) }
     }
 
-    var locationDialogInterruptAnswered = false
+    var locationDialogInterruptAnswered: Bool!
 
     var notificationAlertMonitor: NSObjectProtocol?
 
@@ -38,6 +38,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         super.setUp()
 
         app = XCUIApplication()
+        locationDialogInterruptAnswered = false
 
         // setup host application
         app.launchEnvironment["UITEST.DISABLE_ANIMATIONS"] = "YES"
@@ -179,6 +180,32 @@ final class PharmacySearchMapUITests: XCTestCase {
             .element.waitForExistence(timeout: 5))
     }
 
+    func testTapOnClusterAnnotation() {
+        let tabBar = TabBarScreen(app: app)
+
+        setupLocationAlertForDenial()
+
+        let mapScreen = tabBar
+            .tapRedeemTab()
+            .tapMapSearch()
+
+        forceTriggerInterruptMonitors()
+
+        // Tap on Okay button of custom alert
+        app.buttons["Okay"].tap()
+
+        mapScreen
+            .tapSearchHere()
+
+        XCTAssertTrue(mapScreen.app.otherElements.matching(NSPredicate(format: "label like '+1 weitere'")).element
+            .waitForExistence(timeout: 5))
+
+        mapScreen.app.otherElements.matching(NSPredicate(format: "label like '+1 weitere'")).firstMatch.tap()
+
+        XCTAssertTrue(mapScreen.app.staticTexts.containing(NSPredicate(format: "label like '2 Apotheken'"))
+            .element.waitForExistence(timeout: 5))
+    }
+
     func testTapOnSearchHere() {
         let tabBar = TabBarScreen(app: app)
 
@@ -202,11 +229,11 @@ final class PharmacySearchMapUITests: XCTestCase {
             .firstMatch
             .waitForExistence(timeout: 5))
 
-        // 4 "Apotheken" annotations should be visible
+        // 3 "Apotheken" annotations should be visible
         XCTAssertTrue(app.otherElements.matching(identifier: "pha_search_map_map")
             .children(matching: .other)
             .matching(NSPredicate(format: "identifier BEGINSWITH '3-01.2.2023001.16.'"))
-            .count == 4)
+            .count == 3)
     }
 
     func testGoToUser() throws {
@@ -230,17 +257,17 @@ final class PharmacySearchMapUITests: XCTestCase {
         // swipe the map to the left
         mapScreen.app.swipeDown(velocity: 2000)
 
-        XCTAssertTrue(app.otherElements.element(matching: .init(format: "label like 'Mein Standort'"))
-            .waitForExistence(timeout: 5))
+        let currentLocationAnnotation = app
+            .otherElements["AnnotationContainer"].otherElements["Mein Standort"].firstMatch
 
-        XCTAssertFalse(app.otherElements.matching(identifier: "AnnotationContainer").children(matching: .other)
-            .firstMatch.isHittable)
+        expect(currentLocationAnnotation.waitForExistence(timeout: 5)).to(beTrue())
+        expect(currentLocationAnnotation.isHittable).to(beFalse())
 
         // press the button GoToUser button to go to the user location
         mapScreen.tapGoToUser()
 
-        XCTAssertTrue(app.otherElements.matching(identifier: "AnnotationContainer").children(matching: .other)
-            .firstMatch.isHittable)
+        // animation might take a short time
+        expect(currentLocationAnnotation.isHittable).toEventually(beTrue())
     }
 
     private func setupLocationAlertForAcceptance() {
@@ -280,6 +307,9 @@ final class PharmacySearchMapUITests: XCTestCase {
     }
 
     private func forceTriggerInterruptMonitors(file: StaticString = #file, line: UInt = #line) {
+        // sometimes the interrupt monitor is very fast and already true
+        guard !locationDialogInterruptAnswered else { return }
+
         expect(file: file, line: line) {
             // Interact somehow with the app, to trigger the registered `addUIInterruptionMonitor`
             // see https://stackoverflow.com/questions/39973904/handler-of-adduiinterruptionmonitor-is-not-called-for-alert-related-to-photos swiftlint:disable:this line_length

@@ -126,61 +126,46 @@ class PharmacyContactDomainTests: XCTestCase {
         )
 
         mockInputValidator.returnValue = .invalid("that is invalid")
-        await sut.send(.setDeliveryInfo("hey")) { state in
+        await sut.send(.binding(.set(\.contactInfo.deliveryInfo, "hey"))) { state in
+            state.contactInfo.deliveryInfo = "hey"
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
         await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        await sut.send(.setName("Some Name")) { state in
+        await sut.send(.binding(.set(\.contactInfo.name, "Some Name"))) { state in
+            state.contactInfo.name = "Some Name"
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
         await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        await sut.send(.setStreet("Street")) { state in
+        await sut.send(.binding(.set(\.contactInfo.street, "Street"))) { state in
+            state.contactInfo.street = "Street"
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
         await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        await sut.send(.setZip("123")) { state in
+        await sut.send(.binding(.set(\.contactInfo.zip, "123"))) { state in
+            state.contactInfo.zip = "123"
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
         await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        await sut.send(.setCity("Köln")) { state in
+        await sut.send(.binding(.set(\.contactInfo.city, "Köln"))) { state in
+            state.contactInfo.city = "Köln"
             state.alertState = PharmacyContactDomain.invalidInputAlert(with: "that is invalid")
         }
         await sut.send(.alert(.dismiss)) {
             $0.alertState = nil
         }
-        await sut.send(.setPhone("1")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(
-                ShipmentInfo(identifier: shipmentInfo.id,
-                             name: shipmentInfo.name,
-                             street: shipmentInfo.street,
-                             addressDetail: shipmentInfo.addressDetail,
-                             zip: shipmentInfo.zip,
-                             city: shipmentInfo.city,
-                             phone: "1",
-                             mail: shipmentInfo.mail,
-                             deliveryInfo: shipmentInfo.deliveryInfo)
-            )
+        await sut.send(.binding(.set(\.contactInfo.phone, "1"))) { state in
+            state.contactInfo.phone = "1"
         }
-        await sut.send(.setMail("mail")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(
-                ShipmentInfo(identifier: shipmentInfo.id,
-                             name: shipmentInfo.name,
-                             street: shipmentInfo.street,
-                             addressDetail: shipmentInfo.addressDetail,
-                             zip: shipmentInfo.zip,
-                             city: shipmentInfo.city,
-                             phone: "1",
-                             mail: "mail",
-                             deliveryInfo: shipmentInfo.deliveryInfo)
-            )
+        await sut.send(.binding(.set(\.contactInfo.mail, "mail"))) { state in
+            state.contactInfo.mail = "mail"
         }
         mockInputValidator.returnValue = .invalid("Invalid Phone")
         await sut.send(.save) { state in
@@ -198,8 +183,8 @@ class PharmacyContactDomainTests: XCTestCase {
         )
 
         mockInputValidator.returnValue = .valid
-        await sut.send(.setDeliveryInfo("hey")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(
+        await sut.send(.binding(.set(\.contactInfo.deliveryInfo, "hey"))) { state in
+            state.contactInfo = PharmacyContactDomain.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: shipmentInfo.name,
                              street: shipmentInfo.street,
@@ -208,8 +193,8 @@ class PharmacyContactDomainTests: XCTestCase {
                              deliveryInfo: "hey")
             )
         }
-        await sut.send(.setName("Some Name")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(
+        await sut.send(.binding(.set(\.contactInfo.name, "Some Name"))) { state in
+            state.contactInfo = PharmacyContactDomain.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
                              street: shipmentInfo.street,
@@ -219,8 +204,8 @@ class PharmacyContactDomainTests: XCTestCase {
             )
         }
 
-        await sut.send(.setStreet("Street")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(
+        await sut.send(.binding(.set(\.contactInfo.street, "Street"))) { state in
+            state.contactInfo = PharmacyContactDomain.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
                              street: "Street",
@@ -230,8 +215,8 @@ class PharmacyContactDomainTests: XCTestCase {
             )
         }
 
-        await sut.send(.setZip("123")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(
+        await sut.send(.binding(.set(\.contactInfo.zip, "123"))) { state in
+            state.contactInfo = PharmacyContactDomain.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
                              street: "Street",
@@ -240,8 +225,8 @@ class PharmacyContactDomainTests: XCTestCase {
                              deliveryInfo: "hey")
             )
         }
-        await sut.send(.setCity("Köln")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(
+        await sut.send(.binding(.set(\.contactInfo.city, "Köln"))) { state in
+            state.contactInfo = PharmacyContactDomain.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
                              street: "Street",
@@ -251,8 +236,8 @@ class PharmacyContactDomainTests: XCTestCase {
             )
         }
 
-        await sut.send(.setPhone("1771234")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(
+        await sut.send(.binding(.set(\.contactInfo.phone, "1771234"))) { state in
+            state.contactInfo = PharmacyContactDomain.ContactInfo(
                 ShipmentInfo(identifier: shipmentInfo.id,
                              name: "Some Name",
                              street: "Street",
@@ -270,8 +255,8 @@ class PharmacyContactDomainTests: XCTestCase {
                                              phone: "1771234",
                                              mail: "mail",
                                              deliveryInfo: "hey")
-        await sut.send(.setMail("mail")) { state in
-            state.contactInfo = PharmacyContactDomain.State.ContactInfo(finalShipmentInfo)
+        await sut.send(.binding(.set(\.contactInfo.mail, "mail"))) { state in
+            state.contactInfo = PharmacyContactDomain.ContactInfo(finalShipmentInfo)
         }
 
         mockShipmentInfoDataStore.saveShipmentInfosReturnValue = Just([finalShipmentInfo])

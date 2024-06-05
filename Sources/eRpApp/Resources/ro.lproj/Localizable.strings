@@ -82,6 +82,7 @@
 "cdw_btn_extauth_fallback_order_egk" = "Comandați un card de sănătate";
 "cdw_btn_extauth_selection_cancel" = "Anulare";
 "cdw_btn_extauth_selection_continue" = "Mai departe";
+"cdw_btn_extauth_selection_help" = "Prim ajutor";
 "cdw_btn_extauth_selection_order_egk" = "Comandați un card de sănătate";
 "cdw_btn_extauth_selection_retry" = "Încearcă din nou";
 "cdw_btn_help_next_hint" = "Imediat după apăsarea acestui buton, cardul de sănătate este citit prin NFC. Pentru a face acest lucru, țineți cardul direct pe dispozitiv. Dacă conexiunea are succes, veți primi feedback haptic. O pierdere a conexiunii sau erorile sunt, de asemenea, comunicate prin feedback haptic. Comunicarea cu cardul de sănătate poate dura până la zece secunde. Apoi scoateți cardul de sănătate din dispozitiv.";
@@ -156,7 +157,7 @@
 "cdw_txt_biometry_subtitle" = "Doriți să vă salvați detaliile de conectare pentru autentificarea viitoare?";
 "cdw_txt_biometry_title" = "Înregistrare";
 "cdw_txt_can_demo_mode_info" = "Puteți specifica orice cifre.";
-"cdw_txt_can_description" = "Puteți găsi numărul dvs. de acces (Numărul de acces al cardului, pe scurt CAN) în colțul din dreapta sus al cardului de sănătate.";
+"cdw_txt_can_description" = "Numărul de acces îl găsiți în colțul din dreapta sus al cardului de sănătate.";
 "cdw_txt_can_subtitle" = "Introduceți numărul de acces";
 "cdw_txt_can_title" = "Înregistrare";
 "cdw_txt_can_title_hint" = "Numărul dvs. de acces la card (CAN pe scurt) are 6 cifre. Puteți găsi CAN în colțul din dreapta sus al față a cardului dumneavoastră de sănătate. Dacă nu există un număr de acces din șase cifre aici, veți avea nevoie de un nou card de sănătate de la compania dumneavoastră de asigurări de sănătate.";
@@ -177,10 +178,18 @@
 "cdw_txt_extauth_fallback_description2" = "Nu vrei să aștepți? Înregistrarea cu cardul de sănătate este deja acceptată de fiecare companie de asigurări de sănătate.";
 "cdw_txt_extauth_fallback_headline" = "Alegeți asigurarea";
 "cdw_txt_extauth_fallback_title" = "Înregistrați-vă cu aplicația";
+"cdw_txt_extauth_help_caption" = "Sfaturi pentru înregistrarea cu aplicația de asigurări";
+"cdw_txt_extauth_help_description" = "Compania dvs. de asigurări este responsabilă pentru ID-ul de sănătate. Vă rugăm să-i contactați dacă aveți întrebări despre înregistrare. Iată câteva sfaturi încercate și testate:";
+"cdw_txt_extauth_help_info_1" = "Vă rugăm să rețineți că, în funcție de asigurarea dvs., poate fi necesară o aplicație separată. Vă rugăm să verificați cu compania dvs. de asigurări pentru a afla despre ce este vorba.";
+"cdw_txt_extauth_help_info_2" = "Porniți aplicația de casă de marcat și conectați-vă acolo o dată înainte de a începe înregistrarea în aplicația e-prescription.";
+"cdw_txt_extauth_help_info_3" = "Comutarea între autentificarea cu ID-ul de sănătate și cardul de sănătate poate duce la probleme. Prin urmare, vă rugăm mai întâi să vă deconectați activ de la profilul dvs. înainte de a schimba opțiunea de conectare.";
+"cdw_txt_extauth_help_info_4" = "Dacă asigurarea dumneavoastră nu este pe listă, vă puteți înregistra alternativ cu cardul de sănătate și PIN-ul corespunzător.";
+"cdw_txt_extauth_help_info_5" = "Dacă aplicația de casă de marcat nu vă redirecționează înapoi la aplicația de prescriere electronică, asigurați-vă că raportați această eroare companiei dumneavoastră de asigurări.";
+"cdw_txt_extauth_help_title" = "Ajutor";
 "cdw_txt_extauth_noresults" = "Nu am găsit niciun rezultat pentru acest termen de căutare.";
 "cdw_txt_extauth_noresults_title" = "Fara rezultate";
 "cdw_txt_extauth_searchprompt" = "Cauta dupa nume";
-"cdw_txt_extauth_selection_description" = "Nu ați găsit ceea ce căutați? Această listă este în continuă extindere. Înregistrarea cu cardul de sănătate este deja acceptată de fiecare companie de asigurări de sănătate.";
+"cdw_txt_extauth_selection_description" = "Dacă conectarea cu ID de sănătate nu decurge conform așteptărilor, sunt disponibile instrucțiuni de prim ajutor.";
 "cdw_txt_extauth_selection_empty_list_description" = "Această funcție va fi disponibilă în câteva zile. Vă rugăm să încercați din nou mai târziu.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Nu este încă disponibil";
 "cdw_txt_extauth_selection_error_fallback" = "Vă rugăm să încercați din nou mai târziu.";
@@ -262,7 +271,7 @@
 "cdw_txt_rc_nfc_message_noCardMessage" = "Nu a fost găsit card de sănătate";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Acest tip de card nu este acceptat";
 "cdw_txt_rc_placement" = "Creează aici 👆";
-"cdw_txt_rc_position_content" = "Încercați și această poziție a hărții și a iPhone-ului. S-a demonstrat că această poziție oferă o conexiune mai bună pe anumite iPhone-uri.";
+"cdw_txt_rc_position_content" = "Mutați cardul astfel încât cipul auriu să fie deasupra camerei frontale sau țineți cardul de capul iPhone-ului, așa cum se arată în imagine.";
 "cdw_txt_rc_position_header" = "Poziție diferită";
 "cdw_txt_rc_subheadline" = "Următorul proces poate dura până la 30 de secunde.";
 "cdw_txt_rc_tip_four" = "Sfat 4 din 4";
@@ -358,7 +367,9 @@
 "epp_back_button" = "Înapoi";
 "epp_btn_alert_abort" = "Anulare";
 "epp_btn_alert_camera" = "aparat foto";
+"epp_btn_alert_emoji" = "Emoji";
 "epp_btn_alert_library" = "Selectați fotografia";
+"epp_btn_emoji_use" = "Utilizare";
 "epp_txt_alert_header_profile" = "Alege poza de profil";
 "epp_txt_alert_subheader_choose" = "Cum vrei să continui?";
 "erp_txt_tooltips_add_profile" = "Apăsați aici pentru a crea un profil nou";
@@ -377,7 +388,7 @@
 "erx_btn_alert_login" = "Inregistreaza-te";
 "erx_btn_alert_ok" = "Bine";
 "erx_btn_alert_retry" = "Încearcă din nou";
-"erx_btn_redeem" = "Răscumpărați totul";
+"erx_btn_redeem" = "Toate răscumpărați";
 "erx_btn_refresh" = "A updata";
 "erx_btn_scn_prescription" = "Deschideți scanerul de rețete";
 "erx_title" = "Rețete";
@@ -845,8 +856,8 @@
 "ord_txt_no_pharmacy_name" = "Farmacie necunoscută";
 "ord_txt_title" = "Comenzi";
 "order_egk_btn_info_button" = "Cum să recunoașteți un card de sănătate compatibil NFC";
-"order_egk_pin" = "Cod PIN";
-"order_egk_pin_card" = "Pin și card de sănătate";
+"order_egk_pin" = "cod PIN";
+"order_egk_pin_card" = "PIN și card de sănătate";
 "order_egk_service_subtitle" = "Pentru această aplicație aveți nevoie de un card și de un PIN asociat.";
 "order_egk_service_title" = "Pentru ce ați dori să aplicați?";
 "order_egk_txt_contact_option_mail" = "Poștă";
@@ -945,7 +956,8 @@
 "pha_search_hint_txt_close" = "Închideți partajarea locației, nu partajați locația";
 "pha_search_map_annotation" = "Farmacie";
 "pha_search_map_btn_Error_cancel" = "Anulare";
-"pha_search_map_header" = "Aproape de";
+"pha_search_map_header" = "Aproape de mine";
+"pha_search_map_txt_cluster_header" = "Farmacii";
 "pha_search_txt_closed" = "Închis";
 "pha_search_txt_closing_soon" = "Se închide în curând";
 "pha_search_txt_error_no_server_response_headline" = "serverul nu răspunde";
@@ -1022,12 +1034,14 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Taxa de serviciu de urgenta";
 "prsc_dtl_dr_error_info_description" = "Nu toate informațiile sunt prezentate corect în această rețetă. Cu toate acestea, îl puteți valorifica în continuare la farmacie.";
 "prsc_dtl_dr_error_info_title" = "Reteta incorecta";
+"prsc_dtl_dr_no_substitution_info_describtion" = "Medicul dumneavoastră a stabilit că trebuie să primiți preparatul prescris. Farmacia nu ar trebui să efectueze schimburi pe baza unui acord de reducere („Aut idem”).";
+"prsc_dtl_dr_no_substitution_info_title" = "Nu este posibilă nicio pregătire înlocuitoare";
 "prsc_dtl_dr_prescription_validity_info_accept_date_description" = "În această perioadă, vă puteți răscumpăra rețeta în orice farmacie cu o plată suplimentară maximă de 10 EUR.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Puteți completa rețeta la o farmacie în această perioadă, dar va trebui să plătiți singur prețul de achiziție al medicamentului. Ca alternativă, puteți cere cabinetului dumneavoastră să fie reemisă rețeta.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Cât timp este valabilă această rețetă?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Rețetele importate dintr-o copie hârtie nu pot afișa informații personale sau medicale din motive de securitate. \n\n Conectați-vă la această aplicație cu cardul de sănătate sau aplicația de asigurare pentru a vedea toate informațiile conținute în rețetă.";
 "prsc_dtl_dr_scanned_prescription_info_title" = "Rețetă scanată";
-"prsc_dtl_dr_substitution_info_description" = "Datorită cerințelor legale din partea companiei dumneavoastră de asigurări de sănătate, vi se poate oferi o alternativă cu același ingredient activ. \n\n Medicamentele pot arăta și pot fi numite diferit, au prețuri și producători diferiți, dar conțin totuși același ingredient activ. Ingredientul activ în sine și doza sunt cruciale pentru efectul medicamentelor în organism. Pacienții primesc adesea un alt medicament la farmacie decât cel prescris de medic - cu condiția ca medicația să fie comparabilă. Pot exista motive terapeutice și economice pentru schimbare.";
+"prsc_dtl_dr_substitution_info_description" = "Farmaciştii sunt obligaţi să acorde prioritate eliberării medicamentelor pentru care casa de asigurări de sănătate a pacientului a încheiat un acord de reduceri cu producătorii de medicamente. Acest lucru nu se aplică numai dacă medicul exclude „Aut idem” pe rețetă, ceea ce nu este cazul cu rețeta dumneavoastră.";
 "prsc_dtl_dr_substitution_info_title" = "Posibilă pregătire pentru înlocuire";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Deschideți healthy.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Puteți găsi informații verificate de experți despre boli, coduri ICD și subiecte de prevenire și îngrijire în Portalul Național de Sănătate.";
@@ -1082,6 +1096,7 @@
 "prsc_dtl_txt_missing_dosage_instructions" = "Medicul dumneavoastră nu v-a oferit nicio informație despre administrarea medicamentului.";
 "prsc_dtl_txt_multi_prescription" = "Rețetă multiplă";
 "prsc_dtl_txt_no" = "Nu";
+"prsc_dtl_txt_no_substitution" = "Nu este posibilă nicio pregătire înlocuitoare";
 "prsc_dtl_txt_partial" = "Parţial";
 "prsc_dtl_txt_pkv_hint_activate_msg" = "Odată ce chitanțele de cost au fost activate, le veți găsi aici după ce vă răscumpărați rețeta.";
 "prsc_dtl_txt_pkv_hint_activate_title" = "Primiți chitanțe de cost în format digital";
@@ -1090,6 +1105,8 @@
 "prsc_dtl_txt_practitioner_person" = "Prescriptor";
 "prsc_dtl_txt_quantity" = "Numărul de pachete prescris";
 "prsc_dtl_txt_section_details_header" = "Informatii detaliate";
+"prsc_dtl_txt_substitution" = "Preparat înlocuitor (Aut idem)";
+"prsc_dtl_txt_substitution_possible" = "Posibilă pregătire pentru înlocuire";
 "prsc_dtl_txt_yes" = "da";
 "prsc_fd_btn_error_banner" = "Raport";
 "prsc_fd_hint_dosageInstructions_pic" = "doctor";
@@ -1156,7 +1173,7 @@
 "puc_txt_subtitle_%@" = "Afișați acest cod de ridicare la %@ .";
 "puc_txt_title" = "Cod de preluare";
 "rdm_btn_redeem_pharmacy_description" = "Scaneaza-l la farmacie";
-"rdm_btn_redeem_pharmacy_title" = "Răscumpărați direct";
+"rdm_btn_redeem_pharmacy_title" = "Afișați codul";
 "rdm_btn_redeem_search_pharmacy_description" = "Rezervați sau primiți-l";
 "rdm_btn_redeem_search_pharmacy_title" = "Trimite la farmacie";
 "rdm_scc_btn_return_to_main" = "La pagina de start";
@@ -1165,8 +1182,8 @@
 "rdm_scc_txt_onpremise_content" = "Comanda dvs. va fi de obicei gata pentru dvs. prompt. Pentru o programare exacta va rugam sa contactati farmacia.";
 "rdm_scc_txt_onpremise_title" = "Răscumpărat cu succes";
 "rdm_scc_txt_shipment_content_1" = "Accesați pagina principală.";
-"rdm_scc_txt_shipment_content_2" = "Farmacia de comandă prin corespondență va crea un coș de cumpărături pentru dumneavoastră cu medicamentele dumneavoastră. Acest proces poate dura câteva minute.";
-"rdm_scc_txt_shipment_content_3" = "Atingeți „Deschideți coșul de cumpărături” și finalizați comanda pe site-ul farmaciei.";
+"rdm_scc_txt_shipment_content_2" = "Așteptați câteva minute până când primiți un răspuns de la farmacia de comandă prin corespondență.";
+"rdm_scc_txt_shipment_content_3" = "Farmacia vă va informa apoi prin intermediul aplicației de prescriere electronică cu privire la modul de finalizare a comenzii.";
 "rdm_scc_txt_shipment_title" = "Următorii tăi pași";
 "rdm_txt_subtitle" = "Cum ați dori să vă răscumpărați rețetele?";
 "rdm_txt_title" = "Cum să răscumpărați?";
@@ -1285,6 +1302,8 @@
 "stg_btn_edit_profile_login" = "Inregistreaza-te";
 "stg_btn_edit_profile_logout" = "Deconectați-vă";
 "stg_btn_edit_profile_registered_devices" = "Dispozitive conectate";
+"stg_btn_language_settings" = "Limba";
+"stg_btn_language_settings_alert_open_settings" = "Deschide setările";
 "stg_btn_medication_reminder" = "Memento de venit";
 "stg_btn_new_profile_create" = "Salvați";
 "stg_btn_reg_devices_load" = "Inregistreaza-te";
@@ -1471,6 +1490,8 @@
 "stg_txt_header_personal_settings" = "setari personale";
 "stg_txt_header_profiles" = "Profiluri";
 "stg_txt_header_security" = "Securitate";
+"stg_txt_language_settings_alert_description" = "Puteți schimba limba aplicației în Setările sistemului.";
+"stg_txt_language_settings_alert_title" = "Schimbați limba aplicației";
 "stg_txt_new_profile_background_section_title" = "culoare de fundal";
 "stg_txt_new_profile_error_message_title" = "Greşeală";
 "stg_txt_new_profile_missing_name_error" = "Câmpul de nume nu poate fi gol";
@@ -1483,6 +1504,7 @@
 "stg_txt_reg_devices_registered_since_%@" = "Înregistrat din %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Înregistrat de la %@ (acest dispozitiv)";
 "stg_txt_reg_devices_title" = "Dispozitive conectate";
+"stg_txt_security_option_change_password_title" = "schimbaţi parola";
 "stg_txt_security_option_faceid_title" = "FaceID";
 "stg_txt_security_option_password_title" = "parola";
 "stg_txt_security_option_touchid_title" = "Touch ID";

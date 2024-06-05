@@ -22,136 +22,119 @@ import PhotosUI
 import SwiftUI
 
 struct EditProfilePictureView: View {
-    let store: EditProfilePictureDomain.Store
-
-    @ObservedObject var viewStore: ViewStore<ViewState, EditProfilePictureDomain.Action>
-
-    init(store: EditProfilePictureDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let color: ProfileColor
-        let picture: ProfilePicture
-        let userImageData: Data
-        let destinationTag: EditProfilePictureDomain.Destinations.State.Tag?
-        let isFullScreenPresented: Bool
-
-        init(state: EditProfilePictureDomain.State) {
-            color = state.color ?? .grey
-            picture = state.picture ?? .none
-            destinationTag = state.destination?.tag
-            userImageData = state.userImageData ?? .empty
-            isFullScreenPresented = state.isFullScreenPresented
-        }
-    }
+    @Perception.Bindable var store: StoreOf<EditProfilePictureDomain>
 
     var body: some View {
-        VStack {
-            Section(
-                header: SectionHeader(isFullScreenPresented: viewStore.isFullScreenPresented)
-            ) {
-                ZStack(alignment: .topTrailing) {
-                    ProfilePictureView(
-                        image: viewStore.picture,
-                        userImageData: viewStore.userImageData,
-                        color: viewStore.color,
-                        connection: nil,
-                        style: .xxLarge,
-                        isBorderOn: true
-                    ) {}
-                        .disabled(true)
+        WithPerceptionTracking {
+            VStack {
+                Section(
+                    header: SectionHeader(isFullScreenPresented: store.isFullScreenPresented)
+                ) {
+                    ZStack(alignment: .topTrailing) {
+                        ProfilePictureView(
+                            image: store.picture,
+                            userImageData: store.userImageData,
+                            color: store.color,
+                            connection: nil,
+                            style: .xxLarge,
+                            isBorderOn: true
+                        ) {}
+                            .disabled(true)
 
-                    if viewStore.picture != .none || viewStore.userImageData != .empty {
-                        ResetPictureButton(
-                            isFullScreenPresented: viewStore.isFullScreenPresented
-                        ) {
-                            viewStore.send(.resetPictureButtonTapped)
+                        if store.picture != .none || store.userImageData != .empty {
+                            ResetPictureButton(
+                                isFullScreenPresented: store.isFullScreenPresented
+                            ) {
+                                store.send(.resetPictureButtonTapped)
+                            }
+                            .accessibility(identifier: A11y.editProfilePicture.eppBtnResetPicture)
                         }
-                        .accessibility(identifier: A11y.editProfilePicture.eppBtnResetPicture)
                     }
-                }
+                    .padding(.horizontal)
 
-                VStack(alignment: .leading) {
-                    ProfilePictureSelector(store: store)
-                        .padding([.top, .bottom])
+                    VStack(alignment: .leading) {
+                        ProfilePictureSelector(store: store, isFullScreenPresented: store.isFullScreenPresented)
+                            .padding([.top, .bottom])
 
-                    Text(L10n.editColorTxt)
-                        .font(.headline.bold())
-                        .padding([.trailing, .top])
+                        Text(L10n.editColorTxt)
+                            .font(.headline.bold())
+                            .padding([.horizontal, .top])
 
-                    ProfileColorPicker(
-                        color: viewStore.binding(
-                            get: \.color,
-                            send: EditProfilePictureDomain.Action.editColor
+                        ProfileColorPicker(
+                            color: $store.color.sending(\.editColor)
                         )
-                    )
-                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileBgColorPicker)
-                    .background(Colors.systemBackgroundTertiary)
-                    .cornerRadius(16)
+                        .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileBgColorPicker)
+                        .background(Colors.systemBackgroundTertiary)
+                        .cornerRadius(16)
+                        .padding(.horizontal)
 
-                    if !viewStore.isFullScreenPresented {
-                        Text(viewStore.color.name, bundle: .module)
+                        Text(store.color.name, bundle: .module)
                             .foregroundColor(Colors.textSecondary)
                             .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.horizontal)
                     }
                 }
-            }
 
-            if viewStore.isFullScreenPresented {
-                Spacer()
-            }
+                if store.isFullScreenPresented {
+                    Spacer()
+                }
 
-            Rectangle()
-                .frame(width: 0, height: 0, alignment: .center)
-                .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.destinationTag == .cameraPicker },
-                    set: { show in
-                        if !show {
-                            viewStore.send(.setNavigation(tag: nil))
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(isPresented: Binding<Bool>(
+                        get: { store.destination == .cameraPicker },
+                        set: { show in
+                            if !show {
+                                store.send(.resetNavigation)
+                            }
                         }
-                    }
-                ),
-                onDismiss: {},
-                content: {
-                    ZStack {
-                        CameraPicker(picketImage: viewStore.binding(
-                            get: \.userImageData,
-                            send: EditProfilePictureDomain.Action.setUserImageData
-                        )).ignoresSafeArea()
+                    ),
+                    onDismiss: {},
+                    content: {
+                        ZStack {
+                            CameraPicker(picketImage: $store.userImageData.sending(\.setUserImageData))
+                                .ignoresSafeArea()
 
-                        CameraAuthorizationAlertView()
+                            CameraAuthorizationAlertView()
+                        }
+                    })
+                    .hidden()
+                    .accessibility(hidden: true)
+            }
+            .alert(
+                $store.scope(state: \.destination?.alert?.alert, action: \.destination.alert)
+            )
+            .keyboardShortcut(.defaultAction)
+            .onChange(of: store.color) { _ in
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            }
+            .padding(.bottom)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(store.isFullScreenPresented ? Colors.systemBackgroundSecondary.ignoresSafeArea() : Colors
+                .systemBackgroundTertiary.ignoresSafeArea())
+            .sheet(isPresented: Binding<Bool>(
+                get: { store.destination == .memojiPicker },
+                set: { show in
+                    if !show {
+                        store.send(.resetNavigation)
                     }
-                })
-                .hidden()
-                .accessibility(hidden: true)
-        }
-        .alert(
-            store.scope(state: \.$destination, action: EditProfilePictureDomain.Action.destination),
-            state: /EditProfilePictureDomain.Destinations.State.alert,
-            action: EditProfilePictureDomain.Destinations.Action.alert
-        )
-        .keyboardShortcut(.defaultAction)
-        .onChange(of: viewStore.color) { _ in
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(viewStore.isFullScreenPresented ? Colors.systemBackgroundSecondary.ignoresSafeArea() : Colors
-            .systemBackgroundTertiary.ignoresSafeArea())
-        .sheet(isPresented: Binding<Bool>(
-            get: { viewStore.state.destinationTag == .photoPicker },
-            set: { show in
-                if !show {
-                    viewStore.send(.setNavigation(tag: nil))
+                }
+            )) {
+                MemojiPickerView { image in
+                    guard let data = image?.pngData() else { return }
+                    store.send(.setUserImageData(data))
                 }
             }
-        )) {
-            PhotoPicker(picketImage: viewStore.binding(
-                get: \.userImageData,
-                send: EditProfilePictureDomain.Action.setUserImageData
-            ))
+            .sheet(isPresented: Binding<Bool>(
+                get: { store.destination == .photoPicker },
+                set: { show in
+                    if !show {
+                        store.send(.resetNavigation)
+                    }
+                }
+            )) {
+                PhotoPicker(picketImage: $store.userImageData.sending(\.setUserImageData))
+            }
         }
     }
 }
@@ -160,66 +143,65 @@ extension EditProfilePictureView {
     private struct SectionHeader: View {
         let isFullScreenPresented: Bool
 
+        @Environment(\.dismiss) var dismiss
+
         var body: some View {
             if isFullScreenPresented {
                 EmptyView()
             } else {
-                Text(L10n.editPictureTxt)
-                    .padding([.leading, .trailing, .top])
-                    .font(.headline.bold())
+                ZStack {
+                    CloseButton {
+                        dismiss()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .topTrailing)
+
+                    Text(L10n.editPictureTxt)
+                        .padding([.leading, .trailing])
+                        .padding(.top, 40)
+                        .font(.headline.bold())
+                }
             }
         }
     }
 
     private struct ProfilePictureSelector: View {
-        let store: EditProfilePictureDomain.Store
-
-        @ObservedObject var viewStore: ViewStore<ViewState, EditProfilePictureDomain.Action>
-
-        init(store: EditProfilePictureDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store, observe: ViewState.init)
-        }
-
-        struct ViewState: Equatable {
-            let color: ProfileColor
-            let destinationTag: EditProfilePictureDomain.Destinations.State.Tag?
-
-            init(state: EditProfilePictureDomain.State) {
-                color = state.color ?? .grey
-                destinationTag = state.destination?.tag
-            }
-        }
+        @Perception.Bindable var store: EditProfilePictureDomain.Store
+        let isFullScreenPresented: Bool
 
         var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    Image(systemName: SFSymbolName.camera)
-                        .frame(width: 80, height: 80)
-                        .font(Font.headline.weight(.bold))
-                        .foregroundColor(Colors.systemColorBlack)
-                        .background(Circle().fill(Colors.systemGray5))
-                        .accessibility(identifier: A11y.editProfilePicture.eppBtnChooseType)
-                        .onTapGesture {
-                            viewStore.send(.setNavigation(tag: .alert))
-                        }
+            WithPerceptionTracking {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        Image(systemName: SFSymbolName.camera)
+                            .frame(width: 80, height: 80)
+                            .font(Font.headline.weight(.bold))
+                            .foregroundColor(Colors.text)
+                            .background(Circle().fill(isFullScreenPresented ? Colors.systemGray5 : Colors.systemGray6))
+                            .accessibility(identifier: A11y.editProfilePicture.eppBtnChooseType)
+                            .onTapGesture {
+                                store.send(.showImportAlert)
+                            }
 
-                    ForEach(ProfilePicture.allCases, id: \.rawValue) { image in
-                        if let displayImage = image.description, !displayImage.name.isEmpty {
-                            Button(action: {
-                                viewStore.send(.editPicture(image))
-                                viewStore.send(.setUserImageData(.empty))
-                            }, label: {
-                                Image(asset: displayImage)
-                                    .resizable()
-                                    .frame(width: 80, height: 80)
-                                    .background(Circle().foregroundColor(viewStore.color.background))
-                                    .border(viewStore.color.border, width: 1, cornerRadius: 99)
-                                    .clipShape(Circle())
-                                    .accessibilityLabel(image.accessibility)
-                            })
+                        ForEach(ProfilePicture.allCases, id: \.rawValue) { image in
+                            WithPerceptionTracking {
+                                if let displayImage = image.description, !displayImage.name.isEmpty {
+                                    Button(action: {
+                                        store.send(.editPicture(image))
+                                        store.send(.setUserImageData(.empty))
+                                    }, label: {
+                                        Image(asset: displayImage)
+                                            .resizable()
+                                            .frame(width: 80, height: 80)
+                                            .background(Circle().foregroundColor(store.color.background))
+                                            .border(store.color.border, width: 1, cornerRadius: 99)
+                                            .clipShape(Circle())
+                                            .accessibilityLabel(image.accessibility)
+                                    })
+                                }
+                            }
                         }
                     }
+                    .padding(.horizontal)
                 }
             }
         }

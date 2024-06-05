@@ -38,10 +38,6 @@ import Foundation
             case .{{ caseType.name }}: 
                 tracker.track(Analytics.Screens.{{ caseType.annotations.AnalyticsEvent }})    
 {% endif %}
-{% if caseType.annotations.AnalyticsScreen %}
-            case .{{ caseType.name }}: 
-                tracker.track(Analytics.Screens.{{ caseType.annotations.AnalyticsScreen|join:", Analytics.Screens." }})    
-{% endif %}
 {% endmacro %}
 
 {% macro FindAnalyticsActions actionType %}

@@ -21,16 +21,18 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
-struct EditProfileNameDomain: ReducerProtocol {
+@Reducer
+struct EditProfileNameDomain {
     typealias Store = StoreOf<Self>
 
+    @ObservableState
     struct State: Equatable {
         var profileName: String
         var profileId: UUID
     }
 
     enum Action: Equatable {
-        case set(profileName: String)
+        case setProfileName(String)
         case saveEditedProfileName(name: String)
         case saveEditedProfileNameReceived(Result<Bool, UserProfileServiceError>)
         case saveButtonTapped
@@ -45,13 +47,13 @@ struct EditProfileNameDomain: ReducerProtocol {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case let .set(profileName):
+        case let .setProfileName(profileName):
             state.profileName = profileName
             return .none
         case .saveButtonTapped:
-            return EffectTask.send(.saveEditedProfileName(name: state.profileName))
+            return Effect.send(.saveEditedProfileName(name: state.profileName))
         case let .saveEditedProfileName(name):
             let name = name.trimmed()
             if name.lengthOfBytes(using: .utf8) > 0 {
@@ -73,7 +75,7 @@ extension EditProfileNameDomain {
     func updateProfile(
         with profileId: UUID,
         name: String
-    ) -> EffectTask<Result<Bool, UserProfileServiceError>> {
+    ) -> Effect<Result<Bool, UserProfileServiceError>> {
         .publisher(
             userProfileService
                 .update(profileId: profileId, mutating: ({ profile in profile.name = name }))

@@ -20,7 +20,7 @@ import ComposableArchitecture
 import SwiftUI
 import WebKit
 
-// [REQ:BSI-eRp-ePA:O.Arch_8#2] Webview containint local html without javascript
+// [REQ:BSI-eRp-ePA:O.Arch_8#2] Webview containing local html without javascript
 struct FOSSView: View {
     var body: some View {
         WebView()
@@ -30,7 +30,7 @@ struct FOSSView: View {
 extension FOSSView {
     struct WebView: UIViewRepresentable {
         // swiftlint:disable:next weak_delegate
-        // [REQ:BSI-eRp-ePA:O.Plat_13#4] Usage of the delegate
+        // [REQ:BSI-eRp-ePA:O.Plat_10#4] Usage of the delegate
         let navigationDelegate = DataPrivacyTermsOfUseNavigationDelegate()
 
         func makeUIView(context _: Context) -> WKWebView {

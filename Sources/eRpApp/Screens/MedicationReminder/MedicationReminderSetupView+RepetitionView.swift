@@ -19,25 +19,26 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import Perception
 import SwiftUI
 
 extension MedicationReminderSetupView {
     struct RepetitionView: View {
-        var store: StoreOf<MedicationReminderSetupDomain>
+        @Perception.Bindable var store: StoreOf<MedicationReminderSetupDomain>
 
         var body: some View {
-            WithViewStore(store) { $0 } content: { viewStore in
+            WithPerceptionTracking {
                 VStack {
                     Form {
                         Section {
                             Button {
-                                viewStore.send(.repetitionTypeChanged(.infinite))
+                                store.send(.repetitionTypeChanged(.infinite))
                             } label: {
                                 HStack {
                                     Text(L10n.medReminderTxtRepetitionTypeInfinite)
                                         .foregroundColor(Colors.text)
                                     Spacer()
-                                    if viewStore.medicationSchedule.repetitionType == .infinite {
+                                    if store.medicationSchedule.repetitionType == .infinite {
                                         Image(systemName: SFSymbolName.checkmark)
                                             .font(.body.weight(.semibold))
                                             .foregroundColor(Colors.primary)
@@ -47,13 +48,13 @@ extension MedicationReminderSetupView {
                             .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionInfinite)
 
                             Button {
-                                viewStore.send(.repetitionTypeChanged(.finite))
+                                store.send(.repetitionTypeChanged(.finite))
                             } label: {
                                 HStack {
                                     Text(L10n.medReminderTxtRepetitionTypeFinite)
                                         .foregroundColor(Colors.text)
                                     Spacer()
-                                    if viewStore.medicationSchedule.repetitionType == .finite {
+                                    if store.medicationSchedule.repetitionType == .finite {
                                         Image(systemName: SFSymbolName.checkmark)
                                             .font(.body.weight(.semibold))
                                             .foregroundColor(Colors.primary)
@@ -62,10 +63,10 @@ extension MedicationReminderSetupView {
                             }
                             .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionFinite)
 
-                            if viewStore.medicationSchedule.repetitionType == .finite {
+                            if store.medicationSchedule.repetitionType == .finite {
                                 DatePicker(
                                     L10n.medReminderBtnRepetitionDatepickerStart.text,
-                                    selection: viewStore.$medicationSchedule.start,
+                                    selection: $store.medicationSchedule.start,
                                     in: Date() ... Date.distantFuture,
                                     displayedComponents: .date
                                 )
@@ -73,8 +74,8 @@ extension MedicationReminderSetupView {
 
                                 DatePicker(
                                     L10n.medReminderBtnRepetitionDatepickerEnd.text,
-                                    selection: viewStore.$medicationSchedule.end,
-                                    in: viewStore.medicationSchedule.start ... Date.distantFuture,
+                                    selection: $store.medicationSchedule.end,
+                                    in: store.medicationSchedule.start ... Date.distantFuture,
                                     displayedComponents: .date
                                 )
                                 .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDateEnd)

@@ -41,7 +41,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
-            PharmacyRedeemView(store: PharmacyRedeemDomain.Store(
+            PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
                 initialState: initialState
 
             ) {
@@ -71,7 +71,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
-            PharmacyRedeemView(store: PharmacyRedeemDomain.Store(
+            PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
                 initialState: initialState
 
             ) {
@@ -98,7 +98,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
-            PharmacyRedeemView(store: PharmacyRedeemDomain.Store(
+            PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
                 initialState: initialState
 
             ) {

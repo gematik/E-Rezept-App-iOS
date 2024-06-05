@@ -44,4 +44,4 @@ public struct IDPExchangeToken {
     }
 }
 
-extension IDPExchangeToken: Equatable {}
+extension IDPExchangeToken: Equatable, Codable {}

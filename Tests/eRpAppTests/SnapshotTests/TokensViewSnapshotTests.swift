@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpFeatures
 import IDP
 import SnapshotTesting
@@ -32,14 +33,20 @@ final class TokensViewSnapshotTests: ERPSnapshotTestCase {
 
     func testTokensViewWithoutSsoTokenSnapshot() {
         let sut = IDPTokenView(
-            token: IDPToken(
-                accessToken: "some access token with missing SSO token",
-                expires: Date(),
-                idToken: "123456",
-                ssoToken: nil,
-                tokenType: "ended",
-                redirect: "redirect"
-            )
+            store: StoreOf<IDPTokenDomain>(
+                initialState: .init(
+                    token: .init(
+                        accessToken: "some access token with missing SSO token",
+                        expires: Date(),
+                        idToken: "123456",
+                        ssoToken: nil,
+                        tokenType: "ended",
+                        redirect: "redirect"
+                    )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -47,15 +54,21 @@ final class TokensViewSnapshotTests: ERPSnapshotTestCase {
 
     func testTokensViewWithAccessTokenAndSsoTokenSnapshot() {
         let sut = IDPTokenView(
-            token: IDPToken(
-                accessToken: "eyJhbGciOiJCUDI1NlIxIn0.eyJhY3IiOiJlaWRhcy1sb2EtaGlnaCIsImF1ZCI6Imh0dHBzOi8vZXJwLnRlbGVtYXRpay5kZS9sb2dpbiIsImV4cCI6MjUyNDYwODAwMCwiZmFtaWx5X25hbWUiOiJkZXIgTmFjaG5hbWUiLCJnaXZlbl9uYW1lIjoiZGVyIFZvcm5hbWUiLCJpYXQiOjE1ODUzMzY5NTYsImlkTnVtbWVyIjoiWDIzNDU2Nzg5MCIsImlycyI6Imh0dHBzOi8vaWRwMS50ZWxlbWF0aWsuZGUvand0IiwianRpIjoiPElEUD5fMDEyMzQ1Njc4OTAxMjM0NTY3ODkiLCJuYmYiOjE1ODUzMzY5NTYsIm5vbmNlIjoiZnV1IGJhciBiYXoiLCJvcmdhbml6YXRpb25OYW1lIjoiSW5zdGl0dXRpb25zLSBvZGVyIE9yZ2FuaXNhdGlvbnMtQmV6ZWljaG51bpciLCJwcm9mZXNzaW9uT0lEIjoiMS4yLjI3Ni4wLjc2LjQuNDkiLCJzdWIiOiJSYWJjVVN1dVdLS1pFRUhtcmNObV9rVURPVzEzdWFHVTVaazhPb0J3aU5rIn0.hV_gCPkPAHYRsrxwoARYSfQQlfJuJ198ys2aMf1XC2tOgDj-HXt0SUh15kWmFXoXVNOI7m6X4oqIRgLK4BHn3Q",
-                // swiftlint:disable:previous line_length
-                expires: Date(),
-                idToken: "123456",
-                ssoToken: "sso_tokens_are_very_long",
-                tokenType: "ended",
-                redirect: "redirect"
-            )
+            store: StoreOf<IDPTokenDomain>(
+                initialState: .init(
+                    token: .init(
+                        accessToken: "eyJhbGciOiJCUDI1NlIxIn0.eyJhY3IiOiJlaWRhcy1sb2EtaGlnaCIsImF1ZCI6Imh0dHBzOi8vZXJwLnRlbGVtYXRpay5kZS9sb2dpbiIsImV4cCI6MjUyNDYwODAwMCwiZmFtaWx5X25hbWUiOiJkZXIgTmFjaG5hbWUiLCJnaXZlbl9uYW1lIjoiZGVyIFZvcm5hbWUiLCJpYXQiOjE1ODUzMzY5NTYsImlkTnVtbWVyIjoiWDIzNDU2Nzg5MCIsImlycyI6Imh0dHBzOi8vaWRwMS50ZWxlbWF0aWsuZGUvand0IiwianRpIjoiPElEUD5fMDEyMzQ1Njc4OTAxMjM0NTY3ODkiLCJuYmYiOjE1ODUzMzY5NTYsIm5vbmNlIjoiZnV1IGJhciBiYXoiLCJvcmdhbml6YXRpb25OYW1lIjoiSW5zdGl0dXRpb25zLSBvZGVyIE9yZ2FuaXNhdGlvbnMtQmV6ZWljaG51bpciLCJwcm9mZXNzaW9uT0lEIjoiMS4yLjI3Ni4wLjc2LjQuNDkiLCJzdWIiOiJSYWJjVVN1dVdLS1pFRUhtcmNObV9rVURPVzEzdWFHVTVaazhPb0J3aU5rIn0.hV_gCPkPAHYRsrxwoARYSfQQlfJuJ198ys2aMf1XC2tOgDj-HXt0SUh15kWmFXoXVNOI7m6X4oqIRgLK4BHn3Q",
+                        // swiftlint:disable:previous line_length
+                        expires: Date(),
+                        idToken: "123456",
+                        ssoToken: "sso_tokens_are_very_long",
+                        tokenType: "ended",
+                        redirect: "redirect"
+                    )
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

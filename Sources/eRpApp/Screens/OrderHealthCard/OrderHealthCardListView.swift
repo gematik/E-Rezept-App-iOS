@@ -22,99 +22,66 @@ import eRpStyleKit
 import SwiftUI
 
 struct OrderHealthCardListView: View {
-    let store: OrderHealthCardDomain.Store
-
-    @ObservedObject var viewStore: ViewStore<ViewState, OrderHealthCardDomain.Action>
-
-    init(store: OrderHealthCardDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        var insuranceCompanies: [OrderHealthCardDomain.HealthInsuranceCompany]
-        var searchText: String
-        var searchHealthInsurance = [OrderHealthCardDomain.HealthInsuranceCompany]()
-        let routeTag: OrderHealthCardDomain.Destinations.State.Tag?
-
-        init(state: OrderHealthCardDomain.State) {
-            insuranceCompanies = state.insuranceCompanies
-            searchText = state.searchText
-            searchHealthInsurance = state.searchHealthInsurance
-            routeTag = state.destination?.tag
-        }
-    }
+    @Perception.Bindable var store: StoreOf<OrderHealthCardDomain>
 
     var body: some View {
-        VStack {
-            SearchBar(
-                searchText: viewStore.binding(
-                    get: \.searchText
-                ) { newText in
-                    .updateSearchText(newPrompt: newText)
-                },
-                prompt: L10n.orderEgkTxtSearchPrompt.key
-            ) {
-                viewStore.send(.searchList)
-            }
-            .padding()
-            List {
-                if !viewStore.searchHealthInsurance.isEmpty {
-                    ForEach(viewStore.searchHealthInsurance) { insurance in
-                        Button(insurance.name) {
-                            viewStore.send(.selectHealthInsurance(id: insurance.id))
-                        }
-                    }
-                } else {
-                    VStack {
-                        Text(L10n.phaSearchTxtNoResultsTitle)
-                            .font(.headline)
-                            .padding(.bottom, 1)
-                        Text(L10n.phaSearchTxtNoResults)
-                            .font(.subheadline)
-                            .foregroundColor(Colors.textSecondary)
-                            .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .frame(maxWidth: .infinity)
+        WithPerceptionTracking {
+            VStack {
+                SearchBar(
+                    searchText: $store.searchText,
+                    prompt: L10n.orderEgkTxtSearchPrompt.key
+                ) {
+                    store.send(.searchList)
                 }
-            }.listStyle(PlainListStyle())
-            NavigationLink(
-                isActive: .init(
-                    get: {
-                        viewStore.routeTag != .searchPicker
-                    },
-                    set: { active in
-                        if active {
-                        } else {
-                            viewStore.send(.setNavigation(tag: .searchPicker))
+                .padding()
+                List {
+                    if !store.filteredInsuranceCompanies.isEmpty {
+                        ForEach(store.filteredInsuranceCompanies) { insurance in
+                            Button(insurance.name) {
+                                store.send(.selectHealthInsurance(insurance))
+                            }
                         }
+                    } else {
+                        VStack {
+                            Text(L10n.phaSearchTxtNoResultsTitle)
+                                .font(.headline)
+                                .padding(.bottom, 1)
+                            Text(L10n.phaSearchTxtNoResults)
+                                .font(.subheadline)
+                                .foregroundColor(Colors.textSecondary)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                ),
-                destination: {
+                }.listStyle(PlainListStyle())
+
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.serviceInquiry, action: \.destination.serviceInquiry)
+                ) { store in
                     OrderHealthCardInquiryView(store: store)
-                },
-                label: {
+                } label: {
                     EmptyView()
                 }
+                .hidden(true)
+                .accessibility(hidden: true)
+            }
+            .onAppear {
+                store.send(.loadList)
+                store.send(.resetList)
+            }
+            .onChange(of: store.searchText) { _ in
+                if store.searchText.isEmpty {
+                    store.send(.resetList)
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(
+                trailing: NavigationBarCloseItem {
+                    store.send(.delegate(.close))
+                }
             )
-            .accessibility(hidden: true)
         }
-        .onAppear {
-            viewStore.send(.loadList)
-            viewStore.send(.resetList)
-        }
-        .onChange(of: viewStore.searchText) { _ in
-            if viewStore.searchText.isEmpty {
-                viewStore.send(.resetList)
-            }
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(
-            trailing: NavigationBarCloseItem {
-                viewStore.send(.delegate(.close))
-            }
-        )
     }
 }
 

@@ -109,7 +109,7 @@ struct ProfilePictureView: View {
                 }
                 .frame(width: style.size, height: style.size, alignment: .center)
                 .background(Circle().fill(color?.background ?? Colors.secondary))
-                .border(color?.border ?? Colors.secondary, width: isBorderOn ? 2 : 0, cornerRadius: 999)
+                .border(color?.border ?? Colors.systemGray5, width: isBorderOn ? 4 : 0, cornerRadius: style.size * 0.5)
                 .foregroundColor(Color(.secondaryLabel))
                 .padding(.vertical, 8)
                 .padding(.trailing, 16)
@@ -158,7 +158,23 @@ struct ProfilePictureView_Previews: PreviewProvider {
                 connection: .never,
                 style: .large
             ) {}
+            ProfilePictureView(
+                image: nil,
+                userImageData: nil,
+                color: .grey,
+                connection: .never,
+                style: .large,
+                isBorderOn: true
+            ) {}
+            ProfilePictureView(
+                image: nil,
+                userImageData: nil,
+                color: .grey,
+                connection: .never,
+                style: .xxLarge,
+                isBorderOn: true
+            ) {}
         }
-        .background(Color.red)
+        .background(Colors.backgroundSecondary.opacity(0.5))
     }
 }

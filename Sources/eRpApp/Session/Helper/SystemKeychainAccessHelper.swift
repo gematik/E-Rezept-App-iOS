@@ -216,7 +216,6 @@ extension KeychainAccessHelper {
     }
 }
 
-// [REQ:BSI-eRp-ePA:O.Biom_7#2] Live implementation of KeychainAccessHelper that reaches into system's Keychain methods
 struct SystemKeychainAccessHelper: KeychainAccessHelper {
     func genericPassword(for account: Data, ofService service: Data) throws -> Data? {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,

@@ -22,56 +22,40 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct ChargeItemHintView: View {
-        let store: StoreOf<PrescriptionDetailDomain>
-        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
-
-        init(store: PrescriptionDetailDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store, observe: ViewState.init)
-        }
-
-        struct ViewState: Equatable {
-            let hasChargeItem: Bool
-            let chargeItemConsentState: PrescriptionDetailDomain.ChargeItemConsentState
-            let prescriptionStatus: Prescription.Status
-
-            init(state: PrescriptionDetailDomain.State) {
-                hasChargeItem = state.chargeItem != nil
-                chargeItemConsentState = state.chargeItemConsentState
-                prescriptionStatus = state.prescription.viewStatus
-            }
-        }
+        @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
 
         var body: some View {
-            VStack {
-                if viewStore.hasChargeItem {
-                    Button(action: {
-                        viewStore.send(.setNavigation(tag: .chargeItem))
-                    }, label: {
-                        Text(L10n.prscDtlBtnPkvInvoice)
-                    })
-                        .buttonStyle(.primaryHuggingNarrowly)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPkvInvoice)
-                } else {
-                    switch viewStore.chargeItemConsentState {
-                    case .granted:
-                        HintView<PrescriptionDetailDomain.Action>(
-                            hint: Hints.noInvoiceForTask
-                        )
-                        .border(Colors.primary300, width: 0.5, cornerRadius: 16)
-                    case .notGranted:
-                        HintView<PrescriptionDetailDomain.Action>(
-                            hint: Hints.activateInvoice,
-                            textAction: { viewStore.send(.showGrantConsentAlert) }
-                        )
-                        .border(Colors.primary300, width: 0.5, cornerRadius: 16)
-                    case .notAuthenticated:
-                        EmptyView()
+            WithPerceptionTracking {
+                VStack {
+                    if store.chargeItem != nil {
+                        Button(action: {
+                            store.send(.setNavigation(tag: .chargeItem))
+                        }, label: {
+                            Text(L10n.prscDtlBtnPkvInvoice)
+                        })
+                            .buttonStyle(.primaryHuggingNarrowly)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPkvInvoice)
+                    } else {
+                        switch store.chargeItemConsentState {
+                        case .granted:
+                            HintView<PrescriptionDetailDomain.Action>(
+                                hint: Hints.noInvoiceForTask
+                            )
+                            .border(Colors.primary300, width: 0.5, cornerRadius: 16)
+                        case .notGranted:
+                            HintView<PrescriptionDetailDomain.Action>(
+                                hint: Hints.activateInvoice,
+                                textAction: { store.send(.showGrantConsentAlert) }
+                            )
+                            .border(Colors.primary300, width: 0.5, cornerRadius: 16)
+                        case .notAuthenticated:
+                            EmptyView()
+                        }
                     }
                 }
+                .padding(.horizontal)
+                .padding(.bottom, 40)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 40)
         }
     }
 

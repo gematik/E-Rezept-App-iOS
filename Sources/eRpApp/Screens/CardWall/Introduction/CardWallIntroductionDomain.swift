@@ -21,43 +21,24 @@ import ComposableArchitecture
 import Foundation
 import IDP
 
-struct CardWallIntroductionDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardWall_CAN
-            case can(CardWallCANDomain.State)
-            // sourcery: AnalyticsScreen = cardWall_extAuth
-            case extauth(CardWallExtAuthSelectionDomain.State)
-            // sourcery: AnalyticsScreen = contactInsuranceCompany
-            case egk(OrderHealthCardDomain.State)
-        }
-
-        enum Action: Equatable {
-            case canAction(action: CardWallCANDomain.Action)
-            case extauth(action: CardWallExtAuthSelectionDomain.Action)
-            case egkAction(action: OrderHealthCardDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(state: /State.can, action: /Action.canAction) {
-                CardWallCANDomain()
-            }
-            Scope(state: /State.extauth, action: /Action.extauth) {
-                CardWallExtAuthSelectionDomain()
-            }
-            Scope(state: /State.egk, action: /Action.egkAction) {
-                OrderHealthCardDomain()
-            }
-        }
+@Reducer
+struct CardWallIntroductionDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = cardWall_CAN
+        case can(CardWallCANDomain)
+        // sourcery: AnalyticsScreen = cardWall_extAuth
+        case extAuth(CardWallExtAuthSelectionDomain)
+        // sourcery: AnalyticsScreen = contactInsuranceCompany
+        case egk(OrderHealthCardDomain)
     }
 
+    @ObservableState
     struct State: Equatable {
         /// App is only usable with NFC for now
         let isNFCReady: Bool
         let profileId: UUID
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     indirect enum Action: Equatable {
@@ -66,8 +47,10 @@ struct CardWallIntroductionDomain: ReducerProtocol {
 
         case delegate(Delegate)
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case extAuthTapped
+        case egkButtonTapped
+        case destination(PresentationAction<Destination.Action>)
 
         enum Delegate: Equatable {
             case close
@@ -79,14 +62,12 @@ struct CardWallIntroductionDomain: ReducerProtocol {
     @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
     @Dependency(\.schedulers) var schedulers: Schedulers
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .advance:
             return .publisher(
@@ -104,32 +85,32 @@ struct CardWallIntroductionDomain: ReducerProtocol {
             return .none
         case .delegate(.close):
             return .none
-        case .setNavigation(tag: .egk):
+        case .egkButtonTapped:
             state.destination = .egk(.init())
             return .none
-        case .setNavigation(tag: .none),
-             .destination(.presented(.egkAction(action: .delegate(.close)))):
+        case .resetNavigation,
+             .destination(.presented(.egk(.delegate(.close)))):
             state.destination = nil
             return .none
-        case .destination(.presented(.canAction(.delegate(.navigateToIntro)))),
-             .setNavigation(tag: .extauth):
-            state.destination = .extauth(CardWallExtAuthSelectionDomain.State())
+        case .destination(.presented(.can(.delegate(.navigateToIntro)))),
+             // [REQ:BSI-eRp-ePA:O.Auth_4#3] Present the gID flow for selecting the correct insurance company
+             .extAuthTapped:
+            state.destination = .extAuth(CardWallExtAuthSelectionDomain.State())
             return .none
-        case .destination(.presented(.canAction(.delegate(.close)))),
-             .destination(.presented(.extauth(action: .delegate(.close)))):
+        case .destination(.presented(.can(.delegate(.close)))),
+             .destination(.presented(.extAuth(.delegate(.close)))):
             state.destination = nil
             return .run { send in
                 try await schedulers.main.sleep(for: 0.05)
                 await send(.delegate(.close))
             }
-        case .destination(.presented(.canAction(action: .delegate(.unlockCardClose)))):
+        case .destination(.presented(.can(.delegate(.unlockCardClose)))):
             state.destination = nil
             return .run { send in
                 try await schedulers.main.sleep(for: 0.05)
                 await send(.delegate(.unlockCardClose))
             }
-        case .setNavigation,
-             .destination:
+        case .destination:
             return .none
         case .delegate(.unlockCardClose):
             return .none

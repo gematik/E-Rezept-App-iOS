@@ -16,37 +16,39 @@
 //  
 //
 
+import ComposableArchitecture
 import eRpStyleKit
 import IDP
 import SwiftUI
 
 // [REQ:BSI-eRp-ePA:O.Purp_9#1] Access and SSO Token display
-// [REQ:BSI-eRp-ePA:O.Tokn_5#3] Access and SSO Token display
 struct IDPTokenView: View {
-    let token: IDPToken?
+    @Perception.Bindable var store: StoreOf<IDPTokenDomain>
 
     var body: some View {
-        List {
-            if let accessToken = token?.accessToken {
-                TokenCell(
-                    title: L10n.stgTknTxtAccessToken,
-                    token: accessToken
-                )
-                .accessibility(identifier: A11y.settings.tokens.stgTknTxtAccessToken)
-                .accessibilityValue(Text(accessToken))
+        WithPerceptionTracking {
+            List {
+                if let accessToken = store.token?.accessToken {
+                    TokenCell(
+                        title: L10n.stgTknTxtAccessToken,
+                        token: accessToken
+                    )
+                    .accessibility(identifier: A11y.settings.tokens.stgTknTxtAccessToken)
+                    .accessibilityValue(Text(accessToken))
+                }
+                if let ssoToken = store.token?.ssoToken {
+                    TokenCell(
+                        title: L10n.stgTknTxtSsoToken,
+                        token: ssoToken
+                    )
+                    .accessibility(identifier: A11y.settings.tokens.stgTknTxtSsoToken)
+                    .accessibilityValue(Text(ssoToken))
+                }
             }
-            if let ssoToken = token?.ssoToken {
-                TokenCell(
-                    title: L10n.stgTknTxtSsoToken,
-                    token: ssoToken
-                )
-                .accessibility(identifier: A11y.settings.tokens.stgTknTxtSsoToken)
-                .accessibilityValue(Text(ssoToken))
-            }
+            .listStyle(InsetGroupedListStyle())
+            .navigationTitle(L10n.stgTknTxtTitleTokens)
+            .navigationBarTitleDisplayMode(.automatic)
         }
-        .listStyle(InsetGroupedListStyle())
-        .navigationTitle(L10n.stgTknTxtTitleTokens)
-        .navigationBarTitleDisplayMode(.automatic)
     }
 
     /// sourcery: StringAssetInitialized
@@ -83,14 +85,20 @@ struct TokensView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             IDPTokenView(
-                token: IDPToken(
-                    accessToken: "12122121212",
-                    expires: Date(),
-                    idToken: "123456",
-                    ssoToken: "sso_token",
-                    tokenType: "ended",
-                    redirect: ""
-                )
+                store: StoreOf<IDPTokenDomain>(
+                    initialState: .init(
+                        token: IDPToken(
+                            accessToken: "12122121212",
+                            expires: Date(),
+                            idToken: "123456",
+                            ssoToken: "sso_token",
+                            tokenType: "ended",
+                            redirect: ""
+                        )
+                    )
+                ) {
+                    IDPTokenDomain()
+                }
             )
         }
     }

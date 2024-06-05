@@ -20,7 +20,9 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-struct MedicationReminderOneDaySummaryDomain: Reducer {
+@Reducer
+struct MedicationReminderOneDaySummaryDomain {
+    @ObservableState
     struct State: Equatable {
         init(entries: [UUID], medicationSchedules: [MedicationSchedule] = []) {
             self.entries = entries

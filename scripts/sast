@@ -28,12 +28,16 @@ if [ -f ".githubignore" ]; then
   rm -f .githubignore
 fi
 
-if [[ -z "${CIBUILD}" ]]; then
-  export SAST_FILENAME="scan_$(date '+%Y-%m-%d_%H:%M:%s').zip"
-  zip -r "$SAST_FILENAME" . -x ".git*" -x "DerivedData/*" -x "artifacts/*" -x "distribution/*" -x "*.ipa" -x "*.zip"
-else
-  rm -rf "./DerivedData" "./artifacts" "./distribution" "./*.ipa" "./*.zip"
-fi
+# delete all files that are listed within .gitignore
+git ls-files -i -o --exclude-from=.gitignore | xargs rm -rf
+
+export SNYK_API=https://app.eu.snyk.io
+
+# `--remote-repo-url` is only overwriting the name visible in the backend, not altering what code is monitored/tested
+snyk monitor   --file=Package.swift --org="e-rezept-app-ios" --project-name=gematik/E-Rezept-App-iOS --report --remote-repo-url="https://github.com/gematik/E-Rezept-App-iOS.git" || true
+snyk test      --file=Package.swift --org="e-rezept-app-ios" --project-name=gematik/E-Rezept-App-iOS --report --remote-repo-url="https://github.com/gematik/E-Rezept-App-iOS.git" --severity-threshold=low --sarif-file-output=./reports/snyk-sca.sarif
+snyk code test --file=Package.swift --org="e-rezept-app-ios" --project-name=gematik/E-Rezept-App-iOS --report --remote-repo-url="https://github.com/gematik/E-Rezept-App-iOS.git" --severity-threshold=low --sarif-file-output=./reports/snyk-sast.sarif
 
 echo "Done"
 date "+%H:%M:%S"
+

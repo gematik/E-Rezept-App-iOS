@@ -1,0 +1,66 @@
+{
+    "loadDirectoryKKAppsRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        {
+            "fed_idp_list":
+            [
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy1.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 1"
+                },
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy2.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 2"
+                },
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy3.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 3"
+                },
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy4.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 4"
+                },
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy5.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 5"
+                },
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy6.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 6"
+                },
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy7.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 7"
+                },
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy8.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 8"
+                },
+                {
+                    "idp_sek_2": true,
+                    "idp_iss": "https://dummy9.identifier.erezept.gematik.de",
+                    "idp_logo": "https://noLogoYet.de",
+                    "idp_name": "LOCAL MOCK KK 9"
+                }
+            ]
+        }
+    }
+}

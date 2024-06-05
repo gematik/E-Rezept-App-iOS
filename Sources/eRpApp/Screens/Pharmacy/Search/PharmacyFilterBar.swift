@@ -17,8 +17,8 @@
 //
 
 import eRpStyleKit
-import Introspect
 import SwiftUI
+import SwiftUIIntrospect
 
 extension PharmacyFilterBar.Filter: Equatable where FilterType: Equatable {}
 
@@ -68,9 +68,9 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
             }
             .padding(.vertical, 8)
         }
-        .introspectScrollView { view in
-            view.clipsToBounds = false
-            view.alwaysBounceHorizontal = false
+        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
+            scrollView.clipsToBounds = false
+            scrollView.alwaysBounceHorizontal = false
         }
         .accessibility(identifier: A11y.pharmacySearch.phaFilterBar)
         .accentColor(Colors.primary)

@@ -22,24 +22,10 @@ import SwiftUI
 import UIKit
 
 struct CardWallPINView: View {
-    let store: CardWallPINDomain.Store
-
-    struct ViewState: Equatable {
-        let routeTag: CardWallPINDomain.Destinations.State.Tag?
-        let enteredPINValid: Bool
-        let isDemoModus: Bool
-        let transitionMode: CardWallPINDomain.TransitionMode
-
-        init(state: CardWallPINDomain.State) {
-            routeTag = state.destination?.tag
-            enteredPINValid = state.enteredPINValid
-            isDemoModus = state.isDemoModus
-            transitionMode = state.transition
-        }
-    }
+    @Perception.Bindable var store: StoreOf<CardWallPINDomain>
 
     var body: some View {
-        WithViewStore(store, observe: ViewState.init) { viewStore in
+        WithPerceptionTracking {
             VStack(alignment: .leading) {
                 // [REQ:BSI-eRp-ePA:O.Purp_2#3,O.Data_6#4] PIN is used for eGK Connection
                 PINView(store: store).padding()
@@ -50,58 +36,44 @@ struct CardWallPINView: View {
 
                 PrimaryTextButton(text: L10n.cdwBtnPinDone,
                                   a11y: A11y.cardWall.pinInput.cdwBtnPinDone,
-                                  isEnabled: viewStore.state.enteredPINValid) {
+                                  isEnabled: store.enteredPINValid) {
                     // workaround: dismiss keyboard to fix safearea bug for iOS 16
                     if #available(iOS 16, *) {
                         UIApplication.shared.dismissKeyboard()
                     }
-                    viewStore.send(.advance(viewStore.transitionMode))
+                    store.send(.advance(store.transition))
                 }
                 .accessibility(label: Text(L10n.cdwBtnPinDoneLabel))
                 .padding(.horizontal)
-                .padding(.bottom)
-                .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.routeTag == .login && viewStore.transitionMode == .fullScreenCover },
-                    set: { show in
-                        if !show {
-                            viewStore.send(.setNavigation(tag: nil))
-                        }
-                    }
-                ),
-                onDismiss: {},
-                content: {
-                    NavigationView {
-                        IfLetStore(
-                            store.scope(state: \.$destination, action: CardWallPINDomain.Action.destination),
-                            state: /CardWallPINDomain.Destinations.State.login,
-                            action: CardWallPINDomain.Destinations.Action.login,
-                            then: CardWallLoginOptionView.init(store:)
-                        )
-                    }
-                    .accentColor(Colors.primary700)
-                    .navigationViewStyle(StackNavigationViewStyle())
-                })
+                .padding(.bottom, 8)
 
-                if viewStore.transitionMode == .push {
-                    NavigationLinkStore(
-                        store.scope(state: \.$destination, action: CardWallPINDomain.Action.destination),
-                        state: /CardWallPINDomain.Destinations.State.login,
-                        action: CardWallPINDomain.Destinations.Action.login,
-                        onTap: { viewStore.send(.setNavigation(tag: .login)) },
-                        destination: CardWallLoginOptionView.init(store:),
-                        label: {}
-                    )
+                if store.transition == .push {
+                    NavigationLink(item: $store
+                        .scope(state: \.destination?.login, action: \.destination.login)) { store in
+                            CardWallLoginOptionView(store: store)
+                    } label: {
+                        EmptyView()
+                    }
                     .hidden()
                     .accessibility(hidden: true)
+                } else {
+                    Rectangle()
+                        .fullScreenCover(
+                            item: $store.scope(state: \.destination?.login, action: \.destination.login)
+                        ) { store in
+                            CardWallLoginOptionView(store: store)
+                        }
+                        .frame(width: 0, height: 0)
+                        .accessibilityHidden(true)
                 }
             }
-            .demoBanner(isPresented: viewStore.isDemoModus) {
+            .demoBanner(isPresented: store.isDemoModus) {
                 Text(L10n.cdwTxtPinDemoModeInfo)
             }
             .navigationBarTitle(L10n.cdwTxtPinTitle, displayMode: .inline)
             .navigationBarItems(
                 trailing: NavigationBarCloseItem {
-                    viewStore.send(.delegate(.close))
+                    store.send(.delegate(.close))
                 }
                 .accessibility(identifier: A11y.cardWall.pinInput.cdwBtnPinCancel)
                 .accessibility(label: Text(L10n.cdwBtnPinCancelLabel))
@@ -110,26 +82,12 @@ struct CardWallPINView: View {
     }
 
     private struct PINView: View {
-        let store: CardWallPINDomain.Store
-
-        struct ViewState: Equatable {
-            let routeTag: CardWallPINDomain.Destinations.State.Tag?
-            let wrongPinEntered: Bool
-            let showWarning: Bool
-            let warningMessage: String
-
-            init(state: CardWallPINDomain.State) {
-                routeTag = state.destination?.tag
-                wrongPinEntered = state.wrongPinEntered
-                showWarning = state.showWarning
-                warningMessage = state.warningMessage
-            }
-        }
+        @Perception.Bindable var store: StoreOf<CardWallPINDomain>
 
         var body: some View {
-            WithViewStore(store, observe: ViewState.init) { viewStore in
+            WithPerceptionTracking {
                 ScrollView(.vertical, showsIndicators: true) {
-                    if viewStore.wrongPinEntered {
+                    if store.wrongPinEntered {
                         WorngPINEnteredWarningView().padding()
                     }
 
@@ -148,39 +106,27 @@ struct CardWallPINView: View {
                     }
 
                     Button(L10n.cdwBtnPinNoPin) {
-                        viewStore.send(.setNavigation(tag: .egk))
-                    }.fullScreenCover(isPresented: Binding<Bool>(
-                        get: { viewStore.state.routeTag == .egk },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil))
+                        store.send(.egkButtonTapped)
+                    }
+                    .fullScreenCover(item: $store
+                        .scope(state: \.destination?.egk, action: \.destination.egk)) { store in
+                            NavigationView {
+                                OrderHealthCardListView(store: store)
                             }
-                        }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        NavigationView {
-                            IfLetStore(
-                                store.scope(state: \.$destination, action: CardWallPINDomain.Action.destination),
-                                state: /CardWallPINDomain.Destinations.State.egk,
-                                action: CardWallPINDomain.Destinations.Action.egkAction(action:),
-                                then: OrderHealthCardListView.init(store:)
-                            )
-                        }
-                        .accentColor(Colors.primary700)
-                        .navigationViewStyle(StackNavigationViewStyle())
-                    })
-                        .padding([.bottom, .top], 6)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                            .accentColor(Colors.primary700)
+                            .navigationViewStyle(StackNavigationViewStyle())
+                    }
+                    .padding([.bottom, .top], 6)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
 
                     PINFieldView(store: store) {
-                        viewStore.send(
+                        store.send(
                             .advance(.none),
                             animation: Animation.default
                         )
                     }.padding([.top, .bottom])
 
-                    if !viewStore.showWarning {
+                    if !store.showWarning {
                         Text(L10n.cdwTxtPinHint)
                             .font(.footnote)
                             .foregroundColor(Colors.systemLabelSecondary)
@@ -194,7 +140,7 @@ struct CardWallPINView: View {
                                 .foregroundColor(Colors.alertNegativ)
                                 .font(.footnote)
 
-                            Text(viewStore.warningMessage)
+                            Text(store.warningMessage)
                                 .font(.footnote)
                                 .foregroundColor(Colors.alertNegativ)
                                 .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinWarning)
@@ -208,35 +154,39 @@ struct CardWallPINView: View {
     }
 
     private struct PINFieldView: View {
-        let store: CardWallPINDomain.Store
-        @ObservedObject var viewStore: ViewStoreOf<CardWallPINDomain>
+        @Perception.Bindable var store: StoreOf<CardWallPINDomain>
+        @FocusState private var focused: Bool
 
-        init(store: CardWallPINDomain.Store, completion: @escaping () -> Void) {
+        init(store: StoreOf<CardWallPINDomain>, completion: @escaping () -> Void) {
             self.store = store
-            viewStore = ViewStore(store) { $0 }
             self.completion = completion
         }
 
         let completion: () -> Void
 
         var body: some View {
-            VStack(alignment: .leading) {
-                SecureFieldWithReveal(
-                    titleKey: L10n.cdwEdtPinInput,
-                    accessibilityLabelKey: L10n.cdwTxtPinInputLabel,
-                    text: viewStore.binding(get: \.pin, send: CardWallPINDomain.Action.update(pin:)).animation(),
-                    textContentType: .password,
-                    backgroundColor: Colors.systemGray5
-                ) {}
-                    .textContentType(.oneTimeCode)
-                    .multilineTextAlignment(.leading)
-                    .keyboardType(.numberPad)
-                    .padding()
-                    .font(Font.title3)
-                    .background(Colors.systemGray5)
-                    .cornerRadius(8)
-                    .textFieldKeepFirstResponder()
-                    .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
+            WithPerceptionTracking {
+                VStack(alignment: .leading) {
+                    SecureFieldWithReveal(
+                        titleKey: L10n.cdwEdtPinInput,
+                        accessibilityLabelKey: L10n.cdwTxtPinInputLabel,
+                        text: $store.pin.sending(\.update),
+                        textContentType: .password,
+                        backgroundColor: Colors.systemGray5
+                    ) {}
+                        .textContentType(.oneTimeCode)
+                        .multilineTextAlignment(.leading)
+                        .keyboardType(.numberPad)
+                        .padding()
+                        .font(Font.title3)
+                        .background(Colors.systemGray5)
+                        .cornerRadius(8)
+                        .focused($focused)
+                        .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
+                }
+                .onAppear {
+                    focused = true
+                }
             }
         }
     }

@@ -18,11 +18,14 @@
 
 import eRpStyleKit
 import SwiftUI
+import SwiftUIIntrospect
 
 struct EnterProfileNameSubView: View {
     let displayName: Binding<String>
     let didTapButtonAction: () -> Void
     var validating: ((String) -> Bool)?
+
+    @FocusState private var focused: Bool
 
     var isValidEntry: Bool {
         guard let validating = validating else { return true }
@@ -38,13 +41,15 @@ struct EnterProfileNameSubView: View {
                         L10n.addTxtProfile1,
                         text: displayName
                     )
-                    .foregroundColor(Colors.textSecondary)
+                    .introspect(.textField, on: .iOS(.v15, .v16, .v17)) { textField in
+                        textField.clearButtonMode = .whileEditing
+                    }
+                    .foregroundColor(Colors.text)
                     .padding()
                     .border(Colors.primary700, width: 2, cornerRadius: 8)
                     .padding(.vertical)
                     .padding(.horizontal)
-                    // TODO: when > iOS 14 this can be replaced by `focused(:)` // swiftlint:disable:this todo
-                    .textFieldKeepFirstResponder()
+                    .focused($focused)
 
                     Button(
                         action: {
@@ -67,6 +72,9 @@ struct EnterProfileNameSubView: View {
         }
         .padding()
         .background(Colors.systemBackground.ignoresSafeArea())
+        .onAppear {
+            focused = true
+        }
     }
 }
 

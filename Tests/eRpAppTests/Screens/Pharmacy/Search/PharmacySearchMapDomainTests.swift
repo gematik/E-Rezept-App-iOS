@@ -59,17 +59,6 @@ class PharmacySearchMapDomainTests: XCTestCase {
         }
     }
 
-    /*
-     List of Test:
-     Normal Search - D
-     First Allow Location - D (maybe include changing position)
-     First Denied Location -
-     Allow Location -
-     Denied Location -
-     Filter Tapped Search -
-     SearchCustomPosition
-     UI-Test - Serach/GoToUser while swiping ?
-     */
     func testSearchForPharmacies() async {
         // given
         let mockPharmacyRepo = MockPharmacyRepository()
@@ -105,16 +94,24 @@ class PharmacySearchMapDomainTests: XCTestCase {
         let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .notDetermined }
-        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.delegate = {
+            AsyncStream { continuation in
+                let cancellable = locationManagerSubject.sink { continuation.yield($0) }
+                continuation.onTermination = { _ in
+                    cancellable.cancel()
+                }
+            }
+        }
         sut.dependencies.locationManager.locationServicesEnabled = { true }
 
-        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
-        sut.dependencies.locationManager.startUpdatingLocation = { .run { _ in } }
-        sut.dependencies.locationManager.stopUpdatingLocation = { .run { _ in } }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = {}
+        sut.dependencies.locationManager.startUpdatingLocation = {}
+        sut.dependencies.locationManager.stopUpdatingLocation = {}
+        sut.dependencies.locationManager.requestLocation = {}
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
         let expectedLocation = TestData.testLocation
 
-        await sut.send(.onAppear)
+        let onAppear = await sut.send(.onAppear)
         await sut.receive(.searchWithMap)
         await sut.receive(.requestLocation) { state in
             state.currentUserLocation = nil
@@ -152,6 +149,8 @@ class PharmacySearchMapDomainTests: XCTestCase {
         await testScheduler.advance()
 
         await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate)))
+
+        await onAppear.cancel()
     }
 
     func test_AlreadyAllowingLocation() async {
@@ -164,13 +163,20 @@ class PharmacySearchMapDomainTests: XCTestCase {
         let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .authorizedAlways }
-        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
-        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
+        sut.dependencies.locationManager.delegate = {
+            AsyncStream { continuation in
+                let cancellable = locationManagerSubject.sink { continuation.yield($0) }
+                continuation.onTermination = { _ in
+                    cancellable.cancel()
+                }
+            }
+        }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = {}
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
         let expectedLocation = TestData.testLocation
         sut.dependencies.locationManager.location = { expectedLocation }
 
-        await sut.send(.onAppear)
+        let onAppear = await sut.send(.onAppear)
         locationManagerSubject.send(completion: .finished)
         await sut.receive(.searchWithMap)
 
@@ -188,6 +194,8 @@ class PharmacySearchMapDomainTests: XCTestCase {
         await testScheduler.advance()
 
         await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate)))
+
+        await onAppear.cancel()
     }
 
     func test_FirstOpenAndDeniedLocation() async {
@@ -200,14 +208,22 @@ class PharmacySearchMapDomainTests: XCTestCase {
         let sut = testStore(for: TestData.stateWithNoLocation, pharmacyRepository: mockPharmacyRepo)
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .notDetermined }
-        sut.dependencies.locationManager.requestWhenInUseAuthorization = { .run { _ in } }
-        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = {}
+        sut.dependencies.locationManager.locationServicesEnabled = { true }
+        sut.dependencies.locationManager.delegate = {
+            AsyncStream { continuation in
+                let cancellable = locationManagerSubject.sink { continuation.yield($0) }
+                continuation.onTermination = { _ in
+                    cancellable.cancel()
+                }
+            }
+        }
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
         let expectedLocation = Location(rawValue:
             CLLocation(latitude: MKCoordinateRegion.gematikHQRegion.center.latitude,
                        longitude: MKCoordinateRegion.gematikHQRegion.center.longitude))
 
-        await sut.send(.onAppear)
+        let onAppear = await sut.send(.onAppear)
         await sut.receive(.searchWithMap)
         await sut.receive(.requestLocation)
 
@@ -224,7 +240,9 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
         await sut.send(.goToUser)
 
-        await sut.receive(.requestLocation) { state in
+        await sut.receive(.requestLocation)
+
+        await sut.receive(.setAlert(PharmacySearchMapDomain.locationPermissionAlertState)) { state in
             state.destination = .alert(PharmacySearchMapDomain.locationPermissionAlertState)
         }
 
@@ -239,6 +257,8 @@ class PharmacySearchMapDomainTests: XCTestCase {
                                                                longitudeDelta: 9.841382800000005
                                                            )))
         }
+
+        await onAppear.cancel()
     }
 
     func test_AlreadyDeniedLocation() async {
@@ -251,13 +271,21 @@ class PharmacySearchMapDomainTests: XCTestCase {
         let sut = testStore(for: TestData.stateWithNoLocation, pharmacyRepository: mockPharmacyRepo)
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .denied }
-        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.locationServicesEnabled = { true }
+        sut.dependencies.locationManager.delegate = {
+            AsyncStream { continuation in
+                let cancellable = locationManagerSubject.sink { continuation.yield($0) }
+                continuation.onTermination = { _ in
+                    cancellable.cancel()
+                }
+            }
+        }
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
         let expectedLocation = Location(rawValue:
             CLLocation(latitude: MKCoordinateRegion.gematikHQRegion.center.latitude,
                        longitude: MKCoordinateRegion.gematikHQRegion.center.longitude))
 
-        await sut.send(.onAppear)
+        let onAppear = await sut.send(.onAppear)
         locationManagerSubject.send(completion: .finished)
         await sut.receive(.searchWithMap)
 
@@ -273,9 +301,13 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
         await sut.send(.goToUser)
 
-        await sut.receive(.requestLocation) { state in
+        await sut.receive(.requestLocation)
+
+        await sut.receive(.setAlert(PharmacySearchMapDomain.locationPermissionAlertState)) { state in
             state.destination = .alert(PharmacySearchMapDomain.locationPermissionAlertState)
         }
+
+        await onAppear.cancel()
     }
 
     func test_FilterTapedSearch() async {
@@ -288,15 +320,22 @@ class PharmacySearchMapDomainTests: XCTestCase {
         let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .authorizedAlways }
-        sut.dependencies.locationManager.delegate = { .publisher(locationManagerSubject.eraseToAnyPublisher) }
+        sut.dependencies.locationManager.delegate = {
+            AsyncStream { continuation in
+                let cancellable = locationManagerSubject.sink { continuation.yield($0) }
+                continuation.onTermination = { _ in
+                    cancellable.cancel()
+                }
+            }
+        }
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
         let expectedLocation = TestData.testLocation
 
-        await sut.send(.setNavigation(tag: .filter)) { state in
+        await sut.send(.showPharmacyFilter) { state in
             state.destination = .filter(.init(pharmacyFilterShow: [.open, .delivery, .shipment]))
         }
 
-        await sut.send(.destination(.presented(.pharmacyFilterView(action: .toggleFilter(.delivery))))) { state in
+        await sut.send(.destination(.presented(.filter(.toggleFilter(.delivery))))) { state in
             state.destination = .filter(.init(pharmacyFilterOptions: [.delivery],
                                               pharmacyFilterShow: [.open, .delivery, .shipment]))
         }

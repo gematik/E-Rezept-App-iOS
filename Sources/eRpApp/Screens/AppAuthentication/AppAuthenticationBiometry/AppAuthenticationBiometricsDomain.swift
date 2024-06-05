@@ -21,30 +21,41 @@ import ComposableArchitecture
 import eRpKit
 import LocalAuthentication
 
-struct AppAuthenticationBiometricsDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct AppAuthenticationBiometricsDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
 
+        enum Alert: Equatable {}
+    }
+
+    @ObservableState
     struct State: Equatable {
+        @Presents var destination: Destination.State?
+
         let biometryType: BiometryType
         let startImmediateAuthenticationChallenge: Bool
         var authenticationResult: AuthenticationChallengeProviderResult?
-        var errorToDisplay: AuthenticationChallengeProviderError?
     }
 
     enum Action: Equatable {
+        case destination(PresentationAction<Destination.Action>)
+
         case startAuthenticationChallenge
-        case dismissError
         case authenticationChallengeResponse(AuthenticationChallengeProviderResult)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
+            .ifLet(\.$destination, action: \.destination)
     }
 
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .startAuthenticationChallenge:
             return .publisher(
@@ -58,11 +69,10 @@ struct AppAuthenticationBiometricsDomain: ReducerProtocol {
         case let .authenticationChallengeResponse(response):
             state.authenticationResult = response
             if case let .failure(error) = response {
-                state.errorToDisplay = error
+                state.destination = .alert(.init(for: error, title: L10n.alertErrorTitle))
             }
             return .none
-        case .dismissError:
-            state.errorToDisplay = nil
+        case .destination:
             return .none
         }
     }

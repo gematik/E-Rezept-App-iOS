@@ -22,45 +22,31 @@ import Dependencies
 import eRpKit
 import SwiftUI
 
-struct MedicationOverviewDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = prescriptionDetail_medication
-            case medication(MedicationDomain.State)
-        }
-
-        enum Action: Equatable {
-            case medication(action: MedicationDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.medication,
-                action: /Action.medication
-            ) {
-                MedicationDomain()
-            }
-        }
+@Reducer
+struct MedicationOverviewDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = prescriptionDetail_medication
+        case medication(MedicationDomain)
     }
 
+    @ObservableState
     struct State: Equatable {
         let subscribed: ErxMedication
         let dispensed: [ErxMedicationDispense]
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     enum Action: Equatable {
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
         case showSubscribedMedication
         case showDispensedMedication(ErxMedicationDispense)
-        case setNavigation(tag: Destinations.State.Tag?)
+        case resetNavigation
     }
 
     @Dependency(\.uiDateFormatter) var uiDateFormatter
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .showSubscribedMedication:
@@ -74,16 +60,13 @@ struct MedicationOverviewDomain: ReducerProtocol {
                 )
                 state.destination = .medication(medicationState)
                 return .none
-            case .setNavigation(tag: .none):
+            case .resetNavigation:
                 state.destination = nil
                 return .none
-            case .setNavigation,
-                 .destination:
+            case .destination:
                 return .none
             }
         }
-        .ifLet(\.$destination, action: /Action.destination) {
-            Destinations()
-        }
+        .ifLet(\.$destination, action: \.destination)
     }
 }

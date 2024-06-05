@@ -22,22 +22,32 @@ import eRpKit
 import Foundation
 import LocalAuthentication
 
-struct AppAuthenticationBiometricPasswordDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct AppAuthenticationBiometricPasswordDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
 
+        enum Alert: Equatable {}
+    }
+
+    @ObservableState
     struct State: Equatable {
+        @Presents var destination: Destination.State?
+
         let biometryType: BiometryType
         let startImmediateAuthenticationChallenge: Bool
         var authenticationResult: AuthenticationChallengeProviderResult?
-        var errorToDisplay: AuthenticationChallengeProviderError?
         var showPassword = false
         var password: String = ""
         var lastMatchResultSuccessful: Bool?
     }
 
     enum Action: Equatable {
+        case destination(PresentationAction<Destination.Action>)
+
         case startAuthenticationChallenge
-        case dismissError
         case switchToPassword(Bool)
         case authenticationChallengeResponse(AuthenticationChallengeProviderResult)
         case loginButtonTapped
@@ -49,11 +59,12 @@ struct AppAuthenticationBiometricPasswordDomain: ReducerProtocol {
     @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
+            .ifLet(\.$destination, action: \.destination)
     }
 
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .startAuthenticationChallenge:
             return .publisher(
@@ -68,9 +79,9 @@ struct AppAuthenticationBiometricPasswordDomain: ReducerProtocol {
             state.authenticationResult = response
             if case let .failure(error) = response {
                 if error.isUserFallBack {
-                    return EffectTask.send(.switchToPassword(true))
+                    return .send(.switchToPassword(true))
                 }
-                state.errorToDisplay = error
+                state.destination = .alert(.init(for: error, title: L10n.alertErrorTitle))
             }
             return .none
         case let .setPassword(password):
@@ -78,9 +89,9 @@ struct AppAuthenticationBiometricPasswordDomain: ReducerProtocol {
             return .none
         case .loginButtonTapped:
             guard let success = try? appSecurityManager.matches(password: state.password) else {
-                return EffectTask.send(.passwordVerificationReceived(false))
+                return Effect.send(.passwordVerificationReceived(false))
             }
-            return EffectTask.send(.passwordVerificationReceived(success))
+            return Effect.send(.passwordVerificationReceived(success))
 
         case let .passwordVerificationReceived(isLoggedIn):
             state.lastMatchResultSuccessful = isLoggedIn
@@ -88,8 +99,7 @@ struct AppAuthenticationBiometricPasswordDomain: ReducerProtocol {
         case let .switchToPassword(bool):
             state.showPassword = bool
             return .none
-        case .dismissError:
-            state.errorToDisplay = nil
+        case .destination:
             return .none
         }
     }

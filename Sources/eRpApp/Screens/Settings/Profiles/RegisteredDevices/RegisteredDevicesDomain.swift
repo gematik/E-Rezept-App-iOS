@@ -24,13 +24,13 @@ import eRpKit
 import Foundation
 import IDP
 
-struct RegisteredDevicesDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct RegisteredDevicesDomain {
+    @ObservableState
     struct State: Equatable {
         let profileId: UUID
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
 
         var thisDeviceKeyIdentifier: String?
 
@@ -66,30 +66,16 @@ struct RegisteredDevicesDomain: ReducerProtocol {
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardWall
-            case cardWallCAN(CardWallCANDomain.State)
-            // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<Action.Alert>)
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = cardWall
+        case cardWallCAN(CardWallCANDomain)
+        // sourcery: AnalyticsScreen = alert
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Alert>)
 
-        enum Action: Equatable {
-            case cardWallCAN(action: CardWallCANDomain.Action)
-            case alert(Alert)
-
-            enum Alert: Equatable {
-                case dismiss
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.cardWallCAN,
-                action: /Action.cardWallCAN
-            ) {
-                CardWallCANDomain()
-            }
+        enum Alert: Equatable {
+            case dismiss
         }
     }
 
@@ -100,8 +86,7 @@ struct RegisteredDevicesDomain: ReducerProtocol {
 
         case showCardWall(CardWallCANDomain.State)
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
 
         case response(Response)
 
@@ -123,36 +108,20 @@ struct RegisteredDevicesDomain: ReducerProtocol {
     @Dependency(\.registeredDevicesService) var registeredDevicesService: RegisteredDevicesService
     @Dependency(\.uiDateFormatter.compactDateAndTimeFormatter) var dateFormatter: DateFormatter
 
-    private var environment: Environment {
-        .init(
-            schedulers: schedulers,
-            registeredDevicesService: registeredDevicesService,
-            dateFormatter: dateFormatter
-        )
-    }
-
-    struct Environment {
-        let schedulers: Schedulers
-        let registeredDevicesService: RegisteredDevicesService
-        let dateFormatter: DateFormatter
-    }
-
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             let currentState = (/State.Content.loaded).extract(from: state.content) ?? []
             state.content = .loading(currentState)
             return .merge(
-                environment.getRegisteredDevicesWithSurpressedError(profileId: state.profileId),
-                environment.getDeviceId(for: state.profileId)
+                getRegisteredDevicesWithSurpressedError(profileId: state.profileId),
+                getDeviceId(for: state.profileId)
             )
         case let .response(.taskReceived(result)):
             switch result {
@@ -172,8 +141,8 @@ struct RegisteredDevicesDomain: ReducerProtocol {
             let currentState = (/State.Content.loaded).extract(from: state.content) ?? []
             state.content = .loading(currentState)
             return .merge(
-                environment.getRegisteredDevices(profileId: state.profileId),
-                environment.getDeviceId(for: state.profileId)
+                getRegisteredDevices(profileId: state.profileId),
+                getDeviceId(for: state.profileId)
             )
         case let .response(.loadDevicesReceived(.success(entries))):
             state.content = .loaded(
@@ -194,33 +163,27 @@ struct RegisteredDevicesDomain: ReducerProtocol {
             state.content = .notLoaded
             state.destination = .cardWallCAN(cardWallState)
             return .none
-        case .setNavigation(tag: .none):
-            state.destination = nil
-            state.content = .notLoaded
-            return .none
-        case .setNavigation:
-            return .none
         case .destination(.presented(.cardWallCAN(action: .delegate(.close)))):
             state.destination = nil
             return .send(.task)
         case let .deleteDevice(device):
             return .publisher(
-                environment.deleteDevice(device, of: state.profileId)
+                deleteDevice(device, of: state.profileId)
                     .eraseToAnyPublisher
             )
         case let .response(.deleteDeviceReceived(.failure(error))):
             state.destination = .alert(.init(for: error))
             return .none
         case .response(.deleteDeviceReceived(.success)):
-            return environment.getRegisteredDevices(profileId: state.profileId)
+            return getRegisteredDevices(profileId: state.profileId)
         case .destination:
             return .none
         }
     }
 }
 
-extension RegisteredDevicesDomain.Environment {
-    func getRegisteredDevicesWithSurpressedError(profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
+extension RegisteredDevicesDomain {
+    func getRegisteredDevicesWithSurpressedError(profileId: UUID) -> Effect<RegisteredDevicesDomain.Action> {
         .publisher(
             registeredDevicesService.registeredDevices(for: profileId)
                 .map { RegisteredDevicesDomain.Action.response(.taskReceived(.success($0))) }
@@ -233,7 +196,7 @@ extension RegisteredDevicesDomain.Environment {
         )
     }
 
-    func getRegisteredDevices(profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
+    func getRegisteredDevices(profileId: UUID) -> Effect<RegisteredDevicesDomain.Action> {
         .publisher(
             registeredDevicesService.registeredDevices(for: profileId)
                 .map { RegisteredDevicesDomain.Action.response(.loadDevicesReceived(.success($0))) }
@@ -251,7 +214,7 @@ extension RegisteredDevicesDomain.Environment {
         )
     }
 
-    func getDeviceId(for profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
+    func getDeviceId(for profileId: UUID) -> Effect<RegisteredDevicesDomain.Action> {
         .publisher(
             registeredDevicesService.deviceId(for: profileId)
                 .map(RegisteredDevicesDomain.Action.Response.deviceIdReceived)
@@ -311,7 +274,7 @@ extension RegisteredDevicesDomain {
 
         static func store(
             for state: State
-        ) -> Store {
+        ) -> StoreOf<RegisteredDevicesDomain> {
             Store(
                 initialState: state
             ) {

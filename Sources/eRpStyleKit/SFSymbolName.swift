@@ -72,6 +72,7 @@ public enum SFSymbolName {
     public static let wandAndStars = "wand.and.stars"
     public static let waveformEcg = "waveform.path.ecg"
     public static let arrowRight = "arrow.right"
+    public static let arrowForward = "arrow.forward"
     public static let arrowRightCircleFill = "arrow.right.circle.fill"
     public static let pencil = "pencil"
     public static let squareAndPencil = "square.and.pencil"
@@ -139,16 +140,17 @@ public enum SFSymbolName {
     public static let boltFill = "bolt.fill"
     public static let sparkles = "sparkles"
     public static let photo = "photo"
-    public static var filter = "line.3.horizontal.decrease.circle"
+    public static let filter = "line.3.horizontal.decrease.circle"
+    public static let globe = "globe"
 
     public static let rectangleAndPencilAndEllipsis = "rectangle.and.pencil.and.ellipsis"
     public static let eye = "eye"
     public static let eyeSlash = "eye.slash"
     public static let calendarClock = "calendar.badge.clock"
-    public static var calendarWarning = "calendar.badge.exclamationmark"
+    public static let calendarWarning = "calendar.badge.exclamationmark"
 
-    public static var clockWarning = "clock.badge.exclamationmark"
-    public static var iPhonelocked = "lock.iphone"
+    public static let clockWarning = "clock.badge.exclamationmark"
+    public static let iPhonelocked = "lock.iphone"
 
     public static let hourglass = "hourglass"
     public static var euroSign: String {

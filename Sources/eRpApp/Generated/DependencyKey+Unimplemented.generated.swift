@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -536,7 +536,7 @@ struct UnimplementedRedeemInputValidator: RedeemInputValidator {
     func validate(_ shipmentInfo: ShipmentInfo?, for redeemOption: RedeemOption) -> Validity {
         fatalError("validate(_:for:) has not been implemented")
     }
-    func validate(_ contactInfo: PharmacyContactDomain.State.ContactInfo) -> Validity {
+    func validate(_ contactInfo: PharmacyContactDomain.ContactInfo) -> Validity {
         fatalError("validate(_:) has not been implemented")
     }
     func isValid(address: Address?) -> Validity {

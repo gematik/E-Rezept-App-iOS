@@ -22,59 +22,55 @@ import eRpStyleKit
 import SwiftUI
 
 struct MedicationOverview: View {
-    let store: StoreOf<MedicationOverviewDomain>
-    @ObservedObject var viewStore: ViewStore<MedicationOverviewDomain.State, MedicationOverviewDomain.Action>
-
-    init(store: StoreOf<MedicationOverviewDomain>) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
+    @Perception.Bindable var store: StoreOf<MedicationOverviewDomain>
 
     var body: some View {
-        ScrollView(.vertical) {
-            SingleElementSectionContainer(
-                header: {
-                    Label(L10n.prscDtlMedOvTxtSubscribedHeader)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvSubscribedHeader)
-                }, content: {
-                    Button(action: { viewStore.send(.showSubscribedMedication) }, label: {
-                        SubTitle(title: viewStore.subscribed.displayName)
-                    })
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnSubscribedMedication)
-                }
-            ).sectionContainerStyle(.inline)
-
-            SingleElementSectionContainer(
-                header: {
-                    Label(L10n.prscDtlMedOvTxtDispensedHeader)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvDispensedHeader)
-                }, content: {
-                    ForEach(viewStore.dispensed.indices, id: \.self) { index in
-                        Button(
-                            action: { viewStore.send(.showDispensedMedication(viewStore.dispensed[index])) },
-                            label: {
-                                SubTitle(title: viewStore.dispensed[index].displayName)
-                                    .sectionContainerIsLastElement(index == viewStore.dispensed.count - 1)
-                            }
-                        )
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnDispensedMedication)
+        WithPerceptionTracking {
+            ScrollView(.vertical) {
+                SingleElementSectionContainer(
+                    header: {
+                        Label(L10n.prscDtlMedOvTxtSubscribedHeader)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvSubscribedHeader)
+                    }, content: {
+                        Button(action: { store.send(.showSubscribedMedication) }, label: {
+                            SubTitle(title: store.subscribed.displayName)
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnSubscribedMedication)
                     }
-                }
-            ).sectionContainerStyle(.inline)
+                ).sectionContainerStyle(.inline)
 
-            // MedicationView
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: MedicationOverviewDomain.Action.destination),
-                state: /MedicationOverviewDomain.Destinations.State.medication,
-                action: MedicationOverviewDomain.Destinations.Action.medication(action:),
-                onTap: { viewStore.send(.setNavigation(tag: .medication)) },
-                destination: MedicationView.init(store:),
-                label: { EmptyView() }
-            ).accessibility(hidden: true)
+                SingleElementSectionContainer(
+                    header: {
+                        Label(L10n.prscDtlMedOvTxtDispensedHeader)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvDispensedHeader)
+                    }, content: {
+                        ForEach(store.dispensed.indices, id: \.self) { index in
+                            Button(
+                                action: { store.send(.showDispensedMedication(store.dispensed[index])) },
+                                label: {
+                                    SubTitle(title: store.dispensed[index].displayName)
+                                        .sectionContainerIsLastElement(index == store.dispensed.count - 1)
+                                }
+                            )
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnDispensedMedication)
+                        }
+                    }
+                ).sectionContainerStyle(.inline)
+
+                // MedicationView
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.medication, action: \.destination.medication)
+                ) { store in
+                    MedicationView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .accessibility(hidden: true)
+            }
+            .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
         }
-        .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
     }
 }
 

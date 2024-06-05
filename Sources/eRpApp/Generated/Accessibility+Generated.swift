@@ -51,6 +51,7 @@ internal enum A11y {
       static let cdwBtnExtauthSelectionRetry = "cdw_btn_extauth_selection_retry"
       static let cdwBtnExtauthSelectionCancel = "cdw_btn_extauth_selection_cancel"
       static let cdwBtnExtauthSelectionConfirm = "cdw_btn_extauth_selection_confirm"
+      static let cdwBtnExtauthSelectionHelp = "cdw_btn_extauth_selection_help"
   }
     internal enum intro {
       static let cdwBtnIntroLater = "cdw_btn_intro_later"
@@ -137,6 +138,7 @@ internal enum A11y {
       static let eppBtnChooseType = "epp_btn_choose_type"
       static let eppBtnActionCamera = "epp_btn_action_camera"
       static let eppBtnActionLibrary = "epp_btn_action_library"
+      static let eppBtnEmojiUse = "epp_btn_emoji_use"
   }
     internal enum mainScreen {
       static let erxBtnLogin = "erx_btn_login"
@@ -262,6 +264,8 @@ internal enum A11y {
     internal enum orderEGK {
       static let ogkTxtHeadline = "ogk_txt_headline"
       static let ogkBtnCancel = "ogk_btn_cancel"
+      static let ogkBtnPinOnly = "ogk_btn_pinOnly"
+      static let ogkBtnPinAndCard = "ogk_btn_pinAndCard"
       static let ogkBtnPhone = "ogk_btn_phone"
       static let ogkBtnWeb = "ogk_btn_web"
       static let ogkBtnMail = "ogk_btn_mail"
@@ -359,6 +363,9 @@ internal enum A11y {
       static let phaSearchMapBtnGoToUser = "pha_search_map_btn_go_to_user"
       static let phaSearchMapBtnSearchHere = "pha_search_map_btn_search_here"
       static let phaSearchMapMap = "pha_search_map_map"
+      static let phaSearchMapTxtClusterHeader = "pha_search_map_txt_cluster_header"
+      static let phaSearchMapBtnClusterPharmacy = "pha_search_map_btn_cluster_pharmacy"
+      static let phaSearchMapBtnClusterClose = "pha_search_map_btn_cluster_close"
   }
     internal enum pharmacySearchStart {
       static let phaSearchTxtQuickFilterTitle = "pha_search_txt_quick_filter_title"
@@ -387,6 +394,7 @@ internal enum A11y {
       static let prscDtlToolbarMenuBtnDelete = "prsc_dtl_toolbar_menu_btn_delete"
       static let prscDtlBtnErrorInfo = "prsc_dtl_btn_error_info"
       static let prscDtlBtnSubstitutionInfo = "prsc_dtl_btn_substitution_info"
+      static let prscDtlBtnHeadlineSubstitutionInfo = "prsc_dtl_btn_headline_substitution_info"
       static let prscDtlBtnScannedPrescriptionInfo = "prsc_dtl_btn_scanned_prescription_info"
       static let prscDtlBtnDirectAssignmentInfo = "prsc_dtl_btn_direct_assignment_info"
       static let prscDtlTxtPrescriptionValidity = "prsc_dtl_txt_prescription_validity"
@@ -395,6 +403,8 @@ internal enum A11y {
       static let prscDtlDrawerErrorInfo = "prsc_dtl_drawer_error_info"
       static let prscDtlDrawerScannedPrescriptionInfo = "prsc_dtl_drawer_scanned_prescription_info"
       static let prscDtlDrawerPrescriptionValidityInfo = "prsc_dtl_drawer_prescription_validity_info"
+      static let prscDtlDrawerTitle = "prsc_dtl_drawer_title"
+      static let prscDtlDrawerDescription = "prsc_dtl_drawer_description"
       static let prscDtlBtnRedeem = "prsc_dtl_btn_redeem"
       static let prscDtlBtnShowMatrixCode = "prsc_dtl_btn_show_matrix_code"
       static let prscDtlBtnAdditionalFee = "prsc_dtl_btn_additional_fee"
@@ -572,11 +582,14 @@ internal enum A11y {
       static let cpwBtnSave = "cpw_btn_save"
       static let cpwBtnUpdate = "cpw_btn_update"
       static let cpwInpCurrentPassword = "cpw_inp_current_password"
+      static let cpwTxtCurrentPasswordWrong = "cpw_txt_current_password_wrong"
       static let cpwInpPasswordA = "cpw_inp_passwordA"
       static let cpwInpPasswordB = "cpw_inp_passwordB"
       static let cpwTxtPasswordRecommendation = "cpw_txt_password_recommendation"
       static let cpwTxtSectionTitle = "cpw_txt_section_title"
       static let cpwTxtSectionUpdateTitle = "cpw_txt_section_update_title"
+      static let cpwTxtPasswordStrength = "cpw_txt_password_strength"
+      static let cpwTxtPasswordStrengthErrorFooter = "cpw_txt_password_strength_error_footer"
   }
     internal enum dataPrivacy {
       static let stgDprTxtDataPrivacy = "stg_dpr_txt_data_privacy"
@@ -643,12 +656,15 @@ internal enum A11y {
   }
     internal enum security {
       static let stgTxtHeaderSecurity = "stg_txt_header_security"
-      static let stgTxtSecurityFaceid = "stg_txt_security_faceid"
-      static let stgTxtSecurityTouchid = "stg_txt_security_touchid"
-      static let stgTxtSecurityPassword = "stg_txt_security_password"
+      static let stgTglSecurityFaceid = "stg_tgl_security_faceid"
+      static let stgTglSecurityTouchid = "stg_tgl_security_touchid"
+      static let stgTglSecurityPassword = "stg_tgl_security_password"
+      static let stgBtnSecurityChangePassword = "stg_btn_security_change_password"
       static let stgTxtSecurityTokens = "stg_txt_security_tokens"
       static let stgBtnDeviceSecurity = "stg_btn_device_security"
       static let stgBtnMedicationReminder = "stg_btn_medication_reminder"
+      static let stgBtnLanguageSettings = "stg_btn_language_settings"
+      static let stgHntBiometricsWarning = "stg_hnt_biometrics_warning"
   }
     internal enum termsOfUse {
       static let stgTouTxtTermsOfUse = "stg_tou_txt_terms_of_use"

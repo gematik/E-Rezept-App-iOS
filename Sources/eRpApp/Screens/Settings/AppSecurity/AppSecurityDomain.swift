@@ -21,14 +21,14 @@ import ComposableArchitecture
 import eRpKit
 import LocalAuthentication
 
-struct AppSecurityDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct AppSecurityDomain {
+    @ObservableState
     struct State: Equatable {
         var availableSecurityOptions: [AppSecurityOption]
         var selectedSecurityOption: AppSecurityOption?
         var errorToDisplay: AppSecurityManagerError?
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
         var isBiometricSelected: Bool {
             selectedSecurityOption == .biometryAndPassword(.touchID) || selectedSecurityOption ==
                 .biometryAndPassword(.faceID) || selectedSecurityOption == .biometry(.faceID) ||
@@ -41,24 +41,13 @@ struct AppSecurityDomain: ReducerProtocol {
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            case appPassword(CreatePasswordDomain.State)
-        }
-
-        enum Action: Equatable {
-            case appPassword(CreatePasswordDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(state: /State.appPassword,
-                  action: /Action.appPassword) {
-                CreatePasswordDomain()
-            }
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        case appPassword(CreatePasswordDomain)
     }
 
     enum Action: Equatable {
+        @CasePathable
         enum Response: Equatable {
             case loadSecurityOption(AppSecurityOption)
         }
@@ -67,25 +56,24 @@ struct AppSecurityDomain: ReducerProtocol {
         case select(_ option: AppSecurityOption)
         case dismissError
         case response(Response)
-        case setNavigation(tag: Destinations.State.Tag?)
+        case resetNavigation
+        case appPasswordTapped
         case togglePasswordSelected
         case toggleBiometricSelected(BiometryType)
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
     }
 
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
     @Dependency(\.schedulers) var schedulers: Schedulers
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .loadSecurityOption:
             let availableSecurityOptions = appSecurityManager.availableSecurityOptions
@@ -116,13 +104,13 @@ struct AppSecurityDomain: ReducerProtocol {
                 return .none
             }
             if !state.isPasswordSelected {
-                return EffectTask.send(.setNavigation(tag: .appPassword))
+                return Effect.send(.appPasswordTapped)
             } else {
                 switch state.selectedSecurityOption {
                 case .biometryAndPassword(.faceID):
-                    return EffectTask.send(.select(.biometry(.faceID)))
+                    return Effect.send(.select(.biometry(.faceID)))
                 case .biometryAndPassword(.touchID):
-                    return EffectTask.send(.select(.biometry(.touchID)))
+                    return Effect.send(.select(.biometry(.touchID)))
                 default:
                     return .none
                 }
@@ -132,44 +120,49 @@ struct AppSecurityDomain: ReducerProtocol {
                 return .none
             }
             if state.isBiometricSelected {
-                return EffectTask.send(.select(.password))
+                return Effect.send(.select(.password))
             } else {
                 switch state.selectedSecurityOption {
                 case .password:
-                    return EffectTask.send(.select(.biometryAndPassword(type)))
+                    return Effect.send(.select(.biometryAndPassword(type)))
                 default:
-                    return EffectTask.send(.select(.biometry(type)))
+                    return Effect.send(.select(.biometry(type)))
                 }
             }
         case let .select(option):
             state.selectedSecurityOption = option
             userDataStore.set(appSecurityOption: option)
             return .none
-        case .setNavigation(tag: .appPassword):
-            if state.selectedSecurityOption == .password {
+        case .appPasswordTapped:
+            if state.selectedSecurityOption == .password
+                || state.selectedSecurityOption == .biometryAndPassword(.faceID)
+                || state.selectedSecurityOption == .biometryAndPassword(.touchID) {
                 state.destination = .appPassword(.init(mode: .update))
             } else {
                 state.destination = .appPassword(.init(mode: .create))
             }
             return .none
-        case .setNavigation(tag: nil):
+        case .resetNavigation:
             state.destination = nil
             return .none
-        case .destination(.presented(.appPassword(.delegate(.closeAfterPasswordSaved)))):
+        case let .destination(.presented(.appPassword(.delegate(.closeAfterPasswordSaved(mode: mode))))):
             state.destination = nil
+
+            // opt out early to not change the currently selected security option
+            guard mode != .update else { return .none }
+
             switch state.selectedSecurityOption {
             case .biometry(.faceID):
-                return EffectTask.send(.select(.biometryAndPassword(.faceID)))
+                return Effect.send(.select(.biometryAndPassword(.faceID)))
             case .biometry(.touchID):
-                return EffectTask.send(.select(.biometryAndPassword(.touchID)))
+                return Effect.send(.select(.biometryAndPassword(.touchID)))
             default:
-                return EffectTask.send(.select(.password))
+                return Effect.send(.select(.password))
             }
         case .dismissError:
             state.errorToDisplay = nil
             return .none
-        case .destination,
-             .setNavigation:
+        case .destination:
             return .none
         }
     }
@@ -179,7 +172,7 @@ extension AppSecurityDomain {
     enum Dummies {
         static let state = State(availableSecurityOptions: [], selectedSecurityOption: .biometry(.faceID))
 
-        static let store = Store(initialState: state) {
+        static let store = StoreOf<AppSecurityDomain>(initialState: state) {
             AppSecurityDomain()
         }
     }

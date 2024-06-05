@@ -90,7 +90,7 @@ final class MedicationReminderSetupDomainTests: XCTestCase {
         expectedNewEntry1200.minuteComponent = 00
         schedule.entries = [expectedNewEntry1200]
 
-        await sut.send(.set(\.$medicationSchedule, schedule)) { state in
+        await sut.send(.set(\.medicationSchedule, schedule)) { state in
             // then the time is updated
             state.medicationSchedule.entries = [expectedNewEntry1200]
         }
@@ -132,7 +132,7 @@ final class MedicationReminderSetupDomainTests: XCTestCase {
         var medicationScheduleWithFutureStartDate = Fixtures.medicationScheduleZeroEntries
         medicationScheduleWithFutureStartDate.start = Self.now.addingTimeInterval(60 * 60 * 24 * 7 * 3)
 
-        await sut.send(.binding(.set(\.$medicationSchedule, medicationScheduleWithFutureStartDate))) { state in
+        await sut.send(.binding(.set(\.medicationSchedule, medicationScheduleWithFutureStartDate))) { state in
             state.medicationSchedule.start = medicationScheduleWithFutureStartDate.start
             state.medicationSchedule.end = medicationScheduleWithFutureStartDate.start
         }

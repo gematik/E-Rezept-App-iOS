@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.1.7 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import AVS
 import Combine
@@ -646,6 +646,30 @@ final class MockIDPSession: IDPSession {
         extAuthVerifyAndExchangeIdTokenValidatorReceivedArguments = (url: url, idTokenValidator: idTokenValidator)
         extAuthVerifyAndExchangeIdTokenValidatorReceivedInvocations.append((url: url, idTokenValidator: idTokenValidator))
         return extAuthVerifyAndExchangeIdTokenValidatorClosure.map({ $0(url, idTokenValidator) }) ?? extAuthVerifyAndExchangeIdTokenValidatorReturnValue
+    }
+}
+
+
+// MARK: - MockJWTSigner -
+
+final class MockJWTSigner: JWTSigner {
+    
+   // MARK: - sign
+
+    var signMessageCallsCount = 0
+    var signMessageCalled: Bool {
+        signMessageCallsCount > 0
+    }
+    var signMessageReceivedMessage: Data?
+    var signMessageReceivedInvocations: [Data] = []
+    var signMessageReturnValue: AnyPublisher<Data, Swift.Error>!
+    var signMessageClosure: ((Data) -> AnyPublisher<Data, Swift.Error>)?
+
+    func sign(message: Data) -> AnyPublisher<Data, Swift.Error> {
+        signMessageCallsCount += 1
+        signMessageReceivedMessage = message
+        signMessageReceivedInvocations.append(message)
+        return signMessageClosure.map({ $0(message) }) ?? signMessageReturnValue
     }
 }
 

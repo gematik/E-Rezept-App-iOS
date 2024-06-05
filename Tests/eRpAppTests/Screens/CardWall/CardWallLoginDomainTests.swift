@@ -50,7 +50,7 @@ final class CardWallLoginDomainTests: XCTestCase {
             ))
 
         await store.send(.advance) { state in
-            state.destination = .readcard(CardWallReadCardDomain.State(
+            state.destination = .readCard(CardWallReadCardDomain.State(
                 isDemoModus: false,
                 profileId: state.profileId,
                 pin: "",
@@ -71,7 +71,7 @@ final class CardWallLoginDomainTests: XCTestCase {
             ))
 
         await store.send(.advance) { state in
-            state.destination = .readcard(CardWallReadCardDomain.State(
+            state.destination = .readCard(CardWallReadCardDomain.State(
                 isDemoModus: true,
                 profileId: state.profileId,
                 pin: "",
@@ -92,7 +92,7 @@ final class CardWallLoginDomainTests: XCTestCase {
             ))
 
         await store.send(.advance) { state in
-            state.destination = .readcard(CardWallReadCardDomain.State(
+            state.destination = .readCard(CardWallReadCardDomain.State(
                 isDemoModus: false,
                 profileId: state.profileId,
                 pin: "",

@@ -1,0 +1,147 @@
+html {
+	background: #f0f0f0;
+}
+
+body {
+	max-width: 800px;
+	margin: 0 auto;
+	background: #fff;
+	padding: 32px;
+	border: 1px solid #e0e0e0;
+}
+
+h3 {
+	margin: 32px 0 16px;
+}
+
+* {
+	font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+	color: #333;
+}
+
+code {
+  font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+  background: #eee;
+  display: inline-block;
+  padding: 0 5px;
+  margin:  2px;
+}
+
+pre {
+	overflow-x: auto;
+}
+pre code {
+  padding: 16px;
+  display: inline-block;
+}
+
+a {
+	text-decoration: none;
+	margin: 0;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a::after {
+	content: "🔗";
+	font-size: 60%;
+	vertical-align: top;
+}
+
+#TOC {
+	background: #fff;
+	width: auto;
+	left: 0;
+	font-size: 1.2em;
+	line-height: 1.5em;
+	top: 0;
+	bottom: 0;
+	overflow: scroll;
+}
+
+#TOC ul {
+	padding: 0 0 0 1em;
+	list-style-type: none;
+}
+
+#TOC ul ul {
+	counter-reset: section;
+	font-size: 1.0em;
+	line-height: 1.5em;
+}
+
+#TOC ul ul ul {
+	font-size: 0.8em;
+	line-height: 1.5em;
+}
+
+ul {
+	counter-reset: section;
+	font-size: 1.0em;
+	line-height: 1.5em;
+}
+
+ul ul {
+	font-size: 0.9em;
+	line-height: 1.5em;
+}
+#toc-requirements + ul > li > a {
+	padding: 10px;
+}
+
+details summary {
+	font-size: 0.8em;
+}
+
+details pre {
+	font-size: 0.8em;
+	font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+	padding: 16px;
+	background: #eee;
+}
+
+a.github {
+	color: #999;
+	font-size: 0.8em;
+	vertical-align: top;
+	padding: 4px;
+}
+
+@media print {
+	#TOC {
+		position: initial;
+	}
+
+	#toc-requirements + ul a + ul {
+		display: block;
+	}
+}
+
+code {
+  white-space: pre-wrap;
+  padding: 16px;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: scroll;
+}
+
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+.target-element {
+  background: #f9f9f9;
+  margin: 0 20px;
+  padding: 10px;
+  border: 3px solid #ddd;
+}
+table {
+	margin: -11px;
+	border: none;
+	background: #aaa;
+}
+
+th, td {
+	border: none;
+	background: #f9f9f9;
+	padding: 4px;
+}

@@ -47,12 +47,13 @@ final class ContentSquareAnalyticsAdapter: NSObject, Tracker {
 
     var optIn: Bool {
         get {
+            // [REQ:gemSpec_eRp_FdV:A_24525#2] Calculate if analytics are enabled or not.
             userDefaults.appTrackingAllowed
         }
         set {
             userDefaults.appTrackingAllowed = newValue
             if newValue {
-                // [REQ:gemSpec_eRp_FdV:A_19090] activate after optIn is granted
+                // [REQ:gemSpec_eRp_FdV:A_19090-01] activate after optIn is granted
                 Contentsquare.start()
                 Contentsquare.optIn()
             } else {
@@ -71,7 +72,8 @@ final class ContentSquareAnalyticsAdapter: NSObject, Tracker {
     // [REQ:gemSpec_eRp_FdV:A_19090] activate tracking only if permitted
     private func startIfPermitted() {
         if optIn {
-            // [REQ:gemSpec_eRp_FdV:A_19096] Remove existing sessions while starting the framework
+            // [REQ:gemSpec_eRp_FdV:A_19096-01#1] Remove existing sessions while starting the framework, tracking is
+            // never cross session.
             Contentsquare.start()
             Contentsquare.optOut()
             Contentsquare.optIn()

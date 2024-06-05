@@ -23,30 +23,12 @@ import IDP
 import SwiftUI
 
 struct RegisteredDevicesView: View {
-    let store: RegisteredDevicesDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, RegisteredDevicesDomain.Action>
-
-    init(store: RegisteredDevicesDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let destinationTag: RegisteredDevicesDomain.Destinations.State.Tag?
-        let content: RegisteredDevicesDomain.State.Content
-        let thisDeviceKeyIdentifier: String?
-
-        init(with state: RegisteredDevicesDomain.State) {
-            destinationTag = state.destination?.tag
-            content = state.content
-            thisDeviceKeyIdentifier = state.thisDeviceKeyIdentifier
-        }
-    }
+    @Perception.Bindable var store: StoreOf<RegisteredDevicesDomain>
 
     func delete(at offsets: IndexSet) {
         let deviceKeysToDelete: [String] = offsets.compactMap { offset in
             if let entries = (/RegisteredDevicesDomain.State.Content.loaded)
-                .extract(from: viewStore.content),
+                .extract(from: store.content),
                 entries.count > offset {
                 return entries[offset].keyIdentifier
             }
@@ -54,13 +36,13 @@ struct RegisteredDevicesView: View {
         }
 
         for key in deviceKeysToDelete {
-            viewStore.send(.deleteDevice(key))
+            store.send(.deleteDevice(key))
         }
     }
 
     func description(for entry: RegisteredDevicesDomain.State.Entry) -> String {
-        if viewStore.thisDeviceKeyIdentifier != nil,
-           entry.keyIdentifier == viewStore.thisDeviceKeyIdentifier {
+        if store.thisDeviceKeyIdentifier != nil,
+           entry.keyIdentifier == store.thisDeviceKeyIdentifier {
             return L10n.stgTxtRegDevicesRegisteredSinceThisDevice(entry.date).text
         } else {
             return L10n.stgTxtRegDevicesRegisteredSince(entry.date).text
@@ -68,115 +50,107 @@ struct RegisteredDevicesView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            switch viewStore.content {
-            case let .loading(entries):
-                if !entries.isEmpty {
-                    List {
-                        Section(
-                            content: {
-                                ForEach(entries) { entry in
-                                    SubTitle(
-                                        title: entry.name,
-                                        description: description(for: entry)
-                                    )
-                                    .padding(.vertical)
+        WithPerceptionTracking {
+            VStack(spacing: 0) {
+                switch store.content {
+                case let .loading(entries):
+                    if !entries.isEmpty {
+                        List {
+                            Section(
+                                content: {
+                                    ForEach(entries) { entry in
+                                        SubTitle(
+                                            title: entry.name,
+                                            description: description(for: entry)
+                                        )
+                                        .padding(.vertical)
+                                    }
+                                },
+                                header: {
+                                    ProgressView()
+                                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
                                 }
-                            },
-                            header: {
-                                ProgressView()
-                                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
-                            }
-                        )
-                    }
-                    .listStyle(InsetGroupedListStyle())
-                } else {
-                    VStack {
-                        ProgressView()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                }
-            case let .loaded(entries):
-                if !entries.isEmpty {
-                    List {
-                        ForEach(entries) { entry in
-                            SubTitle(
-                                title: entry.name,
-                                description: description(for: entry)
                             )
-                            .padding(.vertical)
-                            .accessibilityElement(children: .combine)
                         }
-                        .onDelete(perform: delete)
+                        .listStyle(InsetGroupedListStyle())
+                    } else {
+                        VStack {
+                            ProgressView()
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     }
-                    .listStyle(InsetGroupedListStyle())
-                    .toolbar {
-                        EditButton()
+                case let .loaded(entries):
+                    if !entries.isEmpty {
+                        List {
+                            ForEach(entries) { entry in
+                                SubTitle(
+                                    title: entry.name,
+                                    description: description(for: entry)
+                                )
+                                .padding(.vertical)
+                                .accessibilityElement(children: .combine)
+                            }
+                            .onDelete(perform: delete)
+                        }
+                        .listStyle(InsetGroupedListStyle())
+                        .toolbar {
+                            EditButton()
+                        }
+                    } else {
+                        VStack(spacing: 8) {
+                            Text(L10n.stgTxtRegDevicesEmptyListTitle)
+                                .font(.headline)
+
+                            Text(L10n.stgTxtRegDevicesEmptyList)
+                                .font(.subheadline)
+                                .foregroundColor(Color(.secondaryLabel))
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     }
-                } else {
+                case .notLoaded:
                     VStack(spacing: 8) {
-                        Text(L10n.stgTxtRegDevicesEmptyListTitle)
+                        Text(L10n.stgTxtRegDevicesInfoTitle)
                             .font(.headline)
 
-                        Text(L10n.stgTxtRegDevicesEmptyList)
+                        Text(L10n.stgTxtRegDevicesInfo)
                             .font(.subheadline)
                             .foregroundColor(Color(.secondaryLabel))
                             .multilineTextAlignment(.center)
+
+                        Button(action: {
+                            store.send(.loadDevices)
+                        }, label: {
+                            Label(title: {
+                                Text(L10n.stgBtnRegDevicesLoad)
+                                    .font(.subheadline)
+                            }, icon: {
+                                Image(systemName: SFSymbolName.refresh)
+                            })
+                        })
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 }
-            case .notLoaded:
-                VStack(spacing: 8) {
-                    Text(L10n.stgTxtRegDevicesInfoTitle)
-                        .font(.headline)
-
-                    Text(L10n.stgTxtRegDevicesInfo)
-                        .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
-                        .multilineTextAlignment(.center)
-
-                    Button(action: {
-                        viewStore.send(.loadDevices)
-                    }, label: {
-                        Label(title: {
-                            Text(L10n.stgBtnRegDevicesLoad)
-                                .font(.subheadline)
-                        }, icon: {
-                            Image(systemName: SFSymbolName.refresh)
-                        })
-                    })
+            }
+            .task {
+                await store.send(.task).finish()
+            }
+            .fullScreenCover(item: $store.scope(state: \.destination?.cardWallCAN,
+                                                action: \.destination.cardWallCAN)) { store in
+                NavigationView {
+                    CardWallCANView(store: store)
                 }
-                .padding()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .navigationViewStyle(StackNavigationViewStyle())
             }
+            .subTitleStyle(PlainSectionContainerSubTitleStyle())
+            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+            .navigationTitle(L10n.stgTxtRegDevicesTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .background(Color(.secondarySystemBackground)
+                .ignoresSafeArea())
         }
-        .task {
-            await viewStore.send(.task).finish()
-        }
-        .fullScreenCover(
-            store: store.scope(state: \.$destination, action: RegisteredDevicesDomain.Action.destination),
-            state: /RegisteredDevicesDomain.Destinations.State.cardWallCAN,
-            action: RegisteredDevicesDomain.Destinations.Action.cardWallCAN
-        ) { store in
-            NavigationView {
-                CardWallCANView(store: store)
-            }
-            .navigationViewStyle(StackNavigationViewStyle())
-        }
-        .subTitleStyle(PlainSectionContainerSubTitleStyle())
-        .alert(
-            store.scope(
-                state: \.$destination,
-                action: RegisteredDevicesDomain.Action.destination
-            ),
-            state: /RegisteredDevicesDomain.Destinations.State.alert,
-            action: RegisteredDevicesDomain.Destinations.Action.alert
-        )
-        .navigationTitle(L10n.stgTxtRegDevicesTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .background(Color(.secondarySystemBackground)
-            .ignoresSafeArea())
     }
 }
 

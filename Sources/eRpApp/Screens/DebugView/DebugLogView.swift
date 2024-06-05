@@ -119,9 +119,9 @@ struct DebugLogView: View {
                 }
             }
         }
-        .sheet(isPresented: $showShareSheet) {
-            ShareViewController(itemsToShare: [log.shareText])
-        }
+//        .sheet(isPresented: $showShareSheet) {
+//            ShareViewController(itemsToShare: [log.shareText])
+//        }
         .navigationTitle("Logs")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

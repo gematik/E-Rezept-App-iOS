@@ -192,7 +192,6 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
         let sut = EditProfileView(
             store: .init(
                 initialState: .init(
-                    profileId: UUID(),
                     name: "Private Paul",
                     acronym: "PP",
                     fullName: "Private Paul",
@@ -200,7 +199,9 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
                     can: "123123",
                     insuranceId: "X987654321",
                     image: .boyWithCard,
+                    userImageData: nil,
                     color: .red,
+                    profileId: UUID(),
                     insuranceType: .pKV
                 )
             ) {

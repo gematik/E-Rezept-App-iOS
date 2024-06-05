@@ -200,23 +200,78 @@ extension CardWallReadCardDomain.State.Error: LocalizedError {
     }
 }
 
+import Helper
+import NFCCardReaderProvider
+
+extension CardWallReadCardDomain {
+    static func createNfcReadingReport(
+        with error: CodedError,
+        commands: [Command]
+    ) -> String {
+        @Dependency(\.dateProvider) var dateProvider
+
+        var description = "Teilen Sie uns den Namen Ihrer Krankenversicherung mit:\n"
+        description += "\nWelchen Gesundheitskartentyp haben Sie "
+        description += "(dies steht i.d.R. seitlich auf der Rückseite Ihrer Karte z.B. IDEMIA oder G&D):\n"
+
+        description = "\nVielen Dank für das Senden dieses Reports. Der generierte Report enthält keine privaten Daten:"
+        description += "# NFC Reading error iOS E-Rezept App\n\n"
+
+        description += "Date: \(dateProvider().description)\n"
+
+        description += "\n# RESULT\n\n"
+        description += "Tag connections lost count: \(CardWallReadCardDomain.AlertStates.tagConnectionLostCount)"
+
+        description +=
+            "Finished with error message: '\(error.localizedDescription) \(error.recoverySuggestionWithErrorList)'\n"
+        description += "actual error: \(String(describing: error))\n"
+
+        description += "\n# COMMANDS\n"
+
+        guard !commands.isEmpty else {
+            description += "No commands between smart card and device have been sent!\n"
+            return description
+        }
+
+        for command in commands {
+            switch command.type {
+            case .send:
+                description += "SEND:\n"
+                description += "\(command.message.prefix(100))\n"
+            case .sendSecureChannel:
+                description += "SEND (secure channel, header only):\n"
+                description += "\(command.message.prefix(12))\n\n"
+            case .response:
+                description += "\nRESPONSE:\n"
+                description += "\(command.message.prefix(100))...\n\n"
+            case .responseSecureChannel:
+                description += "RESPONSE (secure channel):\n"
+                description += "\(command.message.prefix(8))...\n\n"
+            case .description:
+                description += "\n*** \(command.message) ***\n\n"
+            }
+        }
+        return description
+    }
+}
+
 // TODO: localization for keys is missing   swiftlint:disable:this todo
 extension CardWallReadCardDomain.State.Error.InputError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .missingCAN:
-            return NSLocalizedString("cdw_btn_rc_error_missing_can_error_description", comment: "")
+            return NSLocalizedString("cdw_btn_rc_error_missing_can_error_description", bundle: .module, comment: "")
         case .missingPIN:
-            return NSLocalizedString("cdw_btn_rc_error_missing_pin_error_description", comment: "")
+            return NSLocalizedString("cdw_btn_rc_error_missing_pin_error_description", bundle: .module, comment: "")
         }
     }
 
     var recoverySuggestion: String? {
         switch self {
         case .missingCAN:
-            return NSLocalizedString("cdw_btn_rc_error_missing_can_recovery_suggestion", comment: "")
+            return NSLocalizedString("cdw_btn_rc_error_missing_can_recovery_suggestion", bundle: .module, comment: "")
         case .missingPIN:
-            return NSLocalizedString("cdw_btn_rc_error_missing_pin_recovery_suggestion", comment: "")
+            return NSLocalizedString("cdw_btn_rc_error_missing_pin_recovery_suggestion", bundle: .module, comment: "")
         }
     }
 }

@@ -17,19 +17,19 @@
 //
 
 import ComposableArchitecture
+import Perception
 import SwiftUI
+import SwiftUIIntrospect
 
 struct RefreshScrollView<Content: View, StickyHeader: View>: View {
-    let store: PrescriptionListDomain.Store
+    @Perception.Bindable var store: StoreOf<PrescriptionListDomain>
     let content: Content
     let header: StickyHeader
 
     let action: () -> Void
 
-    @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionListDomain.Action>
-
     init(
-        store: PrescriptionListDomain.Store,
+        store: StoreOf<PrescriptionListDomain>,
         @ViewBuilder content: @escaping () -> Content,
         @ViewBuilder header: @escaping () -> StickyHeader,
         action: @escaping () -> Void
@@ -38,62 +38,51 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
         self.content = content()
         self.header = header()
         self.action = action
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        var isNotLoading: Bool
-        var hasOpenPrescriptions: Bool
-        var isReedemable: Bool
-
-        init(state: PrescriptionListDomain.State) {
-            isNotLoading = !state.loadingState.isLoading
-            hasOpenPrescriptions = !state.prescriptions.filter { !$0.isArchived }.isEmpty
-            isReedemable = !state.prescriptions.filter(\.isRedeemable).isEmpty
-        }
     }
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            ScrollViewWithStickyHeader(
-                applyBackgroundBlur: false,
-                header: {
-                    header
-                }, content: {
-                    content
-                        .padding(.bottom, viewStore.hasOpenPrescriptions ? 80 : 28)
-                        // Positioning of this introspection is important, moving it out of the `content` will alter the
-                        // horizontal scrollview instead of the full screen vertical one.
-                        .introspectScrollView { scrollView in
-                            let refreshControl: RefreshControl
-                            if let control = scrollView.refreshControl as? RefreshControl {
-                                refreshControl = control
-                            } else {
-                                refreshControl = RefreshControl()
-                                scrollView.refreshControl = refreshControl
-                            }
-                            refreshControl.onRefreshAction = {
-                                viewStore.send(.refresh)
-                            }
-                            if viewStore.isNotLoading, refreshControl.isRefreshing {
-                                refreshControl.endRefreshing()
-                            }
-                        }
-                }
-            )
-
-            if viewStore.isReedemable {
-                HStack {
-                    Spacer()
-                    Button {
-                        action()
-                    } label: {
-                        Text(L10n.mainBtnRedeem)
+        WithPerceptionTracking {
+            ZStack(alignment: .bottomLeading) {
+                ScrollViewWithStickyHeader(
+                    applyBackgroundBlur: false,
+                    header: {
+                        header
+                    }, content: {
+                        let hasOpenPrescriptions = !store.prescriptions.filter { !$0.isArchived }.isEmpty
+                        content
+                            .padding(.bottom, hasOpenPrescriptions ? 80 : 28)
                     }
-                    .buttonStyle(.primaryHugging)
-                    .padding(.vertical)
-                    .accessibilityIdentifier(A11y.mainScreen.erxBtnRedeemPrescriptions)
-                    Spacer()
+                )
+                .introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
+                    let refreshControl: RefreshControl
+                    if let control = scrollView.refreshControl as? RefreshControl {
+                        refreshControl = control
+                    } else {
+                        refreshControl = RefreshControl()
+                        scrollView.refreshControl = refreshControl
+                    }
+                    refreshControl.onRefreshAction = {
+                        store.send(.refresh)
+                    }
+                    if !store.loadingState.isLoading, refreshControl.isRefreshing {
+                        refreshControl.endRefreshing()
+                    }
+                }
+
+                let isReedemable = !store.prescriptions.filter(\.isRedeemable).isEmpty
+                if isReedemable {
+                    HStack {
+                        Spacer()
+                        Button {
+                            action()
+                        } label: {
+                            Text(L10n.mainBtnRedeem)
+                        }
+                        .buttonStyle(.primaryHugging)
+                        .padding(.vertical)
+                        .accessibilityIdentifier(A11y.mainScreen.erxBtnRedeemPrescriptions)
+                        Spacer()
+                    }
                 }
             }
         }

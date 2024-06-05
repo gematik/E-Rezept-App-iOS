@@ -41,7 +41,7 @@ struct AuthEnvelopedWithUnauthAttributes: AVSMessageConverter {
         // 0. Serialize to JSON
         let data = try Self.encoder.encode(message)
 
-        // [REQ:gemSpec_eRp_FdV:A_22779#2] Encrypted message is of form of a PKCS#7 container (CMS)
+        // [REQ:gemSpec_eRp_FdV:A_22779-01#2] Encrypted message is of form of a PKCS#7 container (CMS)
         // 1. Create a CMS AuthenticatedEnvelopedData structure with help from OpenSSL-swift
         let cmsAuthEnvelopedData = try avsCmsEncrypter.cmsEncrypt(data, recipients: recipients)
 

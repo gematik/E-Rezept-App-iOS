@@ -22,124 +22,57 @@ import DataKit
 import eRpKit
 import Foundation
 import IDP
+import UIKit
 
-// domain and screens will be subject to refactoring for new style, long body is ok for now
-// swiftlint:disable:next type_body_length
-struct SettingsDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct SettingsDomain {
+    @ObservableState
     struct State: Equatable {
         var isDemoMode: Bool
         var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil)
         var appVersion = AppVersion.current
         var trackerOptIn = false
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            case debug(DebugDomain.State)
-            // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<Action.Alert>)
-            // sourcery: AnalyticsScreen = healthCardPassword_forgotPin
-            case healthCardPasswordForgotPin(HealthCardPasswordDomain.State)
-            // sourcery: AnalyticsScreen = healthCardPassword_setCustomPin
-            case healthCardPasswordSetCustomPin(HealthCardPasswordDomain.State)
-            // sourcery: AnalyticsScreen = healthCardPassword_unlockCard
-            case healthCardPasswordUnlockCard(HealthCardPasswordDomain.State)
-            case appSecurity(AppSecurityDomain.State)
-            // sourcery: AnalyticsScreen = settings_productImprovements_complyTracking
-            case complyTracking
-            // sourcery: AnalyticsScreen = settings_legalNotice
-            case legalNotice
-            // sourcery: AnalyticsScreen = settings_dataProtection
-            case dataProtection
-            // sourcery: AnalyticsScreen = settings_openSourceLicence
-            case openSourceLicence
-            // sourcery: AnalyticsScreen = settings_termsOfUse
-            case termsOfUse
-            // sourcery: AnalyticsScreen = contactInsuranceCompany
-            case egk(OrderHealthCardDomain.State)
-            // sourcery: AnalyticsScreen = profile
-            case editProfile(EditProfileDomain.State)
-            // sourcery: AnalyticsScreen = settings_newProfile
-            case newProfile(NewProfileDomain.State)
-            // sourcery: AnalyticsScreen = settings_medicationReminderList
-            case medicationReminderList(MedicationReminderListDomain.State)
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        case debug(DebugDomain)
+        // sourcery: AnalyticsScreen = alert
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Destination.Alert>)
+        // sourcery: AnalyticsScreen = healthCardPassword_forgotPin
+        case healthCardPasswordForgotPin(HealthCardPasswordIntroductionDomain)
+        // sourcery: AnalyticsScreen = healthCardPassword_setCustomPin
+        case healthCardPasswordSetCustomPin(HealthCardPasswordIntroductionDomain)
+        // sourcery: AnalyticsScreen = healthCardPassword_unlockCard
+        case healthCardPasswordUnlockCard(HealthCardPasswordIntroductionDomain)
+        //
+        case appSecurity(AppSecurityDomain)
+        // sourcery: AnalyticsScreen = settings_productImprovements_complyTracking
+        case complyTracking(EmptyDomain)
+        // sourcery: AnalyticsScreen = settings_legalNotice
+        case legalNotice(EmptyDomain)
+        // sourcery: AnalyticsScreen = settings_dataProtection
+        case dataProtection(EmptyDomain)
+        // sourcery: AnalyticsScreen = settings_openSourceLicence
+        case openSourceLicence(EmptyDomain)
+        // sourcery: AnalyticsScreen = settings_termsOfUse
+        case termsOfUse(EmptyDomain)
+        // sourcery: AnalyticsScreen = contactInsuranceCompany
+        case egk(OrderHealthCardDomain)
+        // sourcery: AnalyticsScreen = profile
+        case editProfile(EditProfileDomain)
+        // sourcery: AnalyticsScreen = settings_newProfile
+        case newProfile(NewProfileDomain)
+        // sourcery: AnalyticsScreen = settings_medicationReminderList
+        case medicationReminderList(MedicationReminderListDomain)
 
-        enum Action: Equatable {
-            case debugAction(DebugDomain.Action)
-            case healthCardPasswordForgotPinAction(HealthCardPasswordDomain.Action)
-            case healthCardPasswordSetCustomPinAction(HealthCardPasswordDomain.Action)
-            case healthCardPasswordUnlockCardAction(HealthCardPasswordDomain.Action)
-            case appSecurityStateAction(AppSecurityDomain.Action)
-            case egkAction(OrderHealthCardDomain.Action)
-            case editProfileAction(EditProfileDomain.Action)
-            case newProfileAction(NewProfileDomain.Action)
-            case medicationReminderListAction(MedicationReminderListDomain.Action)
-            case alert(Alert)
-
-            case complyTracking(None)
-            case legalNotice(None)
-            case dataProtection(None)
-            case openSourceLicence(None)
-            case termsOfUse(None)
-
-            enum None: Equatable {}
-
-            enum Alert: Equatable {
-                case dismiss
-                case profile(SettingsDomain.Action)
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            #if ENABLE_DEBUG_VIEW
-            Scope(state: /State.debug, action: /Action.debugAction) {
-                DebugDomain()
-            }
-            #endif
-            Scope(state: /State.appSecurity, action: /Action.appSecurityStateAction) {
-                AppSecurityDomain()
-            }
-
-            Scope(state: /State.egk, action: /Action.egkAction) {
-                OrderHealthCardDomain()
-            }
-
-            Scope(state: /State.healthCardPasswordForgotPin, action: /Action.healthCardPasswordForgotPinAction) {
-                HealthCardPasswordDomain()
-            }
-            Scope(
-                state: /State.healthCardPasswordSetCustomPin,
-                action: /Action.healthCardPasswordSetCustomPinAction
-            ) {
-                HealthCardPasswordDomain()
-            }
-            Scope(state: /State.healthCardPasswordUnlockCard, action: /Action.healthCardPasswordUnlockCardAction) {
-                HealthCardPasswordDomain()
-            }
-            Scope(
-                state: /State.editProfile,
-                action: /Action.editProfileAction
-            ) {
-                EditProfileDomain()
-            }
-
-            Scope(
-                state: /State.newProfile,
-                action: /Action.newProfileAction
-            ) {
-                NewProfileDomain()
-            }
-            Scope(
-                state: /State.medicationReminderList,
-                action: /Action.medicationReminderListAction
-            ) {
-                MedicationReminderListDomain()
-            }
+        enum Alert: Equatable {
+            case dismiss
+            case profile(SettingsDomain.Action)
+            case openSettings
         }
     }
 
@@ -148,13 +81,28 @@ struct SettingsDomain: ReducerProtocol {
         case task
         case toggleTrackingTapped(Bool)
         case confirmedOptInTracking
-        case toggleDemoModeSwitch
+        case toggleDemoModeSwitch(Bool)
         case profiles(action: ProfilesDomain.Action)
         case showChargeItemListFor(profileId: UserProfile.ID)
         case popToRootView
         case response(Response)
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
+        case showDebug
+        case showMedicationReminderList
+        case showAppSecurity
+
+        case tappedLegalNotice
+        case tappedDataProtection
+        case tappedFOSS
+        case tappedTermsOfUse
+
+        case tappedEgk
+        case tappedForgotPin
+        case tappedCustomPin
+        case tappedUnlockCard
+
+        case resetNavigation
+        case languageSettingsTapped
 
         enum Response: Equatable {
             case trackerStatusReceived(Bool)
@@ -166,20 +114,19 @@ struct SettingsDomain: ReducerProtocol {
     @Dependency(\.changeableUserSessionContainer) var changeableUserSessionContainer: UsersSessionContainer
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.tracker) var tracker: Tracker
+    @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
 
-    var body: some ReducerProtocol<State, Action> {
-        Scope(state: \State.profiles, action: /SettingsDomain.Action.profiles(action:)) {
+    var body: some Reducer<State, Action> {
+        Scope(state: \.profiles, action: \.profiles) {
             ProfilesDomain()
         }
 
         Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             return .merge(
@@ -203,94 +150,103 @@ struct SettingsDomain: ReducerProtocol {
         case .close:
             return .none
         // Demo-Mode
-        case .toggleDemoModeSwitch:
+        case let .toggleDemoModeSwitch(isDemo):
             state.destination = .alert(.info(state.isDemoMode ? Self.demoModeOffAlertState : Self.demoModeOnAlertState))
-            if state.isDemoMode {
-                changeableUserSessionContainer.switchToStandardMode()
-            } else {
+            if isDemo {
                 changeableUserSessionContainer.switchToDemoMode()
+            } else {
+                changeableUserSessionContainer.switchToStandardMode()
             }
             return .none
 
         // Tracking
-        // [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for usage tracking
+        // [REQ:gemSpec_eRp_FdV:A_19088, A_19089-01#5, A_19092-01#4, A_19097-01#1] React to later opt-in or deactivation
+        // of usage analytics
         // [REQ:BSI-eRp-ePA:O.Purp_5#2] Actual disabling of analytics
         // [REQ:gemSpec_eRp_FdV:A_19982#2] Opt out of analytics
         case let .toggleTrackingTapped(optIn):
             if optIn {
-                // [REQ:gemSpec_eRp_FdV:A_19091#3] Show comply route to display analytics usage within settings
-                state.destination = .complyTracking
+                // [REQ:gemSpec_eRp_FdV:A_19091-01#3] Show comply route to display analytics usage within settings
+                state.destination = .complyTracking(.init())
             } else {
                 // [REQ:gemSpec_eRp_FdV:A_20185,A_20187] OptOut for user
                 state.trackerOptIn = false
                 tracker.optIn = false
             }
             return .none
-        // [REQ:gemSpec_eRp_FdV:A_19090,A_19091#4] User confirms the opt in within settings
+        // [REQ:gemSpec_eRp_FdV:A_19090-01,A_19091-01#4] User confirms the opt in within settings
         // [REQ:BSI-eRp-ePA:O.Purp_5#4] User confirms the opt in within settings
         case .confirmedOptInTracking:
             state.trackerOptIn = true
             tracker.optIn = true
             state.destination = nil
             return .none
-        case .destination(.presented(.healthCardPasswordUnlockCardAction(.delegate(.navigateToSettings)))),
-             .destination(.presented(.healthCardPasswordForgotPinAction(.delegate(.navigateToSettings)))),
-             .destination(.presented(.healthCardPasswordSetCustomPinAction(.delegate(.navigateToSettings)))):
-            state.destination = nil
-            return .none
-        case .destination(.presented(.healthCardPasswordUnlockCardAction)),
-             .destination(.presented(.healthCardPasswordForgotPinAction)),
-             .destination(.presented(.healthCardPasswordSetCustomPinAction)):
-            return .none
-        case .setNavigation(tag: .healthCardPasswordForgotPin):
-            state.destination = .healthCardPasswordForgotPin(
-                .init(
-                    mode: .forgotPin,
-                    destination: .introduction
-                )
-            )
-            return .none
-        case .setNavigation(tag: .healthCardPasswordSetCustomPin):
-            state.destination = .healthCardPasswordSetCustomPin(
-                .init(
-                    mode: .setCustomPin,
-                    destination: .introduction
-                )
-            )
-            return .none
-        case .setNavigation(tag: .healthCardPasswordUnlockCard):
-            state.destination = .healthCardPasswordUnlockCard(
-                .init(
-                    mode: .unlockCard,
-                    destination: .introduction
-                )
-            )
-            return .none
-        case let .setNavigation(tag: tag):
-            switch tag {
-            case .debug:
-                state.destination = .debug(DebugDomain.State(trackingOptIn: tracker.optIn))
-            case .egk:
-                state.destination = .egk(.init())
-            case .legalNotice:
-                state.destination = .legalNotice
-            case .dataProtection:
-                state.destination = .dataProtection
-            case .openSourceLicence:
-                state.destination = .openSourceLicence
-            case .termsOfUse:
-                state.destination = .termsOfUse
-            case .appSecurity:
-                state.destination = .appSecurity(.init(availableSecurityOptions: []))
-            case .medicationReminderList:
-                state.destination = .medicationReminderList(.init())
-            case .none:
-                state.destination = nil
-                return .none
-            default: break
+        case .destination(.presented(.alert(.openSettings))):
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                resourceHandler.open(url)
             }
             return .none
-        case .destination(.presented(.egkAction(.delegate(.close)))):
+        case .destination(.presented(.healthCardPasswordUnlockCard(.delegate(.navigateToSettings)))),
+             .destination(.presented(.healthCardPasswordForgotPin(.delegate(.navigateToSettings)))),
+             .destination(.presented(.healthCardPasswordSetCustomPin(.delegate(.navigateToSettings)))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.healthCardPasswordUnlockCard)),
+             .destination(.presented(.healthCardPasswordForgotPin)),
+             .destination(.presented(.healthCardPasswordSetCustomPin)):
+            return .none
+        case .showMedicationReminderList:
+            state.destination = .medicationReminderList(.init())
+            return .none
+        case .showDebug:
+            state.destination = .debug(DebugDomain.State(trackingOptIn: tracker.optIn))
+            return .none
+        case .showAppSecurity:
+            state.destination = .appSecurity(.init(availableSecurityOptions: []))
+            return .none
+        case .tappedLegalNotice:
+            state.destination = .legalNotice(.init())
+            return .none
+        case .tappedDataProtection:
+            state.destination = .dataProtection(.init())
+            return .none
+        case .tappedFOSS:
+            state.destination = .openSourceLicence(.init())
+            return .none
+        case .tappedTermsOfUse:
+            state.destination = .termsOfUse(.init())
+            return .none
+        case .tappedEgk:
+            state.destination = .egk(.init())
+            return .none
+        case .tappedForgotPin:
+            state.destination = .healthCardPasswordForgotPin(
+                .init(
+                    mode: .forgotPin
+                )
+            )
+            return .none
+        case .tappedCustomPin:
+            state.destination = .healthCardPasswordSetCustomPin(
+                .init(
+                    mode: .setCustomPin
+                )
+            )
+            return .none
+        case .tappedUnlockCard:
+            state.destination = .healthCardPasswordUnlockCard(
+                .init(
+                    mode: .unlockCard
+                )
+            )
+            return .none
+        case .resetNavigation:
+            state.destination = nil
+            return .none
+        case .languageSettingsTapped:
+            state.destination = .alert(.info(SettingsDomain.languageSettingsAlertState))
+            return .none
+        case .destination(.presented(.egk(.delegate(.close)))):
             state.destination = nil
             return .none
         case let .profiles(action: .delegate(delegateAction)):
@@ -321,7 +277,7 @@ struct SettingsDomain: ReducerProtocol {
                 routeToChargeItemList: true
             ))
             return .none
-        case let .destination(.presented(.editProfileAction(.delegate(action)))):
+        case let .destination(.presented(.editProfile(.delegate(action)))):
             switch action {
             case .logout:
                 return .send(.profiles(action: .registerListener))
@@ -329,7 +285,7 @@ struct SettingsDomain: ReducerProtocol {
                 state.destination = nil
                 return .none
             }
-        case let .destination(.presented(.newProfileAction(.delegate(action)))):
+        case let .destination(.presented(.newProfile(.delegate(action)))):
             switch action {
             case .close:
                 state.destination = nil
@@ -343,8 +299,24 @@ struct SettingsDomain: ReducerProtocol {
             return .none
         }
     }
+}
 
-    static var demoModeOnAlertState: AlertState<Destinations.Action.Alert> = {
+extension SettingsDomain {
+    static var languageSettingsAlertState: AlertState<Destination.Alert> =
+        AlertState(
+            title: { TextState(L10n.stgTxtLanguageSettingsAlertTitle) },
+            actions: {
+                ButtonState(action: .send(.openSettings)) {
+                    TextState(L10n.stgBtnLanguageSettingsAlertOpenSettings)
+                }
+                ButtonState(role: .cancel, action: .send(.dismiss)) {
+                    TextState(L10n.alertBtnOk)
+                }
+            },
+            message: { TextState(L10n.stgTxtLanguageSettingsAlertDescription) }
+        )
+
+    static var demoModeOnAlertState: AlertState<Destination.Alert> = {
         AlertState(
             title: { TextState(L10n.stgTxtAlertTitleDemoMode) },
             actions: {
@@ -356,7 +328,7 @@ struct SettingsDomain: ReducerProtocol {
         )
     }()
 
-    static var demoModeOffAlertState: AlertState<Destinations.Action.Alert> = {
+    static var demoModeOffAlertState: AlertState<Destination.Alert> = {
         AlertState(
             title: { TextState(L10n.stgTxtAlertTitleDemoModeOff) },
             actions: {
@@ -381,7 +353,7 @@ extension SettingsDomain {
 
         static let store = storeFor(state)
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<SettingsDomain> {
             Store(
                 initialState: state
             ) {

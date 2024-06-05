@@ -21,20 +21,33 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-struct AuditEventsDomain: Reducer {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct AuditEventsDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = cardWall
+        case cardWall(CardWallIntroductionDomain)
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = errorAlert
+        case alert(ErpAlertState<Alert>)
+
+        enum Alert: Equatable {
+            case cardWall
+        }
+    }
 
     enum CancelID: CaseIterable, Hashable {
         case loadNextAuditEvents
     }
 
+    @ObservableState
     struct State: Equatable {
         var profileUUID: UUID
         var entries: IdentifiedArrayOf<State.AuditEvent>?
         var nextPageUrl: URL?
         var needsAuthentication = false
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
 
         struct AuditEvent: Equatable, Identifiable {
             let id: String
@@ -44,39 +57,12 @@ struct AuditEventsDomain: Reducer {
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = errorAlert
-            case alert(ErpAlertState<Destinations.Action.Alert>)
-            // sourcery: AnalyticsScreen = cardWall
-            case cardWall(CardWallIntroductionDomain.State)
-        }
-
-        enum Action: Equatable {
-            case cardWall(action: CardWallIntroductionDomain.Action)
-            case alert(Alert)
-
-            enum Alert: Equatable {
-                case cardWall
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.cardWall,
-                action: /Action.cardWall
-            ) {
-                CardWallIntroductionDomain()
-            }
-        }
-    }
-
     enum Action: Equatable {
         case task
         case loadNextPage
         case close
         case showCardWall
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
 
         case response(Response)
 
@@ -84,8 +70,6 @@ struct AuditEventsDomain: Reducer {
             case loadNextPageReceived(Result<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>)
             case taskReceived(Result<PagedContent<[ErxAuditEvent]>, AuditEventsServiceError>)
         }
-
-        enum Delegate: Equatable {}
     }
 
     @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
@@ -95,15 +79,13 @@ struct AuditEventsDomain: Reducer {
     @Dependency(\.uiDateFormatter.compactDateAndTimeFormatter) var dateFormatter: DateFormatter
     var currentLanguageCode = Locale.current.languageCode
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             return .publisher(
@@ -175,12 +157,12 @@ struct AuditEventsDomain: Reducer {
             }
 
             return .none
-        case .destination(.presented(.cardWall(action: .delegate(.close)))):
+        case .destination(.presented(.cardWall(.delegate(.close)))):
             state.destination = nil
             state.entries = nil
             state.needsAuthentication = false
             state.nextPageUrl = nil
-            return EffectTask.send(.task)
+            return Effect.send(.task)
         case .close:
             return .none
         case .showCardWall:
@@ -239,7 +221,7 @@ extension AuditEventsDomain {
     enum Dummies {
         static let state = State(profileUUID: DemoProfileDataStore.anna.id)
 
-        static let store = Store(initialState: state) {
+        static let store = StoreOf<AuditEventsDomain>(initialState: state) {
             AuditEventsDomain(currentLanguageCode: Locale.current.languageCode)
         }
     }

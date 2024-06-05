@@ -17,30 +17,32 @@
 //
 
 import ComposableArchitecture
+import Perception
 import SwiftUI
 
 struct AppMigrationView: View {
-    let store: AppMigrationDomain.Store
-    @ObservedObject var viewStore: ViewStore<AppMigrationDomain.State, AppMigrationDomain.Action>
+    @Perception.Bindable var store: StoreOf<AppMigrationDomain>
 
-    init(store: AppMigrationDomain.Store) {
+    init(store: StoreOf<AppMigrationDomain>) {
         self.store = store
-        viewStore = ViewStore(store) { $0 }
     }
 
     var body: some View {
-        HStack {
-            if viewStore.state.migration == .inProgress {
-                ProgressView(L10n.amgTxtInProgress)
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .accessibility(identifier: A11y.migration.amgTxtAndSpinner)
+        WithPerceptionTracking {
+            HStack {
+                if store.migration == .inProgress {
+                    ProgressView(L10n.amgTxtInProgress)
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .accessibility(identifier: A11y.migration.amgTxtAndSpinner)
+                }
             }
-        }
-        .alert(store: store.scope(state: \.$destination, action: AppMigrationDomain.Action.destination),
-               state: /AppMigrationDomain.Destinations.State.alert,
-               action: AppMigrationDomain.Destinations.Action.alert)
-        .onAppear {
-            viewStore.send(.loadCurrentModelVersion)
+            .alert($store.scope(
+                state: \.destination?.alert?.alert,
+                action: \.destination.alert
+            ))
+            .onAppear {
+                store.send(.loadCurrentModelVersion)
+            }
         }
     }
 }

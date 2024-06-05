@@ -23,40 +23,25 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct AccidentInfoView: View {
-        let store: Store<
-            PrescriptionDetailDomain.Destinations.AccidentInfoState,
-            PrescriptionDetailDomain.Destinations.Action.None
-        >
-        @ObservedObject var viewStore: ViewStore<
-            PrescriptionDetailDomain.Destinations.AccidentInfoState,
-            PrescriptionDetailDomain.Destinations.Action.None
-        >
-
-        init(store: Store<
-            PrescriptionDetailDomain.Destinations.AccidentInfoState,
-            PrescriptionDetailDomain.Destinations.Action.None
-        >) {
-            self.store = store
-            viewStore = ViewStore(store) { $0 }
-        }
+        @Perception.Bindable var store: StoreOf<AccidentInfoDomain>
 
         var body: some View {
             ScrollView(.vertical) {
                 SectionContainer {
                     SubTitle(
-                        title: viewStore.accidentInfo.localizedReason,
+                        title: store.accidentInfo.localizedReason,
                         description: L10n.prscDtlTxtAccidentReason
                     )
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentReason)
 
                     SubTitle(
-                        title: viewStore.accidentInfo.date ?? L10n.prscFdTxtNa.text,
+                        title: store.accidentInfo.date ?? L10n.prscFdTxtNa.text,
                         description: L10n.prscFdTxtAccidentDate
                     )
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentDate)
 
                     SubTitle(
-                        title: viewStore.accidentInfo.workPlaceIdentifier ?? L10n.prscFdTxtNa.text,
+                        title: store.accidentInfo.workPlaceIdentifier ?? L10n.prscFdTxtNa.text,
                         description: L10n.prscFdTxtAccidentId
                     )
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlAccidentId)

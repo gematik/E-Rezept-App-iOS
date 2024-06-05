@@ -20,47 +20,34 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-struct NewProfileDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct NewProfileDomain {
+    @ObservableState
     struct State: Equatable {
         var name: String
         var color: ProfileColor
         var image: ProfilePicture?
         var userImageData: Data?
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            case editProfilePicture(EditProfilePictureDomain.State)
-            case alert(AlertState<Action.Alert>)
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        case editProfilePicture(EditProfilePictureDomain)
+        @ReducerCaseEphemeral
+        case alert(ErpAlertState<Destination.Alert>)
 
-        enum Action: Equatable {
-            case editProfilePictureAction(action: EditProfilePictureDomain.Action)
-            case alert(Alert)
-
-            enum Alert: Equatable {}
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.editProfilePicture,
-                action: /Action.editProfilePictureAction
-            ) {
-                EditProfilePictureDomain()
-            }
-        }
+        enum Alert: Equatable {}
     }
 
-    enum Action: Equatable {
-        case setName(String)
+    enum Action: BindableAction, Equatable {
+        case binding(BindingAction<State>)
         case save
         case closeButtonTapped
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
 
+        case destination(PresentationAction<Destination.Action>)
+        case tappedEditProfilePicture
+        case resetNavigation
         case response(Response)
         case delegate(Delegate)
 
@@ -77,23 +64,20 @@ struct NewProfileDomain: ReducerProtocol {
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
+        BindingReducer()
+
         Reduce(core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case let .setName(name):
-            state.name = name
-            return .none
         case .save:
             let name = state.name.trimmed()
             guard name.lengthOfBytes(using: .utf8) > 0 else {
-                state.destination = .alert(AlertStates.emptyName)
+                state.destination = .alert(.info(AlertStates.emptyName))
                 return .none
             }
             let profile = Profile(name: name,
@@ -120,38 +104,38 @@ struct NewProfileDomain: ReducerProtocol {
             )
         case let .response(.saveReceived(.success(profileId))):
             userDataStore.set(selectedProfileId: profileId)
-            return EffectTask.send(.delegate(.close))
+            return Effect.send(.delegate(.close))
         case let .response(.saveReceived(.failure(error))):
-            state.destination = .alert(AlertStates.for(error))
+            state.destination = .alert(.init(for: error))
             return .none
         case .closeButtonTapped:
-            return EffectTask.send(.delegate(.close))
+            return Effect.send(.delegate(.close))
 
-        case .setNavigation(tag: .editProfilePicture):
+        case .tappedEditProfilePicture:
             state.destination = .editProfilePicture(.init(
                 profileId: nil,
                 color: state.color,
-                picture: state.image,
-                userImageData: state.userImageData,
+                picture: state.image ?? .none,
+                userImageData: state.userImageData ?? .empty,
                 isFullScreenPresented: true
             ))
             return .none
-        case let .destination(.presented(.editProfilePictureAction(action: .editColor(color)))):
-            state.color = color ?? .grey
+        case let .destination(.presented(.editProfilePicture(.editColor(color)))):
+            state.color = color
             return .none
-        case let .destination(.presented(.editProfilePictureAction(action: .editPicture(picture)))):
-            state.image = picture ?? ProfilePicture.none
+        case let .destination(.presented(.editProfilePicture(.editPicture(picture)))):
+            state.image = picture
             return .none
-        case let .destination(.presented(.editProfilePictureAction(action: .setUserImageData(image)))):
+        case let .destination(.presented(.editProfilePicture(.setUserImageData(image)))):
             state.userImageData = image
             return .none
-        case .setNavigation(tag: .none):
+        case .resetNavigation:
             state.destination = nil
             return .none
 
-        case .setNavigation,
-             .delegate,
-             .destination:
+        case .delegate,
+             .destination,
+             .binding:
             return .none
         }
     }
@@ -159,7 +143,7 @@ struct NewProfileDomain: ReducerProtocol {
 
 extension NewProfileDomain {
     enum AlertStates {
-        typealias Action = NewProfileDomain.Destinations.Action.Alert
+        typealias Action = NewProfileDomain.Destination.Alert
 
         static var emptyName = AlertState<Action>(
             title: { TextState(L10n.stgTxtNewProfileErrorMessageTitle) },
@@ -170,18 +154,6 @@ extension NewProfileDomain {
             },
             message: { TextState(L10n.stgTxtNewProfileMissingNameError) }
         )
-
-        static func `for`(_ error: LocalStoreError) -> AlertState<Action> {
-            AlertState(
-                title: { TextState(L10n.stgTxtNewProfileErrorMessageTitle) },
-                actions: {
-                    ButtonState(role: .cancel, action: .send(.none)) {
-                        TextState(L10n.alertBtnOk)
-                    }
-                },
-                message: { TextState(error.localizedDescriptionWithErrorList) }
-            )
-        }
     }
 }
 

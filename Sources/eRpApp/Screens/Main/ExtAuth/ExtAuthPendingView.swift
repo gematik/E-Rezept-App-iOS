@@ -22,17 +22,10 @@ import IDP
 import SwiftUI
 
 struct ExtAuthPendingView: View {
-    let store: ExtAuthPendingDomain.Store
-
-    @ObservedObject private var viewStore: ViewStore<ExtAuthPendingDomain.State, ExtAuthPendingDomain.Action>
-
-    init(store: ExtAuthPendingDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
+    @Perception.Bindable var store: ExtAuthPendingDomain.Store
 
     var background: Color {
-        switch viewStore.state.extAuthState {
+        switch store.state.extAuthState {
         case .extAuthFailed:
             return Colors.red300
         default:
@@ -41,9 +34,9 @@ struct ExtAuthPendingView: View {
     }
 
     @ViewBuilder func text() -> some View {
-        let name = viewStore.state.extAuthState.entry?.name ?? ""
+        let name = store.state.extAuthState.entry?.name ?? ""
 
-        switch viewStore.state.extAuthState {
+        switch store.state.extAuthState {
         case .pendingExtAuth:
             Text(L10n.mainTxtPendingextauthPending(name))
         case .extAuthReceived:
@@ -56,7 +49,7 @@ struct ExtAuthPendingView: View {
     }
 
     @ViewBuilder func icon() -> some View {
-        switch viewStore.state.extAuthState {
+        switch store.state.extAuthState {
         case .pendingExtAuth,
              .extAuthReceived:
             ProgressView()
@@ -71,7 +64,7 @@ struct ExtAuthPendingView: View {
     }
 
     var showToast: Bool {
-        switch viewStore.state.extAuthState {
+        switch store.state.extAuthState {
         case .empty,
              .extAuthFailed:
             return false
@@ -83,40 +76,35 @@ struct ExtAuthPendingView: View {
     }
 
     var body: some View {
-        VStack {
-            Spacer()
-                .alert(
-                    store.scope(
-                        state: \.$destination,
-                        action: ExtAuthPendingDomain.Action.destination
-                    ),
-                    state: /ExtAuthPendingDomain.Destination.State.extAuthAlert,
-                    action: ExtAuthPendingDomain.Destination.Action.alert
-                )
-            if showToast {
-                HStack(spacing: 16) {
-                    icon()
+        WithPerceptionTracking {
+            VStack {
+                Spacer()
+                    .alert($store.scope(state: \.destination?.extAuthAlert?.alert, action: \.destination.extAuthAlert))
+                if showToast {
+                    HStack(spacing: 16) {
+                        icon()
 
-                    text()
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        text()
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Button(action: {
-                        viewStore.send(.cancelAllPendingRequests, animation: .easeInOut)
-                    }, label: {
-                        Image(systemName: SFSymbolName.crossIconPlain)
-                    })
+                        Button(action: {
+                            store.send(.cancelAllPendingRequests, animation: .easeInOut)
+                        }, label: {
+                            Image(systemName: SFSymbolName.crossIconPlain)
+                        })
+                    }
+                    .transition(.move(edge: .bottom))
+                    .foregroundColor(Color(.secondaryLabel))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+                    .background(background)
+                    .cornerRadius(16)
+                    .padding()
                 }
-                .transition(.move(edge: .bottom))
-                .foregroundColor(Color(.secondaryLabel))
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding()
-                .background(background)
-                .cornerRadius(16)
-                .padding()
             }
-        }
-        .task {
-            await viewStore.send(.registerListener).finish()
+            .task {
+                await store.send(.registerListener).finish()
+            }
         }
     }
 }

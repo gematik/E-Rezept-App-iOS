@@ -22,95 +22,60 @@ import eRpKit
 import IDP
 import SwiftUI
 
-struct AppDomain: ReducerProtocol {
+@Reducer
+struct AppDomain {
     typealias Store = StoreOf<Self>
 
-    struct Subdomains: ReducerProtocol {
-        struct State: Equatable {
-            var main: MainDomain.State
-            var pharmacySearch: PharmacySearchDomain.State
-            var orders: OrdersDomain.State
-            var settings: SettingsDomain.State
-        }
-
-        enum Action: Equatable {
-            case main(action: MainDomain.Action)
-            case pharmacySearch(action: PharmacySearchDomain.Action)
-            case orders(action: OrdersDomain.Action)
-            case settings(action: SettingsDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: \.main,
-                action: /Action.main(action:)
-            ) {
-                MainDomain()
-            }
-
-            Scope(
-                state: \.pharmacySearch,
-                action: /Action.pharmacySearch(action:)
-            ) {
-                PharmacySearchDomain(referenceDateForOpenHours: nil)
-            }
-
-            Scope(
-                state: \.orders,
-                action: /Action.orders(action:)
-            ) {
-                OrdersDomain()
-            }
-
-            Scope(
-                state: \.settings,
-                action: /Action.settings(action:)
-            ) {
-                SettingsDomain()
-            }
-        }
-    }
-
     // sourcery: AnalyticsIgnoreGeneration
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsState = subdomains.main
+    struct Destinations: Reducer {
+        enum State: Int, Equatable {
+            // sourcery: AnalyticsState = main
             // sourcery: AnalyticsScreen = main
             case main
-            // sourcery: AnalyticsState = subdomains.pharmacySearch
+            // sourcery: AnalyticsState = pharmacySearch
             // sourcery: AnalyticsScreen = pharmacySearch
             case pharmacySearch
-            // sourcery: AnalyticsState = subdomains.orders
+            // sourcery: AnalyticsState = orders
             // sourcery: AnalyticsScreen = orders
             case orders
-            // sourcery: AnalyticsState = subdomains.settings
+            // sourcery: AnalyticsState = settings
             // sourcery: AnalyticsScreen = settings
             case settings
         }
 
         enum Action: Equatable {}
 
-        var body: some ReducerProtocol<State, Action> {
+        var body: some ReducerOf<Self> {
             EmptyReducer()
         }
     }
 
+    @ObservableState
     struct State: Equatable {
         var destination: Destinations.State
 
-        var subdomains: Subdomains.State
+        var main: MainDomain.State
+        var pharmacySearch: PharmacySearchDomain.State
+        var orders: OrdersDomain.State
+        var settings: SettingsDomain.State
 
         var unreadOrderMessageCount: Int
         var isDemoMode: Bool
 
         init(
             destination: Destinations.State,
-            subdomains: Subdomains.State,
+            main: MainDomain.State,
+            pharmacySearch: PharmacySearchDomain.State,
+            orders: OrdersDomain.State,
+            settings: SettingsDomain.State,
             unreadOrderMessageCount: Int,
             isDemoMode: Bool
         ) {
             self.destination = destination
-            self.subdomains = subdomains
+            self.main = main
+            self.pharmacySearch = pharmacySearch
+            self.orders = orders
+            self.settings = settings
             self.unreadOrderMessageCount = unreadOrderMessageCount
             self.isDemoMode = isDemoMode
         }
@@ -125,54 +90,63 @@ struct AppDomain: ReducerProtocol {
         case newOrderMessageReceived(Int)
         case setNavigation(Destinations.State)
 
-        case subdomains(Subdomains.Action)
+        case main(action: MainDomain.Action)
+        case pharmacySearch(action: PharmacySearchDomain.Action)
+        case orders(action: OrdersDomain.Action)
+        case settings(action: SettingsDomain.Action)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.changeableUserSessionContainer) var userSessionContainer: UsersSessionContainer
     @Dependency(\.entireErxTaskRepository) var entireErxTaskRepository
 
-    var body: some ReducerProtocol<State, Action> {
-        Scope(state: \.subdomains, action: /Action.subdomains) {
-            Subdomains()
+    var body: some Reducer<State, Action> {
+        Scope(state: \.main, action: \.main) {
+            MainDomain()
+        }
+
+        Scope(state: \.pharmacySearch, action: \.pharmacySearch) {
+            PharmacySearchDomain()
+        }
+
+        Scope(state: \.orders, action: \.orders) {
+            OrdersDomain()
+        }
+
+        Scope(state: \.settings, action: \.settings) {
+            SettingsDomain()
         }
 
         Reduce(self.core)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             return .merge(
                 .send(.registerDemoModeListener),
                 .send(.registerNewOrderMessageListener)
             )
-        case .subdomains(
-            .settings(
-                action: .destination(
-                    .presented(.editProfileAction(.destination(.presented(.alert(.confirmDeleteProfile)))))
-                )
+        case .settings(
+            action: .destination(
+                .presented(.editProfile(.destination(.presented(.alert(.confirmDeleteProfile)))))
             )
         ),
-        .subdomains(
-            .settings(action: .destination(.presented(.newProfileAction(.response(.saveReceived(.success))))))
-        ):
+        .settings(action: .destination(.presented(.newProfile(.response(.saveReceived(.success)))))):
             return .concatenate(
-                .send(.subdomains(.main(action: .setNavigation(tag: nil)))),
-                .send(.subdomains(.orders(action: .setNavigation(tag: nil)))),
-                .send(.subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
+                .send(.main(action: .setNavigation(tag: .none))),
+                .send(.orders(action: .resetNavigation)),
+                .send(.pharmacySearch(action: .resetNavigation))
             )
-        case .subdomains(.main(action: .horizontalProfileSelection(action: .selectProfile))):
+        case .main(action: .horizontalProfileSelection(action: .selectProfile)):
             return .concatenate(
-                .send(.subdomains(.orders(action: .setNavigation(tag: nil)))),
-                .send(.subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
+                .send(.orders(action: .resetNavigation)),
+                .send(.pharmacySearch(action: .resetNavigation))
             )
-        case .subdomains:
-            return .none
         case let .isDemoModeReceived(isDemoMode):
             state.isDemoMode = isDemoMode
-            state.subdomains.settings.isDemoMode = isDemoMode
+            state.settings.isDemoMode = isDemoMode
             return .none
         case .registerDemoModeListener:
             return .publisher(
@@ -198,22 +172,24 @@ struct AppDomain: ReducerProtocol {
                 // we present the "root" view of the corresponding TabView's content
                 switch destination {
                 case .main:
-                    state.subdomains.main.destination = nil
+                    state.main.destination = nil
                     return .none
                 case .pharmacySearch:
-                    state.subdomains.pharmacySearch.destination = nil
+                    state.pharmacySearch.destination = nil
                     return .none
                 case .orders:
-                    state.subdomains.orders.destination = nil
+                    state.orders.destination = nil
                     return .none
                 case .settings:
-                    state.subdomains.settings.destination = nil
+                    state.settings.destination = nil
                     return .none
                 }
             } else {
                 state.destination = destination
                 return .none
             }
+        case .main, .settings, .pharmacySearch, .orders:
+            return .none
         }
     }
 }
@@ -226,12 +202,10 @@ extension AppDomain {
 
         static let state = State(
             destination: .main,
-            subdomains: .init(
-                main: MainDomain.Dummies.state,
-                pharmacySearch: PharmacySearchDomain.Dummies.stateStartView,
-                orders: OrdersDomain.Dummies.state,
-                settings: SettingsDomain.Dummies.state
-            ),
+            main: MainDomain.Dummies.state,
+            pharmacySearch: PharmacySearchDomain.Dummies.stateStartView,
+            orders: OrdersDomain.Dummies.state,
+            settings: SettingsDomain.Dummies.state,
             unreadOrderMessageCount: 0,
             isDemoMode: false
         )

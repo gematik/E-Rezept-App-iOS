@@ -20,15 +20,16 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import Perception
 import SwiftUI
 
 #if ENABLE_DEBUG_VIEW
 // [REQ:BSI-eRp-ePA:O.Source_8#5] DebugView is only available on debug builds
 struct DebugView: View {
-    let store: DebugDomain.Store
+    @Perception.Bindable var store: StoreOf<DebugDomain>
 
     var body: some View {
-        WithViewStore(store) { $0 } content: { viewStore in
+        WithPerceptionTracking {
             List {
                 EnvironmentSection(store: store)
                 LogSection(store: store)
@@ -39,43 +40,34 @@ struct DebugView: View {
                 OnboardingSection(store: store)
                 LoginSection(store: store)
             }
-            .onAppear { viewStore.send(.appear) }
+            .onAppear { store.send(.appear) }
             .alert(
                 "Oh no!",
-                isPresented: viewStore.binding(
-                    get: \.showAlert,
-                    send: DebugDomain.Action.showAlert
-                ),
+                isPresented: $store.showAlert,
                 actions: { Button(L10n.alertBtnOk) {} },
                 message: {
-                    Text(viewStore.alertText ?? "Unknown")
+                    Text(store.alertText ?? "Unknown")
                 }
             )
-        }.navigationTitle("Debug Settings")
+            .navigationTitle("Debug Settings")
+        }
     }
 }
 
 extension DebugView {
     private struct OnboardingSection: View {
-        let store: DebugDomain.Store
+        @Perception.Bindable var store: StoreOf<DebugDomain>
 
         var body: some View {
-            WithViewStore(store) { $0 } content: { viewStore in
+            WithPerceptionTracking {
                 Section(header: Text("Onboarding")) {
                     VStack {
-                        Toggle("Hide Onboarding", isOn: viewStore.binding(
-                            get: \.hideOnboarding,
-                            send: DebugDomain.Action.hideOnboardingToggleTapped
-                        ))
+                        Toggle("Hide Onboarding", isOn: $store.hideOnboarding)
                         FootnoteView(text: "Intro is only displayed once. Needs App restart.", a11y: "dummy_a11y_l")
                     }
-                    Toggle("Tracking OptOut",
-                           isOn: viewStore.binding(
-                               get: { state in state.trackingOptIn },
-                               send: DebugDomain.Action.toggleTrackingTapped
-                           ))
+                    Toggle("Tracking OptOut", isOn: $store.trackingOptIn)
                     Button("Reset tooltips") {
-                        viewStore.send(.resetTooltips)
+                        store.send(.resetTooltips)
                     }
                 }
             }
@@ -83,17 +75,13 @@ extension DebugView {
     }
 
     private struct CardWallSection: View {
-        let store: DebugDomain.Store
+        @Perception.Bindable var store: StoreOf<DebugDomain>
 
         var body: some View {
-            WithViewStore(store) { $0 } content: { viewStore in
+            WithPerceptionTracking {
                 Section(header: Text("Cardwall")) {
                     VStack {
-                        Toggle("Hide Intro",
-                               isOn: viewStore.binding(
-                                   get: \.hideCardWallIntro,
-                                   send: DebugDomain.Action.hideCardWallIntroToggleTapped
-                               ))
+                        Toggle("Hide Intro", isOn: $store.hideCardWallIntro)
                             .accessibilityIdentifier("debug_tog_hide_intro")
 
                         FootnoteView(
@@ -102,33 +90,22 @@ extension DebugView {
                         )
                         .font(.subheadline)
                     }
-                    Toggle("Fake Device Capabilities",
-                           isOn: viewStore.binding(
-                               get: \.useDebugDeviceCapabilities,
-                               send: DebugDomain.Action.useDebugDeviceCapabilitiesToggleTapped
-                           )
-                           .animation())
-                    if viewStore.useDebugDeviceCapabilities {
+                    Toggle("Fake Device Capabilities", isOn: $store.useDebugDeviceCapabilities.animation())
+                    if store.useDebugDeviceCapabilities {
                         VStack {
-                            Toggle("NFC ready", isOn: viewStore.binding(
-                                get: \.isNFCReady,
-                                send: DebugDomain.Action.nfcReadyToggleTapped
-                            ))
-                            Toggle("iOS 14", isOn: viewStore.binding(
-                                get: \.isMinimumOS14,
-                                send: DebugDomain.Action.isMinimumOS14ToggleTapped
-                            ))
+                            Toggle("NFC ready", isOn: $store.isNFCReady)
+                            Toggle("iOS 14", isOn: $store.isMinimumOS14)
                         }
                         .padding(.leading, 16)
                     }
                     Button("Reset CAN") {
-                        viewStore.send(.resetCanButtonTapped)
+                        store.send(.resetCanButtonTapped)
                     }
                     Button("Reset Biometrie (Key and Cert)") {
-                        viewStore.send(.deleteKeyAndEGKAuthCertForBiometric)
+                        store.send(.deleteKeyAndEGKAuthCertForBiometric)
                     }
                     Button("Reset CERT- and OCSP-Lists") {
-                        viewStore.send(.resetOcspAndCertListButtonTapped)
+                        store.send(.resetOcspAndCertListButtonTapped)
                     }
                 }
             }
@@ -136,45 +113,33 @@ extension DebugView {
     }
 
     struct LocalTaskStatusView: View {
-        @ObservedObject private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
-
-        init(store: DebugDomain.Store) {
-            viewStore = ViewStore(store) { $0 }
-        }
+        @Perception.Bindable var store: StoreOf<DebugDomain>
 
         var body: some View {
-            Section(header: Text("Local Task Status")) {
-                VStack(alignment: .leading) {
-                    Text("Fake task status for:")
-                    HStack {
-                        TextField("Test", text: viewStore.binding(
-                            get: \.fakeTaskStatus,
-                            send: DebugDomain.Action.setFaceErxTaskStatus
-                        ))
-                            .keyboardType(.numberPad)
-                        Text("Seconds")
-                            .foregroundColor(.gray)
+            WithPerceptionTracking {
+                Section(header: Text("Local Task Status")) {
+                    VStack(alignment: .leading) {
+                        Text("Fake task status for:")
+                        HStack {
+                            TextField("Test", text: $store.fakeTaskStatus)
+                                .keyboardType(.numberPad)
+                            Text("Seconds")
+                                .foregroundColor(.gray)
+                        }
+                        .font(.system(.body, design: .monospaced))
                     }
-                    .font(.system(.body, design: .monospaced))
                 }
             }
         }
     }
 
     struct VirtualEGKLogin: View {
-        private let store: DebugDomain.Store
-
-        @ObservedObject private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
-
-        init(store: DebugDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store) { $0 }
-        }
+        @Perception.Bindable var store: StoreOf<DebugDomain>
 
         @State var showScanVirtualEGK = false
 
         var body: some View {
-            WithViewStore(store) { $0 } content: { viewStore in
+            WithPerceptionTracking {
                 Section(
                     header: Text("Virtual eGK Login"),
                     footer: Text("""
@@ -182,26 +147,15 @@ extension DebugView {
                     Just go threw the regular 'Anmelden' screens. The entered CAN and PIN will be ignored.
                     """)
                 ) {
-                    Toggle("Use Virtual eGK instead of NFC",
-                           isOn: viewStore.binding(
-                               get: \.useVirtualLogin,
-                               send: DebugDomain.Action.toggleVirtualLogin
-                           )
-                           .animation())
-                                               .accessibilityIdentifier("debug_enable_virtual_egk")
+                    Toggle("Use Virtual eGK instead of NFC", isOn: $store.useVirtualLogin.animation())
+                        .accessibilityIdentifier("debug_enable_virtual_egk")
 
-                    if viewStore.useVirtualLogin {
+                    if store.useVirtualLogin {
                         NavigationLink(
                             destination: DebugEGKScannerView(
                                 show: $showScanVirtualEGK,
-                                prkCHAUTbase64: viewStore.binding(
-                                    get: \.virtualLoginPrivateKey,
-                                    send: DebugDomain.Action.virtualPrkCHAutReceived
-                                ),
-                                cCHAUTbase64: viewStore.binding(
-                                    get: \.virtualLoginCertKey,
-                                    send: DebugDomain.Action.virtualCCHAutReceived
-                                )
+                                prkCHAUTbase64: $store.virtualLoginPrivateKey,
+                                cCHAUTbase64: $store.virtualLoginCertKey
                             ),
                             isActive: $showScanVirtualEGK
                         ) {
@@ -212,10 +166,7 @@ extension DebugView {
                         }
 
                         VStack {
-                            TextEditor(text: viewStore.binding(
-                                get: \.virtualLoginPrivateKey,
-                                send: DebugDomain.Action.virtualPrkCHAutReceived
-                            ))
+                            TextEditor(text: $store.virtualLoginPrivateKey)
                                 .accessibility(identifier: "debug_prk_ch_aut")
                                 .frame(minHeight: 100, maxHeight: 100)
                                 .foregroundColor(Colors.systemLabel)
@@ -227,10 +178,7 @@ extension DebugView {
                         }
 
                         VStack {
-                            TextEditor(text: viewStore.binding(
-                                get: \.virtualLoginCertKey,
-                                send: DebugDomain.Action.virtualCCHAutReceived
-                            ))
+                            TextEditor(text: $store.virtualLoginCertKey)
                                 .accessibility(identifier: "debug_c_ch_aut")
                                 .frame(minHeight: 100, maxHeight: 100)
                                 .foregroundColor(Colors.systemLabel)
@@ -248,12 +196,20 @@ extension DebugView {
 
     private struct LoginSection: View {
         @Dependency(\.fhirDateFormatter) var dateFormatter: FHIRDateFormatter
-        let store: DebugDomain.Store
+        @Perception.Bindable var store: StoreOf<DebugDomain>
+
+        var hidePkvConsentDrawerOnMainView: Binding<Bool> { Binding(
+            get: {
+                store.hidePkvConsentDrawerOnMainView
+            }, set: { _ in
+                store.send(.hidePkvConsentDrawerMainViewToggleTapped)
+            }
+        ) }
 
         var body: some View {
-            WithViewStore(store) { $0 } content: { viewStore in
-                Section(header: Text("Active Profile")) {
-                    if let profile = viewStore.profile {
+            WithPerceptionTracking {
+                Section(content: {
+                    if let profile = store.profile {
                         HStack {
                             ProfilePictureView(image: .baby,
                                                userImageData: nil,
@@ -269,7 +225,7 @@ extension DebugView {
                         }
 
                         Button("Mark as PKV") {
-                            viewStore.send(.setProfileInsuranceTypeToPKV)
+                            store.send(.setProfileInsuranceTypeToPKV)
                         }
 //                        .disabled(profile.insuranceType != .gKV)
                         .foregroundColor(profile.insuranceType == .gKV ? Color.orange : Color.gray)
@@ -282,10 +238,7 @@ extension DebugView {
                         )
 
                         VStack {
-                            Toggle("Hide ConsentDrawer On MainScreen", isOn: viewStore.binding(
-                                get: \.hidePkvConsentDrawerOnMainView,
-                                send: DebugDomain.Action.hidePkvConsentDrawerMainViewToggleTapped
-                            ))
+                            Toggle("Hide ConsentDrawer On MainScreen", isOn: hidePkvConsentDrawerOnMainView)
                             FootnoteView(
                                 text: "Drawer will only be shown when consent is currently not granted",
                                 a11y: "dummy_a11y_k"
@@ -294,14 +247,11 @@ extension DebugView {
                     } else {
                         Text("Loading current Profile...")
                     }
-                }
+                }, header: { Text("Active Profile") })
 
-                Section(header: Text("Login With Token")) {
+                Section(content: {
                     Group {
-                        TextEditor(text: viewStore.binding(
-                            get: \.accessCodeText,
-                            send: DebugDomain.Action.accessCodeTextReceived
-                        ))
+                        TextEditor(text: $store.accessCodeText)
                             .accessibilityIdentifier("debug_txt_access_token_write")
                             .frame(minHeight: 100, maxHeight: 150)
                             .foregroundColor(Colors.systemLabel)
@@ -317,11 +267,11 @@ extension DebugView {
 
                     HStack {
                         Text("Logged in:")
-                        if viewStore.isAuthenticated ?? false {
+                        if store.isAuthenticated ?? false {
                             Text("YES").bold().foregroundColor(.green)
                             Spacer()
                             Button("Logout") {
-                                viewStore.send(.logoutButtonTapped)
+                                store.send(.logoutButtonTapped)
                             }
                             .foregroundColor(.red)
                         } else {
@@ -330,7 +280,7 @@ extension DebugView {
                             Button("Login") {
                                 withAnimation {
                                     UIApplication.shared.dismissKeyboard()
-                                    viewStore.send(.loginWithToken)
+                                    store.send(.loginWithToken)
                                 }
                             }
                             .foregroundColor(.green)
@@ -344,10 +294,10 @@ extension DebugView {
                     )
 
                     SectionHeaderView(text: "Current access-token", a11y: "dummy_a11y_i")
-                    Text(viewStore.token?.accessToken ?? "*** No valid token available ***")
+                    Text(store.token?.accessToken ?? "*** No valid token available ***")
                         .contextMenu(ContextMenu {
                             Button("Copy") {
-                                UIPasteboard.general.string = viewStore.token?.accessToken
+                                UIPasteboard.general.string = store.token?.accessToken
                             }
                         })
                         .padding()
@@ -355,7 +305,7 @@ extension DebugView {
                         .foregroundColor(Colors.systemGray)
                         .background(Color(.systemGray5))
                         .accessibilityIdentifier("debug_txt_access_token_read")
-                    if let date = viewStore.token?.expires {
+                    if let date = store.token?.expires {
                         let expires = dateFormatter.string(from: date)
                         FootnoteView(
                             text: "Access-token is valid until \(expires). Token can be copied with long touch.",
@@ -365,31 +315,28 @@ extension DebugView {
                         FootnoteView(text: "No valid access-token available", a11y: "dummy_a11y_i")
                     }
                     Button("Invalidate current access-token (which enforces using SSO-Token)") {
-                        viewStore.send(.invalidateAccessToken)
+                        store.send(.invalidateAccessToken)
                     }
                     Button("Delete SSO-Token and invalidate current access-token") {
-                        viewStore.send(.deleteSSOToken)
+                        store.send(.deleteSSOToken)
                     }
-                }
+                }, header: { Text("Login With Token") })
             }
         }
     }
 
     private struct LogSection: View {
-        let store: DebugDomain.Store
+        @Perception.Bindable var store: StoreOf<DebugDomain>
 
         #if DEBUG
         @Dependency(\.smartMockRegister) var smartMockRegister: SmartMockRegister
         #endif
 
         var body: some View {
-            Section(header: Text("Logging")) {
-                WithViewStore(store) { $0 } content: { _ in
+            Section(content: {
+                WithPerceptionTracking {
                     NavigationLink("Logs", destination: DebugLogsView(
-                        store: store.scope(
-                            state: \.logState,
-                            action: DebugDomain.Action.logAction
-                        )
+                        store: store.scope(state: \.logState, action: \.logAction)
                     ))
                 }
 
@@ -400,7 +347,7 @@ extension DebugView {
                     SubTitle(title: "Save SmartMocks", description: "& copy mocks path to clipboard")
                 }
                 #endif
-            }
+            }, header: { Text("Logging") })
         }
     }
 
@@ -431,24 +378,26 @@ extension DebugView {
     }
 
     private struct EnvironmentSection: View {
-        let store: DebugDomain.Store
+        @Perception.Bindable var store: StoreOf<DebugDomain>
+
+        var selectedEnvironment: Binding<String> { Binding(
+            get: {
+                store.selectedEnvironment?.name ?? "TU"
+            }, set: { newValue in
+                store.send(.setServerEnvironment(newValue))
+            }
+        ) }
 
         var body: some View {
-            WithViewStore(store) { $0 } content: { viewStore in
-                Section(header: Text("Environment")) {
-                    Picker("Environment",
-                           selection: viewStore.binding(get: {
-                                                            $0.selectedEnvironment?.name ?? "no selection"
-                                                        },
-                                                        send: { value in
-                                                            DebugDomain.Action.setServerEnvironment(value)
-                                                        })) {
-                        ForEach(viewStore.availableEnvironments, id: \.id) { serverEnvironment in
+            WithPerceptionTracking {
+                Section(content: {
+                    Picker("Environment", selection: selectedEnvironment) {
+                        ForEach(store.availableEnvironments, id: \.id) { serverEnvironment in
                             Text(serverEnvironment.configuration.name).tag(serverEnvironment.name)
                         }
                     }
 
-                    if let environment = viewStore.selectedEnvironment?.configuration {
+                    if let environment = store.selectedEnvironment?.configuration {
                         HStack {
                             Text("Current")
                             Spacer()
@@ -460,30 +409,27 @@ extension DebugView {
                     }
 
                     Button("Reset") {
-                        viewStore.send(DebugDomain.Action.setServerEnvironment(nil))
+                        store.send(DebugDomain.Action.setServerEnvironment(nil))
                     }
-                }
+                }, header: { Text("Environment") })
             }
         }
     }
 
     private struct FeatureFlagsSection: View {
         var body: some View {
-            Section(header: Text("Feature Flags")) {
+            Section(content: {
                 NavigationLink(destination: FeatureFlags()) {
                     Text("Feature Flags")
                 }
-            }
+            }, header: { Text("Feature Flags") })
         }
 
         private struct FeatureFlags: View {
             @AppStorage("show_debug_pharmacies") var showDebugPharmacies = false
-            @AppStorage("enable_prescription_sharing") var isPrescriptionSharingEnabled = false
 
             var body: some View {
                 List {
-                    Toggle("Rezepte Teilen", isOn: $isPrescriptionSharingEnabled)
-
                     VStack(alignment: .leading) {
                         Toggle("Show Debug Pharmacies", isOn: $showDebugPharmacies)
                         Text("Zeigt die unter 'Debug Pharmacies' hinterlegten Apotheken in der Apothekensuche an")

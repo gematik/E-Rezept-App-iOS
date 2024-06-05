@@ -32,7 +32,7 @@ final class CreatePasswordViewSnapshotTests: ERPSnapshotTestCase {
 
     func testCreatePasswordView_Create_Password() {
         let sut = CreatePasswordView(
-            store: CreatePasswordDomain.Store(
+            store: StoreOf<CreatePasswordDomain>(
                 initialState: CreatePasswordDomain.State(
                     mode: .create,
                     password: "",
@@ -53,7 +53,7 @@ final class CreatePasswordViewSnapshotTests: ERPSnapshotTestCase {
 
     func testCreatePasswordView_Update_Password_Mismatch() {
         let sut = CreatePasswordView(
-            store: CreatePasswordDomain.Store(
+            store: StoreOf<CreatePasswordDomain>(
                 initialState: CreatePasswordDomain.State(
                     mode: .update,
                     password: "oldPassword",
@@ -74,7 +74,7 @@ final class CreatePasswordViewSnapshotTests: ERPSnapshotTestCase {
 
     func testCreatePasswordView_Update_Password_Insufficient_Strength() {
         let sut = CreatePasswordView(
-            store: CreatePasswordDomain.Store(
+            store: StoreOf<CreatePasswordDomain>(
                 initialState: CreatePasswordDomain.State(
                     mode: .update,
                     password: "oldPassword",

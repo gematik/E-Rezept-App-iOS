@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>requirements</title>
+  <link rel="stylesheet" href="Templates/ERB/audit_style.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+
+  	<script type="text/javascript">
+// Source: https://stackoverflow.com/questions/19646684/force-open-the-details-summary-tag-for-print-in-chrome
+// Open all details tags when printing.
+window.addEventListener( 'beforeprint', () => {
+    [].forEach.call( document.querySelectorAll( 'details' ), el => el.setAttribute( 'open', '' ) )
+} )
+
+// Close all details tags after printing.
+window.addEventListener( 'afterprint', () => {
+    [].forEach.call( document.querySelectorAll( 'details' ), el => el.removeAttribute( 'open' ) )
+} )
+  	</script>
+</head>
+<body>
+<h1>TOC:</h1>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#missing_requirements" id="toc-missing-requirements">Known Missing Requirements References</a>
+<li><a href="#requirements" id="toc-requirements">Requirements</a>
+<ul>
+<% SORTED_SPECS.each do |spec_name, afos| %>
+<% next if !AUDIT_AFOS.intersect?(afos.keys) %>
+
+<li><a href="#<%= spec_name %>" id="toc-<%= spec_name %>"><%= spec_name %></a>
+	<ul>
+<% afos.each do |afo_name, details| %>
+<% next if !AUDIT_AFOS.include?(afo_name) %>
+	<li><a href="#<%= afo_name %>" id="toc-<%= afo_name %>"><%= afo_name %></a></li>
+<% end %>
+	</ul>
+</li>
+<% end %>
+</ul>
+</li>
+</ul>
+</nav>
+
+<h1 id="missing_requirements">Known Missing Requirements References:</h1>
+
+<%= REQUIRED_AFOS %>
+
+<h1 id="requirements">Requirements</h1><% SORTED_SPECS.each do |spec_name, afos| %>
+
+<h2 id="<%= spec_name %>"><%= spec_name %></h2>
+
+<% afos.each do |afo_name, details| %>
+
+<% next if !AUDIT_AFOS.include?(afo_name) %>
+
+<h3 id="<%= afo_name %>"><%= afo_name %>
+<a href="https://gemspec.gematik.de/search?<%= afo_name %>">🔗</a>
+</h3>
+<% if AFOS[afo_name] %>
+
+<h4>Requirement <a href="https://gemspec.gematik.de/docs/gemSpec/<%= spec_name %>/latest/index.html#<%= afo_name %>">Gemspec Pages</a>:</h4>
+
+<%= AFOS[afo_name] %>
+
+<% end %>
+<h4>Notes and Code:</h4>
+
+<% details.each do |details| %>
+
+<% if details['source'] == "intro" %>
+<p><%= details['description'] %></p>
+<% else %>
+<%= "<h5>#{details['part']} </h5>" if details['part'] %>
+<p><%= details['description'] %></p>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/<%= details['file'].sub("../", "") %>#L<%= details['line'] %>"><%= details['file'].sub("../", "") %>:<%= details['line'] %></a>
+<code><%= details['code'] %></code>
+
+<% end %>
+
+<% end %>
+
+<% end %>
+<% end %>
+
+</body>
+</html>

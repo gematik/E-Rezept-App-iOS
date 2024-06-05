@@ -21,7 +21,7 @@ import Foundation
 import OpenSSL
 
 /// Bundles data needed for creating and verifiying a pairing.
-/// [REQ:gemF_Biometrie:A_21415:Registration_Data]
+/// [REQ:gemSpec_IDP_Dienst:A_21415:Registration_Data]
 /// [REQ:gemSpec_IDP_Frontend:A_21416] Data Structure
 public struct RegistrationData: Claims, Codable {
     public init(
@@ -49,7 +49,7 @@ public struct RegistrationData: Claims, Codable {
         case registrationDataVersion = "registration_data_version"
     }
 
-    /// [REQ:gemF_Biometrie:A_21415:Device_Information]
+    /// [REQ:gemSpec_IDP_Dienst:A_21415:Device_Information]
     public struct DeviceInformation: Codable {
         public init(
             name: String,
@@ -65,7 +65,7 @@ public struct RegistrationData: Claims, Codable {
 
         let deviceInformationDataVersion: String
 
-        /// [REQ:gemF_Biometrie:A_21415:Device_Type]
+        /// [REQ:gemSpec_IDP_Dienst:A_21415:Device_Type]
         /// [REQ:gemSpec_IDP_Frontend:A_21591]
         public struct DeviceType: Codable {
             public init(
@@ -113,7 +113,7 @@ public struct RegistrationData: Claims, Codable {
         return jsonEncoder
     }()
 
-    /// [REQ:gemF_Biometrie:A_21415:Encrypted_Registration_Data] Returns JWE encrypted Registration_Data
+    /// [REQ:gemSpec_IDP_Dienst:A_21415:Encrypted_Registration_Data] Returns JWE encrypted Registration_Data
     /// [REQ:gemSpec_IDP_Frontend:A_21416] Encryption
     func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
                    using cryptoBox: IDPCrypto) throws -> JWE {

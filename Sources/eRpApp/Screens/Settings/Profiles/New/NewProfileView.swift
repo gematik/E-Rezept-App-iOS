@@ -22,104 +22,78 @@ import IDP
 import SwiftUI
 
 struct NewProfileView: View {
-    let store: NewProfileDomain.Store
-
-    @ObservedObject var viewStore: ViewStore<ViewState, NewProfileDomain.Action>
-
-    init(store: NewProfileDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let destinationTag: NewProfileDomain.Destinations.State.Tag?
-        let color: ProfileColor
-        let picture: ProfilePicture
-        let userImageData: Data
-        let name: String
-
-        init(with state: NewProfileDomain.State) {
-            color = state.color
-            picture = state.image ?? .none
-            userImageData = state.userImageData ?? .empty
-            destinationTag = state.destination?.tag
-            name = state.name
-        }
-    }
+    @Perception.Bindable var store: StoreOf<NewProfileDomain>
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 0) {
-                    ProfilePictureView(
-                        image: viewStore.picture,
-                        userImageData: viewStore.userImageData,
-                        color: viewStore.color,
-                        connection: nil,
-                        style: .xxLarge,
-                        isBorderOn: true
-                    ) {
-                        viewStore.send(.setNavigation(tag: .editProfilePicture))
-                    }
-
-                    NavigationLinkStore(
-                        store.scope(state: \.$destination, action: NewProfileDomain.Action.destination),
-                        state: /NewProfileDomain.Destinations.State.editProfilePicture,
-                        action: NewProfileDomain.Destinations.Action.editProfilePictureAction,
-                        onTap: { viewStore.send(.setNavigation(tag: .editProfilePicture)) },
-                        destination: { store in
-                            EditProfilePictureView(store: store)
-                                .navigationTitle(L10n.editPictureTxt)
-                                .navigationBarTitleDisplayMode(.inline)
-                        },
-                        label: { Text(L10n.stgBtnEditPicture) }
-                    )
-
-                    SingleElementSectionContainer {
-                        FormTextField(
-                            L10n.stgTxtNewProfileNamePlaceholder.key,
-                            bundle: .module,
-                            text: viewStore.binding(get: \.name, send: NewProfileDomain.Action.setName)
+        WithPerceptionTracking {
+            NavigationView {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ProfilePictureView(
+                            image: store.image,
+                            userImageData: store.userImageData,
+                            color: store.color,
+                            connection: nil,
+                            style: .xxLarge,
+                            isBorderOn: true
+                        ) {
+                            store.send(.tappedEditProfilePicture)
+                        }
+                        NavigationLink(
+                            item: $store.scope(
+                                state: \.destination?.editProfilePicture,
+                                action: \.destination.editProfilePicture
+                            ),
+                            onTap: { store.send(.tappedEditProfilePicture) },
+                            destination: { store in
+                                EditProfilePictureView(store: store)
+                                    .navigationTitle(L10n.editPictureTxt)
+                                    .navigationBarTitleDisplayMode(.inline)
+                            },
+                            label: {
+                                Text(L10n.stgBtnEditPicture)
+                            }
                         )
-                        .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
-                    }
-                }
 
-                Spacer(minLength: 0)
-            }
-            .background(Color(.secondarySystemBackground).ignoresSafeArea())
-            .gesture(TapGesture().onEnded {
-                UIApplication.shared.dismissKeyboard()
-            })
-            .navigationBarTitle(L10n.stgTxtNewProfileTitle, displayMode: .inline)
-            .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    NavigationBarCloseItem {
-                        viewStore.send(.closeButtonTapped)
+                        SingleElementSectionContainer {
+                            FormTextField(
+                                L10n.stgTxtNewProfileNamePlaceholder.key,
+                                bundle: .module,
+                                text: $store.name
+                            )
+                            .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
+                        }
                     }
-                    .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileCancel)
-                    .embedToolbarContent()
+
+                    Spacer(minLength: 0)
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(action: {
-                        viewStore.send(.save)
-                    }, label: {
-                        Text(L10n.stgBtnNewProfileCreate)
-                    })
-                        .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileSave)
+                .background(Color(.secondarySystemBackground).ignoresSafeArea())
+                .gesture(TapGesture().onEnded {
+                    UIApplication.shared.dismissKeyboard()
+                })
+                .navigationBarTitle(L10n.stgTxtNewProfileTitle, displayMode: .inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigation) {
+                        NavigationBarCloseItem {
+                            store.send(.closeButtonTapped)
+                        }
+                        .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileCancel)
                         .embedToolbarContent()
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(action: {
+                            store.send(.save)
+                        }, label: {
+                            Text(L10n.stgBtnNewProfileCreate)
+                        })
+                            .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileSave)
+                            .embedToolbarContent()
+                    }
                 }
+                .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             }
-            .alert(
-                store: store.scope(
-                    state: \.$destination,
-                    action: NewProfileDomain.Action.destination
-                ),
-                state: /NewProfileDomain.Destinations.State.alert,
-                action: NewProfileDomain.Destinations.Action.alert
-            )
+            .accentColor(Colors.primary600)
         }
-        .accentColor(Colors.primary600)
     }
 }
 

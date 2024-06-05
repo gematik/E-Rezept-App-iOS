@@ -67,4 +67,5 @@ extension PagedAuditEventsController {}
 extension AuditEventsService {}
 extension PharmacyRepository {}
 extension OrdersRepository {}
+extension JWTSigner {}
 // sourcery:end

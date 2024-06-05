@@ -21,9 +21,9 @@ import ComposableArchitecture
 import Foundation
 import IDP
 
-struct CardWallCANDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct CardWallCANDomain {
+    @ObservableState
     struct State: Equatable {
         let isDemoModus: Bool
         let profileId: UUID
@@ -32,39 +32,17 @@ struct CardWallCANDomain: ReducerProtocol {
         var wrongCANEntered = false
         var scannedCAN: String?
         var isFlashOn = false
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardWall_PIN
-            case pin(CardWallPINDomain.State)
-            // sourcery: AnalyticsScreen = contactInsuranceCompany
-            case egk(OrderHealthCardDomain.State)
-            // sourcery: AnalyticsScreen = cardWall_scanCAN
-            case scanner
-        }
-
-        enum Action: Equatable {
-            case pinAction(action: CardWallPINDomain.Action)
-            case egkAction(action: OrderHealthCardDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.pin,
-                action: /Action.pinAction
-            ) {
-                CardWallPINDomain()
-            }
-
-            Scope(
-                state: /State.egk,
-                action: /Action.egkAction(action:)
-            ) {
-                OrderHealthCardDomain()
-            }
-        }
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = cardWall_PIN
+        case pin(CardWallPINDomain)
+        // sourcery: AnalyticsScreen = contactInsuranceCompany
+        case egk(OrderHealthCardDomain)
+        // sourcery: AnalyticsScreen = cardWall_scanCAN
+        case scanner
     }
 
     enum Action: Equatable {
@@ -74,8 +52,9 @@ struct CardWallCANDomain: ReducerProtocol {
         case toggleFlashLight
         case flashLightOff
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case egkButtonTapped
+        case destination(PresentationAction<Destination.Action>)
 
         case delegate(Delegate)
 
@@ -89,15 +68,13 @@ struct CardWallCANDomain: ReducerProtocol {
     @Dependency(\.profileBasedSessionProvider) var sessionProvider: ProfileBasedSessionProvider
     @Dependency(\.schedulers) var schedulers: Schedulers
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
     // swiftlint:disable:next cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .update(can: can):
             state.can = can
@@ -111,7 +88,7 @@ struct CardWallCANDomain: ReducerProtocol {
                 .destination = .pin(CardWallPINDomain
                     .State(isDemoModus: state.isDemoModus, profileId: state.profileId, transition: .push))
             return .none
-        case .setNavigation(tag: .egk):
+        case .egkButtonTapped:
             state.destination = .egk(.init())
             return .none
         case .toggleFlashLight:
@@ -120,14 +97,14 @@ struct CardWallCANDomain: ReducerProtocol {
         case .showScannerView:
             state.destination = .scanner
             return .none
-        case .setNavigation(tag: .none),
-             .destination(.presented(.egkAction(action: .delegate(.close)))):
+        case .resetNavigation,
+             .destination(.presented(.egk(.delegate(.close)))):
             state.destination = nil
             return .none
-        case let .destination(.presented(.pinAction(.delegate(delegateAction)))):
+        case let .destination(.presented(.pin(.delegate(delegateAction)))):
             switch delegateAction {
             case .close:
-                return EffectTask.send(.delegate(.close))
+                return Effect.send(.delegate(.close))
             case .wrongCanClose:
                 state.destination = nil
                 return .none
@@ -139,10 +116,9 @@ struct CardWallCANDomain: ReducerProtocol {
                     await send(.delegate(.navigateToIntro))
                 }
             case .unlockCardClose:
-                return EffectTask.send(.delegate(.unlockCardClose))
+                return Effect.send(.delegate(.unlockCardClose))
             }
-        case .setNavigation,
-             .delegate,
+        case .delegate,
              .destination:
             return .none
         case .flashLightOff:
@@ -158,7 +134,7 @@ extension CardWallCANDomain {
 
         static let store = storeFor(state)
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<CardWallCANDomain> {
             Store(initialState: state) {
                 CardWallCANDomain()
             }

@@ -21,78 +21,71 @@ import eRpStyleKit
 import SwiftUI
 
 struct HealthCardSectionView: View {
-    let store: SettingsDomain.Store
-
-    @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
-
-    init(store: SettingsDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(self.store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let destinationTag: SettingsDomain.Destinations.State.Tag?
-
-        init(state: SettingsDomain.State) {
-            destinationTag = state.destination?.tag
-        }
-    }
+    @Perception.Bindable var store: StoreOf<SettingsDomain>
 
     var body: some View {
-        SectionContainer(
-            header: {
-                Text(L10n.stgTxtCardSectionHeader)
-            },
-            content: {
-                // Destination: "Order health card"
-                NavigationLinkStore(
-                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
-                    state: /SettingsDomain.Destinations.State.egk,
-                    action: SettingsDomain.Destinations.Action.egkAction,
-                    onTap: { viewStore.send(.setNavigation(tag: .egk)) },
-                    destination: OrderHealthCardListView.init(store:),
-                    label: { Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon) }
-                )
-                .accessibility(identifier: A11y.settings.card.stgTxtCardOrderNewCard)
-                .buttonStyle(.navigation)
+        WithPerceptionTracking {
+            SectionContainer(
+                header: {
+                    Text(L10n.stgTxtCardSectionHeader)
+                },
+                content: {
+                    NavigationLink(
+                        item: $store.scope(
+                            state: \.destination?.egk,
+                            action: \.destination.egk
+                        ),
+                        onTap: { store.send(.tappedEgk) },
+                        destination: { store in OrderHealthCardListView(store: store) },
+                        label: {
+                            Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon)
+                        }
+                    )
+                    .accessibility(identifier: A11y.settings.card.stgTxtCardOrderNewCard)
+                    .buttonStyle(.navigation)
 
-                // Destination: "Forgot PIN"
-                NavigationLinkStore(
-                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
-                    state: /SettingsDomain.Destinations.State.healthCardPasswordForgotPin,
-                    action: SettingsDomain.Destinations.Action.healthCardPasswordForgotPinAction,
-                    onTap: { viewStore.send(.setNavigation(tag: .healthCardPasswordForgotPin)) },
-                    destination: HealthCardPasswordView.init(store:),
-                    label: { Label(L10n.stgTxtCardForgotPin, systemImage: SFSymbolName.questionmarkCircle) }
-                )
-                .accessibility(identifier: A11y.settings.card.stgTxtCardForgotPin)
-                .buttonStyle(.navigation)
+                    // Destination: "Forgot PIN"
+                    NavigationLink(
+                        item: $store.scope(state: \.destination?.healthCardPasswordForgotPin,
+                                           action: \.destination.healthCardPasswordForgotPin),
+                        onTap: { store.send(.tappedForgotPin) },
+                        destination: { store in HealthCardPasswordIntroductionView(store: store) },
+                        label: {
+                            Label(L10n.stgTxtCardForgotPin,
+                                  systemImage: SFSymbolName.questionmarkCircle)
+                        }
+                    ).accessibility(identifier: A11y.settings.card.stgTxtCardForgotPin)
+                        .buttonStyle(.navigation)
 
-                // Destination: "Set a custom PIN"
-                NavigationLinkStore(
-                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
-                    state: /SettingsDomain.Destinations.State.healthCardPasswordSetCustomPin,
-                    action: SettingsDomain.Destinations.Action.healthCardPasswordSetCustomPinAction,
-                    onTap: { viewStore.send(.setNavigation(tag: .healthCardPasswordSetCustomPin)) },
-                    destination: HealthCardPasswordView.init(store:),
-                    label: { Label(L10n.stgTxtCardCustomPin, systemImage: SFSymbolName.cardIconAnd123) }
-                )
-                .accessibility(identifier: A11y.settings.card.stgTxtCardCustomPin)
-                .buttonStyle(.navigation)
+                    // Destination: "Set a custom PIN"
+                    NavigationLink(
+                        item: $store.scope(state: \.destination?.healthCardPasswordSetCustomPin,
+                                           action: \.destination
+                                               .healthCardPasswordSetCustomPin),
+                        onTap: { store.send(.tappedCustomPin) },
+                        destination: { store in HealthCardPasswordIntroductionView(store: store) },
+                        label: {
+                            Label(L10n.stgTxtCardCustomPin,
+                                  systemImage: SFSymbolName.cardIconAnd123)
+                        }
+                    ).accessibility(identifier: A11y.settings.card.stgTxtCardCustomPin)
+                        .buttonStyle(.navigation)
 
-                // Destination: "Unlock health card"
-                NavigationLinkStore(
-                    store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
-                    state: /SettingsDomain.Destinations.State.healthCardPasswordUnlockCard,
-                    action: SettingsDomain.Destinations.Action.healthCardPasswordUnlockCardAction,
-                    onTap: { viewStore.send(.setNavigation(tag: .healthCardPasswordUnlockCard)) },
-                    destination: HealthCardPasswordView.init(store:),
-                    label: { Label(L10n.stgTxtCardUnlockCard, systemImage: SFSymbolName.lockRotation) }
-                )
-                .accessibility(identifier: A11y.settings.card.stgTxtCardUnlockCard)
-                .buttonStyle(.navigation)
-            }
-        )
+                    // Destination: "Unlock health card"
+                    NavigationLink(
+                        item: $store.scope(state: \.destination?.healthCardPasswordUnlockCard,
+                                           action: \.destination.healthCardPasswordUnlockCard),
+                        onTap: { store.send(.tappedUnlockCard) },
+                        destination: { store in HealthCardPasswordIntroductionView(store: store) },
+                        label: {
+                            Label(L10n.stgTxtCardUnlockCard,
+                                  systemImage: SFSymbolName.lockRotation)
+                        }
+                    ).accessibility(identifier: A11y.settings.card.stgTxtCardUnlockCard)
+                        .buttonStyle(.navigation)
+                }
+            )
+        }
     }
 }
 

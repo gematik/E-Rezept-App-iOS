@@ -29,7 +29,7 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
         diffTool = "open"
     }
 
-    func store(for state: PharmacyDetailDomain.State) -> PharmacyDetailDomain.Store {
+    func store(for state: PharmacyDetailDomain.State) -> StoreOf<PharmacyDetailDomain> {
         .init(initialState: state) {
             EmptyReducer()
         }

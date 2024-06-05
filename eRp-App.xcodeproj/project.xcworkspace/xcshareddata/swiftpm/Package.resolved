@@ -3,7 +3,7 @@
     {
       "identity" : "asn1kit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/gematik/ASN1Kit.git",
+      "location" : "https://github.com/gematik/ASN1Kit",
       "state" : {
         "revision" : "605113f951fd31c083e66e3197309f42b968d800",
         "version" : "1.2.1"
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/combine-schedulers",
       "state" : {
-        "revision" : "ec62f32d21584214a4b27c8cee2b2ad70ab2c38a",
-        "version" : "0.11.0"
+        "revision" : "9dc9cbe4bc45c65164fa653a563d8d8db61b09bb",
+        "version" : "1.0.0"
       }
     },
     {
@@ -30,10 +30,9 @@
     {
       "identity" : "composable-core-location",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/composable-core-location",
+      "location" : "https://github.com/rcasula/composable-core-location",
       "state" : {
-        "revision" : "68cb1f3eea43275859b7141acfd6f7cb47137096",
-        "version" : "0.3.0"
+        "revision" : "40a98e18d0350fd1a1efa83c24aca3044b9b7bd2"
       }
     },
     {
@@ -41,8 +40,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ContentSquare/CS_iOS_CrashReporter.git",
       "state" : {
-        "revision" : "a7928e21ed17d42a61f80296f4114fd7dee17f2d",
-        "version" : "0.0.3"
+        "revision" : "105d2d400aa2bc85b70c44fd0baca9ef4d258922",
+        "version" : "1.0.0"
       }
     },
     {
@@ -50,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ContentSquare/CS_iOS_SDK",
       "state" : {
-        "revision" : "9936beffca3d1255f06a20233119364fc8b6ffbd",
-        "version" : "4.29.1"
+        "revision" : "cba1dad6ecc5c412e3a7e289b554b1f03ceba039",
+        "version" : "4.32.0"
       }
     },
     {
@@ -75,7 +74,7 @@
     {
       "identity" : "datakit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftCommon/DataKit.git",
+      "location" : "https://github.com/SwiftCommon/DataKit",
       "state" : {
         "revision" : "08cc443adbe1103ba36e1c187fa313b8e412ad60",
         "version" : "1.1.0"
@@ -113,8 +112,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gematik/OpenSSL-Swift",
       "state" : {
-        "revision" : "2ff3b2b7745f86eaa6a94c44299dd4f330a0943a",
-        "version" : "4.1.0"
+        "revision" : "37e10b7ef220afca4483d614a9d67697fb345959",
+        "version" : "4.2.0"
       }
     },
     {
@@ -131,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gematik/ref-OpenHealthCardKit/",
       "state" : {
-        "revision" : "dbfcc96fe324d854b050e322d661bade74777d74",
-        "version" : "5.6.0"
+        "revision" : "0440510a1ae1756725a73162c210f3f15c4d4727",
+        "version" : "5.8.0"
       }
     },
     {
@@ -140,8 +139,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "fc45e7b2cfece9dd80b5a45e6469ffe67fe67984",
-        "version" : "0.14.1"
+        "revision" : "8d712376c99fc0267aa0e41fea732babe365270a",
+        "version" : "1.3.3"
       }
     },
     {
@@ -149,8 +148,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-clocks",
       "state" : {
-        "revision" : "0fbaebfc013715dab44d715a4d350ba37f297e4d",
-        "version" : "0.4.0"
+        "revision" : "a8421d68068d8f45fbceb418fbf22c5dad4afd33",
+        "version" : "1.0.2"
       }
     },
     {
@@ -158,8 +157,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "d029d9d39c87bed85b1c50adee7c41795261a192",
-        "version" : "1.0.6"
+        "revision" : "94cf62b3ba8d4bed62680a282d4c25f9c63c2efb",
+        "version" : "1.1.0"
       }
     },
     {
@@ -167,8 +166,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-composable-architecture",
       "state" : {
-        "revision" : "9f4202ab5b8422aa90f0ed983bf7652c3af7abf0",
-        "version" : "0.59.0"
+        "revision" : "433a23118f739078644ebeb4009e23d307af694a",
+        "version" : "1.10.4"
       }
     },
     {
@@ -176,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-concurrency-extras",
       "state" : {
-        "revision" : "479750bd98fac2e813fffcf2af0728b5b0085795",
-        "version" : "0.1.1"
+        "revision" : "bb5059bde9022d69ac516803f4f227d8ac967f71",
+        "version" : "1.1.0"
       }
     },
     {
@@ -185,8 +184,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-custom-dump",
       "state" : {
-        "revision" : "4a87bb75be70c983a9548597e8783236feb3401e",
-        "version" : "0.11.1"
+        "revision" : "f01efb26f3a192a0e88dcdb7c3c391ec2fc25d9c",
+        "version" : "1.3.0"
       }
     },
     {
@@ -194,17 +193,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-dependencies",
       "state" : {
-        "revision" : "16fd42ae04c6e7f74a6a86395d04722c641cccee",
-        "version" : "0.6.0"
+        "revision" : "350e1e119babe8525f9bd155b76640a5de270184",
+        "version" : "1.3.0"
       }
     },
     {
       "identity" : "swift-gempdfkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/gematik/swift-gemPDFKit.git",
+      "location" : "https://github.com/gematik/swift-gemPDFKit",
       "state" : {
-        "revision" : "d54cae3201e19ec83a4771c22a59b3d9d1524b23",
-        "version" : "0.1.0"
+        "revision" : "06851ed602e5b3bbd3aedf0dd8d91372de9fa11d",
+        "version" : "0.1.1"
       }
     },
     {
@@ -212,8 +211,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-identified-collections",
       "state" : {
-        "revision" : "d01446a78fb768adc9a78cbb6df07767c8ccfc29",
-        "version" : "0.8.0"
+        "revision" : "d533cd18b0b456b106694a9899f917ee595f2666",
+        "version" : "1.0.2"
       }
     },
     {
@@ -221,8 +220,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-parsing",
       "state" : {
-        "revision" : "27c941bbd22a4bbc53005a15a0440443fd892f70",
-        "version" : "0.12.1"
+        "revision" : "a0e7d73f462c1c38c59dc40a3969ac40cea42950",
+        "version" : "0.13.0"
+      }
+    },
+    {
+      "identity" : "swift-perception",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-perception",
+      "state" : {
+        "revision" : "8e8ca36c02abc7775a3ab81f9468c0df5fe22c2c",
+        "version" : "1.1.7"
       }
     },
     {
@@ -239,8 +247,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "8e68404f641300bfd0e37d478683bb275926760c",
-        "version" : "1.15.2"
+        "revision" : "625ccca8570773dd84a34ee51a81aa2bc5a4f97a",
+        "version" : "1.16.0"
       }
     },
     {
@@ -257,8 +265,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "121c146fe591b1320238d054ae35c81ffa45f45a",
-        "version" : "0.12.0"
+        "revision" : "7dc5b287f8040e4ad5038739850b758e78f77808",
+        "version" : "1.1.4"
       }
     },
     {
@@ -266,8 +274,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swiftui-navigation",
       "state" : {
-        "revision" : "2aa885e719087ee19df251c08a5980ad3e787f12",
-        "version" : "0.8.0"
+        "revision" : "d9e72f3083c08375794afa216fb2f89c0114f303",
+        "version" : "1.2.1"
       }
     },
     {
@@ -275,8 +283,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "50843cbb8551db836adec2290bb4bc6bac5c1865",
-        "version" : "0.9.0"
+        "revision" : "6f30bdba373bbd7fbfe241dddd732651f2fbd1e2",
+        "version" : "1.1.2"
       }
     },
     {

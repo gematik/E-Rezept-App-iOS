@@ -22,28 +22,19 @@ import Dependencies
 import eRpKit
 import SwiftUI
 
-struct MedicationDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = prescriptionDetail_medication_ingredients
-            case ingredient(IngredientDomain.State)
-        }
-
-        enum Action: Equatable {
-            case ingredient(IngredientDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            EmptyReducer()
-        }
+@Reducer
+struct MedicationDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = prescriptionDetail_medication_ingredients
+        case ingredient(IngredientDomain)
     }
 
+    @ObservableState
     struct State: Equatable {
         let medication: ErxMedication?
         let dispenseState: DispenseState?
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
 
         init(subscribed: ErxMedication) {
             medication = subscribed
@@ -73,12 +64,12 @@ struct MedicationDomain: ReducerProtocol {
     }
 
     enum Action: Equatable {
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
         case showIngredient(ErxMedication.Ingredient)
-        case setNavigation(tag: Destinations.State.Tag?)
+        case resetNavigation
     }
 
-    var body: some ReducerProtocolOf<Self> {
+    var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case let .showIngredient(ingredient):
@@ -90,17 +81,14 @@ struct MedicationDomain: ReducerProtocol {
                 )
                 state.destination = .ingredient(ingredientState)
                 return .none
-            case .setNavigation(tag: .none):
+            case .resetNavigation:
                 state.destination = nil
                 return .none
-            case .setNavigation,
-                 .destination:
+            case .destination:
                 return .none
             }
         }
-        .ifLet(\.$destination, action: /Action.destination) {
-            Destinations()
-        }
+        .ifLet(\.$destination, action: \.destination)
     }
 }
 
@@ -110,7 +98,7 @@ extension ErxMedication {
               let localizedStringKey = KBVMappingKeys.dosageFormMappingKeys[dosageFormKey.lowercased()] else {
             return dosageForm
         }
-        return NSLocalizedString(localizedStringKey, comment: "")
+        return NSLocalizedString(localizedStringKey, bundle: .module, comment: "")
     }
 }
 
@@ -120,7 +108,7 @@ extension ErxMedication.Ingredient {
               let localizedStringKey = KBVMappingKeys.dosageFormMappingKeys[dosageFormKey.lowercased()] else {
             return form
         }
-        return NSLocalizedString(localizedStringKey, comment: "")
+        return NSLocalizedString(localizedStringKey, bundle: .module, comment: "")
     }
 
     var strengthDescription: String? {

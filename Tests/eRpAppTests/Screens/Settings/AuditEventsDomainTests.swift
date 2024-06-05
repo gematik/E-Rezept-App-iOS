@@ -83,7 +83,7 @@ final class AuditEventsDomainTests: XCTestCase {
         let expectedResponse = PagedContent(content: ErxAuditEvent.Fixtures.auditEvents, next: nil)
         mockAuditEventsService.loadAuditEventsForLocaleReturnValue = Just(expectedResponse)
             .setFailureType(to: AuditEventsServiceError.self).eraseToAnyPublisher()
-        await sut.send(.destination(.presented(.cardWall(action: .delegate(.close))))) {
+        await sut.send(.destination(.presented(.cardWall(.delegate(.close))))) {
             $0.destination = nil
         }
         await sut.receive(.task)

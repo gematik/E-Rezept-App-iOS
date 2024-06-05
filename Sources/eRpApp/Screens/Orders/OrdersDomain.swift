@@ -23,21 +23,30 @@ import IdentifiedCollections
 import Pharmacy
 import UIKit
 
-struct OrdersDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
+@Reducer
+struct OrdersDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = orders_detail
+        case orderDetail(OrderDetailDomain)
+        @ReducerCaseEphemeral
+        // sourcery: AnalyticsScreen = alert
+        case alert(ErpAlertState<Never>)
+    }
 
+    @ObservableState
     struct State: Equatable {
         var isLoading = false
         var orders: IdentifiedArrayOf<Order> = []
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     enum Action: Equatable {
         case task
         case didSelect(String)
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case resetNavigation
+        case destination(PresentationAction<Destination.Action>)
 
         case response(Response)
 
@@ -46,44 +55,15 @@ struct OrdersDomain: ReducerProtocol {
         }
     }
 
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = orders_detail
-            case orderDetail(OrderDetailDomain.State)
-            // sourcery: AnalyticsScreen = alert
-            case alert(ErpAlertState<Action.Alert>)
-        }
-
-        enum Action: Equatable {
-            case orderDetail(action: OrderDetailDomain.Action)
-            case alert(Alert)
-
-            enum Alert: Equatable {
-                case dismiss
-            }
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.orderDetail,
-                action: /Action.orderDetail(action:)
-            ) {
-                OrderDetailDomain()
-            }
-        }
-    }
-
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.ordersRepository) var ordersRepository: OrdersRepository
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
-    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
             state.isLoading = true
@@ -111,11 +91,10 @@ struct OrdersDomain: ReducerProtocol {
                 )
             }
             return .none
-        case .setNavigation(tag: .none):
+        case .resetNavigation:
             state.destination = nil
             return .none
-        case .setNavigation,
-             .destination:
+        case .destination:
             return .none
         }
     }
@@ -126,13 +105,13 @@ extension OrdersDomain {
         static let state =
             State(orders: IdentifiedArray(uniqueElements: Order.Dummies.multipleOrderCommunications))
 
-        static let store = Store(
+        static let store = StoreOf<OrdersDomain>(
             initialState: state
         ) {
             OrdersDomain()
         }
 
-        static func storeFor(_ state: State) -> Store {
+        static func storeFor(_ state: State) -> StoreOf<OrdersDomain> {
             Store(
                 initialState: state
             ) {

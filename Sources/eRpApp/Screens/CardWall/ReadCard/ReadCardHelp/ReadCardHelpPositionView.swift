@@ -21,59 +21,61 @@ import eRpStyleKit
 import SwiftUI
 
 struct ReadCardHelpPositionView: View {
-    let store: Store<ReadCardHelpDomain.State, ReadCardHelpDomain.Action>
+    @Perception.Bindable var store: Store<ReadCardHelpDomain.State, ReadCardHelpDomain.Action>
 
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    Text(L10n.cdwTxtRcTipTwo)
-                        .foregroundColor(Colors.systemGray)
+        WithPerceptionTracking {
+            VStack {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        Text(L10n.cdwTxtRcTipTwo)
+                            .foregroundColor(Colors.systemGray)
+                            .padding()
+                            .overlay(
+                                Rectangle()
+                                    .foregroundColor(Colors.systemGray5)
+                                    .opacity(0.4)
+                                    .cornerRadius(8)
+                            )
+                            .padding(.top)
+
+                        Text(L10n.cdwTxtRcPositionHeader)
+                            .font(.system(size: 30))
+                            .bold()
+                            .padding(.top)
+
+                        Text(L10n.cdwTxtRcPositionContent)
+                            .padding(.top)
+                    }
+
+                    Image(asset: Asset.CardReader.cardReadPosition2)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .padding()
-                        .overlay(
-                            Rectangle()
-                                .foregroundColor(Colors.systemGray5)
-                                .opacity(0.4)
-                                .cornerRadius(8)
-                        )
-                        .padding(.top)
-
-                    Text(L10n.cdwTxtRcPositionHeader)
-                        .font(.system(size: 30))
-                        .bold()
-                        .padding(.top)
-
-                    Text(L10n.cdwTxtRcPositionContent)
-                        .padding(.top)
                 }
-
-                Image(asset: Asset.CardReader.cardReadPosition2)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .padding()
             }
+            .navigationBarItems(
+                leading: Button(action: {
+                    store.send(.updatePageIndex(.first))
+                }, label: {
+                    HStack {
+                        Image(systemName: SFSymbolName.back).padding(0)
+                            .foregroundColor(Colors.primary700)
+                        Text(L10n.cdwBtnRcHelpBack)
+                            .font(.body)
+                            .foregroundColor(Colors.primary700)
+                            .padding(0)
+                    }
+                }),
+                trailing: Button(L10n.cdwBtnRcNextTip) {
+                    store.send(.updatePageIndex(.third))
+                }
+                .accessibility(label: Text(L10n.cdwBtnRcNextTip))
+                .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcHelpNextTip)
+            )
+            .padding()
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationBarItems(
-            leading: Button(action: {
-                store.send(.delegate(.updatePageIndex(.first)))
-            }, label: {
-                HStack {
-                    Image(systemName: SFSymbolName.back).padding(0)
-                        .foregroundColor(Colors.primary700)
-                    Text(L10n.cdwBtnRcHelpBack)
-                        .font(.body)
-                        .foregroundColor(Colors.primary700)
-                        .padding(0)
-                }
-            }),
-            trailing: Button(L10n.cdwBtnRcNextTip) {
-                store.send(.delegate(.updatePageIndex(.third)))
-            }
-            .accessibility(label: Text(L10n.cdwBtnRcNextTip))
-            .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcHelpNextTip)
-        )
-        .padding()
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

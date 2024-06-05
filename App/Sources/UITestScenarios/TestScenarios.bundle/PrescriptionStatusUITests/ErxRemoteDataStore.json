@@ -842,8 +842,8 @@
                         "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.06",
                         "authoredOn": "{{DATE:-15D}}",
                         "status": "ready",
-                        "expiresOn": "2024-04-16",
-                        "acceptedUntil": "2024-02-13",
+                        "expiresOn": "{{DATE:+90D}}",
+                        "acceptedUntil": "{{DATE:+24D}}",
                         "practitioner":
                         {
                             "qualification": "travel agent",
@@ -931,8 +931,8 @@
                         "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.07",
                         "authoredOn": "{{DATE:-16D}}",
                         "status": "in-progress",
-                        "expiresOn": "2024-04-16",
-                        "acceptedUntil": "2024-02-13",
+                        "expiresOn": "{{DATE:+90D}}",
+                        "acceptedUntil": "{{DATE:+24D}}",
                         "practitioner":
                         {
                             "qualification": "travel agent",
@@ -1020,8 +1020,8 @@
                         "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.08",
                         "authoredOn": "{{DATE:-17D}}",
                         "status": "in-progress",
-                        "expiresOn": "2024-04-16",
-                        "acceptedUntil": "2024-02-13",
+                        "expiresOn": "{{DATE:+90D}}",
+                        "acceptedUntil": "{{DATE:+24D}}",
                         "practitioner":
                         {
                             "qualification": "travel agent",
@@ -1109,8 +1109,8 @@
                         "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.09",
                         "authoredOn": "{{DATE:-18D}}",
                         "status": "completed",
-                        "expiresOn": "2024-04-16",
-                        "acceptedUntil": "2024-02-13",
+                        "expiresOn": "{{DATE:+90D}}",
+                        "acceptedUntil": "{{DATE:+24D}}",
                         "practitioner":
                         {
                             "qualification": "travel agent",

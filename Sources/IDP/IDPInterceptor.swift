@@ -71,7 +71,7 @@ public class IDPInterceptor: Interceptor {
                     return request
                 }
                 .mapError { error in
-                    // [REQ:gemSpec_eRp_FdV:A_20167] no token available, bailout
+                    // [REQ:gemSpec_eRp_FdV:A_20167-02#4] no token available, bailout
                     .authentication(error)
                 }
                 .flatMap { request -> AnyPublisher<HTTPResponse, HTTPClientError> in
@@ -80,7 +80,7 @@ public class IDPInterceptor: Interceptor {
                         .proceed(request: request)
                         .handleEvents(receiveOutput: { httpResponse in
                             if httpResponse.status == HTTPStatusCode.unauthorized {
-                                // [REQ:gemSpec_eRp_FdV:A_20167] invalidate/delete unauthorized token
+                                // [REQ:gemSpec_eRp_FdV:A_20167-02#5] invalidate/delete unauthorized token
                                 // [REQ:BSI-eRp-ePA:O.Source_5#2] invalidate/delete unauthorized token
                                 self.session.invalidateAccessToken()
                             }

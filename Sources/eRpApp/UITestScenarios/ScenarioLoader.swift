@@ -58,6 +58,7 @@ extension SceneDelegate {
         if ProcessInfo.processInfo.environment["UITEST.DISABLE_ANIMATIONS"] != nil {
             mainWindow?.layer.speed = 1000
         }
+        @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
 
         if ProcessInfo.processInfo.environment["UITEST.RESET"] != nil {
             if let domain = Bundle.main.bundleIdentifier {
@@ -65,6 +66,11 @@ extension SceneDelegate {
                 UserDefaults.standard.synchronize()
             }
             _ = try? FileManager.default.removeItem(at: LocalStoreFactory.defaultDatabaseUrl)
+
+            _ = try? appSecurityManager.save(password: "")
+        }
+        if let password = ProcessInfo.processInfo.environment["UITEST.SET_APPLICATION_PASSWORD"] {
+            _ = try? appSecurityManager.save(password: password)
         }
 
         if let flagsString = ProcessInfo.processInfo.environment["UITEST.FLAGS"] {
@@ -80,8 +86,8 @@ extension SceneDelegate {
 }
 
 #if DEBUG
-extension ReducerProtocol {
-    func setupUITests() -> some ReducerProtocol<Self.State, Self.Action> {
+extension Reducer {
+    func setupUITests() -> some Reducer<Self.State, Self.Action> {
         let isRecording = ProcessInfo.processInfo.environment["UITEST.RECORD_MOCKS"] != nil
         let scenario: Scenario?
 
@@ -110,6 +116,12 @@ extension ReducerProtocol {
             }
             dependencies.erxRemoteDataStoreFactory = ErxRemoteDataStoreFactory { fhirClient in
                 SmartMocks.shared.smartMockErxRemoteDataStore(fhirClient: fhirClient, scenario, isRecording)
+            }
+            // this clashes with erxRemoteDataStoreFactory, as accessing the underlying IDPSession calls the usersession
+            // that then prematurely calls the erxRemoteDataStoreFactory from above. The `if`can be removed as soon as
+            // we use shared state for the current user
+            if scenario?.idpSession != nil {
+                dependencies.idpSession = SmartMocks.shared.smartMockIDPSession(scenario, isRecording)
             }
             dependencies
                 .loginHandlerServiceFactory = LoginHandlerServiceFactory { idpSession, signatureProvider in
@@ -244,6 +256,22 @@ struct SmartMocks {
         smartMockRedeemService = mock
         return mock
     }
+
+    private var smartMockIDPSession: SmartMockIDPSession?
+    mutating func smartMockIDPSession(_ scenario: Scenario?, _ isRecording: Bool) -> IDPSession {
+        if let existingMock = smartMockIDPSession {
+            return existingMock
+        }
+        @Dependency(\.idpSession) var idpSession: IDPSession
+        let mock = SmartMockIDPSession(
+            wrapped: idpSession,
+            mocks: scenario?.idpSession,
+            isRecording: isRecording
+        )
+        smartMockRegister.register(mock)
+        smartMockIDPSession = mock
+        return mock
+    }
 }
 
 struct Scenario {
@@ -253,6 +281,7 @@ struct Scenario {
     var erxRemoteDataStore: SmartMockErxRemoteDataStore.Mocks?
     var loginHandler: SmartMockLoginHandler.Mocks?
     var redeemService: SmartMockRedeemService.Mocks?
+    var idpSession: SmartMockIDPSession.Mocks?
 }
 
 struct ScenarioLoader {
@@ -294,6 +323,10 @@ struct ScenarioLoader {
             scenarioUrl: scenarioPath,
             with: "RedeemService"
         )
+        let idpSession: SmartMockIDPSession.Mocks? = loadMockData(
+            scenarioUrl: scenarioPath,
+            with: "IDPSession"
+        )
 
         return Scenario(
             userDataStore: userDataStoreMock,
@@ -301,7 +334,8 @@ struct ScenarioLoader {
             erxTaskCoreDataStore: erxTaskCoreDataStore,
             erxRemoteDataStore: erxRemoteDataStore,
             loginHandler: loginHandler,
-            redeemService: redeemService
+            redeemService: redeemService,
+            idpSession: idpSession
         )
     }
 
@@ -473,6 +507,7 @@ extension ErxTaskCoreDataStore {}
 extension ErxRemoteDataStore {}
 extension LoginHandler {}
 extension RedeemService {}
+extension IDPSession {}
 // sourcery:end
 
 #endif

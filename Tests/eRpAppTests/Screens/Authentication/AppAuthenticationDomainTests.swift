@@ -74,13 +74,12 @@ final class AppAuthenticationDomainTests: XCTestCase {
         await store.send(.task)
         await store.receive(.failedAppAuthenticationsReceived(0))
         await store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 0)) {
-            $0.biometrics = AppAuthenticationBiometricsDomain.State(
+            $0.subdomain = .biometrics(AppAuthenticationBiometricsDomain.State(
                 biometryType: .faceID,
                 startImmediateAuthenticationChallenge: true
-            )
+            ))
             $0.failedAuthenticationsCount = 0
             $0.didCompleteAuthentication = false
-            $0.password = nil
         }
     }
 
@@ -90,19 +89,17 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
         await store.send(.task)
         await store.receive(.failedAppAuthenticationsReceived(1)) {
-            $0.biometrics = nil
-            $0.password = nil
+            $0.subdomain = nil
             $0.failedAuthenticationsCount = 1
             $0.didCompleteAuthentication = false
         }
         await store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 1)) {
-            $0.biometrics = AppAuthenticationBiometricsDomain.State(
+            $0.subdomain = .biometrics(AppAuthenticationBiometricsDomain.State(
                 biometryType: .faceID,
                 startImmediateAuthenticationChallenge: false
-            )
+            ))
             $0.failedAuthenticationsCount = 1
             $0.didCompleteAuthentication = false
-            $0.password = nil
         }
     }
 
@@ -118,11 +115,10 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
         let store = TestStore(
             initialState: AppAuthenticationDomain.State(
-                biometrics: AppAuthenticationBiometricsDomain.State(
+                subdomain: .biometrics(AppAuthenticationBiometricsDomain.State(
                     biometryType: .touchID,
                     startImmediateAuthenticationChallenge: false
-                ),
-                password: nil
+                ))
             )
         ) {
             AppAuthenticationDomain { didCompleteAuthenticationCalledCount += 1 }
@@ -140,10 +136,9 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
         let expectedResponse = AuthenticationChallengeProviderResult.success(true)
         expect(didCompleteAuthenticationCalled).to(beFalse())
-        await store.send(.biometrics(action: .authenticationChallengeResponse(expectedResponse))) { state in
+        await store.send(.subdomain(.biometrics(.authenticationChallengeResponse(expectedResponse)))) { state in
             state.didCompleteAuthentication = true
-            state.password = nil
-            state.biometrics = nil
+            state.subdomain = nil
         }
         expect(didCompleteAuthenticationCalled).to(beTrue())
     }
@@ -157,7 +152,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
         await testStore.send(.task)
         await testStore.receive(.failedAppAuthenticationsReceived(0))
         await testStore.receive(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
-            state.password = AppAuthenticationPasswordDomain.State()
+            state.subdomain = .password(AppAuthenticationPasswordDomain.State())
         }
     }
 
@@ -165,7 +160,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
         let testStore = testStore(for: .password)
 
         await testStore.send(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
-            state.password = AppAuthenticationPasswordDomain.State()
+            state.subdomain = .password(AppAuthenticationPasswordDomain.State())
         }
     }
 
@@ -181,8 +176,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
         let store = TestStore(
             initialState: AppAuthenticationDomain.State(
-                biometrics: nil,
-                password: AppAuthenticationPasswordDomain.State()
+                subdomain: .password(AppAuthenticationPasswordDomain.State())
             )
         ) {
             AppAuthenticationDomain { didCompleteAuthenticationCalledCount += 1 }
@@ -199,9 +193,9 @@ final class AppAuthenticationDomainTests: XCTestCase {
         }
 
         expect(didCompleteAuthenticationCalled).to(beFalse())
-        await store.send(.password(action: .passwordVerificationReceived(true))) { state in
+        await store.send(.subdomain(.password(.passwordVerificationReceived(true)))) { state in
             state.didCompleteAuthentication = true
-            state.password = nil
+            state.subdomain = nil
         }
         expect(didCompleteAuthenticationCalled).to(beTrue())
     }

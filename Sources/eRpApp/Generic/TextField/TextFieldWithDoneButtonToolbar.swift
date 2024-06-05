@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 import UIKit
 
 extension View {
@@ -51,7 +52,7 @@ private struct TextFieldWithDoneButtonToolbar: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .introspectTextField { textField in
+            .introspect(.textField, on: .iOS(.v15, .v16, .v17)) { textField in
                 let toolBar = textField
                     .inputAccessoryView as? UIToolbar ??
                     UIToolbar(frame: CGRect(x: 0, y: 0, width: textField.frame.size.width, height: 44))

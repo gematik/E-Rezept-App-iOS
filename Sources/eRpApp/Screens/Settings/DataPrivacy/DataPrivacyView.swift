@@ -32,7 +32,7 @@ struct DataPrivacyView: View {
 extension DataPrivacyView {
     struct WebView: UIViewRepresentable {
         // swiftlint:disable:next weak_delegate
-        // [REQ:BSI-eRp-ePA:O.Plat_13#3] Usage of the delegate
+        // [REQ:BSI-eRp-ePA:O.Plat_10#3] Usage of the delegate
         let navigationDelegate = DataPrivacyTermsOfUseNavigationDelegate()
 
         func makeUIView(context _: Context) -> WKWebView {

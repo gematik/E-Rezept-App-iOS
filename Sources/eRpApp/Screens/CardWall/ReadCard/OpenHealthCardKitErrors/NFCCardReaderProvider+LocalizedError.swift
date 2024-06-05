@@ -48,8 +48,6 @@ extension NFCTagReaderSession.Error: LocalizedError {
             case let .unknown(error):
                 return error.localizedDescription
             }
-        @unknown default:
-            return "unknown NFCTagReaderSession.Error"
         }
     }
 }
@@ -80,8 +78,6 @@ extension NFCCardError: LocalizedError {
             case let .unknown(error):
                 return error.localizedDescription
             }
-        @unknown default:
-            return "unknown NFCCardError"
         }
     }
 }

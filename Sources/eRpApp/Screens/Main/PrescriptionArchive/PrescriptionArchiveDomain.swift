@@ -21,32 +21,21 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-struct PrescriptionArchiveDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            // sourcery: AnalyticsScreen = prescriptionDetail
-            case prescriptionDetail(PrescriptionDetailDomain.State)
-        }
-
-        enum Action: Equatable {
-            case prescriptionDetail(PrescriptionDetailDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(state: /State.prescriptionDetail, action: /Action.prescriptionDetail) {
-                PrescriptionDetailDomain()
-            }
-        }
+@Reducer
+struct PrescriptionArchiveDomain {
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        // sourcery: AnalyticsScreen = prescriptionDetail
+        case prescriptionDetail(PrescriptionDetailDomain)
     }
 
+    @ObservableState
     struct State: Equatable {
         var loadingState: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .idle
         var prescriptions: [Prescription] = []
 
-        @PresentationState var destination: Destinations.State?
+        @Presents var destination: Destination.State?
     }
 
     enum Action: Equatable {
@@ -58,8 +47,7 @@ struct PrescriptionArchiveDomain: ReducerProtocol {
         case response(Response)
         case delegate(Delegate)
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(PresentationAction<Destinations.Action>)
+        case destination(PresentationAction<Destination.Action>)
 
         enum Response: Equatable {
             /// Response from `loadLocalPrescriptions`
@@ -75,14 +63,12 @@ struct PrescriptionArchiveDomain: ReducerProtocol {
     @Dependency(\.prescriptionRepository) var prescriptionRepository: PrescriptionRepository
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
 
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
         Reduce(self.core)
-            .ifLet(\.$destination, action: /Action.destination) {
-                Destinations()
-            }
+            .ifLet(\.$destination, action: \.destination)
     }
 
-    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+    private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .loadLocalPrescriptions:
             state.loadingState = .loading(state.prescriptions)
@@ -103,12 +89,10 @@ struct PrescriptionArchiveDomain: ReducerProtocol {
                 isArchived: prescription.isArchived
             ))
             return .none
-        case .setNavigation(tag: .none),
-             .destination(.presented(.prescriptionDetail(.delegate(.close)))):
+        case .destination(.presented(.prescriptionDetail(.delegate(.close)))):
             state.destination = nil
             return .none
-        case .setNavigation,
-             .delegate,
+        case .delegate,
              .destination:
             return .none
         }

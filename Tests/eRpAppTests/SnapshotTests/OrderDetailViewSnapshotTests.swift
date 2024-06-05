@@ -102,7 +102,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         )
         let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(
-            store: OrderDetailDomain.Store(
+            store: StoreOf<OrderDetailDomain>(
                 initialState: .init(
                     order: order,
                     erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),
@@ -127,7 +127,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         )
         let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(
-            store: OrderDetailDomain.Store(
+            store: StoreOf<OrderDetailDomain>(
                 initialState: .init(
                     order: order,
                     erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),
@@ -151,7 +151,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         )
         let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(store:
-            OrderDetailDomain.Store(
+            StoreOf<OrderDetailDomain>(
                 initialState: .init(
                     order: order,
                     erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),

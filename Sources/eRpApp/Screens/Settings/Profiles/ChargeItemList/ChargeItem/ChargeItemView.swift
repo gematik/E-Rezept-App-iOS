@@ -24,166 +24,148 @@ import Foundation
 import SwiftUI
 
 struct ChargeItemView: View {
-    let store: ChargeItemDomain.Store
-
-    @ObservedObject private var viewStore: ViewStore<ViewState, ChargeItemDomain.Action>
-
-    init(store: ChargeItemDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let chargeItem: ErxChargeItem
-        let showRoutingButton: Bool
-        let destinationTag: ChargeItemDomain.Destinations.State.Tag?
-
-        init(state: ChargeItemDomain.State) {
-            chargeItem = state.chargeItem
-            showRoutingButton = state.showRouteToChargeItemListButton
-            destinationTag = state.destination?.tag
-        }
-    }
+    @Perception.Bindable var store: StoreOf<ChargeItemDomain>
 
     @Dependency(\.uiDateFormatter) var dateFormatter
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                SectionContainer(
-                    header: {
-                        Text(viewStore.chargeItem.medication?.name ?? "-")
-                            .font(.title2.bold())
-                            .padding()
-                    },
-                    footer: {
-                        if viewStore.showRoutingButton {
-                            Button {
-                                viewStore.send(.routeToChargeItemList)
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Text(L10n.stgBtnChargeItemRouteToList)
-                                        .font(Font.subheadline)
-                                    Image(systemName: SFSymbolName.chevronRight)
-                                        .font(Font.subheadline.weight(.semibold))
+        WithPerceptionTracking {
+            VStack(spacing: 0) {
+                ScrollView {
+                    SectionContainer(
+                        header: {
+                            Text(store.chargeItem.medication?.name ?? "-")
+                                .font(.title2.bold())
+                                .padding()
+                        },
+                        footer: {
+                            WithPerceptionTracking {
+                                if store.showRouteToChargeItemListButton {
+                                    Button {
+                                        store.send(.routeToChargeItemList)
+                                    } label: {
+                                        HStack(spacing: 4) {
+                                            Text(L10n.stgBtnChargeItemRouteToList)
+                                                .font(Font.subheadline)
+                                            Image(systemName: SFSymbolName.chevronRight)
+                                                .font(Font.subheadline.weight(.semibold))
+                                        }
+                                    }
+                                    .buttonStyle(TertiaryButtonStyle())
+                                    .foregroundColor(Colors.primary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
-                            .buttonStyle(TertiaryButtonStyle())
-                            .foregroundColor(Colors.primary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        },
+                        content: {
+                            SubTitle(
+                                title: dateFormatter.relativeDateAndTime(
+                                    store.chargeItem.medicationDispense?.whenHandedOver
+                                ) ?? "-",
+                                description: L10n.stgTxtChargeItemCreator
+                            )
+
+                            SubTitle(
+                                title: store.chargeItem.pharmacy?.name ?? "-",
+                                description: L10n.stgTxtChargeItemRedeemedAt
+                            )
+
+                            SubTitle(
+                                title: dateFormatter
+                                    .relativeDateAndTime(store.chargeItem.enteredDate) ?? "-",
+                                description: L10n.stgTxtChargeItemRedeemedOn
+                            )
                         }
-                    },
-                    content: {
-                        SubTitle(
-                            title: dateFormatter.relativeDateAndTime(
-                                viewStore.chargeItem.medicationDispense?.whenHandedOver
-                            ) ?? "-",
-                            description: L10n.stgTxtChargeItemCreator
-                        )
+                    )
+                    .sectionContainerStyle(.inline)
+                }
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(store.chargeItem.totalGrossPrice)
+                            .font(.title3.bold())
 
-                        SubTitle(
-                            title: viewStore.chargeItem.pharmacy?.name ?? "-",
-                            description: L10n.stgTxtChargeItemRedeemedAt
-                        )
-
-                        SubTitle(
-                            title: dateFormatter.relativeDateAndTime(viewStore.chargeItem.enteredDate) ?? "-",
-                            description: L10n.stgTxtChargeItemRedeemedOn
-                        )
+                        Text(L10n.stgTxtChargeItemSum)
+                            .font(.body)
+                            .foregroundColor(Color(.secondaryLabel))
                     }
-                )
-                .sectionContainerStyle(.inline)
-            }
 
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(viewStore.chargeItem.totalGrossPrice)
-                        .font(.title3.bold())
+                    Spacer()
 
-                    Text(L10n.stgTxtChargeItemSum)
-                        .font(.body)
-                        .foregroundColor(Color(.secondaryLabel))
-                }
-
-                Spacer()
-
-                Button {
-                    viewStore.send(.redeem)
-                } label: {
-                    Text(L10n.stgBtnChargeItemShare)
-                }
-                .buttonStyle(.primaryHuggingNarrowly)
-            }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
-        }
-        .background(Colors.systemBackground.ignoresSafeArea())
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Menu {
-                    Menu {
-                        Button(action: {
-                            viewStore.send(.alterChargeItem)
-                        }, label: {
-                            Text(L10n.stgBtnChargeItemAlterViaPharmacy)
-                                .foregroundColor(Colors.primary700)
-                        })
-                        Button(action: {}, label: {
-                            Text(L10n.stgBtnChargeItemAlterViaApp)
-                                .foregroundColor(Colors.primary700)
-                        })
-                            .disabled(true)
-
+                    Button {
+                        store.send(.redeem)
                     } label: {
-                        Text(L10n.stgTxtChargeItemAlterTitle)
+                        Text(L10n.stgBtnChargeItemShare)
+                    }
+                    .buttonStyle(.primaryHuggingNarrowly)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
+            }
+            .background(Colors.systemBackground.ignoresSafeArea())
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Menu {
+                        Menu {
+                            Button(action: {
+                                store.send(.alterChargeItem)
+                            }, label: {
+                                Text(L10n.stgBtnChargeItemAlterViaPharmacy)
+                                    .foregroundColor(Colors.primary700)
+                            })
+                            Button(action: {}, label: {
+                                Text(L10n.stgBtnChargeItemAlterViaApp)
+                                    .foregroundColor(Colors.primary700)
+                            })
+                                .disabled(true)
+
+                        } label: {
+                            Text(L10n.stgTxtChargeItemAlterTitle)
+                                .foregroundColor(Colors.primary700)
+                        }
+                        Button(role: .destructive,
+                               action: {
+                                   store.send(.deleteButtonTapped)
+                               }, label: {
+                                   Text(L10n.stgBtnChargeItemDelete)
+                                       .foregroundColor(Colors.red600)
+                               })
+                    } label: {
+                        Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.ellipsis)
                             .foregroundColor(Colors.primary700)
                     }
-                    Button(role: .destructive,
-                           action: {
-                               viewStore.send(.deleteButtonTapped)
-                           }, label: {
-                               Text(L10n.stgBtnChargeItemDelete)
-                                   .foregroundColor(Colors.red600)
-                           })
-                } label: {
-                    Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.ellipsis)
-                        .foregroundColor(Colors.primary700)
                 }
+                ToolbarItemGroup(placement: .navigationBarTrailing) {}
             }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {}
-        }
-        .sheet(
-            store: store.scope(state: \.$destination, action: ChargeItemDomain.Action.destination),
-            state: /ChargeItemDomain.Destinations.State.shareSheet,
-            action: ChargeItemDomain.Destinations.Action.shareSheet
-        ) { scopedStore in
-            WithViewStore(scopedStore) { $0 } content: { viewStore in
-                ShareViewController(itemsToShare: viewStore.state)
+            .sheet(item: $store.scope(
+                state: \.destination?.shareSheet,
+                action: \.destination.shareSheet
+            )) { scopedStore in
+                ShareViewController(store: scopedStore)
             }
-        }
-        .sheet(
-            store: store.scope(state: \.$destination, action: ChargeItemDomain.Action.destination),
-            state: /ChargeItemDomain.Destinations.State.idpCardWall,
-            action: ChargeItemDomain.Destinations.Action.idpCardWallAction,
-            content: IDPCardWallView.init(store:)
-        )
-        .alert(
-            store.scope(state: \.$destination, action: ChargeItemDomain.Action.destination),
-            state: /ChargeItemDomain.Destinations.State.alert,
-            action: ChargeItemDomain.Destinations.Action.alert
-        )
+            .sheet(item: $store.scope(
+                state: \.destination?.idpCardWall,
+                action: \.destination.idpCardWall
+            )) { store in
+                IDPCardWallView(store: store)
+            }
+            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
 
-        // Navigation into matrix code to alter charge item via pharmacy
-        NavigationLinkStore(
-            store.scope(state: \.$destination, action: ChargeItemDomain.Action.destination),
-            state: /ChargeItemDomain.Destinations.State.alterChargeItem,
-            action: ChargeItemDomain.Destinations.Action.alterChargeItem,
-            onTap: {},
-            destination: MatrixCodeView.init(store:),
-            label: { EmptyView() }
-        ).accessibility(hidden: true)
+            // Navigation into matrix code to alter charge item via pharmacy
+            NavigationLink(
+                item: $store.scope(
+                    state: \.destination?.alterChargeItem,
+                    action: \.destination.alterChargeItem
+                )
+            ) { store in
+                MatrixCodeView(store: store)
+            } label: {
+                EmptyView()
+            }
+            .hidden()
+            .accessibility(hidden: true)
+        }
     }
 
     private struct Flag: View {

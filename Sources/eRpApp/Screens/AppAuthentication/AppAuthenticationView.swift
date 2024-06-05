@@ -21,99 +21,66 @@ import Foundation
 import SwiftUI
 
 struct AppAuthenticationView: View {
-    let store: AppAuthenticationDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, AppAuthenticationDomain.Action>
-
-    init(store: AppAuthenticationDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let showFailedAuthenticationsHint: Bool
-        let failedAuthentications: Int
-        let hintTitle: String
-        let hintMessage: String
-
-        init(state: AppAuthenticationDomain.State) {
-            showFailedAuthenticationsHint = state.failedAuthenticationsCount != 0
-            failedAuthentications = state.failedAuthenticationsCount
-            hintTitle = L10n.authTxtFailedLoginHintTitle.text
-            hintMessage = L10n.authTxtFailedLoginHintMsg(state.failedAuthenticationsCount).text
-        }
-    }
+    @Perception.Bindable var store: StoreOf<AppAuthenticationDomain>
 
     var body: some View {
         // GeometryReader is needed to expand ScrollView content to full screen
         GeometryReader { geometry in
             ScrollView {
-                VStack {
-                    HStack {
-                        Image(decorative: Asset.LaunchAssets.logoGematik)
-                            .padding()
-                        Spacer()
-                    }
-
-                    if viewStore.showFailedAuthenticationsHint {
-                        HintView<AppAuthenticationDomain.Action>(
-                            hint: Hint(
-                                id: A11y.auth.authTxtFailedLoginHint,
-                                title: viewStore.hintTitle,
-                                message: viewStore.hintMessage,
-                                image: .init(name: Asset.Illustrations.girlRedCircle.name),
-                                style: Hint.Style.important,
-                                imageStyle: Hint.ImageStyle.topAligned
-                            )
-                        )
-                        .padding()
-                    }
-
-                    Spacer()
-
-                    Text(L10n.authTxtBiometricsTitle)
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .padding()
-
+                WithPerceptionTracking {
                     VStack {
-                        IfLetStore(
-                            store.scope(
-                                state: \.biometrics,
-                                action: AppAuthenticationDomain.Action.biometrics(action:)
-                            )
-                        ) {
-                            AppAuthenticationWithBiometricsView(store: $0)
+                        HStack {
+                            Image(decorative: Asset.LaunchAssets.logoGematik)
+                                .padding()
+                            Spacer()
                         }
 
-                        IfLetStore(
-                            store.scope(
-                                state: \.password,
-                                action: AppAuthenticationDomain.Action.password(action:)
+                        // [REQ:BSI-eRp-ePA:O.Pass_4#2] Display of failed login attempts counter
+                        if store.failedAuthenticationsCount != 0 {
+                            HintView<AppAuthenticationDomain.Action>(
+                                hint: Hint(
+                                    id: A11y.auth.authTxtFailedLoginHint,
+                                    title: L10n.authTxtFailedLoginHintTitle.text,
+                                    message: L10n.authTxtFailedLoginHintMsg(store.failedAuthenticationsCount).text,
+                                    image: .init(name: Asset.Illustrations.girlRedCircle.name),
+                                    style: Hint.Style.important,
+                                    imageStyle: Hint.ImageStyle.topAligned
+                                )
                             )
-                        ) {
-                            AppAuthenticationPasswordView(store: $0)
+                            .padding()
                         }
 
-                        IfLetStore(
-                            store.scope(
-                                state: \.biometricAndPassword,
-                                action: AppAuthenticationDomain.Action.biometricAndPassword(action:)
-                            )
-                        ) {
-                            AppAuthenticationBiometricPasswordView(store: $0)
+                        Spacer()
+
+                        Text(L10n.authTxtBiometricsTitle)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .padding()
+
+                        VStack {
+                            if let store = store.scope(state: \.subdomain, action: \.subdomain) {
+                                switch store.case {
+                                case let .biometrics(store):
+                                    AppAuthenticationWithBiometricsView(store: store)
+                                case let .password(store):
+                                    AppAuthenticationPasswordView(store: store)
+                                case let .biometricAndPassword(store):
+                                    AppAuthenticationBiometricPasswordView(store: store)
+                                }
+                            }
                         }
+
+                        Spacer()
+
+                        Image(asset: Asset.Illustrations.groupShot)
+                            .resizable()
+                            .scaledToFit()
                     }
-
-                    Spacer()
-
-                    Image(asset: Asset.Illustrations.groupShot)
-                        .resizable()
-                        .scaledToFit()
+                    .frame(minHeight: geometry.size.height)
                 }
-                .frame(minHeight: geometry.size.height)
             }
         }.task {
-            await viewStore.send(.task).finish()
+            await store.send(.task).finish()
         }
         .ignoresSafeArea(.all, edges: .bottom)
     }
@@ -124,10 +91,12 @@ struct AppAuthenticationView_Previews: PreviewProvider {
         AppAuthenticationView(
             store: AppAuthenticationDomain.Dummies.storeFor(
                 AppAuthenticationDomain.State(
-                    biometrics: AppAuthenticationBiometricsDomain.State(
-                        biometryType: .faceID,
-                        startImmediateAuthenticationChallenge: false,
-                        authenticationResult: .success(true)
+                    subdomain: .biometrics(
+                        .init(
+                            biometryType: .faceID,
+                            startImmediateAuthenticationChallenge: false,
+                            authenticationResult: .success(true)
+                        )
                     ),
                     failedAuthenticationsCount: 3
                 )
@@ -137,7 +106,7 @@ struct AppAuthenticationView_Previews: PreviewProvider {
         AppAuthenticationView(
             store: AppAuthenticationDomain.Dummies.storeFor(
                 AppAuthenticationDomain.State(
-                    password: AppAuthenticationPasswordDomain.State()
+                    subdomain: .password(.init())
                 )
             )
         )

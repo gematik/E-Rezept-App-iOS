@@ -21,85 +21,74 @@ import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
 import IdentifiedCollections
+import Perception
 import SwiftUI
 
 struct OrdersView: View {
-    let store: OrdersDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, OrdersDomain.Action>
+    @Perception.Bindable var store: StoreOf<OrdersDomain>
     // TODO: move dependency into domain and do formatting in the view model // swiftlint:disable:this todo
     @Dependency(\.uiDateFormatter) var uiDateFormatter
 
-    init(store: OrdersDomain.Store) {
+    init(store: StoreOf<OrdersDomain>) {
         self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let isLoading: Bool
-        let orders: IdentifiedArrayOf<Order>
-
-        let destinationTag: OrdersDomain.Destinations.State.Tag?
-
-        init(state: OrdersDomain.State) {
-            isLoading = state.isLoading
-            orders = state.orders
-            destinationTag = state.destination?.tag
-        }
     }
 
     var body: some View {
-        NavigationView {
-            VStack {
-                if !viewStore.state.orders.isEmpty || viewStore.isLoading {
-                    ScrollView(.vertical) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            ForEach(viewStore.orders) { order in
-                                OrderCellView(
-                                    title: order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text,
-                                    subtitle: uiDateFormatter.relativeDate(order.lastUpdated) ?? "",
-                                    isNew: order.hasUnreadEntries,
-                                    prescriptionCount: order.tasksCount
-                                ) {
-                                    viewStore.send(.didSelect(order.orderId))
+        WithPerceptionTracking {
+            NavigationView {
+                VStack {
+                    if !store.state.orders.isEmpty || store.isLoading {
+                        ScrollView(.vertical) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                ForEach(store.orders) { order in
+                                    OrderCellView(
+                                        title: order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text,
+                                        subtitle: uiDateFormatter.relativeDate(order.lastUpdated) ?? "",
+                                        isNew: order.hasUnreadEntries,
+                                        prescriptionCount: order.tasksCount
+                                    ) {
+                                        store.send(.didSelect(order.orderId))
+                                    }
                                 }
+                                .redacted(reason: store.isLoading ? .placeholder : .init())
+                                .padding(.top)
+                                .accessibilityElement(children: .contain)
+                                .accessibility(identifier: A11y.orders.list.ordTxtList)
                             }
-                            .redacted(reason: viewStore.isLoading ? .placeholder : .init())
                             .padding(.top)
-                            .accessibilityElement(children: .contain)
-                            .accessibility(identifier: A11y.orders.list.ordTxtList)
+                            .padding(.bottom)
                         }
-                        .padding(.top)
-                        .padding(.bottom)
+                    } else {
+                        NoOrdersView()
+                            .padding()
                     }
-                } else {
-                    NoOrdersView()
-                        .padding()
-                }
 
-                // Navigation into details
-                NavigationLinkStore(
-                    store.scope(state: \.$destination, action: OrdersDomain.Action.destination),
-                    state: /OrdersDomain.Destinations.State.orderDetail,
-                    action: OrdersDomain.Destinations.Action.orderDetail(action:),
-                    onTap: { viewStore.send(.setNavigation(tag: .orderDetail)) },
-                    destination: OrderDetailView.init(store:),
-                    label: { EmptyView() }
-                ).accessibility(hidden: true)
+                    // Navigation into details
+                    NavigationLink(
+                        item: $store.scope(
+                            state: \.destination?.orderDetail,
+                            action: \.destination.orderDetail
+                        )
+                    ) { store in
+                        OrderDetailView(store: store)
+                    } label: {
+                        EmptyView()
+                    }.accessibility(hidden: true)
+                }
+                .navigationBarTitle(L10n.ordTxtTitle, displayMode: .automatic)
+                .accessibility(identifier: A11y.orders.list.ordTxtTitle)
+                .alert($store.scope(
+                    state: \.destination?.alert?.alert,
+                    action: \.destination.alert
+                ))
+                .task {
+                    await store.send(.task).finish()
+                }
+                .toolbar {}
             }
-            .navigationBarTitle(L10n.ordTxtTitle, displayMode: .automatic)
-            .accessibility(identifier: A11y.orders.list.ordTxtTitle)
-            .alert(
-                store.scope(state: \.$destination, action: OrdersDomain.Action.destination),
-                state: /OrdersDomain.Destinations.State.alert,
-                action: OrdersDomain.Destinations.Action.alert
-            )
-            .task {
-                await viewStore.send(.task).finish()
-            }
-            .toolbar {}
+            .accentColor(Colors.primary600)
+            .navigationViewStyle(StackNavigationViewStyle())
         }
-        .accentColor(Colors.primary600)
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     struct NoOrdersView: View {

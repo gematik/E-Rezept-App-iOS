@@ -22,11 +22,11 @@ import FHIRClient
 import SwiftUI
 
 extension ChargeItemConsentService.AlertState {
-    var prescriptionDetailDomainErpAlertState: ErpAlertState<PrescriptionDetailDomain.Destinations.Action.Alert> {
+    var prescriptionDetailDomainErpAlertState: ErpAlertState<PrescriptionDetailDomain.Destination.Alert> {
         erpAlertState(
-            actionForOkay: PrescriptionDetailDomain.Destinations.Action.Alert.consentServiceErrorOkay,
-            actionForRetry: PrescriptionDetailDomain.Destinations.Action.Alert.consentServiceErrorRetry,
-            actionForLogin: PrescriptionDetailDomain.Destinations.Action.Alert.consentServiceErrorAuthenticate
+            actionForOkay: PrescriptionDetailDomain.Destination.Alert.consentServiceErrorOkay,
+            actionForRetry: PrescriptionDetailDomain.Destination.Alert.consentServiceErrorRetry,
+            actionForLogin: PrescriptionDetailDomain.Destination.Alert.consentServiceErrorAuthenticate
         )
     }
 }
@@ -48,7 +48,7 @@ extension PrescriptionDetailDomain {
             return activity
         }
 
-        static var confirmDeleteAlertState: ErpAlertState<Destinations.Action.Alert> = {
+        static var confirmDeleteAlertState: ErpAlertState<Destination.Alert> = {
             .init(
                 title: L10n.dtlTxtDeleteAlertTitle,
                 actions: {
@@ -64,7 +64,7 @@ extension PrescriptionDetailDomain {
         }()
 
         static func deletionNotAllowedAlertState(_ prescription: Prescription)
-            -> ErpAlertState<Destinations.Action.Alert> {
+            -> ErpAlertState<Destination.Alert> {
             var title = L10n.prscDtlAlertTitleDeleteNotAllowed
             if prescription.type == .directAssignment {
                 title = L10n.prscDeleteNoteDirectAssignment
@@ -84,7 +84,7 @@ extension PrescriptionDetailDomain {
         static func deleteFailedAlertState(
             error: CodedError,
             localizedError: String
-        ) -> ErpAlertState<Destinations.Action.Alert> {
+        ) -> ErpAlertState<Destination.Alert> {
             .init(
                 for: error,
                 title: L10n.dtlTxtDeleteMissingTokenAlertTitle
@@ -98,7 +98,7 @@ extension PrescriptionDetailDomain {
             }
         }
 
-        static func missingTokenAlertState() -> ErpAlertState<Destinations.Action.Alert> {
+        static func missingTokenAlertState() -> ErpAlertState<Destination.Alert> {
             .init(
                 title: L10n.dtlTxtDeleteMissingTokenAlertTitle,
                 actions: {
@@ -110,7 +110,7 @@ extension PrescriptionDetailDomain {
             )
         }
 
-        static func changeNameReceivedAlertState(error: CodedError) -> ErpAlertState<Destinations.Action.Alert> {
+        static func changeNameReceivedAlertState(error: CodedError) -> ErpAlertState<Destination.Alert> {
             // swiftlint:disable:next trailing_closure
             .init(for: error, actions: {
                 ButtonState(role: .cancel, action: .dismiss) {
@@ -119,7 +119,7 @@ extension PrescriptionDetailDomain {
             })
         }
 
-        static let grantConsentRequest: ErpAlertState<Destinations.Action.Alert> = {
+        static let grantConsentRequest: ErpAlertState<Destination.Alert> = {
             .init(
                 title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
                 actions: {
@@ -136,7 +136,7 @@ extension PrescriptionDetailDomain {
     }
 
     enum ToastStates {
-        typealias Action = PrescriptionDetailDomain.Destinations.Action.Toast
+        typealias Action = PrescriptionDetailDomain.Destination.Toast
 
         static let conflictToast: ToastState<Action> =
             .init(style: .simple(ChargeItemConsentService.ToastState.conflict.message))

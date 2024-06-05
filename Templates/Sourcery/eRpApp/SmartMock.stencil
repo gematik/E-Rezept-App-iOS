@@ -8,7 +8,7 @@
 {% macro methods type %}
     {% typed type as Type %}
     {% for method in type.methods %}
-        {% if not method.returnTypeName.isVoid %}
+        {% if not method.returnTypeName.isVoid and not method.definedInType.isExtension %}
     {% if method.returnTypeName.generic.name == "AnyPublisher" %}
     var {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ method.returnTypeName.generic.typeParameters.first.typeName|replace:"X509","SerializableX509" }}>
     {% else %}
@@ -44,7 +44,7 @@
             )
         }
     }
-        {% else %}
+        {% elif not method.definedInType.isExtension %}
     func {{ method.name }} {
         wrapped.{{ method.callName }}({% call methodArguments method %}
             )
@@ -119,7 +119,7 @@
 {% macro methodsInitializer type %}
     {% typed type as Type %}
     {% for method in type.allMethods %}
-        {% if not method.returnTypeName.isVoid %}
+        {% if not method.returnTypeName.isVoid and not method.definedInType.isExtension %}
         {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings = mocks?.{{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings ?? .delegate
         {% endif %}
     {% endfor %}
@@ -148,7 +148,7 @@
 {% macro serializationMethods type %}
     {% typed type as Type %}
     {% for method in type.allMethods %}
-        {% if not method.returnTypeName.isVoid %}
+        {% if not method.returnTypeName.isVoid and not method.definedInType.isExtension %}
     {% if method.returnTypeName.generic.name == "AnyPublisher" %}
         {% if method.returnTypeName.generic.typeParameters.first.typeName.name|contains:"X509" %}
         var {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ method.returnTypeName.generic.typeParameters.first.typeName.name|replace:"X509","SerializableX509" }}>? = .delegate
@@ -175,7 +175,7 @@
 
 {% macro serializationMethodsArguments type %}
     {% typed type as Type %}
-    {% for method in type.allMethods %}
+    {% for method in type.allMethods where not method.definedInType.isExtension %}
         {% if not method.returnTypeName.isVoid %}
     {% if method.returnTypeName.generic.name == "AnyPublisher" %}
                 {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: {{ method.selectorName|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings{% if not forloop.last %},{% endif %}
@@ -197,7 +197,7 @@
         return try CodableMock(
             "{{ type.name }}",
             Mocks(
-                {% set methodscount %}{%for method in type.allMethods where not method.returnTypeName.isVoid %}1{% endfor %}{% endset %}
+                {% set methodscount %}{%for method in type.allMethods where not method.returnTypeName.isVoid and not method.definedInType.isExtension %}1{% endfor %}{% endset %}
                 {% typed methodscount as String %}
                 {% call serializationMethodsArguments type %}{% if methodscount.count != 0 and type.variables.count != 0 %},{% endif %}
                 {% call serializationPropertiesArguments type %}
@@ -248,6 +248,7 @@ import eRpLocalStorage
 import eRpRemoteStorage
 import Foundation
 import IdentifiedCollections
+import IDP
 import OpenSSL
 import Pharmacy
 {% for type in types.protocols where type.based.SmartMock or type|annotated:"SmartMock" %}

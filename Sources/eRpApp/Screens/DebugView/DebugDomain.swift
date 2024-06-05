@@ -22,10 +22,10 @@ import eRpKit
 import Foundation
 import IDP
 
-// swiftlint:disable:next type_body_length
-struct DebugDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+// swiftlint:disable type_body_length
+@Reducer
+struct DebugDomain {
+    @ObservableState
     struct State: Equatable {
         var trackingOptIn: Bool
 
@@ -84,32 +84,23 @@ struct DebugDomain: ReducerProtocol {
         }
     }
 
-    enum Action: Equatable {
+    enum Action: BindableAction, Equatable {
+        case binding(BindingAction<State>)
+
         #if ENABLE_DEBUG_VIEW
-        case hideOnboardingToggleTapped
         case hideOnboardingReceived(String?)
-        case hideCardWallIntroToggleTapped
         case hideCardWallIntroReceived(Bool)
         case resetCanButtonTapped
         case deleteKeyAndEGKAuthCertForBiometric
         case deleteSSOToken
         case resetOcspAndCertListButtonTapped
-        case useDebugDeviceCapabilitiesToggleTapped
-        case nfcReadyToggleTapped
-        case isMinimumOS14ToggleTapped
         case isAuthenticatedReceived(Bool?)
         case logoutButtonTapped
         case invalidateAccessToken
-        case accessCodeTextReceived(String)
         case profileReceived(Result<UserProfile, UserProfileServiceError>)
         case setProfileInsuranceTypeToPKV
         case hidePkvConsentDrawerMainViewToggleTapped
-        case toggleVirtualLogin(Bool)
-        case virtualPrkCHAutReceived(String)
-        case virtualCCHAutReceived(String)
-        case setFaceErxTaskStatus(String)
         case loginWithToken
-        case toggleTrackingTapped
         case tokenReceived(IDPToken?)
         case configurationReceived(State.ServerEnvironment?)
         case setServerEnvironment(String?)
@@ -131,18 +122,17 @@ struct DebugDomain: ReducerProtocol {
     @Dependency(\.serviceLocatorDebugAccess) var serviceLocatorDebugAccess: ServiceLocatorDebugAccess
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
-    func core(into state: inout State, action: Action) -> EffectTask<Action> {
+    func core(into state: inout State, action: Action) -> Effect<Action> {
         #if ENABLE_DEBUG_VIEW
         switch action {
-        case .hideOnboardingToggleTapped:
+        case .binding(\.hideOnboarding):
             localUserStore.set(hideOnboarding: false)
             localUserStore.set(onboardingVersion: nil)
             return .none
         case let .hideOnboardingReceived(onboardingVersion):
             state.hideOnboarding = onboardingVersion != nil
             return .none
-        case .hideCardWallIntroToggleTapped:
-            state.hideCardWallIntro.toggle()
+        case .binding(\.hideCardWallIntro):
             localUserStore.set(hideCardWallIntro: state.hideCardWallIntro)
             return .none
         case let .hideCardWallIntroReceived(hideCardWallIntro):
@@ -170,8 +160,7 @@ struct DebugDomain: ReducerProtocol {
         case .resetOcspAndCertListButtonTapped:
             userSession.trustStoreSession.reset()
             return .none
-        case .useDebugDeviceCapabilitiesToggleTapped:
-            state.useDebugDeviceCapabilities.toggle()
+        case .binding(\.useDebugDeviceCapabilities):
             let serviceLocatorDebugAccess = serviceLocatorDebugAccess
             if state.useDebugDeviceCapabilities {
                 serviceLocatorDebugAccess.setDeviceCapabilities(state.debugCapabilities)
@@ -179,35 +168,26 @@ struct DebugDomain: ReducerProtocol {
                 serviceLocatorDebugAccess.setDeviceCapabilities(RealDeviceCapabilities())
             }
             return .none
-        case .nfcReadyToggleTapped:
-            state.isNFCReady.toggle()
+        case .binding(\.isNFCReady):
             state.debugCapabilities.isNFCReady = state.isNFCReady
             return .none
-        case .isMinimumOS14ToggleTapped:
-            state.isMinimumOS14.toggle()
+        case .binding(\.isMinimumOS14):
             state.debugCapabilities.isMinimumOS14 = state.isMinimumOS14
             return .none
         case let .isAuthenticatedReceived(isAuthenticated):
             state.isAuthenticated = isAuthenticated
             return .none
-        case let .toggleVirtualLogin(useVirtualLogin):
-            state.useVirtualLogin = useVirtualLogin
-            UserDefaults.standard.isVirtualEGKEnabled = useVirtualLogin
+        case .binding(\.useVirtualLogin):
+            UserDefaults.standard.isVirtualEGKEnabled = state.useVirtualLogin
             return .none
-        case let .virtualCCHAutReceived(cchaut):
-            state.virtualLoginCertKey = cchaut
-            UserDefaults.standard.virtualEGKCCHAut = cchaut
+        case .binding(\.virtualLoginCertKey):
+            UserDefaults.standard.virtualEGKCCHAut = state.virtualLoginCertKey
             return .none
-        case let .virtualPrkCHAutReceived(prkchaut):
-            state.virtualLoginPrivateKey = prkchaut
-            UserDefaults.standard.virtualEGKPrkCHAut = prkchaut
+        case .binding(\.virtualLoginPrivateKey):
+            UserDefaults.standard.virtualEGKPrkCHAut = state.virtualLoginPrivateKey
             return .none
-        case let .setFaceErxTaskStatus(seconds):
-            ErxTask.scannedTaskMinIntervalForCompletion = Double(seconds) ?? 0
-            state.fakeTaskStatus = seconds
-            return .none
-        case let .accessCodeTextReceived(accessCodeText):
-            state.accessCodeText = accessCodeText
+        case .binding(\.fakeTaskStatus):
+            ErxTask.scannedTaskMinIntervalForCompletion = Double(state.fakeTaskStatus) ?? 0
             return .none
         case .loginWithToken:
             if let idpToken = state.lastIDPToken {
@@ -254,10 +234,9 @@ struct DebugDomain: ReducerProtocol {
 
             localUserStore.set(serverEnvironmentConfiguration: name)
             return .none
-        case .toggleTrackingTapped:
+        case .binding(\.trackingOptIn):
             tracker.optIn.toggle()
             state.trackingOptIn = tracker.optIn
-
             return .none
         case let .showAlert(showAlert):
             state.showAlert = showAlert
@@ -305,28 +284,32 @@ struct DebugDomain: ReducerProtocol {
             return .none
         case .logAction:
             return .none
+        case .binding:
+            return .none
         }
+        #else
+        return .none
         #endif
     }
 
-    #if ENABLE_DEBUG_VIEW
-    var body: some ReducerProtocol<State, Action> {
+    var body: some Reducer<State, Action> {
+        #if ENABLE_DEBUG_VIEW
         Scope(state: \.logState, action: /Action.logAction) {
             DebugLogDomain(loggingStore: DebugLiveLogger.shared)
         }
 
+        BindingReducer()
+
         Reduce(self.core)
-    }
-    #else
-    var body: some ReducerProtocol<State, Action> {
+        #else
         EmptyReducer()
+        #endif
     }
-    #endif
 }
 
 #if ENABLE_DEBUG_VIEW
 extension DebugDomain {
-    func onReceiveHideOnboarding() -> EffectTask<DebugDomain.Action> {
+    func onReceiveHideOnboarding() -> Effect<DebugDomain.Action> {
         .publisher(
             localUserStore.onboardingVersion
                 .receive(on: schedulers.main)
@@ -335,7 +318,7 @@ extension DebugDomain {
         )
     }
 
-    func onReceiveHideCardWallIntro() -> EffectTask<DebugDomain.Action> {
+    func onReceiveHideCardWallIntro() -> Effect<DebugDomain.Action> {
         .publisher(
             localUserStore.hideCardWallIntro
                 .receive(on: schedulers.main)
@@ -344,7 +327,7 @@ extension DebugDomain {
         )
     }
 
-    func onReceiveIsAuthenticated() -> EffectTask<DebugDomain.Action> {
+    func onReceiveIsAuthenticated() -> Effect<DebugDomain.Action> {
         .publisher(
             userSession.isAuthenticated
                 .receive(on: schedulers.main)
@@ -356,7 +339,7 @@ extension DebugDomain {
         )
     }
 
-    func onReceiveToken() -> EffectTask<DebugDomain.Action> {
+    func onReceiveToken() -> Effect<DebugDomain.Action> {
         .publisher(
             userSession.idpSession.autoRefreshedToken
                 .receive(on: schedulers.main)
@@ -367,7 +350,7 @@ extension DebugDomain {
     }
 
     func onReceiveConfigurationName(for availableEnvironments: [DebugDomain.State.ServerEnvironment])
-        -> EffectTask<DebugDomain.Action> {
+        -> Effect<DebugDomain.Action> {
         .publisher(
             localUserStore.serverEnvironmentConfiguration
                 .map { name in
@@ -385,16 +368,15 @@ extension DebugDomain {
         )
     }
 
-    func onReceiveVirtualEGK() -> EffectTask<DebugDomain.Action> {
-        .concatenate([
-            EffectTask.send(DebugDomain.Action.toggleVirtualLogin(UserDefaults.standard.isVirtualEGKEnabled)),
-            EffectTask.send(DebugDomain.Action
-                .virtualPrkCHAutReceived(UserDefaults.standard.virtualEGKPrkCHAut ?? "")),
-            EffectTask.send(DebugDomain.Action.virtualCCHAutReceived(UserDefaults.standard.virtualEGKCCHAut ?? "")),
-        ])
+    func onReceiveVirtualEGK() -> Effect<DebugDomain.Action> {
+        .run { send in
+            await send(.binding(.set(\.useVirtualLogin, UserDefaults.standard.isVirtualEGKEnabled)))
+            await send(.binding(.set(\.virtualLoginPrivateKey, UserDefaults.standard.virtualEGKPrkCHAut ?? "")))
+            await send(.binding(.set(\.virtualLoginCertKey, UserDefaults.standard.virtualEGKCCHAut ?? "")))
+        }
     }
 
-    func onReceiveCurrentProfile() -> EffectTask<DebugDomain.Action> {
+    func onReceiveCurrentProfile() -> Effect<DebugDomain.Action> {
         .publisher(
             userProfileService
                 .activeUserProfilePublisher()
@@ -405,7 +387,7 @@ extension DebugDomain {
         )
     }
 
-    func setProfileInsuranceTypeToPKV(profileId: UUID) -> EffectTask<DebugDomain.Action> {
+    func setProfileInsuranceTypeToPKV(profileId: UUID) -> Effect<DebugDomain.Action> {
         let userProfileService = self.userProfileService
 
         return .run { _ in
@@ -418,7 +400,7 @@ extension DebugDomain {
         }
     }
 
-    func setHidePkvConsentDrawerOnMainView(to value: Bool, profileId: UUID) -> EffectTask<DebugDomain.Action> {
+    func setHidePkvConsentDrawerOnMainView(to value: Bool, profileId: UUID) -> Effect<DebugDomain.Action> {
         let userProfileService = self.userProfileService
 
         return .run { _ in
@@ -443,3 +425,5 @@ extension DebugDomain {
         }
     }
 }
+
+// swiftlint:enable type_body_length

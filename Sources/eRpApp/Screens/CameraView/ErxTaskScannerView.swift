@@ -22,37 +22,29 @@ import eRpKit
 import SwiftUI
 
 struct ErxTaskScannerView: View {
-    let store: ScannerDomain.Store
-    @ObservedObject var viewStore: ViewStoreOf<ScannerDomain>
-
-    init(store: ScannerDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store) { $0 }
-    }
+    @Perception.Bindable var store: StoreOf<ScannerDomain>
 
     var body: some View {
-        ZStack {
-            AVScannerView(erxCodeTypes: [.dataMatrix, .qr],
-                          supportedCodeTypes: [.dataMatrix, .qr, .aztec],
-                          scanning: viewStore.scanState.isIdle) {
-                if viewStore.state.scanState.isIdle {
-                    // [REQ:BSI-eRp-ePA:O.Purp_2#1,O.Data_6#3] Scanning tasks contains purpose related data input
-                    // [REQ:BSI-eRp-ePA:O.Source_1#1] Scanning tasks starts with scanner callback
-                    viewStore.send(.analyse(scanOutput: $0))
+        WithPerceptionTracking {
+            ZStack {
+                AVScannerView(erxCodeTypes: [.dataMatrix, .qr],
+                              supportedCodeTypes: [.dataMatrix, .qr, .aztec],
+                              scanning: store.scanState.isIdle) {
+                    if store.state.scanState.isIdle {
+                        // [REQ:BSI-eRp-ePA:O.Purp_2#1,O.Data_6#3] Scanning tasks contains purpose related data input
+                        // [REQ:BSI-eRp-ePA:O.Source_1#1] Scanning tasks starts with scanner callback
+                        store.send(.analyse(scanOutput: $0))
+                    }
                 }
+                .edgesIgnoringSafeArea(.all)
+
+                ScannerOverlay(store: store)
+
+                CameraAuthorizationAlertView()
             }
-            .edgesIgnoringSafeArea(.all)
-
-            ScannerOverlay(store: store)
-
-            CameraAuthorizationAlertView()
+            .onChange(of: store.scanState, perform: hapticAndAudioFeedback)
+            .alert($store.scope(state: \.destination?.alert, action: \.destination.alert))
         }
-        .onChange(of: viewStore.scanState, perform: hapticAndAudioFeedback)
-        .alert(
-            store: store.scope(state: \.$destination, action: ScannerDomain.Action.destination),
-            state: /ScannerDomain.Destinations.State.alert,
-            action: ScannerDomain.Destinations.Action.alert
-        )
     }
 
     private func hapticAndAudioFeedback(for state: LoadingState<[ScannedErxTask], ScannerDomain.Error>) {

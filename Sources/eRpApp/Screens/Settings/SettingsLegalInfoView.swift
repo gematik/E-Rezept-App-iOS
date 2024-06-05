@@ -21,73 +21,52 @@ import eRpStyleKit
 import SwiftUI
 
 struct SettingsLegalInfoView: View {
-    let store: SettingsDomain.Store
-
-    @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
-
-    init(store: SettingsDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store, observe: ViewState.init)
-    }
-
-    struct ViewState: Equatable {
-        let destinationTag: SettingsDomain.Destinations.State.Tag?
-
-        init(state: SettingsDomain.State) {
-            destinationTag = state.destination?.tag
-        }
-    }
+    @Perception.Bindable var store: StoreOf<SettingsDomain>
 
     var body: some View {
-        SectionContainer(header: {
-            Label(title: { Text(L10n.stgTxtHeaderLegalInfo) }, icon: {})
-                .accessibilityIdentifier(A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo)
-        }, content: {
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
-                state: /SettingsDomain.Destinations.State.legalNotice,
-                action: SettingsDomain.Destinations.Action.legalNotice,
-                onTap: { viewStore.send(.setNavigation(tag: .legalNotice)) },
-                destination: { _ in LegalNoticeView() },
-                label: { Label(L10n.stgLnoTxtLegalNotice, systemImage: SFSymbolName.info) }
-            )
-            .accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
-            .buttonStyle(.navigation)
+        WithPerceptionTracking {
+            SectionContainer(header: {
+                Label(title: { Text(L10n.stgTxtHeaderLegalInfo) }, icon: {})
+                    .accessibilityIdentifier(A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo)
+            }, content: {
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.legalNotice, action: \.destination.legalNotice),
+                    onTap: { store.send(.tappedLegalNotice) },
+                    destination: { _ in LegalNoticeView() },
+                    label: { Label(L10n.stgLnoTxtLegalNotice, systemImage: SFSymbolName.info)
+                    }
+                ).accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
+                    .buttonStyle(.navigation)
 
-            // [REQ:BSI-eRp-ePA:O.Arch_9#3] DataPrivacy display within Settings
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
-                state: /SettingsDomain.Destinations.State.dataProtection,
-                action: SettingsDomain.Destinations.Action.dataProtection,
-                onTap: { viewStore.send(.setNavigation(tag: .dataProtection)) },
-                destination: { _ in DataPrivacyView() },
-                label: { Label(L10n.stgDpoTxtDataPrivacy, systemImage: SFSymbolName.shield) }
-            )
-            .accessibility(identifier: A18n.settings.dataPrivacy.stgDprTxtDataPrivacy)
-            .buttonStyle(.navigation)
+                // [REQ:BSI-eRp-ePA:O.Arch_9#3] DataPrivacy display within Settings
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.dataProtection, action: \.destination.dataProtection),
+                    onTap: { store.send(.tappedDataProtection) },
+                    destination: { _ in DataPrivacyView() },
+                    label: { Label(L10n.stgDpoTxtDataPrivacy, systemImage: SFSymbolName.shield)
+                    }
+                ).accessibility(identifier: A18n.settings.dataPrivacy.stgDprTxtDataPrivacy)
+                    .buttonStyle(.navigation)
+                NavigationLink(
+                    item: $store
+                        .scope(state: \.destination?.openSourceLicence, action: \.destination.openSourceLicence),
+                    onTap: { store.send(.tappedFOSS) },
+                    destination: { _ in FOSSView() },
+                    label: { Label(L10n.stgDpoTxtFoss, systemImage: SFSymbolName.heartTextSquare)
+                    }
+                ).accessibility(identifier: A18n.settings.foss.stgDprTxtFoss)
+                    .buttonStyle(.navigation)
 
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
-                state: /SettingsDomain.Destinations.State.openSourceLicence,
-                action: SettingsDomain.Destinations.Action.openSourceLicence,
-                onTap: { viewStore.send(.setNavigation(tag: .openSourceLicence)) },
-                destination: { _ in FOSSView() },
-                label: { Label(L10n.stgDpoTxtFoss, systemImage: SFSymbolName.heartTextSquare) }
-            )
-            .accessibility(identifier: A18n.settings.foss.stgDprTxtFoss)
-            .buttonStyle(.navigation)
-
-            NavigationLinkStore(
-                store.scope(state: \.$destination, action: SettingsDomain.Action.destination),
-                state: /SettingsDomain.Destinations.State.termsOfUse,
-                action: SettingsDomain.Destinations.Action.termsOfUse,
-                onTap: { viewStore.send(.setNavigation(tag: .termsOfUse)) },
-                destination: { _ in TermsOfUseView() },
-                label: { Label(L10n.stgDpoTxtTermsOfUse, systemImage: SFSymbolName.docPlaintext) }
-            )
-            .accessibility(identifier: A18n.settings.termsOfUse.stgTouTxtTermsOfUse)
-            .buttonStyle(.navigation)
-        })
+                NavigationLink(
+                    item: $store.scope(state: \.destination?.termsOfUse, action: \.destination.termsOfUse),
+                    onTap: { store.send(.tappedTermsOfUse) },
+                    destination: { _ in TermsOfUseView() },
+                    label: { Label(L10n.stgDpoTxtTermsOfUse, systemImage: SFSymbolName.docPlaintext)
+                    }
+                ).accessibility(identifier: A18n.settings.termsOfUse.stgTouTxtTermsOfUse)
+                    .buttonStyle(.navigation)
+            })
+        }
     }
 }
 

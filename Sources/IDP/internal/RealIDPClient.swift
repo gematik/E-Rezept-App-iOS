@@ -156,7 +156,7 @@ class RealIDPClient: IDPClient {
         _ signedChallenge: JWE,
         using document: DiscoveryDocument
     ) -> AnyPublisher<IDPExchangeToken, IDPError> {
-        // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Building and sending the request
+        // [REQ:gemSpec_IDP_Frontend:A_20526-01] Building and sending the request
         var request = URLRequest(url: document.authentication.url, cachePolicy: .reloadIgnoringCacheData)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
@@ -467,6 +467,7 @@ class RealIDPClient: IDPClient {
         .eraseToAnyPublisher()
     }
 
+    // [REQ:gemSpec_IDP_Frontend:A_22302-01#2] Sending the required data as POST to the backend.
     func extAuthVerify(_ verify: IDPExtAuthVerify,
                        using document: DiscoveryDocument) -> AnyPublisher<IDPExchangeToken, IDPError> {
         guard let url = document.federationAuth?.url else {
@@ -511,7 +512,7 @@ class RealIDPClient: IDPClient {
 }
 
 extension RealIDPClient {
-    // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
+    // [REQ:gemSpec_IDP_Frontend:A_19937#2,A_20605] Decoding server errors
     private static func responseError(for body: Data) -> IDPError {
         guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
             return Self.fallbackServerResponse

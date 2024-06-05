@@ -20,9 +20,9 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 
-struct RedeemSuccessDomain: ReducerProtocol {
-    typealias Store = StoreOf<Self>
-
+@Reducer
+struct RedeemSuccessDomain: Reducer {
+    @ObservableState
     struct State: Equatable {
         var redeemOption: RedeemOption
     }
@@ -38,12 +38,12 @@ struct RedeemSuccessDomain: ReducerProtocol {
 
     @Dependency(\.reviewRequester) var reviewRequester
 
-    func reduce(into _: inout State, action: Action) -> EffectTask<Action> {
+    func reduce(into _: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .closeButtonTapped:
             reviewRequester.requestReview()
 
-            return EffectTask.send(.delegate(.close))
+            return Effect.send(.delegate(.close))
         case .delegate:
             return .none
         }
@@ -53,13 +53,13 @@ struct RedeemSuccessDomain: ReducerProtocol {
 extension RedeemSuccessDomain {
     enum Dummies {
         static let state = State(redeemOption: .delivery)
-        static let store = Store(
+        static let store = StoreOf<RedeemSuccessDomain>(
             initialState: state
         ) {
             RedeemSuccessDomain()
         }
 
-        static func store(with option: RedeemOption) -> Store {
+        static func store(with option: RedeemOption) -> StoreOf<RedeemSuccessDomain> {
             Store(initialState: State(redeemOption: option)) {
                 EmptyReducer()
             }

@@ -82,6 +82,7 @@
 "cdw_btn_extauth_fallback_order_egk" = "Bestil et sundhedskort";
 "cdw_btn_extauth_selection_cancel" = "Afbestille";
 "cdw_btn_extauth_selection_continue" = "Yderligere";
+"cdw_btn_extauth_selection_help" = "Førstehjælp";
 "cdw_btn_extauth_selection_order_egk" = "Bestil et sundhedskort";
 "cdw_btn_extauth_selection_retry" = "Prøv igen";
 "cdw_btn_help_next_hint" = "Umiddelbart efter tryk på denne knap læses sundhedskortet via NFC. For at gøre dette skal du holde kortet direkte på enheden. Hvis forbindelsen lykkes, vil du modtage haptisk feedback. Et tab af forbindelse eller fejl kommunikeres også via haptisk feedback. Kommunikation med sundhedskortet kan tage op til ti sekunder. Fjern derefter sundhedskortet fra enheden.";
@@ -156,7 +157,7 @@
 "cdw_txt_biometry_subtitle" = "Vil du gemme dine loginoplysninger til fremtidige login?";
 "cdw_txt_biometry_title" = "Registrering";
 "cdw_txt_can_demo_mode_info" = "Du kan angive alle cifre.";
-"cdw_txt_can_description" = "Du kan finde dit adgangsnummer (Card Access Number, forkortet CAN) i øverste højre hjørne af dit sundhedskort.";
+"cdw_txt_can_description" = "Du kan finde dit adgangsnummer i øverste højre hjørne af dit sundhedskort.";
 "cdw_txt_can_subtitle" = "Indtast adgangsnummer";
 "cdw_txt_can_title" = "Registrering";
 "cdw_txt_can_title_hint" = "Dit kortadgangsnummer (forkortet CAN) har 6 cifre. Du kan finde CAN i øverste højre hjørne foran på dit sundhedskort. Hvis der ikke er et sekscifret adgangsnummer her, skal du have et nyt sundhedskort fra dit sygesikringsselskab.";
@@ -177,10 +178,18 @@
 "cdw_txt_extauth_fallback_description2" = "Vil du ikke vente? Registrering med et sundhedskort understøttes allerede af alle sygeforsikringsselskaber.";
 "cdw_txt_extauth_fallback_headline" = "Vælg forsikring";
 "cdw_txt_extauth_fallback_title" = "Tilmeld dig med app";
+"cdw_txt_extauth_help_caption" = "Tips til tilmelding til forsikringsappen";
+"cdw_txt_extauth_help_description" = "Dit forsikringsselskab er ansvarlig for Sundheds-ID. Kontakt dem, hvis du har spørgsmål til tilmelding. Her er nogle afprøvede tips:";
+"cdw_txt_extauth_help_info_1" = "Bemærk venligst, at afhængigt af din forsikring kan det være nødvendigt med en separat app. Kontakt dit forsikringsselskab for at finde ud af, hvad det er.";
+"cdw_txt_extauth_help_info_2" = "Start kasseapp'en og log ind der én gang, inden du begynder at registrere dig i e-recept-appen.";
+"cdw_txt_extauth_help_info_3" = "Skift mellem at logge ind med sundheds-id og sundhedskort kan give problemer. Log derfor først aktivt ud af din profil, før du ændrer login-muligheden.";
+"cdw_txt_extauth_help_info_4" = "Står din forsikring ikke på listen, kan du alternativt tilmelde dig dit sundhedskort og den tilhørende pinkode.";
+"cdw_txt_extauth_help_info_5" = "Hvis kasseapparat-appen ikke omdirigerer dig tilbage til e-recept-appen, skal du sørge for at rapportere denne fejl til dit forsikringsselskab.";
+"cdw_txt_extauth_help_title" = "Hjælp";
 "cdw_txt_extauth_noresults" = "Vi kunne ikke finde nogen resultater for denne søgeterm.";
 "cdw_txt_extauth_noresults_title" = "Ingen resultater";
 "cdw_txt_extauth_searchprompt" = "Søg efter navn";
-"cdw_txt_extauth_selection_description" = "Fandt du ikke det, du ledte efter? Denne liste bliver konstant udvidet. Registrering med et sundhedskort understøttes allerede af alle sygeforsikringsselskaber.";
+"cdw_txt_extauth_selection_description" = "Hvis det ikke går som forventet at logge på med sundheds-id'et, er førstehjælpsinstruktioner tilgængelige.";
 "cdw_txt_extauth_selection_empty_list_description" = "Denne funktion vil være tilgængelig for dig om et par dage. Prøv igen senere.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Ikke tilgængelig endnu";
 "cdw_txt_extauth_selection_error_fallback" = "Prøv igen senere.";
@@ -262,7 +271,7 @@
 "cdw_txt_rc_nfc_message_noCardMessage" = "Intet sundhedskort fundet";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Denne korttype understøttes ikke";
 "cdw_txt_rc_placement" = "Opret her 👆";
-"cdw_txt_rc_position_content" = "Prøv også denne position af kortet og iPhone. Denne position har vist sig at give en bedre forbindelse på visse iPhones.";
+"cdw_txt_rc_position_content" = "Flyt kortet, så guldchippen er over frontkameraet, eller hold kortet mod hovedet på iPhonen som vist på billedet.";
 "cdw_txt_rc_position_header" = "Forskellig position";
 "cdw_txt_rc_subheadline" = "Den følgende proces kan tage op til 30 sekunder.";
 "cdw_txt_rc_tip_four" = "Tip 4 af 4";
@@ -358,7 +367,9 @@
 "epp_back_button" = "Tilbage";
 "epp_btn_alert_abort" = "Afbestille";
 "epp_btn_alert_camera" = "kamera";
+"epp_btn_alert_emoji" = "Emoji";
 "epp_btn_alert_library" = "Vælg foto";
+"epp_btn_emoji_use" = "Brug";
 "epp_txt_alert_header_profile" = "Vælg profilbillede";
 "epp_txt_alert_subheader_choose" = "Hvordan vil du fortsætte?";
 "erp_txt_tooltips_add_profile" = "Tryk her for at oprette en ny profil";
@@ -377,7 +388,7 @@
 "erx_btn_alert_login" = "Tilmeld";
 "erx_btn_alert_ok" = "Okay";
 "erx_btn_alert_retry" = "Prøv igen";
-"erx_btn_redeem" = "Indløs alle";
+"erx_btn_redeem" = "Alle indløs";
 "erx_btn_refresh" = "At opdatere";
 "erx_btn_scn_prescription" = "Åbn opskriftsscanner";
 "erx_title" = "Opskrifter";
@@ -845,8 +856,8 @@
 "ord_txt_no_pharmacy_name" = "Ukendt apotek";
 "ord_txt_title" = "Ordre:% s";
 "order_egk_btn_info_button" = "Sådan genkender du et NFC-aktiveret sundhedskort";
-"order_egk_pin" = "Pinkode";
-"order_egk_pin_card" = "Pin og sundhedskort";
+"order_egk_pin" = "pinkode";
+"order_egk_pin_card" = "PIN-kode og sundhedskort";
 "order_egk_service_subtitle" = "Til denne app skal du bruge et kort og en tilhørende pinkode.";
 "order_egk_service_title" = "Hvad vil du gerne ansøge om?";
 "order_egk_txt_contact_option_mail" = "Post";
@@ -945,7 +956,8 @@
 "pha_search_hint_txt_close" = "Luk placeringsdeling, del ikke placering";
 "pha_search_map_annotation" = "Apotek";
 "pha_search_map_btn_Error_cancel" = "Afbestille";
-"pha_search_map_header" = "Tæt på";
+"pha_search_map_header" = "Tæt på mig";
+"pha_search_map_txt_cluster_header" = "Apoteker";
 "pha_search_txt_closed" = "Lukket";
 "pha_search_txt_closing_soon" = "Lukker snart";
 "pha_search_txt_error_no_server_response_headline" = "serveren svarer ikke";
@@ -1022,12 +1034,14 @@
 "prsc_dtl_dr_emergency_service_fee_info_title" = "Akut servicegebyr";
 "prsc_dtl_dr_error_info_description" = "Ikke alle oplysninger er præsenteret korrekt i denne opskrift. Du kan dog stadig indløse den på dit apotek.";
 "prsc_dtl_dr_error_info_title" = "Opskriften er forkert";
+"prsc_dtl_dr_no_substitution_info_describtion" = "Din læge har bestemt, at du skal have det ordinerede præparat. Apoteket bør ikke foretage ombytning på baggrund af en rabataftale (\"Aut idem\").";
+"prsc_dtl_dr_no_substitution_info_title" = "Ingen erstatningsforberedelse mulig";
 "prsc_dtl_dr_prescription_validity_info_accept_date_description" = "I denne periode kan du indløse din recept på ethvert apotek med en maksimal ekstra betaling på €10.";
 "prsc_dtl_dr_prescription_validity_info_expire_date_description" = "Du kan stadig udfylde recepten på apoteket inden for denne periode, men du skal selv betale hele købesummen for medicinen. Alternativt kan du bede din praksis om at få genudstedt recepten.";
 "prsc_dtl_dr_prescription_validity_info_title" = "Hvor længe er denne recept gyldig?";
 "prsc_dtl_dr_scanned_prescription_info_description" = "Recepter importeret fra en papirkopi kan ikke vise personlige eller medicinske oplysninger af sikkerhedsmæssige årsager. \n\n Log ind på denne app med sundhedskort eller forsikringsapp for at se alle oplysningerne i recepten.";
 "prsc_dtl_dr_scanned_prescription_info_title" = "Scannet opskrift";
-"prsc_dtl_dr_substitution_info_description" = "På grund af lovkrav fra dit sygeforsikringsselskab kan du få et alternativ med det samme aktive stof. \n\n Medicin kan se ud og hedde anderledes, have forskellige priser og producenter, men stadig indeholde det samme aktive stof. Selve det aktive stof og doseringen er afgørende for lægemidlers virkning i kroppen. Patienterne får ofte en anden medicin på apoteket end den, lægen har ordineret – forudsat at medicinen er sammenlignelig. Der kan være terapeutiske og økonomiske årsager til ændringen.";
+"prsc_dtl_dr_substitution_info_description" = "Apoteker er forpligtet til at prioritere udlevering af lægemidler, som patientens sygesikring har indgået rabataftale om med lægemiddelproducenter. Dette gælder kun ikke, hvis lægen udelukker \"Aut idem\" på recepten, hvilket ikke er tilfældet med din recept.";
 "prsc_dtl_dr_substitution_info_title" = "Udskiftningsforberedelse mulig";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Åbn health.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Du kan finde ekspertverificeret information om sygdomme, ICD-koder og forebyggelses- og plejeemner i den nationale sundhedsportal.";
@@ -1082,6 +1096,7 @@
 "prsc_dtl_txt_missing_dosage_instructions" = "Din læge har ikke givet dig nogen information om at tage medicinen.";
 "prsc_dtl_txt_multi_prescription" = "Flere recepter";
 "prsc_dtl_txt_no" = "Ingen";
+"prsc_dtl_txt_no_substitution" = "Ingen erstatningsforberedelse mulig";
 "prsc_dtl_txt_partial" = "Delvist";
 "prsc_dtl_txt_pkv_hint_activate_msg" = "Når omkostningskvitteringerne er aktiveret, finder du dem her, efter du har indløst din recept.";
 "prsc_dtl_txt_pkv_hint_activate_title" = "Modtag omkostningskvitteringer digitalt";
@@ -1090,6 +1105,8 @@
 "prsc_dtl_txt_practitioner_person" = "Udskriver";
 "prsc_dtl_txt_quantity" = "Antal foreskrevne pakninger";
 "prsc_dtl_txt_section_details_header" = "Detaljeret information";
+"prsc_dtl_txt_substitution" = "Vikarforberedelse (Aut idem)";
+"prsc_dtl_txt_substitution_possible" = "Udskiftningsforberedelse mulig";
 "prsc_dtl_txt_yes" = "Ja";
 "prsc_fd_btn_error_banner" = "Rapport";
 "prsc_fd_hint_dosageInstructions_pic" = "læge";
@@ -1156,7 +1173,7 @@
 "puc_txt_subtitle_%@" = "Vis denne afhentningskode på %@ .";
 "puc_txt_title" = "Afhentningskode";
 "rdm_btn_redeem_pharmacy_description" = "Få den scannet på apoteket";
-"rdm_btn_redeem_pharmacy_title" = "Indløs direkte";
+"rdm_btn_redeem_pharmacy_title" = "Vis kode";
 "rdm_btn_redeem_search_pharmacy_description" = "Reserver eller få det leveret";
 "rdm_btn_redeem_search_pharmacy_title" = "Send til apoteket";
 "rdm_scc_btn_return_to_main" = "Til startsiden";
@@ -1165,8 +1182,8 @@
 "rdm_scc_txt_onpremise_content" = "Din ordre vil normalt være klar til dig med det samme. For en præcis aftale kontakt venligst apoteket.";
 "rdm_scc_txt_onpremise_title" = "Indløst";
 "rdm_scc_txt_shipment_content_1" = "Gå til startsiden.";
-"rdm_scc_txt_shipment_content_2" = "Postordreapoteket laver en indkøbskurv til dig med din medicin. Denne proces kan tage flere minutter.";
-"rdm_scc_txt_shipment_content_3" = "Tryk på \"Åbn indkøbskurv\" og fuldfør din ordre på apotekets hjemmeside.";
+"rdm_scc_txt_shipment_content_2" = "Vent et par minutter, indtil du modtager et svar fra postordreapoteket.";
+"rdm_scc_txt_shipment_content_3" = "Apoteket vil herefter informere dig via e-recept-appen om, hvordan du gennemfører bestillingen.";
 "rdm_scc_txt_shipment_title" = "Dine næste skridt";
 "rdm_txt_subtitle" = "Hvordan vil du indløse dine recepter?";
 "rdm_txt_title" = "Hvordan indløser man?";
@@ -1285,6 +1302,8 @@
 "stg_btn_edit_profile_login" = "Tilmeld";
 "stg_btn_edit_profile_logout" = "Log ud";
 "stg_btn_edit_profile_registered_devices" = "Tilsluttede enheder";
+"stg_btn_language_settings" = "Sprog";
+"stg_btn_language_settings_alert_open_settings" = "Åbn Indstillinger";
 "stg_btn_medication_reminder" = "Påmindelse om omsætning";
 "stg_btn_new_profile_create" = "Gemme";
 "stg_btn_reg_devices_load" = "Tilmeld";
@@ -1471,6 +1490,8 @@
 "stg_txt_header_personal_settings" = "personlige indstillinger";
 "stg_txt_header_profiles" = "Profiler";
 "stg_txt_header_security" = "Sikkerhed";
+"stg_txt_language_settings_alert_description" = "Du kan ændre appens sprog i Systemindstillinger.";
+"stg_txt_language_settings_alert_title" = "Skift sproget på appen";
 "stg_txt_new_profile_background_section_title" = "baggrundsfarve";
 "stg_txt_new_profile_error_message_title" = "Fejl";
 "stg_txt_new_profile_missing_name_error" = "Navnefeltet må ikke være tomt";
@@ -1483,6 +1504,7 @@
 "stg_txt_reg_devices_registered_since_%@" = "Registreret siden %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Registreret siden %@ (denne enhed)";
 "stg_txt_reg_devices_title" = "Tilsluttede enheder";
+"stg_txt_security_option_change_password_title" = "skift kodeord";
 "stg_txt_security_option_faceid_title" = "FaceID";
 "stg_txt_security_option_password_title" = "adgangskode";
 "stg_txt_security_option_touchid_title" = "Tryk på ID";
