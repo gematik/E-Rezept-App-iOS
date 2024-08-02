@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SubTitleStyle Protocol Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Protocol/SubTitleStyle" class="dashAnchor"></a>
+
+    <a title="SubTitleStyle Protocol Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+           1.24.0
+ Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <div class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </div>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html"> Reference</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      SubTitleStyle Protocol Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/Colors.html">Colors</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SFSymbolName.html">SFSymbolName</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SectionContainerContentStyle.html">SectionContainerContentStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/UnicodeCharacter.html">UnicodeCharacter</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/AppKit">AppKit</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/ButtonStyle.html">ButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/EnvironmentValues.html">EnvironmentValues</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/LabelStyle.html">LabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/ToggleStyle.html">ToggleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/View.html">View</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/KeyValuePairStyle.html">KeyValuePairStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SectionContainerStyle.html">SectionContainerStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SubTitleStyle.html">SubTitleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/TooltipId.html">TooltipId</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/BorderSectionContainerStyle.html">BorderSectionContainerStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/BottomDividerStyle.html">BottomDividerStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DefaultKeyValuePairStyle.html">DefaultKeyValuePairStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DefaultSubTitleStyle.html">DefaultSubTitleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DetailNavigationButtonStyle.html">DetailNavigationButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DetailNavigationLabelStyle.html">DetailNavigationLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DetailNavigationSubTitleStyle.html">DetailNavigationSubTitleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/FlagLabelStyle.html">FlagLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/FooterButtonStyle.html">FooterButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/FormRadioToggleStyle.html">FormRadioToggleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/FormTextField.html">FormTextField</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/FormToggleStyle.html">FormToggleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/InfoNavigationSubTitleStyle.html">InfoNavigationSubTitleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/InitialsImage.html">InitialsImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/InitialsImage/Size.html">– Size</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/InlineSectionContainerStyle.html">InlineSectionContainerStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/KeyValuePair.html">KeyValuePair</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/KeyValuePairConfiguration.html">KeyValuePairConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PageControl.html">PageControl</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PictureButtonStyle.html">PictureButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PictureButtonStyle/Width.html">– Width</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PictureLabelStyle.html">PictureLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PictureLabelStyle/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PlainKeyValuePairStyle.html">PlainKeyValuePairStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PlainSectionContainerSubTitleStyle.html">PlainSectionContainerSubTitleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PrimaryButtonStyle/Width.html">– Width</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/QuartaryButtonStyle.html">QuartaryButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RadioLabelStyle.html">RadioLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ReportButtonStyle.html">ReportButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SecondaryAltButtonStyle.html">SecondaryAltButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SecondaryButtonStyle.html">SecondaryButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainer.html">SectionContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerButtonLabelStyle.html">SectionContainerButtonLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerButtonStyle.html">SectionContainerButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerCellModifier.html">SectionContainerCellModifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerColoredIconLabelStyle.html">SectionContainerColoredIconLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerLabelStyle.html">SectionContainerLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerSubTitleStyle.html">SectionContainerSubTitleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerViewModifier.html">SectionContainerViewModifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SeparatedKeyValuePairStyle.html">SeparatedKeyValuePairStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SingleElementSectionContainer.html">SingleElementSectionContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SubTitle.html">SubTitle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SubTitleConfiguration.html">SubTitleConfiguration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SubTitleTop.html">SubTitleTop</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SubTitleViewModifier.html">SubTitleViewModifier</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/TertiaryButtonStyle.html">TertiaryButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/TertiaryFilledButtonStyle.html">TertiaryFilledButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Toast.html">Toast</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Toast/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ToastContainerView.html">ToastContainerView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ToggleLabelStyle.html">ToggleLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/TooltipDisplayStorage.html">TooltipDisplayStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/TopDividerStyle.html">TopDividerStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/TrailingIconCellLabelStyle.html">TrailingIconCellLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/TrailingIconLabelStyle.html">TrailingIconLabelStyle</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>SubTitleStyle</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">SubTitleStyle</span></code></pre>
+
+                </div>
+              </div>
+            <p>A type that applies a custom appearance to all <code><a href="../Structs/SubTitle.html">SubTitle</a></code>s within a view hierarchy.</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0P4BodyQa"></a>
+                    <a name="//apple_ref/swift/Alias/Body" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0P4BodyQa">Body</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A view that represents the body of a <code><a href="../Structs/SubTitle.html">SubTitle</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">associatedtype</span> <span class="kt">Body</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0P8makeBody13configuration0G0QzAA0dE13ConfigurationV_tF"></a>
+                    <a name="//apple_ref/swift/Method/makeBody(configuration:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0P8makeBody13configuration0G0QzAA0dE13ConfigurationV_tF">makeBody(configuration:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a view that represents the <code><a href="../Structs/SubTitle.html">SubTitle</a></code> of a button.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@ViewBuilder</span>
+<span class="kd">func</span> <span class="nf">makeBody</span><span class="p">(</span><span class="nv">configuration</span><span class="p">:</span> <span class="kt"><a href="../Structs/SubTitleConfiguration.html">SubTitleConfiguration</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span><span class="o">.</span><span class="kt"><a href="../Protocols/SubTitleStyle.html#/s:11eRpStyleKit08SubTitleB0P4BodyQa">Body</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60DefaultSubTitleStyle%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `DefaultSubTitleStyle`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60DefaultSubTitleStyle%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Structs/DefaultSubTitleStyle.html">DefaultSubTitleStyle</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0PA2A07DefaultdeB0VRszrlE6simpleAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/simple" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0PA2A07DefaultdeB0VRszrlE6simpleAEvpZ">simple</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A SubTitleStyle style that applies a default SubTitle</p>
+
+<p>To apply this style to a SubTitle, or to a view that contains SubTitle, use
+the <code><a href="../Extensions/View.html#/s:7SwiftUI4ViewP11eRpStyleKitE08subTitleE0yQrqd__AD03SubhE0Rd__lF">subTitleStyle(_:)</a></code> modifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">simple</span><span class="p">:</span> <span class="kt"><a href="../Structs/DefaultSubTitleStyle.html">DefaultSubTitleStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60PlainSectionContainerSubTitleStyle%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `PlainSectionContainerSubTitleStyle`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60PlainSectionContainerSubTitleStyle%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Structs/PlainSectionContainerSubTitleStyle.html">PlainSectionContainerSubTitleStyle</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0PA2A021PlainSectionContainerdeB0VRszrlE5plainAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/plain" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0PA2A021PlainSectionContainerdeB0VRszrlE5plainAEvpZ">plain</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A SubTitleStyle style that applies a plain SubTitle</p>
+
+<p>To apply this style to a SubTitle, or to a view that contains SubTitle, use
+the <code><a href="../Extensions/View.html#/s:7SwiftUI4ViewP11eRpStyleKitE08subTitleE0yQrqd__AD03SubhE0Rd__lF">subTitleStyle(_:)</a></code> modifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">plain</span><span class="p">:</span> <span class="kt"><a href="../Structs/PlainSectionContainerSubTitleStyle.html">PlainSectionContainerSubTitleStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60SectionContainerSubTitleStyle%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `SectionContainerSubTitleStyle`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60SectionContainerSubTitleStyle%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Structs/SectionContainerSubTitleStyle.html">SectionContainerSubTitleStyle</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0PA2A016SectionContainerdeB0VRszrlE07sectionG0AEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/sectionContainer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0PA2A016SectionContainerdeB0VRszrlE07sectionG0AEvpZ">sectionContainer</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A SubTitleStyle style that wraps the SubTitle with a divider at the bottom</p>
+
+<p>To apply this style to a SubTitle, or to a view that contains SubTitle, use
+the <code><a href="../Extensions/View.html#/s:7SwiftUI4ViewP11eRpStyleKitE08subTitleE0yQrqd__AD03SubhE0Rd__lF">subTitleStyle(_:)</a></code> modifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">sectionContainer</span><span class="p">:</span> <span class="kt"><a href="../Structs/SectionContainerSubTitleStyle.html">SectionContainerSubTitleStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0PA2A016SectionContainerdeB0VRszrlE07sectionG013showSeparatorAESb_tFZ"></a>
+                    <a name="//apple_ref/swift/Method/sectionContainer(showSeparator:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0PA2A016SectionContainerdeB0VRszrlE07sectionG013showSeparatorAESb_tFZ">sectionContainer(showSeparator:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A SubTitleStyle that applies an optional divider at the bottom.</p>
+
+<p>To apply this style to a SubTitle, or to a view that contains SubTitles, use
+the <code>View/subTitleStyle(.sectionContainer(showSeparator:))</code> modifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">sectionContainer</span><span class="p">(</span><span class="nv">showSeparator</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/SectionContainerSubTitleStyle.html">SectionContainerSubTitleStyle</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60DetailNavigationSubTitleStyle%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `DetailNavigationSubTitleStyle`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60DetailNavigationSubTitleStyle%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Structs/DetailNavigationSubTitleStyle.html">DetailNavigationSubTitleStyle</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0PA2A016DetailNavigationdeB0VRszrlE10navigationAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/navigation" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0PA2A016DetailNavigationdeB0VRszrlE10navigationAEvpZ">navigation</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A SubTitleStyle style that applies a navigation chevron and wraps the SubTitle with a divider.</p>
+
+<p>To apply this style to a SubTitle, or to a view that contains SubTitle, use
+the <code><a href="../Extensions/View.html#/s:7SwiftUI4ViewP11eRpStyleKitE08subTitleE0yQrqd__AD03SubhE0Rd__lF">subTitleStyle(_:)</a></code> modifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">navigation</span><span class="p">:</span> <span class="kt"><a href="../Structs/DetailNavigationSubTitleStyle.html">DetailNavigationSubTitleStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0PA2A016DetailNavigationdeB0VRszrlE10navigation13showSeparator17minChevronSpacing9stateTextAESb_14CoreFoundation7CGFloatVSgSSSgtFZ"></a>
+                    <a name="//apple_ref/swift/Method/navigation(showSeparator:minChevronSpacing:stateText:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0PA2A016DetailNavigationdeB0VRszrlE10navigation13showSeparator17minChevronSpacing9stateTextAESb_14CoreFoundation7CGFloatVSgSSSgtFZ">navigation(showSeparator:<wbr>minChevronSpacing:<wbr>stateText:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A SubTitleStyle that applies a navigation chevron and optionally skips the divider.</p>
+
+<p>To apply this style to a SubTitle, or to a view that contains SubTitles, use
+the <code>View/subTitleStyle(.navigation(showSeparator:))</code> modifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">navigation</span><span class="p">(</span>
+    <span class="nv">showSeparator</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nv">minChevronSpacing</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">stateText</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DetailNavigationSubTitleStyle.html">DetailNavigationSubTitleStyle</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Available%20where%20%60Self%60%20%3D%3D%20%60InfoNavigationSubTitleStyle%60"></a>
+                <a name="//apple_ref/swift/Section/Available where `Self` == `InfoNavigationSubTitleStyle`" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Available%20where%20%60Self%60%20%3D%3D%20%60InfoNavigationSubTitleStyle%60"></a>
+                  <h3 class="section-name"><span>Available where <code>Self</code> == <code><a href="../Structs/InfoNavigationSubTitleStyle.html">InfoNavigationSubTitleStyle</a></code></span>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0PA2A014InfoNavigationdeB0VRszrlE4infoAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/info" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0PA2A014InfoNavigationdeB0VRszrlE4infoAEvpZ">info</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A SubTitleStyle style that applies an info icon and wraps the SubTitle with a divider.</p>
+
+<p>To apply this style to a SubTitle, or to a view that contains SubTitle, use
+the <code><a href="../Extensions/View.html#/s:7SwiftUI4ViewP11eRpStyleKitE08subTitleE0yQrqd__AD03SubhE0Rd__lF">subTitleStyle(_:)</a></code> modifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">info</span><span class="p">:</span> <span class="kt"><a href="../Structs/InfoNavigationSubTitleStyle.html">InfoNavigationSubTitleStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit08SubTitleB0PA2A014InfoNavigationdeB0VRszrlE4info13showSeparator17minChevronSpacingAESb_14CoreFoundation7CGFloatVSgtFZ"></a>
+                    <a name="//apple_ref/swift/Method/info(showSeparator:minChevronSpacing:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit08SubTitleB0PA2A014InfoNavigationdeB0VRszrlE4info13showSeparator17minChevronSpacingAESb_14CoreFoundation7CGFloatVSgtFZ">info(showSeparator:<wbr>minChevronSpacing:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A SubTitleStyle that applies an info icon and optionally skips the divider.</p>
+
+<p>To apply this style to a SubTitle, or to a view that contains SubTitles, use
+the <code>View/subTitleStyle(.info(showSeparator:))</code> modifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">info</span><span class="p">(</span>
+    <span class="nv">showSeparator</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nv">minChevronSpacing</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/InfoNavigationSubTitleStyle.html">InfoNavigationSubTitleStyle</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+    </section>
+  </body>
+</html>

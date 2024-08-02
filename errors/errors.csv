@@ -5,7 +5,7 @@ i-54003,"AVSError.invalidX509Input","When an X509 certificate was of unexpected 
 i-54004,"AVSError.unspecified","Conversion error when trying to cast to `AVSError` but error type was different",
 i-54005,"AVSError.`internal`","Internal error",AVSError.InternalError
 i-54101,"AVSError.InternalError.cmsContentCreation","",
-i-00901,"ZXDataMatrixWriter.Error.cgImageConversion","",
+i-00901,"ZXingMatrixCodeGenerator.Error.cgImageConversion","",
 i-02701,"PrescriptionRepositoryError.loginHandler","",LoginHandlerError
 i-02702,"PrescriptionRepositoryError.erxRepository","",ErxRepositoryError
 i-00301,"AuthenticationChallengeProviderError.cannotEvaluatePolicy","",
@@ -20,6 +20,9 @@ i-00105,"ScannerDomain.Error.scannedErxTask","",ScannedErxTask.Error
 i-00106,"ScannerDomain.Error.unknown","",
 i-01201,"CardWallExtAuthConfirmationDomain.Error.idpError","",IDPError
 i-01202,"CardWallExtAuthConfirmationDomain.Error.universalLinkFailed","",
+i-02901,"CardWallIntroductionDomain.Error.idpError","",IDPError
+i-02902,"CardWallIntroductionDomain.Error.universalLinkFailed","",
+i-02903,"CardWallIntroductionDomain.Error.kkNotFound","",
 i-01001,"CardWallReadCardDomain.State.Error.idpError","`IDPError` thrown within the `CardWallReadCardDomain`",IDPError
 i-01002,"CardWallReadCardDomain.State.Error.inputError","Possible user input errors thrown within the `CardWallReadCardDomain`",CardWallReadCardDomain.State.Error.InputError
 i-01003,"CardWallReadCardDomain.State.Error.signChallengeError","NFC signature errors thrown within the `CardWallReadCardDomain`",NFCSignatureProviderError
@@ -137,6 +140,7 @@ i-01901,"DemoError.demo","",
 i-00601,"AppSecurityManagerError.savePasswordFailed","",
 i-00602,"AppSecurityManagerError.retrievePasswordFailed","",
 i-00603,"AppSecurityManagerError.localAuthenticationContext","",
+i-00604,"AppSecurityManagerError.migrationFailed","",
 i-02001,"KeychainAccessHelperError.illegalArgument","",
 i-02002,"KeychainAccessHelperError.keyChainError","",
 i-02002,"KeychainAccessHelperError.keyChainError","",

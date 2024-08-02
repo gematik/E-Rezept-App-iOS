@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>IDPSession Protocol Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Protocol/IDPSession" class="dashAnchor"></a>
+
+    <a title="IDPSession Protocol Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+           1.24.0
+ Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <div class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </div>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html"> Reference</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      IDPSession Protocol Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Guides.html">Guides</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../readme.html">Readme</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer.html">BiometricsSHA256Signer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession.html">DefaultIDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession/Configuration.html">– Configuration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultSecureEnclaveSignatureProvider.html">DefaultSecureEnclaveSignatureProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/IDPInterceptor.html">IDPInterceptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/ConversionError.html">ConversionError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPCodeChallengeMode.html">IDPCodeChallengeMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPError.html">IDPError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPError/ServerResponse.html">– ServerResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPError/Code.html">– Code</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPError/InternalError.html">– InternalError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPError/LoadingError.html">– LoadingError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SecureEnclaveSignatureProviderError.html">SecureEnclaveSignatureProviderError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/BrainpoolP256r1.html">BrainpoolP256r1</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/BrainpoolP256r1/KeyExchange.html">– KeyExchange</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ChallengeSession.html">ChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ExtAuthRequestStorage.html">ExtAuthRequestStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPClient.html">IDPClient</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPEndpoint.html">IDPEndpoint</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPSchedulers.html">IDPSchedulers</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPSession.html">IDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPSessionDelegate.html">IDPSessionDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPStorage.html">IDPStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SecureEGKCertificateStorage.html">SecureEGKCertificateStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SecureEnclaveSignatureProvider.html">SecureEnclaveSignatureProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AuthenticationData.html">AuthenticationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/BiometricAuthenticationSession.html">BiometricAuthenticationSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ExtAuthChallengeSession.html">ExtAuthChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallenge.html">IDPChallenge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallenge/Claim.html">– Claim</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallenge/UserConsent.html">– UserConsent</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallengeResponse.html">IDPChallengeResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallengeSession.html">IDPChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPDirectoryKKApps.html">IDPDirectoryKKApps</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPExtAuth.html">IDPExtAuth</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPExtAuth/AuthType.html">– AuthType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPExtAuthVerify.html">IDPExtAuthVerify</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPToken.html">IDPToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/KKAppDirectory.html">KKAppDirectory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/KKAppDirectory/Entry.html">– Entry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/NestedJWT.html">NestedJWT</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PairingData.html">PairingData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PairingEntries.html">PairingEntries</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PairingEntry.html">PairingEntry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PrivateKeyContainer.html">PrivateKeyContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PrivateKeyContainer/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RegistrationData.html">RegistrationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RegistrationData/DeviceInformation.html">– DeviceInformation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignedAuthenticationData.html">SignedAuthenticationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignedChallenge.html">SignedChallenge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignedPairingData.html">SignedPairingData</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP8IDPScopea">IDPScope</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP6Randoma">Random</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12TimeProvidera">TimeProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12VerifierCodea">VerifierCode</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>IDPSession</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">IDPSession</span></code></pre>
+
+                </div>
+              </div>
+            <p>IDPSession acts as an interactor/mediator for the IDPClient and IDPStorage
+sourcery: StreamWrapped</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP10isLoggedIn7Combine12AnyPublisherVySbAA8IDPErrorOGvp"></a>
+                    <a name="//apple_ref/swift/Property/isLoggedIn" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP10isLoggedIn7Combine12AnyPublisherVySbAA8IDPErrorOGvp">isLoggedIn</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Whether the session has access to a (valid) authenticated session (e.g. token)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isLoggedIn</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP18autoRefreshedToken7Combine12AnyPublisherVyAA8IDPTokenVSgAA8IDPErrorOGvp"></a>
+                    <a name="//apple_ref/swift/Property/autoRefreshedToken" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP18autoRefreshedToken7Combine12AnyPublisherVyAA8IDPTokenVSgAA8IDPErrorOGvp">autoRefreshedToken</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Subscribe to the session&rsquo;s IDPToken and receive the latest (session) token through this Publisher</p>
+
+<p>[REQ:gemSpec_eRp_FdV:A_19480] usage of this token is limited to FD/IDP Access.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">autoRefreshedToken</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP21invalidateAccessTokenyyF"></a>
+                    <a name="//apple_ref/swift/Method/invalidateAccessToken()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP21invalidateAccessTokenyyF">invalidateAccessToken()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Invalidates the active token. Use to logout the user or mark the existing Session as invalid, e.g. due to an
+403/forbidden server response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">invalidateAccessToken</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP16requestChallenge7Combine12AnyPublisherVyAA19IDPChallengeSessionVAA8IDPErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/requestChallenge()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP16requestChallenge7Combine12AnyPublisherVyAA19IDPChallengeSessionVAA8IDPErrorOGyF">requestChallenge()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Request a challenge from the IDPClient for certain scopes</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">requestChallenge</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPChallengeSession.html">IDPChallengeSession</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Published <code><a href="../Structs/IDPChallengeSession.html">IDPChallengeSession</a></code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP6verifyy7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA15SignedChallengeVF"></a>
+                    <a name="//apple_ref/swift/Method/verify(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP6verifyy7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA15SignedChallengeVF">verify(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Verify the signed challenge</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">verify</span><span class="p">(</span><span class="n">_</span> <span class="nv">signedChallenge</span><span class="p">:</span> <span class="kt"><a href="../Structs/SignedChallenge.html">SignedChallenge</a></span><span class="p">)</span>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>signedChallenge</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the received challenge</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP8exchange5token16challengeSession16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAA011IDPExchangeH0V_AA09ChallengeF0_ps6ResultOySbs5Error_pGAA0H7PayloadV07IDTokenS0VctF"></a>
+                    <a name="//apple_ref/swift/Method/exchange(token:challengeSession:idTokenValidator:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP8exchange5token16challengeSession16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAA011IDPExchangeH0V_AA09ChallengeF0_ps6ResultOySbs5Error_pGAA0H7PayloadV07IDTokenS0VctF">exchange(token:<wbr>challengeSession:<wbr>idTokenValidator:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Exchange the token with verifier for the actual token</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">exchange</span><span class="p">(</span>
+    <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span>
+    <span class="nv">challengeSession</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChallengeSession.html">ChallengeSession</a></span><span class="p">,</span>
+    <span class="nv">idTokenValidator</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">TokenPayload</span><span class="o">.</span><span class="kt">IDTokenPayload</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>token</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the exchange token</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>challengeSession</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A  challengeSession with verifier code for the challenge</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>idTokenValidator</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Closure that validates the passed IDToken for the selected profile</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Publisher of the received IDPToken</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP7refresh5token7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAJ_tF"></a>
+                    <a name="//apple_ref/swift/Method/refresh(token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP7refresh5token7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAJ_tF">refresh(token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Refresh token</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">refresh</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>token</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the token to refresh</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>renewed token or error</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP10pairDevice4with5token7Combine12AnyPublisherVyAA12PairingEntryVAA8IDPErrorOGAA16RegistrationDataV_AA8IDPTokenVtF"></a>
+                    <a name="//apple_ref/swift/Method/pairDevice(with:token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP10pairDevice4with5token7Combine12AnyPublisherVyAA12PairingEntryVAA8IDPErrorOGAA16RegistrationDataV_AA8IDPTokenVtF">pairDevice(with:<wbr>token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Pairs the device with a biometric key.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">pairDevice</span><span class="p">(</span><span class="n">with</span> <span class="nv">registrationData</span><span class="p">:</span> <span class="kt"><a href="../Structs/RegistrationData.html">RegistrationData</a></span><span class="p">,</span> <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PairingEntry.html">PairingEntry</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>registrationData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/RegistrationData.html">RegistrationData</a></code> containing information about the biometric key to register.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>token</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Accesstoken for authentication and authorization for the new key.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>AnyPublisher with a <code><a href="../Structs/PairingEntry.html">PairingEntry</a></code> containing registration information upon success.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP16unregisterDevice_5token7Combine12AnyPublisherVySbAA8IDPErrorOGSS_AA8IDPTokenVtF"></a>
+                    <a name="//apple_ref/swift/Method/unregisterDevice(_:token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP16unregisterDevice_5token7Combine12AnyPublisherVySbAA8IDPErrorOGSS_AA8IDPTokenVtF">unregisterDevice(_:<wbr>token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unregisters the devices key with the given identifier.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unregisterDevice</span><span class="p">(</span><span class="n">_</span> <span class="nv">keyIdentifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>keyIdentifier</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Key identifier to unregister.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>token</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Accesstoken for authentication and authorization for the new key.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>AnyPublisher with a<code>Bool</code> containing <code>true</code> upon success, <code>false</code> otherwise.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP11listDevices5token7Combine12AnyPublisherVyAA14PairingEntriesVAA8IDPErrorOGAA8IDPTokenV_tF"></a>
+                    <a name="//apple_ref/swift/Method/listDevices(token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP11listDevices5token7Combine12AnyPublisherVyAA14PairingEntriesVAA8IDPErrorOGAA8IDPTokenV_tF">listDevices(token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns the list of all registered devices.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listDevices</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PairingEntries.html">PairingEntries</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>token</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Accesstoken for authentication and authorization for the new key.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>AnyPublisher with a<code><a href="../Structs/PairingEntries.html">PairingEntries</a></code> containing all registered devices.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP9altVerifyy7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA24SignedAuthenticationDataVF"></a>
+                    <a name="//apple_ref/swift/Method/altVerify(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP9altVerifyy7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA24SignedAuthenticationDataVF">altVerify(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Verify a given challenge with the IDP using alternative authentication, a.k.a. biometric secured key.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">altVerify</span><span class="p">(</span><span class="n">_</span> <span class="nv">signedChallenge</span><span class="p">:</span> <span class="kt"><a href="../Structs/SignedAuthenticationData.html">SignedAuthenticationData</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>signedChallenge</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/SignedAuthenticationData.html">SignedAuthenticationData</a></code> that is signed with a biometric key instead of an eGK.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>AnyPublisher with <code><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></code> if successfull, fails with an <code><a href="../Enums/IDPError.html">IDPError</a></code> otherwise.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP19loadDirectoryKKApps7Combine12AnyPublisherVyAA05KKAppD0VAA8IDPErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/loadDirectoryKKApps()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP19loadDirectoryKKApps7Combine12AnyPublisherVyAA05KKAppD0VAA8IDPErrorOGyF">loadDirectoryKKApps()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Load available Insurance companies that are capable of External Authentication (<em>gID</em>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadDirectoryKKApps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/KKAppDirectory.html">KKAppDirectory</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP12startExtAuth5entry7Combine12AnyPublisherVy10Foundation3URLVAA8IDPErrorOGAA14KKAppDirectoryV5EntryV_tF"></a>
+                    <a name="//apple_ref/swift/Method/startExtAuth(entry:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP12startExtAuth5entry7Combine12AnyPublisherVy10Foundation3URLVAA8IDPErrorOGAA14KKAppDirectoryV5EntryV_tF">startExtAuth(entry:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initial step for external authentication with insurance company app.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">startExtAuth</span><span class="p">(</span><span class="nv">entry</span><span class="p">:</span> <span class="kt"><a href="../Structs/KKAppDirectory.html">KKAppDirectory</a></span><span class="o">.</span><span class="kt">Entry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">URL</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>entry</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The reference to an insurance company app to user for the authentication.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP24extAuthVerifyAndExchange_16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOG10Foundation3URLV_s6ResultOySbs5Error_pGAA0I7PayloadV07IDTokenT0VctF"></a>
+                    <a name="//apple_ref/swift/Method/extAuthVerifyAndExchange(_:idTokenValidator:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP24extAuthVerifyAndExchange_16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOG10Foundation3URLV_s6ResultOySbs5Error_pGAA0I7PayloadV07IDTokenT0VctF">extAuthVerifyAndExchange(_:<wbr>idTokenValidator:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Follow up step whenever an insurance company app authorizes a user login.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">extAuthVerifyAndExchange</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span>
+    <span class="nv">idTokenValidator</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">TokenPayload</span><span class="o">.</span><span class="kt">IDTokenPayload</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>url</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Universal link containing login information</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>idTokenValidator</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Closure that validates the passed IDToken for the selected profile</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionPAAE17verifyAndExchange15signedChallenge16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAA06SignedG0V_s6ResultOySbs5Error_pGAA0I7PayloadV07IDTokenS0VctF"></a>
+                    <a name="//apple_ref/swift/Method/verifyAndExchange(signedChallenge:idTokenValidator:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionPAAE17verifyAndExchange15signedChallenge16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAA06SignedG0V_s6ResultOySbs5Error_pGAA0I7PayloadV07IDTokenS0VctF">verifyAndExchange(signedChallenge:<wbr>idTokenValidator:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Verify signed challenge and immediately exchange the token</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">verifyAndExchange</span><span class="p">(</span>
+    <span class="nv">signedChallenge</span><span class="p">:</span> <span class="kt"><a href="../Structs/SignedChallenge.html">SignedChallenge</a></span><span class="p">,</span>
+    <span class="nv">idTokenValidator</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">TokenPayload</span><span class="o">.</span><span class="kt">IDTokenPayload</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>signedChallenge</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>singed challenge</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>idTokenValidator</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Closure that validates the passed IDToken for the selected profile</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Publisher that emits <code><a href="../Structs/IDPToken.html">IDPToken</a></code> or <code><a href="../Enums/IDPError.html">IDPError</a></code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionPAAE15httpInterceptor8delegateAA14IDPInterceptorCAA0B8Delegate_pSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/httpInterceptor(delegate:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionPAAE15httpInterceptor8delegateAA14IDPInterceptorCAA0B8Delegate_pSg_tF">httpInterceptor(delegate:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a new IDPInterceptor for this session</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">httpInterceptor</span><span class="p">(</span><span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/IDPSessionDelegate.html">IDPSessionDelegate</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/IDPInterceptor.html">IDPInterceptor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>delegate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the IDP Session delegate</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>new IDPInterceptor</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionPAAE8exchange5token16challengeSession7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAA16IDPExchangeTokenV_AA09ChallengeF0_ptF"></a>
+                    <a name="//apple_ref/swift/Method/exchange(token:challengeSession:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionPAAE8exchange5token16challengeSession7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAA16IDPExchangeTokenV_AA09ChallengeF0_ptF">exchange(token:<wbr>challengeSession:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Exchange the token with verifier for the actual token</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">exchange</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span>
+                     <span class="nv">challengeSession</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChallengeSession.html">ChallengeSession</a></span><span class="p">)</span>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>token</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the exchange token</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>challengeSession</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A  challengeSession with verifier code for the challenge</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>redirectURI</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>optional redirect URI to use for the token exchange.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Publisher of the received IDPToken</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DefaultHTTPClient Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/DefaultHTTPClient" class="dashAnchor"></a>
+
+    <a title="DefaultHTTPClient Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+           1.24.0
+ Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <div class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </div>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html"> Reference</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      DefaultHTTPClient Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Guides.html">Guides</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../readme.html">Readme</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AdditionalHeaderInterceptor.html">AdditionalHeaderInterceptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultHTTPClient.html">DefaultHTTPClient</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/LoggingInterceptor.html">LoggingInterceptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/LoggingInterceptor/Level.html">– Level</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HTTPClientError.html">HTTPClientError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HTTPStatusCode.html">HTTPStatusCode</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/Chain.html">Chain</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/HTTPClient.html">HTTPClient</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/Interceptor.html">Interceptor</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10HTTPClient15RedirectHandlera">RedirectHandler</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>DefaultHTTPClient</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">DefaultHTTPClient</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/HTTPClient.html">HTTPClient</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>A simple implementation of an HTTP client using the interceptor concept.</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10HTTPClientAAP12interceptorsSayAA11Interceptor_pGvp"></a>
+                    <a name="//apple_ref/swift/Property/interceptors" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClientAAP12interceptorsSayAA11Interceptor_pGvp">interceptors</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10HTTPClient07DefaultA0C23urlSessionConfiguration12interceptors13delegateQueueACSo012NSURLSessionE0C_SayAA11Interceptor_pGSo011NSOperationH0CSgtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(urlSessionConfiguration:interceptors:delegateQueue:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClient07DefaultA0C23urlSessionConfiguration12interceptors13delegateQueueACSo012NSURLSessionE0C_SayAA11Interceptor_pGSo011NSOperationH0CSgtcfc">init(urlSessionConfiguration:<wbr>interceptors:<wbr>delegateQueue:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializer for the lightweight HTTP client</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="nv">urlSessionConfiguration</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span><span class="p">,</span>
+    <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="nv">delegateQueue</span><span class="p">:</span> <span class="kt">OperationQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>urlSession</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>URLSessionConfiguration</code> that is used to create the URLSession.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptors</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>list of <code>Interceptors</code> that may modify the request and/or response before sending.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>delegateQueue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>An operation queue for scheduling the delegate calls and completion handlers.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10HTTPClient07DefaultA0C4send7request12interceptors8redirect7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAK10URLRequestV_SayAA11Interceptor_pGAYSgAP_AYtYacSgtF"></a>
+                    <a name="//apple_ref/swift/Method/send(request:interceptors:redirect:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClient07DefaultA0C4send7request12interceptors8redirect7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAK10URLRequestV_SayAA11Interceptor_pGAYSgAP_AYtYacSgtF">send(request:<wbr>interceptors:<wbr>redirect:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send the given request. The request will be processed by the list of <code>Interceptors</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span>
+    <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span>
+    <span class="n"><a href="../Classes/DefaultHTTPClient.html#/s:10HTTPClientAAP12interceptorsSayAA11Interceptor_pGvp">interceptors</a></span> <span class="nv">requestInterceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">],</span>
+    <span class="n">redirect</span> <span class="nv">handler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient15RedirectHandlera">RedirectHandler</a></span><span class="p">?</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The request to be (modified and) sent.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>AnyPublisher</code> that emits a response as <code>URLSessionResponse</code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+    </section>
+  </body>
+</html>
