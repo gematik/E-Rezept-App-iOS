@@ -78,13 +78,14 @@ public class DefaultTrustStoreSession {
     }
 }
 
-// [REQ:gemSpec_Krypt:A_21218,A_21222]
+// [REQ:gemSpec_Krypt:A_21218,A_21222#2] `DefaultTrustStoreSession` coordinates loading and validity checking
 extension DefaultTrustStoreSession: TrustStoreSession {
     public func reset() {
         trustStoreStorage.set(certList: nil)
         trustStoreStorage.set(ocspList: nil)
     }
 
+    // [REQ:gemSpec_Krypt:A_21222#5|5] Loading of the whole trust store, filtering for vau certificate
     public func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError> {
         loadOCSPCheckedTrustStore()
             .map(\.vauCert)

@@ -14,7 +14,7 @@ import OpenSSL
 import Pharmacy
 import TrustStore
 import VAUClient
-import ZXingObjC
+import ZXingCpp
 
 {% macro listCaseErrorCodes enum %}
     {% typed enum as Enum %}

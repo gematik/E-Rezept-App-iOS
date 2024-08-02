@@ -189,6 +189,7 @@ extension EditProfileView {
                 }
 
                 if store.token != nil {
+                    // [REQ:BSI-eRp-ePA:O.Auth_14#2|5] The user may use the logout button within each profile
                     Button(action: {
                         store.send(.delegate(.logout))
                     }, label: {
@@ -408,30 +409,6 @@ extension EditProfileView {
 
         var body: some View {
             WithPerceptionTracking {
-                NavigationLink(item: $store.scope(state: \.destination?.token,
-                                                  action: \.destination.token),
-                               onTap: { store.send(.tokenViewTapped) },
-                               destination: { scopedStore in
-                                   IDPTokenView(store: scopedStore)
-                               },
-                               label: {
-                                   Label(
-                                       title: {
-                                           SubTitle(
-                                               title: L10n.stgTxtEditProfileSecurityShowTokensLabel,
-                                               description: L10n.stgTxtEditProfileSecurityShowTokensDescription
-                                           )
-                                       },
-                                       icon: {
-                                           Image(systemName: SFSymbolName.key)
-                                       }
-                                   )
-                               })
-                    .accessibilityElement(children: .combine)
-                    .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowTokens)
-                    .buttonStyle(.navigation)
-                    .disabled(store.state.token == nil)
-
                 // [REQ:gemSpec_eRp_FdV:A_19177#2,A_19185#3] Actual Button to open the audit events
                 // [REQ:BSI-eRp-ePA:O.Auth_6#2] Actual Button to open the audit events
                 NavigationLink(item: $store.scope(state: \.destination?.auditEvents,

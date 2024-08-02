@@ -86,7 +86,7 @@ extension ErxTask {
                     return false
                 }
                 let redeemedTimeInterval = now.timeIntervalSince(redeemDate)
-                return redeemedTimeInterval < ErxTask.scannedTaskMinIntervalForCompletion &&
+                return redeemedTimeInterval < ErxTask.minTimeIntervalForCompletion &&
                     redeemedTimeInterval > 0
             }
             return recentCommunications.isEmpty ? .completed : .computed(status: .waiting)
@@ -113,20 +113,20 @@ extension ErxTask {
                     return false
                 }
             }
-            return redeemedTimeInterval < ErxTask.scannedTaskMinIntervalForCompletion &&
+            return redeemedTimeInterval < ErxTask.minTimeIntervalForCompletion &&
                 redeemedTimeInterval > 0
         }
         if !comms.isEmpty {
-            return .inProgress
+            return .computed(status: .waiting)
         }
         return nil
     }
 
     #if ENABLE_DEBUG_VIEW
     /// Time interval for the fake status of a scanned `ErxTask`
-    public static var scannedTaskMinIntervalForCompletion: TimeInterval = 600
+    public static var minTimeIntervalForCompletion: TimeInterval = 600
     #else
-    static let scannedTaskMinIntervalForCompletion: TimeInterval = 600
+    static let minTimeIntervalForCompletion: TimeInterval = 600
     #endif
 
     // swiftlint:disable:next function_body_length

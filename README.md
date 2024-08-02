@@ -90,7 +90,6 @@ Run `$ make build`
 
 Note: make sure you've ran `$ make setup` before and have code-signing setup for your local (or ci-build) build.
 
-
 ### Functional Requirements
 
 The underlying requirements can be found within the Gematik [Fachportal](https://fachportal.gematik.de). Search for "E-Rezept Frontend des Versicherten".

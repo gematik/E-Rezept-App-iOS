@@ -81,7 +81,7 @@ struct CardWallExtAuthSelectionDomain {
         case .loadKKList:
             state.error = nil
             state.selectedKK = nil
-            // [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
+            // [REQ:gemSpec_IDP_Frontend:A_22296-01] Load available apps
             // [REQ:gemSpec_IDP_Frontend:A_23082#2] Load available apps
             return .publisher(
                 idpSession.loadDirectoryKKApps()
@@ -100,7 +100,7 @@ struct CardWallExtAuthSelectionDomain {
             return .none
         case let .selectKK(entry):
             // [REQ:BSI-eRp-ePA:O.Auth_4#6] Business logic of user selecting the insurance company
-            // [REQ:gemSpec_IDP_Sek:A_22294] Select KK
+            // [REQ:gemSpec_IDP_Frontend:A_22294-01] Select KK
             state.selectedKK = entry
             return .none
         // [REQ:BSI-eRp-ePA:O.Auth_4#7] Proceed to confirmation screen

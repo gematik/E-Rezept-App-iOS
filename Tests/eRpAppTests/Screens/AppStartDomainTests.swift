@@ -78,7 +78,8 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
-                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                    pharmacySearch: PharmacySearchDomain.State(inRedeemProcess: false,
+                                                               pharmacyFilterOptions: Shared([])),
                     orders: OrdersDomain.State(orders: []),
                     settings: SettingsDomain.State(isDemoMode: false),
                     unreadOrderMessageCount: 0,
@@ -104,7 +105,8 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
-                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                    pharmacySearch: PharmacySearchDomain.State(inRedeemProcess: false,
+                                                               pharmacyFilterOptions: Shared([])),
                     orders: OrdersDomain.State(orders: []),
                     settings: .init(isDemoMode: false),
                     unreadOrderMessageCount: 0,

@@ -27,23 +27,6 @@ import SwiftUIIntrospect
 struct PharmacyPrescriptionSelectionView: View {
     @Perception.Bindable var store: StoreOf<PharmacyPrescriptionSelectionDomain>
 
-    init(store: StoreOf<PharmacyPrescriptionSelectionDomain>) {
-        self.store = store
-    }
-
-    struct Prescription: Hashable, Identifiable {
-        var id: String { taskID }
-        let taskID: String
-        let title: String
-        var isSelected = false
-
-        init(_ task: ErxTask, isSelected: Bool) {
-            taskID = task.id
-            title = task.medication?.displayName ?? L10n.prscFdTxtNa.text
-            self.isSelected = isSelected
-        }
-    }
-
     var body: some View {
         WithPerceptionTracking {
             VStack {
@@ -59,21 +42,19 @@ struct PharmacyPrescriptionSelectionView: View {
                             }
                         }
                     }, content: {
-                        let prescriptions = store.erxTasks.map {
-                            Prescription($0,
-                                         isSelected: store.selectedErxTasks.contains($0))
-                        }
-                        ForEach(Array(prescriptions.enumerated()), id: \.element) { index, prescription in
-                            Button(action: { store.send(.didSelect(prescription.taskID)) },
-                                   label: {
-                                       TitleWithSubtitleCellView(
-                                           title: prescription.title,
-                                           subtitle: "",
-                                           isSelected: prescription.isSelected
-                                       ).multilineTextAlignment(.leading)
-                                   })
-                                .sectionContainerIsLastElement(index == prescriptions.count - 1)
-                                .padding(.horizontal)
+                        ForEach(Array(store.prescriptions.enumerated()), id: \.element) { index, prescription in
+                            WithPerceptionTracking {
+                                Button(action: { store.send(.didSelect(prescription.id)) },
+                                       label: {
+                                           TitleWithSubtitleCellView(
+                                               title: prescription.title,
+                                               subtitle: "",
+                                               isSelected: store.selectedPrescriptions.contains(prescription)
+                                           ).multilineTextAlignment(.leading)
+                                       })
+                                    .sectionContainerIsLastElement(index == store.prescriptions.count - 1)
+                                    .padding(.horizontal)
+                            }
                         }
                     })
                 }
@@ -84,7 +65,7 @@ struct PharmacyPrescriptionSelectionView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        store.send(.saveSelection(store.selectedErxTasks))
+                        store.send(.saveSelection(store.selectedPrescriptions))
                     }, label: {
                         Text(L10n.phaRedeemTxtSelectedPrescriptionSave)
                     })

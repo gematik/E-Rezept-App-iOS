@@ -103,8 +103,6 @@ struct EditProfileDomain {
         // sourcery: AnalyticsScreen = alert
         @ReducerCaseEphemeral
         case alert(ErpAlertState<Alert>)
-        // sourcery: AnalyticsScreen = profile_token
-        case token(IDPTokenDomain)
         // sourcery: AnalyticsScreen = profile_auditEvents
         case auditEvents(AuditEventsDomain)
         // sourcery: AnalyticsScreen = profile_registeredDevices
@@ -130,7 +128,6 @@ struct EditProfileDomain {
 
         case destination(PresentationAction<Destination.Action>)
         case resetNavigation
-        case tokenViewTapped
         case registeredDevicesTapped
         case auditEventsTapped
         case chargeItemListTapped
@@ -264,6 +261,8 @@ struct EditProfileDomain {
         case let .response(.updateProfileReceived(.failure(error))):
             state.destination = .alert(.init(for: error))
             return .none
+
+        // [REQ:BSI-eRp-ePA:O.Auth_14#3|6] The domain accepts the intent and wipes tokens and other login related data
         case .delegate(.logout):
             state.token = nil
             // [REQ:gemSpec_IDP_Frontend:A_20499-01#1] Call the SSO_TOKEN removal upon manual logout
@@ -285,11 +284,6 @@ struct EditProfileDomain {
             }
         case .resetNavigation:
             state.destination = nil
-            return .none
-        case .tokenViewTapped:
-            if let token = state.token {
-                state.destination = .token(.init(token: token))
-            }
             return .none
         case .registeredDevicesTapped:
             state.destination = .registeredDevices(.init(profileId: state.profileId))

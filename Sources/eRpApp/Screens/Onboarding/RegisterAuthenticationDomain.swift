@@ -185,6 +185,7 @@ struct RegisterAuthenticationDomain {
                 }
                 return .none
             case .binding(\.passwordA):
+                // [REQ:BSI-eRp-ePA:O.Pass_2#3] Testing the acutal password strength
                 state.passwordStrength = passwordStrengthTester.passwordStrength(for: state.passwordA)
                 state.showPasswordErrorMessage = false
                 return .run { [timeout = state.timeout] send in

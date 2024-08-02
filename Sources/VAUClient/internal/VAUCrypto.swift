@@ -30,7 +30,7 @@ protocol VAUCrypto {
     /// Perform encryption of the data that the implementing instance has been initialized with
     /// in order to send it to a VAU service endpoint. See: gemSpec_Krypt A_20161-01
     ///
-    /// [REQ:gemSpec_Krypt:A_20161-01]
+    /// [REQ:gemSpec_Krypt:A_20161-01#2] Encryption interface
     ///
     /// - Returns: Encrypted HTTPRequest as specified to be sent to a VAU endpoint
     /// - Throws: `VAUError` in case of encryption failure
@@ -55,7 +55,9 @@ class EciesVAUCryptoProvider: VAUCryptoProvider {
         guard let vauPublicKey = vauCertificate.brainpoolP256r1KeyExchangePublicKey else {
             throw VAUError.certificateDecoding
         }
+        // [REQ:gemSpec_Krypt:A_20161-01#12] 2: Request-ID Generator
         let requestIdGenerator = { try VAURandom.generateSecureRandom(length: 16).hexStringLowerCase }
+        // [REQ:gemSpec_Krypt:A_20161-01#13] 3: AES-Key Generator
         let symmetricKeyGenerator = { SymmetricKey(size: SymmetricKeySize(bitCount: 128)) }
         let eciesSpec = Ecies.Spec.v1
 
@@ -94,11 +96,11 @@ class EciesVAUCrypto: VAUCrypto {
         self.eciesSpec = eciesSpec
     }
 
-    // [REQ:gemSpec_eRp_FdV:A_21325#2] Encryption of accessToken (here bearerToken)
+    // [REQ:gemSpec_IDP_Frontend:A_21325#2] Encryption of accessToken (here bearerToken)
     func encrypt() throws -> Data {
         // Build payload message
         let symKeyHex = symmetricKey.withUnsafeBytes { Data(Array($0)) }.hexStringLowerCase
-        // [REQ:gemSpec_Krypt:A_20161-01:5]
+        // [REQ:gemSpec_Krypt:A_20161-01#15] 5:
         guard let payload = "1 \(bearerToken) \(requestId) \(symKeyHex) \(message)".data(using: .utf8) else {
             throw VAUError.internalCryptoError
         }
@@ -119,9 +121,10 @@ class EciesVAUCrypto: VAUCrypto {
         )
     }
 
+    // [REQ:BSI-eRp-ePA:O.Ntwk_6#3|21] Decrypting and verifying FD server messages
     func decrypt(data: Data) throws -> String {
         // Steps according to gemSpec_Krypt A_20174
-        // [REQ:gemSpec_Krypt:A_20174:3] Decrypt using AES symmetric key
+        // [REQ:gemSpec_Krypt:A_20174#13] 3: Decrypt using AES symmetric key
         guard let sealed = try? AES.GCM.SealedBox(combined: data),
               let decrypted = try? AES.GCM.open(sealed, using: symmetricKey),
               let utf8 = decrypted.utf8string
@@ -129,7 +132,7 @@ class EciesVAUCrypto: VAUCrypto {
             throw VAUError.responseValidation
         }
 
-        // [REQ:gemSpec_Krypt:A_20174:4,5] Verify decrypted message. Expect: "1 <request id> <response header and body>"
+        // [REQ:gemSpec_Krypt:A_20174#14] 4+5: Verify decrypted message. Expect: "1 <request id> <response header+body>"
         let separated = utf8.split(separator: " ", maxSplits: 2).map { String($0) }
         guard separated.count == 3,
               separated[0] == "1",
@@ -144,7 +147,7 @@ class EciesVAUCrypto: VAUCrypto {
 
 enum Ecies {
     /// Perform Elliptic Curve Integrated Encryption Scheme [SEC1-2009] on some payload
-    /// [REQ:gemSpec_Krypt:A_20161-01:6a-g]
+    /// [REQ:gemSpec_Krypt:A_20161-01#16] 6a-g
     static func encrypt(
         payload: Data,
         vauPubKey: BrainpoolP256r1.KeyExchange.PublicKey,

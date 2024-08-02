@@ -82,7 +82,7 @@ final class ErxTaskTests: XCTestCase {
         sut = try XCTUnwrap(ErxTask(entity: entity) {
             stillRedeeming
         })
-        expect(sut.status).to(equal(.inProgress))
+        expect(sut.status).to(equal(.computed(status: .waiting)))
 
         sut = try XCTUnwrap(ErxTask(entity: entity) {
             noLongerRedeeming
@@ -119,7 +119,7 @@ final class ErxTaskTests: XCTestCase {
         sut = try XCTUnwrap(ErxTask(entity: entity) {
             stillRedeeming
         })
-        expect(sut.status).to(equal(.inProgress))
+        expect(sut.status).to(equal(.computed(status: .waiting)))
 
         // After updating the task the state should again be ready
         entity.lastModified = FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: modifiedTaskDate)

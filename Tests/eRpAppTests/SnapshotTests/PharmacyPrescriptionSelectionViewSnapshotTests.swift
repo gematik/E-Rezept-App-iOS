@@ -32,8 +32,8 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
 
     func testPharmacyPrescriptionAllSelected() {
         let initialState = PharmacyPrescriptionSelectionDomain.State(
-            erxTasks: ErxTask.Fixtures.erxTasks,
-            selectedErxTasks: Set(ErxTask.Fixtures.erxTasks),
+            prescriptions: Prescription.Fixtures.prescriptions,
+            selectedPrescriptions: Set(Prescription.Fixtures.prescriptions),
             profile: UserProfile.Fixtures.theo.profile
         )
         let sut = NavigationView {
@@ -52,7 +52,7 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
 
     func testPharmacyPrescriptionNoneSelected() {
         let initialState = PharmacyPrescriptionSelectionDomain.State(
-            erxTasks: ErxTask.Fixtures.erxTasks,
+            prescriptions: Prescription.Fixtures.prescriptions,
             profile: UserProfile.Fixtures.theo.profile
         )
         let sut = NavigationView {

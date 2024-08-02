@@ -99,7 +99,10 @@ struct MapViewWithClustering: UIViewRepresentable {
 
         /// Handling the update of the region binding
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated _: Bool) {
-            parent.region = .delegate(mapView.region)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.parent.region = .delegate(mapView.region)
+            }
         }
 
         /// Handling the annotation on the map

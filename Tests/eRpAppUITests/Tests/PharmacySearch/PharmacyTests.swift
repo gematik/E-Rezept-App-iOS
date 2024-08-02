@@ -31,7 +31,7 @@ final class PharmacyTests: XCTestCase {
         app.launchEnvironment["UITEST.DISABLE_ANIMATIONS"] = "YES"
         app.launchEnvironment["UITEST.DISABLE_AUTHENTICATION"] = "YES"
 
-        app.launchEnvironment["UITEST.SCENARIO_NAME"] = "1"
+        app.launchEnvironment["UITEST.SCENARIO_NAME"] = "PharmacyUITests"
         app.launchEnvironment["UITEST.RESET"] = "1"
 
         app.launch()
@@ -68,7 +68,7 @@ final class PharmacyTests: XCTestCase {
         for serviceType in Service.allCases {
             XCTAssertEqual(
                 services.contains(serviceType),
-                app.buttons[serviceType.buttonId].exists,
+                app.buttons[serviceType.buttonId].waitForExistence(timeout: 1),
                 "expected '.\(serviceType.rawValue)' to \(services.contains(serviceType) ? "not " : "")be" +
                     " present within '\(pharmacyName)'",
                 file: file,
@@ -142,6 +142,88 @@ final class PharmacyTests: XCTestCase {
 
         // Back
         app.navigationBars.buttons.firstMatch.tap()
+    }
+
+    func testSwitchToMap() throws {
+        app.buttons.element(matching: .init(format: "label == %@", "Apothekensuche")).tap()
+        app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
+        app.typeText("A")
+
+        XCUIApplication().keyboards.buttons["Suchen"].tap()
+
+        // SwitchToMap Button
+        app.buttons.element(matching: .init(format: "identifier == %@", "pha_search_switch_result_map")).tap()
+
+        XCTAssertTrue(app.otherElements.matching(identifier: "pha_search_map_map")
+            .children(matching: .other)
+            .matching(NSPredicate(format: "label like '+19 weitere'"))
+            .element.waitForExistence(timeout: 5))
+    }
+
+    func testSearchFilter() throws {
+        let tabBar = TabBarScreen(app: app)
+
+        let resultScreen = tabBar.tapRedeemTab()
+
+        app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
+        app.typeText("A")
+        XCUIApplication().keyboards.buttons["Suchen"].tap()
+
+        let filterScreen = resultScreen.tapFilter()
+
+        filterScreen.tapFilterOption("Versand")
+
+        filterScreen.closeFilter()
+
+        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
+            .children(matching: .button)
+            .matching(identifier: "shipment")
+            .element.exists)
+
+        let redeemSearchScreen = tabBar.tapPrescriptionsTab()
+            .tapRedeem()
+            .tapRedeemRemote()
+
+        app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
+        app.typeText("A")
+        XCUIApplication().keyboards.buttons["Suchen"].tap()
+
+        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
+            .children(matching: .button)
+            .matching(identifier: "shipment")
+            .element.exists)
+
+        let filterScreen2 = redeemSearchScreen.tapFilter()
+
+        filterScreen2.tapFilterOption("Botendienst")
+
+        filterScreen.closeFilter()
+
+        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
+            .children(matching: .button)
+            .matching(identifier: "delivery")
+            .element.exists)
+
+        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
+            .children(matching: .button)
+            .matching(identifier: "shipment")
+            .element.exists)
+
+        redeemSearchScreen.tapCancelButton()
+        redeemSearchScreen.tapCancelButton()
+
+        tabBar.tapRedeemTab()
+
+        // Check for filter Botendienst & Open + neue Suche
+        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
+            .children(matching: .button)
+            .matching(identifier: "shipment")
+            .element.exists)
+
+        XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
+            .children(matching: .button)
+            .matching(identifier: "delivery")
+            .element.exists)
     }
 
     override func tearDown() {

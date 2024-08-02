@@ -166,6 +166,7 @@ struct ExtAuthPendingDomain {
             }
             return .none
         // [REQ:BSI-eRp-ePA:O.Source_1#8] Validate data by parsing url and only allowing predefined variables as String
+        // [REQ:gemSpec_IDP_Frontend:A_22301-01#7] Actual handling of the universal link, user feedback via dialogs e.g.
         case let .externalLogin(url),
              let .destination(.presented(.extAuthAlert(.externalLogin(url)))):
             let environment = environment
@@ -178,6 +179,7 @@ struct ExtAuthPendingDomain {
                 environment.idTokenValidator
                     .mapError(Error.profileValidation)
                     .flatMap { idTokenValidator -> AnyPublisher<IDPToken, Error> in
+                        // [REQ:gemSpec_IDP_Frontend:A_22301-01#8|5] Login part is handled by idpSesson
                         environment.idpSession
                             .extAuthVerifyAndExchange(
                                 url,
@@ -214,7 +216,8 @@ struct ExtAuthPendingDomain {
                         insurance: payload?.organizationName,
                         givenName: payload?.givenName,
                         familyName: payload?.familyName,
-                        overrideInsuranceTypeToPkv: overrideInsuranceTypeToPkv
+                        overrideInsuranceTypeToPkv: overrideInsuranceTypeToPkv,
+                        gIdEntry: entry
                     )
                     .animation()
                 )
@@ -264,7 +267,8 @@ struct ExtAuthPendingDomain {
             insurance: String?,
             givenName: String?,
             familyName: String?,
-            overrideInsuranceTypeToPkv: Bool = false
+            overrideInsuranceTypeToPkv: Bool = false,
+            gIdEntry: KKAppDirectory.Entry?
         ) -> Effect<ExtAuthPendingDomain.Action> {
             .publisher(
                 currentProfile
@@ -284,6 +288,7 @@ struct ExtAuthPendingDomain {
                             profile.insurance = insurance
                             profile.givenName = givenName
                             profile.familyName = familyName
+                            profile.gIdEntry = gIdEntry
                         }
                         .eraseToAnyPublisher()
                     }

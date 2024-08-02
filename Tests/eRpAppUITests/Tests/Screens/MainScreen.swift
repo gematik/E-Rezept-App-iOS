@@ -28,15 +28,30 @@ struct MainScreen: Screen {
         return cell
     }
 
-    func detailsForPrescriptionNamed(_ name: String, file: StaticString = #file,
-                                     line: UInt = #line) -> PrescriptionDetailsScreen {
+    func tapDetailsForPrescriptionNamed(_ name: String, file: StaticString = #file,
+                                        line: UInt = #line) -> PrescriptionDetailsScreen<MainScreen> {
         staticText(by: name, file: file, line: line).tap()
 
         // assert label exists that contains the prescription name as a label
         let title = staticText(by: A11y.prescriptionDetails.prscDtlTxtTitle, file: file, line: line)
         expect(file: file, line: line, title.label).to(equal(name))
 
-        return PrescriptionDetailsScreen(app: app)
+        return PrescriptionDetailsScreen(app: app, previous: self)
+    }
+
+    func tapDetailsForScannedPrescription(_ name: String, file: StaticString = #file,
+                                          line: UInt = #line) -> PrescriptionDetailsScreen<MainScreen> {
+        staticText(by: name, file: file, line: line).tap()
+
+        // assert label exists that contains the prescription name as a label
+        let title = textField(by: A11y.prescriptionDetails.prscDtlTxtTitleInput, file: file, line: line)
+        if let titleValue = title.value as? String {
+            expect(file: file, line: line, titleValue).to(equal(name))
+        } else {
+            Nimble.fail("expect to have a title in prescription detail view")
+        }
+
+        return PrescriptionDetailsScreen(app: app, previous: self)
     }
 
     func tapRedeem(file: StaticString = #file, line: UInt = #line) -> RedeemSelectionScreen {
@@ -69,14 +84,14 @@ struct MainScreen: Screen {
         }
 
         func detailsForPrescriptionNamed(_ name: String, file: StaticString = #file,
-                                         line: UInt = #line) -> PrescriptionDetailsScreen {
+                                         line: UInt = #line) -> PrescriptionDetailsScreen<ArchiveScreen> {
             staticText(by: name, file: file, line: line).tap()
 
             // assert label exists that contains the prescription name as a label
             let title = staticText(by: A11y.prescriptionDetails.prscDtlTxtTitle, file: file, line: line)
             expect(file: file, line: line, title.label).to(equal(name))
 
-            return PrescriptionDetailsScreen(app: app)
+            return PrescriptionDetailsScreen(app: app, previous: self)
         }
     }
 }

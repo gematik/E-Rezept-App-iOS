@@ -36,7 +36,7 @@ import XCTest
 /// Runs ErxTaskFHIRDataStore client (Fachdienst) Integration Tests.
 /// Set `APP_CONF` in runtime environment to setup the execution environment.
 final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
-    var environment: IntegrationTestsEnvironment!
+    var environment: IntegrationTestsConfiguration!
 
     override func setUp() {
         super.setUp()
@@ -130,6 +130,9 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         guard let signer = environment.brainpool256r1Signer else {
             throw XCTSkip("Skip test because no signing entity available")
         }
+        if environment.appConfiguration == integrationTestsEnvironmentGMTKDEV.appConfiguration {
+            throw XCTSkip("Skip test because FD components in gematik_dev environment are unstable.")
+        }
 
         let didLogin = login(with: signer)
         expect(didLogin).to(beTrue())
@@ -147,6 +150,10 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
     func deactivated_testConsentFlow() throws {
         guard let signer = environment.brainpool256r1Signer else {
             throw XCTSkip("Skip test because no signing entity available")
+        }
+        guard environment.appConfiguration == integrationTestsEnvironmentRUDev.appConfiguration
+        else {
+            throw XCTSkip("Skip test because it`s only configured for RUDev")
         }
 
         let didLogin = login(with: signer)
@@ -175,6 +182,13 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
     func testRedeemFlow() throws {
         guard let signer = environment.brainpool256r1Signer else {
             throw XCTSkip("Skip test because no signing entity available")
+        }
+        guard environment.appConfiguration == integrationTestsEnvironmentTU.appConfiguration
+        else {
+            throw XCTSkip("Skip test because it`s only configured for TU")
+            // NOTE: If this test fails, it might be because we cannot assure that a task is available for X114428530.
+            // Before, this was guaranteed by calling a Jenkins job ERX-FD-CLI-NG from the Jenkins-Pipeline.
+            // That job has been abandoned and cannot be used anymore to properly setup this test.
         }
 
         let didLogin = login(with: signer)

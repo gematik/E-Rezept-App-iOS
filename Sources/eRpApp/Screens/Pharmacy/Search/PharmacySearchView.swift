@@ -25,19 +25,6 @@ import UIKit
 
 struct PharmacySearchView: View {
     @Perception.Bindable var store: StoreOf<PharmacySearchDomain>
-    let isRedeemRecipe: Bool
-
-    init(store: StoreOf<PharmacySearchDomain>) {
-        self.init(store: store, isRedeemRecipe: true)
-    }
-
-    init(
-        store: StoreOf<PharmacySearchDomain>,
-        isRedeemRecipe: Bool
-    ) {
-        self.store = store
-        self.isRedeemRecipe = isRedeemRecipe
-    }
 
     @State var scrollOffset: CGFloat = 0
 
@@ -76,17 +63,33 @@ struct PharmacySearchView: View {
                             .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
                     case .searchRunning,
                          .searchResultOk:
-                        ScrollViewWithStickyHeader(header: {
-                            PharmacyFilterBar(openFiltersAction: {
-                                store.send(.showPharmacyFilter, animation: .default)
-                            }, removeFilter: { option in
-                                store.send(.removeFilterOption(option.element), animation: .default)
-                            }, elements: filter)
-                                .padding(.horizontal)
-                                .transition(.move(edge: .top).combined(with: .opacity))
-                        }, content: {
-                            ResultsView(store: store)
-                        })
+                        ZStack(alignment: .bottomTrailing) {
+                            ScrollViewWithStickyHeader(header: {
+                                PharmacyFilterBar(openFiltersAction: {
+                                    store.send(.showPharmacyFilter, animation: .default)
+                                }, removeFilter: { option in
+                                    store.send(
+                                        .removeFilterOption(option.element),
+                                        animation: .default
+                                    )
+                                }, elements: filter)
+                                    .padding(.horizontal)
+                                    .transition(.move(edge: .top)
+                                        .combined(with: .opacity))
+                            }, content: {
+                                ResultsView(store: store)
+                            })
+
+                            Button(action: { store.send(.switchToMapView) }, label: {
+                                Image(systemName: SFSymbolName.map)
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(Colors.primary)
+                                    .padding(16)
+                                    .background(Circle().foregroundColor(Colors.systemColorWhite))
+                                    .padding(.all, 26)
+                                    .shadow(color: Colors.separator, radius: 4)
+                            }).accessibility(identifier: A11y.pharmacySearch.phaSearchSwitchResultMap)
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -101,26 +104,16 @@ struct PharmacySearchView: View {
 
                 Spacer(minLength: 0)
 
-                Rectangle()
-                    .frame(width: 0, height: 0, alignment: .center)
-                    .smallSheet($store.scope(
-                        state: \.destination?.pharmacyFilter,
-                        action: \.destination.pharmacyFilter
-                    )) { store in
-                        PharmacySearchFilterView(store: store)
-                            .accentColor(Colors.primary600)
-                    }
-                    .accessibility(hidden: true)
-
-                if isRedeemRecipe {
+                if store.inRedeemProcess {
                     NavigationLink(item: $store.scope(
                         state: \.destination?.pharmacyMapSearch,
                         action: \.destination.pharmacyMapSearch
                     )) { store in
-                        PharmacySearchMapView(store: store, isRedeemRecipe: isRedeemRecipe)
+                        PharmacySearchMapView(store: store)
                     } label: {
                         EmptyView()
                     }
+                    .hidden()
                     .accessibility(hidden: true)
                 } else {
                     Rectangle()
@@ -130,10 +123,11 @@ struct PharmacySearchView: View {
                             action: \.destination.pharmacyMapSearch
                         )) { store in
                             NavigationView {
-                                PharmacySearchMapView(store: store, isRedeemRecipe: isRedeemRecipe)
+                                PharmacySearchMapView(store: store)
                                     .navigationViewStyle(StackNavigationViewStyle())
                             }
                         }
+                        .hidden()
                         .accessibility(hidden: true)
                 }
 
@@ -143,16 +137,49 @@ struct PharmacySearchView: View {
                         action: \.destination.pharmacyDetail
                     )
                 ) { store in
-                    PharmacyDetailView(store: store, isRedeemRecipe: isRedeemRecipe)
-                        .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
+                    PharmacyDetailView(store: store)
                 } label: {
                     EmptyView()
                 }
+                .hidden()
                 .accessibility(hidden: true)
+
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.redeemViaAVS,
+                        action: \.destination.redeemViaAVS
+                    )
+                ) { store in
+                    PharmacyRedeemView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
+                .accessibility(hidden: true)
+
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.redeemViaErxTaskRepository,
+                        action: \.destination.redeemViaErxTaskRepository
+                    )
+                ) { store in
+                    PharmacyRedeemView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
+                .accessibility(hidden: true)
+            }
+            .smallSheet($store.scope(
+                state: \.destination?.pharmacyFilter,
+                action: \.destination.pharmacyFilter
+            )) { store in
+                PharmacySearchFilterView(store: store)
+                    .accentColor(Colors.primary600)
             }
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if isRedeemRecipe {
+                    if store.inRedeemProcess {
                         NavigationBarCloseItem {
                             store.send(.closeButtonTouched)
                         }
@@ -160,11 +187,9 @@ struct PharmacySearchView: View {
                 }
             }
             .navigationTitle(L10n.tabTxtPharmacySearch)
-            .searchable(
-                text: searchText,
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: L10n.phaSearchTxtSearchHint.text
-            ) {
+            .searchable(text: $store.searchText,
+                        placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: L10n.phaSearchTxtSearchHint.text) {
                 Suggestions(store: store)
             }
             .onSubmit(of: .search) {
@@ -223,6 +248,14 @@ struct PharmacySearchView: View {
         }
     }
 
+    var screen: Binding<Bool> {
+        Binding {
+            store.destination == nil
+        } set: {
+            store.send(.nothing($0))
+        }
+    }
+
     var filter: [PharmacyFilterBar<PharmacySearchFilterDomain.PharmacyFilterOption>.Filter] {
         store.pharmacyFilterOptions.map { option in
             PharmacyFilterBar<PharmacySearchFilterDomain.PharmacyFilterOption>.Filter(
@@ -230,24 +263,6 @@ struct PharmacySearchView: View {
                 key: option.localizedStringKey,
                 accessibilityIdentifier: option.rawValue
             )
-        }
-    }
-
-    var searchText: Binding<String> {
-        Binding {
-            store.searchText
-        } set: {
-            store.send(.searchTextChanged($0))
-        }
-    }
-
-    var forceCancelButtonVisible: Binding<Bool> {
-        Binding {
-            store.searchState.isNotStartView
-        } set: { value in
-            if !value {
-                store.send(.searchTextChanged(""), animation: .default)
-            }
         }
     }
 }
@@ -288,21 +303,24 @@ extension PharmacySearchView {
                 SingleElementSectionContainer {
                     LazyVStack(spacing: 0) {
                         ForEach(store.pharmacies) { pharmacyViewModel in
-                            Button(
-                                action: { store.send(.showDetails(pharmacyViewModel)) },
-                                label: { Label(title: {
-                                    let showDistance = store.pharmacyFilterOptions.contains { $0 == .currentLocation }
-                                    PharmacySearchCell(
-                                        pharmacy: pharmacyViewModel,
-                                        showDistance: showDistance
-                                    )
-                                }, icon: {})
-                                }
-                            )
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
-                            .buttonStyle(.navigation(showSeparator: true))
-                            .modifier(SectionContainerCellModifier(last: false))
+                            WithPerceptionTracking {
+                                Button(
+                                    action: { store.send(.showDetails(pharmacyViewModel)) },
+                                    label: { Label(title: {
+                                        let showDistance = store.pharmacyFilterOptions
+                                            .contains { $0 == .currentLocation }
+                                        PharmacySearchCell(
+                                            pharmacy: pharmacyViewModel,
+                                            showDistance: showDistance
+                                        )
+                                    }, icon: {})
+                                    }
+                                )
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
+                                .buttonStyle(.navigation(showSeparator: true))
+                                .modifier(SectionContainerCellModifier(last: false))
+                            }
                         }
                     }
                 }
@@ -403,15 +421,13 @@ extension PharmacySearchView {
 struct PharmacySearchView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            PharmacySearchView(store: PharmacySearchDomain.Dummies.store,
-                               isRedeemRecipe: false)
+            PharmacySearchView(store: PharmacySearchDomain.Dummies.store)
         }
         .accentColor(Colors.primary700)
 
         NavigationView {
             PharmacySearchView(
-                store: PharmacySearchDomain.Dummies.storeOf(PharmacySearchDomain.Dummies.stateSearchResultOk),
-                isRedeemRecipe: false
+                store: PharmacySearchDomain.Dummies.storeOf(PharmacySearchDomain.Dummies.stateSearchResultOk)
             )
         }
         .preferredColorScheme(.dark)

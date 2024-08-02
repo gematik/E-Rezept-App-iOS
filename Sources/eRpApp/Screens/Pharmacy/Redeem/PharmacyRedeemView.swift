@@ -125,6 +125,27 @@ struct PharmacyRedeemView: View {
 
                 RedeemButton(store: store)
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: {
+                        store.send(.delegate(.closeRedeemView))
+                    }, label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: SFSymbolName.back)
+                                .font(.body.bold())
+                                .padding(0)
+                                .foregroundColor(Colors.primary600)
+                            Text(L10n.cdwBtnRcHelpBack)
+                                .font(.body)
+                                .foregroundColor(Colors.primary600)
+                                .padding(0)
+                        }
+                    })
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationBarCloseItem { store.send(.delegate(.close)) }
+                }
+            }
             .alert($store.scope(
                 state: \.destination?.alert?.alert,
                 action: \.destination.alert
@@ -132,6 +153,7 @@ struct PharmacyRedeemView: View {
             .task {
                 await store.send(.task).finish()
             }
+            .navigationBarBackButtonHidden(true)
             .navigationBarTitleDisplayMode(.inline)
             // Because of issues with Introspect only change the color when iOS 16 is available
             .backport.navigationBarToolBarBackground(color: Colors.gifBackground)
@@ -372,18 +394,21 @@ extension PharmacyRedeemView {
                             .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
                     },
                     content: {
-                        if !store.prescriptions.isEmpty {
+                        if !store.selectedPrescriptions.isEmpty {
                             Button(action: {
                                 store.send(.showPrescriptionSelection)
                             }, label: {
                                 HStack(spacing: 0) {
                                     VStack(alignment: .leading) {
-                                        Text("\(store.prescriptions.count) " + L10n.phaRedeemTxtPrescription.text)
-                                            .font(Font.body)
-                                            .padding(.bottom)
-                                            .foregroundColor(Colors.systemLabel)
+                                        Text(
+                                            "\(store.selectedPrescriptions.count) " +
+                                                L10n.phaRedeemTxtPrescription.text
+                                        )
+                                        .font(Font.body)
+                                        .padding(.bottom)
+                                        .foregroundColor(Colors.systemLabel)
 
-                                        Text(store.prescriptions.map(\.title).joined(separator: ", "))
+                                        Text(store.selectedPrescriptions.map(\.title).joined(separator: ", "))
                                             .font(Font.subheadline)
                                             .foregroundColor(Colors.systemLabelSecondary)
                                             .lineLimit(1)
@@ -429,10 +454,10 @@ extension PharmacyRedeemView {
                 VStack(spacing: 8) {
                     GreyDivider()
 
-                    if store.prescriptions.isEmpty {
+                    if store.selectedPrescriptions.isEmpty {
                         PrimaryTextButton(text: L10n.phaRedeemBtnRedeem,
                                           a11y: A11y.pharmacyRedeem.phaRedeemBtnRedeem,
-                                          isEnabled: !store.prescriptions.isEmpty) {
+                                          isEnabled: !store.selectedPrescriptions.isEmpty) {
                             store.send(.redeem)
                         }
                         .padding(.horizontal)

@@ -73,6 +73,8 @@ extension PrescriptionDetailDomain {
             case dismiss
             /// User has confirmed to delete task
             case confirmedDelete
+            /// User has confirmed to delete task with chargeItem
+            case confirmedDeleteWithChargeItem
             case openEmailClient(body: String)
             case grantConsent
             case grantConsentDeny

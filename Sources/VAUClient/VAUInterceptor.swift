@@ -22,6 +22,7 @@ import HTTPClient
 
 /// The VAU (trusted execution environment) http Interceptor to encrypt HTTP-Requests before sending them
 /// and decrypting the received encrypted responses.
+/// [REQ:BSI-eRp-ePA:O.Ntwk_6#2] Interceptor implementing request and response encryption.
 class VAUInterceptor: Interceptor {
     private let vauAccessTokenProvider: VAUAccessTokenProvider
     private let vauCertificateProvider: VAUCertificateProvider
@@ -56,13 +57,14 @@ class VAUInterceptor: Interceptor {
             )
             .first()
             // Prepare outer request (encrypt original request and embed it into a new one)
-            // [REQ:gemSpec_Krypt:A_20161-01]
+            // [REQ:gemSpec_Krypt:A_20161-01#3] Encapsulate "real" HTTPRequest into VAU envelop
             .processToVauRequest(urlRequest: request, vauCryptoProvider: vauCryptoProvider)
             .flatMap { vauCrypto, vauRequest -> AnyPublisher<HTTPResponse, HTTPClientError> in
                 chain.proceed(request: vauRequest)
                     // Process VAU server response (validate and extract+decrypt inner FHIR service response)
-                    // [REQ:gemSpec_Krypt:A_20174]
+                    // [REQ:gemSpec_Krypt:A_20174#12] 2: Handle userpseudonym
                     .handleUserPseudonym(vauEndpointHandler: self.vauEndpointHandler)
+                    // [REQ:gemSpec_Krypt:A_20174#16] 6: Remove the envelop
                     .processVauResponse(vauCrypto: vauCrypto, originalUrl: originalUrl)
             }
             .eraseToAnyPublisher()
@@ -72,7 +74,7 @@ class VAUInterceptor: Interceptor {
 // swiftlint:disable:next large_tuple
 extension Publisher where Output == (BearerToken, VAUCertificate, URL), Failure == VAUError {
     // Prepare outer request (encrypt original request and embed it into a new one)
-    // [REQ:gemSpec_Krypt:A_20161-01]
+    // [REQ:gemSpec_Krypt:A_20161-01#4] Encapsulate "real" HTTPRequest into VAU envelop
     func processToVauRequest(
         urlRequest: URLRequest,
         vauCryptoProvider: VAUCryptoProvider
@@ -100,6 +102,7 @@ extension VAUInterceptor {
         vauCertificate: VAUCertificate
     ) throws -> (VAUCrypto, URLRequest) {
         let stringEncodedRequest = try urlRequest.encodeToRawString()
+        // [REQ:gemSpec_Krypt:A_20161-01#14|5] 4: vauCrypto is generating new entity and thus a new request/id everytime
         let vauCrypto = try vauCryptoProvider.provide(
             for: stringEncodedRequest,
             vauCertificate: vauCertificate,
@@ -139,7 +142,7 @@ extension Publisher where Output == HTTPResponse, Failure == HTTPClientError {
 
 extension VAUInterceptor {
     // Process VAU server response (validate and extract+decrypt inner FHIR service response)
-    // [REQ:gemSpec_Krypt:A_20174]
+    // [REQ:gemSpec_Krypt:A_20174#11|12] 1: Check Content-Type
     static func processVauResponse(httpResponse: HTTPResponse, vauCrypto: VAUCrypto, originalUrl: URL) throws
         -> HTTPResponse {
         guard httpResponse.status == .ok,

@@ -28,7 +28,67 @@ import TestUtils
 import XCTest
 
 final class AVSIntegrationTests: XCTestCase {
-    // work in progress
+    var environment: IntegrationTestsConfiguration!
+
+    override func setUp() {
+        super.setUp()
+
+        if let integrationTestsEnvironmentString = ProcessInfo.processInfo.environment["APP_CONF"],
+           let integrationTestsEnvironment = integrationTestsAppConfigurations[integrationTestsEnvironmentString] {
+            environment = integrationTestsEnvironment
+        } else {
+            environment = integrationTestsEnvironmentDummy
+        }
+    }
+
+    func testGematikDevCompleteFlow_200() throws {
+        guard let gemDevAvsConfiguration = environment.gemDevAvsConfiguration
+        else {
+            throw XCTSkip("Skip test because no gemDevAvsConfiguration available")
+        }
+        // given
+        let message: AVSMessage = .Fixtures.completeExample
+        let endPoint =
+            AVSEndpoint(
+                url: URL(string: gemDevAvsConfiguration.url)!.appendingPathComponent("200"),
+                additionalHeaders: gemDevAvsConfiguration.additionalHeaders
+            )
+
+        // swiftlint:disable line_length
+
+        let x509 = try X509(
+            der: Base64.decode(
+                string: "MIIFPzCCBCegAwIBAgIHAhWxKm51ljANBgkqhkiG9w0BAQsFADCBmjELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxSDBGBgNVBAsMP0luc3RpdHV0aW9uIGRlcyBHZXN1bmRoZWl0c3dlc2Vucy1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLlNNQ0ItQ0EyNCBURVNULU9OTFkwHhcNMjAwMTI0MDAwMDAwWhcNMjQxMjExMjM1OTU5WjCB2zELMAkGA1UEBhMCREUxETAPBgNVBAcMCFTDtm5uaW5nMQ4wDAYDVQQRDAUyNTgzMjETMBEGA1UECQwKQW0gTWFya3QgMTEqMCgGA1UECgwhMy1TTUMtQi1UZXN0a2FydGUtODgzMTEwMDAwMTE2OTQ4MR0wGwYDVQQFExQ4MDI3Njg4MzExMDAwMDExNjk0ODEVMBMGA1UEBAwMQmzDtGNoLUJhdWVyMQ8wDQYDVQQqDAZTb3BoaWUxITAfBgNVBAMMGEFwb3RoZWtlIGFtIFNlZVRFU1QtT05MWTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKOgZ4thfQmIx77NLZ36mNRwEpIqcOhtMjLjPkArAQcIWnjJ7OaOUJTtel73aH38KWoMgr0+rbw+aR4U5Rkg9wdkl/FTV0ifTDzqQtLYnAg6JQDoy2wqJbLT+oXNWhlDwHhlVDnSwVM9aNvHryZOgOgilYHJcvo45g+wv9W9PO2oysBkUtf5iXhhBXaMKrIs4iJ6fV1r8WsjacBNthyaO+zw5vPtyYjZKMdrVwTvxOX59MisqOJysnGShn41Ov9PyTNolWl7xWTmFTR/bDd/1YMKsN3/nzBJn4nIh+k7qI/YB7DKm/f1IdGiPtq3yHYn1gFJYXDGSvae5kDez7PtcxUCAwEAAaOCAUUwggFBMB0GA1UdDgQWBBSQTkL3N8vhGLlatVE3Lh57+n5jIjAMBgNVHRMBAf8EAjAAMDgGCCsGAQUFBwEBBCwwKjAoBggrBgEFBQcwAYYcaHR0cDovL2VoY2EuZ2VtYXRpay5kZS9vY3NwLzAOBgNVHQ8BAf8EBAMCBDAwHwYDVR0jBBgwFoAUeunhb+oUWRYF7gPp0/0hq97p2Z4wIAYDVR0gBBkwFzAKBggqghQATASBIzAJBgcqghQATARMMIGEBgUrJAgDAwR7MHmkKDAmMQswCQYDVQQGEwJERTEXMBUGA1UECgwOZ2VtYXRpayBCZXJsaW4wTTBLMEkwRzAXDBXDlmZmZW50bGljaGUgQXBvdGhla2UwCQYHKoIUAEwENhMhMy1TTUMtQi1UZXN0a2FydGUtODgzMTEwMDAwMTE2OTQ4MA0GCSqGSIb3DQEBCwUAA4IBAQAH+r1D+L1JbtQiXs6kCoQZWpxi8sk7K+fBJXxemfwb5qED0BkdtV5Nsd4Io5osJFrIQiBccIofM4X/7p5A2OTfuG11imB9c8eVcQRdL2vEPUuUu2WgZccd0Q4gz9GaVOHVIE2CviV36/eZbSp6zauqx8efBpLta3iyxMf/vJEzRQy2RKRoeaAYDtn/wihXiwpCo1+lyMJLOFl8TER48pjb0kJQdXAhrSB8C1tRHPHb2cbeVECNwDDX9qJlGTrMwnmOVO2VgMMmZJ8iwL34oyxVF7ULaN59HsW6rVE2g88h/N8sp57PeqVA7bzASHxgCwjhQL7aqLqKDjrxhEt6m/zC"
+            )
+        )
+
+        // swiftlint:enable line_length
+
+        let sut = DefaultAVSSession(
+            httpClient: DefaultHTTPClient(
+                urlSessionConfiguration: .ephemeral,
+                interceptors: [
+                    LoggingInterceptor(log: .body),
+                ]
+            )
+        )
+
+        // then
+        var success = false
+        sut.redeem(message: message, endpoint: endPoint, recipients: [x509])
+            .test(
+                timeout: 120,
+                failure: { error in
+                    fail("Failed with error: \(error)")
+                },
+                expectations: { uuid in
+                    success = true
+                    Swift.print("UUID:", uuid)
+                },
+                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
+        expect(success) == true
+    }
 }
 
 struct AVSIntegrationTestConfiguration {

@@ -108,18 +108,6 @@ schemes:
 packages:
   eRpKit:
     path: ./
-  ASN1Kit:
-    url: https://github.com/gematik/ASN1Kit
-    majorVersion: 1.2.0
-  DataKit:
-    url: https://github.com/SwiftCommon/DataKit
-    majorVersion: 1.1.0
-  OpenSSL-Swift:
-    url: https://github.com/gematik/OpenSSL-Swift
-    majorVersion: 4.1.0
-  IdentifiedCollections:
-    url: https://github.com/pointfreeco/swift-identified-collections.git
-    minorVersion: 1.0.0
   Nimble:
     url: https://github.com/Quick/Nimble
     majorVersion: 9.2.0

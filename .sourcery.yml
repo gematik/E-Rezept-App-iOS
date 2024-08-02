@@ -20,7 +20,7 @@ configurations:
       - Templates/Sourcery/Tests/ProtocolMock.stencil
     output: Tests/eRpAppTests
     args:
-      protocolMockImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingObjC ]
+      protocolMockImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp ]
       protocolMockTestableImports: [ eRpFeatures ]
   - sources: # writes to Tests/eRpKitTests/Mocks/Generated/
       - Sources

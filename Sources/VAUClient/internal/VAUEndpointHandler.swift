@@ -23,11 +23,11 @@ import HTTPClient
 protocol VAUEndpointHandler {
     var vauEndpoint: AnyPublisher<URL, VAUError> { get }
 
-    // [REQ:gemSpec_Krypt:A_20174:2]
     func didReceiveUserPseudonym(in httpResponse: HTTPResponse)
 }
 
 extension VAUSession: VAUEndpointHandler {
+    // [REQ:gemSpec_Krypt:A_20161-01#17|10] 7: VAU-Endpoint respects userpseudonym if present
     var vauEndpoint: AnyPublisher<URL, VAUError> {
         vauStorage.userPseudonym
             .map { userPseudonym in
@@ -44,7 +44,7 @@ extension VAUSession: VAUEndpointHandler {
     }
 
     func didReceiveUserPseudonym(in httpResponse: HTTPResponse) {
-        // [REQ:gemSpec_Krypt:A_20174:2]
+        // [REQ:gemSpec_Krypt:A_20174#12] 2:
         if let pseudonym = httpResponse.response.value(forHTTPHeaderField: "userpseudonym") {
             vauStorage.set(userPseudonym: pseudonym)
         }

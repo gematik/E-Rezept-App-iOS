@@ -62,6 +62,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
             dependencies.redeemService = mockRedeemService
             dependencies.serviceLocator = ServiceLocator()
             dependencies.pharmacyRepository = mockPharmacyRepository
+            dependencies.date = DateGenerator.constant(Date.now)
+            dependencies.calendar = Calendar.autoupdatingCurrent
         }
     }
 
@@ -82,12 +84,12 @@ class PharmacyRedeemDomainTests: XCTestCase {
     }
 
     func testRedeemingWhenNotLoggedIn() async {
-        let inputTasks = ErxTask.Fixtures.erxTasks
+        let inputTasks = Prescription.Fixtures.prescriptions
         let sut = testStore(for: PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: inputTasks,
+            prescriptions: inputTasks,
             pharmacy: pharmacy,
-            selectedErxTasks: Set(inputTasks)
+            selectedPrescriptions: Set(inputTasks)
         ))
 
         let expectedShipmentInfo = ShipmentInfo(
@@ -135,12 +137,12 @@ class PharmacyRedeemDomainTests: XCTestCase {
     )
 
     func testRedeemHappyPath() async {
-        let inputTasks = ErxTask.Fixtures.erxTasks
+        let inputTasks = Prescription.Fixtures.prescriptions
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: inputTasks,
+            prescriptions: inputTasks,
             pharmacy: pharmacy,
-            selectedErxTasks: Set(inputTasks)
+            selectedPrescriptions: Set(inputTasks)
         )
         let sut = testStore(for: initialState)
 
@@ -196,12 +198,12 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
     func testRedeemWithPartialSuccess() async {
         // given
-        let inputTasks = ErxTask.Fixtures.erxTasks
+        let inputTasks = Prescription.Fixtures.prescriptions
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: inputTasks,
+            prescriptions: inputTasks,
             pharmacy: pharmacy,
-            selectedErxTasks: Set(inputTasks)
+            selectedPrescriptions: Set(inputTasks)
         )
         let sut = testStore(for: initialState)
 
@@ -241,12 +243,12 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
     func testRedeemWithFailure() async {
         // given
-        let inputTasks = ErxTask.Fixtures.erxTasks
+        let inputTasks = Prescription.Fixtures.prescriptions
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: inputTasks,
+            prescriptions: inputTasks,
             pharmacy: pharmacy,
-            selectedErxTasks: Set(inputTasks)
+            selectedPrescriptions: Set(inputTasks)
         )
         let sut = testStore(for: initialState)
 
@@ -269,13 +271,13 @@ class PharmacyRedeemDomainTests: XCTestCase {
     }
 
     func testLoadingProfile() async {
-        let inputTasks = ErxTask.Fixtures.erxTasks
+        let inputTasks = Prescription.Fixtures.prescriptions
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
                 redeemOption: .onPremise,
-                erxTasks: inputTasks,
+                prescriptions: inputTasks,
                 pharmacy: pharmacy,
-                selectedErxTasks: Set(inputTasks)
+                selectedPrescriptions: Set(inputTasks)
             )
         )
 
@@ -291,13 +293,13 @@ class PharmacyRedeemDomainTests: XCTestCase {
     }
 
     func testRedeemWithInvalidInput() async {
-        let inputTasks = ErxTask.Fixtures.erxTasks
+        let inputTasks = Prescription.Fixtures.prescriptions
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
                 redeemOption: .shipment,
-                erxTasks: inputTasks,
+                prescriptions: inputTasks,
                 pharmacy: pharmacy,
-                selectedErxTasks: Set(inputTasks)
+                selectedPrescriptions: Set(inputTasks)
             )
         )
 
@@ -343,18 +345,18 @@ class PharmacyRedeemDomainTests: XCTestCase {
     }
 
     func testRedeemNoPrescriptionsSelected() async {
-        let inputTasks = [ErxTask.Fixtures.erxTask1, ErxTask.Fixtures.erxTask2, ErxTask.Fixtures.erxTask3]
+        let inputTasks = Prescription.Fixtures.prescriptions
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
                 redeemOption: .shipment,
-                erxTasks: inputTasks,
+                prescriptions: inputTasks,
                 pharmacy: pharmacy,
-                selectedErxTasks: Set(inputTasks)
+                selectedPrescriptions: Set(inputTasks)
             )
         )
         let selectionPrescriptionState = PharmacyPrescriptionSelectionDomain.State(
-            erxTasks: sut.state.erxTasks,
-            selectedErxTasks: sut.state.selectedErxTasks
+            prescriptions: sut.state.prescriptions.filter(\.isRedeemable),
+            selectedPrescriptions: sut.state.selectedPrescriptions
         )
 
         await sut.send(.showPrescriptionSelection) { sut in
@@ -362,9 +364,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         }
 
         await sut
-            .send(.destination(.presented(.prescriptionSelection(.saveSelection(Set<ErxTask>()))))) { sut in
+            .send(.destination(.presented(.prescriptionSelection(.saveSelection(Set<Prescription>()))))) { sut in
                 sut.destination = nil
-                sut.selectedErxTasks = Set<ErxTask>()
+                sut.selectedPrescriptions = Set<Prescription>()
             }
 
         await sut.send(.redeem)

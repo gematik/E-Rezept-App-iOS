@@ -10,6 +10,12 @@ docs
 /requirements_filtered.html
 doc/errors/generated
 
+# Environment variables provided by other sources
+development.env 
+development.apikeys.env
+development.static.env
+
+
 # AppCode project files
 .idea/
 
@@ -107,6 +113,7 @@ Jenkinsfile
 Jenkinsfile_Archive
 devops
 .gitlab
+fastlane/Matchfile
 doc/security_review
 doc/architecture
 Sources/AVS/useful_links.txt
@@ -120,4 +127,3 @@ docs/errors/errors.html
 fastlane/audit_afos.json
 
 .gitattributes
-

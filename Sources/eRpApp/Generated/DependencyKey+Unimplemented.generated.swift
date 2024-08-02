@@ -47,6 +47,9 @@ struct UnimplementedAppSecurityManager: AppSecurityManager {
     func matches(password: String) throws -> Bool {
         fatalError("matches(password:) has not been implemented")
     }
+    func migrate() throws -> Void {
+        fatalError("migrate has not been implemented")
+    }
 }
 struct UnimplementedAuthenticationChallengeProvider: AuthenticationChallengeProvider {
     init() {}

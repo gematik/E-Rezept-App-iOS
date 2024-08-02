@@ -54,6 +54,9 @@ struct PharmacySearchStartView: View {
                             onAnnotationTapped: { _ in },
                             onClusterTapped: { _ in }
                         )
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(L10n.phaSearchMapAccessibilityLabel.text)
+                        .accessibilityAddTraits(.isButton)
                         .onTapGesture { store.send(.showMap) }
                         .frame(maxWidth: nil, maxHeight: Self.height)
                         .scaledToFill()

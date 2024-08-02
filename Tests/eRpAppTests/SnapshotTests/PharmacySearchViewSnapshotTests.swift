@@ -63,10 +63,11 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
         let state = PharmacySearchDomain.State(
-            erxTasks: [ErxTask.Fixtures.erxTaskReady],
+            inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmacies,
             localPharmacies: pharmacies,
+            pharmacyFilterOptions: Shared([]),
             searchState: .startView(loading: false)
         )
         let sut = NavigationView {
@@ -87,15 +88,14 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             PharmacySearchView(
                 store: .init(
                     initialState: .init(
-                        erxTasks: [ErxTask](),
+                        inRedeemProcess: false,
                         searchText: "Apothekesdfwerwerasdf",
+                        pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
                         searchState: .searchResultEmpty
                     )
                 ) {
                     EmptyReducer()
-                },
-
-                isRedeemRecipe: false
+                }
             )
         }
 
@@ -109,16 +109,15 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             PharmacySearchView(
                 store: .init(
                     initialState: .init(
-                        erxTasks: [ErxTask](),
+                        inRedeemProcess: false,
                         searchText: "Adler Apo",
                         pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
+                        pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
                         searchState: .searchResultOk
                     )
                 ) {
                     EmptyReducer()
-                },
-
-                isRedeemRecipe: false
+                }
             )
         }
 
@@ -131,15 +130,14 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PharmacySearchMapView(
             store: .init(
                 initialState: .init(
-                    erxTasks: [ErxTask](),
+                    inRedeemProcess: false,
                     mapLocation: .manual(MKCoordinateRegion.gematikHQRegion),
-                    pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies
+                    pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
+                    pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter
                 )
             ) {
                 EmptyReducer()
-            },
-
-            isRedeemRecipe: false
+            }
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -159,5 +157,11 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+}
+
+extension PharmacySearchMapDomainTests {
+    enum Fixtures {
+        static let sharedEmptyFilter: Shared<[PharmacySearchFilterDomain.PharmacyFilterOption]> = Shared([])
     }
 }

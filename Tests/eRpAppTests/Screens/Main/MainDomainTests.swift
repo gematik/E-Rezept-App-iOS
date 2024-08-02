@@ -325,7 +325,7 @@ final class MainDomainTests: XCTestCase {
         await sut
             .send(.prescriptionList(action: .redeemButtonTapped(openPrescriptions: nonReadyPrescriptions +
                     [expectedPrescription]))) { state in
-                    state.destination = .redeemMethods(.init(erxTasks: [expectedPrescription.erxTask]))
+                    state.destination = .redeemMethods(.init(prescriptions: [expectedPrescription]))
             }
     }
 

@@ -32,7 +32,7 @@ struct CardWallExtAuthHelpView: View {
                     .foregroundColor(Colors.systemLabelSecondary)
                     .padding(.bottom, 32)
 
-                VStack(spacing: 32) {
+                VStack(alignment: .leading, spacing: 32) {
                     HStack(alignment: .top) {
                         OnboardingFeatureCheckmarkView()
                         Text(L10n.cdwTxtExtauthHelpInfo1)

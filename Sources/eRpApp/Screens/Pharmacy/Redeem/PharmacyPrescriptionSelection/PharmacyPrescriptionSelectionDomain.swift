@@ -25,24 +25,24 @@ import SwiftUI
 struct PharmacyPrescriptionSelectionDomain {
     @ObservableState
     struct State: Equatable {
-        var erxTasks: [ErxTask]
-        var selectedErxTasks: Set<ErxTask> = []
+        var prescriptions: [Prescription]
+        var selectedPrescriptions: Set<Prescription> = []
         var profile: Profile?
     }
 
     enum Action: Equatable {
         case didSelect(String)
-        case saveSelection(Set<ErxTask>)
+        case saveSelection(Set<Prescription>)
     }
 
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .didSelect(taskID):
-            if let erxTask = state.erxTasks.first(where: { $0.id == taskID }) {
-                if state.selectedErxTasks.contains(erxTask) {
-                    state.selectedErxTasks.remove(erxTask)
+            if let prescriptions = state.prescriptions.first(where: { $0.id == taskID }) {
+                if state.selectedPrescriptions.contains(prescriptions) {
+                    state.selectedPrescriptions.remove(prescriptions)
                 } else {
-                    state.selectedErxTasks.insert(erxTask)
+                    state.selectedPrescriptions.insert(prescriptions)
                 }
             }
             return .none
@@ -55,7 +55,7 @@ struct PharmacyPrescriptionSelectionDomain {
 extension PharmacyPrescriptionSelectionDomain {
     enum Dummies {
         static let state = State(
-            erxTasks: ErxTask.Demo.erxTasks
+            prescriptions: [Prescription.Dummies.prescriptionReady]
         )
 
         static let store = Store(

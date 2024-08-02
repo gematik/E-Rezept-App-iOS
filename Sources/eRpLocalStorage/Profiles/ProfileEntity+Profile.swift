@@ -18,15 +18,28 @@
 
 import CoreData
 import eRpKit
+import IDP
 
 extension ProfileEntity {
+    static let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        return encoder
+    }()
+
     static func from(profile: Profile,
+                     encoder: JSONEncoder = ProfileEntity.encoder,
                      in context: NSManagedObjectContext) -> ProfileEntity {
-        ProfileEntity(profile: profile, in: context)
+        ProfileEntity(profile: profile, encoder: encoder, in: context)
     }
 
-    convenience init(profile: Profile, in context: NSManagedObjectContext) {
+    convenience init(profile: Profile,
+                     encoder: JSONEncoder = ProfileEntity.encoder,
+                     in context: NSManagedObjectContext) {
         self.init(context: context)
+
+        let gIdEntry = try? encoder.encode(profile.gIdEntry)
+
         identifier = profile.identifier
         name = profile.name
         created = profile.created
@@ -41,11 +54,14 @@ extension ProfileEntity {
         lastAuthenticated = profile.lastAuthenticated
         // Note: update of erxTasks is set when saving tasks in `save(tasks:)`
         hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
+        self.gIdEntry = gIdEntry
     }
 }
 
 extension Profile {
-    init?(entity: ProfileEntity, dateProvider: () -> Date) {
+    init?(entity: ProfileEntity,
+          dateProvider: () -> Date,
+          decoder: JSONDecoder = JSONDecoder()) {
         guard let identifier = entity.identifier,
               let name = entity.name,
               let created = entity.created else {
@@ -83,6 +99,8 @@ extension Profile {
 
         let hidePkvConsentDrawerOnMainView = entity.hidePkvConsentDrawerOnMainView
 
+        let gIdEntry = try? decoder.decode(KKAppDirectory.Entry.self, from: entity.gIdEntry ?? Data())
+
         self.init(
             name: name,
             identifier: identifier,
@@ -97,7 +115,8 @@ extension Profile {
             userImageData: entity.userImageData,
             lastAuthenticated: entity.lastAuthenticated,
             erxTasks: tasks,
-            hidePkvConsentDrawerOnMainView: hidePkvConsentDrawerOnMainView
+            hidePkvConsentDrawerOnMainView: hidePkvConsentDrawerOnMainView,
+            gIdEntry: gIdEntry
         )
     }
 }

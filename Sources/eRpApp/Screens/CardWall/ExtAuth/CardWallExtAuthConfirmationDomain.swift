@@ -99,7 +99,7 @@ struct CardWallExtAuthConfirmationDomain {
         switch action {
         case .confirmKK:
             state.loading = true
-            // [REQ:gemSpec_IDP_Sek:A_22294] Start login via gID
+            // [REQ:gemSpec_IDP_Frontend:A_22294-01] Start login via gID
             // [REQ:BSI-eRp-ePA:O.Auth_4#9,O.Plat_10#2] Start login via gID
             return .publisher(
                 environment.idpSession.startExtAuth(entry: state.selectedKK)
@@ -114,15 +114,15 @@ struct CardWallExtAuthConfirmationDomain {
         case let .openURL(url):
             return Effect.run { send in
                 let action = await withCheckedContinuation { continuation in
-                    // [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
+                    // [REQ:gemSpec_IDP_Frontend:A_22299-01] Follow redirect
                     // [REQ:BSI-eRp-ePA:O.Plat_10#3] Follow redirect
                     guard environment.resourceHandler.canOpenURL(url) else {
                         continuation.resume(returning: Action.response(.openURL(false)))
                         return
                     }
 
-                    // [REQ:gemSpec_IDP_Sek:A_22313-01] Remember State parameter for later verification
-                    environment.resourceHandler.open(url, options: [:]) { result in
+                    // [REQ:gemSpec_IDP_Frontend:A_22313-01] Universal link options
+                    environment.resourceHandler.open(url, options: [.universalLinksOnly: false]) { result in
                         continuation.resume(returning: Action.response(.openURL(result)))
                     }
                 }

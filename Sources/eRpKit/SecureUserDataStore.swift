@@ -23,6 +23,7 @@ import OpenSSL
 
 /// Interface to access user specific data that should be kept private
 /// sourcery: StreamWrapped
+/// [REQ:BSI-eRp-ePA:O.Auth_13#2|11] The protocol for storing secured data
 public protocol SecureUserDataStore: IDPStorage, SecureEGKCertificateStorage {
     /// Keep track of the latest CAN kept by the DataStore
     var can: AnyPublisher<String?, Never> { get }

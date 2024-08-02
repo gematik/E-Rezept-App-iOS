@@ -190,6 +190,14 @@ struct Prescription: Equatable, Identifiable {
         guard type != .directAssignment
         else { return false }
 
+        if type == .multiplePrescription {
+            if let mvo = erxTask.medicationRequest.multiplePrescription {
+                if mvo.isRedeemable == false {
+                    return false
+                }
+            }
+        }
+
         switch (erxTask.status, viewStatus) {
         case (_, .archived),
              (_, .redeem): return false
@@ -340,6 +348,13 @@ extension Prescription {
         }
     }
 
+    var loadingIndicator: Bool {
+        switch (erxTask.status, viewStatus) {
+        case (.computed(.waiting), _): return true
+        default: return false
+        }
+    }
+
     var titleTint: Color {
         guard type != .directAssignment
         else { return Colors.systemGray }
@@ -349,10 +364,10 @@ extension Prescription {
              (.undefined, _),
              (.completed, _),
              (.computed(.sent), _),
+             (.computed(.waiting), _),
              (.inProgress, .archived),
              (.ready, .archived): return Colors.systemGray
         case (.ready, .redeem),
-             (.computed(.waiting), _),
              (.inProgress, _): return Colors.yellow900
         case (.ready, _): return Colors.primary900
         case (.cancelled, _): return Colors.red900
@@ -368,11 +383,11 @@ extension Prescription {
         case (.draft, _),
              (.undefined, _),
              (.completed, _),
+             (.computed(.waiting), _),
              (.computed(.sent), _),
              (.inProgress, .archived),
              (.ready, .archived): return Colors.systemGray2
         case (.ready, .redeem),
-             (.computed(.waiting), _),
              (.inProgress, _): return Colors.yellow500
         case (.ready, _): return Colors.primary500
         case (.cancelled, _): return Colors.red500
@@ -389,10 +404,10 @@ extension Prescription {
              (.undefined, _),
              (.completed, _),
              (.computed(.sent), _),
+             (.computed(.waiting), _),
              (.inProgress, .archived),
              (.ready, .archived): return Colors.secondary
         case (.ready, .redeem),
-             (.computed(.waiting), _),
              (.inProgress, _): return Colors.yellow200
         case (.ready, _): return Colors.primary100
         case (.cancelled, _): return Colors.red100

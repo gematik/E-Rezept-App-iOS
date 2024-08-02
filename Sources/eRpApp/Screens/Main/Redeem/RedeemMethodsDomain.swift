@@ -22,13 +22,12 @@ import ComposableArchitecture
 import eRpKit
 import IDP
 import UIKit
-import ZXingObjC
 
 @Reducer
 struct RedeemMethodsDomain {
     @ObservableState
     struct State: Equatable {
-        var erxTasks: [ErxTask]
+        var prescriptions: [Prescription]
         @Presents var destination: Destination.State?
     }
 
@@ -74,12 +73,13 @@ struct RedeemMethodsDomain {
                 state.destination = .matrixCode(
                     MatrixCodeDomain.State(
                         type: .erxTask,
-                        erxTasks: state.erxTasks
+                        erxTasks: state.prescriptions.map(\.erxTask)
                     )
                 )
                 return .none
             case .showPharmacySearchTapped:
-                state.destination = .pharmacySearch(PharmacySearchDomain.State(erxTasks: state.erxTasks))
+                state.destination = .pharmacySearch(PharmacySearchDomain
+                    .State(selectedPrescriptions: state.prescriptions.filter(\.isRedeemable), inRedeemProcess: true))
                 return .none
             case .resetNavigation:
                 state.destination = nil
@@ -95,7 +95,7 @@ struct RedeemMethodsDomain {
 extension RedeemMethodsDomain {
     enum Dummies {
         static let state = State(
-            erxTasks: ErxTask.Demo.erxTasks
+            prescriptions: [Prescription.Dummies.prescriptionReady]
         )
 
         static let store = Store(

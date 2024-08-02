@@ -28,6 +28,11 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
     let foregroundQueue: AnySchedulerOf<DispatchQueue>
     let backgroundQueue: AnySchedulerOf<DispatchQueue>
     let dateProvider: () -> Date
+    static let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        return encoder
+    }()
 
     /// Initialize a Profile Core Data Store
     /// - Parameters:
@@ -170,6 +175,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                 profileEntity.userImageData = profile.userImageData
                 profileEntity.lastAuthenticated = profile.lastAuthenticated
                 profileEntity.hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
+                profileEntity.gIdEntry = try? ProfileCoreDataStore.encoder.encode(profile.gIdEntry)
             } else {
                 throw Error.noMatchingEntity
             }

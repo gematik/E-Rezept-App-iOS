@@ -41,13 +41,12 @@ struct DebugDomain {
 
         var isAuthenticated: Bool?
         var token: IDPToken?
-        var accessCodeText: String = "" +
-            ""
+        var accessCodeText: String = ""
         var lastIDPToken: IDPToken?
         var profile: Profile?
         var hidePkvConsentDrawerOnMainView: Bool { profile?.hidePkvConsentDrawerOnMainView ?? false }
 
-        var fakeTaskStatus = String(ErxTask.scannedTaskMinIntervalForCompletion)
+        var fakeTaskStatus = String(ErxTask.minTimeIntervalForCompletion)
 
         var useVirtualLogin: Bool = UserDefaults.standard.isVirtualEGKEnabled
         var virtualLoginPrivateKey: String = UserDefaults.standard.virtualEGKPrkCHAut ?? ""
@@ -71,7 +70,7 @@ struct DebugDomain {
 
         var showAlert = false
         var alertText: String?
-        var logState = DebugLogDomain.State(logs: [])
+        var logState = DebugLogsDomain.State(logs: [])
         #endif
 
         struct ServerEnvironment: Identifiable, Equatable {
@@ -108,7 +107,7 @@ struct DebugDomain {
         case resetAlertText
         case appear
         case resetTooltips
-        case logAction(action: DebugLogDomain.Action)
+        case logAction(action: DebugLogsDomain.Action)
         #endif
     }
 
@@ -187,7 +186,7 @@ struct DebugDomain {
             UserDefaults.standard.virtualEGKPrkCHAut = state.virtualLoginPrivateKey
             return .none
         case .binding(\.fakeTaskStatus):
-            ErxTask.scannedTaskMinIntervalForCompletion = Double(state.fakeTaskStatus) ?? 0
+            ErxTask.minTimeIntervalForCompletion = Double(state.fakeTaskStatus) ?? 0
             return .none
         case .loginWithToken:
             if let idpToken = state.lastIDPToken {
@@ -295,7 +294,7 @@ struct DebugDomain {
     var body: some Reducer<State, Action> {
         #if ENABLE_DEBUG_VIEW
         Scope(state: \.logState, action: /Action.logAction) {
-            DebugLogDomain(loggingStore: DebugLiveLogger.shared)
+            DebugLogsDomain(loggingStore: DebugLiveLogger.shared)
         }
 
         BindingReducer()

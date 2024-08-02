@@ -27,6 +27,12 @@ public struct PictureButtonStyle: ButtonStyle {
 
     var style: PictureLabelStyle.Style
     var isActive: Bool
+    var width: Width
+
+    public enum Width {
+        case infinite
+        case narrow
+    }
 
     private var isLarge: Bool {
         switch style {
@@ -37,16 +43,17 @@ public struct PictureButtonStyle: ButtonStyle {
         }
     }
 
-    public init(style: PictureLabelStyle.Style = .default, active: Bool = false) {
+    public init(style: PictureLabelStyle.Style = .default, active: Bool = false, width: Width = .infinite) {
         self.style = style
         isActive = active
+        self.width = width
     }
 
     public func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .labelStyle(PictureLabelStyle(style: style))
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
+            .frame(maxWidth: (width == .infinite) ? .infinity : nil, minHeight: 52, alignment: .center)
             .padding(isLarge ? 16 : 8)
             .background(
                 Colors.systemBackgroundTertiary

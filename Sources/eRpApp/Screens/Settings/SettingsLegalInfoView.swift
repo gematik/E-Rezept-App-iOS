@@ -38,7 +38,7 @@ struct SettingsLegalInfoView: View {
                 ).accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
                     .buttonStyle(.navigation)
 
-                // [REQ:BSI-eRp-ePA:O.Arch_9#3] DataPrivacy display within Settings
+                // [REQ:BSI-eRp-ePA:O.Arch_9#3,O.Purp_1#4] DataPrivacy display within Settings
                 NavigationLink(
                     item: $store.scope(state: \.destination?.dataProtection, action: \.destination.dataProtection),
                     onTap: { store.send(.tappedDataProtection) },

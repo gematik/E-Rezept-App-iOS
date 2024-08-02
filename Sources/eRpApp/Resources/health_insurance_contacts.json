@@ -90,8 +90,8 @@
   {
     "name": "AOK Rheinland/Hamburg - Die Gesundheitskasse",
     "healthCardAndPinPhone": "",
-    "healthCardAndPinMail": "aok@rh.aok.de",
-    "healthCardAndPinUrl": "",
+    "healthCardAndPinMail": "",
+    "healthCardAndPinUrl": "https://www.aok.de/pk/versichertenservice/elektronische-gesundheitskarte-egk/",
     "pinUrl": "https://www.aok.de/pk/rh/inhalt/pin-zur-elektronischen-gesundheitskarte-egk-5/",
     "subjectCardAndPinMail": "#eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte und PIN",
     "bodyCardAndPinMail": "Sehr geehrte Damen und Herren,\nich möchte die E-Rezept-App der gematik nutzen.\n\nName:\nVorname:\nVersichertennummer/ KVNR:\n\nBitte senden Sie mir hierfür eine NFC-fähige Gesundheitskarte zu. Ich benötige zu der Gesundheitskarte auch die PIN. Bitte senden Sie mir Informationen zu, wie ich die PIN erhalten kann.\n\nMit freundlichen Grüßen\nIhr Versicherter/ Ihre Versicherte",
@@ -430,9 +430,9 @@
   },
   {
     "name": "BKK Miele",
-    "healthCardAndPinPhone": "+498008002189",
+    "healthCardAndPinPhone": "",
     "healthCardAndPinMail": "",
-    "healthCardAndPinUrl": "https://www.miele-bkk.de/service/elektronische-gesundheitskarte",
+    "healthCardAndPinUrl": "https://www.miele-bkk.de/service/e-rezept",
     "pinUrl": "",
     "subjectCardAndPinMail": "",
     "bodyCardAndPinMail": "",

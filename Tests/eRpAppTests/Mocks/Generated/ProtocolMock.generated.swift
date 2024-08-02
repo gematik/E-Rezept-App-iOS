@@ -13,7 +13,7 @@ import Pharmacy
 import TestUtils
 import TrustStore
 import VAUClient
-import ZXingObjC
+import ZXingCpp
 
 @testable import eRpFeatures
 
@@ -146,6 +146,81 @@ final class MockActivityIndicating: ActivityIndicating {
         set(value) { underlyingIsActive = value }
     }
     var underlyingIsActive: AnyPublisher<Bool, Never>!
+}
+
+
+// MARK: - MockAppSecurityManager -
+
+final class MockAppSecurityManager: AppSecurityManager {
+    
+   // MARK: - availableSecurityOptions
+
+    var availableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?) {
+        get { underlyingAvailableSecurityOptions }
+        set(value) { underlyingAvailableSecurityOptions = value }
+    }
+    var underlyingAvailableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?)!
+    
+   // MARK: - save
+
+    var savePasswordThrowableError: Error?
+    var savePasswordCallsCount = 0
+    var savePasswordCalled: Bool {
+        savePasswordCallsCount > 0
+    }
+    var savePasswordReceivedPassword: String?
+    var savePasswordReceivedInvocations: [String] = []
+    var savePasswordReturnValue: Bool!
+    var savePasswordClosure: ((String) throws -> Bool)?
+
+    func save(password: String) throws -> Bool {
+        if let error = savePasswordThrowableError {
+            throw error
+        }
+        savePasswordCallsCount += 1
+        savePasswordReceivedPassword = password
+        savePasswordReceivedInvocations.append(password)
+        return try savePasswordClosure.map({ try $0(password) }) ?? savePasswordReturnValue
+    }
+    
+   // MARK: - matches
+
+    var matchesPasswordThrowableError: Error?
+    var matchesPasswordCallsCount = 0
+    var matchesPasswordCalled: Bool {
+        matchesPasswordCallsCount > 0
+    }
+    var matchesPasswordReceivedPassword: String?
+    var matchesPasswordReceivedInvocations: [String] = []
+    var matchesPasswordReturnValue: Bool!
+    var matchesPasswordClosure: ((String) throws -> Bool)?
+
+    func matches(password: String) throws -> Bool {
+        if let error = matchesPasswordThrowableError {
+            throw error
+        }
+        matchesPasswordCallsCount += 1
+        matchesPasswordReceivedPassword = password
+        matchesPasswordReceivedInvocations.append(password)
+        return try matchesPasswordClosure.map({ try $0(password) }) ?? matchesPasswordReturnValue
+    }
+    
+   // MARK: - migrate
+
+    var migrateThrowableError: Error?
+    var migrateCallsCount = 0
+    var migrateCalled: Bool {
+        migrateCallsCount > 0
+    }
+    var migrateClosure: (() throws -> Void)?
+
+    func migrate() throws {
+        if let error = migrateThrowableError {
+            throw error
+        }
+        migrateCallsCount += 1
+        try migrateClosure?()
+    }
 }
 
 
@@ -670,6 +745,74 @@ final class MockJWTSigner: JWTSigner {
         signMessageReceivedMessage = message
         signMessageReceivedInvocations.append(message)
         return signMessageClosure.map({ $0(message) }) ?? signMessageReturnValue
+    }
+}
+
+
+// MARK: - MockKeychainAccessHelper -
+
+final class MockKeychainAccessHelper: KeychainAccessHelper {
+    
+   // MARK: - genericPassword
+
+    var genericPasswordForOfServiceThrowableError: Error?
+    var genericPasswordForOfServiceCallsCount = 0
+    var genericPasswordForOfServiceCalled: Bool {
+        genericPasswordForOfServiceCallsCount > 0
+    }
+    var genericPasswordForOfServiceReceivedArguments: (account: Data, service: Data)?
+    var genericPasswordForOfServiceReceivedInvocations: [(account: Data, service: Data)] = []
+    var genericPasswordForOfServiceReturnValue: Data?
+    var genericPasswordForOfServiceClosure: ((Data, Data) throws -> Data?)?
+
+    func genericPassword(for account: Data, ofService service: Data) throws -> Data? {
+        if let error = genericPasswordForOfServiceThrowableError {
+            throw error
+        }
+        genericPasswordForOfServiceCallsCount += 1
+        genericPasswordForOfServiceReceivedArguments = (account: account, service: service)
+        genericPasswordForOfServiceReceivedInvocations.append((account: account, service: service))
+        return try genericPasswordForOfServiceClosure.map({ try $0(account, service) }) ?? genericPasswordForOfServiceReturnValue
+    }
+    
+   // MARK: - unsetGenericPassword
+
+    var unsetGenericPasswordForOfServiceCallsCount = 0
+    var unsetGenericPasswordForOfServiceCalled: Bool {
+        unsetGenericPasswordForOfServiceCallsCount > 0
+    }
+    var unsetGenericPasswordForOfServiceReceivedArguments: (account: Data, service: Data)?
+    var unsetGenericPasswordForOfServiceReceivedInvocations: [(account: Data, service: Data)] = []
+    var unsetGenericPasswordForOfServiceReturnValue: Bool!
+    var unsetGenericPasswordForOfServiceClosure: ((Data, Data) -> Bool)?
+
+    func unsetGenericPassword(for account: Data, ofService service: Data) -> Bool {
+        unsetGenericPasswordForOfServiceCallsCount += 1
+        unsetGenericPasswordForOfServiceReceivedArguments = (account: account, service: service)
+        unsetGenericPasswordForOfServiceReceivedInvocations.append((account: account, service: service))
+        return unsetGenericPasswordForOfServiceClosure.map({ $0(account, service) }) ?? unsetGenericPasswordForOfServiceReturnValue
+    }
+    
+   // MARK: - setGenericPassword
+
+    var setGenericPasswordForServiceThrowableError: Error?
+    var setGenericPasswordForServiceCallsCount = 0
+    var setGenericPasswordForServiceCalled: Bool {
+        setGenericPasswordForServiceCallsCount > 0
+    }
+    var setGenericPasswordForServiceReceivedArguments: (password: Data, account: Data, service: Data)?
+    var setGenericPasswordForServiceReceivedInvocations: [(password: Data, account: Data, service: Data)] = []
+    var setGenericPasswordForServiceReturnValue: Bool!
+    var setGenericPasswordForServiceClosure: ((Data, Data, Data) throws -> Bool)?
+
+    func setGenericPassword(_ password: Data, for account: Data, service: Data) throws -> Bool {
+        if let error = setGenericPasswordForServiceThrowableError {
+            throw error
+        }
+        setGenericPasswordForServiceCallsCount += 1
+        setGenericPasswordForServiceReceivedArguments = (password: password, account: account, service: service)
+        setGenericPasswordForServiceReceivedInvocations.append((password: password, account: account, service: service))
+        return try setGenericPasswordForServiceClosure.map({ try $0(password, account, service) }) ?? setGenericPasswordForServiceReturnValue
     }
 }
 

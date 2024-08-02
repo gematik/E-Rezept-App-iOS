@@ -67,7 +67,7 @@ struct PharmacySearchFilterDomain {
     @ObservableState
     struct State: Equatable {
         /// Store for the active filter options the user has chosen
-        var pharmacyFilterOptions: [PharmacyFilterOption] = []
+        @Shared(.pharmacyFilterOptions) var pharmacyFilterOptions
         var pharmacyFilterShow: [PharmacyFilterOption] = [.currentLocation, .open, .delivery, .shipment]
     }
 
@@ -114,7 +114,7 @@ extension Collection where Element == PharmacySearchFilterDomain.PharmacyFilterO
 extension PharmacySearchFilterDomain {
     enum Dummies {
         static let state = State(
-            pharmacyFilterOptions: [.open, .delivery]
+            pharmacyFilterOptions: Shared([.open, .delivery])
         )
 
         static let store = Store(

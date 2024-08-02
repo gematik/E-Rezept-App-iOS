@@ -246,6 +246,26 @@ extension ErxTask {
             organization: demoOrganization
         )
 
+        static let erxTaskOnlyPKV = ErxTask(
+            identifier: "169.178.456.789.123.58",
+            status: .completed,
+            flowType: .pharmacyOnlyForPKV,
+            accessCode: "e46ab30636811adbb210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: "2021-06-10T10:55:04+02:00",
+            expiresOn: "2021-09-10T10:55:04+02:00",
+            acceptedUntil: "2021-08-10T10:55:04+02:00",
+            redeemedOn: nil,
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication4,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
+            patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization
+        )
+
         static let erxTaskSubstitutionAllowed: ErxTask = .init(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,

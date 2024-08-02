@@ -1,3 +1,35 @@
+# Release 1.24.0
+
+### changed (2 changes)
+
+ - Change prescription status message to be more precise for status computed and inProgess
+ - Parse environment variables from development.env{,.default} file
+ 
+### added (8 changes)
+
+ - Add pharmacy infos to order details
+ - Add tap for dismiss for action toasts.
+ - Add feedback for various AFOs
+ - Add Remember Insurance Name
+ - Add alert before deleting prescriptions with charge item
+ - Add Switch to map from searchresult
+ - Add waiting status for remote prescription
+ - Add medication reminder for scanned tasks
+
+### fixed (6 changes)
+
+ - Fix warning dialog not showing while using biometrics
+ - Fix archived prescriptions can be selected
+ - Fix wrong direct assignment hint view
+ - Fix cardwall delegate finish for charge items
+ - Fix a pharmacy’s cached location gets send when the near-filter has been removed
+ - Fix that MVOs are sometimes redeemable when they shouldn't be
+
+### internal (2 changes)
+
+ - Refactor environment configuration of App/IntergrationTests
+ - Replace zxingify-objc dependency with zxing-cpp
+
 # Release 1.23.1
 
 ### added (12 changes)

@@ -69,7 +69,7 @@ public class CoreDataController {
         let protectedStoreDescription = NSPersistentStoreDescription(url: databaseUrl)
         protectedStoreDescription.type = NSSQLiteStoreType
         #if !os(macOS)
-        // [REQ:BSI-eRp-ePA:O.Purp_8#3,O.Arch_2#3] actual protection setting on file system level
+        // [REQ:BSI-eRp-ePA:O.Purp_8#3|4] actual protection setting on file system level
         protectedStoreDescription.setOption(
             fileProtectionType as NSObject,
             forKey: NSPersistentStoreFileProtectionKey
@@ -93,7 +93,7 @@ public class CoreDataController {
                 return
             }
 
-            // [REQ:BSI-eRp-ePA:O.Purp_8#4,O.Arch_2#4,O.Arch_4#2,O.Data_15#1] Database backup exclusion
+            // [REQ:BSI-eRp-ePA:O.Purp_8#4,O.Arch_4#2,O.Data_15#1] Database backup exclusion
             if excludeFromBackup, let storeUrl = store.url {
                 do {
                     _ = try fileManager.excludeFileFromBackup(filePath: storeUrl).get()

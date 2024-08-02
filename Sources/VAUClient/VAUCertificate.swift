@@ -30,6 +30,7 @@ protocol VAUCertificate {
 }
 
 extension VAUSession: VAUCertificateProvider {
+    // [REQ:gemSpec_Krypt:A_21222#4|7] Vau Certificate provider
     func loadAndVerifyVauCertificate() -> AnyPublisher<VAUCertificate, VAUError> {
         trustStoreSession.loadVauCertificate()
             .first()

@@ -26,15 +26,8 @@ import SwiftUI
 
 struct PharmacySearchMapView: View {
     @Perception.Bindable var store: StoreOf<PharmacySearchMapDomain>
-    let isRedeemRecipe: Bool
-
-    init(
-        store: StoreOf<PharmacySearchMapDomain>,
-        isRedeemRecipe: Bool
-    ) {
-        self.store = store
-        self.isRedeemRecipe = isRedeemRecipe
-    }
+    /// Workaround for navigationbar visible on Map after Search for iPhone 12 Mini with iOS 17.0+
+    @State var navigationBarHidden = false
 
     var body: some View {
         WithPerceptionTracking {
@@ -59,15 +52,21 @@ struct PharmacySearchMapView: View {
                         .accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapMap)
                     VStack {
                         HStack {
-                            Button(action: { store.send(.delegate(.closeMap)) }, label: {
-                                Image(systemName: SFSymbolName.crossIconPlain)
-                                    .font(Font.caption.weight(.bold))
-                                    .foregroundColor(Colors.primary)
-                                    .padding(12)
-                                    .background(Circle().foregroundColor(Colors.systemColorWhite))
-                                    .padding(.all, 12)
-                                    .shadow(color: Colors.separator, radius: 4)
-                            }).accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapBtnClose)
+                            Button(
+                                action: {
+                                    store
+                                        .send(.delegate(.closeMap(location: store.currentUserLocation)))
+                                },
+                                label: {
+                                    Image(systemName: SFSymbolName.crossIconPlain)
+                                        .font(Font.caption.weight(.bold))
+                                        .foregroundColor(Colors.primary)
+                                        .padding(12)
+                                        .background(Circle().foregroundColor(Colors.systemColorWhite))
+                                        .padding(.all, 12)
+                                        .shadow(color: Colors.separator, radius: 4)
+                                }
+                            ).accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapBtnClose)
 
                             Spacer()
 
@@ -110,38 +109,25 @@ struct PharmacySearchMapView: View {
                         }.padding(.bottom, 24)
                     }
 
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .sheet(item: $store.scope(state: \.destination?.clusterSheet,
-                                                  action: \.destination.clusterSheet)) { store in
-                            if #available(iOS 16, *) {
-                                ClusterView(store: store)
-                                    .presentationDetents([.fraction(0.45), .fraction(0.85), .large])
-                            } else {
-                                ClusterView(store: store)
-                            }
-                        }
-                        .accessibility(hidden: true)
-
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .smallSheet($store.scope(
-                            state: \.destination?.filter,
-                            action: \.destination.filter
-                        )) { store in
-                            PharmacySearchFilterView(store: store)
-                                .accentColor(Colors.primary600)
-                        }
-                        .accessibility(hidden: true)
+                    NavigationLink(
+                        item: $store.scope(
+                            state: \.destination?.redeemViaAVS,
+                            action: \.destination.redeemViaAVS
+                        )
+                    ) { store in
+                        PharmacyRedeemView(store: store)
+                    } label: {
+                        EmptyView()
+                    }
+                    .accessibility(hidden: true)
 
                     NavigationLink(
                         item: $store.scope(
-                            state: \.destination?.pharmacy,
-                            action: \.destination.pharmacy
+                            state: \.destination?.redeemViaErxTaskRepository,
+                            action: \.destination.redeemViaErxTaskRepository
                         )
                     ) { store in
-                        PharmacyDetailView(store: store, isRedeemRecipe: isRedeemRecipe)
-                            .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
+                        PharmacyRedeemView(store: store)
                     } label: {
                         EmptyView()
                     }
@@ -153,9 +139,40 @@ struct PharmacySearchMapView: View {
                 ))
                 .task {
                     await store.send(.onAppear).finish()
+                    UIApplication.shared.dismissKeyboard()
                 }
             }
-        }.navigationBarHidden(true)
+            .sheet(item: $store.scope(state: \.destination?.clusterSheet,
+                                      action: \.destination.clusterSheet)) { store in
+                if #available(iOS 16, *) {
+                    ClusterView(store: store)
+                        .presentationDetents([.fraction(0.45), .fraction(0.85), .large])
+                } else {
+                    ClusterView(store: store)
+                }
+            }
+            .smallSheet($store.scope(
+                state: \.destination?.filter,
+                action: \.destination.filter
+            )) { store in
+                PharmacySearchFilterView(store: store)
+                    .accentColor(Colors.primary600)
+            }
+            .sheet(item: $store.scope(
+                state: \.destination?.pharmacy,
+                action: \.destination.pharmacy
+            )) { store in
+                if #available(iOS 16, *) {
+                    PharmacyDetailView(store: store)
+                        .presentationDetents([.fraction(0.45), .fraction(0.85), .large])
+                } else {
+                    PharmacyDetailView(store: store)
+                }
+            }
+        }
+        /// Workaround for navigationbar visible on Map after Search for iPhone 12 Mini
+        .onAppear { navigationBarHidden = true }
+        .navigationBarHidden(navigationBarHidden)
     }
 }
 
@@ -175,7 +192,7 @@ extension PharmacySearchMapView {
                                     .font(Font.caption.weight(.bold))
                                     .foregroundColor(Colors.primary)
                                     .padding(12)
-                                    .background(Circle().foregroundColor(Colors.systemGray6))
+                                    .background(Circle().foregroundColor(Colors.systemFillTertiary))
                             })
                                 .accessibilityIdentifier(A11y.pharmacySearchMap.phaSearchMapBtnClusterClose)
                         }

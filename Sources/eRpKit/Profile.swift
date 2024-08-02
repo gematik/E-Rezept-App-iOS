@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import IDP
 
 /// Represents a user profile selectable within the settings
 public struct Profile: Identifiable, Hashable, Equatable, Codable {
@@ -34,7 +35,8 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         userImageData: Data? = nil,
         lastAuthenticated: Date? = nil,
         erxTasks: [ErxTask] = [],
-        hidePkvConsentDrawerOnMainView: Bool = false
+        hidePkvConsentDrawerOnMainView: Bool = false,
+        gIdEntry: KKAppDirectory.Entry? = nil
     ) {
         self.name = name
         self.identifier = identifier
@@ -50,6 +52,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         self.lastAuthenticated = lastAuthenticated
         self.erxTasks = erxTasks
         self.hidePkvConsentDrawerOnMainView = hidePkvConsentDrawerOnMainView
+        self.gIdEntry = gIdEntry
     }
 
     public var id: UUID {
@@ -71,6 +74,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
     public var erxTasks: [ErxTask]
     // Note: When the list of preferences per Profile keeps growing, consider extracting them to separate struct.
     public var hidePkvConsentDrawerOnMainView: Bool
+    public var gIdEntry: KKAppDirectory.Entry?
 
     public var fullName: String? {
         [givenName, familyName]

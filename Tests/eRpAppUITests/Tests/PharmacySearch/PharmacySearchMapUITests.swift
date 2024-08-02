@@ -130,7 +130,7 @@ final class PharmacySearchMapUITests: XCTestCase {
 
         mapScreen
             .tapCloseMap()
-            .tapCancleButton()
+            .tapCancelButton()
 
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label like 'Rezepte'")).element.exists)
     }

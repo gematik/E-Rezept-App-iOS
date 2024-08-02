@@ -396,8 +396,6 @@ extension EditProfileDomain.Action {
 extension EditProfileDomain.Destination.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .token(action):
-                action.analytics(tracker: tracker)
             case let .auditEvents(action):
                 action.analytics(tracker: tracker)
             case let .registeredDevices(action):
@@ -603,13 +601,6 @@ extension IDPCardWallDomain.Subdomain.Action {
                 action.analytics(tracker: tracker)
             case let .readCard(action):
                 action.analytics(tracker: tracker)
-            default: break
-        }
-    }
-}
-extension IDPTokenDomain.Action {
-    func analytics(tracker: Tracker) {
-        switch self {
             default: break
         }
     }
@@ -958,6 +949,10 @@ extension PharmacySearchDomain.Destination.Action {
                 action.analytics(tracker: tracker)
             case let .pharmacyMapSearch(action):
                 action.analytics(tracker: tracker)
+            case let .redeemViaAVS(action):
+                action.analytics(tracker: tracker)
+            case let .redeemViaErxTaskRepository(action):
+                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -984,6 +979,10 @@ extension PharmacySearchMapDomain.Destination.Action {
             case let .pharmacy(action):
                 action.analytics(tracker: tracker)
             case let .filter(action):
+                action.analytics(tracker: tracker)
+            case let .redeemViaAVS(action):
+                action.analytics(tracker: tracker)
+            case let .redeemViaErxTaskRepository(action):
                 action.analytics(tracker: tracker)
             case let .clusterSheet(action):
                 action.analytics(tracker: tracker)

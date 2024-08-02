@@ -168,6 +168,10 @@ extension CardWallIntroductionDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case let .egk(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case .alert:
+                return destination.analyticsName
+            case .contactSheet:
+                return destination.analyticsName
         }
     }
 }
@@ -290,8 +294,6 @@ extension EditProfileDomain.State {
         switch destination {
             case .alert:
                 return destination.analyticsName
-            case let .token(state: state):
-                return state.routeName() ?? destination.analyticsName
             case let .auditEvents(state: state):
                 return state.routeName() ?? destination.analyticsName
             case let .registeredDevices(state: state):
@@ -433,12 +435,6 @@ extension HorizontalProfileSelectionDomain.State {
 }
 
 extension IDPCardWallDomain.State {
-    func routeName() -> String? {
-            return nil
-    }
-}
-
-extension IDPTokenDomain.State {
     func routeName() -> String? {
             return nil
     }
@@ -666,6 +662,8 @@ extension PharmacyDetailDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case .alert:
                 return destination.analyticsName
+            case .toast:
+                return destination.analyticsName
         }
     }
 }
@@ -716,6 +714,10 @@ extension PharmacySearchDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case .alert:
                 return destination.analyticsName
+            case let .redeemViaAVS(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .redeemViaErxTaskRepository(state: state):
+                return state.routeName() ?? destination.analyticsName
         }
     }
 }
@@ -738,6 +740,10 @@ extension PharmacySearchMapDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case .alert:
                 return destination.analyticsName
+            case let .redeemViaAVS(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .redeemViaErxTaskRepository(state: state):
+                return state.routeName() ?? destination.analyticsName
             case let .clusterSheet(state: state):
                 return state.routeName() ?? destination.analyticsName
         }
@@ -1080,6 +1086,10 @@ extension CardWallIntroductionDomain.Destination.State {
                 return Analytics.Screens.cardWall_extAuth.name
             case .egk: 
                 return Analytics.Screens.contactInsuranceCompany.name
+            case .alert: 
+                return Analytics.Screens.alert.name
+            case .contactSheet: 
+                return "contactSheet"
         }
     }
 }
@@ -1148,8 +1158,6 @@ extension EditProfileDomain.Destination.State {
         switch self {
             case .alert: 
                 return Analytics.Screens.alert.name
-            case .token: 
-                return Analytics.Screens.profile_token.name
             case .auditEvents: 
                 return Analytics.Screens.profile_auditEvents.name
             case .registeredDevices: 
@@ -1370,6 +1378,8 @@ extension PharmacyDetailDomain.Destination.State {
                 return Analytics.Screens.redeem_viaTI.name
             case .alert: 
                 return Analytics.Screens.alert.name
+            case .toast: 
+                return Analytics.Screens.alert.name
         }
     }
 }
@@ -1400,6 +1410,10 @@ extension PharmacySearchDomain.Destination.State {
                 return Analytics.Screens.pharmacySearch_map.name
             case .alert: 
                 return Analytics.Screens.alert.name
+            case .redeemViaAVS: 
+                return Analytics.Screens.redeem_viaAVS.name
+            case .redeemViaErxTaskRepository: 
+                return Analytics.Screens.redeem_viaTI.name
         }
     }
 }
@@ -1412,6 +1426,10 @@ extension PharmacySearchMapDomain.Destination.State {
                 return Analytics.Screens.pharmacySearch_filter.name
             case .alert: 
                 return Analytics.Screens.alert.name
+            case .redeemViaAVS: 
+                return Analytics.Screens.redeem_viaAVS.name
+            case .redeemViaErxTaskRepository: 
+                return Analytics.Screens.redeem_viaTI.name
             case .clusterSheet: 
                 return "clusterSheet"
         }

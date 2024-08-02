@@ -35,9 +35,9 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacyRedeemViewMissingAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: ErxTask.Fixtures.erxTasks,
+            prescriptions: Prescription.Fixtures.prescriptions,
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedErxTasks: Set(ErxTask.Fixtures.erxTasks),
+            selectedPrescriptions: Set(Prescription.Fixtures.prescriptions),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
@@ -55,9 +55,9 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacyRedeemViewFullAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
-            erxTasks: ErxTask.Fixtures.erxTasks,
+            prescriptions: Prescription.Fixtures.prescriptions,
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedErxTasks: Set([ErxTask.Fixtures.erxTask1]),
+            selectedPrescriptions: Set(Prescription.Fixtures.prescriptions),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Maria Vetter",
                 street: "Benzelrather Str. 29",
@@ -85,9 +85,9 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacyRedeemViewTypeShipmentMissingPhone() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
-            erxTasks: ErxTask.Fixtures.erxTasks,
+            prescriptions: Prescription.Fixtures.prescriptions,
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedErxTasks: Set([ErxTask.Fixtures.erxTask1]),
+            selectedPrescriptions: Set(Prescription.Fixtures.prescriptions),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Vetter",
                 street: "Benzelrather Str. 29",

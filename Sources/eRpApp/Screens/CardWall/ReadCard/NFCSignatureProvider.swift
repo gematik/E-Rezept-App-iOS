@@ -598,6 +598,7 @@ class EGKSigner: JWTSigner {
         self.card = card
     }
 
+    // [REQ:BSI-eRp-ePA:O.Cryp_4#7|12] Signature creation with eGK with dedicated C.CH.AUT
     func sign(message: Data) -> AnyPublisher<Data, Swift.Error> {
         // [REQ:gemSpec_IDP_Frontend:A_20700-07] perform signature with OpenHealthCardKit
         card.sign(data: message)

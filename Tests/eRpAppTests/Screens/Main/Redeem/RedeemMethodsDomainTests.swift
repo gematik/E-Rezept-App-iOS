@@ -104,8 +104,9 @@ final class RedeemMethodsDomainTests: XCTestCase {
 
     func testStore() -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        return TestStore(initialState: RedeemMethodsDomain.State(erxTasks: [erxTask, scannedTask])) {
-            RedeemMethodsDomain()
+        return TestStore(initialState: RedeemMethodsDomain
+            .State(prescriptions: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady])) {
+                RedeemMethodsDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
         }
@@ -117,7 +118,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
 
         let expectedState = MatrixCodeDomain.State(
             type: .erxTask,
-            erxTasks: [erxTask, scannedTask]
+            erxTasks: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady].map(\.erxTask)
         )
 
         // when
@@ -131,7 +132,9 @@ final class RedeemMethodsDomainTests: XCTestCase {
         let store = testStore()
 
         let expectedState = PharmacySearchDomain.State(
-            erxTasks: [erxTask, scannedTask]
+            selectedPrescriptions: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady],
+            inRedeemProcess: true,
+            pharmacyFilterOptions: Shared([])
         )
 
         // when

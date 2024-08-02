@@ -16,20 +16,25 @@
 //  
 //
 
-import ComposableArchitecture
-import Foundation
-import IDP
+import Nimble
+import XCTest
 
-@Reducer
-struct IDPTokenDomain {
-    @ObservableState
-    struct State: Equatable {
-        var token: IDPToken?
+struct PharmacyFilterScreen<Previous>: Screen where Previous: Screen {
+    let app: XCUIApplication
+    let previous: Previous
+
+    init(app: XCUIApplication, previous: Previous) {
+        self.app = app
+        self.previous = previous
     }
 
-    enum Action: Equatable {}
+    func tapFilterOption(_ filterName: String, file _: StaticString = #file, line _: UInt = #line) {
+        app.buttons.element(matching: .init(format: "label == %@", "\(filterName)")).tap()
+    }
 
-    var body: some Reducer<State, Action> {
-        EmptyReducer()
+    @discardableResult
+    func closeFilter(file _: StaticString = #file, line _: UInt = #line) -> Previous {
+        app.scrollViews.firstMatch.swipeDown(velocity: 2000.0)
+        return previous
     }
 }

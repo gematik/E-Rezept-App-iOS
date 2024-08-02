@@ -5,29 +5,14 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>requirements</title>
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
-  </style>
-  <link rel="stylesheet" href="Templates/ERB/style.css" />
+  <link rel="stylesheet" href="Templates/ERB/prism.css" />
+  <link rel="stylesheet" href="Templates/ERB/audit_style.css" />
+  <script src="Templates/ERB/prism.js"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
 
-  	<script type="text/javascript">
+    <script type="text/javascript">
 // Source: https://stackoverflow.com/questions/19646684/force-open-the-details-summary-tag-for-print-in-chrome
 // Open all details tags when printing.
 window.addEventListener( 'beforeprint', () => {
@@ -38,20 +23,23 @@ window.addEventListener( 'beforeprint', () => {
 window.addEventListener( 'afterprint', () => {
     [].forEach.call( document.querySelectorAll( 'details' ), el => el.removeAttribute( 'open' ) )
 } )
-  	</script>
+    </script>
 </head>
 <body>
+<h1>TOC:</h1>
 <nav id="TOC" role="doc-toc">
 <ul>
+<li><a href="#missing_requirements" id="toc-missing-requirements">Known Missing Requirements References</a>
 <li><a href="#requirements" id="toc-requirements">Requirements</a>
 <ul>
 <% SORTED_SPECS.each do |spec_name, afos| %>
-<li><a href="#<%= spec_name %>" id="<%= spec_name %>"><%= spec_name %></a>
-	<ul>
+
+<li><a href="#<%= spec_name %>" id="toc-<%= spec_name %>"><%= spec_name %></a>
+  <ul>
 <% afos.each do |afo_name, details| %>
-	<li><a href="#<%= afo_name %>" id="toc-<%= afo_name %>"><%= afo_name %></a></li>
+  <li><a href="#<%= afo_name.sub(".", "") %>" id="toc-<%= afo_name %>"><%= afo_name %></a></li>
 <% end %>
-	</ul>
+  </ul>
 </li>
 <% end %>
 </ul>
@@ -59,29 +47,35 @@ window.addEventListener( 'afterprint', () => {
 </ul>
 </nav>
 
-<h1>Requirements</h1><% SORTED_SPECS.each do |spec_name, afos| %>
+<h1 id="missing_requirements">Known Missing Requirements References:</h1>
+
+<%= REQUIRED_AFOS %>
+
+<h1 id="requirements">Requirements</h1><% SORTED_SPECS.each do |spec_name, afos| %>
 
 <h2 id="<%= spec_name %>"><%= spec_name %></h2>
 
 <% afos.each do |afo_name, details| %>
 
-<h3 id="<%= afo_name %>"><%= afo_name %>
-<a href="https://gemspec.gematik.de/search?<%= afo_name %>">🔗</a>
-</h3>
+<h3 id="<%= afo_name.sub(".", "") %>"><%= afo_name %></h3>
+<% if AFOS[afo_name] %>
 
+<h4>Requirement <a href="https://gemspec.gematik.de/docs/gemSpec/<%= spec_name %>/latest/index.html#<%= afo_name %>">Gemspec Pages</a>:</h4>
+
+<%= AFOS[afo_name] %>
+
+<% end %>
+<h4>Notes and Code:</h4>
 
 <% details.each do |details| %>
 
 <% if details['source'] == "intro" %>
 <p><%= details['description'] %></p>
 <% else %>
-<%= "<h4>#{details['part']} </h4>" if details['part'] %>
+<%= "<h5>#{details['part']} </h5>" if details['part'] %>
 <p><%= details['description'] %></p>
-<details><summary><%= details['file'].sub("../", "") %>:<%= details['line']+13 %><a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/<%= details['file'].sub("../", "") %>#L<%= details['line']+13 %>">Github</a></summary>
-<pre>
-<%= details['code'] %>
-</pre>
-</details>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/<%= details['file'].sub("../", "") %>#L<%= details['line'] %><%= "-L#{details['line_to']}" if details['line_to'] %>"><%= details['file'].sub("../", "") %>:L<%= details['line'] %><%= "-L#{details['line_to']}" if details['line_to'] %></a>
+<code class="language-swift"><%= details['code'] %></code>
 
 <% end %>
 

@@ -114,7 +114,7 @@ extension KeychainAccessHelper {
         return try setGenericPassword(encodedPassword, for: encodedAccount, service: service)
     }
 
-    func genericPassword(for account: String, encoding: String.Encoding = .utf8) throws -> Data? {
+    func genericPasswordData(for account: String, encoding: String.Encoding = .utf8) throws -> Data? {
         guard let accountData = account.data(using: encoding),
               let service = defaultService.data(using: encoding) else {
             throw KeychainAccessHelperError.illegalArgument

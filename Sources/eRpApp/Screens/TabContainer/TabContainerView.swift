@@ -47,10 +47,10 @@ struct TabContainerView: View {
                                 store: store.scope(
                                     state: \.pharmacySearch,
                                     action: \.pharmacySearch
-                                ),
-                                isRedeemRecipe: false
+                                )
                             )
                         }
+                        .navigationViewStyle(StackNavigationViewStyle())
                         .tabItem {
                             Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
                         }

@@ -285,6 +285,8 @@ final class EditProfileDomainTests: XCTestCase {
         mockUserSession.secureUserStore = mockSecureUserStore
         mockUserSessionProvider.userSessionForReturnValue = mockUserSession
 
+        mockAppSecurityManager.underlyingAvailableSecurityOptions = (options: [.password], error: nil)
+
         await sut.send(.task) {
             $0.availableSecurityOptions = [.password]
         }

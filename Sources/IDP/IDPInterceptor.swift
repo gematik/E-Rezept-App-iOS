@@ -66,7 +66,7 @@ public class IDPInterceptor: Interceptor {
                     guard let token = token else {
                         throw IDPError.tokenUnavailable
                     }
-                    // [REQ:gemSpec_IDP_Frontend:A_20602,A_21325#1]
+                    // [REQ:gemSpec_IDP_Frontend:A_20602#2,A_21325#1] Setup `Authorization-Header`.
                     request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
                     return request
                 }

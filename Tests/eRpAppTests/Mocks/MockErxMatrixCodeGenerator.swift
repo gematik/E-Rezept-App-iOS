@@ -20,7 +20,6 @@ import Combine
 @testable import eRpFeatures
 import eRpKit
 import UIKit
-import ZXingObjC
 
 // Encodes a string with a given `MatrixCodeGenerator` into an DMC image.
 class MockErxMatrixCodeGenerator: ErxMatrixCodeGenerator {

@@ -20,7 +20,7 @@ import Combine
 import Dependencies
 import eRpKit
 import UIKit
-import ZXingObjC
+import ZXingCpp
 
 /// This protocol abstracts the generates of visual (matrix) codes for
 /// a given set of `ErxTask`s or a `ErxChargeItem`.
@@ -56,7 +56,7 @@ protocol ErxMatrixCodeGenerator {
 
 struct ErxMatrixCodeGeneratorDependency: DependencyKey {
     static let liveValue: ErxMatrixCodeGenerator =
-        DefaultErxMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter())
+        DefaultErxMatrixCodeGenerator(matrixCodeGenerator: ZXingMatrixCodeGenerator())
 
     static var previewValue: ErxMatrixCodeGenerator = liveValue
 

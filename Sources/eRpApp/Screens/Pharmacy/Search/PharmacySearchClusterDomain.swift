@@ -48,7 +48,6 @@ struct PharmacySearchClusterDomain {
         switch action {
         case .closeSheet:
             return .run { _ in
-
                 await dismiss()
             }
         case .delegate:

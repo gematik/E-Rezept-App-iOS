@@ -5,6 +5,7 @@ brew 'pandoc'
 brew 'graphviz'
 brew 'glab'
 brew 'xcodes'
+brew 'jq'
 
 tap 'snyk/tap'
 brew 'snyk'

@@ -60,42 +60,48 @@ extension PharmacySearchDomain {
             }
 
         static let stateEmpty = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
+            inRedeemProcess: false,
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: [],
+            pharmacyFilterOptions: Shared([]),
             searchState: .searchResultEmpty
         )
 
         static let stateSearchResultOk = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
+            inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmaciesLocationViewModel,
+            pharmacyFilterOptions: Shared([]),
             searchState: .searchResultOk
         )
 
         static let stateSearchRunning = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
+            inRedeemProcess: false,
             searchText: "Apotheke",
             pharmacies: [],
+            pharmacyFilterOptions: Shared([]),
             searchState: .searchRunning
         )
         static let stateFilterItems = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
+            inRedeemProcess: false,
             pharmacies: [],
-            pharmacyFilterOptions: [
+            pharmacyFilterOptions: Shared([
                 PharmacySearchFilterDomain.PharmacyFilterOption.delivery,
-            ]
+            ])
         )
         static let stateError = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
+            inRedeemProcess: false,
             pharmacies: [],
+            pharmacyFilterOptions: Shared([]),
             searchState: .error
         )
         static let stateStartView = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
+            inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmaciesLocationViewModel,
-            searchState: .startView(loading: false) // .searchResultOk(pharmaciesLocationViewModel)
+            pharmacyFilterOptions: Shared([]),
+            searchState: .startView(loading: false)
+            // .searchResultOk(pharmaciesLocationViewModel)
         )
         static var openHoursReferenceDate: Date? {
             // Current dummy-time is set to 10:00am on 16th (WED) June 2021...

@@ -20,20 +20,17 @@ import Combine
 import Foundation
 
 /// VAU Storage protocol
+/// [REQ:gemSpec_Krypt:A_20175#1|7] VAUStorage provides a getter and a setter for user pseudonym
 public protocol VAUStorage {
     /// Retrieve a previously saved UserPseudonym
-    ///
-    /// [REQ:gemSpec_Krypt:A_20175]
     var userPseudonym: AnyPublisher<String?, Never> { get }
 
     /// Set and save a user pseudonym
-    ///
-    /// [REQ:gemSpec_Krypt:A_20175]
-    ///
     /// - Parameter userPseudonym: value to save. Pass in nil to unset
     func set(userPseudonym: String?)
 }
 
+// [REQ:gemSpec_Krypt:A_20175#2|2] Implementation of VAUStorage is using the Filesystem
 public class FileVAUStorage: VAUStorage {
     let userPseudonymFilePath: URL
     #if os(iOS)

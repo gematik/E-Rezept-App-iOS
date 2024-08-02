@@ -109,7 +109,7 @@ public class DefaultIDPSession: IDPSession {
 
     /// Whether the session has access to a (valid) authenticated session (e.g. token)
     public var isLoggedIn: AnyPublisher<Bool, IDPError> {
-        // [REQ:gemSpec_eRp_FdV:A_21326#3,A_21327#3] Triggered at every app start, profile change, pull to refresh
+        // [REQ:gemSpec_IDP_Frontend:A_21326#3,A_21327#3] Triggered at every app start, profile change, pull to refresh
         autoRefreshedToken.map { token in
             token != nil
         }
@@ -193,8 +193,8 @@ public class DefaultIDPSession: IDPSession {
                 guard let self = self else {
                     return Fail(error: IDPError.internal(error: .exchangeUnexpectedNil)).eraseToAnyPublisher()
                 }
-                // [REQ:gemSpec_IDP_Frontend:A_20529-01] Encryption
-                // [REQ:gemSpec_IDP_Frontend:A_21323,A_21324#1] Crypto box contains `Token-Key`
+                // [REQ:gemSpec_IDP_Frontend:A_20529-01#2|6] Encrypting the `KEY_VERIFIER`
+                // [REQ:gemSpec_IDP_Frontend:A_21323,A_21324#1|6] Crypto box contains `Token-Key`
                 guard let encryptedKeyVerifier = try? KeyVerifier(
                     with: self.cryptoBox.aesKey,
                     codeVerifier: challengeSession.verifierCode
@@ -202,6 +202,7 @@ public class DefaultIDPSession: IDPSession {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
                 }
 
+                // [REQ:gemSpec_IDP_Frontend:A_20529-01#3|7] Sending encrypted `KEY_VERIFIER` and `AUTHORIZATION_CODE`.
                 return self.client.exchange(
                     token: exchange,
                     verifier: challengeSession.verifierCode,
@@ -213,14 +214,14 @@ public class DefaultIDPSession: IDPSession {
                     guard let self = self else {
                         return Fail(error: IDPError.internal(error: .exchangeTokenUnexpectedNil)).eraseToAnyPublisher()
                     }
-                    // [REQ:gemSpec_IDP_Frontend:A_19938-01,A_20283-01] Decrypt, fails if wrong aes key
+                    // [REQ:gemSpec_IDP_Frontend:A_19938-01#3|3,A_20283-01|3] Decrypt, fails if wrong aes key
                     guard let decrypted = try? token.decrypted(with: self.cryptoBox.aesKey) else {
                         return Fail(error: IDPError.decryption).eraseToAnyPublisher()
                     }
                     guard (try? challengeSession.validateNonce(with: decrypted.idToken)) ?? false else {
                         return Fail(error: IDPError.invalidNonce).eraseToAnyPublisher()
                     }
-                    // [REQ:gemSpec_IDP_Frontend:A_20625] Validate ID_TOKEN signature
+                    // [REQ:gemSpec_IDP_Frontend:A_20625#2|4] Validate `ID_TOKEN` signature with `C.FD.SIG`.
                     guard let jwt = try? JWT(from: decrypted.idToken),
                           (try? jwt.verify(with: document.signingCert)) ?? false else {
                         return Fail(error: IDPError.invalidSignature("ID_TOKEN")).eraseToAnyPublisher()
@@ -236,7 +237,7 @@ public class DefaultIDPSession: IDPSession {
                     return Just(IDPToken(
                         accessToken: decrypted.accessToken, // [REQ:gemSpec_IDP_Frontend:A_20283-01] Usage
                         expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
-                        idToken: decrypted.idToken, // [REQ:gemSpec_IDP_Frontend:A_19938-01] Usage
+                        idToken: decrypted.idToken, // [REQ:gemSpec_IDP_Frontend:A_19938-01#4] Usage
                         ssoToken: exchange.sso,
                         tokenType: decrypted.tokenType,
                         redirect: exchange.redirect
@@ -271,6 +272,7 @@ public class DefaultIDPSession: IDPSession {
 
     // [REQ:BSI-eRp-ePA:O.Resi_6#2] Implementation of loading the discovery document for fetching signature and
     // encryption keys.
+    // [REQ:gemSpec_Krypt:A_21222#3] DiscoveryDocument is validated with the active trustStoreSession
     private func loadDiscoveryDocument() -> AnyPublisher<DiscoveryDocument, IDPError> {
         storage.discoveryDocument
             .first()
@@ -286,7 +288,7 @@ public class DefaultIDPSession: IDPSession {
                 if let document = document {
                     return Just(document).setFailureType(to: IDPError.self).eraseToAnyPublisher()
                 } else {
-                    // [REQ:gemSpec_IDP_Frontend:A_20512]
+                    // [REQ:gemSpec_IDP_Frontend:A_20512#3] Reset expired documents before loading a new one
                     self.storage.set(discovery: nil)
                     return self.client // swiftlint:disable:this trailing_closure
                         .loadDiscoveryDocument()
@@ -427,7 +429,7 @@ public class DefaultIDPSession: IDPSession {
                 }
                 return self.client.loadDirectoryKKApps(using: document)
                     .tryMap { jwtContainer in
-                        // [REQ:gemSpec_IDP_Sek:A_22296] Signature verification
+                        // [REQ:gemSpec_IDP_Frontend:A_22296-01] Signature verification
                         // [REQ:gemSpec_IDP_Frontend:A_23082#3] Signature verification
                         // [REQ:BSI-eRp-ePA:O.Resi_6#3] Discovery Document signature verification
                         guard try jwtContainer.verify(with: document.discKey) == true else {
@@ -460,7 +462,7 @@ public class DefaultIDPSession: IDPSession {
                     return Fail(error: IDPError.internal(error: .extAuthStateNonceCreation)).eraseToAnyPublisher()
                 }
 
-                // [REQ:gemSpec_IDP_Sek:A_22295] Usage of kk_app_id
+                // [REQ:gemSpec_IDP_Frontend:A_22295-01] Usage of kk_app_id
                 let extAuth = IDPExtAuth(kkAppId: entry.identifier,
                                          state: state,
                                          codeChallenge: codeChallenge,
@@ -477,7 +479,7 @@ public class DefaultIDPSession: IDPSession {
                         if entry.gId {
                             storageIdentifier = state
                         } else {
-                            // [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
+                            // [REQ:gemSpec_IDP_Frontend:A_22299-01] Remember State parameter for later verification
                             guard let components = URLComponents(url: redirectUrl, resolvingAgainstBaseURL: true),
                                   let returnState = components.queryItemWithName("state")?.value
                             else {
@@ -485,6 +487,7 @@ public class DefaultIDPSession: IDPSession {
                             }
                             storageIdentifier = returnState
                         }
+                        // [REQ:gemSpec_IDP_Frontend:A_22301-01#12] The challenge session has been set here.
                         self.extAuthRequestStorage.setExtAuthRequest(challengeSession, for: storageIdentifier)
                     })
                     .mapError { $0.asIDPError() }
@@ -497,6 +500,7 @@ public class DefaultIDPSession: IDPSession {
         _ url: URL,
         idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
+        // [REQ:gemSpec_IDP_Frontend:A_22301-01#9|7] Extract the components.
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let code = components.queryItemWithName("code")?.value,
               let state = components.queryItemWithName("state")?.value else {
@@ -507,7 +511,7 @@ public class DefaultIDPSession: IDPSession {
 
         let verify = IDPExtAuthVerify(code: code, state: state)
 
-        // [REQ:gemSpec_IDP_Sek:A_22301-01] Send authorization request
+        // [REQ:gemSpec_IDP_Frontend:A_22301-01#10] Send authorization request
         return extAuthVerify(verify)
             .flatMap { [weak self] token -> AnyPublisher<IDPToken, IDPError> in
                 guard let self = self else {
@@ -516,6 +520,7 @@ public class DefaultIDPSession: IDPSession {
                     ).eraseToAnyPublisher()
                 }
 
+                // [REQ:gemSpec_IDP_Frontend:A_22301-01#11] Check for existing challenge session
                 guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: token.state) else {
                     return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
                 }
@@ -625,7 +630,7 @@ extension DefaultIDPSession {
                       let nonce = try? self.cryptoBox.generateRandomNonce() else {
                     return Fail(error: IDPError.internal(error: .stateNonceCreation)).eraseToAnyPublisher()
                 }
-                // [REQ:gemSpec_IDP_Frontend:A_20483]
+                // [REQ:gemSpec_IDP_Frontend:A_20483#2|8] Requesting the challange for the session
                 return self.client.requestChallenge(
                     codeChallenge: codeChallenge,
                     method: .sha256,
@@ -762,8 +767,9 @@ extension TrustStoreSession {
     /// - Returns: A publisher that contains an output with the check value or an failure if the check failed
     /// due to an underlying error.
     func validate(discoveryDocument: DiscoveryDocument) -> AnyPublisher<Bool, TrustStoreError> {
-        // [REQ:BSI-eRp-ePA:O.Resi_6#5] Discovery Document signature verification
+        // [REQ:BSI-eRp-ePA:O.Resi_6#5|6] Discovery Document signature verification
         validate(certificate: discoveryDocument.discKey)
+            // [REQ:gemSpec_IDP_Frontend:A_20625#3|4] `C.FD.SIG`-Certificate verification
             .zip(validate(certificate: discoveryDocument.signingCert))
             .map { isDiscKeyValid, isSigningCertValid -> Bool in
                 isDiscKeyValid && isSigningCertValid
@@ -779,7 +785,7 @@ extension TimeInterval {
 }
 
 extension Publisher where Output == IDPToken?, Failure == Never {
-    // [REQ:gemSpec_eRp_FdV:A_21326#4,A_21327#4] Triggered at every app start, profile change, pull to refresh
+    // [REQ:gemSpec_IDP_Frontend:A_21326#4,A_21327#4] Triggered at every app start, profile change, pull to refresh
     func refreshIfExpired(session: DefaultIDPSession,
                           time: @escaping TimeProvider) -> AnyPublisher<IDPToken?, IDPError> {
         setFailureType(to: IDPError.self)
@@ -790,7 +796,7 @@ extension Publisher where Output == IDPToken?, Failure == Never {
                 }
                 // [REQ:BSI-eRp-ePA:O.Auth_10#2] The application is also checking for Access-Token expiration
                 guard token.expires > time() else {
-                    // [REQ:gemSpec_eRp_FdV:A_21326#5,A_21327#5] Either return a refreshed IDPToken
+                    // [REQ:gemSpec_IDP_Frontend:A_21326#5,A_21327#5] Either return a refreshed IDPToken
                     //  (or nil in case of error) to overwrite the current one
                     guard let session = session else {
                         return Just(nil)

@@ -23,24 +23,23 @@ let package = Package(
         .library(name: "VAUClient", targets: ["VAUClient"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.32.0"),
+        .package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.33.1"),
         .package(url: "https://github.com/AliSoftware/OHHTTPStubs", from: "9.1.0"),
         .package(url: "https://github.com/andyjohns/zxcvbn-ios", revision: "bf6083dc17df950c8bdfcf2063859ee1270015fd"),
-        .package(url: "https://github.com/apple/FHIRModels", from: "0.4.0"),
+        .package(url: "https://github.com/apple/FHIRModels", from: "0.5.0"),
         .package(url: "https://github.com/gematik/ref-GemCommonsKit.git", from: "1.3.0"),
         .package(url: "https://github.com/pointfreeco/combine-schedulers", from: "1.0.0"),
         .package(url: "https://github.com/rcasula/composable-core-location", revision: "40a98e18d0350fd1a1efa83c24aca3044b9b7bd2"),
-        .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.3.3"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.10.4"),
+        .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.4.2"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.11.2"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.0"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.0"),
-        .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.0.2"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.1"),
+        .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.1"),
         .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.1.2"),
         .package(url: "https://github.com/Quick/Nimble", from: "9.2.0"), // 10.0.0
-        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.1.4"),
-        // higher minor versions result into: "contains unsafe build flags"
-        .package(url: "https://github.com/zxingify/zxingify-objc", exact: "3.6.7"),
+        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.2.0"),
+        .package(url: "https://github.com/zxing-cpp/zxing-cpp", from: "2.2.1"),
         .package(url: "https://github.com/SwiftCommon/DataKit", from: "1.1.0"),
         .package(url: "https://github.com/gematik/ASN1Kit", from: "1.2.1"),
         .package(url: "https://github.com/gematik/OpenSSL-Swift", from: "4.2.0"),
@@ -78,7 +77,7 @@ let package = Package(
                 .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "GemPDFKit", package: "swift-gemPDFKit"),
-                .product(name: "ZXingObjC", package: "zxingify-objc"),
+                .product(name: "ZXingCpp", package: "zxing-cpp"),
                 .product(name: "HealthCardAccess", package: "ref-openhealthcardkit"),
                 .product(name: "HealthCardControl", package: "ref-openhealthcardkit"),
                 .product(name: "NFCCardReaderProvider", package: "ref-openhealthcardkit"),
@@ -92,8 +91,20 @@ let package = Package(
                 .unsafeFlags(["-enable-bare-slash-regex"]),
                 .define("ENABLE_DEBUG_VIEW", .when(configuration: .debug)),
                 .define("TEST_ENVIRONMENT", .when(configuration: .debug))
+            ],
+            plugins: [
+                .plugin(name: "ErpAppPlugin"),
             ]
         ),
+        .plugin(
+            name: "ErpAppPlugin",
+            capability: .buildTool(),
+            dependencies: ["EnvironmentParser"]
+        ),
+        .executableTarget(
+            name: "EnvironmentParser"
+        ),
+
         .target(
             name: "eRpStyleKit",
             dependencies: [],

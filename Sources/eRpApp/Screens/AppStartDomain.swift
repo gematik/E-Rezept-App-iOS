@@ -65,7 +65,7 @@ struct AppStartDomain {
                             prescriptionListState: PrescriptionListDomain.State(),
                             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                         ),
-                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                        pharmacySearch: PharmacySearchDomain.State(inRedeemProcess: false),
                         orders: OrdersDomain.State(orders: []),
                         settings: .init(
                             isDemoMode: userSession.isDemoMode
@@ -94,7 +94,7 @@ struct AppStartDomain {
                     AppDomain.State(
                         destination: .main,
                         main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
-                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                        pharmacySearch: PharmacySearchDomain.State(inRedeemProcess: false),
                         orders: OrdersDomain.State(orders: []),
                         settings: .init(isDemoMode: userSession.isDemoMode),
                         unreadOrderMessageCount: 0,
@@ -234,6 +234,7 @@ struct AppStartDomain {
         // [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
         case let .universalLink(url):
             switch url.path {
+            // [REQ:gemSpec_IDP_Frontend:A_22301-01#4] App2App gID will trigger this case
             case "/extauth":
                 return .run { send in
                     // reset destination of main tab
@@ -243,7 +244,7 @@ struct AppStartDomain {
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
                     await send(.destination(.app(.setNavigation(.main))))
-                    // set actual destination in main tab
+                    // // [REQ:gemSpec_IDP_Frontend:A_22301-01#5] set actual destination in main tab
                     await send(.destination(.app(.main(action: .externalLogin(url)))))
                 }
             case "/pharmacies/index.html",

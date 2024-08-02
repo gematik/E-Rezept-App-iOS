@@ -16,119 +16,129 @@
 //  
 //
 
+import ComposableArchitecture
 import eRpStyleKit
 import Foundation
+import Perception
 import SwiftUI
 
 #if ENABLE_DEBUG_VIEW
 struct DebugLogView: View {
-    @State var showShareSheet = false
-    let log: DebugLiveLogger.RequestLog
+    @Perception.Bindable var store: StoreOf<DebugLogDomain>
 
     var body: some View {
-        List {
-            if log.responseStatus == .debug {
-                Text(
-                    """
-                    This request only exists locally. The request body is decrypted
-                    for debug purposes. Date and header fields can be different from the
-                    original request.
-                    """
-                )
-                .foregroundColor(Color.purple)
-            }
-            Text(log.id.uuidString)
+        WithPerceptionTracking {
+            List {
+                if store.log.responseStatus == .debug {
+                    Text(
+                        """
+                        This request only exists locally. The request body is decrypted
+                        for debug purposes. Date and header fields can be different from the
+                        original request.
+                        """
+                    )
+                    .foregroundColor(Color.purple)
+                }
+                Text(store.log.id.uuidString)
 
-            Section(header: Text("Request")) {
-                HStack {
-                    Text("URL")
-                        .font(.headline)
-                    Spacer()
-                    Text(log.requestUrl)
-                        .font(.system(.body, design: .monospaced))
-                }.contextMenu(ContextMenu {
-                    Button("Copy") {
-                        UIPasteboard.general.string = log.requestUrl
-                    }
-                })
-
-                LongProperty(title: "Request Body", text: log.requestBody)
-                    .contextMenu(ContextMenu {
+                Section(header: Text("Request")) {
+                    HStack {
+                        Text("URL")
+                            .font(.headline)
+                        Spacer()
+                        Text(store.log.requestUrl)
+                            .font(.system(.body, design: .monospaced))
+                    }.contextMenu(ContextMenu {
                         Button("Copy") {
-                            UIPasteboard.general.string = log.requestBody
+                            UIPasteboard.general.string = store.log.requestUrl
                         }
                     })
 
-                Text("HTTP Header:")
-                    .font(.headline)
+                    LongProperty(title: "Request Body", text: store.log.requestBody)
+                        .contextMenu(ContextMenu {
+                            Button("Copy") {
+                                UIPasteboard.general.string = store.log.requestBody
+                            }
+                        })
 
-                ForEach(log.requestHeader.keys.sorted(), id: \.self) { key in
-                    VStack(alignment: .leading) {
-                        Text("\(key):")
-                            .font(.system(.subheadline, design: .monospaced))
-                        Text(log.requestHeader[key] ?? "unset")
-                            .font(.system(.body, design: .monospaced))
-                            .multilineTextAlignment(.trailing)
-                            .contextMenu(ContextMenu {
-                                Button("Copy") {
-                                    UIPasteboard.general.string = log.requestHeader[key]
-                                }
-                            })
-                    }
-                }
-            }
-
-            Section(header: Text("Response")) {
-                HStack {
-                    Text("Status Code")
+                    Text("HTTP Header:")
                         .font(.headline)
-                    Spacer()
-                    Text("\(log.responseStatus?.rawValue ?? -1)")
-                        .font(.system(.headline, design: .monospaced))
-                        .foregroundColor(log.responseStatus?.isSuccessful ?? false ? .green : .red)
+
+                    ForEach(store.log.requestHeader.keys.sorted(), id: \.self) { key in
+                        WithPerceptionTracking {
+                            VStack(alignment: .leading) {
+                                Text("\(key):")
+                                    .font(.system(.subheadline, design: .monospaced))
+                                Text(store.log.requestHeader[key] ?? "unset")
+                                    .font(.system(.body, design: .monospaced))
+                                    .multilineTextAlignment(.trailing)
+                                    .contextMenu(ContextMenu {
+                                        Button("Copy") {
+                                            UIPasteboard.general.string = store.log.requestHeader[key]
+                                        }
+                                    })
+                            }
+                        }
+                    }
                 }
 
-                LongProperty(title: "Response Body", text: log.responseBody)
-                    .contextMenu(ContextMenu {
-                        Button("Copy") {
-                            UIPasteboard.general.string = log.responseBody
-                        }
-                    })
-                Text("HTTP Header:")
-                    .font(.headline)
+                Section(header: Text("Response")) {
+                    HStack {
+                        Text("Status Code")
+                            .font(.headline)
+                        Spacer()
+                        Text("\(store.log.responseStatus?.rawValue ?? -1)")
+                            .font(.system(.headline, design: .monospaced))
+                            .foregroundColor(store.log.responseStatus?.isSuccessful ?? false ? .green : .red)
+                    }
 
-                LazyVGrid(columns: [
-                    GridItem(
-                        .flexible(minimum: 100, maximum: .infinity),
-                        spacing: 8,
-                        alignment: .topLeading
-                    ),
-                    GridItem(
-                        .flexible(minimum: 100, maximum: .infinity),
-                        spacing: 8,
-                        alignment: .topTrailing
-                    ),
-                ], spacing: 8) {
-                    ForEach(log.responseHeader.keys.compactMap { $0 as? String }.sorted(), id: \.self) { key in
-                        Text("\(key):")
-                            .font(.system(.body, design: .monospaced))
-                        Text(log.responseHeader[key] as? String ?? "unset")
-                            .multilineTextAlignment(.trailing)
-                            .font(.system(.body, design: .monospaced))
+                    LongProperty(title: "Response Body", text: store.log.responseBody)
+                        .contextMenu(ContextMenu {
+                            Button("Copy") {
+                                UIPasteboard.general.string = store.log.responseBody
+                            }
+                        })
+                    Text("HTTP Header:")
+                        .font(.headline)
+
+                    LazyVGrid(columns: [
+                        GridItem(
+                            .flexible(minimum: 100, maximum: .infinity),
+                            spacing: 8,
+                            alignment: .topLeading
+                        ),
+                        GridItem(
+                            .flexible(minimum: 100, maximum: .infinity),
+                            spacing: 8,
+                            alignment: .topTrailing
+                        ),
+                    ], spacing: 8) {
+                        ForEach(
+                            store.log.responseHeader.keys.compactMap { $0 as? String }.sorted(),
+                            id: \.self
+                        ) { key in
+                            Text("\(key):")
+                                .font(.system(.body, design: .monospaced))
+                            Text(store.log.responseHeader[key] as? String ?? "unset")
+                                .multilineTextAlignment(.trailing)
+                                .font(.system(.body, design: .monospaced))
+                        }
                     }
                 }
             }
-        }
-//        .sheet(isPresented: $showShareSheet) {
-//            ShareViewController(itemsToShare: [log.shareText])
-//        }
-        .navigationTitle("Logs")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(
-                    action: { showShareSheet = true },
-                    label: { Image(systemName: "square.and.arrow.up") }
-                )
+            .sheet(item: $store
+                .scope(state: \.destination?.share,
+                       action: \.destination.share)) { store in
+                    ShareViewController(store: store)
+            }
+            .navigationTitle("Log")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(
+                        action: { store.send(.share) },
+                        label: { Image(systemName: "square.and.arrow.up") }
+                    )
+                }
             }
         }
     }
@@ -173,7 +183,9 @@ struct DebugLogView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             NavigationView {
-                DebugLogView(log: DebugLogDomain.Dummies.log4)
+                DebugLogView(store: .init(initialState: .init(log: DebugLogsDomain.Dummies.log4)) {
+                    DebugLogDomain()
+                })
             }
         }
     }

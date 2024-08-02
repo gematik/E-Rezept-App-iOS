@@ -29,7 +29,7 @@ import XCTest
 /// Runs Pharmacy (Apotheken Verzeichnis) Integration Tests.
 /// Set `APP_CONF` in runtime environment to setup the execution environment.
 final class PharmacyIntegrationTests: XCTestCase {
-    var environment: IntegrationTestsEnvironment!
+    var environment: IntegrationTestsConfiguration!
 
     override func setUp() {
         super.setUp()

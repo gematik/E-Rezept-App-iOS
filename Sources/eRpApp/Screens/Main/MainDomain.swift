@@ -267,6 +267,7 @@ struct MainDomain {
             return .none
         case let .externalLogin(url):
             // [REQ:BSI-eRp-ePA:O.Source_1#7] redirect into correct domain
+            // [REQ:gemSpec_IDP_Frontend:A_22301-01#6|3] Redirect into ExtAuthPendingDomain
             return .run { send in
                 await send(.extAuthPending(action: .externalLogin(url)))
             }
@@ -334,7 +335,7 @@ struct MainDomain {
         case let .prescriptionList(action: .redeemButtonTapped(openPrescriptions)):
             state.destination = .redeemMethods(
                 RedeemMethodsDomain
-                    .State(erxTasks: openPrescriptions.filter(\.isRedeemable).map(\.erxTask))
+                    .State(prescriptions: openPrescriptions.filter(\.isRedeemable))
             )
             return .none
         case .prescriptionList(action: .showArchivedButtonTapped):
@@ -500,7 +501,10 @@ struct MainDomain {
         case let .destination(.presented(.prescriptionDetail(action: .delegate(.redeem(task))))):
             state.destination = .redeemMethods(
                 RedeemMethodsDomain
-                    .State(erxTasks: [task], destination: .pharmacySearch(.init(erxTasks: [task])))
+                    .State(
+                        prescriptions: [task],
+                        destination: .pharmacySearch(.init(selectedPrescriptions: [task], inRedeemProcess: true))
+                    )
             )
 
             return .none

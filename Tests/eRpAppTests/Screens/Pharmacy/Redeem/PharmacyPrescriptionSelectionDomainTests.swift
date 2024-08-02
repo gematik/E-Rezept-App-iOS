@@ -47,17 +47,18 @@ class PharmacyPrescriptionSelectionDomainTests: XCTestCase {
     }
 
     func testDidSelection() async {
-        let erxTask1 = ErxTask.Fixtures.erxTask1
-        let erxTask2 = ErxTask.Fixtures.erxTask2
+        let prescription1 = Prescription.Dummies.prescriptionReady
+        let prescription2 = Prescription.Dummies.prescriptionMVO
 
-        let sut = testStore(for: PharmacyPrescriptionSelectionDomain.State(erxTasks: [erxTask1, erxTask2]))
+        let sut = testStore(for: PharmacyPrescriptionSelectionDomain
+            .State(prescriptions: [prescription1, prescription2]))
 
-        await sut.send(.didSelect(erxTask1.identifier)) { sut in
-            sut.selectedErxTasks = Set([erxTask1])
+        await sut.send(.didSelect(prescription1.identifier)) { sut in
+            sut.selectedPrescriptions = Set([prescription1])
         }
 
-        await sut.send(.didSelect(erxTask1.identifier)) { sut in
-            sut.selectedErxTasks = Set<ErxTask>()
+        await sut.send(.didSelect(prescription1.identifier)) { sut in
+            sut.selectedPrescriptions = Set<Prescription>()
         }
     }
 }

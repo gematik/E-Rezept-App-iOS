@@ -30,4 +30,6 @@ struct DemoAppSecurityPasswordManager: AppSecurityManager {
     var availableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?) {
         return (options: [.password, .biometry(.faceID)], error: nil)
     }
+
+    func migrate() {}
 }

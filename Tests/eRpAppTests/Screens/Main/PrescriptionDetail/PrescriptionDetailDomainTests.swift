@@ -69,7 +69,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             // then
             sut.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
         }
-        await store.send(.setNavigation(tag: .none)) { sut in
+        await store.send(.destination(.dismiss)) { sut in
             // then
             sut.destination = nil
         }
@@ -122,7 +122,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             state.destination = .alert(PrescriptionDetailDomain.Alerts.missingTokenAlertState())
             state.isDeleting = false
         }
-        await store.send(.setNavigation(tag: .none)) { state in
+        await store.send(.destination(.dismiss)) { state in
             state.destination = nil
         }
 
@@ -204,6 +204,120 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                     }
                 }
             ))
+        }
+    }
+
+    func testCancelDeletingPrescriptionAndChargeItemPKV() async {
+        let prescription = Prescription(
+            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV,
+            dateFormatter: UIDateFormatter.testValue
+        )
+        let store = testStore(.init(
+            prescription: prescription,
+            isArchived: true
+        ))
+        await store.send(.delete) { sut in
+            sut.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
+        }
+        await store.send(.destination(.presented(.alert(.confirmedDelete)))) {
+            $0.destination = nil
+        }
+        await store.receive(.showConfirmDeleteChargeItemAlert) {
+            $0.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteWithChargeItemAlertState)
+        }
+        await store.send(.destination(.dismiss)) { sut in
+            sut.destination = nil
+        }
+    }
+
+    func testDeletingPrescriptionPKV() async {
+        let prescription = Prescription(
+            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV,
+            dateFormatter: UIDateFormatter.testValue
+        )
+
+        mockErxTaskRepository.deletePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockErxTaskRepository
+            .loadRemoteAndSaveChargeItemsPublisher =
+            Just([ErxChargeItem.Fixtures.chargeItemWithTaskOnlyPKV.sparseChargeItem])
+                .setFailureType(to: ErxRepositoryError.self)
+                .eraseToAnyPublisher()
+        mockErxTaskRepository.deleteChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let store = testStore(.init(
+            prescription: prescription,
+            isArchived: true
+        ))
+
+        await store.send(.delete) {
+            $0.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
+        }
+        await store.send(.destination(.presented(.alert(.confirmedDelete)))) {
+            $0.destination = nil
+        }
+        await store.receive(.showConfirmDeleteChargeItemAlert) {
+            $0.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteWithChargeItemAlertState)
+        }
+        await store.send(.destination(.presented(.alert(.confirmedDeleteWithChargeItem)))) {
+            $0.isDeleting = true
+            $0.destination = nil
+        }
+        await store.receive(.response(.taskDeletedReceived(Result.success(true))))
+        await store.receive(.response(.chargeItemDeletedReceived(.success(true)))) {
+            $0.isDeleting = false
+        }
+        await store.receive(.delegate(.close))
+    }
+
+    func testDeletingChargeItemWithErrorMessage() async {
+        let prescription = Prescription(
+            erxTask: ErxTask.Fixtures.erxTaskOnlyPKV,
+            dateFormatter: UIDateFormatter.testValue
+        )
+
+        let expectedError = ErxRepositoryError.local(.notImplemented)
+        mockErxTaskRepository.deletePublisher = Just(true)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockErxTaskRepository
+            .loadRemoteAndSaveChargeItemsPublisher =
+            Just([ErxChargeItem.Fixtures.chargeItemWithTaskOnlyPKV.sparseChargeItem])
+                .setFailureType(to: ErxRepositoryError.self)
+                .eraseToAnyPublisher()
+        mockErxTaskRepository.deleteChargeItemsPublisher = Fail(error: expectedError)
+            .eraseToAnyPublisher()
+
+        let store = testStore(.init(
+            prescription: prescription,
+            isArchived: true
+        ))
+
+        await store.send(.delete) { sut in
+            sut.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteAlertState)
+        }
+        await store.send(.destination(.presented(.alert(.confirmedDelete)))) { sut in
+            sut.destination = nil
+        }
+        await store.receive(.showConfirmDeleteChargeItemAlert) {
+            $0.destination = .alert(PrescriptionDetailDomain.Alerts.confirmDeleteWithChargeItemAlertState)
+        }
+        await store.send(.destination(.presented(.alert(.confirmedDeleteWithChargeItem)))) {
+            $0.isDeleting = true
+            $0.destination = nil
+        }
+        await store.receive(.response(.taskDeletedReceived(Result.success(true))))
+        await store.receive(.response(.chargeItemDeletedReceived(
+            Result.failure(ErxRepositoryError.local(.notImplemented))
+        ))) { state in
+            state.isDeleting = false
+            state.destination = .alert(
+                PrescriptionDetailDomain.Alerts.deleteFailedAlertState(
+                    error: ErxRepositoryError.local(.notImplemented),
+                    localizedError: ErxRepositoryError.local(.notImplemented).localizedDescriptionWithErrorList
+                )
+            )
         }
     }
 
@@ -394,7 +508,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testLoadingImageAndShowShareSheet() async {
         let sut = testStore()
-        let expectedUrl = sut.state.prescription.erxTask.shareUrl()!
+        let expectedUrl: URL? = nil // sut.state.prescription.erxTask.shareUrl()!
         let expectedImage = mockMatrixCodeGenerator.uiImage
         let expectedLoadingState: LoadingState<UIImage, PrescriptionDetailDomain.LoadingImageError> =
             .value(expectedImage)

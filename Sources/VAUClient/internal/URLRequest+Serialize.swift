@@ -22,6 +22,7 @@ import HTTPClient
 extension URLRequest {
     /// Serialize the request into a String that can be interpreted by the VAU server
     /// - Note: A HTTP body is only included into the string representation when it is UTF-8 encoded.
+    /// [REQ:gemSpec_Krypt:A_20161-01#11] 1:
     func encodeToRawString() throws -> String {
         var string = ""
         guard let method = httpMethod,

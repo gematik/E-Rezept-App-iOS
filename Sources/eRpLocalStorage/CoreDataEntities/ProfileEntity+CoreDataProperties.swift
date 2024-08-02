@@ -40,6 +40,7 @@ extension ProfileEntity {
     @NSManaged public var hidePkvConsentDrawerOnMainView: Bool
     @NSManaged public var chargeItems: NSSet?
     @NSManaged public var erxTasks: NSSet?
+    @NSManaged public var gIdEntry: Data?
 }
 
 // MARK: Generated accessors for chargeItems

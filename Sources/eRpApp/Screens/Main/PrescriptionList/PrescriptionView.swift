@@ -69,15 +69,25 @@ struct PrescriptionView: View {
     struct PrescriptionStatusView: View {
         let prescription: Prescription
 
+        @State private var isAnimating = false
+
         var body: some View {
             HStack(alignment: .top, spacing: 8) {
                 HStack(spacing: 4) {
                     Text(prescription.statusTitle)
                         .font(Font.subheadline.weight(.regular))
                         .foregroundColor(prescription.titleTint)
+
                     prescription.image
                         .font(Font.subheadline.weight(.semibold))
                         .foregroundColor(prescription.imageTint)
+
+                    if prescription.loadingIndicator {
+                        ProgressView()
+                            .scaleEffect(0.85)
+                            .tint(prescription.imageTint)
+                            .background(prescription.backgroundTint)
+                    }
                 }
                 .padding(.init(top: 8, leading: 12, bottom: 8, trailing: 12))
                 .background(prescription.backgroundTint)

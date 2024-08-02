@@ -468,8 +468,8 @@ struct ChargeItemListDomain {
                 state.bottomBannerState = .authenticate
                 return .none
             }
-
-        case .destination(.presented(.idpCardWall(.delegate(.close)))):
+        case .destination(.presented(.idpCardWall(.delegate(.close)))),
+             .destination(.presented(.idpCardWall(.delegate(.finished)))):
             state.destination = nil
             return .send(.fetchChargeItems)
         case .destination(.presented(.idpCardWall)),

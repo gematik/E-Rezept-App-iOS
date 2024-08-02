@@ -18,28 +18,30 @@
 
 import Combine
 import eRpKit
-import ZXingObjC
+import ZXingCpp
 
-extension ZXDataMatrixWriter: MatrixCodeGenerator {
+class ZXingMatrixCodeGenerator: MatrixCodeGenerator {
     // sourcery: CodedError = "009"
     enum Error: Swift.Error {
         // sourcery: errorCode = "01"
         case cgImageConversion(String)
     }
 
-    public func generateImage(for contents: String,
-                              width: Int,
-                              height: Int) throws -> CGImage {
-        let matrix = try encode(contents,
-                                format: ZXBarcodeFormat(rawValue: kBarcodeFormatDataMatrix.rawValue),
-                                width: Int32(width),
-                                height: Int32(height),
-                                hints: nil)
-
-        if let cgImage = ZXImage(matrix: matrix).cgimage {
-            return cgImage
-        } else {
+    func generateImage(for contents: String,
+                       width: Int,
+                       height: Int) throws -> CGImage {
+        let options = ZXIWriterOptions(
+            format: .DATA_MATRIX,
+            width: Int32(width),
+            height: Int32(height),
+            ecLevel: 0,
+            margin: -1
+        )
+        guard let image = try? ZXIBarcodeWriter(options: options).write(contents)
+        else {
             throw Error.cgImageConversion("Could not create a cgImage from the encoded matrix code")
         }
+
+        return image.takeRetainedValue()
     }
 }

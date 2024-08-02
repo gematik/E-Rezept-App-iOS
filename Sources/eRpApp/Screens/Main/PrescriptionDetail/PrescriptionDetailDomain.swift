@@ -51,6 +51,7 @@ struct PrescriptionDetailDomain {
         case loadMatrixCodeImage(screenSize: CGSize)
         /// Initial delete action
         case delete
+        case showConfirmDeleteChargeItemAlert
         /// Toggle medication redeem state
         case toggleRedeemPrescription
         case openUrlGesundBundDe
@@ -75,14 +76,14 @@ struct PrescriptionDetailDomain {
             /// Closes the details page
             case close
             /// Closes the details page and starts the redeem process
-            case redeem(ErxTask)
+            case redeem(Prescription)
         }
 
         enum Response: Equatable {
             /// When a new data matrix code was generated
             case matrixCodeImageReceived(LoadingState<UIImage, LoadingImageError>)
-            /// When user chooses to not delete
             case taskDeletedReceived(Result<Bool, ErxRepositoryError>)
+            case chargeItemDeletedReceived(Result<Bool, ErxRepositoryError>)
             /// Responds after save
             case redeemedOnSavedReceived(Bool)
             /// Responds after update Medication.name
@@ -198,9 +199,9 @@ struct PrescriptionDetailDomain {
             )
         case let .response(.matrixCodeImageReceived(loadingState)):
             state.loadingState = loadingState
-            guard let url = state.prescription.erxTask.shareUrl(),
-                  let image = loadingState.value else { return .none }
-            state.destination = .sharePrescription(.init(url: url, dataMatrixCodeImage: image))
+//            guard let url = state.prescription.erxTask.shareUrl(),
+            guard let image = loadingState.value else { return .none }
+            state.destination = .sharePrescription(.init( /* url: url, */ dataMatrixCodeImage: image))
             return .none
         // Delete
         // [REQ:gemSpec_eRp_FdV:A_19229-01#2] Deletion button is tapped -> delete confirmation dialog shows
@@ -211,49 +212,50 @@ struct PrescriptionDetailDomain {
                 state.destination = .alert(Alerts.deletionNotAllowedAlertState(state.prescription))
             }
             return .none
+        case .showConfirmDeleteChargeItemAlert:
+            state.destination = .alert(Alerts.confirmDeleteWithChargeItemAlertState)
+            return .none
         // [REQ:gemSpec_eRp_FdV:A_19229-01#3] Confirmation dialog was confirmed, deletion is triggered
         case .destination(.presented(.alert(.confirmedDelete))):
-            state.destination = nil
-            state.isDeleting = true
-            return .publisher(
-                erxTaskRepository.delete(erxTasks: [state.prescription.erxTask])
-                    .first()
-                    .receive(on: schedulers.main)
-                    .catchToPublisher()
-                    .map { Action.response(.taskDeletedReceived($0)) }
-                    .eraseToAnyPublisher
-            )
-        case let .response(.taskDeletedReceived(.failure(fail))):
-            state.isDeleting = false
-            switch fail {
-            // state.chargeItemConsentState = ???
-            default: break // todo ralph
+            // check if prescription is pkv and show chargeItem deletion warning
+            if state.prescription.erxTask.flowType == .directAssignmentForPKV
+                || state.prescription.erxTask.flowType == .pharmacyOnlyForPKV {
+                state.destination = nil
+                return .run { send in await send(.showConfirmDeleteChargeItemAlert) }
             }
 
-            // for now we wrap the erxRepositoryError in an ChargeItemConsentService.Error to get access
-            // to the localized error messages for http codes 400...500
-            // it's technically not correct, since the consent service is not
-            // these lines will be corrected (automatically) when the task deletion is implemented using
-            // structured concurrency
-            let chargeItemConsentServiceError = ChargeItemConsentService.Error.erxRepository(fail)
-            if case let .remote(.fhirClient(.http(fhirClientHttpError))) = fail,
-               fhirClientHttpError.httpClientError == .authentication(IDPError.tokenUnavailable) {
-                state.destination = .alert(Alerts.missingTokenAlertState())
-            } else if let alertState = chargeItemConsentServiceError.alertState {
-                state.destination = .alert(alertState.prescriptionDetailDomainErpAlertState)
-            } else {
-                state.destination = .alert(
-                    Alerts.deleteFailedAlertState(error: fail, localizedError: fail.localizedDescriptionWithErrorList)
-                )
-            }
+            state.destination = nil
+            state.isDeleting = true
+            return delete(erxTask: state.prescription.erxTask)
+        case .destination(.presented(.alert(.confirmedDeleteWithChargeItem))):
+            state.destination = nil
+            state.isDeleting = true
+            return delete(erxTask: state.prescription.erxTask)
+        case let .response(.taskDeletedReceived(.failure(fail))):
+            state.isDeleting = false
+            state.destination = handleResponse(error: fail)
             return .none
         case let .response(.taskDeletedReceived(.success(success))):
+            if success,
+               state.prescription.erxTask.flowType == .directAssignmentForPKV
+               || state.prescription.erxTask.flowType == .pharmacyOnlyForPKV {
+                return deleteChargeItem(erxTask: state.prescription.erxTask)
+            }
             state.isDeleting = false
             if success {
                 return Effect.send(.delegate(.close))
             }
             return .none
-
+        case let .response(.chargeItemDeletedReceived(.failure(failure))):
+            state.isDeleting = false
+            state.destination = handleResponse(error: failure)
+            return .none
+        case let .response(.chargeItemDeletedReceived(.success(success))):
+            state.isDeleting = false
+            if success {
+                return Effect.send(.delegate(.close))
+            }
+            return .none
         // Redeem
         case .toggleRedeemPrescription:
             guard state.prescription.isManualRedeemEnabled else {
@@ -270,7 +272,7 @@ struct PrescriptionDetailDomain {
                 erxTask.update(with: nil)
             }
             state.prescription = Prescription(erxTask: erxTask, dateFormatter: uiDateFormatter)
-            return saveErxTasks(erxTasks: [erxTask])
+            return save(erxTasks: [erxTask])
         case let .response(.redeemedOnSavedReceived(success)):
             if !success {
                 state.isArchived.toggle()
@@ -338,7 +340,7 @@ struct PrescriptionDetailDomain {
             state.destination = .alert(Alerts.missingTokenAlertState())
             return .none
         case .redeemPressed:
-            return .send(.delegate(.redeem(state.prescription.erxTask)))
+            return .send(.delegate(.redeem(state.prescription)))
         case let .setNavigation(tag: tag):
             switch tag {
             case .chargeItem:
@@ -507,6 +509,25 @@ struct PrescriptionDetailDomain {
              .delegate,
              .binding:
             return .none
+        }
+    }
+
+    private func handleResponse(error: ErxRepositoryError) -> PrescriptionDetailDomain.Destination.State {
+        // for now we wrap the erxRepositoryError in an ChargeItemConsentService.Error to get access
+        // to the localized error messages for http codes 400...500
+        // it's technically not correct, since the consent service is not
+        // these lines will be corrected (automatically) when the task deletion is implemented using
+        // structured concurrency
+        let chargeItemConsentServiceError = ChargeItemConsentService.Error.erxRepository(error)
+        if case let .remote(.fhirClient(.http(fhirClientHttpError))) = error,
+           fhirClientHttpError.httpClientError == .authentication(IDPError.tokenUnavailable) {
+            return .alert(Alerts.missingTokenAlertState())
+        } else if let alertState = chargeItemConsentServiceError.alertState {
+            return .alert(alertState.prescriptionDetailDomainErpAlertState)
+        } else {
+            return .alert(
+                Alerts.deleteFailedAlertState(error: error, localizedError: error.localizedDescriptionWithErrorList)
+            )
         }
     }
 

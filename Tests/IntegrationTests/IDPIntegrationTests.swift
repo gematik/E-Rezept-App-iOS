@@ -32,7 +32,7 @@ import XCTest
 /// Runs IDP Integration Tests.
 /// Set `IDP_URL` in runtime environment to setup idp server url.
 final class IDPIntegrationTests: XCTestCase {
-    var environment: IntegrationTestsEnvironment!
+    var environment: IntegrationTestsConfiguration!
 
     override func setUp() {
         super.setUp()

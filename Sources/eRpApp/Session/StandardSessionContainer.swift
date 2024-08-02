@@ -99,7 +99,7 @@ class StandardSessionContainer: UserSession {
 
         return DefaultIDPSession(
             config: idpSessionConfig,
-            // [REQ:gemSpec_eRp_FdV:A_21328#2] Keychain storage encrypts session tokens
+            // [REQ:gemSpec_IDP_Frontend:A_21328#2] Keychain storage encrypts session tokens
             // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
             storage: secureUserStore,
             schedulers: schedulers,
@@ -163,6 +163,7 @@ class StandardSessionContainer: UserSession {
     #endif
 
     // Local VAU storage configuration
+    // [REQ:gemSpec_Krypt:A_20175#3|10] Initialization of the VAUStorage at a predefined location in the filesystem
     lazy var vauStorage: VAUStorage = {
         guard let vauStorageFilePath = try? FileManager.default.url(
             for: .documentDirectory,

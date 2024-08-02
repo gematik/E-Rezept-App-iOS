@@ -40,6 +40,18 @@ struct PharmacySearchScreen: Screen {
         return PharmacyDetailsScreen(app: app)
     }
 
+    func searchFor(_ searchText: String, file _: StaticString = #file, line _: UInt = #line) {
+        app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
+        app.typeText(searchText)
+
+        XCUIApplication().keyboards.buttons["Suchen"].tap()
+    }
+
+    func tapFilter(file: StaticString = #file, line: UInt = #line) -> PharmacyFilterScreen<Self> {
+        button(by: A11y.pharmacySearch.phaFilterOpenFilter, file: file, line: line).tap()
+        return PharmacyFilterScreen(app: app, previous: self)
+    }
+
     @discardableResult
     func tapMapSearch(file _: StaticString = #file, line _: UInt = #line) -> PharmacySearchMapScreen<Self> {
         app.maps.firstMatch.tap()
@@ -47,7 +59,7 @@ struct PharmacySearchScreen: Screen {
     }
 
     @discardableResult
-    func tapCancleButton(file: StaticString = #file, line: UInt = #line) -> RedeemSelectionScreen {
+    func tapCancelButton(file: StaticString = #file, line: UInt = #line) -> RedeemSelectionScreen {
         print(app.debugDescription)
         button(within: app.navigationBars, by: "Abbrechen", file: file, line: line).tap()
 

@@ -367,8 +367,18 @@ lane :build_ios do |options|
   end
 end
 
-lane :uitests_ios do |options|
+lane :uitests_ios_setup do |options|
+  scheme = "UITests_iOS"
 
+  scan(
+    scheme: scheme,
+    configuration: "Debug",
+    build_for_testing: true,
+    output_directory: "./fastlane/test_output/uitests"
+  )
+end
+
+lane :uitests_ios do |options|
   reset_simulator_contents
   scheme = "UITests_iOS"
 
@@ -416,7 +426,7 @@ lane :integration_tests do |options|
     output_directory: "./fastlane/test_output/#{app_conf}" # default is ./fastlane/test_output
   )
 rescue => ex
-  jenkins_job_url = "https://jenkins.prod.ccs.gematik.solutions/job/eRezeptApp-iOS-Integration-Tests/#{ENV['BUILD_NUMBER']}"
+  jenkins_job_url = "https://jenkins.prod.ccs.gematik.solutions/job/e-Rezept-iOS-App-Integration_Tests/#{ENV['BUILD_NUMBER']}"
   message = "Failed Integration Tests for configuration: #{app_conf}
 Reason: #{ex}
 
@@ -460,6 +470,7 @@ lane :build_all do |options|
   end
 
   integration_tests_setup
+  uitests_ios_setup
 
   build_mac options unless skip_macos
   build_ios options unless skip_ios
@@ -470,13 +481,13 @@ lane :generate_documentation do |options|
   list_errors
   list_requirements
 
-  output = sh "cd .. && xcodebuild -quiet -list 2>/dev/null | grep _macOS | grep -v Test; cd - > /dev/null"
+  output = sh "cd .. && swift package describe --type json | jq -r \".targets[].name\" | grep -v Tests"
   schemes = output.split("\n").map { |e| e.strip }
 
   sh "mkdir -p ../build/docs"
 
   for scheme in schemes
-    sh "cd .. && mint run -s sourcekitten doc -- -project eRp-App.xcodeproj -scheme #{scheme} > build/docs/#{scheme}.json; cd -"
+    sh "cd .. && mint run -s sourcekitten doc -- -project eRp-App.xcodeproj -scheme #{scheme} -sdk 'iphonesimulator' > build/docs/#{scheme}.json; cd -"
   end
 
   version = sh 'cd .. && grep -A 1 -R CFBundleShortVersionString ./App/Sources/Resources/Info.plist | grep "<string>" | sed -E "s/.*<string>(.*)<\\/string>/\\1/g"; cd - > /dev/null'.strip
@@ -615,7 +626,27 @@ lane :list_requirements do |options|
 
   AUDIT_AFOS = JSON.parse(File.read('audit_afos.json'))['audit_afos']
 
-  def register(matches, file, line, code = "", source = "code")
+  def read_part_of_file(filename, start_line, num_lines, trimming = 0)
+    return "" unless File.exist?(filename)
+
+    lines = []
+    current_line = 1
+
+    File.foreach(filename) do |line|
+      if current_line >= start_line && current_line < start_line + num_lines
+        lines << line.chomp
+      elsif current_line >= start_line + num_lines
+        break
+      end
+      current_line += 1
+    end
+
+    lines.empty? ? "" : lines.map { |line| line.sub(/^ {0,#{trimming}}/, '') }.join("\n")
+  end
+
+  require 'kramdown'
+
+  def register(matches, file, line, code = "", source = "code", trimming = 0)
     spec = matches[:SPEC]
     afos = matches[:AFOS]
 
@@ -640,7 +671,15 @@ lane :list_requirements do |options|
         hit["part"] = matches[:SUBAFOS]
       end
       if matches.names.include?("DESC")
-        hit["description"] = matches[:DESC]
+        hit["description"] = Kramdown::Document.new(matches[:DESC]).to_html
+      end
+
+      if matches.names.include?("NUMBEROFLINES")
+        numberOfLines = matches[:NUMBEROFLINES].to_i
+        if numberOfLines > 1
+          hit["code"] += read_part_of_file(file, line + 1, numberOfLines - 1, trimming)
+          hit["line_to"] = line + numberOfLines - 1
+        end
       end
 
       unless SPECS[spec]
@@ -657,15 +696,15 @@ lane :list_requirements do |options|
   def parseBlock(block, file, firstLineNumber, source)
     number = firstLineNumber
 
+    trimming = block.first[/\A */].size
     trimmedCode = block.map { |line|
-      line.strip
-    }.join("\n")
+      line.sub(/^ {0,#{trimming}}/, '')
+    }.join("")
 
     block.each do |line|
       # Format: [REQ:<SPEC>:<AFOS>:<SUBAFOS?>] <DESC>
-      if matches = line.match(/\[REQ:(?<SPEC>[^:]*):(?<AFOS>[^:\s]*)(?:(?::)(?<SUBAFOS>[^:\s]*))?\](?<DESC>.*)/)
-
-        register(matches, file, number, trimmedCode, source)
+      if matches = line.match(/\[REQ:(?<SPEC>[^:]*):(?<AFOS>[^:^\|\s]*)(?:(?::)(?<SUBAFOS>[^:^\|\s]*))?(?:(?:\|)(?<NUMBEROFLINES>[^:\s]*))?\](?<DESC>.*)/)
+        register(matches, file, number, trimmedCode, source, trimming)
       end
       number += 1
     end
@@ -682,7 +721,10 @@ lane :list_requirements do |options|
     end
   end
 
-  Dir.glob("../sources/**/*.swift").each do |file|
+  Dir.glob("../Sources/**/*.swift")
+  .union(Dir.glob("../Tests/**/*.swift"))
+  .union(Dir.glob("../App/**/*.swift"))
+  .each do |file|
     # puts "Testing '#{file}'"
 
     number = 0
@@ -722,7 +764,9 @@ lane :list_requirements do |options|
     afos.each  { |afo, entries|
         required_afos = required_afos.difference([afo])
         if (ORIGINAL_TEXTS[spec])
-          AFOS[afo] = ORIGINAL_TEXTS[spec].at_css("\##{afo.sub(".", "")}").to_s
+          AFOS[afo] = ORIGINAL_TEXTS[spec].at_css("\##{afo.sub(".", "")}").to_s.split("\n").map { |line|
+            line.sub(/^ */, '')
+          }.join("\n")
         else
           print("no spec")
         end
@@ -878,6 +922,12 @@ def dependencies_package_resolved
     license_uri = curl_license_url_from_github(location) if location.include? "github.com"
     dependency[:license_uri] = license_uri
     dependency[:version] = version||revision
+    if location.include? "github.com"
+      most_recent_version = curl_most_recent_tag(location)
+      if most_recent_version != dependency[:version]
+        UI.important("Version mismatch for package #{identity}, NEW: '#{most_recent_version}' OLD: '#{dependency[:version]}'")
+      end
+    end
 
     dependency
   end
@@ -885,9 +935,10 @@ def dependencies_package_resolved
   dependencies
 end
 
+require 'net/http'
+require 'uri'
+
 def curl_license_url_from_github(repo_url)
-  require 'net/http'
-  require 'uri'
 
   repo_url = repo_url.gsub(".git", "")
   repo_owner, repo_name = repo_url.split("/").last(2)
@@ -906,7 +957,72 @@ def curl_license_url_from_github(repo_url)
   data_hash = JSON.parse(response.body)
   download_url = data_hash['download_url']
   download_url
-end  
+end
+
+def curl_most_recent_tag(repo_url)
+  # Function to validate semver format
+  def valid_semver?(version)
+    version.match?(/^v?\d+\.\d+\.\d+$/)
+  end
+  # Function to compare semantic versions
+  def compare_versions(v1, v2)
+    segments1 = v1.split('.').map(&:to_i)
+    segments2 = v2.split('.').map(&:to_i)
+
+    segments1 <=> segments2
+  end
+
+  repo_url = repo_url.gsub(".git", "")
+  repo_owner, repo_name = repo_url.split("/").last(2)
+
+  download_url = ""
+  repo_url = "https://api.github.com/repos/#{repo_owner}/#{repo_name}/releases"
+  uri = URI.parse(repo_url)
+
+  req = Net::HTTP::Get.new(uri)
+  req['Authorization'] = "Bearer #{ENV['GITHUB_API_TOKEN']}" if ENV['GITHUB_API_TOKEN']
+  response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) { |http|
+    http.request(req)
+  }
+  UI.error("Bad credentials or authorisation") if response.body.include? "Bad credentials"
+
+  puts("Parsing versions for #{repo_url}")
+  data_hash = JSON.parse(response.body)
+
+  return data_hash['message'] if data_hash.is_a?(Hash)
+
+  # Extract names and sort them as semantic versions
+  versions = data_hash.map { |item| item['tag_name'] }
+
+  if versions.length == 0
+    puts("Repository contains no releases, trying tags instead")
+    repo_url = "https://api.github.com/repos/#{repo_owner}/#{repo_name}/tags"
+    uri = URI.parse(repo_url)
+
+    req = Net::HTTP::Get.new(uri)
+    req['Authorization'] = "Bearer #{ENV['GITHUB_API_TOKEN']}" if ENV['GITHUB_API_TOKEN']
+    response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) { |http|
+      http.request(req)
+    }
+    data_hash = JSON.parse(response.body)
+    return data_hash['message'] if data_hash.is_a?(Hash)
+
+    # Extract names and sort them as semantic versions
+    versions = data_hash.map { |item| item['name'] }
+  end
+
+  semantic_versions = versions.select { |name| valid_semver?(name) }.map { |name| name.sub(/^v/, '') }
+  sorted_versions = semantic_versions.sort { |a, b| compare_versions(b, a) }
+  sorted_versions.first
+  # download_url = data_hash['download_url']
+  # download_url
+
+  # curl -L \                                    
+  # -H "Accept: application/vnd.github+json" \
+  # -H "Authorization: Bearer $GITHUB_API_TOKEN" \
+  # -H "X-GitHub-Api-Version: 2022-11-28" \
+  # https://api.github.com/repos/AliSoftware/OHHTTPStubs/tags | jq ".[].name" | sort -Vr | head -n 1
+end
 
 
 def notify_teams_channel(url = "no_hook", stream = "Unknown stream", success = true, optional_message = "")

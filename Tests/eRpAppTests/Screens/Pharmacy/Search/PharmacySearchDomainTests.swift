@@ -35,12 +35,16 @@ class PharmacySearchDomainTests: XCTestCase {
     var delaySearchStart: DispatchQueue.SchedulerTimeType.Stride = 0.1
     var resourceHandlerMock: MockResourceHandler!
     var searchHistoryMock: MockSearchHistory!
+    var mockUserSession: MockUserSession!
+    var mockPrescriptionRepository: MockPrescriptionRepository!
 
     override func setUp() {
         super.setUp()
 
+        mockUserSession = MockUserSession()
         resourceHandlerMock = MockResourceHandler()
         searchHistoryMock = MockSearchHistory()
+        mockPrescriptionRepository = MockPrescriptionRepository()
     }
 
     override func tearDownWithError() throws {
@@ -60,6 +64,11 @@ class PharmacySearchDomainTests: XCTestCase {
             dependencies.searchHistory = searchHistoryMock
             dependencies.resourceHandler = resourceHandlerMock
             dependencies.feedbackReceiver = MockFeedbackReceiver()
+            dependencies.dateProvider = { TestData.openHoursTestReferenceDate! }
+            dependencies.userSession = mockUserSession
+            dependencies.prescriptionRepository = mockPrescriptionRepository
+            dependencies.date = DateGenerator.constant(Date.now)
+            dependencies.calendar = Calendar.autoupdatingCurrent
         }
     }
 
@@ -82,7 +91,7 @@ class PharmacySearchDomainTests: XCTestCase {
         searchHistoryMock.historyItemsReturnValue = []
 
         // when search text changes to valid search term...
-        await sut.send(.searchTextChanged(testSearchText)) { state in
+        await sut.send(.binding(.set(\.searchText, testSearchText))) { state in
             // ...expect it to be stored
             state.searchText = testSearchText
         }
@@ -90,6 +99,7 @@ class PharmacySearchDomainTests: XCTestCase {
         await sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
+            state.lastSearchCriteria = .init(searchTerm: testSearchText, filter: [])
         }
         await testScheduler.advance()
         // when search request is done...
@@ -113,7 +123,7 @@ class PharmacySearchDomainTests: XCTestCase {
         searchHistoryMock.historyItemsReturnValue = []
 
         // when search text changes to valid search term...
-        await sut.send(.searchTextChanged(testSearchText)) { state in
+        await sut.send(.binding(.set(\.searchText, testSearchText))) { state in
             // ...expect it to be stored
             state.searchText = testSearchText
         }
@@ -121,6 +131,7 @@ class PharmacySearchDomainTests: XCTestCase {
         await sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
+            state.lastSearchCriteria = .init(searchTerm: testSearchText, filter: [])
         }
         await testScheduler.advance()
         expect(self.searchHistoryMock.addHistoryItemReceivedItem).to(equal(testSearchText))
@@ -139,15 +150,14 @@ class PharmacySearchDomainTests: XCTestCase {
             .eraseToAnyPublisher()
 
         let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
-        let expected: Result<[PharmacyLocationViewModel], PharmacyRepositoryError> = .success(
-            TestData.pharmaciesWithLocations.map {
-                PharmacyLocationViewModel(
-                    pharmacy: $0,
-                    referenceLocation: TestData.testLocation,
-                    referenceDate: TestData.openHoursTestReferenceDate
-                )
-            }
-        )
+        let expectedPharmacy = TestData.pharmaciesWithLocations.map {
+            PharmacyLocationViewModel(
+                pharmacy: $0,
+                referenceLocation: nil,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
+        }
+        let expectedResult: Result<[PharmacyLocationViewModel], PharmacyRepositoryError> = .success(expectedPharmacy)
 
         searchHistoryMock.historyItemsReturnValue = []
 
@@ -155,11 +165,13 @@ class PharmacySearchDomainTests: XCTestCase {
         await sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
+            state.lastSearchCriteria = .init(searchTerm: "", location: nil, filter: [])
         }
         await testScheduler.advance()
         // when search request is done...
-        await sut.receive(.response(.pharmaciesReceived(expected))) { state in
+        await sut.receive(.response(.pharmaciesReceived(expectedResult))) { state in
             // expect it to deliver successful & results...
+            state.pharmacies = expectedPharmacy
             state.searchState = .searchResultOk
         }
     }
@@ -186,7 +198,7 @@ class PharmacySearchDomainTests: XCTestCase {
         sut.dependencies.locationManager.requestWhenInUseAuthorization = {}
         sut.dependencies.locationManager.location = { nil }
 
-        await sut.send(.task)
+        let task = await sut.send(.task)
         await testScheduler.advance()
         await sut.receive(.mapSetUp)
 
@@ -194,6 +206,8 @@ class PharmacySearchDomainTests: XCTestCase {
         await sut.receive(.response(.loadLocalPharmaciesReceived(.success(storedPharmaciesAsVM)))) {
             $0.localPharmacies = storedPharmaciesAsVM
         }
+
+        await task.cancel()
     }
 
     func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_Success() async {
@@ -212,10 +226,14 @@ class PharmacySearchDomainTests: XCTestCase {
         }
         await testScheduler.advance()
         await sut.receive(.response(.loadAndNavigateToPharmacyReceived(.success(selectedPharmacy)))) {
+            $0.detailsPharmacy = PharmacyLocationViewModel(
+                pharmacy: selectedPharmacy,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
             $0.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                erxTasks: state.erxTasks,
+                inRedeemProcess: false,
                 pharmacyViewModel: PharmacyLocationViewModel(
                     pharmacy: selectedPharmacy,
                     referenceDate: TestData.openHoursTestReferenceDate
@@ -254,10 +272,11 @@ class PharmacySearchDomainTests: XCTestCase {
             )
         }
         let state = PharmacySearchDomain.State(
-            erxTasks: [ErxTask.Fixtures.erxTaskReady],
+            inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmacyViewModels,
             localPharmacies: pharmacyViewModels,
+            pharmacyFilterOptions: Shared([]),
             searchState: .startView(loading: false)
         )
         let selectedPharmacy = pharmacyViewModels.last!
@@ -368,9 +387,10 @@ class PharmacySearchDomainTests: XCTestCase {
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
         let sut = testStore(for: PharmacySearchDomain.State(
-            erxTasks: [],
+            inRedeemProcess: false,
             searchText: "",
-            pharmacies: []
+            pharmacies: [],
+            pharmacyFilterOptions: Shared([])
         ), pharmacyRepository: mockPharmacyRepo)
 
         let url = URL(string: "https://erezept.gematik.de/pharmacies/#tiid=123.456.789")!
@@ -380,10 +400,10 @@ class PharmacySearchDomainTests: XCTestCase {
         var locationViewModel = PharmacyLocationViewModel(pharmacy: pharmacy)
         await sut.receive(.response(.loadAndNavigateToPharmacyReceived(.success(pharmacy)))) { state in
             state.searchState = .startView(loading: false)
-
+            state.detailsPharmacy = locationViewModel
             state
                 .destination = .pharmacyDetail(PharmacyDetailDomain
-                    .State(erxTasks: [], pharmacyViewModel: locationViewModel))
+                    .State(inRedeemProcess: false, pharmacyViewModel: locationViewModel))
         }
 
         await testScheduler.run()
@@ -402,7 +422,7 @@ class PharmacySearchDomainTests: XCTestCase {
             ) { state in
                 state
                     .destination = .pharmacyDetail(PharmacyDetailDomain
-                        .State(erxTasks: [], pharmacyViewModel: locationViewModel))
+                        .State(inRedeemProcess: false, pharmacyViewModel: locationViewModel))
             }
     }
 
@@ -433,7 +453,7 @@ class PharmacySearchDomainTests: XCTestCase {
         let expectedPharmacies = [TestData.pharmacy1, TestData.pharmacy2, expectedPharmacy.pharmacyLocation]
         let testPharmacies = [TestData.pharmacy1, TestData.pharmacy2, TestData.pharmacy3]
 
-        let sut = testStore(for: .init(erxTasks: [ErxTask.Fixtures.erxTaskReady],
+        let sut = testStore(for: .init(inRedeemProcess: false,
                                        searchText: "",
                                        currentLocation: TestData.testLocation,
                                        pharmacies: testPharmacies.map { pharmacies in
@@ -442,13 +462,14 @@ class PharmacySearchDomainTests: XCTestCase {
                                                referenceLocation: TestData.testLocation,
                                                referenceDate: TestData.openHoursTestReferenceDate
                                            )
-                                       }),
+                                       }, pharmacyFilterOptions: Shared([])),
                             pharmacyRepository: mockPharmacyRepo)
 
         await sut.send(.showDetails(testPharmacy)) { state in
-            state
-                .destination =
-                .pharmacyDetail(.init(erxTasks: [ErxTask.Fixtures.erxTask1], pharmacyViewModel: testPharmacy))
+            state.detailsPharmacy = testPharmacy
+
+            state.destination =
+                .pharmacyDetail(.init(inRedeemProcess: false, pharmacyViewModel: testPharmacy))
         }
 
         await sut.send(.destination(.presented(.pharmacyDetail(.toggleIsFavorite))))
@@ -465,15 +486,28 @@ class PharmacySearchDomainTests: XCTestCase {
                     referenceDate: TestData.openHoursTestReferenceDate
                 )
             }
-            state.selectedPharmacy?.isFavorite = true
             state
                 .destination =
-                .pharmacyDetail(.init(erxTasks: [ErxTask.Fixtures.erxTaskReady], pharmacyViewModel: expectedPharmacy))
+                .pharmacyDetail(.init(inRedeemProcess: false, pharmacyViewModel: expectedPharmacy))
+        }
+
+        await sut.send(.destination(.dismiss)) { state in
+            state.destination = nil
+        }
+
+        await testScheduler.run()
+
+        await sut.send(.showDetails(expectedPharmacy)) { state in
+            state.detailsPharmacy = expectedPharmacy
+
+            state.destination =
+                .pharmacyDetail(.init(inRedeemProcess: false, pharmacyViewModel: expectedPharmacy))
         }
     }
 
     func testRedeemPharmacyChangePharmacy() async {
-        let inputTask = TestData.stateWithStartView.erxTasks
+        let prescriptions = Prescription.Fixtures.prescriptions
+
         let oldPharmacy = PharmacyLocationViewModel(
             pharmacy: TestData.pharmacy1,
             referenceDate: TestData.openHoursTestReferenceDate
@@ -484,24 +518,34 @@ class PharmacySearchDomainTests: XCTestCase {
         )
         let oldPharmacyRedeemState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: inputTask,
-            pharmacy: oldPharmacy.pharmacyLocation
+            prescriptions: prescriptions.filter(\.isRedeemable),
+            pharmacy: oldPharmacy.pharmacyLocation,
+            selectedPrescriptions: Set()
         )
         let newPharmacyRedeemState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: inputTask,
-            pharmacy: newPharmacy.pharmacyLocation
+            prescriptions: oldPharmacyRedeemState.prescriptions,
+            pharmacy: newPharmacy.pharmacyLocation,
+            selectedPrescriptions: oldPharmacyRedeemState.selectedPrescriptions
         )
         let mockPharmacyRepo = MockPharmacyRepository()
+
         mockPharmacyRepo.updateFromRemoteByReturnValue = Just(newPharmacy.pharmacyLocation)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
-        mockPharmacyRepo.loadAvsCertificatesForReturnValue = Just([])
-            .setFailureType(to: PharmacyRepositoryError.self)
+
+        let profile = Profile(name: "Test", insuranceId: nil, erxTasks: [ErxTask.Fixtures.erxTaskReady])
+        mockUserSession.profileReturnValue = Just(profile)
+            .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
+        mockPrescriptionRepository.loadLocalReturnValue = Just(prescriptions)
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        let expected: Result<[Prescription], PrescriptionRepositoryError> = .success(prescriptions)
+
         let sut = testStore(for: PharmacySearchDomain.State(
-            erxTasks: [ErxTask.Fixtures.erxTaskReady],
+            inRedeemProcess: false,
             searchText: "",
             pharmacies: TestData.pharmacies.map { pharmacies in
                 PharmacyLocationViewModel(
@@ -510,54 +554,109 @@ class PharmacySearchDomainTests: XCTestCase {
                     referenceDate: TestData.openHoursTestReferenceDate
                 )
             },
+            pharmacyFilterOptions: Shared([]),
             searchState: .startView(loading: false)
         ), pharmacyRepository: mockPharmacyRepo)
 
         await sut.send(.showDetails(oldPharmacy)) {
+            $0.detailsPharmacy = oldPharmacy
             $0.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                erxTasks: inputTask,
+                inRedeemProcess: false,
                 pharmacyViewModel: oldPharmacy
             ))
         }
 
+        await sut.send(.destination(.presented(.pharmacyDetail(.task))))
+
+        await testScheduler.run()
+
+        await sut.receive(.destination(.presented(.pharmacyDetail(.response(.currentProfileReceived(profile)))))) {
+            $0.destination = .pharmacyDetail(.init(inRedeemProcess: false,
+                                                   pharmacyViewModel: oldPharmacy,
+                                                   reservationService: .erxTaskRepositoryAvailable,
+                                                   shipmentService: .erxTaskRepositoryAvailable))
+        }
+
         await sut
-            .send(
-                .destination(
-                    .presented(.pharmacyDetail(.delegate(.changePharmacy(oldPharmacyRedeemState))))
-                )
-            ) {
+            .receive(.destination(.presented(.pharmacyDetail(.response(.loadLocalPrescriptionsReceived(expected)))))) {
+                $0.destination = .pharmacyDetail(.init(prescriptions: prescriptions.filter(\.isRedeemable),
+                                                       inRedeemProcess: false,
+                                                       pharmacyViewModel: oldPharmacy,
+                                                       hasRedeemableTasks: true,
+                                                       reservationService: .erxTaskRepositoryAvailable,
+                                                       shipmentService: .erxTaskRepositoryAvailable))
+            }
+
+        await sut.send(.destination(.presented(.pharmacyDetail(.tappedRedeemOption(.onPremise))))) {
+            $0.destination = .pharmacyDetail(.init(prescriptions: prescriptions.filter(\.isRedeemable),
+                                                   inRedeemProcess: false,
+                                                   pharmacyViewModel: oldPharmacy,
+                                                   hasRedeemableTasks: true,
+                                                   reservationService: .erxTaskRepositoryAvailable,
+                                                   shipmentService: .erxTaskRepositoryAvailable,
+                                                   destination: .redeemViaErxTaskRepository(oldPharmacyRedeemState)))
+        }
+
+        await sut.send(.destination(.presented(.pharmacyDetail(.destination(.presented(
+            .redeemViaErxTaskRepository(.delegate(.changePharmacy(oldPharmacyRedeemState)))
+        )))))) {
+            $0.destination = .pharmacyDetail(.init(prescriptions: prescriptions.filter(\.isRedeemable),
+                                                   inRedeemProcess: false,
+                                                   pharmacyViewModel: oldPharmacy,
+                                                   hasRedeemableTasks: true,
+                                                   reservationService: .erxTaskRepositoryAvailable,
+                                                   shipmentService: .erxTaskRepositoryAvailable,
+                                                   destination: nil))
+        }
+
+        await sut
+            .receive(.destination(.presented(.pharmacyDetail(.delegate(.changePharmacy(oldPharmacyRedeemState)))))) {
                 $0.destination = nil
                 $0.pharmacyRedeemState = oldPharmacyRedeemState
             }
 
         await sut.send(.showDetails(newPharmacy)) {
+            $0.detailsPharmacy = newPharmacy
+
             $0.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                erxTasks: inputTask,
+                inRedeemProcess: false,
                 pharmacyViewModel: newPharmacy,
                 pharmacyRedeemState: oldPharmacyRedeemState
             ))
         }
 
+        await sut.send(.destination(.presented(.pharmacyDetail(.task))))
+
+        await testScheduler.run()
+
+        await sut.receive(.destination(.presented(.pharmacyDetail(.response(.currentProfileReceived(profile)))))) {
+            $0.destination = .pharmacyDetail(.init(inRedeemProcess: false,
+                                                   pharmacyViewModel: newPharmacy,
+                                                   pharmacyRedeemState: oldPharmacyRedeemState,
+                                                   reservationService: .erxTaskRepositoryAvailable,
+                                                   shipmentService: .noService))
+        }
+
         await sut
-            .send(
-                .destination(.presented(.pharmacyDetail(.response(.avsCertificatesReceived(.success([]))))))
-            ) {
-                $0.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                    erxTasks: inputTask,
-                    pharmacyViewModel: newPharmacy,
-                    pharmacyRedeemState: oldPharmacyRedeemState,
-                    reservationService: .erxTaskRepositoryAvailable
-                ))
+            .receive(.destination(.presented(.pharmacyDetail(.response(.loadLocalPrescriptionsReceived(expected)))))) {
+                $0.destination = .pharmacyDetail(.init(prescriptions: prescriptions.filter(\.isRedeemable),
+                                                       inRedeemProcess: false,
+                                                       pharmacyViewModel: newPharmacy,
+                                                       hasRedeemableTasks: true,
+                                                       pharmacyRedeemState: oldPharmacyRedeemState,
+                                                       reservationService: .erxTaskRepositoryAvailable,
+                                                       shipmentService: .noService))
             }
 
-        await sut.send(.destination(.presented(.pharmacyDetail(.showPharmacyRedeemOption(.onPremise))))) {
-            $0.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                erxTasks: inputTask,
-                pharmacyViewModel: newPharmacy,
-                pharmacyRedeemState: nil,
-                reservationService: .erxTaskRepositoryAvailable,
-                destination: .redeemViaErxTaskRepository(newPharmacyRedeemState)
-            ))
+        await sut.send(.destination(.presented(.pharmacyDetail(.tappedRedeemOption(.onPremise))))) {
+            $0.destination = .pharmacyDetail(.init(prescriptions: prescriptions.filter(\.isRedeemable),
+                                                   inRedeemProcess: false,
+                                                   pharmacyViewModel: newPharmacy,
+                                                   hasRedeemableTasks: true,
+                                                   pharmacyRedeemState: oldPharmacyRedeemState,
+                                                   reservationService: .erxTaskRepositoryAvailable,
+                                                   shipmentService: .noService,
+                                                   destination: .redeemViaErxTaskRepository(newPharmacyRedeemState)))
         }
     }
 
@@ -594,13 +693,406 @@ class PharmacySearchDomainTests: XCTestCase {
 
         await onAppear.cancel()
     }
+
+    // Includes the change of location permission while inside child domain and detecting the change in parent domain
+    func testSwitchResultToMap() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+        let sut = testStore(for: TestData.stateWithNoLocation, pharmacyRepository: mockPharmacyRepo)
+        let testSearchText = "Apo"
+        let testSearchTextBahn = "Wäldchen"
+        let expected: Result<[PharmacyLocationViewModel], PharmacyRepositoryError> = .success(
+            TestData.pharmaciesWithLocations.map { pharmacies in
+                PharmacyLocationViewModel(
+                    pharmacy: pharmacies,
+                    referenceLocation: nil,
+                    referenceDate: TestData.openHoursTestReferenceDate
+                )
+            }
+        )
+        searchHistoryMock.historyItemsReturnValue = []
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .denied }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = {}
+        sut.dependencies.locationManager.stopUpdatingLocation = {}
+        sut.dependencies.locationManager.requestLocation = {}
+        sut.dependencies.locationManager.delegate = {
+            AsyncStream { continuation in
+                let cancellable = locationManagerSubject.sink { continuation.yield($0) }
+                continuation.onTermination = { _ in
+                    cancellable.cancel()
+                }
+            }
+        }
+        sut.dependencies.locationManager.location = { nil }
+        let expectedMapRegion = MKCoordinateRegion(center: .init(latitude: 49.24703449999999,
+                                                                 longitude: 8.866878599999998),
+                                                   span: .init(latitudeDelta: 0.01,
+                                                               longitudeDelta: 0.01))
+
+        let locationMapRegion = MKCoordinateRegion(center: .init(latitude: 52.5260422, longitude: 13.403368),
+                                                   span: .init(latitudeDelta: 6.558015400000016,
+                                                               longitudeDelta: 9.072978800000005))
+        let newLocation = TestData.testLocation2
+        // Pharmacies with referenceLocation of nil
+        let expectedPharmacyNil = TestData.pharmaciesWithLocations.map { pharmacies in
+            PharmacyLocationViewModel(
+                pharmacy: pharmacies,
+                referenceLocation: nil,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
+        }
+        // Result of pharmacySearch with expectedPharmacyNil
+        let expectedResultNil: Result<[PharmacyLocationViewModel], PharmacyRepositoryError> =
+            .success(expectedPharmacyNil)
+        let emptyLocation: Location? = nil
+        let calculatedLocation = TestData.testLocation
+        // Pharmacies after Location tracking is allowed and got referenceLocation
+        let pharmaciesAfterAllow = TestData.pharmaciesWithLocations.map { pharmacies in
+            PharmacyLocationViewModel(
+                pharmacy: pharmacies,
+                referenceLocation: newLocation,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
+        }
+        // Pharmacies after Location is nil and is calculated based on pharmacies
+        let pharmaciesAfterCalculatedLocation = TestData.pharmaciesWithLocations.map { pharmacies in
+            PharmacyLocationViewModel(
+                pharmacy: pharmacies,
+                referenceLocation: calculatedLocation,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
+        }
+        // Pharmacies after Location tracking is denied
+        let pharmaciesAfterDenied = TestData.pharmaciesWithLocations.map { pharmacies in
+            PharmacyLocationViewModel(
+                pharmacy: pharmacies,
+                referenceLocation: nil,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
+        }
+
+        // then
+        let onAppear = await sut.send(.onAppear)
+        locationManagerSubject.send(completion: .finished)
+        await sut.send(.mapSetUp)
+        await sut.receive(.mapSetUpReceived(nil))
+
+        await onAppear.cancel()
+
+        await sut.send(.binding(.set(\.searchText, testSearchText))) { state in
+            state.searchText = testSearchText
+        }
+        await sut.send(.performSearch) { state in
+            state.searchState = .searchRunning
+            state.lastSearchCriteria = .init(searchTerm: testSearchText, filter: [])
+        }
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expected))) { state in
+            state.searchState = .searchResultOk
+        }
+
+        await sut.send(.switchToMapView) { state in
+            state.destination = .pharmacyMapSearch(.init(inRedeemProcess: false,
+                                                         currentUserLocation: state.currentLocation,
+                                                         mapLocation: .manual(expectedMapRegion),
+                                                         pharmacies: pharmaciesAfterCalculatedLocation,
+                                                         pharmacyFilterOptions: Shared([]),
+                                                         showOnlyTextSearchResult: true))
+        }
+
+        await sut
+            .send(
+                .destination(
+                    .presented(.pharmacyMapSearch(.locationManager(.didChangeAuthorization(.authorizedAlways))))
+                )
+            ) { state in
+                state.destination = .pharmacyMapSearch(.init(inRedeemProcess: false,
+                                                             currentUserLocation: state.currentLocation,
+                                                             mapLocation: .manual(expectedMapRegion),
+                                                             pharmacies: pharmaciesAfterCalculatedLocation,
+                                                             pharmacyFilterOptions: Shared([]),
+                                                             searchAfterAuthorized: true,
+                                                             showOnlyTextSearchResult: true))
+            }
+
+        await sut
+            .send(
+                .destination(
+                    .presented(.pharmacyMapSearch(.locationManager(.didUpdateLocations([newLocation]))))
+                )
+            ) { state in
+                state.destination = .pharmacyMapSearch(.init(inRedeemProcess: false,
+                                                             currentUserLocation: newLocation,
+                                                             mapLocation: .manual(expectedMapRegion),
+                                                             pharmacies: pharmaciesAfterCalculatedLocation,
+                                                             pharmacyFilterOptions: Shared([]),
+                                                             searchAfterAuthorized: true,
+                                                             showOnlyTextSearchResult: true))
+            }
+
+        await sut.receive(.destination(.presented(.pharmacyMapSearch(.setMapAfterLocationUpdate)))) { state in
+            state.destination = .pharmacyMapSearch(.init(inRedeemProcess: false,
+                                                         currentUserLocation: newLocation,
+                                                         mapLocation: .manual(locationMapRegion),
+                                                         pharmacies: pharmaciesAfterAllow,
+                                                         pharmacyFilterOptions: Shared([]),
+                                                         searchAfterAuthorized: true,
+                                                         showOnlyTextSearchResult: true))
+        }
+
+        await sut
+            .send(.destination(.presented(.pharmacyMapSearch(.delegate(.closeMap(location: newLocation)))))) { state in
+                state.destination = nil
+                state.currentLocation = newLocation
+                state.pharmacyFilterOptions = []
+            }
+
+        await sut.send(.binding(.set(\.searchText, testSearchTextBahn))) { state in
+            state.searchText = testSearchTextBahn
+        }
+
+        await sut.send(.performSearch) { state in
+            state.searchState = .searchRunning
+            state.lastSearchCriteria = .init(searchTerm: state.searchText,
+                                             location: nil,
+                                             filter: state.pharmacyFilterOptions)
+        }
+
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expectedResultNil))) { state in
+            state.searchState = .searchResultOk
+            state.pharmacies = expectedPharmacyNil
+        }
+
+        await sut.send(.switchToMapView) { state in
+            state.destination = .pharmacyMapSearch(.init(inRedeemProcess: false,
+                                                         currentUserLocation: state.currentLocation,
+                                                         mapLocation: .manual(locationMapRegion),
+                                                         pharmacies: pharmaciesAfterAllow,
+                                                         pharmacyFilterOptions: Shared([]),
+                                                         showOnlyTextSearchResult: true))
+        }
+
+        await sut
+            .send(
+                .destination(
+                    .presented(.pharmacyMapSearch(.locationManager(.didChangeAuthorization(.denied))))
+                )
+            ) { state in
+                state.destination = .pharmacyMapSearch(.init(inRedeemProcess: false,
+                                                             currentUserLocation: nil,
+                                                             mapLocation: .manual(locationMapRegion),
+                                                             pharmacies: pharmaciesAfterAllow,
+                                                             pharmacyFilterOptions: Shared([]),
+                                                             destination: .alert(PharmacySearchMapDomain
+                                                                 .locationPermissionAlertState),
+                                                             searchAfterAuthorized: false,
+                                                             showOnlyTextSearchResult: true))
+            }
+
+        await sut
+            .send(
+                .destination(.presented(.pharmacyMapSearch(.delegate(.closeMap(location: emptyLocation)))))
+            ) { state in
+                state.destination = nil
+                state.currentLocation = emptyLocation
+                state.pharmacyFilterOptions = []
+            }
+
+        await sut.send(.binding(.set(\.searchText, testSearchText))) { state in
+            state.searchText = testSearchText
+        }
+
+        await sut.send(.performSearch) { state in
+            state.searchState = .searchRunning
+            state.lastSearchCriteria = .init(searchTerm: state.searchText,
+                                             location: nil,
+                                             filter: state.pharmacyFilterOptions)
+        }
+
+        await testScheduler.advance()
+
+        await sut.receive(.response(.pharmaciesReceived(expected))) { state in
+            state.searchState = .searchResultOk
+            state.pharmacies = pharmaciesAfterDenied
+        }
+
+        await sut.send(.switchToMapView) { state in
+            state.destination = .pharmacyMapSearch(.init(inRedeemProcess: false,
+                                                         currentUserLocation: emptyLocation,
+                                                         mapLocation: .manual(expectedMapRegion),
+                                                         pharmacies: pharmaciesAfterCalculatedLocation,
+                                                         pharmacyFilterOptions: Shared([]),
+                                                         showOnlyTextSearchResult: true))
+        }
+    }
+
+    func testSearchRequestNearMeFilter() async {
+        // given
+        let mockPharmacyRepo = MockPharmacyRepository()
+        mockPharmacyRepo.loadLocalCountReturnValue = Just([])
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockPharmacyRepo.searchRemoteSearchTermPositionFilterReturnValue = Just(TestData.pharmaciesWithLocations)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
+        let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
+        sut.dependencies.locationManager.authorizationStatus = { .authorizedWhenInUse }
+        sut.dependencies.locationManager.delegate = {
+            AsyncStream { continuation in
+                let cancellable = locationManagerSubject.sink { continuation.yield($0) }
+                continuation.onTermination = { _ in
+                    cancellable.cancel()
+                }
+            }
+        }
+        sut.dependencies.locationManager.requestWhenInUseAuthorization = {}
+        sut.dependencies.locationManager.locationServicesEnabled = { true }
+        sut.dependencies.locationManager.requestLocation = {}
+        sut.dependencies.locationManager.stopUpdatingLocation = {}
+        sut.dependencies.locationManager.location = { TestData.testLocation }
+        searchHistoryMock.historyItemsReturnValue = []
+
+        let expectedPharmacyLocation = TestData.pharmaciesWithLocations.map { pharmacies in
+            PharmacyLocationViewModel(
+                pharmacy: pharmacies,
+                referenceLocation: TestData.testLocation,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
+        }
+        let expectedResultLocation: Result<[PharmacyLocationViewModel], PharmacyRepositoryError> =
+            .success(expectedPharmacyLocation)
+
+        let expectedPharmacyNil = TestData.pharmaciesWithLocations.map { pharmacies in
+            PharmacyLocationViewModel(
+                pharmacy: pharmacies,
+                referenceLocation: nil,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
+        }
+        let expectedResultNil: Result<[PharmacyLocationViewModel], PharmacyRepositoryError> =
+            .success(expectedPharmacyNil)
+
+        let onAppear = await sut.send(.onAppear)
+        locationManagerSubject.send(completion: .finished)
+        let task = await sut.send(.task)
+        await sut.receive(.mapSetUp)
+
+        await sut.receive(.mapSetUpReceived(TestData.testLocation)) { state in
+            state.currentLocation = TestData.testLocation
+            state.mapLocation = MKCoordinateRegion(center: TestData.testLocation.coordinate,
+                                                   span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+        }
+
+        await testScheduler.run()
+
+        await sut.receive(.response(.loadLocalPharmaciesReceived(.success([]))))
+
+        await sut.send(.showPharmacyFilter) { state in
+            state.destination = .pharmacyFilter(.init())
+        }
+        await sut.send(.destination(.presented(.pharmacyFilter(.toggleFilter(.currentLocation))))) { state in
+            state.pharmacyFilterOptions = [.currentLocation]
+        }
+
+        await testScheduler.run()
+
+        await sut.receive(\.quickSearch, [.currentLocation]) { state in
+            state.searchState = .searchAfterLocalizationWasAuthorized
+        }
+        await sut.receive(.requestLocation)
+
+        await testScheduler.run()
+
+        await sut.send(.locationManager(.didUpdateLocations([TestData.testLocation])))
+
+        await sut.receive(.performSearch) { state in
+            state.searchState = .searchRunning
+            state.lastSearchCriteria = .init(
+                searchTerm: "",
+                location: TestData.testLocation,
+                filter: [.currentLocation]
+            )
+        }
+
+        await testScheduler.run()
+
+        await sut.receive(.response(.pharmaciesReceived(expectedResultLocation))) { state in
+            state.pharmacies = expectedPharmacyLocation
+            state.searchState = .searchResultOk
+        }
+
+        await sut.send(.destination(.presented(.pharmacyFilter(.toggleFilter(.currentLocation))))) { state in
+            state.pharmacyFilterOptions = []
+        }
+
+        await sut.receive(\.quickSearch, [])
+        await sut.receive(.performSearch) { state in
+            state.searchState = .searchRunning
+            state.lastSearchCriteria = .init(searchTerm: "", location: nil, filter: [])
+        }
+
+        await testScheduler.run()
+
+        await sut.receive(.response(.pharmaciesReceived(expectedResultNil))) { state in
+            state.pharmacies = expectedPharmacyNil
+            state.searchState = .searchResultOk
+        }
+
+        await task.cancel()
+        await onAppear.cancel()
+    }
+
+    func testSearchInRedeemProcessToDetails() async {
+        let prescriptions = Prescription.Fixtures.prescriptions
+
+        let pharmacy = PharmacyLocationViewModel(
+            pharmacy: TestData.pharmacy1,
+            referenceDate: TestData.openHoursTestReferenceDate
+        )
+
+        let mockPharmacyRepo = MockPharmacyRepository()
+
+        let sut = testStore(for: PharmacySearchDomain.State(
+            selectedPrescriptions: prescriptions,
+            inRedeemProcess: true,
+            searchText: "",
+            pharmacies: TestData.pharmacies.map { pharmacies in
+                PharmacyLocationViewModel(
+                    pharmacy: pharmacies,
+                    referenceLocation: nil,
+                    referenceDate: TestData.openHoursTestReferenceDate
+                )
+            },
+            pharmacyFilterOptions: Shared([]),
+            searchState: .startView(loading: false)
+        ), pharmacyRepository: mockPharmacyRepo)
+
+        await sut.send(.showDetails(pharmacy)) {
+            $0.detailsPharmacy = pharmacy
+            $0.destination = .pharmacyDetail(PharmacyDetailDomain.State(
+                selectedPrescriptions: $0.selectedPrescriptions,
+                inRedeemProcess: true,
+                pharmacyViewModel: pharmacy,
+                hasRedeemableTasks: true
+            ))
+        }
+    }
 }
 
 extension PharmacySearchDomainTests {
-    /// Test-Data values for `PharmacyLocation`
-    public enum TestData {
-        /// Test-Date for opening/closing state
-        public static var openHoursTestReferenceDate: Date? {
+    // Test-Data values for `PharmacyLocation`
+    enum TestData {
+        // Test-Date for opening/closing state
+        static var openHoursTestReferenceDate: Date? {
             // Current dummy-time is set to 10:00am on 16th (WED) June 2021...
             var dateComponents = DateComponents()
             dateComponents.year = 2021
@@ -613,10 +1105,10 @@ extension PharmacySearchDomainTests {
             return cal.date(from: dateComponents)
         }
 
-        /// Test-Data PharmacyDomain.State
-        public static let stateWithStartView =
+        // Test-Data PharmacyDomain.State
+        static let stateWithStartView =
             PharmacySearchDomain.State(
-                erxTasks: [ErxTask.Fixtures.erxTaskReady],
+                inRedeemProcess: false,
                 searchText: "",
                 pharmacies: pharmacies.map { pharmacies in
                     PharmacyLocationViewModel(
@@ -625,19 +1117,21 @@ extension PharmacySearchDomainTests {
                         referenceDate: TestData.openHoursTestReferenceDate
                     )
                 },
+                pharmacyFilterOptions: Shared([]),
                 searchState: .startView(loading: false)
             )
-        /// Test-Data PharmacyDomain.State
-        public static let stateEmpty =
+        // Test-Data PharmacyDomain.State
+        static let stateEmpty =
             PharmacySearchDomain.State(
-                erxTasks: [ErxTask.Fixtures.erxTaskReady],
+                inRedeemProcess: false,
                 searchText: "",
-                pharmacies: []
+                pharmacies: [],
+                pharmacyFilterOptions: Shared([])
             )
-        /// Test-Data PharmacyDomain.State with a location
-        public static let stateWithLocation =
+        // Test-Data PharmacyDomain.State with a location
+        static let stateWithLocation =
             PharmacySearchDomain.State(
-                erxTasks: [ErxTask.Fixtures.erxTaskReady],
+                inRedeemProcess: false,
                 searchText: "",
                 currentLocation: testLocation,
                 pharmacies: pharmaciesWithLocations.map { pharmacies in
@@ -646,35 +1140,57 @@ extension PharmacySearchDomainTests {
                         referenceLocation: testLocation,
                         referenceDate: openHoursTestReferenceDate
                     )
-                }
+                },
+                pharmacyFilterOptions: Shared([])
             )
-        /// Test location
-        public static let testLocation = Location(
+
+        // Test-Data PharmacyDomain.State
+        static let stateWithNoLocation =
+            PharmacySearchDomain.State(
+                inRedeemProcess: false,
+                searchText: "",
+                currentLocation: nil,
+                pharmacies: pharmaciesWithLocations.map { pharmacies in
+                    PharmacyLocationViewModel(
+                        pharmacy: pharmacies,
+                        referenceLocation: nil,
+                        referenceDate: TestData.openHoursTestReferenceDate
+                    )
+                },
+                pharmacyFilterOptions: Shared([])
+            )
+
+        // Test location
+        static let testLocation = Location(
             rawValue: CLLocation(latitude: 49.2470345, longitude: 8.8668786)
         )
-        /// Test-Data address
-        public static let address1 = PharmacyLocation.Address(
+        // Test location - 2
+        static let testLocation2 = Location(
+            rawValue: CLLocation(latitude: 52.5260422, longitude: 13.4033680)
+        )
+        // Test-Data address
+        static let address1 = PharmacyLocation.Address(
             street: "Hinter der Bahn",
             houseNumber: "6",
             zip: "12345",
             city: "Buxtehude"
         )
-        /// Test-Data address
-        public static let address2 = PharmacyLocation.Address(
+        // Test-Data address
+        static let address2 = PharmacyLocation.Address(
             street: "Meisenweg",
             houseNumber: "23",
             zip: "54321",
             city: "Linsengericht"
         )
-        /// Test-Data telecom
-        public static let telecom = PharmacyLocation.Telecom(
+        // Test-Data telecom
+        static let telecom = PharmacyLocation.Telecom(
             phone: "555-Schuh",
             fax: "555-123456",
             email: "info@gematik.de",
             web: "http://www.gematik.de"
         )
-        /// Test-Data Pharmacy 1
-        public static let pharmacy1 = PharmacyLocation(
+        // Test-Data Pharmacy 1
+        static let pharmacy1 = PharmacyLocation(
             id: "1",
             status: .active,
             telematikID: "3-06.2.ycl.123",
@@ -695,8 +1211,8 @@ extension PharmacySearchDomainTests {
                 ),
             ]
         )
-        /// Test-Data Pharmacy 2
-        public static let pharmacy2 = PharmacyLocation(
+        // Test-Data Pharmacy 2
+        static let pharmacy2 = PharmacyLocation(
             id: "2",
             status: .inactive,
             telematikID: "3-09.2.S.10.124",
@@ -713,8 +1229,8 @@ extension PharmacySearchDomainTests {
                 ),
             ]
         )
-        /// Test-Data Pharmacy 3
-        public static let pharmacy3 = PharmacyLocation(
+        // Test-Data Pharmacy 3
+        static let pharmacy3 = PharmacyLocation(
             id: "3",
             status: .active,
             telematikID: "3-09.2.sdf.125",
@@ -725,8 +1241,8 @@ extension PharmacySearchDomainTests {
             telecom: telecom,
             hoursOfOperation: []
         )
-        /// Test-Data Pharmacy 4
-        public static let pharmacy4 = PharmacyLocation(
+        // Test-Data Pharmacy 4
+        static let pharmacy4 = PharmacyLocation(
             id: "4",
             status: .inactive,
             telematikID: "3-09.2.dfs.126",
@@ -744,22 +1260,22 @@ extension PharmacySearchDomainTests {
             ]
         )
 
-        /// Test-Data arry of pharmacies
-        public static let pharmacies = [
+        // Test-Data arry of pharmacies
+        static let pharmacies = [
             pharmacy1,
             pharmacy2,
             pharmacy3,
             pharmacy4,
         ]
-        /// Test-Data array of pharmacies sorted alphabetical
-        public static let pharmaciesSortedAlphabetical = [
+        // Test-Data array of pharmacies sorted alphabetical
+        static let pharmaciesSortedAlphabetical = [
             pharmacy1,
             pharmacy3,
             pharmacy2,
             pharmacy4,
         ]
-        /// Test-Data array of pharmacies with a location
-        public static let pharmaciesWithLocations = [
+        // Test-Data array of pharmacies with a location
+        static let pharmaciesWithLocations = [
             pharmacy1,
         ]
     }

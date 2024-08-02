@@ -59,11 +59,11 @@ class PrescriptionStatusUITests: XCTestCase {
         let medicationStatusMapping: [MedicationNameAndStatus] = [
             .init(name: "Ibuprofen Broken", status: "Fehlerhaftes Rezept"),
             .init(name: "Ibuprofen 01", status: "Einlösbar"),
-            .init(name: "Ibuprofen 02", status: "In Einlösung"),
+            .init(name: "Ibuprofen 02", status: "Warte auf Antwort"),
             .init(name: "Ibuprofen 03", status: "Einlösbar"),
             .init(name: "Ibuprofen 04", status: "In Einlösung"),
             .init(name: "Ibuprofen 05", status: "Einlösbar"),
-            .init(name: "Ibuprofen 06", status: "In Einlösung"),
+            .init(name: "Ibuprofen 06", status: "Warte auf Antwort"),
             .init(name: "Ibuprofen 07", status: "In Einlösung"),
             .init(name: "Ibuprofen 08", status: "In Einlösung"),
         ]

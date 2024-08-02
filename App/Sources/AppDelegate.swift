@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 
-    // [REQ:BSI-eRp-ePA:O.Data_10#2] Keyboard extensions are disallowed
+    // [REQ:BSI-eRp-ePA:O.Data_10#2|10] Keyboard extensions are disallowed
     func application(
         _: UIApplication,
         shouldAllowExtensionPointIdentifier extensionPointIdentifier: UIApplication.ExtensionPointIdentifier

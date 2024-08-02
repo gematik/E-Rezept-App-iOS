@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 public struct KKAppDirectory: Codable, Equatable, Claims {
     public init(apps: [KKAppDirectory.Entry]) {
@@ -34,7 +35,7 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
         case apps = "fed_idp_list"
     }
 
-    public struct Entry: Codable, Equatable {
+    public struct Entry: Hashable, Codable, Equatable {
         public init(name: String, identifier: String, gId: Bool = false, logo: String? = nil) {
             self.name = name
             self.identifier = identifier
@@ -61,6 +62,14 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
             identifier = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.identifier)
             gId = (try? container.decode(Bool.self, forKey: KKAppDirectory.Entry.CodingKeysV2.gId)) ?? false
             logo = try? container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.logo)
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: KKAppDirectory.Entry.CodingKeysV2.self)
+            try container.encode(name, forKey: .name)
+            try container.encode(identifier, forKey: .identifier)
+            try container.encode(gId, forKey: .gId)
+            try container.encode(logo, forKey: .logo)
         }
     }
 

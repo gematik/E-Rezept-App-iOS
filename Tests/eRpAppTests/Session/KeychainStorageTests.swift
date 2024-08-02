@@ -24,37 +24,6 @@ import Nimble
 import TestUtils
 import XCTest
 
-class KeychainAccessHelperMock: KeychainAccessHelper {
-    var setGenericPasswordCalled = false
-    // swiftlint:disable:next large_tuple
-    var setGenericPasswordCalledWith: (password: Data, account: Data, service: Data)?
-    var setGenericPasswordCalledReturn = true
-
-    func setGenericPassword(_ password: Data, for account: Data, service: Data) throws -> Bool {
-        setGenericPasswordCalled = true
-        setGenericPasswordCalledWith = (password, account, service)
-        return setGenericPasswordCalledReturn
-    }
-
-    var unsetGenericPasswordCalled = false
-    var unsetGenericPasswordReturn = true
-
-    func unsetGenericPassword(for _: Data, ofService _: Data) -> Bool {
-        unsetGenericPasswordCalled = true
-        return unsetGenericPasswordReturn
-    }
-
-    var genericPassword: Data?
-
-    func genericPassword(for _: Data, ofService _: Data) throws -> Data? {
-        if let genericPassword = genericPassword {
-            return genericPassword
-        } else {
-            return nil
-        }
-    }
-}
-
 final class KeychainStorageTests: XCTestCase {
     // swiftlint:disable line_length
     let jwt =
@@ -83,14 +52,15 @@ final class KeychainStorageTests: XCTestCase {
     }()
 
     func testDiscoveryDocumentStorage() throws {
-        let keychainHelperMock = KeychainAccessHelperMock()
+        let keychainHelperMock = MockKeychainAccessHelper()
+        keychainHelperMock.setGenericPasswordForServiceReturnValue = true
         let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
         sut.set(discovery: testDocument)
 
-        expect(keychainHelperMock.setGenericPasswordCalled).to(beTrue())
-        guard let (password, _, _) = keychainHelperMock.setGenericPasswordCalledWith else {
+        expect(keychainHelperMock.setGenericPasswordForServiceCalled).to(beTrue())
+        guard let (password, _, _) = keychainHelperMock.setGenericPasswordForServiceReceivedArguments else {
             fail()
             return
         }
@@ -99,11 +69,11 @@ final class KeychainStorageTests: XCTestCase {
     }
 
     func testRetrieveDiscoveryDocumentStorage() throws {
-        let keychainHelperMock = KeychainAccessHelperMock()
+        let keychainHelperMock = MockKeychainAccessHelper()
         let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
-        keychainHelperMock.genericPassword = serialized
+        keychainHelperMock.genericPasswordForOfServiceReturnValue = serialized
 
         sut.discoveryDocument.first().test(expectations: { receivedDocument in
             // swiftlint:disable:previous trailing_closure
@@ -112,14 +82,15 @@ final class KeychainStorageTests: XCTestCase {
     }
 
     func testCANStorage() {
-        let keychainHelperMock = KeychainAccessHelperMock()
+        let keychainHelperMock = MockKeychainAccessHelper()
+        keychainHelperMock.setGenericPasswordForServiceReturnValue = true
         let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
         sut.set(can: "123456")
 
-        expect(keychainHelperMock.setGenericPasswordCalled).to(beTrue())
-        guard let (password, _, _) = keychainHelperMock.setGenericPasswordCalledWith else {
+        expect(keychainHelperMock.setGenericPasswordForServiceCalled).to(beTrue())
+        guard let (password, _, _) = keychainHelperMock.setGenericPasswordForServiceReceivedArguments else {
             fail()
             return
         }
@@ -128,11 +99,11 @@ final class KeychainStorageTests: XCTestCase {
     }
 
     func testCANRetrieval() {
-        let keychainHelperMock = KeychainAccessHelperMock()
+        let keychainHelperMock = MockKeychainAccessHelper()
         let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
-        keychainHelperMock.genericPassword = "123456".data(using: .utf8)
+        keychainHelperMock.genericPasswordForOfServiceReturnValue = "123456".data(using: .utf8)
 
         sut.can.first().test(expectations: { can in
             // swiftlint:disable:previous trailing_closure
@@ -141,11 +112,12 @@ final class KeychainStorageTests: XCTestCase {
     }
 
     func testCANRetrievalOnAnotherSet() {
-        let keychainHelperMock = KeychainAccessHelperMock()
+        let keychainHelperMock = MockKeychainAccessHelper()
         let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
+        keychainHelperMock.setGenericPasswordForServiceReturnValue = true
 
-        keychainHelperMock.genericPassword = "123456".data(using: .utf8)
+        keychainHelperMock.genericPasswordForOfServiceReturnValue = "123456".data(using: .utf8)
 
         var firedEvents = 0
 
@@ -171,7 +143,8 @@ final class KeychainStorageTests: XCTestCase {
     }
 
     func testTokenRetrievalOnAnotherSet() throws {
-        let keychainHelperMock = KeychainAccessHelperMock()
+        let keychainHelperMock = MockKeychainAccessHelper()
+        keychainHelperMock.setGenericPasswordForServiceReturnValue = true
         let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
@@ -182,11 +155,11 @@ final class KeychainStorageTests: XCTestCase {
 
         let inputToken = IDPToken(accessToken: "accessToken", expires: Date(), idToken: "idToken", redirect: "redirect")
         let tokenData = try JSONEncoder().encode(inputToken)
-        keychainHelperMock.genericPassword = tokenData
+        keychainHelperMock.genericPasswordForOfServiceReturnValue = tokenData
 
-        expect(keychainHelperMock.setGenericPasswordCalled) == false
+        expect(keychainHelperMock.setGenericPasswordForServiceCalled) == false
         sut.set(token: inputToken)
-        expect(keychainHelperMock.setGenericPasswordCalled) == true
+        expect(keychainHelperMock.setGenericPasswordForServiceCalled) == true
 
         expect(receivedTokens.count).toEventually(equal(2), timeout: .seconds(5))
         expect(receivedTokens[0]).to(beNil())
@@ -196,7 +169,8 @@ final class KeychainStorageTests: XCTestCase {
     }
 
     func testKeyIdentifierRetrievalOnAnotherSet() throws {
-        let keychainHelperMock = KeychainAccessHelperMock()
+        let keychainHelperMock = MockKeychainAccessHelper()
+        keychainHelperMock.setGenericPasswordForServiceReturnValue = true
         let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
@@ -206,11 +180,11 @@ final class KeychainStorageTests: XCTestCase {
         }
 
         let expected = "123456".data(using: .utf8)
-        keychainHelperMock.genericPassword = expected
+        keychainHelperMock.genericPasswordForOfServiceReturnValue = expected
 
-        expect(keychainHelperMock.setGenericPasswordCalled) == false
+        expect(keychainHelperMock.setGenericPasswordForServiceCalled) == false
         sut.set(keyIdentifier: expected)
-        expect(keychainHelperMock.setGenericPasswordCalled) == true
+        expect(keychainHelperMock.setGenericPasswordForServiceCalled) == true
 
         expect(receivedKeys.count).toEventually(equal(2), timeout: .seconds(5))
         expect(receivedKeys[0]).to(beNil())

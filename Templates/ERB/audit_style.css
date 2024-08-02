@@ -12,6 +12,8 @@ body {
 
 h3 {
 	margin: 32px 0 16px;
+	border-bottom: 2px solid #ccc;
+	padding-bottom: 6px;
 }
 
 * {
@@ -20,11 +22,21 @@ h3 {
 }
 
 code {
-  font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
-  background: #eee;
-  display: inline-block;
-  padding: 0 5px;
-  margin:  2px;
+	font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+	background: #fdf6e3;
+	display: inline-block;
+	padding: 0 5px;
+	margin: 2px;
+	font-size: 0.9em;
+	border-radius: 2px;
+	color: #586e75;
+}
+
+code.language-swift {
+  padding: 8px 16px !important;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
 }
 
 pre {
@@ -117,14 +129,6 @@ a.github {
 	#toc-requirements + ul a + ul {
 		display: block;
 	}
-}
-
-code {
-  white-space: pre-wrap;
-  padding: 16px;
-  font-size: 0.9em;
-  display: block;
-  overflow-x: scroll;
 }
 
 .display.math{display: block; text-align: center; margin: 0.5rem auto;}

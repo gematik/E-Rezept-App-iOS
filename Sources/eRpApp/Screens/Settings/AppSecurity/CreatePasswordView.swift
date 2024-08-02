@@ -90,6 +90,7 @@ struct CreatePasswordView: View {
                                     a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
                                 )
 
+                                // [REQ:BSI-eRp-ePA:O.Pass_2#4] Password strength view within settings.
                                 PasswordStrengthView(strength: store.passwordStrength)
                                     .accessibility(identifier: A11y.settings.createPassword.cpwTxtPasswordStrength)
                             }

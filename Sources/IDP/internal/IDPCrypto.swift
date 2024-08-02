@@ -64,6 +64,7 @@ struct IDPCrypto {
         // [REQ:gemSpec_Krypt:GS-A_4389:1] 256bit GCM symmetric key
         // [REQ:gemSpec_eRp_FdV:A_19179#3] AES key generation via CryptoKit
         // [REQ:gemSpec_Krypt:GS-A_4368] AES key generation via CryptoKit
+        // [REQ:gemSpec_IDP_Frontend:A_21323#4] AES key generation via CryptoKit
         aesKey: SymmetricKey = SymmetricKey(size: SymmetricKeySize(bitCount: 256))
     ) {
         self.verifierLength = verifierLength

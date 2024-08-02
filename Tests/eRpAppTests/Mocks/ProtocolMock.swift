@@ -68,4 +68,6 @@ extension AuditEventsService {}
 extension PharmacyRepository {}
 extension OrdersRepository {}
 extension JWTSigner {}
+extension AppSecurityManager {}
+extension KeychainAccessHelper {}
 // sourcery:end

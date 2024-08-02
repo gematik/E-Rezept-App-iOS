@@ -15,7 +15,7 @@ import OpenSSL
 import Pharmacy
 import TrustStore
 import VAUClient
-import ZXingObjC
+import ZXingCpp
 
 extension AVSError: CodedError {
     var erpErrorCode: String {
@@ -110,6 +110,8 @@ extension AppSecurityManagerError: CodedError {
                 return "i-00602"
             case .localAuthenticationContext:
                 return "i-00603"
+            case .migrationFailed:
+                return "i-00604"
         }
     }
     var erpErrorCodeList: [String] {
@@ -188,6 +190,27 @@ extension CardWallExtAuthConfirmationDomain.Error: CodedError {
                 return "i-01201"
             case .universalLinkFailed:
                 return "i-01202"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .idpError(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension CardWallIntroductionDomain.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .idpError:
+                return "i-02901"
+            case .universalLinkFailed:
+                return "i-02902"
+            case .kkNotFound:
+                return "i-02903"
         }
     }
     var erpErrorCodeList: [String] {
@@ -2001,7 +2024,7 @@ extension VAUError: CodedError {
     }
 }
 
-extension ZXDataMatrixWriter.Error: CodedError {
+extension ZXingMatrixCodeGenerator.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .cgImageConversion:

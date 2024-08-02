@@ -52,11 +52,6 @@ extension Hint {
         self.init(id: id, title: title, message: message, actionText: actionText.key, actionImageName: actionImageName, action: action, image: image, closeAction: closeAction, style: style, buttonStyle: buttonStyle, imageStyle: imageStyle)
     }
 }
-extension IDPTokenView.TokenCell {
-    init(title: StringAsset, token: String) {
-        self.init(title: title.key, token: token)
-    }
-}
 extension KeyValuePair {
     init(key: StringAsset, value: StringAsset, bundle: Bundle? = nil) {
     self.init(key: key.key, value: value.key, bundle: bundle)

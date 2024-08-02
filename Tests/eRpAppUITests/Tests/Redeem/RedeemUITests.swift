@@ -93,7 +93,7 @@ final class RedeemUITests: XCTestCase {
     func testRedeemFromDetailsPharmacyRedeem() {
         let details = TabBarScreen(app: app)
             .tapPrescriptionsTab()
-            .detailsForPrescriptionNamed("Adavomilproston")
+            .tapDetailsForPrescriptionNamed("Adavomilproston")
 
         _ = details
             .tapRedeemPharmacyButton()
@@ -108,7 +108,7 @@ final class RedeemUITests: XCTestCase {
     func testRedeemFromDetailsShowMatrixCode() {
         let details = TabBarScreen(app: app)
             .tapPrescriptionsTab()
-            .detailsForPrescriptionNamed("Adavomilproston")
+            .tapDetailsForPrescriptionNamed("Adavomilproston")
 
         let redeem = details
             .tapShowMatrixCodeButton()

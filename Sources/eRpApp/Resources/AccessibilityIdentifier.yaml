@@ -60,6 +60,7 @@ cardWall:
     - cdw_txt_intro_requirement_card
     - cdw_txt_intro_requirement_pin
     - cdw_txt_intro_requirement_phone
+    - cdw_btn_intro_direct_gid
   notForYou:
     - cdw_btn_nfu_done
     - cdw_btn_nfu_cancel
@@ -476,6 +477,7 @@ pharmacySearch:
   - pha_filter_bar
   - pha_filter_open_filter
   - pha_filter_filter_list
+  - pha_search_switch_result_map
 pharmacySearchStart:
   - pha_search_txt_quick_filter_title
   - pha_search_btn_quick_filter_nearby

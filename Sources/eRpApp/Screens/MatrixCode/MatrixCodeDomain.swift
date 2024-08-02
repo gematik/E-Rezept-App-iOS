@@ -21,7 +21,6 @@ import ComposableArchitecture
 import eRpKit
 import IdentifiedCollections
 import SwiftUI
-import ZXingObjC
 
 @Reducer
 struct MatrixCodeDomain {

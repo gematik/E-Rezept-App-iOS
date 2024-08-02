@@ -18,8 +18,14 @@
 
 import XCTest
 
-struct PrescriptionDetailsScreen: Screen {
+struct PrescriptionDetailsScreen<Previous>: Screen where Previous: Screen {
     let app: XCUIApplication
+    let previous: Previous
+
+    init(app: XCUIApplication, previous: Previous) {
+        self.app = app
+        self.previous = previous
+    }
 
     func medicationReminderCell(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
         button(by: A11y.prescriptionDetails.prscDtlBtnMedicationReminder, file: file, line: line)

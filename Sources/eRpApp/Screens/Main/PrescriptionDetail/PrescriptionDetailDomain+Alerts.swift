@@ -63,6 +63,21 @@ extension PrescriptionDetailDomain {
             )
         }()
 
+        static var confirmDeleteWithChargeItemAlertState: ErpAlertState<Destination.Alert> = {
+            .init(
+                title: L10n.dtlTxtDeleteWithChargeItemAlertTitle,
+                actions: {
+                    ButtonState(role: .destructive, action: .confirmedDeleteWithChargeItem) {
+                        .init(L10n.dtlTxtDeleteYes)
+                    }
+                    ButtonState(role: .cancel, action: .dismiss) {
+                        .init(L10n.dtlTxtDeleteNo)
+                    }
+                },
+                message: L10n.dtlTxtDeleteWithChargeItemAlertMessage
+            )
+        }()
+
         static func deletionNotAllowedAlertState(_ prescription: Prescription)
             -> ErpAlertState<Destination.Alert> {
             var title = L10n.prscDtlAlertTitleDeleteNotAllowed

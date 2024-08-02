@@ -64,6 +64,7 @@ internal enum A11y {
       static let cdwTxtIntroRequirementCard = "cdw_txt_intro_requirement_card"
       static let cdwTxtIntroRequirementPin = "cdw_txt_intro_requirement_pin"
       static let cdwTxtIntroRequirementPhone = "cdw_txt_intro_requirement_phone"
+      static let cdwBtnIntroDirectGid = "cdw_btn_intro_direct_gid"
   }
     internal enum loginOption {
       static let cdwTxtLoginOptionSubtitle = "cdw_txt_loginOption_subtitle"
@@ -356,6 +357,7 @@ internal enum A11y {
       static let phaFilterBar = "pha_filter_bar"
       static let phaFilterOpenFilter = "pha_filter_open_filter"
       static let phaFilterFilterList = "pha_filter_filter_list"
+      static let phaSearchSwitchResultMap = "pha_search_switch_result_map"
   }
     internal enum pharmacySearchMap {
       static let phaSearchMapBtnFilter = "pha_search_map_btn_filter"

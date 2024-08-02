@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 @testable import eRpFeatures
+import eRpKit
 import IDP
 import Nimble
 import TestUtils
@@ -29,7 +30,6 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
     typealias TestStore = TestStoreOf<CardWallExtAuthSelectionDomain>
 
     var idpSessionMock: IDPSessionMock!
-
     let networkScheduler = DispatchQueue.test
     let uiScheduler = DispatchQueue.test
 
@@ -118,9 +118,11 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
 
     static let testEntryA = KKAppDirectory.Entry(name: "Test Entry A", identifier: "identifierA")
     static let testEntryB = KKAppDirectory.Entry(name: "Test Entry B", identifier: "identifierB")
+    static let testEntryG = KKAppDirectory.Entry(name: "Generic BKK", identifier: "identifierG")
 
     static let testDirectory = KKAppDirectory(apps: [
         testEntryA,
         testEntryB,
+        testEntryG,
     ])
 }

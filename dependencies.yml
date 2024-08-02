@@ -11,7 +11,7 @@ purpose:
       This library contains convenience functions for handling asn1 data structures.
     ref-openhealthcardkit: >
       This library contains convenience functions for using eGK via NFC.
-    zxingify-objc: >
+    zxing-cpp: >
       This library is used to create data matrix codes for redeeming prescriptions at a local pharmacy.
     zxcvbn-ios: >
       This library is used to rate the strength of passwords.

@@ -197,7 +197,7 @@ import SwiftUI
     internal static let cdwBtnExtauthSelectionCancel = StringAsset("cdw_btn_extauth_selection_cancel")
     /// Next
     internal static let cdwBtnExtauthSelectionContinue = StringAsset("cdw_btn_extauth_selection_continue")
-    /// First aid
+    /// Help
     internal static let cdwBtnExtauthSelectionHelp = StringAsset("cdw_btn_extauth_selection_help")
     /// Order medical card
     internal static let cdwBtnExtauthSelectionOrderEgk = StringAsset("cdw_btn_extauth_selection_order_egk")
@@ -205,8 +205,12 @@ import SwiftUI
     internal static let cdwBtnExtauthSelectionRetry = StringAsset("cdw_btn_extauth_selection_retry")
     /// Immediately after pressing this button, the health card is read in via NFC. To do this, hold the card directly against the device. If the connection is successful, you will receive haptic feedback. If the connection is broken or errors occur, this is also communicated via haptic feedback. Communication with the health card can take up to ten seconds. Then remove the health card from the device.
     internal static let cdwBtnHelpNextHint = StringAsset("cdw_btn_help_next_hint")
+    /// Close
+    internal static let cdwBtnIntroAlertClose = StringAsset("cdw_btn_intro_alert_close")
     /// Close dialog
     internal static let cdwBtnIntroCancelLabel = StringAsset("cdw_btn_intro_cancel_label")
+    /// Connect to
+    internal static let cdwBtnIntroDirectExtauth = StringAsset("cdw_btn_intro_direct_extauth")
     /// Digital health ID
     internal static let cdwBtnIntroExtauth = StringAsset("cdw_btn_intro_extauth")
     /// health insurance app
@@ -253,7 +257,7 @@ import SwiftUI
     internal static let cdwBtnRcAlertReport = StringAsset("cdw_btn_rc_alert_report")
     /// Close
     internal static let cdwBtnRcAlertSaveProfile = StringAsset("cdw_btn_rc_alert_save_profile")
-    /// Karte entsperren
+    /// Unblock card
     internal static let cdwBtnRcAlertUnlockcard = StringAsset("cdw_btn_rc_alert_unlockcard")
     /// Back
     internal static let cdwBtnRcBack = StringAsset("cdw_btn_rc_back")
@@ -418,7 +422,7 @@ import SwiftUI
     internal static let cdwTxtExtauthNoresultsTitle = StringAsset("cdw_txt_extauth_noresults_title")
     /// Search by name
     internal static let cdwTxtExtauthSearchprompt = StringAsset("cdw_txt_extauth_searchprompt")
-    /// If the Health ID login does not work as expected, first aid instructions are available.
+    /// If registration with the Health ID does not work as expected, please follow the tips in our help.
     internal static let cdwTxtExtauthSelectionDescription = StringAsset("cdw_txt_extauth_selection_description")
     /// This feature will be available in a few days. Please try again later.
     internal static let cdwTxtExtauthSelectionEmptyListDescription = StringAsset("cdw_txt_extauth_selection_empty_list_description")
@@ -430,6 +434,8 @@ import SwiftUI
     internal static let cdwTxtExtauthSelectionHeadline = StringAsset("cdw_txt_extauth_selection_headline")
     /// Log in with app
     internal static let cdwTxtExtauthSelectionTitle = StringAsset("cdw_txt_extauth_selection_title")
+    /// Health insurance company could not be found
+    internal static let cdwTxtIntroAlertKkNotFoundTitle = StringAsset("cdw_txt_intro_alert_kkNotFound_title")
     /// To be able to use all functions of the app, log in with your medical card. You will receive this card and the required login details from your health insurance company.
     internal static let cdwTxtIntroDescription = StringAsset("cdw_txt_intro_description")
     /// Receive prescriptions online and forward them to a pharmacy.
@@ -442,6 +448,8 @@ import SwiftUI
     internal static let cdwTxtIntroHeaderBottom = StringAsset("cdw_txt_intro_header_bottom")
     /// Register
     internal static let cdwTxtIntroHeaderTop = StringAsset("cdw_txt_intro_header_top")
+    /// Please select your health insurance provider again.
+    internal static let cdwTxtIntroKkNotFoundAlertMessage = StringAsset("cdw_txt_intro_kkNotFound_alert_message")
     /// What you need:
     internal static let cdwTxtIntroListTitle = StringAsset("cdw_txt_intro_list_title")
     /// What you need:
@@ -750,6 +758,10 @@ import SwiftUI
     internal static let dtlTxtDeleteMissingTokenAlertTitle = StringAsset("dtl_txt_delete_missing_token_alert_title")
     /// Cancel
     internal static let dtlTxtDeleteNo = StringAsset("dtl_txt_delete_no")
+    /// Delete prescription and cost receipt
+    internal static let dtlTxtDeleteWithChargeItemAlertTitle = StringAsset("dtl_txt_delete_with_charge_item__alert_title")
+    /// If you delete the prescription, the associated expense receipt will also be deleted.
+    internal static let dtlTxtDeleteWithChargeItemAlertMessage = StringAsset("dtl_txt_delete_with_charge_item_alert_message")
     /// Delete
     internal static let dtlTxtDeleteYes = StringAsset("dtl_txt_delete_yes")
     /// Mark this prescription as redeemed as soon as you have received your medication.
@@ -1530,7 +1542,7 @@ import SwiftUI
     internal static let mainTxtProfileStatusOnline = StringAsset("main_txt_profile_status_online")
     /// Remind me
     internal static let medReminderBtnActivationToggle = StringAsset("med_reminder_btn_activation_toggle")
-    /// To my memories
+    /// To my medication reminders
     internal static let medReminderBtnOneDaySummaryGoToRemindersOverviewButton = StringAsset("med_reminder_btn_one_day_summary_go_to_reminders_overview_button")
     /// Last day
     internal static let medReminderBtnRepetitionDatepickerEnd = StringAsset("med_reminder_btn_repetition_datepicker_end")
@@ -1542,19 +1554,19 @@ import SwiftUI
     internal static let medReminderBtnTimeScheduleAddEntry = StringAsset("med_reminder_btn_time_schedule_add_entry")
     /// Instructions for use
     internal static let medReminderTxtDosageInstructionSubtitle = StringAsset("med_reminder_txt_dosage_instruction_subtitle")
-    /// No pill reminders
+    /// No medication reminders
     internal static let medReminderTxtListEmptyListHeadline = StringAsset("med_reminder_txt_list_empty_list_headline")
     /// You can set pill reminders for your prescriptions.
     internal static let medReminderTxtListEmptyListSubheadline = StringAsset("med_reminder_txt_list_empty_list_subheadline")
-    /// A
+    /// On
     internal static let medReminderTxtListPlanActive = StringAsset("med_reminder_txt_list_plan_active")
-    /// Out of
+    /// Off
     internal static let medReminderTxtListPlanInactive = StringAsset("med_reminder_txt_list_plan_inactive")
-    /// Memory
+    /// Medication reminder
     internal static let medReminderTxtNotificationContentTitle = StringAsset("med_reminder_txt_notification_content_title")
-    /// You have no memories today.
+    /// You have no reminders to take your medication today.
     internal static let medReminderTxtOneDaySummaryEmptyEventSubtitle = StringAsset("med_reminder_txt_one_day_summary_empty_event_subtitle")
-    /// No active memories
+    /// No active reminders
     internal static let medReminderTxtOneDaySummaryEmptyEventTitle = StringAsset("med_reminder_txt_one_day_summary_empty_event_title")
     /// At evening
     internal static let medReminderTxtOneDaySummaryInTheEvening = StringAsset("med_reminder_txt_one_day_summary_in_the_evening")
@@ -1564,7 +1576,7 @@ import SwiftUI
     internal static let medReminderTxtOneDaySummaryInTheNight = StringAsset("med_reminder_txt_one_day_summary_in_the_night")
     /// Midday
     internal static let medReminderTxtOneDaySummaryInTheNoon = StringAsset("med_reminder_txt_one_day_summary_in_the_noon")
-    /// Memory
+    /// Medication reminder
     internal static let medReminderTxtOneDaySummaryTitle = StringAsset("med_reminder_txt_one_day_summary_title")
     /// dose
     internal static let medReminderTxtParserMedicationSchedulePlaceholderAmount = StringAsset("med_reminder_txt_parser_medication_schedule_placeholder_amount")
@@ -1584,9 +1596,9 @@ import SwiftUI
     internal static let medReminderTxtScheduleSectionHeader = StringAsset("med_reminder_txt_schedule_section_header")
     /// Quantity
     internal static let medReminderTxtTimeScheduleAmountPlaceholder = StringAsset("med_reminder_txt_time_schedule_amount_placeholder")
-    /// dose
+    /// dosage
     internal static let medReminderTxtTimeScheduleDosageLabel = StringAsset("med_reminder_txt_time_schedule_dosage_label")
-    /// Pill reminder
+    /// Medication reminder
     internal static let medReminderTxtTitle = StringAsset("med_reminder_txt_title")
     /// Profile name
     internal static let mgmFallbackProfileName = StringAsset("mgm_fallback_profile_name")
@@ -1696,7 +1708,7 @@ import SwiftUI
     internal static let onbProfileName = StringAsset("onb_profile_name")
     /// Digital. Fast. Safe.
     internal static let onbStrTxtSubtitle = StringAsset("onb_str_txt_subtitle")
-    /// The e-prescription
+    /// E-prescription
     internal static let onbStrTxtTitle = StringAsset("onb_str_txt_title")
     /// Privacy policy
     internal static let onbTxtTermsOfPrivacyLink = StringAsset("onb_txt_terms_of_privacy_link")
@@ -1876,6 +1888,8 @@ import SwiftUI
     internal static let phaContactTxtStreet = StringAsset("pha_contact_txt_street")
     /// Postcode
     internal static let phaContactTxtZip = StringAsset("pha_contact_txt_zip")
+    /// Delivery
+    internal static let phaDetailBtnDelivery = StringAsset("pha_detail_btn_delivery")
     /// Find out more
     internal static let phaDetailBtnFooter = StringAsset("pha_detail_btn_footer")
     /// Request courier service
@@ -1886,6 +1900,10 @@ import SwiftUI
     internal static let phaDetailBtnLoginNote = StringAsset("pha_detail_btn_login_note")
     /// Delivery by mail order
     internal static let phaDetailBtnOrganization = StringAsset("pha_detail_btn_organization")
+    /// Pickup
+    internal static let phaDetailBtnPickup = StringAsset("pha_detail_btn_pickup")
+    /// Shipment
+    internal static let phaDetailBtnShipment = StringAsset("pha_detail_btn_shipment")
     /// Contact
     internal static let phaDetailContact = StringAsset("pha_detail_contact")
     /// Please note that prescribed medication may also be subject to additional payments.
@@ -1914,6 +1932,8 @@ import SwiftUI
     internal static let phaDetailTxtFooterMid = StringAsset("pha_detail_txt_footer_mid")
     /// Note to pharmacies: this app obtains the contact details for and information about pharmacies from 
     internal static let phaDetailTxtFooterStart = StringAsset("pha_detail_txt_footer_start")
+    /// You have no prescriptions to redeem.
+    internal static let phaDetailTxtNoPrescriptionToast = StringAsset("pha_detail_txt_no_prescription_toast")
     /// Pharmacy
     internal static let phaDetailTxtSubtitleFallback = StringAsset("pha_detail_txt_subtitle_fallback")
     /// Details
@@ -2004,6 +2024,8 @@ import SwiftUI
     internal static let phaSearchFilterTxtTitle = StringAsset("pha_search_filter_txt_title")
     /// Close location sharing, don't share location
     internal static let phaSearchHintTxtClose = StringAsset("pha_search_hint_txt_close")
+    /// Map view
+    internal static let phaSearchMapAccessibilityLabel = StringAsset("pha_search_map_accessibility_label")
     /// Pharmacy
     internal static let phaSearchMapAnnotation = StringAsset("pha_search_map_annotation")
     /// Cancel
@@ -2128,7 +2150,7 @@ import SwiftUI
     internal static let prscDtlBtnDirectAssignment = StringAsset("prsc_dtl_btn_direct_assignment")
     /// Open gesund.bund.de
     internal static let prscDtlBtnFooter = StringAsset("prsc_dtl_btn_footer")
-    /// Pill reminder
+    /// Medication reminder
     internal static let prscDtlBtnMedicationReminder = StringAsset("prsc_dtl_btn_medication_reminder")
     /// Enable
     internal static let prscDtlBtnPkvHintActivate = StringAsset("prsc_dtl_btn_pkv_hint_activate")
@@ -2156,17 +2178,17 @@ import SwiftUI
     internal static let prscDtlDrCoPaymentPartialDescription = StringAsset("prsc_dtl_dr_co_payment_partial_description")
     /// Some medications require additional payment
     internal static let prscDtlDrCoPaymentPartialTitle = StringAsset("prsc_dtl_dr_co_payment_partial_title")
-    /// Those with statutory health insurance must pay an additional payment of up to ten euros for prescription medication. 
+    /// People with statutory insurance usually pay a maximum of 10 euros for prescription drugs. Higher fees may apply if a drug from a specific manufacturer is requested that is not covered by a discount contract with the health insurance company ("desired drug"). 
     /// 
-    ///  The amount of the additional payment depends on the price of your medication. You have to pay for medications that cost less than €5 yourself. For medicines that are more expensive, you have to pay ten percent of the price, but at least €5 and a maximum of €10. 
+    ///  Children and young people under 18 are exempt from additional payments. 
     /// 
-    ///  Children and young people under the age of 18 are generally exempt from additional payment. 
+    ///  If prescriptions are redeemed later than 28 days after they are issued, the costs must be borne in full by the patient. 
     /// 
-    ///  If your annual costs for medication exceed your financial limit, you can be exempt from paying the co-payment. Talk to your health insurance company about this.
+    ///  If medication expenses are high over the year, an exemption from co-payment can be requested from the health insurance company
     internal static let prscDtlDrCoPaymentYesDescription = StringAsset("prsc_dtl_dr_co_payment_yes_description")
     /// Medications subject to co-payment
     internal static let prscDtlDrCoPaymentYesTitle = StringAsset("prsc_dtl_dr_co_payment_yes_title")
-    /// Sometimes haste is necessary. Some prescriptions can also be filled at a pharmacy at night, for example, without the additional payment of an emergency service fee.
+    /// If a prescription is redeemed between 8 p.m. and 6 a.m. or on Sundays and public holidays, an additional fee of 2.50 euros may be charged.
     internal static let prscDtlDrEmergencyServiceFeeInfoDescription = StringAsset("prsc_dtl_dr_emergency_service_fee_info_description")
     /// Emergency service fee
     internal static let prscDtlDrEmergencyServiceFeeInfoTitle = StringAsset("prsc_dtl_dr_emergency_service_fee_info_title")
@@ -2288,11 +2310,11 @@ import SwiftUI
     internal static let prscDtlTxtInsuredPerson = StringAsset("prsc_dtl_txt_insured_person")
     /// Medicine
     internal static let prscDtlTxtMedication = StringAsset("prsc_dtl_txt_medication")
-    /// My memory
+    /// My medication reminder
     internal static let prscDtlTxtMedicationReminder = StringAsset("prsc_dtl_txt_medication_reminder")
-    /// Out of
+    /// Off
     internal static let prscDtlTxtMedicationReminderOff = StringAsset("prsc_dtl_txt_medication_reminder_off")
-    /// A
+    /// On
     internal static let prscDtlTxtMedicationReminderOn = StringAsset("prsc_dtl_txt_medication_reminder_on")
     /// Your doctor has not given you any information about taking the medication.
     internal static let prscDtlTxtMissingDosageInstructions = StringAsset("prsc_dtl_txt_missing_dosage_instructions")
@@ -2756,7 +2778,7 @@ import SwiftUI
     internal static let stgBtnLanguageSettings = StringAsset("stg_btn_language_settings")
     /// Open settings
     internal static let stgBtnLanguageSettingsAlertOpenSettings = StringAsset("stg_btn_language_settings_alert_open_settings")
-    /// Pill reminder
+    /// Medication reminder
     internal static let stgBtnMedicationReminder = StringAsset("stg_btn_medication_reminder")
     /// Save
     internal static let stgBtnNewProfileCreate = StringAsset("stg_btn_new_profile_create")
@@ -2985,7 +3007,7 @@ import SwiftUI
     internal static let stgTxtCardResetRcNfcDialogUnlockCardWithPin = StringAsset("stg_txt_card_reset_rc_nfc_dialog_unlock_card_with_pin")
     /// Insurance card
     internal static let stgTxtCardSectionHeader = StringAsset("stg_txt_card_section_header")
-    /// unlock card
+    /// Unblock Card
     internal static let stgTxtCardUnlockCard = StringAsset("stg_txt_card_unlock_card")
     /// Connect failed
     internal static let stgTxtChargeItemAlertDeleteAuthTitle = StringAsset("stg_txt_charge_item_alert_delete_auth_title")
@@ -3139,7 +3161,7 @@ import SwiftUI
     internal static let stgTxtHeaderDemoMode = StringAsset("stg_txt_header_demo_mode")
     /// Legal information
     internal static let stgTxtHeaderLegalInfo = StringAsset("stg_txt_header_legal_info")
-    /// personal settings
+    /// Personal Settings
     internal static let stgTxtHeaderPersonalSettings = StringAsset("stg_txt_header_personal_settings")
     /// Profiles
     internal static let stgTxtHeaderProfiles = StringAsset("stg_txt_header_profiles")

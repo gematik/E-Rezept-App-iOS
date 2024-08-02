@@ -130,7 +130,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
-    // [REQ:gemSpec_IDP_Frontend:A_20512]
+    // [REQ:gemSpec_IDP_Frontend:A_20512#10] Testing the implementation
     func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() {
         trustStoreSessionMock.validateCertificateReturnValue = Just(false).setFailureType(to: TrustStoreError.self)
             .eraseToAnyPublisher()
@@ -155,7 +155,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
-    // [REQ:gemSpec_IDP_Frontend:A_20512]
+    // [REQ:gemSpec_IDP_Frontend:A_20512#11] Testing the implementation
     func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreFailsValidation() {
         trustStoreSessionMock.validateCertificateReturnValue = Just(false).setFailureType(to: TrustStoreError.self)
             .eraseToAnyPublisher()
@@ -180,7 +180,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
-    // [REQ:gemSpec_IDP_Frontend:A_20512]
+    // [REQ:gemSpec_IDP_Frontend:A_20512#12] Testing the implementation
     func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreThrows() {
         trustStoreSessionMock.validateCertificateReturnValue = Fail(error: TrustStoreError.invalidOCSPResponse)
             .eraseToAnyPublisher()
@@ -205,7 +205,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
-    // [REQ:gemSpec_IDP_Frontend:A_20512]
+    // [REQ:gemSpec_IDP_Frontend:A_20512#13] Testing the implementation
     func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() {
         trustStoreSessionMock.validateCertificateReturnValue = Fail(error: TrustStoreError.invalidOCSPResponse)
             .eraseToAnyPublisher()
@@ -230,7 +230,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
-    // [REQ:gemSpec_IDP_Frontend:A_20512]
+    // [REQ:gemSpec_IDP_Frontend:A_20512#14] Testing the implementation
     func testLoadDiscoveryDocumentFromStorageOnInit() {
         let idpClientMock = MockIDPClient()
         idpClientMock.discoveryDocument = nil
@@ -254,7 +254,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
-    // [REQ:gemSpec_IDP_Frontend:A_20512]
+    // [REQ:gemSpec_IDP_Frontend:A_20512#15] Testing the implementation
     func testLoadDiscoveryDocumentFromRemoteOnInit() {
         let idpClientMock = MockIDPClient()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
@@ -962,7 +962,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         expect(actual).to(equal(fixture))
     }
 
-    // [REQ:gemSpec_IDP_Sek:A_22296] Test
+    // [REQ:gemSpec_IDP_Frontend:A_22296-01] Test
     // [REQ:gemSpec_IDP_Frontend:A_23082#4] Test
     func testLoadDirectoryKKAppsInvalidSignature() throws {
         sut = DefaultIDPSession(
@@ -995,8 +995,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             )
     }
 
-    // [REQ:gemSpec_IDP_Sek:A_22295] Test
-    // [REQ:gemSpec_IDP_Sek:A_22299] Test
+    // [REQ:gemSpec_IDP_Frontend:A_22295-01] Test
+    // [REQ:gemSpec_IDP_Frontend:A_22299-01] Test
     func testStartExtAuth() throws {
         sut = DefaultIDPSession(
             client: idpClientMock,
@@ -1098,7 +1098,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         expect(receivedArguments.redirectURI).to(equal("https://das-e-rezept-fuer-deutschland.de"))
     }
 
-    // [REQ:gemSpec_IDP_Sek:A_22301-01] Negative Test
+    // [REQ:gemSpec_IDP_Frontend:A_22301-01#20] Negative Test
     func testExtAuthVerifyAndExchangeFailesWithoutReferenceStateGID() throws {
         idpClientMock.extAuthVerifyUsingReturnValue =
             Just(IDPExchangeToken(code: "code",

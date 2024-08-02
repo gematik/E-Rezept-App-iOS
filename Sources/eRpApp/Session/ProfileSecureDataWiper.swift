@@ -50,6 +50,7 @@ class DefaultProfileSecureDataWiper: ProfileSecureDataWiper {
         // [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-01#2] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
+        // [REQ:BSI-eRp-ePA:O.Auth_14#4] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         storage.wipe()
         // also delete any in memory token of the pairing IDP session
         userSession.pairingIdpSession.invalidateAccessToken()

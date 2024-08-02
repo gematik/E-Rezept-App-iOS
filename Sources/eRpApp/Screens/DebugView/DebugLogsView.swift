@@ -25,7 +25,7 @@ import SwiftUI
 
 #if ENABLE_DEBUG_VIEW
 struct DebugLogsView: View {
-    @Perception.Bindable var store: StoreOf<DebugLogDomain>
+    @Perception.Bindable var store: StoreOf<DebugLogsDomain>
     @State var showShareSheet = false
 
     func background(for log: DebugLiveLogger.RequestLog) -> Color {
@@ -48,28 +48,49 @@ struct DebugLogsView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            List {
-                Section(header: Text("Sort/Filter")) {
-                    Toggle("Logging enabled", isOn: $store.isLoggingEnabled)
+            VStack(spacing: 0) {
+                List {
+                    Section(header: Text("Sort/Filter")) {
+                        Toggle("Logging enabled", isOn: $store.isLoggingEnabled)
 
-                    TextField("Filter Domain", text: $store.filter)
-                    Picker("Sortierung", selection: $store.sort) {
-                        ForEach(DebugLogDomain.State.Sort.allCases, id: \.id) { sortMethod in
-                            Text(sortMethod.rawValue).tag(sortMethod)
+                        TextField("Filter Domain", text: $store.filter)
+                        Picker("Sortierung", selection: $store.sort) {
+                            ForEach(DebugLogsDomain.State.Sort.allCases, id: \.id) { sortMethod in
+                                Text(sortMethod.rawValue).tag(sortMethod)
+                            }
+                        }.pickerStyle(SegmentedPickerStyle())
+                    }
+                    Section(header: Text("Logs")) {
+                        ForEach(store.logs) { log in
+                            WithPerceptionTracking {
+                                Button {
+                                    store.send(.showSingleLog(log))
+                                } label: {
+                                    LogHeader(log: log)
+                                }
+                                .listRowBackground(self.background(for: log))
+                            }
                         }
-                    }.pickerStyle(SegmentedPickerStyle())
-                }
-                Section(header: Text("Logs")) {
-                    ForEach(store.logs) { log in
-                        NavigationLink(destination: DebugLogView(log: log)) {
-                            LogHeader(log: log)
-                        }
-                        .listRowBackground(self.background(for: log))
                     }
                 }
-//                .sheet(isPresented: $showShareSheet) {
-//                    ShareViewController(itemsToShare: [DebugLiveLogger.shared.serializedHARFile()])
-//                }
+
+                NavigationLink(
+                    item: $store.scope(
+                        state: \.destination?.logDetail,
+                        action: \.destination.logDetail
+                    )
+                ) { store in
+                    DebugLogView(store: store)
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
+                .accessibility(hidden: true)
+            }
+            .sheet(item: $store
+                .scope(state: \.destination?.share,
+                       action: \.destination.share)) { store in
+                    ShareViewController(store: store)
             }
             .onAppear {
                 store.send(.loadLogs)
@@ -79,7 +100,7 @@ struct DebugLogsView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(
-                    action: { showShareSheet = true },
+                    action: { store.send(.share) },
                     label: { Image(systemName: "square.and.arrow.up") }
                 )
             }
@@ -126,7 +147,7 @@ struct DebugLogsView: View {
 struct DebugLogsView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            DebugLogsView(store: DebugLogDomain.Dummies.store)
+            DebugLogsView(store: DebugLogsDomain.Dummies.store)
         }
     }
 }

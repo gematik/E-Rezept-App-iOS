@@ -189,7 +189,7 @@ extension X509TrustStore {
             let (vauCerts, idpCerts) = vauAndIdpCerts
             if eeCert.contains(oidBytes: .oidErpVau) {
                 return (vauCerts + [eeCert], idpCerts)
-            } else if eeCert.contains(oidBytes: .oidIdpd) { // [REQ:gemSpec_IDP_Frontend:A_20623] oid check
+            } else if eeCert.contains(oidBytes: .oidIdpd) { // [REQ:gemSpec_IDP_Frontend:A_20623,A_20625#4] oid check
                 return (vauCerts, idpCerts + [eeCert])
             }
 

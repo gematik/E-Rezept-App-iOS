@@ -110,6 +110,7 @@ class RealIDPClient: IDPClient {
             url: document.authentication.url,
             resolvingAgainstBaseURL: false
         )
+        // [REQ:gemSpec_IDP_Frontend:A_20483#3|15] Fill all the values into the GET Request
         let queryItems = [
             // [REQ:gemSpec_IDP_Frontend:A_20603,A_20601,A_20601-01] Transfer
             URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
@@ -252,6 +253,7 @@ class RealIDPClient: IDPClient {
             return Fail(error: IDPError.internal(error: .encryptedKeyVerifierEncoding)).eraseToAnyPublisher()
         }
 
+        // [REQ:gemSpec_IDP_Frontend:A_20529-01#4|10] Putting all parameters into the HTTP body
         let parameters = [
             "key_verifier": keyVerifierJWEString,
             "code": token.code,
@@ -264,8 +266,10 @@ class RealIDPClient: IDPClient {
         ]
         request.setFormUrlEncodedBody(parameters: parameters)
 
+        // [REQ:gemSpec_IDP_Frontend:A_20529-01#5] Sending the Request with the default HTTPClient via TLS.
         return httpClient.send(request: request)
             .tryMap { body, _, status -> TokenPayload in
+                // [REQ:gemSpec_IDP_Frontend:A_19938-01#2|3] 2xx HTTPCodes are treated as tokens
                 if status.isSuccessful {
                     return try JSONDecoder().decode(TokenPayload.self, from: body)
                 } else {

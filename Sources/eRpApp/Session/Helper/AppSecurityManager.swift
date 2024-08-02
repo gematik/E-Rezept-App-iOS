@@ -20,6 +20,7 @@ import CryptoKit
 import Dependencies
 import eRpKit
 import Foundation
+import IDP // for generateSecureRandom
 import LocalAuthentication
 
 protocol AppSecurityManager {
@@ -27,41 +28,80 @@ protocol AppSecurityManager {
 
     func matches(password: String) throws -> Bool
 
+    func migrate() throws
+
     var availableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?) { get }
 }
 
 struct DefaultAppSecurityManager: AppSecurityManager {
+    typealias Random<T> = (Int) throws -> T
+    typealias Hash = (Data) -> Data
+
+    // deprecated, do not use
     private static let passwordIdentifier = "de.gematik.DefaultAppSecurityPasswordManager"
+    private static let passwordSaltIdentifier = "de.gematik.DefaultAppSecurityPasswordManagerSalt"
+    private static let passwordHashIdentifier = "de.gematik.DefaultAppSecurityPasswordManagerHash"
 
     private let keychainAccess: KeychainAccessHelper
+    private let randomGenerator: Random<Data>
+    private let hash: Hash
 
-    init(keychainAccess: KeychainAccessHelper) {
+    init(keychainAccess: KeychainAccessHelper,
+         randomGenerator: @escaping Random<Data> = { try generateSecureRandom(length: $0) },
+         hash: @escaping Hash = { Data(SHA512.hash(data: $0)) }) {
         self.keychainAccess = keychainAccess
+        self.randomGenerator = randomGenerator
+        self.hash = hash
     }
 
     func save(password: String) throws -> Bool {
-        guard let data = password.data(using: .utf8) else {
+        // [REQ:BSI-eRp-ePA:O.Pass_5#2|4] The salt is regenerated, whenever a new password is stored.
+        guard let data = password.data(using: .utf8),
+              let salt = try? randomGenerator(32) else {
             throw AppSecurityManagerError.savePasswordFailed
         }
 
+        // [REQ:BSI-eRp-ePA:O.Pass_5#3|8] Password is stored alongside hash within keychain.
         do {
-            return try keychainAccess.setGenericPassword(data, for: Self.passwordIdentifier)
+            let hashedPassword = hash(data + salt)
+            guard try keychainAccess.setGenericPassword(salt, for: Self.passwordSaltIdentifier),
+                  try keychainAccess.setGenericPassword(hashedPassword, for: Self.passwordHashIdentifier) else {
+                throw AppSecurityManagerError.savePasswordFailed
+            }
+            return true
         } catch {
             throw AppSecurityManagerError.savePasswordFailed
         }
     }
 
-    // [REQ:BSI-eRp-ePA:O.Auth_7#3] Actual password check
+    // [REQ:BSI-eRp-ePA:O.Auth_7#3,REQ:BSI-eRp-ePA:O.Pass_5#4|13] Actual password check
     func matches(password: String) throws -> Bool {
-        guard let data = password.data(using: .utf8) else {
+        guard let data = password.data(using: .utf8),
+              let salt = try? keychainAccess.genericPasswordData(for: Self.passwordSaltIdentifier) else {
             throw AppSecurityManagerError.retrievePasswordFailed
         }
 
         do {
-            let referenceHash: Data = try keychainAccess.genericPassword(for: Self.passwordIdentifier) ?? Data()
-            return referenceHash == data
+            let hashedPassword = hash(data + salt)
+            let referenceHash: Data = try keychainAccess.genericPasswordData(for: Self.passwordHashIdentifier) ?? Data()
+            return referenceHash == hashedPassword
         } catch {
             throw AppSecurityManagerError.retrievePasswordFailed
+        }
+    }
+
+    func migrate() throws {
+        // Skip migration if salt already exists or no old password exists (migration done or app is freshly installed)
+        guard (try? keychainAccess.genericPasswordData(for: Self.passwordSaltIdentifier)) == nil,
+              let password = try keychainAccess.genericPassword(for: Self.passwordIdentifier) else {
+            return
+        }
+        // retrieve current password:
+        do {
+            _ = try save(password: password)
+            _ = try keychainAccess.setGenericPassword(Data(), for: Self.passwordIdentifier)
+        } catch {
+            throw AppSecurityManagerError.migrationFailed
         }
     }
 
@@ -99,6 +139,8 @@ enum AppSecurityManagerError: Error, Equatable {
     case retrievePasswordFailed
     // sourcery: errorCode = "03"
     case localAuthenticationContext(NSError?)
+    // sourcery: errorCode = "04"
+    case migrationFailed
 
     var errorDescription: String? {
         switch self {
@@ -110,7 +152,7 @@ enum AppSecurityManagerError: Error, Equatable {
             }
 
             return error.localizedDescription
-        case .savePasswordFailed, .retrievePasswordFailed:
+        case .savePasswordFailed, .retrievePasswordFailed, .migrationFailed:
             return nil
         }
     }
@@ -136,6 +178,8 @@ extension DependencyValues {
 // MARK: Dummies
 
 struct DummyAppSecurityManager: AppSecurityManager {
+    func migrate() {}
+
     private let underlyingOptions: [AppSecurityOption]
     private let underlyingError: AppSecurityManagerError?
 

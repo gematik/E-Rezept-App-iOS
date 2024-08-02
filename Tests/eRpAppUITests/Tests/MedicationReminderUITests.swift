@@ -75,7 +75,7 @@ final class MedicationReminderUITests: XCTestCase {
 
         let details = tabBar
             .tapPrescriptionsTab()
-            .detailsForPrescriptionNamed(medicationName)
+            .tapDetailsForPrescriptionNamed(medicationName)
 
         // Check "Off"
         expect(details.medicationReminderCell().value as? String).to(equal("Aus"))
@@ -146,7 +146,7 @@ final class MedicationReminderUITests: XCTestCase {
         // Details screen->
         let prescriptionDetails = tabBar
             .tapPrescriptionsTab()
-            .detailsForPrescriptionNamed(medicationName)
+            .tapDetailsForPrescriptionNamed(medicationName)
 
         // Validate Meine Erinnerung (Aus)->
         expect(prescriptionDetails.medicationReminderCell().value as? String).to(equal("Aus"))
@@ -216,7 +216,7 @@ final class MedicationReminderUITests: XCTestCase {
         // Details screen->
         let prescriptionDetails = tabBar
             .tapPrescriptionsTab()
-            .detailsForPrescriptionNamed(medicationName)
+            .tapDetailsForPrescriptionNamed(medicationName)
 
         // Validate Meine Erinnerung (Aus)->
         expect(prescriptionDetails.medicationReminderCell().value as? String).to(equal("Aus"))
@@ -298,7 +298,7 @@ final class MedicationReminderUITests: XCTestCase {
         // Details screen->
         let prescriptionDetails = tabBar
             .tapPrescriptionsTab()
-            .detailsForPrescriptionNamed(medicationName)
+            .tapDetailsForPrescriptionNamed(medicationName)
 
         // Validate Meine Erinnerung (Aus)->
         expect(prescriptionDetails.medicationReminderCell().value as? String).to(equal("Aus"))
@@ -407,7 +407,7 @@ final class MedicationReminderUITests: XCTestCase {
         // create 3 Rezepts with different timestamps > Activate Push for all three->
 
         let medicationSetup1 = mainView
-            .detailsForPrescriptionNamed(medicationName1)
+            .tapDetailsForPrescriptionNamed(medicationName1)
             .tapSetupMedicationReminder()
 
         medicationSetup1.toggleActive()
@@ -416,7 +416,7 @@ final class MedicationReminderUITests: XCTestCase {
             .tapBackButton()
 
         let medicationSetup2 = mainView
-            .detailsForPrescriptionNamed(medicationName2)
+            .tapDetailsForPrescriptionNamed(medicationName2)
             .tapSetupMedicationReminder()
 
         medicationSetup2.toggleActive()
@@ -426,7 +426,7 @@ final class MedicationReminderUITests: XCTestCase {
             .tapBackButton()
 
         let medicationSetup3 = mainView
-            .detailsForPrescriptionNamed(medicationName3)
+            .tapDetailsForPrescriptionNamed(medicationName3)
             .tapSetupMedicationReminder()
 
         medicationSetup3.toggleActive()
@@ -469,7 +469,7 @@ final class MedicationReminderUITests: XCTestCase {
         let disabledMedicationDetails = tabBar
             .tapPrescriptionsTab()
             // Tap on the same rezept->
-            .detailsForPrescriptionNamed(medicationName2)
+            .tapDetailsForPrescriptionNamed(medicationName2)
         // Validate Meine Erinnerung (Aus)
         expect(disabledMedicationDetails.medicationReminderCell().value as? String).to(equal("Aus"))
     }

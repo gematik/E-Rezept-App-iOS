@@ -53,35 +53,20 @@ struct PharmacyRedeemDomain {
     @ObservableState
     struct State: Equatable {
         var redeemOption: RedeemOption
-        var erxTasks: [ErxTask]
+        var prescriptions: [Prescription]
         var pharmacy: PharmacyLocation
-        var selectedErxTasks: Set<ErxTask> = []
+        var selectedPrescriptions: Set<Prescription> = []
         var orderResponses: IdentifiedArrayOf<OrderResponse> = []
         var selectedShipmentInfo: ShipmentInfo?
         var profile: Profile?
         @Presents var destination: Destination.State?
 
         var orders: [OrderRequest] {
-            selectedErxTasks
+            selectedPrescriptions.map(\.erxTask)
                 .asOrders(orderId: UUID(),
                           option: redeemOption,
                           for: pharmacy,
                           with: selectedShipmentInfo)
-        }
-
-        var prescriptions: [Prescription] {
-            selectedErxTasks.map { Prescription($0) }
-        }
-
-        struct Prescription: Equatable, Identifiable {
-            var id: String { taskID }
-            let taskID: String
-            let title: String
-
-            init(_ task: ErxTask) {
-                taskID = task.id
-                title = task.medication?.displayName ?? L10n.prscFdTxtNa.text
-            }
         }
     }
 
@@ -108,9 +93,12 @@ struct PharmacyRedeemDomain {
         case destination(PresentationAction<Destination.Action>)
         case delegate(Delegate)
         case resetNavigation
-        case close
 
         enum Delegate: Equatable {
+            /// Close all
+            case close
+            /// Only closes the redeem view
+            case closeRedeemView
             /// Save the current State when changing Pharmacy
             case changePharmacy(PharmacyRedeemDomain.State)
         }
@@ -123,6 +111,8 @@ struct PharmacyRedeemDomain {
     @Dependency(\.redeemService) var redeemService: RedeemService
     @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
+    @Dependency(\.date) var date
+    @Dependency(\.calendar) var calendar
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
@@ -149,7 +139,8 @@ struct PharmacyRedeemDomain {
             if case let .success(shipmentInfo) = result, let selectedShipmentInfo = shipmentInfo {
                 state.selectedShipmentInfo = selectedShipmentInfo
             } else {
-                state.selectedShipmentInfo = state.erxTasks.compactMap { $0.patient?.shipmentInfo() }.first
+                state.selectedShipmentInfo = state.prescriptions.map(\.erxTask)
+                    .compactMap { $0.patient?.shipmentInfo() }.first
             }
             return .none
         case .registerSelectedProfileListener:
@@ -167,7 +158,7 @@ struct PharmacyRedeemDomain {
             return .none
         case .redeem:
             state.orderResponses = []
-            guard !state.selectedErxTasks.isEmpty else {
+            guard !state.selectedPrescriptions.isEmpty else {
                 return .none
             }
 
@@ -198,7 +189,7 @@ struct PharmacyRedeemDomain {
             switch action {
             case .close:
                 state.destination = nil
-                return Effect.send(.close)
+                return Effect.send(.delegate(.close))
             }
         case let .destination(.presented(.contact(.delegate(action)))):
             switch action {
@@ -209,9 +200,9 @@ struct PharmacyRedeemDomain {
         case .destination(.presented(.cardWall(.delegate(.close)))):
             state.destination = nil
             return .none
-        case let .destination(.presented(.prescriptionSelection(action: .saveSelection(erxTasks)))):
+        case let .destination(.presented(.prescriptionSelection(action: .saveSelection(prescriptions)))):
             state.destination = nil
-            state.selectedErxTasks = erxTasks
+            state.selectedPrescriptions = prescriptions
             return .none
         case .showContact,
              .destination(.presented(.alert(.contact))):
@@ -229,12 +220,13 @@ struct PharmacyRedeemDomain {
             ))
             return .none
         case .showPrescriptionSelection:
-            state
-                .destination = .prescriptionSelection(PharmacyPrescriptionSelectionDomain
-                    .State(erxTasks: state.erxTasks, selectedErxTasks: state.selectedErxTasks, profile: state.profile))
+            let redeemableTasks = state.prescriptions.filter(\.isRedeemable)
+            state.destination = .prescriptionSelection(PharmacyPrescriptionSelectionDomain
+                .State(prescriptions: redeemableTasks,
+                       selectedPrescriptions: state.selectedPrescriptions,
+                       profile: state.profile))
             return .none
-        case .resetNavigation,
-             .close:
+        case .resetNavigation:
             state.destination = nil
             return .none
         case .destination,
@@ -420,9 +412,9 @@ extension PharmacyRedeemDomain {
 
         static let state = State(
             redeemOption: .shipment,
-            erxTasks: ErxTask.Demo.erxTasks,
+            prescriptions: [Prescription.Dummies.prescriptionReady],
             pharmacy: pharmacy,
-            selectedErxTasks: Set(ErxTask.Demo.erxTasks),
+            selectedPrescriptions: Set([Prescription.Dummies.prescriptionReady]),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Marta Maquise",
                 street: "Stahl und Holz Str.1",

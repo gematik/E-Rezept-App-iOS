@@ -60,22 +60,21 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
     func testLoadingSecurityOptions() async {
-        mockAppSecurityManager.availableSecurityOptionsReturnValue = (options: [.password, .biometry(.faceID)],
-                                                                      error: nil)
+        mockAppSecurityManager.underlyingAvailableSecurityOptions = (options: [.password, .biometry(.faceID)],
+                                                                     error: nil)
         let store = testStore(with: RegisterAuthenticationDomain.State(availableSecurityOptions: []))
 
         await store.send(.loadAvailableSecurityOptions) { state in
             state.availableSecurityOptions = [.password, .biometry(.faceID)]
             state.selectedSecurityOption = .biometry(.faceID)
         }
-        expect(self.mockAppSecurityManager.availableSecurityOptionsCallsCount) == 1
     }
 
     func testLoadingSecurityOptionsWithoutBiometry() async {
         let expectedLoadingError = AppSecurityManagerError.localAuthenticationContext(
             NSError(domain: "", code: LAError.Code.biometryNotEnrolled.rawValue)
         )
-        mockAppSecurityManager.availableSecurityOptionsReturnValue =
+        mockAppSecurityManager.underlyingAvailableSecurityOptions =
             (options: [.password], error: expectedLoadingError)
         let store = testStore(with: RegisterAuthenticationDomain.State(availableSecurityOptions: []))
 
@@ -84,7 +83,6 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.selectedSecurityOption = .password
             state.securityOptionsError = expectedLoadingError
         }
-        expect(self.mockAppSecurityManager.availableSecurityOptionsCallsCount) == 1
     }
 
     func testSelectingWeakPassword() async {

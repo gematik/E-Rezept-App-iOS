@@ -40,7 +40,7 @@ final class AppSecurityDomainTests: XCTestCase {
 
     private func testStore(for availableSecurityOptions: [AppSecurityOption] = [],
                            selectedSecurityOption: AppSecurityOption? = nil) -> TestStore {
-        mockAppSecurityManager.availableSecurityOptionsReturnValue = (availableSecurityOptions, nil)
+        mockAppSecurityManager.underlyingAvailableSecurityOptions = (availableSecurityOptions, nil)
         mockUserDataStore.appSecurityOption = Just(selectedSecurityOption ?? .unsecured).eraseToAnyPublisher()
 
         return TestStore(initialState: AppSecurityDomain.State(availableSecurityOptions: [.password])) {

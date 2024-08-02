@@ -31,16 +31,37 @@ extension PrescriptionDetailDomain {
         return CGSize(width: pixelDimension, height: pixelDimension)
     }
 
-    func saveErxTasks(erxTasks: [ErxTask])
-        -> Effect<PrescriptionDetailDomain.Action> {
-        .publisher(
-            erxTaskRepository.save(erxTasks: erxTasks)
-                .first()
-                .receive(on: schedulers.main.animation())
-                .replaceError(with: false)
-                .map { PrescriptionDetailDomain.Action.response(.redeemedOnSavedReceived($0)) }
-                .eraseToAnyPublisher
-        )
+    func save(erxTasks: [ErxTask]) -> Effect<PrescriptionDetailDomain.Action> {
+        .run { send in
+            let result = try await erxTaskRepository.save(erxTasks: erxTasks).async(/ErxRepositoryError.self)
+            await send(.response(.redeemedOnSavedReceived(result)))
+        }
+    }
+
+    func delete(erxTask: ErxTask) -> Effect<PrescriptionDetailDomain.Action> {
+        .run { send in
+            let result = try await erxTaskRepository.delete(erxTasks: [erxTask]).asyncResult(/ErxRepositoryError.self)
+            await send(.response(.taskDeletedReceived(result)))
+        }
+    }
+
+    func deleteChargeItem(erxTask: ErxTask) -> Effect<PrescriptionDetailDomain.Action> {
+        .run { send in
+            let chargeItems = try await erxTaskRepository.loadRemoteChargeItems().async(/ErxRepositoryError.self)
+            if let sparseChargeItem = chargeItems.first(where: { $0.taskId == erxTask.id }) {
+                if let chargeItem = sparseChargeItem.chargeItem {
+                    let result = try await erxTaskRepository.delete(chargeItems: [chargeItem])
+                        .asyncResult(/ErxRepositoryError.self)
+                    await send(.response(.chargeItemDeletedReceived(result)))
+                } else {
+                    // Parsing failed, can't delete item
+                    await send(.response(.chargeItemDeletedReceived(.success(false))))
+                }
+            } else {
+                // Respond with success if no ChargeItem found e.g. nothing to delete
+                await send(.response(.chargeItemDeletedReceived(.success(true))))
+            }
+        }
     }
 }
 

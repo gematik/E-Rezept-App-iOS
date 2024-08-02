@@ -41,13 +41,9 @@ public class DefaultHTTPClient: HTTPClient {
         let delegate = ProxyDelegate()
 
         // [REQ:gemSpec_Krypt:GS-A_4385,A_18467,A_18464,GS-A_4387]
-        // [REQ:gemSpec_Krypt:GS-A_5322] TODO: Check if limiting SSL Sessions is possible, check for renegotiation
-        // swiftlint:disable:previous todo
-        // [REQ:gemSpec_IDP_Frontend:A_20606] Live URLs not present in NSAppTransportSecurity exception list for allowed
-        // HTTP communication
+        // [REQ:gemSpec_IDP_Frontend:A_20606#2] Setup of minimum TLS Version to use.
         // [REQ:gemSpec_eRp_FdV:A_20206]
         // [REQ:BSI-eRp-ePA:O.Ntwk_2#2,O.Ntwk_3#2,O.Ntwk_7#2] URLSession is used as Network Framework
-
         urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
         urlSession = .init(configuration: urlSessionConfiguration, delegate: delegate, delegateQueue: delegateQueue)
         self.interceptors = interceptors

@@ -52,7 +52,7 @@ final class PrescriptionDetailUITests: XCTestCase {
 
         let details = tabBar
             .tapPrescriptionsTab()
-            .detailsForPrescriptionNamed(medicationName)
+            .tapDetailsForPrescriptionNamed(medicationName)
 
         let autIdemDrawer = details.tapAutIdemInfoButton()
         expect(details.autIdemHeadlineButton().exists).to(beFalse())
@@ -68,7 +68,7 @@ final class PrescriptionDetailUITests: XCTestCase {
 
         let details = tabBar
             .tapPrescriptionsTab()
-            .detailsForPrescriptionNamed(medicationName)
+            .tapDetailsForPrescriptionNamed(medicationName)
 
         let autIdemDrawer = details.tapAutIdemInfoButton()
         expect(autIdemDrawer.title()).to(equal("Kein Ersatzpräparat möglich"))
@@ -119,6 +119,28 @@ final class PrescriptionDetailUITests: XCTestCase {
         expect(autIdemDrawer2.title()).to(equal("Kein Ersatzpräparat möglich"))
         expect(autIdemDrawer2.description()?.lengthOfBytes(using: .utf8)).to(beGreaterThan(50))
         autIdemDrawer2.close()
+    }
+
+    func testMedicationReminderAvailableForScannedAndServerTasks() {
+        let scannedTaskMedicationName = "Scanned Prescription"
+
+        let tabBar = TabBarScreen(app: app)
+
+        let firstMedicationReminderTest = tabBar
+            .tapPrescriptionsTab()
+            .tapDetailsForScannedPrescription(scannedTaskMedicationName)
+            .tapSetupMedicationReminder()
+
+        expect(firstMedicationReminderTest.medicationNameLabel().label).to(equal(scannedTaskMedicationName))
+
+        let remoteTaskMedicationName = "Bdavomilproston"
+
+        let secondMedicationReminderTest = tabBar
+            .tapPrescriptionsTab()
+            .tapDetailsForPrescriptionNamed(remoteTaskMedicationName)
+            .tapSetupMedicationReminder()
+
+        expect(secondMedicationReminderTest.medicationNameLabel().label).to(equal(remoteTaskMedicationName))
     }
 
     override func tearDown() {

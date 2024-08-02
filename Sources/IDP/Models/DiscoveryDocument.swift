@@ -191,7 +191,7 @@ extension DiscoveryDocument {
 }
 
 extension DiscoveryDocument {
-    // [REQ:gemSpec_IDP_Frontend:A_20512]
+    // [REQ:gemSpec_IDP_Frontend:A_20512#2|5] Validation by expiration date checking + maximum of 24h window
     func isValid(on date: Date) -> Bool {
         date <= expiresOn &&
             date >= createdOn &&

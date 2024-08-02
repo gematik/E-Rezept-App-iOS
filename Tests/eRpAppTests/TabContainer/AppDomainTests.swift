@@ -124,9 +124,10 @@ final class AppDomainTests: XCTestCase {
         )
 
         static let pharmacySearchDomainState = PharmacySearchDomain.State(
-            erxTasks: [],
+            inRedeemProcess: false,
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: [],
+            pharmacyFilterOptions: Shared([]),
             searchState: .searchResultEmpty
         )
 

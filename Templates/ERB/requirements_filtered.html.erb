@@ -5,7 +5,9 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>requirements</title>
+  <link rel="stylesheet" href="Templates/ERB/prism.css" />
   <link rel="stylesheet" href="Templates/ERB/audit_style.css" />
+  <script src="Templates/ERB/prism.js"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -37,7 +39,7 @@ window.addEventListener( 'afterprint', () => {
 	<ul>
 <% afos.each do |afo_name, details| %>
 <% next if !AUDIT_AFOS.include?(afo_name) %>
-	<li><a href="#<%= afo_name %>" id="toc-<%= afo_name %>"><%= afo_name %></a></li>
+	<li><a href="#<%= afo_name.sub(".", "") %>" id="toc-<%= afo_name %>"><%= afo_name %></a></li>
 <% end %>
 	</ul>
 </li>
@@ -59,9 +61,7 @@ window.addEventListener( 'afterprint', () => {
 
 <% next if !AUDIT_AFOS.include?(afo_name) %>
 
-<h3 id="<%= afo_name %>"><%= afo_name %>
-<a href="https://gemspec.gematik.de/search?<%= afo_name %>">🔗</a>
-</h3>
+<h3 id="<%= afo_name.sub(".", "") %>"><%= afo_name %></h3>
 <% if AFOS[afo_name] %>
 
 <h4>Requirement <a href="https://gemspec.gematik.de/docs/gemSpec/<%= spec_name %>/latest/index.html#<%= afo_name %>">Gemspec Pages</a>:</h4>
@@ -78,8 +78,8 @@ window.addEventListener( 'afterprint', () => {
 <% else %>
 <%= "<h5>#{details['part']} </h5>" if details['part'] %>
 <p><%= details['description'] %></p>
-<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/<%= details['file'].sub("../", "") %>#L<%= details['line'] %>"><%= details['file'].sub("../", "") %>:<%= details['line'] %></a>
-<code><%= details['code'] %></code>
+<a class="github" href="https://github.com/gematik/E-Rezept-App-iOS/blob/master/<%= details['file'].sub("../", "") %>#L<%= details['line'] %><%= "-L#{details['line_to']}" if details['line_to'] %>"><%= details['file'].sub("../", "") %>:L<%= details['line'] %><%= "-L#{details['line_to']}" if details['line_to'] %></a>
+<code class="language-swift"><%= details['code'] %></code>
 
 <% end %>
 

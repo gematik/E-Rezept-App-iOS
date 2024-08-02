@@ -24,14 +24,18 @@ import UIKit
 struct ShareSheetDomain {
     @ObservableState
     struct State: Equatable {
-        let url: URL
+        let string: String?
+        let url: URL?
         let dataMatrixCodeImage: UIImage?
 
+        init(string: String? = nil, url: URL? = nil, dataMatrixCodeImage: UIImage? = nil) {
+            self.string = string
+            self.url = url
+            self.dataMatrixCodeImage = dataMatrixCodeImage
+        }
+
         func shareItems() -> [Any] {
-            if let dataMatrixCodeImage {
-                return [url, dataMatrixCodeImage]
-            }
-            return [url]
+            [string as Any, url as Any, dataMatrixCodeImage as Any].compactMap { $0 }
         }
     }
 

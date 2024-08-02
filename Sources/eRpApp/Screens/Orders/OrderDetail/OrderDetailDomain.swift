@@ -21,7 +21,6 @@ import ComposableArchitecture
 import eRpKit
 import MapKit
 import SwiftUI
-import ZXingObjC
 
 @Reducer
 struct OrderDetailDomain {

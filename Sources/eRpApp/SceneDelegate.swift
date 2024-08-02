@@ -120,6 +120,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         #endif
 
         do {
+            // If necessary, migrate app security
+            @Dependency(\.appSecurityManager) var appSecurityManager
+            try appSecurityManager.migrate()
+
             try sanitizeDatabases(store: profileCoreDataStore)
         } catch {
             assertionFailure(error.localizedDescription)
@@ -233,6 +237,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 // Fire delayed universal links after timeout, to allow transitions to complete
                 DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
                     if let url = self.universalLinkAfterAuthentication {
+                        // [REQ:gemSpec_IDP_Frontend:A_22301-01#2] If app needs reauthentication routing starts here.
                         self.routeTo(.universalLink(url))
                     }
                     self.universalLinkAfterAuthentication = nil
@@ -265,6 +270,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             if willPresentAppAuthenticationDialog {
                 universalLinkAfterAuthentication = url
             } else {
+                // [REQ:gemSpec_IDP_Frontend:A_22301-01#3] If app is already started, routing starts here.
                 routeTo(.universalLink(url))
             }
         default:

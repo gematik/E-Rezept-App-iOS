@@ -236,9 +236,25 @@ struct PrescriptionDetailView: View {
                     )
                     .sectionContainerStyle(.inline)
                 } else {
-                    SingleElementSectionContainer(
+                    SectionContainer(
                         footer: { FooterView { store.send(.openUrlGesundBundDe) } },
                         content: {
+                            Button(
+                                action: { store.send(.setNavigation(tag: .medicationReminder)) },
+                                label: {
+                                    SubTitle(
+                                        title: L10n.prscDtlTxtMedicationReminder.text,
+                                        description: L10n.prscDtlBtnMedicationReminder.text
+                                    )
+                                    .subTitleStyle(.navigation(
+                                        stateText: store.medicationReminderState
+                                    ))
+                                }
+                            )
+                            .buttonStyle(.navigation)
+                            .accessibilityValue(store.medicationReminderState)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedicationReminder)
+
                             Button(action: { store.send(.setNavigation(tag: .technicalInformations)) }, label: {
                                 SubTitle(title: L10n.prscDtlBtnTechnicalInformations)
                             })
@@ -335,7 +351,7 @@ extension PrescriptionDetailDomain.State {
         if prescription.medicationRequest.multiplePrescription?.mark == true,
            let number = prescription.medicationRequest.multiplePrescription?.numbering,
            let totalNumber = prescription.medicationRequest.multiplePrescription?.totalNumber {
-            return "\(number) von \(totalNumber)"
+            return "\(number) / \(totalNumber)"
         } else {
             return nil
         }

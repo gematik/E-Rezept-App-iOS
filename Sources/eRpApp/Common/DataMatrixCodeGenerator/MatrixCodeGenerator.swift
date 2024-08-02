@@ -19,7 +19,7 @@
 import Combine
 import CoreImage
 import Dependencies
-import ZXingObjC
+import ZXingCpp
 
 /// Instances of conforming type can be used to generate a matrix code
 public protocol MatrixCodeGenerator {
@@ -34,7 +34,7 @@ public protocol MatrixCodeGenerator {
 }
 
 struct MatrixCodeGeneratorDependency: DependencyKey {
-    static let liveValue: MatrixCodeGenerator = ZXDataMatrixWriter()
+    static let liveValue: MatrixCodeGenerator = ZXingMatrixCodeGenerator()
 
     static var previewValue: MatrixCodeGenerator = liveValue
 

@@ -20,7 +20,6 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import SwiftUI
-import ZXingObjC
 
 @Reducer
 struct PickupCodeDomain {

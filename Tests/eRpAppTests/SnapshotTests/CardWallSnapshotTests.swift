@@ -60,7 +60,14 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
     func testIntroductionView() {
         let sut = CardWallIntroductionView(
-            store: CardWallIntroductionDomain.Dummies.store
+            store: StoreOf<CardWallIntroductionDomain>(
+                initialState: .init(
+                    isNFCReady: true,
+                    profileId: UUID()
+                )
+            ) {
+                EmptyReducer()
+            }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

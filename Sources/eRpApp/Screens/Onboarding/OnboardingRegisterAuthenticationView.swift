@@ -245,6 +245,7 @@ extension OnboardingRegisterAuthenticationView {
                         .padding(.bottom, 10)
                         .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
 
+                    // [REQ:BSI-eRp-ePA:O.Pass_2#2] Password strength view within onboarding.
                     PasswordStrengthView(strength: store.passwordStrength,
                                          barBackgroundColor: Color(.secondarySystemBackground))
                         .padding(.bottom, 16)

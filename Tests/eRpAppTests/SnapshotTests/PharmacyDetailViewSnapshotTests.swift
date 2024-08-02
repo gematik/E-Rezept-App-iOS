@@ -47,7 +47,7 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PharmacyDetailView(
             store: store(
                 for: .init(
-                    erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
+                    inRedeemProcess: true,
                     pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive
                 )
             )
@@ -62,7 +62,7 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
 extension PharmacyDetailViewSnapshotTests {
     enum Fixtures {
         static let allOptionsState = PharmacyDetailDomain.State(
-            erxTasks: ErxTask.Fixtures.erxTasks,
+            inRedeemProcess: true,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA,
             reservationService: .erxTaskRepository,
             shipmentService: .erxTaskRepository,
@@ -70,7 +70,7 @@ extension PharmacyDetailViewSnapshotTests {
         )
 
         static let inactiveState = PharmacyDetailDomain.State(
-            erxTasks: ErxTask.Fixtures.erxTasks,
+            inRedeemProcess: true,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive,
             reservationService: .erxTaskRepository,
             shipmentService: .erxTaskRepository,

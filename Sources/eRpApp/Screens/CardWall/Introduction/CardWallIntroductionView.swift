@@ -95,35 +95,76 @@ struct CardWallIntroductionView: View {
                             .hidden()
                             .accessibility(hidden: true)
 
-                            // [REQ:BSI-eRp-ePA:O.Auth_4#2] Button the user may use to start login via gID
-                            Button(action: {
-                                store.send(.extAuthTapped)
-                            }, label: {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(L10n.cdwBtnIntroExtauth)
-                                            .font(Font.body.weight(.medium))
-                                            .foregroundColor(Colors.systemLabel)
+                            if let entry = store.entry {
+                                ZStack(alignment: .center) {
+                                    Button(action: {
+                                        store.send(.directExtAuthTapped)
+                                    }, label: {
+                                        HStack {
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                Text(L10n.cdwBtnIntroExtauth)
+                                                    .font(Font.body.weight(.medium))
+                                                    .foregroundColor(Colors.systemLabel)
+                                                    .multilineTextAlignment(.leading)
+                                                    .accessibilityIdentifier(A11y.cardWall.intro
+                                                        .cdwBtnIntroDirectGid)
+
+                                                Text("\(L10n.cdwBtnIntroDirectExtauth.text) \(entry.name)")
+                                                    .font(.subheadline)
+                                                    .foregroundColor(Colors.systemLabelSecondary)
+                                            }
                                             .multilineTextAlignment(.leading)
-                                            .accessibilityIdentifier(A11y.cardWall.intro.cdwBtnIntroLater)
 
-                                        Text(L10n.cdwBtnIntroExtauthDescription)
-                                            .font(.subheadline)
-                                            .foregroundColor(Colors.systemLabelSecondary)
+                                            Spacer(minLength: 8)
+                                            Image(systemName: SFSymbolName.rightDisclosureIndicator)
+                                                .font(Font.headline.weight(.semibold))
+                                                .foregroundColor(Color(.tertiaryLabel))
+                                                .padding(8)
+                                        }.padding()
+                                    })
+                                        .buttonStyle(DefaultButtonStyle())
+                                        .background(Colors.systemBackgroundTertiary)
+                                        .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                                        .padding(.bottom)
+                                        .opacity(store.loading ? 0.4 : 1)
+
+                                    if store.loading {
+                                        ProgressView()
+                                            .progressViewStyle(.circular)
+                                            .padding(.bottom)
                                     }
-                                    .multilineTextAlignment(.leading)
-
-                                    Spacer(minLength: 8)
-                                    Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                                        .font(Font.headline.weight(.semibold))
-                                        .foregroundColor(Color(.tertiaryLabel))
-                                        .padding(8)
                                 }
-                                .padding()
-                            })
-                                .buttonStyle(DefaultButtonStyle())
-                                .background(Colors.systemBackgroundTertiary)
-                                .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                            } else {
+                                // [REQ:BSI-eRp-ePA:O.Auth_4#2] Button the user may use to start login via gID
+                                Button(action: {
+                                    store.send(.extAuthTapped)
+                                }, label: {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(L10n.cdwBtnIntroExtauth)
+                                                .font(Font.body.weight(.medium))
+                                                .foregroundColor(Colors.systemLabel)
+                                                .multilineTextAlignment(.leading)
+                                                .accessibilityIdentifier(A11y.cardWall.intro.cdwBtnIntroLater)
+
+                                            Text(L10n.cdwBtnIntroExtauthDescription)
+                                                .font(.subheadline)
+                                                .foregroundColor(Colors.systemLabelSecondary)
+                                        }
+                                        .multilineTextAlignment(.leading)
+
+                                        Spacer(minLength: 8)
+                                        Image(systemName: SFSymbolName.rightDisclosureIndicator)
+                                            .font(Font.headline.weight(.semibold))
+                                            .foregroundColor(Color(.tertiaryLabel))
+                                            .padding(8)
+                                    }
+                                    .padding()
+                                })
+                                    .buttonStyle(DefaultButtonStyle())
+                                    .background(Colors.systemBackgroundTertiary)
+                                    .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                            }
 
                             NavigationLink(
                                 item: $store.scope(state: \.destination?.extAuth, action: \.destination.extAuth)
@@ -177,6 +218,11 @@ struct CardWallIntroductionView: View {
                     .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
                 )
             }
+            .task {
+                await store.send(.task).finish()
+            }
+            .confirmationDialog($store.scope(state: \.destination?.contactSheet, action: \.destination.contactSheet))
+            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             .accentColor(Colors.primary700)
             .navigationViewStyle(StackNavigationViewStyle())
         }

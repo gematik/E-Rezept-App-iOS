@@ -4,7 +4,8 @@ ruby "3.1.2"
 
 gem "fastlane", "~>2.220"
 gem "jazzy", "~>0.14.4"
-gem "nokogiri"
+gem "nokogiri", ">= 1.16.5"
+gem "kramdown"
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
 eval_gemfile(plugins_path) if File.exist?(plugins_path)

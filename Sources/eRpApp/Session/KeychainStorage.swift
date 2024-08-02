@@ -26,8 +26,8 @@ import OpenSSL
 // [REQ:gemSpec_eRp_FdV:A_19188] Deletion of data saved here is managed by the OS.
 // [REQ:gemSpec_IDP_Frontend:A_21322] Storage implementation uses iOS Keychain
 // [REQ:gemSpec_IDP_Frontend:A_21595] Storage Implementation
-// [REQ:BSI-eRp-ePA:O.Purp_8#1,O.Arch_2#5,O.Arch_4#3,O.Source_7#2,O.Data_2#2] Implementation of data storage that is
-// persisted via keychain
+// [REQ:BSI-eRp-ePA:O.Purp_8#1,O.Arch_4#3] Implementation of data storage that is persisted via keychain
+// [REQ:BSI-eRp-ePA:O.Source_7#2,O.Data_2#2,O.Auth_13#3] Implementation of data storage that is persisted via keychain
 class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStorage {
     private let schedulers: Schedulers
     @Published private var tokenState: IDPToken?
@@ -107,7 +107,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 
     private func retrieveCAN() -> AnyPublisher<String?, Never> {
         Deferred { [keychainHelper, egkPasswordIdentifier] () -> AnyPublisher<String?, Never> in
-            guard let result = try? keychainHelper.genericPassword(for: egkPasswordIdentifier) as String?
+            guard let result = try? keychainHelper.genericPassword(for: egkPasswordIdentifier)
             else { return Just(nil).eraseToAnyPublisher() }
 
             return Just(result).eraseToAnyPublisher()
@@ -121,7 +121,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 
     var token: AnyPublisher<IDPToken?, Never> {
         Deferred { [keychainHelper, idpTokenIdentifier] () -> AnyPublisher<IDPToken?, Never> in
-            guard let result = try? keychainHelper.genericPassword(for: idpTokenIdentifier) as Data?,
+            guard let result = try? keychainHelper.genericPasswordData(for: idpTokenIdentifier),
                   let token = try? JSONDecoder().decode(IDPToken.self, from: result)
             else { return Just(nil).eraseToAnyPublisher() }
 
@@ -133,7 +133,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 
     func set(token: IDPToken?) {
         // [REQ:gemSpec_eRp_FdV:A_20184]
-        // [REQ:gemSpec_eRp_FdV:A_21328#3] KeychainStorage implementation
+        // [REQ:gemSpec_IDP_Frontend:A_21328#3] KeychainStorage implementation
         let success: Bool
         do {
             if let token = token,
@@ -154,7 +154,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 
     private func retrieveDiscoveryDocument() -> AnyPublisher<DiscoveryDocument?, Never> {
         Deferred { [keychainHelper, idpDiscoveryDocumentIdentifier] () -> AnyPublisher<DiscoveryDocument?, Never> in
-            guard let result = try? keychainHelper.genericPassword(for: idpDiscoveryDocumentIdentifier) as Data?,
+            guard let result = try? keychainHelper.genericPasswordData(for: idpDiscoveryDocumentIdentifier),
                   let archiver = try? NSKeyedUnarchiver(forReadingFrom: result),
                   let document = try? archiver.decodeTopLevelDecodable(
                       DiscoveryDocument.self,
@@ -197,7 +197,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 
     private func retrieveCertificate() -> AnyPublisher<X509?, Never> {
         Deferred { [keychainHelper, egkAuthCertIdentifier] () -> AnyPublisher<X509?, Never> in
-            guard let derBytes = try? keychainHelper.genericPassword(for: egkAuthCertIdentifier) as Data?,
+            guard let derBytes = try? keychainHelper.genericPasswordData(for: egkAuthCertIdentifier),
                   let certificate = try? X509(der: derBytes)
             else {
                 return Just(nil).eraseToAnyPublisher()
@@ -223,7 +223,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 
     private func retrieveKeyIdentifier() -> AnyPublisher<Data?, Never> {
         Deferred { [keychainHelper, idpBiometricKeyIdentifier] () -> AnyPublisher<Data?, Never> in
-            Just(try? keychainHelper.genericPassword(for: idpBiometricKeyIdentifier))
+            Just(try? keychainHelper.genericPasswordData(for: idpBiometricKeyIdentifier))
                 .eraseToAnyPublisher()
         }
         .merge(with: keyIdentifierPassthrough)
@@ -254,6 +254,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         }
     }
 
+    // [REQ:BSI-eRp-ePA:O.Auth_14#5|11] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
     func wipe() {
         // [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-1#3] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN

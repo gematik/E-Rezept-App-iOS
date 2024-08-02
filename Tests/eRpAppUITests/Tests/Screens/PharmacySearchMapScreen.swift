@@ -42,9 +42,9 @@ struct PharmacySearchMapScreen<Previous>: Screen where Previous: Screen {
         button(by: A11y.pharmacySearchMap.phaSearchMapBtnGoToUser, file: file, line: line).tap()
     }
 
-    func tapFilter(file: StaticString = #file, line: UInt = #line) -> FilterScreen<Self> {
+    func tapFilter(file: StaticString = #file, line: UInt = #line) -> PharmacyFilterScreen<Self> {
         button(by: A11y.pharmacySearchMap.phaSearchMapBtnFilter, file: file, line: line).tap()
-        return FilterScreen(app: app, previous: self)
+        return PharmacyFilterScreen(app: app, previous: self)
     }
 
     @discardableResult
@@ -55,24 +55,5 @@ struct PharmacySearchMapScreen<Previous>: Screen where Previous: Screen {
 
     func Annotations(file _: StaticString = #file, line _: UInt = #line) -> XCUIElement {
         app.otherElements.element(matching: .other, identifier: "AnnotationContainer")
-    }
-}
-
-struct FilterScreen<Previous>: Screen where Previous: Screen {
-    let app: XCUIApplication
-    let previous: Previous
-
-    init(app: XCUIApplication, previous: Previous) {
-        self.app = app
-        self.previous = previous
-    }
-
-    func tapFilterOption(_ filterName: String, file _: StaticString = #file, line _: UInt = #line) {
-        app.buttons.element(matching: .init(format: "label == %@", "\(filterName)")).tap()
-    }
-
-    func close(file _: StaticString = #file, line _: UInt = #line) -> Previous {
-        app.scrollViews.firstMatch.swipeUp(velocity: 2000.0)
-        return previous
     }
 }

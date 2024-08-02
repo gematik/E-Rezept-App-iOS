@@ -25,7 +25,7 @@ struct CameraAuthorizationAlertView: View {
     var body: some View {
         Color(.clear)
             .alert(
-                L10n.camPermDenyTitle.key,
+                L10n.camPermDenyTitle.text,
                 isPresented: $viewModel.showAuthorizationAlert,
                 actions: {
                     Button(L10n.camPermDenyBtnCancel.text, role: .cancel) {
