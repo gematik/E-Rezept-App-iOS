@@ -559,6 +559,7 @@ desc ""
 lane :setup do |options|
   resolve_dependencies options
   generate_xcodeproj options
+  pull_environment_variables options
 end
 
 desc "Lane that the ci build should invoke directly to do a complete build/test/analysis."
@@ -617,11 +618,6 @@ lane :get_specs do |options|
 end
 
 lane :list_requirements do |options|
-  # remove, as soon as `GEMATIK_COPYRIGHT_STATEMENT` is replaced by actuals license
-  if (!is_ci)
-    sh "cd .. && bash scripts/addEuplLicense.sh" if prompt(text: "Replace Licenses before running?", boolean: true)
-  end
-
   SPECS = Hash.new
 
   AUDIT_AFOS = JSON.parse(File.read('audit_afos.json'))['audit_afos']
@@ -1024,6 +1020,542 @@ def curl_most_recent_tag(repo_url)
   # https://api.github.com/repos/AliSoftware/OHHTTPStubs/tags | jq ".[].name" | sort -Vr | head -n 1
 end
 
+lane :build_test_version do |options|
+  build_archive_with_debug_screen
+
+  sign_adhoc
+
+  if is_ci
+    appcenter_upload(app_name: "eRezept-iOS", release_notes: "branch #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}")
+    add_mr_note_if_possible
+    notify_teams_channel(ENV["TEAMS_WEBHOOK_CI"], "CI Build")
+  end
+
+  sh "cd .. && mkdir -p artifacts/cibuild/ && rm -rf artifacts/cibuild/* && mv distribution artifacts/cibuild/; cd - "
+
+end
+
+lane :build_konnektathon_ru do |options|
+  clear_derived_data(derived_data_path: ENV['GYM_DERIVED_DATA_PATH'])
+
+  match(type: "appstore")
+
+  sh "cd .. && /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString \\\"$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' ./App/Sources/Resources/Info.plist)\\\"\" ./Sources/Konny/Resources/Info.plist; cd -"
+  sh "cp -vR ../Sources/Konny/Resources ../App/Sources"
+
+  gym(
+    skip_build_archive: false,
+    skip_package_ipa: true,
+    export_method: "app-store",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" GEM_PRODUCT_BUNDLE_IDENTIFIER=\"de.gematik.konny\" GEM_PROVISIONING_PROFILE_SPECIFIER=\"match AppStore de.gematik.konny\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) ENABLE_DEBUG_VIEW DEFAULT_ENVIRONMENT_RU_DEV\"",
+    output_directory: "./distribution"
+  )
+  gym(
+    skip_build_archive: true,
+    export_method: "app-store",
+    output_name: "eRPApp_#{build_version}_store.ipa",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    output_directory: "./distribution"
+  )
+
+  match(type: "adhoc")
+  gym(
+    skip_build_archive: true,
+    export_method: "ad-hoc",
+    output_name: "eRPApp_#{build_version}_adhoc.ipa",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    output_directory: "./distribution",
+    include_bitcode: false,
+    export_options: {
+        uploadBitcode: false,
+        uploadSymbols: true,
+        compileBitcode: false
+    }
+  )
+
+  app_store_connect_api_key(
+    issuer_id: "69a6de92-74a9-47e3-e053-5b8c7c11a4d1"
+  )
+
+  upload_to_testflight(
+    ipa: "./distribution/eRPApp_#{build_version}_store.ipa",
+    skip_submission: true,
+    apple_id: '1575045048',
+    dev_portal_team_id: "A9FL89PFFL",
+    skip_waiting_for_build_processing: true
+  )
+
+  if is_ci
+    appcenter_upload(app_name: "Konny", release_notes: "Konny Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}")
+    notify_teams_channel(ENV["TEAMS_WEBHOOK_RELEASE"], "Konny Version")
+  end
+
+end
+
+lane :build_drezept_ru do |options|
+  clear_derived_data(derived_data_path: ENV['GYM_DERIVED_DATA_PATH'])
+
+  match(type: "appstore")
+
+  sh "cd .. && /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString \\\"$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' ./App/Sources/Resources/Info.plist)\\\"\" ./Sources/DerivedApps/dRezept/Resources/Info.plist; cd -"
+  sh "cp -vR ../Sources/DerivedApps/dRezept/Resources ../App/Sources"
+
+  gym(
+    skip_build_archive: false,
+    skip_package_ipa: true,
+    export_method: "app-store",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" GEM_PRODUCT_BUNDLE_IDENTIFIER=\"de.gematik.drezept\" GEM_PROVISIONING_PROFILE_SPECIFIER=\"match AppStore de.gematik.drezept\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) ENABLE_DEBUG_VIEW TEST_ENVIRONMENT DEFAULT_ENVIRONMENT_RU\"",
+    output_directory: "./distribution"
+  )
+  gym(
+    skip_build_archive: true,
+    export_method: "app-store",
+    output_name: "eRPApp_#{build_version}_store.ipa",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    output_directory: "./distribution"
+  )
+
+  match(type: "adhoc")
+  gym(
+    skip_build_archive: true,
+    export_method: "ad-hoc",
+    output_name: "eRPApp_#{build_version}_adhoc.ipa",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    output_directory: "./distribution",
+    include_bitcode: false,
+    export_options: {
+        uploadBitcode: false,
+        uploadSymbols: true,
+        compileBitcode: false
+    }
+  )
+
+  app_store_connect_api_key(
+    issuer_id: "69a6de92-74a9-47e3-e053-5b8c7c11a4d1"
+  )
+
+  upload_to_testflight(
+    ipa: "./distribution/eRPApp_#{build_version}_store.ipa",
+    skip_submission: true,
+    apple_id: '1589232632',
+    dev_portal_team_id: "A9FL89PFFL",
+    skip_waiting_for_build_processing: true
+  )
+
+  if is_ci
+    appcenter_upload(app_name: "D-Rezept", release_notes: "D-Rezept Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}")
+    notify_teams_channel(ENV["TEAMS_WEBHOOK_RELEASE"], "D-Rezept Version")
+  end
+end
+
+lane :sign_adhoc do |options|
+  match(type: "adhoc")
+
+  gym(
+    skip_build_archive: true,
+    export_method: "ad-hoc",
+    output_name: "eRPApp_#{build_version}_adhoc.ipa",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    output_directory: "./distribution",
+    include_bitcode: false,
+    export_options: {
+        uploadBitcode: false,
+        uploadSymbols: true,
+        compileBitcode: false
+    }
+  )
+end
+
+lane :sign_appstore do |options|
+  match(type: "appstore")
+
+  gym(
+    skip_build_archive: true,
+    export_method: "app-store",
+    output_name: "eRPApp_#{build_version}_store.ipa",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    output_directory: "./distribution"
+  )
+end
+
+lane :build_archive do |options|
+  clear_derived_data(derived_data_path: ENV['GYM_DERIVED_DATA_PATH'])
+
+  match(type: "appstore")
+
+  gym(
+    skip_build_archive: false,
+    skip_package_ipa: true,
+    export_method: "app-store",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\""
+  )
+end
+
+lane :build_tu_archive do |options|
+  clear_derived_data(derived_data_path: ENV['GYM_DERIVED_DATA_PATH'])
+
+  match(type: "appstore")
+
+  gym(
+    skip_build_archive: false,
+    skip_package_ipa: true,
+    export_method: "app-store",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"DEFAULT_ENVIRONMENT_TU\""
+  )
+end
+
+lane :build_ru_archive do |options|
+  clear_derived_data(derived_data_path: ENV['GYM_DERIVED_DATA_PATH'])
+
+  match(type: "appstore")
+
+  gym(
+    skip_build_archive: false,
+    skip_package_ipa: true,
+    export_method: "app-store",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"DEFAULT_ENVIRONMENT_RU\""
+  )
+end
+
+lane :build_simulator_archive do |options|
+  clear_derived_data(derived_data_path: ENV['GYM_DERIVED_DATA_PATH'])
+
+  gym(
+    skip_codesigning: true,
+    skip_build_archive: false,
+    skip_package_ipa: true,
+    export_method: "development",
+    archive_path: "./distribution/eRPApp_simulator_#{build_version}.xcarchive",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) ENABLE_DEBUG_VIEW TEST_ENVIRONMENT\" SUPPORTED_PLATFORMS=iphonesimulator"
+  )
+end
+
+lane :build_archive_with_debug_screen do |options|
+  clear_derived_data(derived_data_path: ENV['GYM_DERIVED_DATA_PATH'])
+
+  match(type: "appstore")
+
+  gym(
+    skip_build_archive: false,
+    skip_package_ipa: true,
+    export_method: "app-store",
+    archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) ENABLE_DEBUG_VIEW TEST_ENVIRONMENT\""
+  )
+end
+
+before_all do |lane, options|
+  load_keychain
+
+  GEMATIK_INTERNAL_ENVIRONMENT = File.exist? File.expand_path("../Gemfile.internal.lock")
+end
+
+after_all do |lane, options|
+  remove_keychain
+end
+
+error do |lane, exception, options|
+  remove_keychain
+end
+
+def load_keychain
+  remove_keychain
+
+  create_keychain(
+    name: "gematik",
+    password: "gematikpassword",
+    unlock: true,
+    timeout: 0
+  )
+end
+
+def remove_keychain
+  if File.exist? File.expand_path("~/Library/Keychains/gematik-db")
+    delete_keychain(name: "gematik") 
+  end
+end
+
+def git_version()
+  short_hash = last_git_commit[:abbreviated_commit_hash]
+  dirty = sh("git diff --quiet || echo '-dirty'").strip!
+
+  "#{short_hash}#{dirty}"
+end
+
+def build_version()
+  ENV['BUILD_NUMBER'] || 'LOCAL_BUILD'
+end
+
+def randomWord(length)
+  return ('a'..'z').to_a.shuffle[0,length].join
+end
+
+def isDryRun(options)
+  if options[:dry_run]
+    dry_run = true
+  elsif !ENV['G_PUBLISH_DRY_RUN'].nil?
+    dry_run = true?(ENV['G_PUBLISH_DRY_RUN'])
+  else
+    dry_run = false
+  end
+  return dry_run
+end
+
+lane :update_localization do |option|
+  lokalise(
+    project_identifier: ENV['LOCALISE_PROJECT_ID'],
+    destination: "./Sources/eRpApp/Resources/",
+    languages: ["de", "en_GB", "tr", "ru", "ar", "uk", "pl", "bg", "da", "he_IL", "cs", "nl", "it", "ro"],
+    include_comments: false,
+    use_original: true
+  )
+
+  languages = ["de", "en-GB", "tr", "ru", "ar", "uk", "pl", "bg", "da", "he-IL", "cs", "nl", "it", "ro"]
+  for language_code in languages
+    sh "sort ../Sources/eRpApp/Resources/#{language_code}.lproj/Localizable.strings -o ../Sources/eRpApp/Resources/#{language_code}.lproj/Localizable.strings"
+    sh "plutil -convert xml1 ../Sources/eRpApp/Resources/#{language_code}.lproj/Localizable.stringsdict"
+  end
+end
+
+desc "Build AdHoc Version against TU Environment"
+lane :build_tu_version do |option|
+  build_tu_archive
+
+  sign_adhoc
+
+  if is_ci
+    appcenter_upload(app_name: "eRezept-iOS", release_notes: "TU Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}")
+    notify_teams_channel(ENV["TEAMS_WEBHOOK_RELEASE"], "TU Version")
+  end
+
+  sh "cd .. && mkdir -p artifacts/appstorebuild_tu/ && rm -rf artifacts/appstorebuild_tu/* && mv distribution artifacts/appstorebuild_tu/; cd - "
+end
+
+desc "Build AdHoc Version against RU Environment"
+lane :build_ru_version do |option|
+  build_ru_archive
+
+  sign_adhoc
+
+  if is_ci
+    appcenter_upload(app_name: "eRezept-iOS", release_notes: "RU Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}")
+    notify_teams_channel(ENV["TEAMS_WEBHOOK_RELEASE"], "RU Version")
+  end
+
+  sh "cd .. && mkdir -p artifacts/appstorebuild_ru/ && rm -rf artifacts/appstorebuild_ru/* && mv distribution artifacts/appstorebuild_ru/; cd - "
+end
+
+desc "Build, sign and upload the iOS eRezeptApp to Testflight"
+lane :publish do |options|
+  build_archive
+
+  sign_adhoc
+  if is_ci
+    appcenter_upload(app_name: "eRezept-iOS", release_notes: "PU Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}")
+    notify_teams_channel(ENV["TEAMS_WEBHOOK_RELEASE"], "PU Version")
+  end
+
+  sign_appstore
+
+  dry_run = isDryRun(options)
+  UI.message("Live run") unless dry_run
+  UI.message("Dry run") if dry_run
+  app_store_connect_api_key(
+    issuer_id: "69a6de92-74a9-47e3-e053-5b8c7c11a4d1"
+  )
+
+  upload_to_testflight(
+    ipa: "./distribution/eRPApp_#{build_version}_store.ipa",
+    skip_submission: true,
+    apple_id: '1511792179',
+    dev_portal_team_id: "A9FL89PFFL",
+    skip_waiting_for_build_processing: true
+  ) unless dry_run
+
+  sh "cd .. && mkdir -p artifacts/appstorebuild_pu/ && rm -rf artifacts/appstorebuild_pu/* && mv distribution artifacts/appstorebuild_pu/; cd - "
+end
+
+lane :publish_release_information do |options|
+  url = ENV["TEAMS_WEBHOOK_RELEASE"]
+  version = `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
+  gitlab_login()
+  release_notes = sh("cd .. && git fetch --tags -q && glab changelog generate --from $(git tag | grep -E \"^[1-9]\\d*\.(?:0|[1-9]\\d*)\.(?:0|[1-9]\\d*)$\" | sort -Vr | head -n 1) --version #{version}")
+
+  message_card = {
+    'version' => "#{version} (#{ENV['BUILD_NUMBER']}##{git_version})",
+    'release_notes' => release_notes.to_json,
+    'builds' => [],
+    'jira' => "https://service.gematik.de/issues?jql=project%20%3D%20eRx-App%20AND%20fixVersion%20%3D%20%22iOS%20#{version}%22%20AND%20type%20not%20in%20(%27Test%27)%20ORDER%20BY%20priority%20DESC%2C%20key%20ASC"
+  }
+
+  Dir.glob("../artifacts/appstorebuild_*/distribution/*_#{build_version}.json").each do |filepath|
+    file = File.open(filepath)
+    information = JSON.load(file)
+    message_card['builds'].append(
+      {
+        'stream' => information['stream'],
+        'url' => information['url']
+      }
+    )
+  end
+
+  if file = File.open("../artifacts/cibuild/distribution/build_info_#{build_version}.json") then
+    information = JSON.load(file)
+    message_card['devbuild'] = information['url']
+  end
+
+  erb_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'release_teams_card.json.erb')
+  erb = ERB.new(File.read(erb_path))
+
+  payload = erb.result(binding)
+
+  puts payload
+
+  # Send message
+  UI.message("Send notification to #{url}")
+  require 'net/http'
+  require 'uri'
+  json_headers = { 'Content-Type' => 'application/json' }
+  uri = URI.parse(url)
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+  response = http.post(uri.path, payload, json_headers)
+  if response.code.to_i == 200 && response.body.to_i == 1
+    UI.message("🍾 The message was sent successfully")
+    true
+  else
+    UI.user_error!("⚠️ An error occurred: #{response.body}")
+  end
+
+end
+
+def add_mr_note_if_possible
+  if ENV['CHANGE_ID'] && !lane_context[SharedValues::APPCENTER_BUILD_INFORMATION].nil?
+    mr = ENV['CHANGE_ID']
+    app_name = lane_context[SharedValues::APPCENTER_BUILD_INFORMATION]['app_name']
+    id = lane_context[SharedValues::APPCENTER_BUILD_INFORMATION]['id']
+    owner = ENV['APPCENTER_OWNER_NAME']
+    appcenter_url = "https://install.appcenter.ms/orgs/#{owner}/apps/#{app_name}/releases/#{id}"
+    gitlab_login()
+    sh("glab mr note #{mr} --message \"[Download Test Version in AppCenter](#{appcenter_url}) or scan [QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=#{ERB::Util.url_encode(appcenter_url)})\"")
+  end
+end
+
+def update_minor_version(version)
+  major, minor, patch = version.split('.').map(&:to_i)
+  minor += 1 # Increment the minor part
+  "#{major}.#{minor}.0" # Return the updated version string
+end
+
+def update_patch_version(version)
+  major, minor, patch = version.split('.').map(&:to_i)
+  patch += 1 # Increment the minor part
+  "#{major}.#{minor}.#{patch}" # Return the updated version string
+end
+
+def flatten_version(version)
+  major, minor, patch = version.split('.').map(&:to_i)
+  "#{major}.#{minor}.0" # Return the updated version string
+end
+
+lane :bump_patch_version do |options|
+  current_version = `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
+  new_version = update_patch_version(current_version)
+
+  sh "cd .. && /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString \\\"#{new_version}\\\"\" ./Sources/Konny/Resources/Info.plist; cd -"
+  sh "cd .. && /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString \\\"#{new_version}\\\"\" ./App/Sources/Resources/Info.plist; cd -"
+end
+
+lane :bump_minor_version do |options|
+  current_version = `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
+  new_version = update_minor_version(current_version)
+
+  sh "cd .. && /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString \\\"#{new_version}\\\"\" ./Sources/Konny/Resources/Info.plist; cd -"
+  sh "cd .. && /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString \\\"#{new_version}\\\"\" ./App/Sources/Resources/Info.plist; cd -"
+
+  pull_environment_variables(version: new_version)
+end
+
+desc "Pull the API keys and the static shared environment variables the respective repositories."
+desc "This lane uses the **`pull_api_keys`** and **`pull_shared_environment_variables`** actions"
+desc "###Options"
+desc " * **`version`**: Version of the employed API keys. When not set, the version is read from the Info.plist file"
+desc " * **`puOnly`**: When set to true, only the API keys and environment variables for PU are pulled"
+desc ""
+lane :pull_environment_variables do |options|
+  if GEMATIK_INTERNAL_ENVIRONMENT # has been evaluated in `before_all`
+    pull_api_keys options
+    pull_shared_environment_variables options
+  end
+end
+
+desc "Pull the API keys from the restricted repositories and write them in a parseble format to a file"
+desc "This lane uses the **`api_key_update`** action"
+desc "###Options"
+desc " * **`version`**: Version of the employed API keys. When not set, the version is read from the Info.plist file"
+desc ""
+lane :pull_api_keys do |options|
+  version = options[:version]
+  puOnly = options[:puOnly] # when building for PU only, the API keys for RU and TU should not be included
+  output_file = './development.apikeys.env'
+
+  if version.nil? || version.empty?
+    version = `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
+  end
+
+  # remove patch version ("1.21.1" -> "1.21") since we use the same API key for all patch versions of a minor version
+  # and in the given document there are only versions like "1.21.0"
+  version = flatten_version(version)
+
+  if puOnly
+    fd_environments = 'PU' 
+    apovzd_environments = 'PU'
+  else
+    fd_environments = 'TU, RU, PU'
+    apovzd_environments = 'RU, PU'
+  end
+
+  api_key_pull_into_file(
+    version: "iOS #{version}",
+    fd_environments: fd_environments,
+    apovzd_environments: apovzd_environments,
+    output_file: output_file
+  )
+end
+
+desc "Pull the data from the ERP shared repository and replace the correspoding files with the updated ones"
+desc "Note: Incomplete (more actions/files needed)"
+desc ""
+lane :pull_erp_shared_data do
+  health_insurance_contacts(
+    replace_file_path: './Sources/eRpApp/Resources/health_insurance_contacts.json',
+    transform_to_json_format: true
+  )
+end
+
+desc "Pull the shared environment variables from the shared repositoriy and write them in a parseble format to a file"
+desc "This lane uses the **`pull_environment_varibles_into_file`** action"
+desc ""
+lane :pull_shared_environment_variables do |options|
+  puOnly = options[:puOnly] # when building for PU only, the other environment variables should not be included
+  output_file = './development.static.env'
+
+  if puOnly
+    environments = 'PU' 
+  else
+    environments = 'TU, RU, PU, GEMATIK_DEV, GEMATIK_QS, GEMATIK_PROD'
+  end
+
+  pull_environment_varibles_into_file(
+    environments: environments,
+    output_file: output_file
+  )
+end
 
 def notify_teams_channel(url = "no_hook", stream = "Unknown stream", success = true, optional_message = "")
   install_facts = []
@@ -1085,6 +1617,15 @@ def notify_teams_channel(url = "no_hook", stream = "Unknown stream", success = t
   else
     UI.user_error!("⚠️ An error occurred: #{response.body}")
   end
+end
+
+def gitlab_login()
+  gitlab_api_token = ENV['GITLAB_API_TOKEN']
+  gitlab_api_token = prompt(text: "GITLAB_API_TOKEN not set, please specify") unless gitlab_api_token
+  gitlab_hostname = ENV['GITLAB_HOSTNAME']
+  gitlab_hostname = prompt(text: "GITLAB_HOSTNAME not set, please specify") unless gitlab_hostname
+
+  sh("glab auth login --token #{gitlab_api_token} --hostname #{gitlab_hostname}")
 end
 
 def shiba_inu()

@@ -27,21 +27,16 @@ import XCTest
 final class OnboardingSnapshotTests: ERPSnapshotTestCase {
     let next: (() -> Void) = {}
 
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testOnboardingStartView() {
         let sut = OnboardingStartView()
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testOnboardingAnalyticsView() {
         let sut = OnboardingAnalyticsView(action: next)
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testOnboardingRegisterAuthenticationView_NoBiometrics() {
@@ -61,7 +56,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             }
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testOnboardingRegisterAuthenticationView_WithSelectedFaceId() {
@@ -78,7 +73,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             }
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testOnboardingRegisterAuthenticationView_WithSelectedPasswordOption() {
@@ -95,7 +90,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             }
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testOnboardingRegisterAuthenticationView_WithNonEqualPasswords() {
@@ -115,7 +110,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
 
         let sut = OnboardingRegisterAuthenticationView(store: store)
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testOnboardingRegisterAuthenticationView_WithInsufficientPasswordStrength() {
@@ -135,7 +130,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
 
         let sut = OnboardingRegisterAuthenticationView(store: store)
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testOnboardingRegisterAuthenticationView_WithNoSelectionError() {
@@ -153,7 +148,7 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             }
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testOnboardingLegalInfoView() {
@@ -164,6 +159,6 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
             action: next
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 }

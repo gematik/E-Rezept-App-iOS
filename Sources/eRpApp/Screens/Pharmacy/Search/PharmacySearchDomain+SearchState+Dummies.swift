@@ -60,45 +60,57 @@ extension PharmacySearchDomain {
             }
 
         static let stateEmpty = State(
+            selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: [],
+            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .searchResultEmpty
         )
 
         static let stateSearchResultOk = State(
+            selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmaciesLocationViewModel,
+            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .searchResultOk
         )
 
         static let stateSearchRunning = State(
+            selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             searchText: "Apotheke",
             pharmacies: [],
+            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .searchRunning
         )
         static let stateFilterItems = State(
+            selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             pharmacies: [],
+            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([
                 PharmacySearchFilterDomain.PharmacyFilterOption.delivery,
             ])
         )
         static let stateError = State(
+            selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             pharmacies: [],
+            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .error
         )
         static let stateStartView = State(
+            selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmaciesLocationViewModel,
+            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .startView(loading: false)
             // .searchResultOk(pharmaciesLocationViewModel)

@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Klaar";
 "dmc_txt_code_multiple" = "Ophaalcode";
 "dmc_txt_code_single" = "Enkele code";
+"dmc_txt_number_medications_%d" = "%d medicatie(s)";
+"dmc_txt_share_message_%@" = "Er is via de e-receptenapp een receptcode voor de volgende medicijnen gedeeld: %@";
 "dtl_btn_copy_clipboard" = "Kopiëren";
 "dtl_btn_delete_disabled_note" = "Het recept wordt momenteel verwerkt door een apotheek en kan niet worden verwijderd.";
 "dtl_btn_delete_medication" = "Verwijderen van dit apparaat";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Receptenscanner openen";
 "erx_title" = "Recepten";
 "erx_txt_authored" = "Weergegeven";
+"erx_txt_claimed_at_%@" = "Uitgegaan van %@";
 "erx_txt_current" = "Huidig";
 "erx_txt_expired_on_%@" = "Over de datum op %@";
 "erx_txt_forced_update_alert_description" = "Optimaliseer uw app-ervaring door de app te updaten.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "archief";
 "erx_txt_refresh_loading" = "Laadt …";
 "erx_txt_scanned_at_%@" = "Gescand: %@";
+"erx_txt_self_payer" = "Geen vergoeding van kosten";
+"erx_txt_sent_at_%@" = "Verstuurd %@";
 "hint_btn_close" = "dichtbij";
 "hint_btn_open_scn" = "Scanner openen";
 "hint_btn_try_demo_mode" = "Start de demomodus";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Winkelwagen is klaar";
 "ord_detail_shipment_link_btn" = "Winkelwagen openen";
 "ord_detail_shipment_link_text" = "Ga naar de website van de apotheek om de bestelling af te ronden.";
-"ord_detail_txt_%@_send_to_%@" = "%@ verzonden naar %@ . Het digitale aflossingsproces is voor veel apotheken nog onbekend. Mocht u morgen nog niets gehoord hebben, dan adviseren wij u uit voorzorg even te bellen voor navraag.";
+"ord_detail_txt_%@_send_to_%@" = "%@ verzonden naar %@ . Sommige apotheken beschikken nog niet over een digitale antwoordmogelijkheid. Indien er morgen geen reactie is, verzoeken wij u uit voorzorg te bellen.";
 "ord_detail_txt_charge_item%@" = "U heeft een betalingsbewijs ontvangen voor de kosten van uw medicatie %@ .";
 "ord_detail_txt_contact" = "Contactmogelijkheden";
 "ord_detail_txt_contact_email" = "Email schrijven";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Netnummer en telefoonnummer";
 "pha_contact_txt_street" = "straat en huisnummer";
 "pha_contact_txt_zip" = "Postcode";
-"pha_detail_btn_delivery" = "bezorger\n kiezen";
+"pha_detail_btn_delivery" = "Koerier";
 "pha_detail_btn_footer" = "Kom meer te weten";
 "pha_detail_btn_healthcare_service" = "Koeriersdienst aanvragen";
 "pha_detail_btn_location" = "Reserveren voor afhalen";
 "pha_detail_btn_login_note" = "Inwisselen alleen mogelijk na aanmelding";
+"pha_detail_btn_open_mail" = "Email schrijven";
+"pha_detail_btn_open_map" = "Route hier";
+"pha_detail_btn_open_phone" = "Telefoongesprek";
 "pha_detail_btn_organization" = "Laat het via verzending bezorgen";
-"pha_detail_btn_pickup" = "verzameling\n kiezen";
-"pha_detail_btn_shipment" = "Verzending\n kiezen";
+"pha_detail_btn_pickup" = "ophalen";
+"pha_detail_btn_shipment" = "Verzending";
 "pha_detail_contact" = "Contact";
-"pha_detail_hint_message" = "Houd er rekening mee dat er ook extra betalingen van toepassing kunnen zijn voor voorgeschreven medicijnen.";
 "pha_detail_hint_not_erx_ready_message" = "U kunt nog geen e-recepten naar deze apotheek sturen.";
 "pha_detail_hint_not_erx_ready_pic" = "Apotheker houdt medicijnen vast";
 "pha_detail_hint_not_erx_ready_title" = "Alleen ter plaatse inwisselen";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Let op voor apotheken: Wij verkrijgen de contactgegevens en informatie over apotheken van ";
 "pha_detail_txt_no_prescription_toast" = "U hoeft geen recepten in te vullen.";
+"pha_detail_txt_open_hour_today" = "Vandaag";
+"pha_detail_txt_open_hour_tomorrow" = "Morgen";
 "pha_detail_txt_subtitle_fallback" = "Apotheek";
 "pha_detail_txt_title" = "Details";
 "pha_detail_web" = "website";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Optellen bij";
 "pha_redeem_btn_change_pharmacy" = "Wijziging";
 "pha_redeem_btn_change_prescription" = "Wijziging";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Bestelling annuleren";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Ga verder zonder dit recept";
 "pha_redeem_btn_redeem" = "Inwisselen";
 "pha_redeem_btn_redeem_footnote" = "Hiermee wordt uw recept naar deze apotheek gestuurd. Het is niet mogelijk om het bij een andere apotheek in te wisselen.";
 "pha_redeem_btn_select_pharmacy" = "Kies apotheek";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Activeren";
 "prsc_dtl_btn_pkv_invoice" = "Kostenontvangst";
 "prsc_dtl_btn_redeem" = "Naar apotheek sturen";
+"prsc_dtl_btn_self_payer" = "Geen vergoeding van kosten";
 "prsc_dtl_btn_share" = "Splitsen";
 "prsc_dtl_btn_share_title" = "Splitsen";
 "prsc_dtl_btn_show_matrix_code" = "Toon code";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Gescand recept";
 "prsc_dtl_dr_substitution_info_description" = "Apothekers zijn verplicht voorrang te geven aan de verstrekking van geneesmiddelen waarvoor de zorgverzekeraar van de patiënt een kortingsovereenkomst heeft gesloten met de geneesmiddelenfabrikanten. Dit geldt alleen niet als de arts ‘Aut idem’ op het recept uitsluit, wat bij uw recept niet het geval is.";
 "prsc_dtl_dr_substitution_info_title" = "Vervangingsvoorbereiding mogelijk";
+"prsc_dtl_drawer_self_payer_info_header" = "Geen vergoeding van kosten";
+"prsc_dtl_drawer_self_payer_info_message" = "De zorgverzekering vergoedt in de regel niet de kosten voor dit recept. U bent als patiënt dus zelf verantwoordelijk voor de volledige betaling. Of de kosten vergoed worden vanuit een aanvullende verzekering of wettelijke uitkering moet individueel worden gecontroleerd.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Open healthy.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Op het Nationaal Gezondheidsportaal vindt u deskundig geverifieerde informatie over ziekten, ICD-codes en preventie- en zorgonderwerpen.";
 "prsc_dtl_med_ingredient_name" = "Naam van actief ingrediënt";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-Answerden";
 "prsc_fd_txt_substitution_title" = "Vervangingsvoorbereiding mogelijk";
 "prsc_redeem_note_direct_assignment" = "Dit recept wordt voor u ingewisseld als onderdeel van een behandeling.";
-"prsc_status_canceled" = "Geannuleerd";
+"prsc_status_canceled" = "Verwijderd";
 "prsc_status_completed" = "Ingewisseld";
 "prsc_status_direct_assigned" = "Wordt voor u ingewisseld";
 "prsc_status_error" = "Verkeerd recept";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "De ingevoerde straat overschrijdt de maximaal toegestane lengte van %@ tekens.";
 "riv_ti_invalid_zip_%@" = "De ingevoerde postcode overschrijdt de maximaal toegestane lengte van %@ tekens.";
 "riv_ti_wrong_version" = "Ongeldig versienummer.";
-"rph_btn_close_alert_keep" = "Niet ingewisseld";
-"rph_btn_close_alert_mark_redeemed" = "Ingewisseld";
-"rph_txt_close_alert_message" = "Wil je dit recept als ingewisseld markeren?";
-"rph_txt_close_alert_title" = "Recept gevuld?";
 "rph_txt_matrixcode_hint" = "Laat deze receptcode scannen bij uw apotheek.";
 "rph_txt_subtitle" = "Laat deze receptcode scannen bij uw apotheek.";
 "rph_txt_title" = "Receptcode";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Uw apparaat heeft mogelijk een verminderde beveiliging";
 "section_txt_is_active_value" = "Geselecteerd";
 "section_txt_is_inactive_value" = "Niet geselecteerd";
+"self_payer_warning_txt_ending" = "Uw verzekering vergoedt geen kosten.";
+"self_payer_warning_txt_message_single" = "Uw verzekering vergoedt geen kosten voor dit recept.";
+"self_payer_warning_txt_solo" = "Uw verzekering vergoedt geen kosten voor dit recept.";
 "service_txt_consent_alert_login" = "Register";
 "service_txt_consent_alert_okay" = "OK";
 "service_txt_consent_alert_retry" = "Probeer het nog eens";

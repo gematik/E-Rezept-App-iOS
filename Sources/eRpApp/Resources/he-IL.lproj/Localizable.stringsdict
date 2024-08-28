@@ -122,6 +122,46 @@
 			<string></string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>לא ניתן לממש מרשם</string>
+			<key>other</key>
+			<string>לא ניתן לממש מרשמים</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>המתכון %% @ אינו ניתן עוד למימוש. ייתכן שכבר מימשת אותו באמצעי אחר או שהוא נמחק.</string>
+			<key>other</key>
+			<string>לא ניתן עוד לממש את המתכונים הבאים: %% @. ייתכן שכבר מימשת אותם באמצעים אחרים או שהם נמחקו.</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -158,6 +198,26 @@
 			<string>סיים, הוסף מתכון</string>
 			<key>other</key>
 			<string>סיימת, הוסף מתכונים</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>הביטוח שלך לא יכסה כל עלויות עבור %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>המרשם</string>
+			<key>other</key>
+			<string>את המרשמים</string>
 			<key>two</key>
 			<string></string>
 		</dict>

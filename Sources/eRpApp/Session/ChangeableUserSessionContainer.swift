@@ -21,8 +21,8 @@ import Dependencies
 import eRpKit
 import eRpLocalStorage
 import Foundation
-import GemCommonsKit
 import IDP
+import OSLog
 
 protocol UsersSessionContainer {
     var userSession: UserSession { get }
@@ -83,12 +83,14 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
     }
 
     func switchToDemoMode() {
-        DLog("will switch to demo mode")
+        Logger.eRpApp.debug("will switch to demo mode")
+
         currentSession.send(UserMode.demo(DemoSessionContainer(schedulers: schedulers)))
     }
 
     func switchToStandardMode() {
-        DLog("will switch to standard mode")
+        Logger.eRpApp.debug("will switch to standard mode")
+
         currentSession.send(currentProfileUserSession.userSession)
     }
 }

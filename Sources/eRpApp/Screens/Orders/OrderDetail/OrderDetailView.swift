@@ -45,7 +45,9 @@ struct OrderDetailView: View {
 
                     VStack(alignment: .leading, spacing: 0) {
                         ForEach(store.timelineEntries) { entry in
-                            OrderMessageView(store: store, timelineEntry: entry, style: style(for: entry))
+                            WithPerceptionTracking {
+                                OrderMessageView(store: store, timelineEntry: entry, style: style(for: entry))
+                            }
                         }
                         .accessibilityElement(children: .contain)
                         .accessibility(identifier: A11y.orderDetail.list.ordDetailTxtMsgList)
@@ -84,6 +86,7 @@ struct OrderDetailView: View {
                 } label: {
                     EmptyView()
                 }
+                .hidden()
                 .accessibility(hidden: true)
 
                 // charge item detail
@@ -96,6 +99,7 @@ struct OrderDetailView: View {
                     )) { store in
                         ChargeItemView(store: store)
                     }
+                    .hidden()
                     .accessibility(hidden: true)
 
                 // pickup code
@@ -107,6 +111,22 @@ struct OrderDetailView: View {
                         action: \.destination.pickupCode
                     )) { store in
                         PickupCodeView(store: store)
+                    }
+                    .hidden()
+                    .accessibility(hidden: true)
+
+                // pharmacy
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .sheet(item: $store.scope(state: \.destination?.pharmacyDetail,
+                                              action: \.destination.pharmacyDetail)) { store in
+                        if #available(iOS 16, *) {
+                            PharmacyDetailView(store: store)
+                                .presentationDetents([.fraction(0.53), .large])
+                        } else {
+                            PharmacyDetailView(store: store)
+                        }
                     }
                     .hidden()
                     .accessibility(hidden: true)

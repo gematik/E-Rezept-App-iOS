@@ -486,7 +486,13 @@ extension MainDomain.State {
 
 extension MatrixCodeDomain.State {
     func routeName() -> String? {
+        guard let destination = destination else {
             return nil
+        }
+        switch destination {
+            case let .sharePrescription(state: state):
+                return state.routeName() ?? destination.analyticsName
+        }
     }
 }
 
@@ -581,6 +587,8 @@ extension OrderDetailDomain.State {
             case let .prescriptionDetail(state: state):
                 return state.routeName() ?? destination.analyticsName
             case let .chargeItem(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .pharmacyDetail(state: state):
                 return state.routeName() ?? destination.analyticsName
             case .alert:
                 return destination.analyticsName
@@ -813,6 +821,8 @@ extension PrescriptionDetailDomain.State {
             case let .coPaymentInfo(state: state):
                 return state.routeName() ?? destination.analyticsName
             case let .emergencyServiceFeeInfo(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .selfPayerInfo(state: state):
                 return state.routeName() ?? destination.analyticsName
             case .toast:
                 return destination.analyticsName
@@ -1281,6 +1291,14 @@ extension MainDomain.Destination.State {
         }
     }
 }
+extension MatrixCodeDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .sharePrescription: 
+                return "sharePrescription"
+        }
+    }
+}
 extension MedicationDomain.Destination.State {
     var analyticsName: String {
         switch self {
@@ -1338,6 +1356,8 @@ extension OrderDetailDomain.Destination.State {
                 return Analytics.Screens.prescriptionDetail.name
             case .chargeItem: 
                 return Analytics.Screens.chargeItemDetails.name
+            case .pharmacyDetail: 
+                return Analytics.Screens.orders_pharmacyDetail.name
             case .alert: 
                 return Analytics.Screens.alert.name
         }
@@ -1480,6 +1500,8 @@ extension PrescriptionDetailDomain.Destination.State {
                 return Analytics.Screens.prescriptionDetail_coPaymentInfo.name
             case .emergencyServiceFeeInfo: 
                 return Analytics.Screens.prescriptionDetail_emergencyServiceFeeInfo.name
+            case .selfPayerInfo: 
+                return Analytics.Screens.prescriptionDetail_selfPayerPrescriptionBottomSheet.name
             case .toast: 
                 return Analytics.Screens.prescriptionDetail_toast.name
             case .medicationReminder: 

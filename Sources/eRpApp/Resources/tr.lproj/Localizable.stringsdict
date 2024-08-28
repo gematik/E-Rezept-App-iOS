@@ -110,6 +110,42 @@
 			<string></string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Reçete kullanılamaz</string>
+			<key>other</key>
+			<string>Reçeteler kullanılamaz</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>%% @ tarifi artık kullanılamıyor. Daha önce başka bir yöntemle kullanmış olabilirsiniz veya silinmiş olabilir.</string>
+			<key>other</key>
+			<string>Aşağıdaki tarifler artık kullanılamaz: %% @. Bunları zaten başka yollarla kullanmış olabilirsiniz veya silinmiş olabilir.</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -144,6 +180,24 @@
 			<string>Bitti, yemek tarifleri ekleyin</string>
 			<key>zero</key>
 			<string>[geçersiz]</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Sigortanız %#@variable_0@ %@ için hiçbir masrafı karşılamayacaktır. </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>reçete</string>
+			<key>other</key>
+			<string>reçeteler</string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

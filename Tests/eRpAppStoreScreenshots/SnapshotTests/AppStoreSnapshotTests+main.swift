@@ -148,7 +148,8 @@ extension ErxTask {
             phone: "555 1234567",
             status: "Mitglied",
             insurance: "AOK Rheinland/Hamburg",
-            insuranceId: "A123456789"
+            insuranceId: "A123456789",
+            coverageType: .GKV
         )
 
         static let demoPractitioner = ErxPractitioner(

@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Готов";
 "dmc_txt_code_multiple" = "Код на колекцията";
 "dmc_txt_code_single" = "Единичен код";
+"dmc_txt_number_medications_%d" = "%d лекарство(а)";
+"dmc_txt_share_message_%@" = "Беше ви споделен код на рецепта чрез приложението за електронна рецепта със следните лекарства: %@";
 "dtl_btn_copy_clipboard" = "копие";
 "dtl_btn_delete_disabled_note" = "В момента рецептата се обработва от аптека и не може да бъде изтрита.";
 "dtl_btn_delete_medication" = "Изтриване от това устройство";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Отворете скенера за рецепти";
 "erx_title" = "Рецепти";
 "erx_txt_authored" = "Показва";
+"erx_txt_claimed_at_%@" = "Предполага се %@";
 "erx_txt_current" = "Текущ";
 "erx_txt_expired_on_%@" = "Изтекъл на %@";
 "erx_txt_forced_update_alert_description" = "Оптимизирайте практическата работа с приложението си, като го актуализирате.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "архив";
 "erx_txt_refresh_loading" = "Зарежда се...";
 "erx_txt_scanned_at_%@" = "Сканирано: %@";
+"erx_txt_self_payer" = "Без възстановяване на разходите";
+"erx_txt_sent_at_%@" = "Изпратено %@";
 "hint_btn_close" = "близо";
 "hint_btn_open_scn" = "Отворете скенера";
 "hint_btn_try_demo_mode" = "Стартирайте демо режим";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Количката за пазаруване е готова";
 "ord_detail_shipment_link_btn" = "Отворете количката за пазаруване";
 "ord_detail_shipment_link_text" = "Моля, посетете уебсайта на аптеката, за да завършите поръчката.";
-"ord_detail_txt_%@_send_to_%@" = "%@ изпратени на %@ . Процесът на цифрово обратно изкупуване все още е непознат за много аптеки. Ако не получите отговор до утре, препоръчваме да се обадите, за да попитате като предпазна мярка.";
+"ord_detail_txt_%@_send_to_%@" = "%@ изпратени на %@ . Някои аптеки все още нямат опция за дигитален отговор. Ако до утре няма отговор, моля, обадете се като предпазна мярка.";
 "ord_detail_txt_charge_item%@" = "Получихте разписка за цената на вашето лекарство %@ .";
 "ord_detail_txt_contact" = "Опции за контакт";
 "ord_detail_txt_contact_email" = "Пишете имейл";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Код и телефонен номер";
 "pha_contact_txt_street" = "Улица и номер на къща";
 "pha_contact_txt_zip" = "Пощенски код";
-"pha_detail_btn_delivery" = "доставчик\n избирам";
+"pha_detail_btn_delivery" = "Куриер";
 "pha_detail_btn_footer" = "Научете повече";
 "pha_detail_btn_healthcare_service" = "Поискайте куриерска услуга";
 "pha_detail_btn_location" = "Резервация за вземане";
 "pha_detail_btn_login_note" = "Осребряването е възможно само след регистрация";
+"pha_detail_btn_open_mail" = "Пишете имейл";
+"pha_detail_btn_open_map" = "Маршрут тук";
+"pha_detail_btn_open_phone" = "Обадете се";
 "pha_detail_btn_organization" = "Доставете го чрез доставка";
-"pha_detail_btn_pickup" = "колекция\n избирам";
-"pha_detail_btn_shipment" = "Пратка\n избирам";
+"pha_detail_btn_pickup" = "Вдигни";
+"pha_detail_btn_shipment" = "Пратка";
 "pha_detail_contact" = "Контакт";
-"pha_detail_hint_message" = "Моля, обърнете внимание, че може да се прилагат допълнителни плащания и за предписани лекарства.";
 "pha_detail_hint_not_erx_ready_message" = "Все още не можете да изпращате електронни рецепти до тази аптека.";
 "pha_detail_hint_not_erx_ready_pic" = "Фармацевтът държи лекарства";
 "pha_detail_hint_not_erx_ready_title" = "Осребряване само на място";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Забележка за аптеките: Получаваме данните за контакт и информацията за аптеките от ";
 "pha_detail_txt_no_prescription_toast" = "Нямате рецепти за изпълнение.";
+"pha_detail_txt_open_hour_today" = "Днес";
+"pha_detail_txt_open_hour_tomorrow" = "Утре";
 "pha_detail_txt_subtitle_fallback" = "Аптека";
 "pha_detail_txt_title" = "Подробности";
 "pha_detail_web" = "уебсайт";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Добави към";
 "pha_redeem_btn_change_pharmacy" = "промяна";
 "pha_redeem_btn_change_prescription" = "промяна";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Отмени поръчката";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Продължете без тази рецепта";
 "pha_redeem_btn_redeem" = "Откупете";
 "pha_redeem_btn_redeem_footnote" = "Това ще изпрати вашата рецепта до тази аптека. Не е възможно да го осребрите в друга аптека.";
 "pha_redeem_btn_select_pharmacy" = "Изберете аптека";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Активирате";
 "prsc_dtl_btn_pkv_invoice" = "Разходна бележка";
 "prsc_dtl_btn_redeem" = "Изпратете в аптеката";
+"prsc_dtl_btn_self_payer" = "Без възстановяване на разходите";
 "prsc_dtl_btn_share" = "Сплит";
 "prsc_dtl_btn_share_title" = "Сплит";
 "prsc_dtl_btn_show_matrix_code" = "Показване на кода";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Сканирана рецепта";
 "prsc_dtl_dr_substitution_info_description" = "Фармацевтите са длъжни да отпускат с предимство лекарства, за които здравната каса на пациента е сключила договор за отстъпка с производителите на лекарства. Това не важи само ако лекарят изключи „Aut idem“ от рецептата, което не е случаят с вашата рецепта.";
 "prsc_dtl_dr_substitution_info_title" = "Възможна подготовка за смяна";
+"prsc_dtl_drawer_self_payer_info_header" = "Без възстановяване на разходите";
+"prsc_dtl_drawer_self_payer_info_message" = "По правило здравната застраховка не покрива разходите за тази рецепта. Следователно като пациент вие носите отговорност за пълното плащане. Дали разходите ще бъдат възстановени като част от допълнителна застраховка или законови обезщетения трябва да се провери индивидуално.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Отворете Health.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "В Националния здравен портал можете да намерите експертно проверена информация за заболявания, МКБ кодове и теми за профилактика и грижи.";
 "prsc_dtl_med_ingredient_name" = "Име на активната съставка";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen- Answeren";
 "prsc_fd_txt_substitution_title" = "Възможна подготовка за смяна";
 "prsc_redeem_note_direct_assignment" = "Тази рецепта ще бъде осребрена за вас като част от лечението.";
-"prsc_status_canceled" = "Отменен";
+"prsc_status_canceled" = "Изтрито";
 "prsc_status_completed" = "Изкупен";
 "prsc_status_direct_assigned" = "Ще бъде изкупено за вас";
 "prsc_status_error" = "Неправилна рецепта";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "Въведената улица надвишава максимално разрешената дължина от %@ знака.";
 "riv_ti_invalid_zip_%@" = "Въведеният пощенски код надвишава максимално допустимата дължина от %@ знака.";
 "riv_ti_wrong_version" = "Невалиден номер на версията.";
-"rph_btn_close_alert_keep" = "Не е изкупено";
-"rph_btn_close_alert_mark_redeemed" = "Изкупен";
-"rph_txt_close_alert_message" = "Искате ли да маркирате тази рецепта като осребрена?";
-"rph_txt_close_alert_title" = "Рецептата изпълнена?";
 "rph_txt_matrixcode_hint" = "Сканирайте този код на рецепта във вашата аптека.";
 "rph_txt_subtitle" = "Сканирайте този код на рецепта във вашата аптека.";
 "rph_txt_title" = "Код на рецепта";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Вашето устройство може да има намалена защита";
 "section_txt_is_active_value" = "Избрано";
 "section_txt_is_inactive_value" = "Не е избрано";
+"self_payer_warning_txt_ending" = "Вашата застраховка няма да покрие никакви разходи.";
+"self_payer_warning_txt_message_single" = "Вашата застраховка няма да покрие никакви разходи за тази рецепта.";
+"self_payer_warning_txt_solo" = "Вашата застраховка няма да покрие никакви разходи за тази рецепта.";
 "service_txt_consent_alert_login" = "Регистрирам";
 "service_txt_consent_alert_okay" = "Добре";
 "service_txt_consent_alert_retry" = "Опитай пак";

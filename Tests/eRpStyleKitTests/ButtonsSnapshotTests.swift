@@ -22,12 +22,6 @@ import SwiftUI
 import XCTest
 
 final class ButtonsSnapshotTests: XCTestCase {
-    override class func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func testButtons() {
         let sut = VStack(alignment: .leading, spacing: 16) {
             Spacer()
@@ -114,7 +108,7 @@ final class ButtonsSnapshotTests: XCTestCase {
         .background(Color(.systemBackground))
         .frame(width: 375)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testDestructiveButtons() {
@@ -203,7 +197,7 @@ final class ButtonsSnapshotTests: XCTestCase {
         .background(Color(.systemBackground))
         .frame(width: 375)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testImageButtons() {
@@ -265,6 +259,6 @@ final class ButtonsSnapshotTests: XCTestCase {
         .background(Color(.systemBackground))
         .frame(width: 375, height: 600)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 }

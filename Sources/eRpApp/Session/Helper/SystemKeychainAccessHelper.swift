@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import GemCommonsKit
+import OSLog
 import Security
 
 protocol KeychainAccessHelper {
@@ -234,8 +234,9 @@ struct SystemKeychainAccessHelper: KeychainAccessHelper {
             if status == errSecItemNotFound {
                 return nil
             }
-            let message = SecCopyErrorMessageString(status, nil).map { String($0) }
-            DLog(message ?? "unknown keychain error: \(status)")
+            let message = SecCopyErrorMessageString(status, nil)
+                .map { String($0) } ?? "unknown keychain error: \(status)"
+            Logger.eRpApp.debug("\(message)")
             throw KeychainAccessHelperError.keyChainError(status: status, message: message)
         }
 
@@ -249,7 +250,7 @@ struct SystemKeychainAccessHelper: KeychainAccessHelper {
         let status = SecItemDelete(query as CFDictionary)
 
         if let string = SecCopyErrorMessageString(status, nil).map({ String($0) }) {
-            DLog(string)
+            Logger.eRpApp.debug("\(string)")
         }
 
         return status == errSecSuccess
@@ -268,7 +269,7 @@ struct SystemKeychainAccessHelper: KeychainAccessHelper {
         let status = SecItemCopyMatching(query as CFDictionary, &item)
 
         if let string = SecCopyErrorMessageString(status, nil).map({ String($0) }) {
-            DLog(string)
+            Logger.eRpApp.debug("\(string)")
         }
 
         if status == errSecItemNotFound {
@@ -288,10 +289,9 @@ struct SystemKeychainAccessHelper: KeychainAccessHelper {
                                          kSecAttrService as String: service]
         let updateStatus = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
         if updateStatus != errSecSuccess {
-            let message = SecCopyErrorMessageString(updateStatus, nil).map { String($0) }
-            DLog(message ?? "no message")
-            throw KeychainAccessHelperError
-                .keyChainError(status: updateStatus, message: message ?? "no message")
+            let message = SecCopyErrorMessageString(updateStatus, nil).map { String($0) } ?? "no message"
+            Logger.eRpApp.debug("\(message)")
+            throw KeychainAccessHelperError.keyChainError(status: updateStatus, message: message)
         }
         return true
     }
@@ -305,10 +305,9 @@ struct SystemKeychainAccessHelper: KeychainAccessHelper {
 
         let createStatus = SecItemAdd(query as CFDictionary, nil)
         if createStatus != errSecSuccess {
-            let message = SecCopyErrorMessageString(createStatus, nil).map { String($0) }
-            DLog(message ?? "no message")
-            throw KeychainAccessHelperError
-                .keyChainError(status: createStatus, message: message ?? "no message")
+            let message = SecCopyErrorMessageString(createStatus, nil).map { String($0) } ?? "no message"
+            Logger.eRpApp.debug("\(message)")
+            throw KeychainAccessHelperError.keyChainError(status: createStatus, message: message)
         }
         return true
     }

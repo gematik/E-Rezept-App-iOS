@@ -27,6 +27,7 @@ extension ErxTaskPractitionerEntity {
         self.init(context: context)
 
         lanr = practitioner.lanr
+        zanr = practitioner.zanr
         name = practitioner.name
         qualification = practitioner.qualification
         email = practitioner.email
@@ -39,6 +40,7 @@ extension ErxPractitioner {
         guard let entity = entity else { return nil }
 
         self.init(lanr: entity.lanr,
+                  zanr: entity.zanr,
                   name: entity.name,
                   qualification: entity.qualification,
                   email: entity.email,

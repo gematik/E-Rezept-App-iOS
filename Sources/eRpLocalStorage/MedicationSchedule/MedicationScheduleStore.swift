@@ -21,7 +21,7 @@ import CombineSchedulers
 import CoreData
 import eRpKit
 import Foundation
-import GemCommonsKit
+import OSLog
 
 /// Handle for `MedicationSchedule` and `ErxTask` associated to a `MedicationSchedule.Entry.id`
 public struct MedicationScheduleFetchByEntryIdResponse: Equatable {
@@ -91,7 +91,7 @@ public class MedicationScheduleCoreDataStore: CoreDataCrudable, MedicationSchedu
         do {
             results = try context.fetch(request)
         } catch {
-            DLog("Error loading ErxTaskEntity")
+            Logger.eRpLocalStorage.debug("Error loading ErxTaskEntity")
         }
 
         guard let result = results.first else { return nil }

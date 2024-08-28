@@ -25,12 +25,6 @@ import SwiftUI
 import XCTest
 
 final class EditProfileSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func testEditProfileFigmaVariant1() {
         let sut = NavigationView {
             EditProfileView(
@@ -55,7 +49,7 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
         }
         .frame(width: 375, height: 1807, alignment: .center)
 
-        assertSnapshots(matching: sut, as: figmaReference())
+        assertSnapshots(of: sut, as: figmaReference())
     }
 
     func testEditProfileFigmaVariant2() {
@@ -83,7 +77,7 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
         }
         .frame(width: 375, height: 1807, alignment: .center)
 
-        assertSnapshots(matching: sut, as: figmaReference())
+        assertSnapshots(of: sut, as: figmaReference())
     }
 
     func testEditProfileFigmaVariant3() {
@@ -111,7 +105,7 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
         }
         .frame(width: 375, height: 1807, alignment: .center)
 
-        assertSnapshots(matching: sut, as: figmaReference())
+        assertSnapshots(of: sut, as: figmaReference())
     }
 
     func testEditProfileFilledWithImageSnapshot() {
@@ -134,9 +128,9 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testEditProfileFilledWithAcronymSnapshot() {
@@ -159,9 +153,9 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testEditProfileFilledWithConnectedProfileSnapshot() {
@@ -185,7 +179,7 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
         )
         .frame(width: 375, height: 1400)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testEditProfilePrivateInsuranceProfileSnapshot() {
@@ -210,6 +204,6 @@ final class EditProfileSnapshotTests: ERPSnapshotTestCase {
         )
         .frame(width: 375, height: 1400)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 }

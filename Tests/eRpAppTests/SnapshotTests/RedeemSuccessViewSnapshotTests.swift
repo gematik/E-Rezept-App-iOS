@@ -22,19 +22,14 @@ import SwiftUI
 import XCTest
 
 final class RedeemSuccessViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testRedeemSuccessViewSnapshotWithOnPremise() {
         let sut = NavigationView {
             RedeemSuccessView(store: RedeemSuccessDomain.Dummies.store(with: .onPremise))
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testRedeemSuccessViewSnapshotWithShipment() {
@@ -42,9 +37,9 @@ final class RedeemSuccessViewSnapshotTests: ERPSnapshotTestCase {
             RedeemSuccessView(store: RedeemSuccessDomain.Dummies.store(with: .shipment))
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testRedeemSuccessViewSnapshotWithDelivery() {
@@ -52,8 +47,8 @@ final class RedeemSuccessViewSnapshotTests: ERPSnapshotTestCase {
             RedeemSuccessView(store: RedeemSuccessDomain.Dummies.store(with: .delivery))
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

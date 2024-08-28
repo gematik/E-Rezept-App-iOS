@@ -80,7 +80,8 @@ extension ErxTask {
                     phone: "0177123456",
                     status: "ledig",
                     insurance: "AKK",
-                    insuranceId: "A123456789"
+                    insuranceId: "A123456789",
+                    coverageType: .PKV
                 ),
                 practitioner: practitioner,
                 organization: organization,
@@ -90,6 +91,7 @@ extension ErxTask {
 
         static let practitioner: ErxPractitioner = .init(
             lanr: "12343",
+            zanr: "56778",
             name: "Dr. Dr. med. Sauer",
             qualification: "all",
             email: "mail@praxis-dr-sauer.de",

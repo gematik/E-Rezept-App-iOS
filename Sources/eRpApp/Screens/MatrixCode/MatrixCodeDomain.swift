@@ -43,11 +43,12 @@ struct MatrixCodeDomain {
     @ObservableState
     struct State: Equatable {
         let type: MatrixCodeType
-        var isShowAlert = false
         var erxTasks: [ErxTask] = []
         var erxChargeItem: ErxChargeItem?
         var loadingState: ImageLoadingState = .idle
-        var zoomedInto: UUID?
+        var isMatrixCodeZoomed = false
+        var page = 0
+        @Presents var destination: Destination.State?
 
         struct IdentifiedImage: Equatable, Identifiable {
             let id: UUID
@@ -66,17 +67,23 @@ struct MatrixCodeDomain {
     }
 
     enum Action: Equatable {
-        case closeButtonTapped
-        case zoomButtonTapped(UUID?)
-        case closeZoomTapped
+        case pageChanged(Int)
+        case shareButtonTapped
+        case zoomButtonTapped
         case loadMatrixCodeImage(screenSize: CGSize)
-
+        case resetNavigation
         case response(Response)
+        case destination(PresentationAction<Destination.Action>)
 
         enum Response: Equatable {
             case matrixCodeImageReceived(ImageLoadingState)
             case redeemedOnSavedReceived(Bool)
         }
+    }
+
+    @Reducer(state: .equatable, action: .equatable)
+    enum Destination {
+        case sharePrescription(ShareSheetDomain)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
@@ -86,25 +93,45 @@ struct MatrixCodeDomain {
     @Dependency(\.erxTaskRepository) var taskRepository: ErxTaskRepository
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.dismiss) var dismiss
+    @Dependency(\.uuid) var uuid
+    @Dependency(\.imageGenerator) var imageGenerator: ImageGenerator
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
+            .ifLet(\.$destination, action: \.destination)
     }
-
-    @Dependency(\.uuid) var uuid
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case .closeButtonTapped:
-            return .run { _ in
-                await dismiss()
-            }
-        case let .zoomButtonTapped(imageId):
-            state.zoomedInto = imageId
+        case let .pageChanged(index):
+            state.page = index
             return .none
-        case .closeZoomTapped:
-            state.zoomedInto = nil
+        case .shareButtonTapped:
+            guard state.type == .erxTask,
+                  let matrixCodes = state.loadingState.value,
+                  matrixCodes.count > state.page else {
+                return .none
+            }
+            let currentMatrixCode = matrixCodes[state.page]
+            let medicationNames = currentMatrixCode.chunk?.compactMap { $0.medication?.displayName }
+                .joined(separator: " & ") ?? L10n.dmcTxtNumberMedicationsD(currentMatrixCode.chunk?.count ?? 0).text
+            state
+                .destination = .sharePrescription(
+                    ShareSheetDomain.State(
+                        string: L10n.dmcTxtShareMessage(medicationNames).text,
+                        url: currentMatrixCode.chunk?.shareUrl(),
+                        dataMatrixCodeImage: imageGenerator.addCaption(
+                            currentMatrixCode.image,
+                            currentMatrixCode.chunk?.count == 1 ? L10n.dmcTxtCodeSingle.text : L10n
+                                .dmcTxtCodeMultiple.text,
+                            medicationNames
+                        )
+                    )
+                )
+            return .none
+        case .zoomButtonTapped:
+            state.isMatrixCodeZoomed.toggle()
             return .none
         case let .loadMatrixCodeImage(screenSize):
             switch state.type {
@@ -152,6 +179,9 @@ struct MatrixCodeDomain {
                 )
             }
         case let .response(.matrixCodeImageReceived(loadingState)):
+            if let images = loadingState.value, !images.isEmpty {
+                UIScreen.main.brightness = CGFloat(1.0)
+            }
             state.loadingState = loadingState
             switch state.type {
             case .erxTask:
@@ -162,6 +192,11 @@ struct MatrixCodeDomain {
                 return .none
             }
         case .response(.redeemedOnSavedReceived):
+            return .none
+        case .destination:
+            return .none
+        case .resetNavigation:
+            state.destination = nil
             return .none
         }
     }

@@ -102,37 +102,41 @@ final class DefaultPrescriptionRepositoryTests: XCTestCase {
     }
 
     func testActivityIndicating() {
-        // given
-        let sut = DefaultPrescriptionRepository(
-            loginHandler: loginHandler,
-            erxTaskRepository: erxTaskRepository
-        )
-
-        loginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
-        let erxTasks = ErxTask.Fixtures.erxTasks
-        erxTaskRepository.loadRemoteAndSavedPublisher = Just(erxTasks)
-            .setFailureType(to: ErxRepositoryError.self)
-            .eraseToAnyPublisher()
-
-        var isActiveResult: [Bool] = []
-        // when
-        let isActiveCancelable = sut.isActive.sink { value in
-            isActiveResult.append(value)
-        }
-        expect(isActiveResult) == [false]
-        isActiveResult = []
-
-        sut.silentLoadRemote(for: nil)
-            .test(
-                expectations: { output in
-                    expect(output) == .prescriptions(ErxTask.Fixtures.erxTasks.map {
-                        Prescription(erxTask: $0, dateFormatter: UIDateFormatter.testValue)
-                    })
-                }
+        withDependencies {
+            $0.date = DateGenerator { Date() }
+        } operation: {
+            // given
+            let sut = DefaultPrescriptionRepository(
+                loginHandler: loginHandler,
+                erxTaskRepository: erxTaskRepository
             )
 
-        // then
-        expect(isActiveResult) == [true, false]
-        isActiveCancelable.cancel()
+            loginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
+            let erxTasks = ErxTask.Fixtures.erxTasks
+            erxTaskRepository.loadRemoteAndSavedPublisher = Just(erxTasks)
+                .setFailureType(to: ErxRepositoryError.self)
+                .eraseToAnyPublisher()
+
+            var isActiveResult: [Bool] = []
+            // when
+            let isActiveCancelable = sut.isActive.sink { value in
+                isActiveResult.append(value)
+            }
+            expect(isActiveResult) == [false]
+            isActiveResult = []
+
+            sut.silentLoadRemote(for: nil)
+                .test(
+                    expectations: { output in
+                        expect(output) == .prescriptions(ErxTask.Fixtures.erxTasks.map {
+                            Prescription(erxTask: $0, dateFormatter: UIDateFormatter.testValue)
+                        })
+                    }
+                )
+
+            // then
+            expect(isActiveResult) == [true, false]
+            isActiveCancelable.cancel()
+        }
     }
 }

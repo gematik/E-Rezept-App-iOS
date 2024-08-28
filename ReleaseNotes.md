@@ -1,3 +1,31 @@
+# Release 1.25.0
+
+### fixed (5 changes)
+
+- Fix multiple redeem triggers by adding blocking to redeem button
+- Fix UITests where in progress prescription should never be archived
+- Fix warning dialog not showing while using biometrics
+- Fixed archived prescriptions can be selected
+- Fix wrong direct assignment hint view
+
+### internal (4 changes)
+
+- Replace GemCommonsKit logging with OSLog
+- Add E2E Test trigger for nightly builds
+- Fix build for Xcode > beta 3
+- Change clientId to new value, remove old, no longer functional environments
+
+### added (4 changes)
+
+- Add share button to data matrix code view
+- Add pharmacy infos to order details
+- Add tap for dismiss for action toasts.
+- Add update for remote prescriptions before redeeming prescriptions
+
+### changed (1 change)
+
+- Change prescription status message to be more precise for status computed and inProgess
+
 # Release 1.24.0
 
 ### changed (2 changes)
@@ -27,7 +55,7 @@
 
 ### internal (2 changes)
 
- - Refactor environment configuration of App/IntergrationTests
+ - Refactor environment configuration of App/IntegrationTests
  - Replace zxingify-objc dependency with zxing-cpp
 
 # Release 1.23.1

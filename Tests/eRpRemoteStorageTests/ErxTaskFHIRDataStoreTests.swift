@@ -95,6 +95,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 expect(erxTask.medicationRequest.multiplePrescription?.totalNumber) == 4
                 expect(erxTask.medicationRequest.multiplePrescription?.startPeriod) == "2021-01-02"
                 expect(erxTask.medicationRequest.multiplePrescription?.endPeriod) == "2021-03-30"
+                expect(erxTask.patient?.name) == "Ludger Ludger Königsstein"
+                expect(erxTask.patient?.coverageType) == .GKV
             })
 
         // test if sub has been called

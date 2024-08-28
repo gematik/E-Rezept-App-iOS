@@ -39,9 +39,6 @@ final class TrustStoreIntegrationTests: XCTestCase {
         } else {
             environment = integrationTestsEnvironmentDummy // change me for manual testing
         }
-        if environment.appConfiguration == integrationTestsEnvironmentGMTKDEV.appConfiguration {
-            throw XCTSkip("Skip test because FD components in gematik_dev environment are unstable.")
-        }
 
         let storage = MemStorage()
         let session = DefaultTrustStoreSession(

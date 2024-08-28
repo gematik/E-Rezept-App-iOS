@@ -43,6 +43,7 @@ struct SelectionCell: View {
 
                     VStack(alignment: .leading) {
                         Text(text, bundle: .module)
+                            .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.body)
                             .foregroundColor(Colors.text)

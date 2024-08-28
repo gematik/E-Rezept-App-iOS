@@ -42,7 +42,8 @@ final class RedeemMethodsDomainTests: XCTestCase {
             phone: "555 1234567",
             status: "Mitglied",
             insurance: "AOK Rheinland/Hamburg",
-            insuranceId: "A123456789"
+            insuranceId: "A123456789",
+            coverageType: .GKV
         )
         let medication = ErxMedication(
             name: "Saflorblüten-Extrakt Pulver Peroral",
@@ -105,7 +106,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
     func testStore() -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         return TestStore(initialState: RedeemMethodsDomain
-            .State(prescriptions: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady])) {
+            .State(prescriptions: Shared([Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady]))) {
                 RedeemMethodsDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
@@ -132,8 +133,9 @@ final class RedeemMethodsDomainTests: XCTestCase {
         let store = testStore()
 
         let expectedState = PharmacySearchDomain.State(
-            selectedPrescriptions: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady],
+            selectedPrescriptions: Shared([Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady]),
             inRedeemProcess: true,
+            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([])
         )
 

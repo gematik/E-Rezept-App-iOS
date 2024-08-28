@@ -90,6 +90,7 @@ struct Prescription: Equatable, Identifiable {
         erxTask[keyPath: keyPath]
     }
 
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     static func evaluateViewStatus(
         for erxTask: ErxTask,
         type: PrescriptionType,
@@ -98,7 +99,29 @@ struct Prescription: Equatable, Identifiable {
         uiDateFormatter: UIDateFormatter
     ) -> Status {
         switch erxTask.status {
-        case .ready, .inProgress, .computed:
+        case .inProgress:
+            if let date = erxTask.lastModified?.date {
+                let localizedString = uiDateFormatter.relativeTime(from: date, formattingContext: .middleOfSentence)
+                return .open(until: L10n.erxTxtClaimedAt(localizedString).text)
+            } else {
+                return .open(until: L10n.erxTxtClaimedAt("").text)
+            }
+        case .computed(status: .waiting):
+            // swiftlint:disable:next todo
+            // TODO: `.computed(status: .sent)` is excluded because we do not store sent messages via AVS yet.
+
+            if let recentCommunication = erxTask.communications.filter({ $0.profile == .dispReq })
+                .compactMap(\.timestamp.date)
+                .max() {
+                let localizedString = uiDateFormatter.relativeTime(
+                    from: recentCommunication,
+                    formattingContext: .middleOfSentence
+                )
+                return .open(until: L10n.erxTxtSentAt(localizedString).text)
+            } else {
+                return .open(until: L10n.erxTxtSentAt("").text)
+            }
+        case .ready, .computed(status: .sent):
             if type == .scanned,
                let authoredOn = erxTask.authoredOn?.date {
                 let localizedDateString = uiDateFormatter.relativeDate(from: authoredOn)
@@ -348,7 +371,7 @@ extension Prescription {
         }
     }
 
-    var loadingIndicator: Bool {
+    var isLoading: Bool {
         switch (erxTask.status, viewStatus) {
         case (.computed(.waiting), _): return true
         default: return false
@@ -442,5 +465,7 @@ extension Prescription {
             .map { Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue) }
         static let prescriptionMVO = Prescription(erxTask: ErxTask.Demo.erxTask14,
                                                   dateFormatter: UIDateFormatter.previewValue)
+        static let prescriptionSelfPayer = Prescription(erxTask: ErxTask.Demo.erxTaskSelfPayer,
+                                                        dateFormatter: UIDateFormatter.previewValue)
     }
 }

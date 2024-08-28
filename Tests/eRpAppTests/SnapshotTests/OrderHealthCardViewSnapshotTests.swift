@@ -23,11 +23,6 @@ import SwiftUI
 import XCTest
 
 final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
-    override class func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testOrderHealthCardView() {
         let sut = OrderHealthCardListView(store:
             StoreOf<OrderHealthCardDomain>(
@@ -37,9 +32,9 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
                 EmptyReducer()
             })
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOrderHealthCardView_SelectedInsuranceNoContact() {
@@ -59,9 +54,9 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
             ) {
                 EmptyReducer()
             })
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOrderHealthCardView_SelectedInsurance() {
@@ -71,9 +66,9 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
             ) {
                 EmptyReducer()
             })
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOrderHealthCardView_ContactFull() {
@@ -85,9 +80,9 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
             ) {
                 EmptyReducer()
             })
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOrderHealthCardView_ContactEmpty() {
@@ -108,8 +103,8 @@ final class OrderHealthCardViewSnapshotTests: ERPSnapshotTestCase {
             ) {
                 EmptyReducer()
             })
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

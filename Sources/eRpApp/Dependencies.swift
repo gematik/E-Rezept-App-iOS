@@ -300,6 +300,21 @@ extension DependencyValues {
     }
 }
 
+import LocalAuthentication
+
+struct SecurityPolicyEvaluatorDependency: DependencyKey {
+    static let liveValue: SecurityPolicyEvaluator = LAContext()
+
+    static var testValue: SecurityPolicyEvaluator = UnimplementedSecurityPolicyEvaluator()
+}
+
+extension DependencyValues {
+    var securityPolicyEvaluator: SecurityPolicyEvaluator {
+        get { self[SecurityPolicyEvaluatorDependency.self] }
+        set { self[SecurityPolicyEvaluatorDependency.self] = newValue }
+    }
+}
+
 // MARK: Pharmacy
 
 import Pharmacy

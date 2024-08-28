@@ -1,0 +1,144 @@
+{
+    "fetchPharmacyByRecordings":
+    {
+        "type": "queue",
+        "payload":
+        [
+            {
+                "created": 742827752.591564,
+                "name": "Schloss Apotheke",
+                "telecom":
+                {
+                    "email": "test@test.de",
+                    "fax": "+40987654321",
+                    "phone": "+40987654321"
+                },
+                "countUsage": 0,
+                "isFavorite": false,
+                "address":
+                {
+                    "city": "Ingolfstadt",
+                    "street": "Hauptstr. 11",
+                    "zip": "12346"
+                },
+                "telematikID": "3-01.2.2023001.16.101",
+                "id": "b178c4e5-09f4-4db8-8f10-22628d37b9fa",
+                "types":
+                [
+                    "pharm",
+                    "outpharm",
+                    "delivery"
+                ],
+                "position":
+                {
+                    "latitude": 10.9447565,
+                    "longitude": 48.3536968
+                },
+                "status": "inactive",
+                "hoursOfOperation":
+                [
+                    {
+                        "daysOfWeek":
+                        [
+                            "mon",
+                            "tue",
+                            "wed",
+                            "thu",
+                            "fri"
+                        ],
+                        "openingTime": "08:00:00",
+                        "closingTime": "18:00:00"
+                    },
+                    {
+                        "daysOfWeek": ["sat"],
+                        "openingTime": "08:00:00",
+                        "closingTime": "14:00:00",
+                    }
+                ]
+            },
+            {
+                "created": 742827752.591564,
+                "name": "Schloss Apotheke",
+                "telecom":
+                {
+                    "email": "test@test.de",
+                    "fax": "+40987654321",
+                    "phone": "+40987654321"
+                },
+                "countUsage": 0,
+                "isFavorite": false,
+                "address":
+                {
+                    "city": "Ingolfstadt",
+                    "street": "Hauptstr. 11",
+                    "zip": "12346"
+                },
+                "telematikID": "3-01.2.2023001.16.101",
+                "id": "b178c4e5-09f4-4db8-8f10-22628d37b9fa",
+                "types":
+                [
+                    "pharm",
+                    "outpharm",
+                    "delivery"
+                ],
+                "position":
+                {
+                    "latitude": 10.9447565,
+                    "longitude": 48.3536968
+                },
+                "status": "inactive",
+                "hoursOfOperation":
+                [
+                    {
+                        "closingTime": "18:30:00",
+                        "daysOfWeek":
+                        [
+                            "mon"
+                        ],
+                        "openingTime": "08:00:00"
+                    },
+                    {
+                        "openingTime": "08:00:00",
+                        "closingTime": "18:30:00",
+                        "daysOfWeek":
+                        [
+                            "tue"
+                        ]
+                    },
+                    {
+                        "daysOfWeek":
+                        [
+                            "wed"
+                        ],
+                        "closingTime": "18:30:00",
+                        "openingTime": "08:00:00"
+                    },
+                    {
+                        "daysOfWeek":
+                        [
+                            "thu"
+                        ],
+                        "closingTime": "18:30:00",
+                        "openingTime": "08:00:00"
+                    },
+                    {
+                        "closingTime": "18:30:00",
+                        "openingTime": "08:00:00",
+                        "daysOfWeek":
+                        [
+                            "fri"
+                        ]
+                    },
+                    {
+                        "daysOfWeek":
+                        [
+                            "sat"
+                        ],
+                        "closingTime": "14:00:00",
+                        "openingTime": "08:00:00"
+                    }
+                ]
+            }
+        ]
+    }
+}

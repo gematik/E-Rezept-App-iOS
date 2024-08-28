@@ -102,7 +102,7 @@ struct PharmacySearchDomain {
     @ObservableState
     struct State: Equatable {
         /// A storage for the prescriptions that have been selected to be redeemed
-        var selectedPrescriptions: [Prescription] = []
+        @Shared var selectedPrescriptions: [Prescription]
         /// View can be called within the redeeming process or from the tab-bar.
         /// Boolean is true when called within redeeming process
         var inRedeemProcess: Bool
@@ -121,7 +121,7 @@ struct PharmacySearchDomain {
             searchText.count > 2
         }
 
-        var pharmacyRedeemState: PharmacyRedeemDomain.State?
+        @Shared var pharmacyRedeemState: PharmacyRedeemDomain.State?
         var pharmacySearchMapState: PharmacySearchMapDomain.State?
 
         var isLoading: Bool {
@@ -237,6 +237,7 @@ struct PharmacySearchDomain {
     @Dependency(\.locationManager) var locationManager: LocationManager
     @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
     @Dependency(\.searchHistory) var searchHistory: SearchHistory
+    @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
     // Control the current time for opening/closing determination. When not set current device time is used.
     let referenceDateForOpenHours: Date?
@@ -244,20 +245,6 @@ struct PharmacySearchDomain {
     init(referenceDateForOpenHours: Date? = nil) {
         self.referenceDateForOpenHours = referenceDateForOpenHours
     }
-
-    // swiftlint:disable:next todo
-    // TODO: move to UIDateFormatter and add dependency within the model where it's used
-    var timeOnlyFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        if let preferredLang = Locale.preferredLanguages.first,
-           preferredLang.starts(with: "de") {
-            dateFormatter.dateFormat = "HH:mm 'Uhr'"
-        } else {
-            dateFormatter.timeStyle = .short
-            dateFormatter.dateStyle = .none
-        }
-        return dateFormatter
-    }()
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -273,7 +260,7 @@ struct PharmacySearchDomain {
             return .none
         case .showMap:
             state.destination = .pharmacyMapSearch(.init(
-                selectedPrescriptions: state.selectedPrescriptions,
+                selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 currentUserLocation: state.currentLocation,
                 mapLocation: .manual(state.mapLocation)
@@ -330,7 +317,7 @@ struct PharmacySearchDomain {
                     pharmacy: $0.pharmacyLocation,
                     referenceLocation: centerLocation,
                     referenceDate: referenceDateForOpenHours,
-                    timeOnlyFormatter: timeOnlyFormatter
+                    timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
                 )
             }
 
@@ -343,7 +330,7 @@ struct PharmacySearchDomain {
             ))
 
             state.destination = .pharmacyMapSearch(.init(
-                selectedPrescriptions: state.selectedPrescriptions,
+                selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 currentUserLocation: state.currentLocation,
                 mapLocation: mapLocation,
@@ -364,7 +351,7 @@ struct PharmacySearchDomain {
                                     pharmacy: element,
                                     referenceLocation: currentLocation,
                                     referenceDate: referenceDateForOpenHours,
-                                    timeOnlyFormatter: timeOnlyFormatter
+                                    timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
                                 )
                             }
                         }
@@ -444,17 +431,18 @@ struct PharmacySearchDomain {
                     pharmacy: pharmacy,
                     referenceLocation: state.currentLocation,
                     referenceDate: referenceDateForOpenHours,
-                    timeOnlyFormatter: timeOnlyFormatter
+                    timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
                 )
                 state.detailsPharmacy = viewModel
 
                 state.destination = .pharmacyDetail(
                     PharmacyDetailDomain.State(
-                        selectedPrescriptions: state.selectedPrescriptions,
+                        prescriptions: Shared<[Prescription]>([]),
+                        selectedPrescriptions: state.$selectedPrescriptions,
                         inRedeemProcess: state.inRedeemProcess,
                         pharmacyViewModel: viewModel,
                         hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                        pharmacyRedeemState: state.pharmacyRedeemState
+                        pharmacyRedeemState: Shared(state.pharmacyRedeemState)
                     )
                 )
             case let .failure(error):
@@ -478,11 +466,12 @@ struct PharmacySearchDomain {
             state.detailsPharmacy = viewModel
 
             state.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                selectedPrescriptions: state.selectedPrescriptions,
+                prescriptions: Shared<[Prescription]>([]),
+                selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
                 hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                pharmacyRedeemState: state.pharmacyRedeemState
+                pharmacyRedeemState: Shared(state.pharmacyRedeemState)
             ))
             return .none
         case .destination(.presented(.redeemViaErxTaskRepository(.delegate(.closeRedeemView)))),
@@ -490,10 +479,12 @@ struct PharmacySearchDomain {
             guard let viewModel = state.detailsPharmacy else { return .none }
 
             state.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                selectedPrescriptions: state.selectedPrescriptions,
+                prescriptions: Shared<[Prescription]>([]),
+                selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
-                hasRedeemableTasks: !state.selectedPrescriptions.isEmpty
+                hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
+                pharmacyRedeemState: Shared<PharmacyRedeemDomain.State?>(nil)
             ))
             return .none
         case .destination(.presented(.redeemViaErxTaskRepository(.delegate(.close)))),
@@ -715,7 +706,7 @@ extension PharmacySearchDomain {
                         pharmacy: element,
                         referenceLocation: searchCriteria.location,
                         referenceDate: referenceDateForOpenHours,
-                        timeOnlyFormatter: timeOnlyFormatter
+                        timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
                     )
                 }
             }

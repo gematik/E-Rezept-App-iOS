@@ -328,6 +328,8 @@ orderDetail:
     - puc_txt_title
     - puc_txt_subtitle
     - puc_txt_hrCode
+  message:
+    - msg_txt_title
 mainScreen:
   - erx_btn_login
   - erx_btn_refresh
@@ -336,6 +338,7 @@ mainScreen:
   - erx_detailed_prescription_name
   - erx_detailed_prescription_validity
   - erx_detailed_multiple_prescription_index
+  - erx_detailed_self_payer
   - erx_detailed_status
   - erx_btn_profile
   - erx_img_profile
@@ -385,6 +388,7 @@ prescriptionDetails:
   - prsc_dtl_btn_headline_substitution_info
   - prsc_dtl_btn_scanned_prescription_info
   - prsc_dtl_btn_direct_assignment_info
+  - prsc_dtl_btn_self_payer_info
   - prsc_dtl_txt_prescription_validity
   - prsc_dtl_btn_prescription_validity_info
   - prsc_dtl_drawer_substitution_info
@@ -411,6 +415,7 @@ prescriptionDetails:
   - prsc_dtl_drawer_dosage_instructions_info_description
   - prsc_dtl_drawer_dosage_instructions_info
   - prsc_dtl_drawer_emergency_service_fee_info
+  - prsc_dtl_drawer_self_payer_info
   - prsc_dtl_txt_authored_on
   - prsc_dtl_txt_bvg
   - prsc_dtl_txt_multi_prescription
@@ -511,7 +516,10 @@ pharmacyDetail:
   - pha_detail_btn_pickup_via_login
   - pha_detail_btn_delivery_via_login
   - pha_detail_btn_shipment_via_login
-  - pha_detail_hint
+  - pha_detail_btn_close
+  - pha_detail_btn_open_map
+  - pha_detail_btn_open_phone
+  - pha_detail_btn_open_mail
   - pha_detail_hint_not_erx_ready
   - pha_detail_contact
   - pha_detail_web
@@ -581,7 +589,7 @@ matrixCode:
   - dmc_txt_subtitle
   - dmc_img_loading_indicator
   - dmc_img_matrixcode
-  - dmc_btn_close
+  - dmc_btn_share
 medicationReminder:
   - med_reminder_btn_activation_toggle
   - med_reminder_btn_dosage_instruction
@@ -604,6 +612,8 @@ medicationReminder:
   - med_reminder_btn_one_day_summary_close_button
 medicationReminderList:
   - med_reminder_list_cell
+selfPayerWarning:
+  - self_payer_warning_txt_message
 
 # ./Sources/eRpApp/Components/Tiles/FootnoteView.swift:                .accessibility(identifier: text)
 # ./Sources/eRpApp/Components/Tiles/SectionView.swift:                .accessibility(identifier: text)

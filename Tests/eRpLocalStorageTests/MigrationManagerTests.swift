@@ -373,8 +373,6 @@ final class MigrationManagerTests: XCTestCase {
             erxTaskCoreDataStore: erxTaskStore,
             userDataStore: userDataStore
         )
-        // pre fill database with tasks and auditEvents
-        let tasks = tasksForPatientAnna + tasksForPatientLudger
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
@@ -486,7 +484,8 @@ extension ErxTask {
             phone: patient?.phone,
             status: patient?.status,
             insurance: patient?.insurance,
-            insuranceId: nil
+            insuranceId: nil,
+            coverageType: .GKV
         )
 
         return ErxTask(

@@ -53,7 +53,6 @@ class IntegrationTestsConfiguration {
 }
 
 let integrationTestsAppConfigurations = [
-    "gematik_dev": integrationTestsEnvironmentGMTKDEV,
     "RU": integrationTestsEnvironmentRU,
     "RU_DEV": integrationTestsEnvironmentRUDev,
     "TU": integrationTestsEnvironmentTU,
@@ -67,7 +66,8 @@ let integrationTestsEnvironmentDummy = IntegrationTestsConfiguration(
         trustAnchor: TRUSTANCHOR_GemRootCa3TestOnly,
         idp: AppConfiguration.Server(url: "http://dummy.idp.server", header: [:]),
         erp: AppConfiguration.Server(url: "http://dummy.erp.server", header: [:]),
-        apoVzd: AppConfiguration.Server(url: "http://dummy.apo-vzd.server", header: [:])
+        apoVzd: AppConfiguration.Server(url: "http://dummy.apo-vzd.server", header: [:]),
+        clientId: "dummyClientId"
     )!,
     brainpool256r1Signer: nil,
     idpsekURLServer: nil,
@@ -91,26 +91,6 @@ extension IntegrationTestsConfiguration {
             )!
     )
 }
-
-let integrationTestsEnvironmentGMTKDEV: IntegrationTestsConfiguration = {
-    guard let appConfiguration = environmentGMTKDEV else {
-        preconditionFailure("Environment GMTKDEV not found")
-    }
-    return IntegrationTestsConfiguration(
-        appConfiguration: appConfiguration,
-        brainpool256r1Signer: IntegrationTestsConfiguration.signer,
-        idpsekURLServer: AppConfiguration.Server(
-            url: IntegrationTestsConfiguration.Environment.IDP_SEK_URL_SERVER_GMTKDEV_URL,
-            header: ["X-Authorization": IntegrationTestsConfiguration.Environment.IDP_SEK_URL_SERVER_GMTKDEV_X_AUTH]
-        ),
-        gemDevAvsConfiguration: .init(
-            url: IntegrationTestsConfiguration.Environment.AVS_TEST_INT_GMTKDEV_URL,
-            additionalHeaders: [
-                "X-Authorization": IntegrationTestsConfiguration.Environment.AVS_TEST_INT_GMTKDEV_X_AUTH,
-            ]
-        )
-    )
-}()
 
 let integrationTestsEnvironmentRU: IntegrationTestsConfiguration = {
     guard let appConfiguration = environmentRU else {

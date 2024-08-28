@@ -225,7 +225,8 @@ extension ModelsR4.Bundle {
                 phone: patient?.phone,
                 status: prescriptionBundle.coverageStatus,
                 insurance: prescriptionBundle.coverage?.payor.first?.display?.value?.string,
-                insuranceId: patient?.insuranceId
+                insuranceId: patient?.insuranceId,
+                coverageType: ErxPatient.CoverageType(rawValue: prescriptionBundle.coverageType)
             ),
             practitioner: ErxPractitioner(
                 title: practitioner?.title,

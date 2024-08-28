@@ -1,0 +1,3 @@
+*.generated.swift
+*+Generated.swift
+./Templates/ERB/prism.js

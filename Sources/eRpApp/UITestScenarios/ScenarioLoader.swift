@@ -15,6 +15,7 @@
 //  limitations under the Licence.
 //  
 //
+// swiftlint:disable file_length
 
 import ComposableArchitecture
 import Dependencies

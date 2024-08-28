@@ -20,7 +20,10 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import MapKit
+import Pharmacy
 import SwiftUI
+
+// swiftlint:disable file_length
 
 @Reducer
 struct OrderDetailDomain {
@@ -32,6 +35,8 @@ struct OrderDetailDomain {
         case prescriptionDetail(PrescriptionDetailDomain)
         // sourcery: AnalyticsScreen = chargeItemDetails
         case chargeItem(ChargeItemDomain)
+        // sourcery: AnalyticsScreen = orders_pharmacyDetail
+        case pharmacyDetail(PharmacyDetailDomain)
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = alert
         case alert(ErpAlertState<Alert>)
@@ -62,6 +67,7 @@ struct OrderDetailDomain {
 
         case showPickupCode(dmcCode: String?, hrCode: String?)
 
+        case loadAndShowPharmacy
         case showChargeItem(ErxChargeItem)
         case showOpenUrlSheet(url: URL?)
         case openUrl(url: URL?)
@@ -72,12 +78,18 @@ struct OrderDetailDomain {
 
         case resetNavigation
         case destination(PresentationAction<Destination.Action>)
+        case response(Response)
+
+        enum Response: Equatable {
+            case loadAndShowPharmacyReceived(Result<PharmacyLocation, PharmacyRepositoryError>)
+        }
     }
 
     var deviceInfo = DeviceInformations()
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
+    @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
     @Dependency(\.resourceHandler) var application: ResourceHandler
     @Dependency(\.dateProvider) var date: () -> Date
     @Dependency(\.currentAppVersion) var version: AppVersion
@@ -145,6 +157,43 @@ struct OrderDetailDomain {
                 )
             )
             return .none
+        case .loadAndShowPharmacy:
+            guard let pharmacy = state.order.pharmacy else { return .none }
+            return .run { send in
+                await send(.response(.loadAndShowPharmacyReceived(
+                    try await pharmacyRepository.updateFromRemote(by: pharmacy.telematikID)
+                        .asyncResult(/PharmacyRepositoryError.self)
+                )))
+            }
+        case let .response(.loadAndShowPharmacyReceived(result)):
+            switch result {
+            case let .success(pharmacy):
+                state.order = Order.lens.pharmacy.set(pharmacy)(state.order)
+
+                state.destination = .pharmacyDetail(
+                    PharmacyDetailDomain.State(
+                        prescriptions: Shared([]),
+                        selectedPrescriptions: Shared([]),
+                        inRedeemProcess: false,
+                        inOrdersMessage: true,
+                        pharmacyViewModel: .init(
+                            pharmacy: pharmacy,
+                            timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
+                        ),
+                        pharmacyRedeemState: Shared(nil)
+                    )
+                )
+            case let .failure(error):
+                state.destination = .alert(.init(for: error))
+                if PharmacyRepositoryError.remote(.notFound) == error,
+                   let pharmacy = state.order.pharmacy {
+                    state.order = Order.lens.pharmacy.set(nil)(state.order)
+                    return .run { _ in
+                        _ = try await pharmacyRepository.delete(pharmacy: pharmacy).async()
+                    }
+                }
+            }
+            return .none
         case let .openUrl(url: url):
             guard let url = url else { return .none }
             if application.canOpenURL(url) {
@@ -199,6 +248,7 @@ struct OrderDetailDomain {
             }
             return .none
         case .resetNavigation,
+             .destination(.presented(.pharmacyDetail(.delegate(.close)))),
              .destination(.presented(.pickupCode(action: .delegate(.close)))),
              .destination(.presented(.prescriptionDetail(action: .delegate(.close)))):
             state.destination = nil
@@ -287,6 +337,17 @@ extension OrderDetailDomain {
         let name: String
     }
 
+    enum Markdown: Equatable {
+        case orderPharmacy(_ name: String)
+
+        var link: String {
+            switch self {
+            case let .orderPharmacy(name):
+                return "[\(name)](screen://OrderPharmacyView)"
+            }
+        }
+    }
+
     enum TimelineEntry: Equatable, Identifiable {
         case dispReq(ErxTask.Communication, pharmacy: PharmacyLocation?)
         case reply(ErxTask.Communication)
@@ -328,9 +389,13 @@ extension OrderDetailDomain {
         var text: String {
             switch self {
             case let .dispReq(_, pharmacy):
+                var pharmacyName = L10n.ordTxtNoPharmacyName.text
+                if let name = pharmacy?.name {
+                    pharmacyName = "\(Markdown.orderPharmacy(name).link)"
+                }
                 return L10n.ordDetailTxtSendTo(
                     L10n.ordDetailTxtPresc(1).text,
-                    pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text
+                    pharmacyName
                 ).text
             case let .reply(communication):
                 guard let payload = communication.payload else {
@@ -349,8 +414,11 @@ extension OrderDetailDomain {
 
         var actions: [String: OrderDetailDomain.Action] {
             switch self {
-            case .dispReq:
-                return [:]
+            case let .dispReq(_, pharmacy):
+                guard let name = pharmacy?.name else {
+                    return [:]
+                }
+                return [name: .loadAndShowPharmacy]
             case let .reply(communication):
                 guard let payload = communication.payload else {
                     return [L10n.ordDetailBtnError.text: .openMail(message: communication.payloadJSON)]
@@ -476,3 +544,5 @@ extension OrderDetailDomain {
         }
     }
 }
+
+// swiftlint:enable file_length

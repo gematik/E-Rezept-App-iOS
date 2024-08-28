@@ -26,17 +26,6 @@ import SwiftUI
 import XCTest
 
 final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
-    var resourceHandlerMock: MockResourceHandler!
-
-    override func setUp() {
-        super.setUp()
-
-        SnapshotHelper.fixOffsetProblem()
-
-        resourceHandlerMock = MockResourceHandler()
-        diffTool = "open"
-    }
-
     func testPharmacySearchStartView_WithoutLocalPharmacies() {
         let sut = NavigationView {
             PharmacySearchView(
@@ -49,9 +38,9 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             .navigationTitle("Redeem")
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPharmacySearchStartView_WithLocalPharmacies() {
@@ -63,10 +52,12 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
         let state = PharmacySearchDomain.State(
+            selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmacies,
             localPharmacies: pharmacies,
+            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .startView(loading: false)
         )
@@ -78,18 +69,20 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPharmacySearch_searchResultEmpty() {
         let sut = NavigationView {
             PharmacySearchView(
                 store: .init(
-                    initialState: .init(
+                    initialState: PharmacySearchDomain.State(
+                        selectedPrescriptions: Shared([]),
                         inRedeemProcess: false,
                         searchText: "Apothekesdfwerwerasdf",
+                        pharmacyRedeemState: Shared(nil),
                         pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
                         searchState: .searchResultEmpty
                     )
@@ -99,19 +92,21 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPharmacySearch_searchResultSuccess() {
         let sut = NavigationView {
             PharmacySearchView(
                 store: .init(
-                    initialState: .init(
+                    initialState: PharmacySearchDomain.State(
+                        selectedPrescriptions: Shared([]),
                         inRedeemProcess: false,
                         searchText: "Adler Apo",
                         pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
+                        pharmacyRedeemState: Shared(nil),
                         pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
                         searchState: .searchResultOk
                     )
@@ -121,15 +116,16 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPharmacySearch_mapSearch_WithUserButton() {
         let sut = PharmacySearchMapView(
             store: .init(
-                initialState: .init(
+                initialState: PharmacySearchMapDomain.State(
+                    selectedPrescriptions: Shared([]),
                     inRedeemProcess: false,
                     mapLocation: .manual(MKCoordinateRegion.gematikHQRegion),
                     pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
@@ -139,9 +135,9 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
                 EmptyReducer()
             }
         )
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPharmacySearch_mapSearch_ClusterView() {
@@ -154,9 +150,9 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
                 EmptyReducer()
             }
         )
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }
 

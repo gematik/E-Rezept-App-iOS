@@ -10,3 +10,4 @@ cd "$(dirname "$0")/.."
 
 echo "==> Building…"
 
+bundle exec fastlane build_test_version

@@ -55,7 +55,6 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             dependencies.uiDateFormatter = uiDateFormatter
             dependencies.resourceHandler = mockResourceHandler
             dependencies.erxMatrixCodeGenerator = mockMatrixCodeGenerator
-
             prepareDependencies(&dependencies)
         }
     }
@@ -164,24 +163,28 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     }
 
     func testDeletingPrescriptionInProgress() async {
-        let prescription = Prescription(
-            erxTask: ErxTask.Fixtures.erxTaskInProgressAndValid,
-            dateFormatter: UIDateFormatter.testValue
-        )
-        let sut = testStore(.init(
-            prescription: prescription,
-            isArchived: true
-        ))
-
-        await sut.send(.delete) {
-            $0.destination = .alert(ErpAlertState(
-                title: L10n.dtlBtnDeleteDisabledNote,
-                actions: {
-                    ButtonState(role: .cancel, action: .dismiss) {
-                        .init(L10n.alertBtnOk)
-                    }
-                }
+        await withDependencies {
+            $0.date = DateGenerator { Date() }
+        } operation: {
+            let prescription = Prescription(
+                erxTask: ErxTask.Fixtures.erxTaskInProgressAndValid,
+                dateFormatter: UIDateFormatter.testValue
+            )
+            let sut = testStore(.init(
+                prescription: prescription,
+                isArchived: true
             ))
+
+            await sut.send(.delete) {
+                $0.destination = .alert(ErpAlertState(
+                    title: L10n.dtlBtnDeleteDisabledNote,
+                    actions: {
+                        ButtonState(role: .cancel, action: .dismiss) {
+                            .init(L10n.alertBtnOk)
+                        }
+                    }
+                ))
+            }
         }
     }
 
@@ -513,9 +516,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let expectedLoadingState: LoadingState<UIImage, PrescriptionDetailDomain.LoadingImageError> =
             .value(expectedImage)
 
-        let shareState = ShareSheetDomain.State(
+        let expectedShareState = ShareSheetDomain.State(
+            string: L10n.dmcTxtShareMessage("Saflorblüten-Extrakt Pulver Peroral").text,
             url: expectedUrl,
-            dataMatrixCodeImage: expectedImage
+            dataMatrixCodeImage: ImageGenerator.testValue.addCaption(UIImage(), "", "")
         )
         await sut.send(.loadMatrixCodeImage(screenSize: CGSize(width: 100.0, height: 100.0))) {
             $0.loadingState = .loading(nil)
@@ -523,7 +527,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
         await sut.receive(.response(.matrixCodeImageReceived(expectedLoadingState))) {
             $0.loadingState = expectedLoadingState
-            $0.destination = .sharePrescription(shareState)
+            $0.destination = .sharePrescription(expectedShareState)
         }
     }
 
@@ -808,7 +812,8 @@ extension PrescriptionDetailDomainTests {
                     phone: "555 1234567",
                     status: "Mitglied",
                     insurance: "AOK Rheinland/Hamburg",
-                    insuranceId: "A123456789"
+                    insuranceId: "A123456789",
+                    coverageType: .GKV
                 ),
                 practitioner: ErxPractitioner(
                     lanr: "123456789",
@@ -856,7 +861,8 @@ extension PrescriptionDetailDomainTests {
                         phone: "555 1234567",
                         status: "Mitglied",
                         insurance: "AOK Rheinland/Hamburg",
-                        insuranceId: "A123456789"
+                        insuranceId: "A123456789",
+                        coverageType: .GKV
                     ),
                     practitioner: ErxPractitioner(
                         lanr: "123456789",
@@ -922,7 +928,8 @@ extension PrescriptionDetailDomainTests {
                         phone: "555 1234567",
                         status: "Mitglied",
                         insurance: "AOK Rheinland/Hamburg",
-                        insuranceId: "A123456789"
+                        insuranceId: "A123456789",
+                        coverageType: .GKV
                     ),
                     practitioner: ErxPractitioner(
                         lanr: "123456789",

@@ -31,5 +31,6 @@ extension ErxTaskPatientEntity {
     @NSManaged public var name: String?
     @NSManaged public var phone: String?
     @NSManaged public var status: String?
+    @NSManaged public var coverageType: String?
     @NSManaged public var task: ErxTaskEntity?
 }

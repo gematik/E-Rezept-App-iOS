@@ -929,10 +929,10 @@
                         },
                         "author": "Count Orff",
                         "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.07",
-                        "authoredOn": "{{DATE:-16D}}",
-                        "status": "in-progress",
-                        "expiresOn": "{{DATE:+90D}}",
-                        "acceptedUntil": "{{DATE:+24D}}",
+                        "authoredOn": "{{DATE:-91D}}",
+                        "status": "ready",
+                        "expiresOn": "{{DATE:-1D}}",
+                        "acceptedUntil": "{{DATE:-30D}}",
                         "practitioner":
                         {
                             "qualification": "travel agent",
@@ -1230,7 +1230,7 @@
                         [],
                         "avsTransactions":
                         [],
-                        "lastModified": "31.10.2022"
+                        "lastModified": "{{DATETIME:-28m}}"
                     }
                 ]
             }

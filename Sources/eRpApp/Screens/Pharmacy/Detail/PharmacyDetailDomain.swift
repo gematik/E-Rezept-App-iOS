@@ -15,6 +15,7 @@
 //  limitations under the Licence.
 //  
 //
+// swiftlint:disable file_length
 
 import AVS
 import Combine
@@ -70,12 +71,14 @@ struct PharmacyDetailDomain {
     @ObservableState
     struct State: Equatable {
         /// A storage for the prescriptions that have been loaded from the repository
-        var prescriptions: [Prescription] = []
+        @Shared var prescriptions: [Prescription]
         /// A storage for the prescriptions that have been selected to be redeemed or are loaded from this domain
-        var selectedPrescriptions: [Prescription] = []
+        @Shared var selectedPrescriptions: [Prescription]
         /// View can be called within the redeeming process or from the tab-bar.
         /// Boolean is true when called within redeeming process
         var inRedeemProcess: Bool
+        /// View can be shown as sheet inside order details
+        var inOrdersMessage = false
         var pharmacyViewModel: PharmacyLocationViewModel
         var pharmacy: PharmacyLocation {
             pharmacyViewModel.pharmacyLocation
@@ -85,13 +88,19 @@ struct PharmacyDetailDomain {
         /// Boolean for handling the different navigation paths
         var onMapView = false
 
-        var pharmacyRedeemState: PharmacyRedeemDomain.State?
+        @Shared var pharmacyRedeemState: PharmacyRedeemDomain.State?
         /// If there was a login before the profile is locked to that
         var wasProfileAuthenticatedBefore = false
         var reservationService: RedeemServiceOption = .noService
         var shipmentService: RedeemServiceOption = .noService
         var deliveryService: RedeemServiceOption = .noService
         @Presents var destination: Destination.State?
+
+        var serviceIsMissing: [Bool] {
+            [shipmentService.hasService,
+             deliveryService.hasService,
+             reservationService.hasService].filter { !$0 }
+        }
     }
 
     enum Action: Equatable {
@@ -297,9 +306,9 @@ struct PharmacyDetailDomain {
 
             let redeemState = PharmacyRedeemDomain.State(
                 redeemOption: option,
-                prescriptions: state.pharmacyRedeemState?.prescriptions ?? state.prescriptions,
+                prescriptions: state.$prescriptions,
                 pharmacy: state.pharmacy,
-                selectedPrescriptions: setOfPrescriptions
+                selectedPrescriptions: Shared(setOfPrescriptions)
             )
             switch option {
             case .onPremise:
@@ -485,9 +494,11 @@ extension PharmacyDetailDomain {
         static let prescriptions = [Prescription.Dummies.prescriptionReady]
 
         static let state = State(
-            prescriptions: prescriptions,
+            prescriptions: Shared(prescriptions),
+            selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyViewModel,
+            pharmacyRedeemState: Shared(nil),
             reservationService: .erxTaskRepository,
             shipmentService: .erxTaskRepository,
             deliveryService: .erxTaskRepository

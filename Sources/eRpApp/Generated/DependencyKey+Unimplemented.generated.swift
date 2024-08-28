@@ -227,8 +227,8 @@ struct UnimplementedErxTaskRepository: ErxTaskRepository {
         fatalError("revokeConsent(_:) has not been implemented")
     }
 }
-class UnimplementedExtAuthRequestStorage: ExtAuthRequestStorage {
-    init() {}
+class UnimplementedExtAuthRequestStorage: NSObject, ExtAuthRequestStorage {
+    override init() {}
 
     var pendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never> {
         get { fatalError("") }
@@ -578,12 +578,20 @@ struct UnimplementedResourceHandler: ResourceHandler {
     func open(_ url: URL) -> Void {
         fatalError("open(_:) has not been implemented")
     }
+
+    // Caution! This is manual until Xcode 16 is rolled out.
+#if compiler(>=6.0)
+    func open(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any], completionHandler completion: (@MainActor @Sendable (Bool) -> Void)?) -> Void {
+        fatalError("open(_:options:completionHandler:) has not been implemented")
+    }
+#else
     func open(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any], completionHandler completion: ((Bool) -> Void)?) -> Void {
         fatalError("open(_:options:completionHandler:) has not been implemented")
     }
+#endif
 }
-class UnimplementedRouting: Routing {
-    init() {}
+class UnimplementedRouting: NSObject, Routing {
+    override init() {}
 
     func routeTo(_ endpoint: Endpoint) async -> Void {
         fatalError("routeTo(_:) has not been implemented")
@@ -620,6 +628,13 @@ struct UnimplementedSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvid
         fatalError("authenticationData(for:) has not been implemented")
     }
 }
+class UnimplementedSecurityPolicyEvaluator: NSObject, SecurityPolicyEvaluator {
+    override init() {}
+
+    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
+        fatalError("canEvaluatePolicy(_:error:) has not been implemented")
+    }
+}
 struct UnimplementedShipmentInfoDataStore: ShipmentInfoDataStore {
     init() {}
 
@@ -653,8 +668,8 @@ struct UnimplementedShipmentInfoDataStore: ShipmentInfoDataStore {
         fatalError("delete(shipmentInfo:) has not been implemented")
     }
 }
-class UnimplementedTracker: Tracker {
-    init() {}
+class UnimplementedTracker: NSObject, Tracker {
+    override init() {}
 
     var optIn: Bool {
         get { fatalError("") }
@@ -682,8 +697,8 @@ class UnimplementedTracker: Tracker {
         fatalError("stopTracking has not been implemented")
     }
 }
-class UnimplementedUserDataStore: UserDataStore {
-    init() {}
+class UnimplementedUserDataStore: NSObject, UserDataStore {
+    override init() {}
 
     var hideOnboarding: AnyPublisher<Bool, Never> {
         get { fatalError("") }

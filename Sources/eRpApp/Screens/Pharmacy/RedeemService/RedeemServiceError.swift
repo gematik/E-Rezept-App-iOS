@@ -40,6 +40,9 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
     // sourcery: errorCode = "06"
     /// When receiving an error while doing a login
     case loginHandler(error: LoginHandlerError)
+    // sourcery: errorCode = "07"
+    /// When the prescription has already been redeemed
+    case prescriptionAlreadyRedeemed([Prescription])
 
     static func ==(lhs: RedeemServiceError, rhs: RedeemServiceError) -> Bool {
         switch (lhs, rhs) {
@@ -51,6 +54,8 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
         case (.noTokenAvailable, .noTokenAvailable): return true
         case let (.loginHandler(error: lhsError), .loginHandler(error: rhsError)):
             return lhsError.localizedDescription == rhsError.localizedDescription
+        case let (.prescriptionAlreadyRedeemed(lhsPrescription), .prescriptionAlreadyRedeemed(rhsPrescription)):
+            return lhsPrescription == rhsPrescription
         default:
             return false
         }
@@ -107,6 +112,8 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
             return error.localizedDescription
         case let .loginHandler(error: error):
             return error.localizedDescription
+        case let .prescriptionAlreadyRedeemed(prescriptions):
+            return L10n.phaRedeemTxtPrescriptionAlreadyRedeemedError(prescriptions.count).text
         }
     }
 
@@ -129,6 +136,13 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
             }
         case let .loginHandler(error: error):
             return error.recoverySuggestion
+        case let .prescriptionAlreadyRedeemed(prescriptions):
+            let count = prescriptions.count
+            let prescriptionList = prescriptions.map(\.title).map { "\"\($0)\"" }.joined(separator: " & ")
+            return String(
+                format: L10n.phaRedeemTxtPrescriptionAlreadyRedeemedErrorSuggestionFormat(count).text,
+                prescriptionList
+            )
         }
     }
 
@@ -174,6 +188,8 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError, Codable {
             try container.encode("noTokenAvailable", forKey: .type)
         case .loginHandler:
             try container.encode("loginHandler", forKey: .type)
+        case .prescriptionAlreadyRedeemed:
+            try container.encode("prescriptionAlreadyRedeemed", forKey: .type)
         }
     }
 }

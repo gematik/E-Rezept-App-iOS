@@ -22,7 +22,11 @@ import SwiftUI
 
 extension MatrixCodeDomain.State {
     var medicationName: String {
-        erxChargeItem?.medication?.name ?? "-"
+        erxChargeItem?.medication?.displayName ?? "-"
+    }
+
+    var disableShareButton: Bool {
+        type != .erxTask
     }
 }
 
@@ -31,8 +35,6 @@ extension MatrixCodeDomain.State {
 struct MatrixCodeView: View {
     @Perception.Bindable var store: StoreOf<MatrixCodeDomain>
     @State var originalBrightness: CGFloat?
-
-    @State var page = 0
 
     init(store: StoreOf<MatrixCodeDomain>) {
         self.store = store
@@ -52,13 +54,6 @@ struct MatrixCodeView: View {
         }
     }
 
-    // TabView used for creating the paging effect is very greedy with space. We calculate the size beforehand to
-    // accomodate that.
-    static let deviceWidth: CGFloat = UIScreen.main.bounds.width
-    static let pagedPartHeight: CGFloat = {
-        deviceWidth + 33
-    }()
-
     var body: some View {
         WithPerceptionTracking {
             ScrollView {
@@ -75,82 +70,15 @@ struct MatrixCodeView: View {
                     .foregroundColor(Colors.systemLabelSecondary)
                     .accessibility(identifier: A18n.matrixCode.dmcTxtSubtitle)
 
-                switch store.state.loadingState {
-                case .loading:
-                    ProgressView()
-                        .accessibility(identifier: A18n.matrixCode.dmcImgLoadingIndicator)
-                case let .value(images):
-                    if let singleImage = images.first,
-                       images.count == 1 {
-                        VStack(spacing: 0) {
-                            SingleMatrixCode(image: singleImage.image) {
-                                store.send(.zoomButtonTapped(singleImage.id), animation: .default)
-                            }
+                TabBarView(store: store)
 
-                            if let chunk = singleImage.chunk {
-                                Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
-                                    .font(.headline)
-                                    .padding(.bottom, 8)
-
-                                HStack {
-                                    Text("\(chunk.compactMap { $0.medication?.displayName }.joined(separator: ", "))")
-                                        .padding(.horizontal)
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .multilineTextAlignment(.center)
-                                .animation(.easeInOut.delay(0.2), value: page)
-                            }
-
-                            Spacer()
-                        }
-                    } else {
-                        VStack(spacing: 0) {
-                            TabView(selection: $page) {
-                                ForEach(Array(images.enumerated()), id: \.element.id) { index, image in
-                                    SingleMatrixCode(image: image.image) {
-                                        store.send(.zoomButtonTapped(image.id), animation: .default)
-                                    }
-                                    .tag(index)
-                                }
-                            }
-                            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                            .frame(width: Self.deviceWidth, height: Self.pagedPartHeight)
-
-                            HStack {
-                                Spacer()
-                                PageControl(numberOfPages: images.count, currentPage: $page)
-                                Spacer()
-                            }
-                            .padding(.bottom, 40)
-
-                            if let chunk = images[page].chunk {
-                                Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
-                                    .font(.headline)
-                                    .padding(.bottom, 8)
-
-                                HStack {
-                                    Text("\(chunk.compactMap { $0.medication?.displayName }.joined(separator: ", "))")
-                                        .padding(.horizontal)
-                                        .frame(maxWidth: .infinity)
-                                }
-                                .multilineTextAlignment(.center)
-                                .animation(.easeInOut.delay(0.2), value: page)
-                            }
-
-                            Spacer()
-                        }
-                    }
-                default:
-                    EmptyView()
-                }
-
-                if store.type == .erxChargeItem {
+                if store.state.type == .erxChargeItem {
                     Text(title)
                         .foregroundColor(Colors.systemLabel)
                         .font(Font.subheadline.bold())
                         .padding(.bottom)
                         .accessibility(identifier: A18n.matrixCode.dmcTxtTitle)
-                    Text(store.medicationName)
+                    Text(store.state.medicationName)
                         .lineLimit(2)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Colors.systemLabelSecondary)
@@ -160,56 +88,131 @@ struct MatrixCodeView: View {
 
                 Spacer()
             }
-            .navigationBarItems(trailing: Button(
-                action: {
-                    store.send(.closeButtonTapped)
-                }, label: {
-                    Text(L10n.dmcBtnClose)
-                }
-            )
-            .accessibility(identifier: A18n.matrixCode.dmcBtnClose))
-            .navigationBarBackButtonHidden(true)
-            .alert(
-                L10n.rphTxtCloseAlertTitle.key,
-                isPresented: .constant(store.isShowAlert),
-                actions: {
-                    Button(L10n.rphBtnCloseAlertKeep.key, role: .cancel) {
-                        store.send(.closeButtonTapped)
+            .navigationBarItems(
+                trailing: Button(
+                    action: {
+                        store.send(.shareButtonTapped)
+                    }, label: {
+                        Label(L10n.prscDtlBtnShare, systemImage: SFSymbolName.share)
                     }
-                    Button(L10n.rphBtnCloseAlertMarkRedeemed.key, role: .destructive) {
-                        store.send(.closeButtonTapped)
-                    }
-                }, message: {
-                    Text(L10n.rphTxtCloseAlertMessage)
-                }
+                )
+                .disabled(store.disableShareButton)
+                .accessibility(identifier: A18n.matrixCode.dmcBtnShare)
             )
+            .sheet(item: $store.scope(
+                state: \.destination?.sharePrescription,
+                action: \.destination.sharePrescription
+            )) { scopedStore in
+                ShareViewController(
+                    store: scopedStore
+                )
+            }
             .onAppear {
                 store.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size))
                 originalBrightness = UIScreen.main.brightness
             }
-            .overlay {
-                if let imageId = store.zoomedInto,
-                   let images = store.loadingState.value,
-                   let image = images[id: imageId]?.image {
-                    Button {
-                        store.send(.closeZoomTapped)
-                    } label: {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .padding()
-                            .accessibility(label: Text(L10n.rphTxtMatrixcodeHint))
-                            .accessibility(identifier: A18n.matrixCode.dmcImgMatrixcode)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
-                    .background(Colors.systemColorWhite)
-                    .onAppear {
-                        UIScreen.main.brightness = CGFloat(1.0)
-                    }
-                    .onDisappear {
-                        if let originalBrightness = originalBrightness {
-                            UIScreen.main.brightness = originalBrightness
+            .onDisappear {
+                if let originalBrightness = originalBrightness {
+                    UIScreen.main.brightness = originalBrightness
+                }
+            }
+        }
+    }
+
+    struct TabBarView: View {
+        @Perception.Bindable var store: StoreOf<MatrixCodeDomain>
+
+        // TabView used for creating the paging effect is very greedy with space. We calculate the size beforehand to
+        // accomodate that.
+        static let deviceWidth: CGFloat = UIScreen.main.bounds.width
+        static let pagedPartHeight: CGFloat = {
+            deviceWidth + 33
+        }()
+
+        var body: some View {
+            WithPerceptionTracking {
+                VStack(spacing: 0) {
+                    switch store.loadingState {
+                    case .loading:
+                        ProgressView()
+                            .accessibility(identifier: A18n.matrixCode.dmcImgLoadingIndicator)
+                    case let .value(images):
+                        if let singleImage = images.first,
+                           images.count == 1 {
+                            if let chunk = singleImage.chunk {
+                                SelfPayerWarningView(erxTasks: chunk)
+                                    .padding(.horizontal)
+                            }
+                            SingleMatrixCode(image: singleImage.image, isZoomed: store.isMatrixCodeZoomed) {
+                                store.send(.zoomButtonTapped, animation: .default)
+                            }
+
+                            if let chunk = singleImage.chunk {
+                                Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
+                                    .font(.headline)
+                                    .padding(.bottom, 8)
+
+                                HStack {
+                                    Text(
+                                        "\(chunk.compactMap { $0.medication?.displayName }.joined(separator: " & "))"
+                                    )
+                                    .padding(.horizontal)
+                                    .frame(maxWidth: .infinity)
+                                }
+                                .multilineTextAlignment(.center)
+                                .animation(.easeInOut.delay(0.2), value: store.page)
+                            }
+
+                            Spacer()
+                        } else {
+                            if let chunk = images[store.page].chunk {
+                                SelfPayerWarningView(erxTasks: chunk)
+                                    .padding(.horizontal)
+                            }
+
+                            TabView(selection: $store.page.sending(\.pageChanged)) {
+                                ForEach(Array(images.enumerated()), id: \.element.id) { index, image in
+                                    WithPerceptionTracking {
+                                        SingleMatrixCode(image: image.image, isZoomed: store.isMatrixCodeZoomed) {
+                                            store.send(.zoomButtonTapped, animation: .default)
+                                        }
+                                        .tag(index)
+                                    }
+                                }
+                            }
+                            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                            .frame(width: Self.deviceWidth, height: Self.pagedPartHeight)
+
+                            HStack {
+                                Spacer()
+                                PageControl(
+                                    numberOfPages: images.count,
+                                    currentPage: $store.page.sending(\.pageChanged)
+                                )
+                                Spacer()
+                            }
+                            .padding(.bottom, 40)
+
+                            if let chunk = images[store.page].chunk {
+                                Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
+                                    .font(.headline)
+                                    .padding(.bottom, 8)
+
+                                HStack {
+                                    Text(
+                                        "\(chunk.compactMap { $0.medication?.displayName }.joined(separator: " & "))"
+                                    )
+                                    .padding(.horizontal)
+                                    .frame(maxWidth: .infinity)
+                                }
+                                .multilineTextAlignment(.center)
+                                .animation(.easeInOut.delay(0.2), value: store.page)
+                            }
+
+                            Spacer()
                         }
+                    default:
+                        EmptyView()
                     }
                 }
             }
@@ -217,42 +220,45 @@ struct MatrixCodeView: View {
     }
 }
 
-struct SingleMatrixCode: View {
-    let image: UIImage
-    let action: () -> Void
+extension MatrixCodeView.TabBarView {
+    struct SingleMatrixCode: View {
+        let image: UIImage
+        let isZoomed: Bool
+        let action: () -> Void
 
-    var body: some View {
-        VStack(spacing: 0) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .padding(16)
-                .accessibility(label: Text(L10n.rphTxtMatrixcodeHint))
-                .accessibility(identifier: A18n.matrixCode.dmcImgMatrixcode)
+        var body: some View {
+            VStack(spacing: 0) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .padding(isZoomed ? 16 : 64)
+                    .accessibility(label: Text(L10n.rphTxtMatrixcodeHint))
+                    .accessibility(identifier: A18n.matrixCode.dmcImgMatrixcode)
 
-            HStack {
-                Spacer()
+                HStack {
+                    Spacer()
 
-                Button {
-                    action()
-                } label: {
-                    Image(systemName: SFSymbolName.magnifyingGlasPlus)
-                        .font(Font.body.bold())
-                        .foregroundColor(Colors.primary)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
+                    Button {
+                        action()
+                    } label: {
+                        Image(systemName: isZoomed ? SFSymbolName.magnifyingGlasMinus : SFSymbolName.magnifyingGlasPlus)
+                            .font(Font.body.bold())
+                            .foregroundColor(Colors.primary)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                    }
+                    .background(Colors.backgroundSecondary)
+                    .border(Colors.separator, cornerRadius: 8)
+                    .frame(width: 55, height: 33)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom)
                 }
-                .background(Colors.backgroundSecondary)
-                .border(Colors.separator, cornerRadius: 8)
-                .frame(width: 55, height: 33)
-                .padding(.horizontal, 16)
-                .padding(.bottom)
             }
+            .background(Colors.backgroundNeutral)
+            .border(Colors.separator, cornerRadius: 16)
+            .environment(\.colorScheme, .light)
+            .padding()
         }
-        .background(Colors.backgroundNeutral)
-        .border(Colors.separator, cornerRadius: 16)
-        .environment(\.colorScheme, .light)
-        .padding()
     }
 }
 

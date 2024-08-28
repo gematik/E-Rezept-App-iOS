@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Připraveno";
 "dmc_txt_code_multiple" = "Kód sbírky";
 "dmc_txt_code_single" = "Jediný kód";
+"dmc_txt_number_medications_%d" = "%d léky";
+"dmc_txt_share_message_%@" = "Byl vám sdílen kód předpisu prostřednictvím aplikace pro elektronický předpis s následujícími léky: %@";
 "dtl_btn_copy_clipboard" = "kopírovat";
 "dtl_btn_delete_disabled_note" = "Recept právě zpracovává lékárna a nelze jej smazat.";
 "dtl_btn_delete_medication" = "Smazat z tohoto zařízení";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Otevřete skener receptů";
 "erx_title" = "Recepty";
 "erx_txt_authored" = "Zobrazeno";
+"erx_txt_claimed_at_%@" = "Předpokládaný %@";
 "erx_txt_current" = "Aktuální";
 "erx_txt_expired_on_%@" = "Platnost vypršela %@";
 "erx_txt_forced_update_alert_description" = "Aktualizací aplikace optimalizujte své prostředí.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "archiv";
 "erx_txt_refresh_loading" = "Načítá se…";
 "erx_txt_scanned_at_%@" = "Naskenováno: %@";
+"erx_txt_self_payer" = "Žádná náhrada nákladů";
+"erx_txt_sent_at_%@" = "Odesláno %@";
 "hint_btn_close" = "zavřít";
 "hint_btn_open_scn" = "Otevřete skener";
 "hint_btn_try_demo_mode" = "Spusťte demo režim";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Nákupní košík je připraven";
 "ord_detail_shipment_link_btn" = "Otevřete nákupní košík";
 "ord_detail_shipment_link_text" = "Pro dokončení objednávky přejděte na webovou stránku lékárny.";
-"ord_detail_txt_%@_send_to_%@" = "%@ odeslána %@ . Proces digitálního výkupu je pro mnoho lékáren stále neznámý. Pokud se do zítřka neozvete, doporučujeme preventivně zavolat a zeptat se.";
+"ord_detail_txt_%@_send_to_%@" = "%@ odeslána %@ . Některé lékárny zatím nemají možnost digitální odpovědi. Pokud do zítřka nedostanete žádnou odpověď, preventivně zavolejte.";
 "ord_detail_txt_charge_item%@" = "Obdrželi jste potvrzení o ceně vašeho léku %@ .";
 "ord_detail_txt_contact" = "Možnosti kontaktu";
 "ord_detail_txt_contact_email" = "Napište email";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Předčíslí a telefonní číslo";
 "pha_contact_txt_street" = "Ulice a číslo domu";
 "pha_contact_txt_zip" = "PSČ";
-"pha_detail_btn_delivery" = "poslíček\n Vybrat";
+"pha_detail_btn_delivery" = "Kurýr";
 "pha_detail_btn_footer" = "Zjistěte více";
 "pha_detail_btn_healthcare_service" = "Vyžádejte si kurýrní službu";
 "pha_detail_btn_location" = "Rezervovat na vyzvednutí";
 "pha_detail_btn_login_note" = "Uplatnění je možné pouze po registraci";
+"pha_detail_btn_open_mail" = "Napište email";
+"pha_detail_btn_open_map" = "Trasa sem";
+"pha_detail_btn_open_phone" = "Volání";
 "pha_detail_btn_organization" = "Nechte si to doručit zásilkovou službou";
-"pha_detail_btn_pickup" = "sbírka\n Vybrat";
-"pha_detail_btn_shipment" = "náklad\n Vybrat";
+"pha_detail_btn_pickup" = "vyzvednout";
+"pha_detail_btn_shipment" = "náklad";
 "pha_detail_contact" = "Kontakt";
-"pha_detail_hint_message" = "Vezměte prosím na vědomí, že doplatky se mohou vztahovat i na předepsané léky.";
 "pha_detail_hint_not_erx_ready_message" = "Do této lékárny zatím nelze zasílat elektronické recepty.";
 "pha_detail_hint_not_erx_ready_pic" = "Lékárník drží léky";
 "pha_detail_hint_not_erx_ready_title" = "Uplatnit pouze na místě";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Poznámka pro lékárny: Kontaktní údaje a informace o lékárnách získáváme od ";
 "pha_detail_txt_no_prescription_toast" = "Nemáte žádné předpisy k vyplnění.";
+"pha_detail_txt_open_hour_today" = "Dnes";
+"pha_detail_txt_open_hour_tomorrow" = "Zítra";
 "pha_detail_txt_subtitle_fallback" = "LÉKÁRNA";
 "pha_detail_txt_title" = "Podrobnosti";
 "pha_detail_web" = "webová stránka";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Přidat do";
 "pha_redeem_btn_change_pharmacy" = "Změna";
 "pha_redeem_btn_change_prescription" = "Změna";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Zrušit objednávku";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Pokračujte bez tohoto předpisu";
 "pha_redeem_btn_redeem" = "Vykoupit";
 "pha_redeem_btn_redeem_footnote" = "Tím bude váš recept odeslán do této lékárny. V jiné lékárně jej nelze vykoupit.";
 "pha_redeem_btn_select_pharmacy" = "Vyberte lékárnu";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "aktivovat";
 "prsc_dtl_btn_pkv_invoice" = "Potvrzení o nákladech";
 "prsc_dtl_btn_redeem" = "Odeslat do lékárny";
+"prsc_dtl_btn_self_payer" = "Žádná náhrada nákladů";
 "prsc_dtl_btn_share" = "Rozdělit";
 "prsc_dtl_btn_share_title" = "Rozdělit";
 "prsc_dtl_btn_show_matrix_code" = "Zobrazit kód";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Naskenovaný recept";
 "prsc_dtl_dr_substitution_info_description" = "Lékárníci jsou povinni přednostně vydávat léky, na které má zdravotní pojišťovna pacienta uzavřenu slevovou smlouvu s výrobci léků. To neplatí pouze v případě, že lékař na receptu vyloučí „Aut idem“, což není případ vašeho předpisu.";
 "prsc_dtl_dr_substitution_info_title" = "Možnost přípravy na výměnu";
+"prsc_dtl_drawer_self_payer_info_header" = "Žádná náhrada nákladů";
+"prsc_dtl_drawer_self_payer_info_message" = "Zdravotní pojištění zpravidla nehradí náklady na tento recept. Jako pacient tedy odpovídáte za plnou úhradu. Zda budou náklady hrazeny v rámci připojištění nebo zákonných plnění, je nutné ověřit individuálně.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Otevřete stránku healthy.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Odborně ověřené informace o nemocech, ICD kódech a tématech prevence a péče naleznete v Národním portálu zdraví.";
 "prsc_dtl_med_ingredient_name" = "Název účinné látky";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen- Answeren";
 "prsc_fd_txt_substitution_title" = "Možnost přípravy na výměnu";
 "prsc_redeem_note_direct_assignment" = "Tento předpis vám bude vyplacen jako součást léčby.";
-"prsc_status_canceled" = "Zrušeno";
+"prsc_status_canceled" = "Smazáno";
 "prsc_status_completed" = "Vykoupeno";
 "prsc_status_direct_assigned" = "Bude pro vás vykoupeno";
 "prsc_status_error" = "Nesprávný recept";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "Zadaná ulice překračuje maximální povolenou délku %@ znaků.";
 "riv_ti_invalid_zip_%@" = "Zadané PSČ překračuje maximální povolenou délku %@ znaků.";
 "riv_ti_wrong_version" = "Neplatné číslo verze.";
-"rph_btn_close_alert_keep" = "Nevykoupeno";
-"rph_btn_close_alert_mark_redeemed" = "Vykoupeno";
-"rph_txt_close_alert_message" = "Chcete tento recept označit jako uplatněný?";
-"rph_txt_close_alert_title" = "Vyplněný recept?";
 "rph_txt_matrixcode_hint" = "Nechte si tento kód na předpis naskenovat ve vaší lékárně.";
 "rph_txt_subtitle" = "Nechte si tento kód na předpis naskenovat ve vaší lékárně.";
 "rph_txt_title" = "Kód receptu";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Vaše zařízení může mít snížené zabezpečení";
 "section_txt_is_active_value" = "Vybraný";
 "section_txt_is_inactive_value" = "Nevybraný";
+"self_payer_warning_txt_ending" = "Vaše pojištění nepokryje žádné náklady.";
+"self_payer_warning_txt_message_single" = "Vaše pojištění nebude hradit žádné náklady na tento předpis.";
+"self_payer_warning_txt_solo" = "Vaše pojištění nebude hradit žádné náklady na tento předpis.";
 "service_txt_consent_alert_login" = "Registrovat";
 "service_txt_consent_alert_okay" = "OK";
 "service_txt_consent_alert_retry" = "Zkus to znovu";

@@ -33,6 +33,7 @@ extension ErxTaskPatientEntity {
         name = patient.name
         phone = patient.phone
         status = patient.status
+        coverageType = patient.coverageType?.rawValue
     }
 }
 
@@ -47,7 +48,8 @@ extension ErxPatient {
             phone: entity.phone,
             status: entity.status,
             insurance: entity.insurance,
-            insuranceId: entity.insuranceIdentifier
+            insuranceId: entity.insuranceIdentifier,
+            coverageType: ErxPatient.CoverageType(rawValue: entity.coverageType)
         )
     }
 }

@@ -19,7 +19,7 @@
 import AVFoundation
 import eRpKit
 import Foundation
-import GemCommonsKit
+import OSLog
 import UIKit
 import Vision
 
@@ -222,7 +222,7 @@ class CANCameraScannerViewController: UIViewController {
             for: AVMediaType.video,
             position: .back
         ) else {
-            DLog("Could not create capture device.")
+            Logger.eRpApp.debug("Could not create capture device.")
             return
         }
         self.captureDevice = captureDevice
@@ -236,7 +236,7 @@ class CANCameraScannerViewController: UIViewController {
         }
 
         guard let deviceInput = try? AVCaptureDeviceInput(device: captureDevice) else {
-            DLog("Could not create device input.")
+            Logger.eRpApp.debug("Could not create device input.")
             return
         }
         if captureSession.canAddInput(deviceInput) {
@@ -254,7 +254,7 @@ class CANCameraScannerViewController: UIViewController {
             captureSession.addOutput(videoDataOutput)
             videoDataOutput.connection(with: AVMediaType.video)?.preferredVideoStabilizationMode = .off
         } else {
-            DLog("Could not add VDO output")
+            Logger.eRpApp.debug("Could not add VDO output")
             return
         }
 
@@ -265,7 +265,7 @@ class CANCameraScannerViewController: UIViewController {
             captureDevice.autoFocusRangeRestriction = .near
             captureDevice.unlockForConfiguration()
         } catch {
-            DLog("Could not set zoom level due to error: \(error)")
+            Logger.eRpApp.debug("Could not set zoom level due to error: \(error)")
             return
         }
 
@@ -354,7 +354,7 @@ extension CANCameraScannerViewController: AVCaptureVideoDataOutputSampleBufferDe
             do {
                 try requestHandler.perform([request])
             } catch {
-                DLog(error.localizedDescription)
+                Logger.eRpApp.debug("\(error.localizedDescription)")
             }
         }
     }

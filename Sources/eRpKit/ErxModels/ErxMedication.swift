@@ -20,7 +20,7 @@ import Foundation
 
 /// For informations on medication and it's profiles go to:
 /// https://wiki.gematik.de/display/DEV/eRp+App+-+Medikamententypen+der+KBV
-public struct ErxMedication: Hashable, Codable {
+public struct ErxMedication: Hashable, Codable, Sendable {
     public init(name: String? = nil,
                 profile: ProfileType? = nil,
                 drugCategory: DrugCategory? = nil,
@@ -74,7 +74,7 @@ public struct ErxMedication: Hashable, Codable {
     public let ingredients: [Ingredient]
 
     /// Information that only applies to packages.
-    public struct Batch: Equatable, Hashable, Codable {
+    public struct Batch: Equatable, Hashable, Codable, Sendable {
         public init(lotNumber: String? = nil, expiresOn: String? = nil) {
             self.lotNumber = lotNumber
             self.expiresOn = expiresOn
@@ -87,7 +87,7 @@ public struct ErxMedication: Hashable, Codable {
     }
 
     /// Category of a drug
-    public enum DrugCategory: String, Equatable, Codable {
+    public enum DrugCategory: String, Equatable, Codable, Sendable {
         // Arznei- und Verbandmittel "00"
         case avm = "00"
         // Betaeubungsmittel "01"
@@ -100,7 +100,7 @@ public struct ErxMedication: Hashable, Codable {
         case unknown
     }
 
-    public enum ProfileType: String, Equatable, Codable {
+    public enum ProfileType: String, Equatable, Codable, Sendable {
         case freeText
         case pzn
         case ingredient
@@ -108,7 +108,7 @@ public struct ErxMedication: Hashable, Codable {
         case unknown
     }
 
-    public struct Ingredient: Equatable, Hashable, Codable {
+    public struct Ingredient: Equatable, Hashable, Codable, Sendable {
         public init(
             text: String? = nil,
             number: String? = nil,
@@ -137,7 +137,7 @@ public struct ErxMedication: Hashable, Codable {
         public let strengthFreeText: String?
     }
 
-    public struct Ratio: Equatable, Hashable, Codable, CustomStringConvertible {
+    public struct Ratio: Equatable, Hashable, Codable, CustomStringConvertible, Sendable {
         public init(numerator: Quantity, denominator: Quantity? = nil) {
             self.numerator = numerator
             self.denominator = denominator
@@ -154,7 +154,7 @@ public struct ErxMedication: Hashable, Codable {
         }
     }
 
-    public struct Quantity: Equatable, Hashable, Codable, CustomStringConvertible {
+    public struct Quantity: Equatable, Hashable, Codable, CustomStringConvertible, Sendable {
         public init(value: String, unit: String? = nil) {
             self.value = value
             self.unit = unit

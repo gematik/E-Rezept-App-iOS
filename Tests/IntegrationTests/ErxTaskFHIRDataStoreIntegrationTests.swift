@@ -130,9 +130,6 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         guard let signer = environment.brainpool256r1Signer else {
             throw XCTSkip("Skip test because no signing entity available")
         }
-        if environment.appConfiguration == integrationTestsEnvironmentGMTKDEV.appConfiguration {
-            throw XCTSkip("Skip test because FD components in gematik_dev environment are unstable.")
-        }
 
         let didLogin = login(with: signer)
         expect(didLogin).to(beTrue())

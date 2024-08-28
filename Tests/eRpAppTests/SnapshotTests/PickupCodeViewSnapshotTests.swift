@@ -23,29 +23,24 @@ import SwiftUI
 import XCTest
 
 final class PickupCodeViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testPickupCodeViewWithHRCodeAndDMCCode() {
         let state = PickupCodeDomain.State(pickupCodeHR: "4911",
                                            pickupCodeDMC: "This is a data matrix code.",
                                            dmcImage: Asset.qrcode.image)
         let sut = PickupCodeView(store: PickupCodeDomain.Dummies.storeFor(state))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testPickupCodeViewWithHRCodeOnly() {
         let state = PickupCodeDomain.State(pickupCodeHR: "4911")
         let sut = PickupCodeView(store: PickupCodeDomain.Dummies.storeFor(state))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testPickupCodeViewWithDMCCodeOnly() {
         let state = PickupCodeDomain.State(pickupCodeDMC: "This is a data matrix code.",
                                            dmcImage: Asset.qrcode.image)
         let sut = PickupCodeView(store: PickupCodeDomain.Dummies.storeFor(state))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 }

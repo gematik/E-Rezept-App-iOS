@@ -47,15 +47,18 @@ struct PharmacyRedeemDomain {
 
         enum Alert {
             case contact
+            case closeRedeem
+            case retryRedeem
         }
     }
 
     @ObservableState
     struct State: Equatable {
         var redeemOption: RedeemOption
-        var prescriptions: [Prescription]
+        @Shared var prescriptions: [Prescription]
         var pharmacy: PharmacyLocation
-        var selectedPrescriptions: Set<Prescription> = []
+        @Shared var selectedPrescriptions: Set<Prescription>
+        var redeemInProgress = false
         var orderResponses: IdentifiedArrayOf<OrderResponse> = []
         var selectedShipmentInfo: ShipmentInfo?
         var profile: Profile?
@@ -156,9 +159,10 @@ struct PharmacyRedeemDomain {
         case let .selectedProfileReceived(.success(profile)):
             state.profile = profile
             return .none
-        case .redeem:
+        case .redeem,
+             .destination(.presented(.alert(.retryRedeem))):
             state.orderResponses = []
-            guard !state.selectedPrescriptions.isEmpty else {
+            guard !state.selectedPrescriptions.isEmpty, !state.redeemInProgress else {
                 return .none
             }
 
@@ -167,8 +171,10 @@ struct PharmacyRedeemDomain {
                 state.destination = .alert(.info(AlertStates.missingContactInfo(with: error)))
                 return .none
             }
+            state.redeemInProgress = true
             return redeem(orders: state.orders)
         case let .redeemReceived(.success(orderResponses)):
+            state.redeemInProgress = false
             state.orderResponses = orderResponses
             if orderResponses.arePartiallySuccessful || orderResponses.areFailing {
                 state.destination = .alert(.info(AlertStates.failingRequest(count: orderResponses.failedCount)))
@@ -180,29 +186,51 @@ struct PharmacyRedeemDomain {
                 _ = try await save(pharmacy: pharmacy).async()
             }
         case let .redeemReceived(.failure(error)):
-            state.destination = .alert(.init(for: error))
-            let pharmacy = state.pharmacy
-            return .run { _ in
+            state.redeemInProgress = false
+            if case let RedeemServiceError.prescriptionAlreadyRedeemed(prescriptions) = error {
+                let failedPrescriptionIds = prescriptions.map(\.id)
+                state.selectedPrescriptions = state.selectedPrescriptions
+                    .filter { !failedPrescriptionIds.contains($0.id) }
+
+                if state.selectedPrescriptions.isEmpty {
+                    state.destination = .alert(ErpAlertState<Destination.Alert>(for: error, actions: {
+                        ButtonState(action: .send(.closeRedeem)) {
+                            TextState(L10n.phaRedeemBtnPrescriptionAlreadyRedeemedAlertDismiss)
+                        }
+                        ButtonState(role: .cancel) {
+                            TextState(L10n.amgBtnAlertCancel)
+                        }
+                    }))
+                } else {
+                    state.destination = .alert(ErpAlertState(for: error, actions: {
+                        ButtonState(action: .send(.retryRedeem)) {
+                            TextState(L10n.phaRedeemBtnPrescriptionAlreadyRedeemedAlertProceedWithout)
+                        }
+                        ButtonState(role: .cancel) {
+                            TextState(L10n.amgBtnAlertCancel)
+                        }
+                    }))
+                }
+            } else {
+                state.destination = .alert(.init(for: error))
+            }
+
+            return .run { [pharmacy = state.pharmacy] _ in
                 for try await _ in save(pharmacy: pharmacy).values {}
             }
-        case let .destination(.presented(.redeemSuccess(.delegate(action)))):
-            switch action {
-            case .close:
-                state.destination = nil
-                return Effect.send(.delegate(.close))
-            }
-        case let .destination(.presented(.contact(.delegate(action)))):
-            switch action {
-            case .close:
-                state.destination = nil
-                return .none
-            }
-        case .destination(.presented(.cardWall(.delegate(.close)))):
+        case .destination(.presented(.redeemSuccess(.delegate(.close)))),
+             .destination(.presented(.alert(.closeRedeem))):
             state.destination = nil
-            return .none
-        case let .destination(.presented(.prescriptionSelection(action: .saveSelection(prescriptions)))):
+            return .run { send in
+                // allow the state.destination to be recognized by SwiftUI, otherwise the dialog pops up again after
+                // dismissal
+                try await schedulers.main.sleep(for: 0.1)
+
+                await send(.delegate(.close))
+            }
+        case .destination(.presented(.contact(.delegate(.close)))),
+             .destination(.presented(.cardWall(.delegate(.close)))):
             state.destination = nil
-            state.selectedPrescriptions = prescriptions
             return .none
         case .showContact,
              .destination(.presented(.alert(.contact))):
@@ -214,16 +242,16 @@ struct PharmacyRedeemDomain {
             state.destination = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
             return .none
         case .showCardWall:
+            state.redeemInProgress = false
             state.destination = .cardWall(CardWallIntroductionDomain.State(
                 isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
                 profileId: userSession.profileId
             ))
             return .none
         case .showPrescriptionSelection:
-            let redeemableTasks = state.prescriptions.filter(\.isRedeemable)
             state.destination = .prescriptionSelection(PharmacyPrescriptionSelectionDomain
-                .State(prescriptions: redeemableTasks,
-                       selectedPrescriptions: state.selectedPrescriptions,
+                .State(prescriptions: state.$prescriptions,
+                       selectedPrescriptions: state.$selectedPrescriptions,
                        profile: state.profile))
             return .none
         case .resetNavigation:
@@ -412,9 +440,9 @@ extension PharmacyRedeemDomain {
 
         static let state = State(
             redeemOption: .shipment,
-            prescriptions: [Prescription.Dummies.prescriptionReady],
+            prescriptions: Shared([Prescription.Dummies.prescriptionReady]),
             pharmacy: pharmacy,
-            selectedPrescriptions: Set([Prescription.Dummies.prescriptionReady]),
+            selectedPrescriptions: Shared(Set([Prescription.Dummies.prescriptionReady])),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Marta Maquise",
                 street: "Stahl und Holz Str.1",

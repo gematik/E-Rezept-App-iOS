@@ -72,11 +72,31 @@ final class MockResourceHandler: ResourceHandler {
         options: [UIApplication.OpenExternalURLOptionsKey: Any],
         completion: ((Bool) -> Void)?
     )?
+    #if compiler(>=6.0)
+    var openOptionsCompletionHandlerReceivedInvocations: [(url: URL,
+                                                           options: [UIApplication.OpenExternalURLOptionsKey: Any],
+                                                           completion: (@MainActor @Sendable (Bool) -> Void)?)] = []
+    var openOptionsCompletionHandlerClosure: ((URL, [UIApplication.OpenExternalURLOptionsKey: Any],
+                                               (@MainActor @Sendable (Bool) -> Void)?)
+            -> Void)?
+
+    func open(
+        _ url: URL,
+        options: [UIApplication.OpenExternalURLOptionsKey: Any],
+        completionHandler completion: (@MainActor @Sendable (Bool) -> Void)?
+    ) {
+        openOptionsCompletionHandlerCallsCount += 1
+        openOptionsCompletionHandlerReceivedArguments = (url: url, options: options, completion: completion)
+        openOptionsCompletionHandlerReceivedInvocations.append((url: url, options: options, completion: completion))
+        openOptionsCompletionHandlerClosure?(url, options, completion)
+    }
+    #else
     var openOptionsCompletionHandlerReceivedInvocations: [(url: URL,
                                                            options: [UIApplication.OpenExternalURLOptionsKey: Any],
                                                            completion: ((Bool) -> Void)?)] = []
-    var openOptionsCompletionHandlerClosure: ((URL, [UIApplication.OpenExternalURLOptionsKey: Any], ((Bool) -> Void)?)
-        -> Void)?
+    var openOptionsCompletionHandlerClosure: ((URL, [UIApplication.OpenExternalURLOptionsKey: Any],
+                                               ((Bool) -> Void)?)
+            -> Void)?
 
     func open(
         _ url: URL,
@@ -88,4 +108,5 @@ final class MockResourceHandler: ResourceHandler {
         openOptionsCompletionHandlerReceivedInvocations.append((url: url, options: options, completion: completion))
         openOptionsCompletionHandlerClosure?(url, options, completion)
     }
+    #endif
 }

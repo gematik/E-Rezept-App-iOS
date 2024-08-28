@@ -293,7 +293,10 @@ extension CardWallIntroductionDomain {
         )
 
         static func alertFor(_ error: IDPError) -> ErpAlertState<Action> {
-            .init(for: error) {
+            .init(
+                for: error,
+                title: nil
+            ) {
                 ButtonState(action: .dismiss) {
                     .init(L10n.cdwBtnIntroAlertClose)
                 }

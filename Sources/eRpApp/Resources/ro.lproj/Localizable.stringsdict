@@ -110,6 +110,42 @@
 			<string>%li rețete nu au putut fi valorificate</string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>one</key>
+			<string>Rețeta nu poate fi răscumpărată</string>
+			<key>other</key>
+			<string>Rețetele nu pot fi răscumpărate</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>one</key>
+			<string>Rețeta %% @ nu mai poate fi valorificată. Este posibil să fi răscumpărat deja prin alte mijloace sau să fi fost șters.</string>
+			<key>other</key>
+			<string>Următoarele rețete nu mai pot fi valorificate: %% @. Este posibil să le fi răscumpărat deja prin alte mijloace sau să fi fost șterse.</string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -144,6 +180,24 @@
 			<string>Gata, adauga reteta</string>
 			<key>other</key>
 			<string>Gata, adauga retete</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Asigurarea dvs. nu va acoperi niciun cost pentru %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>one</key>
+			<string>rețeta</string>
+			<key>other</key>
+			<string>rețetele</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

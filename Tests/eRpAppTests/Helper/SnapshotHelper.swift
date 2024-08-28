@@ -179,6 +179,7 @@ extension View {
     }
 }
 
+@MainActor
 enum SnapshotHelper {
     private static var didRecord = false
 
@@ -186,9 +187,7 @@ enum SnapshotHelper {
         guard didRecord == false else { return }
 
         assertSnapshot(
-            of: OffsetPreview(
-                .image(layout: .device(config: .iPhone14(.portrait)))
-            ),
+            of: OffsetPreview(.image(layout: .device(config: .iPhone14(.portrait)))),
             as: .image(
                 precision: 0.0,
                 layout: .device(config: .iPhone14(.portrait))
@@ -200,11 +199,10 @@ enum SnapshotHelper {
     }
 }
 
+@MainActor
 class ERPSnapshotTestCase: XCTestCase {
     override func setUp() {
         super.setUp()
-        diffTool = "open"
-
         SnapshotHelper.fixOffsetProblem()
     }
 }

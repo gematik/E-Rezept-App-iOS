@@ -101,6 +101,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         expect(task.patient?.status) == "3"
         expect(task.patient?.insurance) == "Techniker Krankenkasse"
         expect(task.patient?.insuranceId) == "K030182229"
+        expect(task.patient?.coverageType) == .GKV
         // practitioner
         expect(task.practitioner?.lanr) == "987654423"
         expect(task.practitioner?.name) == "Prof. Dr. med. Emma Schneider"

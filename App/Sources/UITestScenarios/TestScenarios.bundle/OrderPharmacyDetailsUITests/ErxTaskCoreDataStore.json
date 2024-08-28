@@ -1,0 +1,28 @@
+{
+    "listAllCommunicationsForRecordings":
+    {
+        "type": "queue",
+        "payload":
+        [
+            [],
+            [
+                {
+                    "payload":
+                    {
+                        "version": 1,
+                        "supplyOptionsType": "onPremise"
+                    },
+                    "telematikId": "3-01.2.2023001.16.101",
+                    "orderId": "803E9778-34FD-41AC-BD50-9EAA8E3D0A49",
+                    "identifier": "01ebc5b9-f1a8-1c00-7db9-e19c3ce249a5",
+                    "profile": "dispReq",
+                    "isRead": false,
+                    "payloadJSON": "{\"address\":[\"124589\",\"12489\",\"Berlin\"],\"hint\":\"\",\"name\":\"Dude\",\"phone\":\"0987654321\",\"supplyOptionsType\":\"onPremise\",\"version\":1}",
+                    "timestamp": "2024-06-27T09:52:58.880+00:00",
+                    "insuranceId": "X110343009",
+                    "taskId": "160.000.006.602.363.77"
+                }
+            ]
+        ]
+    }
+}

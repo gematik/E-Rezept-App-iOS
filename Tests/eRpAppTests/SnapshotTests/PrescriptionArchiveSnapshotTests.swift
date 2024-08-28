@@ -28,11 +28,6 @@ final class PrescriptionArchiveSnapshotTests: ERPSnapshotTestCase {
     let testScheduler = DispatchQueue.immediate
     let initialState = PrescriptionArchiveDomain.Dummies.state
 
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testPrescriptionArchiveView_Show() {
         let store: StoreOf<PrescriptionArchiveDomain> = Store(initialState: initialState) {
             EmptyReducer()
@@ -40,6 +35,6 @@ final class PrescriptionArchiveSnapshotTests: ERPSnapshotTestCase {
 
         let sut = PrescriptionArchiveView(store: store)
             .frame(width: 320, height: 2000)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 }

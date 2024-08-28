@@ -657,6 +657,17 @@ extension MainDomain.Destination.Action {
 extension MatrixCodeDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
+            case let .destination(.presented(action)):
+                action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
+extension MatrixCodeDomain.Destination.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .sharePrescription(action):
+                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -786,6 +797,8 @@ extension OrderDetailDomain.Destination.Action {
             case let .prescriptionDetail(action):
                 action.analytics(tracker: tracker)
             case let .chargeItem(action):
+                action.analytics(tracker: tracker)
+            case let .pharmacyDetail(action):
                 action.analytics(tracker: tracker)
             default: break
         }
@@ -1065,6 +1078,8 @@ extension PrescriptionDetailDomain.Destination.Action {
             case let .coPaymentInfo(action):
                 action.analytics(tracker: tracker)
             case let .emergencyServiceFeeInfo(action):
+                action.analytics(tracker: tracker)
+            case let .selfPayerInfo(action):
                 action.analytics(tracker: tracker)
             case let .medicationReminder(action):
                 action.analytics(tracker: tracker)

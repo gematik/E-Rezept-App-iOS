@@ -25,11 +25,6 @@ import SwiftUI
 import XCTest
 
 final class DeviceSecurityViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testDeviceWithoutPinSnapshot() {
         let sut = DeviceSecurityView(store: DeviceSecurityDomain.Store(
             initialState: DeviceSecurityDomain.State(
@@ -40,9 +35,9 @@ final class DeviceSecurityViewSnapshotTests: ERPSnapshotTestCase {
             EmptyReducer()
         })
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testRootedDeviceSnapshot() {
@@ -55,8 +50,8 @@ final class DeviceSecurityViewSnapshotTests: ERPSnapshotTestCase {
             EmptyReducer()
         })
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

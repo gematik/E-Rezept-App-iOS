@@ -35,7 +35,7 @@ final class MatrixCodeDomainTests: XCTestCase {
 
     func testStore(
         with type: MatrixCodeDomain.MatrixCodeType,
-        zoomedInto: UUID? = nil
+        isMatrixCodeZoomed: Bool = false
     ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
 
@@ -43,7 +43,7 @@ final class MatrixCodeDomainTests: XCTestCase {
             type: type,
             erxTasks: [ErxTask.Fixtures.erxTaskRedeemed],
             erxChargeItem: ErxChargeItem.Fixtures.chargeItem1,
-            zoomedInto: zoomedInto
+            isMatrixCodeZoomed: isMatrixCodeZoomed
         )
         let savingError: ErxRepositoryError = .local(.notImplemented)
         let saveErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
@@ -121,26 +121,44 @@ final class MatrixCodeDomainTests: XCTestCase {
     func testZoomDataMatrixCode() async {
         let store = testStore(with: .erxTask)
 
-        let uuid = UUID()
+        await store.send(.zoomButtonTapped) {
+            $0.isMatrixCodeZoomed = true
+        }
 
-        await store.send(.zoomButtonTapped(uuid)) {
-            $0.zoomedInto = uuid
+        await store.send(.zoomButtonTapped) {
+            $0.isMatrixCodeZoomed = false
         }
     }
 
-    func testCloseZoomDataMatrixCode() async {
-        let store = testStore(with: .erxTask, zoomedInto: UUID())
+    func testShareMatrixCodeView() async {
+        let task = ErxTask.Fixtures.erxTaskRedeemed
+        let dmcImage = Asset.qrcode.image
+        let testState = MatrixCodeDomain.State(
+            type: .erxTask,
+            erxTasks: [task],
+            loadingState: .value(
+                [MatrixCodeDomain.State.IdentifiedImage(
+                    identifier: UUID(),
+                    image: dmcImage,
+                    chunk: [task]
+                )]
+            )
+        )
 
-        await store.send(.closeZoomTapped) {
-            $0.zoomedInto = nil
+        let store = TestStore(initialState: testState) {
+            MatrixCodeDomain()
         }
-    }
 
-    func testCloseMatrixCodeView() async {
-        let store = testStore(with: .erxTask)
-
-        await store.send(.closeButtonTapped)
-        XCTAssertEqual(isDismissInvoked.value, true)
+        await store.send(.shareButtonTapped) {
+            $0
+                .destination = .sharePrescription(
+                    .init(
+                        string: L10n.dmcTxtShareMessage(task.medication!.displayName).text,
+                        url: nil, // currently nil because we need to check the format first
+                        dataMatrixCodeImage: ImageGenerator.testValue.addCaption(UIImage(), "", "")
+                    )
+                )
+        }
     }
 
     func testChunkingOfErxTasks() async {
@@ -159,11 +177,10 @@ final class MatrixCodeDomainTests: XCTestCase {
         let store = TestStore(
             initialState: MatrixCodeDomain.State(
                 type: .erxTask,
-                isShowAlert: false,
                 erxTasks: tasks,
                 erxChargeItem: nil,
                 loadingState: .idle,
-                zoomedInto: nil
+                isMatrixCodeZoomed: false
             )
         ) {
             MatrixCodeDomain()

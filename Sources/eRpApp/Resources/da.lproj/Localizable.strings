@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Parat";
 "dmc_txt_code_multiple" = "Samlingskode";
 "dmc_txt_code_single" = "Enkelt kode";
+"dmc_txt_number_medications_%d" = "%d medicin(er)";
+"dmc_txt_share_message_%@" = "Du har fået delt en receptkode via e-recept-appen med følgende medicin: %@";
 "dtl_btn_copy_clipboard" = "Kopi";
 "dtl_btn_delete_disabled_note" = "Recepten behandles i øjeblikket af et apotek og kan ikke slettes.";
 "dtl_btn_delete_medication" = "Slet fra denne enhed";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Åbn opskriftsscanner";
 "erx_title" = "Opskrifter";
 "erx_txt_authored" = "Vises";
+"erx_txt_claimed_at_%@" = "Antaget %@";
 "erx_txt_current" = "Nuværende";
 "erx_txt_expired_on_%@" = "Udløb den %@";
 "erx_txt_forced_update_alert_description" = "Optimer din app-oplevelse ved at opdatere appen.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "arkiv";
 "erx_txt_refresh_loading" = "Indlæser …";
 "erx_txt_scanned_at_%@" = "Scannet: %@";
+"erx_txt_self_payer" = "Ingen refusion af omkostninger";
+"erx_txt_sent_at_%@" = "Sendt %@";
 "hint_btn_close" = "tæt";
 "hint_btn_open_scn" = "Åbn scanneren";
 "hint_btn_try_demo_mode" = "Start demotilstand";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Indkøbskurven er klar";
 "ord_detail_shipment_link_btn" = "Åben indkøbskurv";
 "ord_detail_shipment_link_text" = "Gå til apotekets hjemmeside for at fuldføre ordren.";
-"ord_detail_txt_%@_send_to_%@" = "%@ sendt til %@ . Den digitale indløsningsproces er stadig ukendt for mange apoteker. Hvis du ikke hører tilbage i morgen, anbefaler vi, at du ringer for at forhøre dig som en sikkerhedsforanstaltning.";
+"ord_detail_txt_%@_send_to_%@" = "%@ sendt til %@ . Nogle apoteker har endnu ikke en digital svarmulighed. Hvis der ikke er noget svar i morgen, bedes du ringe for en sikkerheds skyld.";
 "ord_detail_txt_charge_item%@" = "Du har modtaget en kvittering for prisen på din medicin %@ .";
 "ord_detail_txt_contact" = "Kontaktmuligheder";
 "ord_detail_txt_contact_email" = "Skriv e-mail";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Områdenummer og telefonnummer";
 "pha_contact_txt_street" = "Gade og husnummer";
 "pha_contact_txt_zip" = "Postnummer";
-"pha_detail_btn_delivery" = "budbringer\n vælge";
+"pha_detail_btn_delivery" = "kurer";
 "pha_detail_btn_footer" = "Lær mere";
 "pha_detail_btn_healthcare_service" = "Anmod om kurerservice";
 "pha_detail_btn_location" = "Reserver til afhentning";
 "pha_detail_btn_login_note" = "Indløsning kun muligt efter tilmelding";
+"pha_detail_btn_open_mail" = "Skriv e-mail";
+"pha_detail_btn_open_map" = "Rute her";
+"pha_detail_btn_open_phone" = "Opkald";
 "pha_detail_btn_organization" = "Få det leveret med fragt";
-"pha_detail_btn_pickup" = "kollektion\n vælge";
-"pha_detail_btn_shipment" = "Forsendelse\n vælge";
+"pha_detail_btn_pickup" = "Saml op";
+"pha_detail_btn_shipment" = "Forsendelse";
 "pha_detail_contact" = "Kontakt";
-"pha_detail_hint_message" = "Vær opmærksom på, at der også kan gælde yderligere betaling for ordineret medicin.";
 "pha_detail_hint_not_erx_ready_message" = "Du kan endnu ikke sende e-recepter til dette apotek.";
 "pha_detail_hint_not_erx_ready_pic" = "Apoteker har medicin";
 "pha_detail_hint_not_erx_ready_title" = "Indløs kun på stedet";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Bemærkning til apoteker: Vi indhenter kontaktoplysninger og information om apoteker fra ";
 "pha_detail_txt_no_prescription_toast" = "Du har ingen recepter at udfylde.";
+"pha_detail_txt_open_hour_today" = "I dag";
+"pha_detail_txt_open_hour_tomorrow" = "I morgen";
 "pha_detail_txt_subtitle_fallback" = "Apotek";
 "pha_detail_txt_title" = "detaljer";
 "pha_detail_web" = "internet side";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Tilføj til";
 "pha_redeem_btn_change_pharmacy" = "Lave om";
 "pha_redeem_btn_change_prescription" = "Lave om";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Annuller ordre";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Fortsæt uden denne recept";
 "pha_redeem_btn_redeem" = "Indløs";
 "pha_redeem_btn_redeem_footnote" = "Dette vil sende din recept til dette apotek. Det er ikke muligt at indløse det på et andet apotek.";
 "pha_redeem_btn_select_pharmacy" = "Vælg apotek";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Aktiver";
 "prsc_dtl_btn_pkv_invoice" = "Omkostningskvittering";
 "prsc_dtl_btn_redeem" = "Send til apoteket";
+"prsc_dtl_btn_self_payer" = "Ingen refusion af omkostninger";
 "prsc_dtl_btn_share" = "Dele";
 "prsc_dtl_btn_share_title" = "Dele";
 "prsc_dtl_btn_show_matrix_code" = "Vis kode";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Scannet opskrift";
 "prsc_dtl_dr_substitution_info_description" = "Apoteker er forpligtet til at prioritere udlevering af lægemidler, som patientens sygesikring har indgået rabataftale om med lægemiddelproducenter. Dette gælder kun ikke, hvis lægen udelukker \"Aut idem\" på recepten, hvilket ikke er tilfældet med din recept.";
 "prsc_dtl_dr_substitution_info_title" = "Udskiftningsforberedelse mulig";
+"prsc_dtl_drawer_self_payer_info_header" = "Ingen refusion af omkostninger";
+"prsc_dtl_drawer_self_payer_info_message" = "Sygeforsikringen dækker som udgangspunkt ikke udgifterne til denne recept. Som patient er du derfor ansvarlig for fuld betaling. Hvorvidt udgifterne refunderes som led i tillægsforsikring eller lovpligtige ydelser, skal kontrolleres individuelt.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Åbn health.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Du kan finde ekspertverificeret information om sygdomme, ICD-koder og forebyggelses- og plejeemner i den nationale sundhedsportal.";
 "prsc_dtl_med_ingredient_name" = "Aktiv ingrediens navn";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen- Answeren";
 "prsc_fd_txt_substitution_title" = "Udskiftningsforberedelse mulig";
 "prsc_redeem_note_direct_assignment" = "Denne recept vil blive indløst for dig som en del af en behandling.";
-"prsc_status_canceled" = "Aflyst";
+"prsc_status_canceled" = "Slettet";
 "prsc_status_completed" = "Forløst";
 "prsc_status_direct_assigned" = "Vil blive indløst for dig";
 "prsc_status_error" = "Forkert opskrift";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "Den indtastede gade overskrider den maksimalt tilladte længde på %@ tegn.";
 "riv_ti_invalid_zip_%@" = "Det indtastede postnummer overstiger den maksimalt tilladte længde på %@ tegn.";
 "riv_ti_wrong_version" = "Ugyldigt versionsnummer.";
-"rph_btn_close_alert_keep" = "Ikke indløst";
-"rph_btn_close_alert_mark_redeemed" = "Forløst";
-"rph_txt_close_alert_message" = "Vil du markere denne opskrift som indløst?";
-"rph_txt_close_alert_title" = "Recept fyldt?";
 "rph_txt_matrixcode_hint" = "Få denne receptkode scannet på dit apotek.";
 "rph_txt_subtitle" = "Få denne receptkode scannet på dit apotek.";
 "rph_txt_title" = "Opskriftskode";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Din enhed kan have nedsat sikkerhed";
 "section_txt_is_active_value" = "Valgte";
 "section_txt_is_inactive_value" = "Ikke valgt";
+"self_payer_warning_txt_ending" = "Din forsikring dækker ingen omkostninger.";
+"self_payer_warning_txt_message_single" = "Din forsikring dækker ingen omkostninger til denne recept.";
+"self_payer_warning_txt_solo" = "Din forsikring dækker ingen omkostninger til denne recept.";
 "service_txt_consent_alert_login" = "Tilmeld";
 "service_txt_consent_alert_okay" = "Okay";
 "service_txt_consent_alert_retry" = "Prøv igen";

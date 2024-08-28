@@ -24,15 +24,6 @@ import SwiftUI
 import XCTest
 
 final class PharmacySearchFilterViewSnapshotTests: ERPSnapshotTestCase {
-    var resourceHandlerMock: MockResourceHandler!
-
-    override func setUp() {
-        super.setUp()
-
-        resourceHandlerMock = MockResourceHandler()
-        diffTool = "open"
-    }
-
     func testPharmacySearchFilterView_Empty() {
         let sut = NavigationView {
             PharmacySearchFilterView(
@@ -46,9 +37,9 @@ final class PharmacySearchFilterViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPharmacySearchFilterView_SomeSelection() {
@@ -66,8 +57,8 @@ final class PharmacySearchFilterViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

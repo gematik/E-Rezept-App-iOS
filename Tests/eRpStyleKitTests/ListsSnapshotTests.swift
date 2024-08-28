@@ -22,12 +22,6 @@ import SwiftUI
 import XCTest
 
 final class ListsSnapshotTests: XCTestCase {
-    override class func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     struct SnapshotExampleView: View {
         var body: some View {
             ScrollView {
@@ -138,7 +132,7 @@ final class ListsSnapshotTests: XCTestCase {
         }
         .frame(width: 375, height: 1400)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testBorderedGroupedListStyle() {
@@ -149,7 +143,7 @@ final class ListsSnapshotTests: XCTestCase {
         }
         .frame(width: 375, height: 1400)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testInlineListStyle() {
@@ -160,7 +154,7 @@ final class ListsSnapshotTests: XCTestCase {
         }
         .frame(width: 375, height: 1400)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 }
 

@@ -29,13 +29,37 @@ final class CardWallLoginDomainTests: XCTestCase {
         testStore(for: CardWallLoginOptionDomain.Dummies.state)
     }
 
+    let mockSecurityPolicyEvaluator = MockSecurityPolicyEvaluator()
+
     func testStore(for state: CardWallLoginOptionDomain.State) -> TestStore {
         TestStore(initialState: state) {
             CardWallLoginOptionDomain()
         } withDependencies: { dependencies in
+            dependencies.securityPolicyEvaluator = mockSecurityPolicyEvaluator
             dependencies.userSession = MockUserSession()
             dependencies.schedulers = Schedulers()
             dependencies.resourceHandler = MockResourceHandler()
+        }
+    }
+
+    func testSelectingOptionTriggersWarning() async {
+        let store = testStore(for: CardWallLoginOptionDomain
+            .State(
+                isDemoModus: false,
+                profileId: UUID(),
+                pin: "",
+                selectedLoginOption: .notSelected,
+                destination: .none
+            ))
+
+        mockSecurityPolicyEvaluator.canEvaluatePolicyErrorReturnValue = true
+
+        await store.send(.binding(.set(\.selectedLoginOption, .withBiometry))) {
+            $0.selectedLoginOption = .withBiometry
+        }
+
+        await store.receive(.presentSecurityWarning) { state in
+            state.destination = .warning
         }
     }
 

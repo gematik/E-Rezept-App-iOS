@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Fertig";
 "dmc_txt_code_multiple" = "Sammelcode";
 "dmc_txt_code_single" = "Einzelcode";
+"dmc_txt_number_medications_%d" = "%d Medikament(e)";
+"dmc_txt_share_message_%@" = "Ihnen wurde ein Rezeptcode über die E-Rezept-App mit folgenden Medikamenten geteilt: %@";
 "dtl_btn_copy_clipboard" = "Kopieren";
 "dtl_btn_delete_disabled_note" = "Das Rezept ist gerade in Bearbeitung durch eine Apotheke und kann nicht gelöscht werden.";
 "dtl_btn_delete_medication" = "Von diesem Gerät löschen";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Rezept-Scanner öffnen";
 "erx_title" = "Rezepte";
 "erx_txt_authored" = "Ausgestellt";
+"erx_txt_claimed_at_%@" = "Angenommen %@";
 "erx_txt_current" = "Aktuell";
 "erx_txt_expired_on_%@" = "Abgelaufen am %@";
 "erx_txt_forced_update_alert_description" = "Optimieren Sie Ihr App-Erlebnis, indem Sie die die App aktualisieren.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "Archiv";
 "erx_txt_refresh_loading" = "Wird geladen …";
 "erx_txt_scanned_at_%@" = "Gescannt: %@";
+"erx_txt_self_payer" = "Keine Kostenübernahme";
+"erx_txt_sent_at_%@" = "Versendet %@";
 "hint_btn_close" = "schließen";
 "hint_btn_open_scn" = "Scanner öffnen";
 "hint_btn_try_demo_mode" = "Demo-Modus starten";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Warenkorb steht bereit";
 "ord_detail_shipment_link_btn" = "Warenkorb öffnen";
 "ord_detail_shipment_link_text" = "Bitte wechseln Sie nun auf die Website der Apotheke, um die Bestellung abzuschließen.";
-"ord_detail_txt_%@_send_to_%@" = "%@ an %@ gesendet. Der digitale Einlöseprozess ist für viele Apotheken noch ungewohnt. Sollten Sie bis morgen keine Rückmeldung erhalten, empfehlen wir, vorsichtshalber telefonisch nachzufragen.";
+"ord_detail_txt_%@_send_to_%@" = "%@ an %@ gesendet. Einige Apotheken haben noch keine digitale Antwortmöglichkeit. Falls bis morgen keine Rückmeldung erfolgt, rufen Sie bitte vorsichtshalber an.";
 "ord_detail_txt_charge_item%@" = "Sie haben einen Kostenbeleg zu Ihrem Medikament %@ erhalten.";
 "ord_detail_txt_contact" = "Kontakt Optionen";
 "ord_detail_txt_contact_email" = "Mail schreiben";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Vorwahl und Telefonnummer";
 "pha_contact_txt_street" = "Straße und Hausnummer";
 "pha_contact_txt_zip" = "PLZ";
-"pha_detail_btn_delivery" = "Bote\nwählen";
+"pha_detail_btn_delivery" = "Bote";
 "pha_detail_btn_footer" = "Mehr erfahren";
 "pha_detail_btn_healthcare_service" = "Botendienst anfragen";
 "pha_detail_btn_location" = "Zur Abholung reservieren";
 "pha_detail_btn_login_note" = "Einlösen nur nach Anmeldung möglich";
+"pha_detail_btn_open_mail" = "Mail schreiben";
+"pha_detail_btn_open_map" = "Route hierhin";
+"pha_detail_btn_open_phone" = "Anrufen";
 "pha_detail_btn_organization" = "Per Versand liefern lassen";
-"pha_detail_btn_pickup" = "Abholung\nwählen";
-"pha_detail_btn_shipment" = "Versand\nwählen";
+"pha_detail_btn_pickup" = "Abholung";
+"pha_detail_btn_shipment" = "Versand";
 "pha_detail_contact" = "Kontakt";
-"pha_detail_hint_message" = "Bitte beachten Sie, dass auch für verschriebene Medikamente Zuzahlungen anfallen können.";
 "pha_detail_hint_not_erx_ready_message" = "An diese Apotheke können Sie noch keine E-Rezepte senden.";
 "pha_detail_hint_not_erx_ready_pic" = "Apotheker*in hält Medikament";
 "pha_detail_hint_not_erx_ready_title" = "Einlösen nur vor Ort";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Hinweis für Apotheken: Die Kontaktdaten und Informationen zu Apotheken beziehen wir von ";
 "pha_detail_txt_no_prescription_toast" = "Sie haben keine Rezepte zum Einlösen.";
+"pha_detail_txt_open_hour_today" = "Heute";
+"pha_detail_txt_open_hour_tomorrow" = "Morgen";
 "pha_detail_txt_subtitle_fallback" = "Apotheke";
 "pha_detail_txt_title" = "Details";
 "pha_detail_web" = "Webseite";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Ergänzen";
 "pha_redeem_btn_change_pharmacy" = "Ändern";
 "pha_redeem_btn_change_prescription" = "Ändern";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Bestellung verwerfen";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Ohne dieses Rezept fortfahren";
 "pha_redeem_btn_redeem" = "Einlösen";
 "pha_redeem_btn_redeem_footnote" = "Hiermit wird Ihr Rezept an diese Apotheke gesendet. Das Einlösen in einer weiteren Apotheke ist nicht möglich.";
 "pha_redeem_btn_select_pharmacy" = "Apotheke wählen";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Aktivieren";
 "prsc_dtl_btn_pkv_invoice" = "Kostenbeleg";
 "prsc_dtl_btn_redeem" = "An Apotheke senden";
+"prsc_dtl_btn_self_payer" = "Keine Kostenübernahme";
 "prsc_dtl_btn_share" = "Teilen";
 "prsc_dtl_btn_share_title" = "Teilen";
 "prsc_dtl_btn_show_matrix_code" = "Code vorzeigen";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Gescanntes Rezept";
 "prsc_dtl_dr_substitution_info_description" = "Apothekerinnen und Apotheker sind verpflichtet, vorrangig Arzneien abzugeben, für welche die Krankenkasse des Patienten einen Rabattvertrag mit Arzneimittelherstellern abgeschlossen hat. Dies gilt nur dann nicht, wenn der Arzt oder die Ärztin \"Aut idem\" auf dem Rezept ausschließt, was bei Ihrem Rezept nicht der Fall ist.";
 "prsc_dtl_dr_substitution_info_title" = "Ersatzpräparat möglich";
+"prsc_dtl_drawer_self_payer_info_header" = "Keine Kostenübernahme";
+"prsc_dtl_drawer_self_payer_info_message" = "Für dieses Rezept erfolgt in der Regel keine Kostenübernahme durch die Krankenversicherung. Als Patient*in sind Sie daher für die vollständige Bezahlung verantwortlich. Ob die Kosten im Rahmen einer Zusatzversicherung oder Satzungsleistung erstattet werden, ist individuell zu prüfen.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "gesund.bund.de öffnen";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Fachlich geprüfte Informationen zu Krankheiten, ICD-Codes und zu Vorsorge- und Pflegethemen finden Sie im Nationalen Gesundheitsportal.";
 "prsc_dtl_med_ingredient_name" = "Wirkstoffname";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Ersatzpräparat möglich";
 "prsc_redeem_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst.";
-"prsc_status_canceled" = "Abgebrochen";
+"prsc_status_canceled" = "Gelöscht";
 "prsc_status_completed" = "Eingelöst";
 "prsc_status_direct_assigned" = "Wird für Sie eingelöst";
 "prsc_status_error" = "Fehlerhaftes Rezept";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "Die eingegebene Straße überschreitet die erlaubte Maximallänge von %@ Zeichen.";
 "riv_ti_invalid_zip_%@" = "Die eingegebene Postleitzahl überschreitet die erlaubte Maximallänge von %@ Zeichen.";
 "riv_ti_wrong_version" = "Ungültige Versionsnummer.";
-"rph_btn_close_alert_keep" = "Nicht eingelöst";
-"rph_btn_close_alert_mark_redeemed" = "Eingelöst";
-"rph_txt_close_alert_message" = "Möchten Sie dieses Rezept als eingelöst markieren?";
-"rph_txt_close_alert_title" = "Rezept eingelöst?";
 "rph_txt_matrixcode_hint" = "Lassen Sie diesen Rezeptcode in Ihrer Apotheke scannen.";
 "rph_txt_subtitle" = "Lassen Sie diesen Rezeptcode in Ihrer Apotheke scannen.";
 "rph_txt_title" = "Rezeptcode";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Ihr Gerät hat möglicherweise eine reduzierte Sicherheit";
 "section_txt_is_active_value" = "Ausgewählt";
 "section_txt_is_inactive_value" = "Nicht Ausgewählt";
+"self_payer_warning_txt_ending" = "übernimmt Ihre Versicherung keine Kosten.";
+"self_payer_warning_txt_message_single" = "Für dieses Rezept übernimmt Ihre Versicherung keine Kosten.";
+"self_payer_warning_txt_solo" = "Für dieses Rezept übernimmt Ihre Versicherung keine Kosten.";
 "service_txt_consent_alert_login" = "Anmelden";
 "service_txt_consent_alert_okay" = "Okay";
 "service_txt_consent_alert_retry" = "Erneut probieren";

@@ -25,12 +25,6 @@ import SwiftUI
 import XCTest
 
 final class NewProfileSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func testEditProfileFigmaVariant1() {
         let sut = NavigationView {
             NewProfileView(
@@ -46,7 +40,7 @@ final class NewProfileSnapshotTests: ERPSnapshotTestCase {
         }
         .frame(width: 375, height: 812, alignment: .top)
 
-        assertSnapshots(matching: sut, as: figmaReference())
+        assertSnapshots(of: sut, as: figmaReference())
     }
 
     func testNewProfileFilledWithAcronymSnapshot() {
@@ -60,8 +54,8 @@ final class NewProfileSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

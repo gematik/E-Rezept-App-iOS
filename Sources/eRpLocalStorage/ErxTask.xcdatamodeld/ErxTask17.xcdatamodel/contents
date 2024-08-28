@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23173.10" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AuthEntry" representedClassName="AuthEntry" syncable="YES" codeGenerationType="class">
         <attribute name="gID" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="insuranceID" optional="YES" attributeType="String"/>
@@ -167,6 +167,7 @@
     <entity name="ErxTaskPatientEntity" representedClassName="ErxTaskPatientEntity" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String"/>
         <attribute name="birthDate" optional="YES" attributeType="String"/>
+        <attribute name="coverageType" optional="YES" attributeType="String"/>
         <attribute name="insurance" optional="YES" attributeType="String"/>
         <attribute name="insuranceIdentifier" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -180,6 +181,7 @@
         <attribute name="lanr" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="qualification" optional="YES" attributeType="String"/>
+        <attribute name="zanr" optional="YES" attributeType="String"/>
         <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="practitioner" inverseEntity="ErxTaskEntity"/>
     </entity>
     <entity name="ErxTaskQuantityEntity" representedClassName="ErxTaskQuantityEntity" syncable="YES">

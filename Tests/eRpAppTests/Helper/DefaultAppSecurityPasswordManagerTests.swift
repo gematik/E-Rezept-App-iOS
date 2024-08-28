@@ -95,9 +95,9 @@ final class DefaultAppSecurityPasswordManagerTests: XCTestCase {
         keychainAccess.setGenericPasswordForServiceClosure = { password, service, data in
             print("""
             setGenericPasswordForServiceClosure:
-            \(String(data: password, encoding: .utf8))
-            \(String(data: service, encoding: .utf8))
-            \(String(data: data, encoding: .utf8))
+            \(String(describing: String(data: password, encoding: .utf8)))
+            \(String(describing: String(data: service, encoding: .utf8)))
+            \(String(describing: String(data: data, encoding: .utf8)))
             """)
             return true
         }

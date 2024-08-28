@@ -149,12 +149,13 @@ extension ModelsR4.Bundle {
                 phone: patient?.phone,
                 status: patientReceiptBundle.coverageStatus,
                 insurance: patientReceiptBundle.coverage?.payor.first?.display?.value?.string,
-                insuranceId: patient?.insuranceId
+                insuranceId: patient?.insuranceId,
+                coverageType: ErxPatient.CoverageType(rawValue: patientReceiptBundle.coverageType)
             ),
             practitioner: ErxPractitioner(
                 title: practitioner?.title,
                 lanr: practitioner?.lanr,
-                zanr: practitioner?.lanr,
+                zanr: practitioner?.zanr,
                 name: practitioner?.fullName,
                 qualification: practitioner?.qualificationText,
                 email: practitioner?.email,
@@ -393,6 +394,12 @@ extension ModelsR4.Bundle {
             }
             return nil
         }
+    }
+
+    var coverageType: String? {
+        coverage?.type?.coding?.first {
+            $0.system?.value?.url.absoluteString == ErpPrescription.Key.coverageTypeKey
+        }?.code?.value?.string
     }
 
     var joinedDosageInstructions: String? {

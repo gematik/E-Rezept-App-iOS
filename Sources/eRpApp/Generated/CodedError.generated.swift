@@ -1590,6 +1590,8 @@ extension RedeemServiceError: CodedError {
                 return "i-02405"
             case .loginHandler:
                 return "i-02406"
+            case .prescriptionAlreadyRedeemed:
+                return "i-02407"
         }
     }
     var erpErrorCodeList: [String] {

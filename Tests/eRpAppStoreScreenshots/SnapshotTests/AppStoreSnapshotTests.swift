@@ -23,14 +23,8 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class AppStoreSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-
-        SnapshotHelper.fixOffsetProblem()
-    }
-
+@MainActor
+final class AppStoreSnapshotTests: ERPSnapshotTestCase {
     func test01Onboarding() {
         assertAppStoreSnapshots(for: onboarding(), backgroundColor: .white, colorScheme: .light)
     }

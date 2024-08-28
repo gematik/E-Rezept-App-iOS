@@ -86,6 +86,18 @@ struct UIDateFormatter {
         return dateFormatter
     }()
 
+    var timeOnlyFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        if let preferredLang = Locale.preferredLanguages.first,
+           preferredLang.starts(with: "de") {
+            dateFormatter.dateFormat = "HH:mm 'Uhr'"
+        } else {
+            dateFormatter.timeStyle = .short
+            dateFormatter.dateStyle = .none
+        }
+        return dateFormatter
+    }()
+
     func relativeDateAndTime(_ string: String?) -> String? {
         if let dateTimeString = string,
            let dateTime = fhirDateFormatter.date(from: dateTimeString, format: .yearMonthDayTimeMilliSeconds) {
@@ -110,9 +122,10 @@ struct UIDateFormatter {
         relativeDateFormatter.string(from: date)
     }
 
-    func relativeTime(from date: Date) -> String {
+    func relativeTime(from date: Date,
+                      formattingContext: RelativeDateTimeFormatter.Context = .beginningOfSentence) -> String {
         @Dependency(\.date) var dateGenerator
-
+        relativeTimeFormatter.formattingContext = formattingContext
         return relativeTimeFormatter.localizedString(for: date, relativeTo: dateGenerator())
     }
 

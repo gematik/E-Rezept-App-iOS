@@ -146,6 +146,54 @@
 			<string></string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>لا يمكن استبدال الوصفة الطبية</string>
+			<key>other</key>
+			<string>لا يمكن استبدال الوصفات الطبية</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>لم تعد الوصفة %% @ قابلة للاسترداد. ربما تكون قد قمت باستردادها بالفعل من خلال وسيلة أخرى أو ربما تم حذفها.</string>
+			<key>other</key>
+			<string>لم يعد من الممكن استرداد الوصفات التالية: %% @. ربما تكون قد قمت باستردادها بالفعل من خلال وسائل أخرى أو ربما تم حذفها.</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -192,6 +240,30 @@
 			<string></string>
 			<key>zero</key>
 			<string>[فارغ]</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>لن يغطي التأمين الخاص بك أي تكاليف لـ %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>الوصفة الطبية</string>
+			<key>other</key>
+			<string>الوصفات الطبية</string>
+			<key>two</key>
+			<string></string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

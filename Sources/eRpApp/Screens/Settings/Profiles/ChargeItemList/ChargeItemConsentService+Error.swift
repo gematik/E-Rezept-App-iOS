@@ -174,6 +174,6 @@ extension ChargeItemConsentService {
             }
         }
 
-        static let routeToChargeItemsListMessage: LocalizedStringKey = L10n.serviceTxtConsentToastRouteToListMessage.key
+        static let routeToChargeItemsListMessage: StringAsset = L10n.serviceTxtConsentToastRouteToListMessage
     }
 }

@@ -51,14 +51,17 @@ class PharmacyPrescriptionSelectionDomainTests: XCTestCase {
         let prescription2 = Prescription.Dummies.prescriptionMVO
 
         let sut = testStore(for: PharmacyPrescriptionSelectionDomain
-            .State(prescriptions: [prescription1, prescription2]))
+            .State(
+                prescriptions: Shared([prescription1, prescription2]),
+                selectedPrescriptions: Shared([])
+            ))
 
         await sut.send(.didSelect(prescription1.identifier)) { sut in
-            sut.selectedPrescriptions = Set([prescription1])
+            sut.selectedPrescriptionsCopy = Set([prescription1])
         }
 
         await sut.send(.didSelect(prescription1.identifier)) { sut in
-            sut.selectedPrescriptions = Set<Prescription>()
+            sut.selectedPrescriptionsCopy = Set<Prescription>()
         }
     }
 }

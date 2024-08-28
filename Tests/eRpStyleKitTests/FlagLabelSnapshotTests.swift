@@ -22,12 +22,6 @@ import SwiftUI
 import XCTest
 
 final class FlagLabelSnapshotTests: XCTestCase {
-    override class func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func testFlagLabeSytles() {
         let sut = VStack {
             Button(action: {}, label: {
@@ -48,6 +42,6 @@ final class FlagLabelSnapshotTests: XCTestCase {
         }
         .frame(width: 375)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 }

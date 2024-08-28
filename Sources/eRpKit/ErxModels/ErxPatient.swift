@@ -26,7 +26,8 @@ public struct ErxPatient: Hashable, Codable {
                 phone: String? = nil,
                 status: String? = nil,
                 insurance: String? = nil,
-                insuranceId: String? = nil) {
+                insuranceId: String? = nil,
+                coverageType: CoverageType? = nil) {
         self.title = title
         self.name = name
         self.address = address
@@ -35,6 +36,7 @@ public struct ErxPatient: Hashable, Codable {
         self.status = status
         self.insurance = insurance
         self.insuranceId = insuranceId
+        self.coverageType = coverageType
     }
 
     /// Degree or Title
@@ -53,4 +55,72 @@ public struct ErxPatient: Hashable, Codable {
     public let insurance: String?
     /// Health card insurance identifier a.k.a. kvnr (e.g: X764228533)
     public let insuranceId: String?
+    /// Patient type of coverage (e.g.: SEL = Selbstzahler)
+    public let coverageType: CoverageType?
+}
+
+extension ErxPatient {
+    /// https://simplifier.net/packages/de.basisprofil.r4/1.5.0/files/2461199/
+    public enum CoverageType: Hashable, Equatable, RawRepresentable, Codable {
+        public typealias RawValue = String?
+
+        public enum CodingKeysV2 {
+            public static var gesetzlicheKrankenversicherung = "GKV"
+            public static var privateKrankenversicherung = "PKV"
+            public static var Berufsgenossenschaft = "BG"
+            public static var Selbstzahler = "SEL"
+            public static var Sozialamt = "SOZ"
+            public static var gesetzlichePflegeversicherung = "GPV"
+            public static var PrivatePflegeversicherung = "PPV"
+            public static var Beihilfe = "BEI"
+        }
+
+        /// gesetzliche Krankenversicherung
+        case GKV
+        /// private Krankenversicherung
+        case PKV
+        /// Berufsgenossenschaft
+        case BG // swiftlint:disable:this identifier_name
+        /// Selbstzahler
+        case SEL
+        /// Sozialamt
+        case SOZ
+        /// gesetzliche Pflegeversicherung
+        case GPV
+        /// private Pflegeversicherung
+        case PPV
+        /// Beihilfe
+        case BEI
+        /// all other (unknown) cases
+        case unknown(String)
+
+        public init?(rawValue: RawValue) {
+            guard let rawValue = rawValue else { return nil }
+            switch rawValue {
+            case CodingKeysV2.gesetzlicheKrankenversicherung: self = .GKV
+            case CodingKeysV2.privateKrankenversicherung: self = .PKV
+            case CodingKeysV2.Berufsgenossenschaft: self = .BG
+            case CodingKeysV2.Selbstzahler: self = .SEL
+            case CodingKeysV2.Sozialamt: self = .SOZ
+            case CodingKeysV2.gesetzlichePflegeversicherung: self = .GPV
+            case CodingKeysV2.PrivatePflegeversicherung: self = .PPV
+            case CodingKeysV2.Beihilfe: self = .BEI
+            default: self = .unknown(rawValue)
+            }
+        }
+
+        public var rawValue: String? {
+            switch self {
+            case .GKV: return CodingKeysV2.gesetzlicheKrankenversicherung
+            case .PKV: return CodingKeysV2.privateKrankenversicherung
+            case .BG: return CodingKeysV2.Berufsgenossenschaft
+            case .SEL: return CodingKeysV2.Selbstzahler
+            case .SOZ: return CodingKeysV2.Sozialamt
+            case .GPV: return CodingKeysV2.gesetzlichePflegeversicherung
+            case .PPV: return CodingKeysV2.PrivatePflegeversicherung
+            case .BEI: return CodingKeysV2.Beihilfe
+            case let .unknown(type): return type
+            }
+        }
+    }
 }

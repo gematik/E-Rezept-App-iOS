@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Gata";
 "dmc_txt_code_multiple" = "Cod de colectare";
 "dmc_txt_code_single" = "Cod unic";
+"dmc_txt_number_medications_%d" = "%d medicament(e)";
+"dmc_txt_share_message_%@" = "Vi s-a partajat un cod de prescripție prin intermediul aplicației de prescriere electronică cu următoarele medicamente: %@";
 "dtl_btn_copy_clipboard" = "Copie";
 "dtl_btn_delete_disabled_note" = "Rețeta este în prezent procesată de o farmacie și nu poate fi ștearsă.";
 "dtl_btn_delete_medication" = "Ștergeți de pe acest dispozitiv";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Deschideți scanerul de rețete";
 "erx_title" = "Rețete";
 "erx_txt_authored" = "Afișat";
+"erx_txt_claimed_at_%@" = "Asumat %@";
 "erx_txt_current" = "Actual";
 "erx_txt_expired_on_%@" = "A expirat pe %@";
 "erx_txt_forced_update_alert_description" = "Optimizați-vă experiența aplicației actualizând aplicația.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "Arhiva";
 "erx_txt_refresh_loading" = "Se incarca …";
 "erx_txt_scanned_at_%@" = "Scanat: %@";
+"erx_txt_self_payer" = "Fără rambursare a costurilor";
+"erx_txt_sent_at_%@" = "Trimis %@";
 "hint_btn_close" = "închide";
 "hint_btn_open_scn" = "Deschide scanerul";
 "hint_btn_try_demo_mode" = "Porniți modul demonstrativ";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Coșul de cumpărături este gata";
 "ord_detail_shipment_link_btn" = "Deschideți coșul de cumpărături";
 "ord_detail_shipment_link_text" = "Vă rugăm să accesați site-ul farmaciei pentru a finaliza comanda.";
-"ord_detail_txt_%@_send_to_%@" = "%@ trimis la %@ . Procesul de răscumpărare digitală este încă necunoscut pentru multe farmacii. Dacă nu primiți răspuns până mâine, vă recomandăm să sunați pentru a vă informa ca măsură de precauție.";
+"ord_detail_txt_%@_send_to_%@" = "%@ trimis la %@ . Unele farmacii nu au încă o opțiune de răspuns digital. Dacă nu există niciun răspuns până mâine, vă rugăm să sunați ca măsură de precauție.";
 "ord_detail_txt_charge_item%@" = "Ați primit o chitanță pentru costul medicamentului dvs. %@ .";
 "ord_detail_txt_contact" = "Opțiuni de contact";
 "ord_detail_txt_contact_email" = "Scrie email";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Prefix și număr de telefon";
 "pha_contact_txt_street" = "Strada și numărul casei";
 "pha_contact_txt_zip" = "Cod poștal";
-"pha_detail_btn_delivery" = "băiat de livrare\n alege";
+"pha_detail_btn_delivery" = "Curier";
 "pha_detail_btn_footer" = "Află mai multe";
 "pha_detail_btn_healthcare_service" = "Solicitați serviciul de curierat";
 "pha_detail_btn_location" = "Rezervă pentru ridicare";
 "pha_detail_btn_login_note" = "Valorificarea este posibilă numai după înregistrare";
+"pha_detail_btn_open_mail" = "Scrie e-mail";
+"pha_detail_btn_open_map" = "Traseu aici";
+"pha_detail_btn_open_phone" = "Apel";
 "pha_detail_btn_organization" = "Livrați-l prin transport";
-"pha_detail_btn_pickup" = "Colectie\n alege";
-"pha_detail_btn_shipment" = "Expediere\n alege";
+"pha_detail_btn_pickup" = "ridica";
+"pha_detail_btn_shipment" = "Expediere";
 "pha_detail_contact" = "a lua legatura";
-"pha_detail_hint_message" = "Vă rugăm să rețineți că se pot aplica și plăți suplimentare pentru medicamentele prescrise.";
 "pha_detail_hint_not_erx_ready_message" = "Încă nu puteți trimite rețete electronice la această farmacie.";
 "pha_detail_hint_not_erx_ready_pic" = "Farmacist deține medicamente";
 "pha_detail_hint_not_erx_ready_title" = "Valorificați numai pe site";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Notă pentru farmacii: Obținem datele de contact și informații despre farmacii de la ";
 "pha_detail_txt_no_prescription_toast" = "Nu aveți rețete de completat.";
+"pha_detail_txt_open_hour_today" = "Astăzi";
+"pha_detail_txt_open_hour_tomorrow" = "Mâine";
 "pha_detail_txt_subtitle_fallback" = "Farmacie";
 "pha_detail_txt_title" = "Detalii";
 "pha_detail_web" = "site-ul web";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Adaugă la";
 "pha_redeem_btn_change_pharmacy" = "Schimbare";
 "pha_redeem_btn_change_prescription" = "Schimbare";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Anulați comanda";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Continuați fără această rețetă";
 "pha_redeem_btn_redeem" = "Răscumpăra";
 "pha_redeem_btn_redeem_footnote" = "Aceasta vă va trimite rețeta la această farmacie. Nu este posibil să-l răscumpărați la altă farmacie.";
 "pha_redeem_btn_select_pharmacy" = "Alege farmacie";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Activati";
 "prsc_dtl_btn_pkv_invoice" = "Chitanța costurilor";
 "prsc_dtl_btn_redeem" = "Trimite la farmacie";
+"prsc_dtl_btn_self_payer" = "Fără rambursare a costurilor";
 "prsc_dtl_btn_share" = "Despică";
 "prsc_dtl_btn_share_title" = "Despică";
 "prsc_dtl_btn_show_matrix_code" = "Afișați codul";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Rețetă scanată";
 "prsc_dtl_dr_substitution_info_description" = "Farmaciştii sunt obligaţi să acorde prioritate eliberării medicamentelor pentru care casa de asigurări de sănătate a pacientului a încheiat un acord de reduceri cu producătorii de medicamente. Acest lucru nu se aplică numai dacă medicul exclude „Aut idem” pe rețetă, ceea ce nu este cazul cu rețeta dumneavoastră.";
 "prsc_dtl_dr_substitution_info_title" = "Posibilă pregătire pentru înlocuire";
+"prsc_dtl_drawer_self_payer_info_header" = "Fără rambursare a costurilor";
+"prsc_dtl_drawer_self_payer_info_message" = "De regulă, asigurarea de sănătate nu acoperă costurile pentru această rețetă. În calitate de pacient, sunteți, prin urmare, responsabil pentru plata integrală. Dacă costurile vor fi rambursate ca parte a asigurării suplimentare sau a beneficiilor statutare trebuie verificat individual.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Deschideți healthy.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Puteți găsi informații verificate de experți despre boli, coduri ICD și subiecte de prevenire și îngrijire în Portalul Național de Sănătate.";
 "prsc_dtl_med_ingredient_name" = "Numele ingredientului activ";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen- Answeren";
 "prsc_fd_txt_substitution_title" = "Posibilă pregătire pentru înlocuire";
 "prsc_redeem_note_direct_assignment" = "Această rețetă va fi răscumpărată pentru dvs. ca parte a unui tratament.";
-"prsc_status_canceled" = "Anulat";
+"prsc_status_canceled" = "Șters";
 "prsc_status_completed" = "Răscumpărat";
 "prsc_status_direct_assigned" = "Va fi răscumpărat pentru tine";
 "prsc_status_error" = "Rețetă incorectă";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "Strada introdusă depășește lungimea maximă permisă de %@ caractere.";
 "riv_ti_invalid_zip_%@" = "Codul poștal introdus depășește lungimea maximă permisă de %@ caractere.";
 "riv_ti_wrong_version" = "Număr de versiune nevalid.";
-"rph_btn_close_alert_keep" = "Nu este răscumpărat";
-"rph_btn_close_alert_mark_redeemed" = "Răscumpărat";
-"rph_txt_close_alert_message" = "Doriți să marcați această rețetă ca valorificată?";
-"rph_txt_close_alert_title" = "Rețetă completată?";
 "rph_txt_matrixcode_hint" = "Scanați acest cod de rețetă la farmacie.";
 "rph_txt_subtitle" = "Scanați acest cod de rețetă la farmacie.";
 "rph_txt_title" = "Cod reteta";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Este posibil ca dispozitivul dvs. să aibă securitate redusă";
 "section_txt_is_active_value" = "Selectat";
 "section_txt_is_inactive_value" = "Nu a fost ales";
+"self_payer_warning_txt_ending" = "asigurarea dumneavoastră nu va acoperi niciun cost.";
+"self_payer_warning_txt_message_single" = "Asigurarea dumneavoastră nu va acoperi niciun cost pentru această rețetă.";
+"self_payer_warning_txt_solo" = "Asigurarea dumneavoastră nu va acoperi niciun cost pentru această rețetă.";
 "service_txt_consent_alert_login" = "Inregistreaza-te";
 "service_txt_consent_alert_okay" = "Bine";
 "service_txt_consent_alert_retry" = "Încearcă din nou";

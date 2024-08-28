@@ -97,5 +97,17 @@ extension ErxTask.Communication {
             payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Hello\"}",
             isRead: true
         )
+
+        static let communicationDispReqComputedDate: ErxTask.Communication = .init(
+            identifier: "disp_req_id_1",
+            profile: .dispReq,
+            taskId: "task_id_1",
+            userId: "user_id_1",
+            telematikId: "12345.1",
+            orderId: "order_id_1",
+            timestamp: DemoDate.createDemoDate(.oneHourAgo)!,
+            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Hello\"}",
+            isRead: true
+        )
     }
 }

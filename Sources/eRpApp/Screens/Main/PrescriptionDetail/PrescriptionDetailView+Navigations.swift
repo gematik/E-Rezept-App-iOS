@@ -47,6 +47,15 @@ extension PrescriptionDetailView {
 
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet($store
+                        .scope(state: \.destination?.selfPayerInfo,
+                               action: \.destination.selfPayerInfo)) { _ in
+                            SelDrawerView()
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
                     .smallSheet(
                         $store.scope(
                             state: \.destination?.dosageInstructionsInfo,
@@ -202,6 +211,23 @@ extension PrescriptionDetailView {
                 .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
                 .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerEmergencyServiceFeeInfo)
+            }
+        }
+
+        struct SelDrawerView: View {
+            var body: some View {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.prscDtlDrawerSelfPayerInfoHeader)
+                        .font(.headline)
+
+                    Text(L10n.prscDtlDrawerSelfPayerInfoMessage)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                    Spacer()
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Colors.systemBackground.ignoresSafeArea())
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerSelfPayerInfo)
             }
         }
 

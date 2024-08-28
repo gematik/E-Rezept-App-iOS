@@ -52,7 +52,6 @@ struct CardWallLoginOptionDomain {
     enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
 
-        case select(option: LoginOption)
         case advance
         case presentSecurityWarning
         case acceptSecurityWarning
@@ -74,12 +73,11 @@ struct CardWallLoginOptionDomain {
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
-
-    let canUseBiometrics: () -> Bool = {
+    @Dependency(\.securityPolicyEvaluator) var securityPolicyEvaluator: SecurityPolicyEvaluator
+    func canUseBiometrics() -> Bool {
         var error: NSError?
-        let authenticationContext = LAContext()
-        return authenticationContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
-                                                       error: &error) == true
+        return securityPolicyEvaluator.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                                                         error: &error) == true
     }
 
     var body: some Reducer<State, Action> {
@@ -92,11 +90,8 @@ struct CardWallLoginOptionDomain {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case let .select(option: option):
-            if state.selectedLoginOption == option, option.hasSelection {
-                return .none
-            }
-            if option.isWithBiometry {
+        case .binding(\.selectedLoginOption):
+            if state.selectedLoginOption.isWithBiometry {
                 guard canUseBiometrics() else {
                     state.destination = .alert(ErpAlertState(
                         title: L10n.cdwTxtBiometrySetupIncomplete,
@@ -114,7 +109,6 @@ struct CardWallLoginOptionDomain {
                 // [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
                 return Effect.send(.presentSecurityWarning)
             }
-            state.selectedLoginOption = option
             return .none
         case .destination(.presented(.alert(.openAppSpecificSettings))):
             if let url = URL(string: UIApplication.openSettingsURLString) {
