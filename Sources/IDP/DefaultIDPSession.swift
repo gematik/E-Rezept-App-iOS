@@ -22,8 +22,8 @@ import Combine
 import CombineSchedulers
 import DataKit
 import Foundation
-import GemCommonsKit
 import HTTPClient
+import OSLog
 import TrustStore
 
 /// Random generator function type
@@ -99,7 +99,7 @@ public class DefaultIDPSession: IDPSession {
             .receive(on: schedulers.serialIO)
             .sink(receiveCompletion: { completion in
                 if case let .failure(error) = completion {
-                    DLog("Discovery document error: \(error)")
+                    Logger.IDP.debug("Discovery document error: \(error)")
                 }
             }, receiveValue: { _ in
                 // document should have been saved by `loadDiscoveryDocument`, prevent double trigger(s)

@@ -26,12 +26,6 @@ import TestUtils
 import XCTest
 
 final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func store(for state: CardWallExtAuthSelectionDomain.State) -> StoreOf<CardWallExtAuthSelectionDomain> {
         .init(initialState: state) {
             EmptyReducer()
@@ -47,7 +41,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
             ))
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testError() {
@@ -59,7 +53,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
             ))
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testNoResult() {
@@ -71,7 +65,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
             ))
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     static let testError = IDPError.internal(error: .notImplemented)

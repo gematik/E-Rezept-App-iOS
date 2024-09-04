@@ -110,6 +110,42 @@
 			<string></string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Prescription cannot be redeemed</string>
+			<key>other</key>
+			<string>Prescriptions cannot be redeemed</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>The prescription %% @ can no longer be redeemed. You may have already redeemed it in another way or it may have been deleted.</string>
+			<key>other</key>
+			<string>The following prescriptions can no longer be redeemed: %% @. You may have already redeemed them in another way or they may have been deleted.</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -144,6 +180,24 @@
 			<string>Done, add prescription</string>
 			<key>zero</key>
 			<string>[void]</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Your insurance will not cover any costs for %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>the prescription</string>
+			<key>other</key>
+			<string>the prescriptions</string>
+			<key>zero</key>
+			<string></string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

@@ -195,6 +195,10 @@ typealias AnalyticsEvent = String
     struct Main_welcomeDrawer: AnalyticsScreen {
       let name = "main:welcomeDrawer"
     }
+    static let matrixCode_sharePrescription = MatrixCode_sharePrescription()
+    struct MatrixCode_sharePrescription: AnalyticsScreen {
+      let name = "matrixCode:sharePrescription"
+    }
     static let medicationReminder_dosageInstruction = MedicationReminder_dosageInstruction()
     struct MedicationReminder_dosageInstruction: AnalyticsScreen {
       let name = "medicationReminder:dosageInstructionsInfo"
@@ -218,6 +222,10 @@ typealias AnalyticsEvent = String
     static let orders_detail = Orders_detail()
     struct Orders_detail: AnalyticsScreen {
       let name = "orders:detail"
+    }
+    static let orders_pharmacyDetail = Orders_pharmacyDetail()
+    struct Orders_pharmacyDetail: AnalyticsScreen {
+      let name = "orders:pharmacyDetail"
     }
     static let orders_pickupCode = Orders_pickupCode()
     struct Orders_pickupCode: AnalyticsScreen {
@@ -306,6 +314,10 @@ typealias AnalyticsEvent = String
     static let prescriptionDetail_scannedPrescriptionInfo = PrescriptionDetail_scannedPrescriptionInfo()
     struct PrescriptionDetail_scannedPrescriptionInfo: AnalyticsScreen {
       let name = "prescriptionDetail:scannedPrescriptionInfo"
+    }
+    static let prescriptionDetail_selfPayerPrescriptionBottomSheet = PrescriptionDetail_selfPayerPrescriptionBottomSheet()
+    struct PrescriptionDetail_selfPayerPrescriptionBottomSheet: AnalyticsScreen {
+      let name = "prescriptionDetail:selfPayerPrescriptionBottomSheet"
     }
     static let prescriptionDetail_setupMedicationSchedule = PrescriptionDetail_setupMedicationSchedule()
     struct PrescriptionDetail_setupMedicationSchedule: AnalyticsScreen {

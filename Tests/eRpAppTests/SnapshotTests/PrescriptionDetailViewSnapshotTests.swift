@@ -25,11 +25,6 @@ import SwiftUI
 import XCTest
 
 final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func store(
         with erxTask: ErxTask,
         profile: UserProfile = UserProfile.Dummies.profileA,
@@ -56,7 +51,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PrescriptionDetailView(store: store)
             .frame(width: 320, height: 1100)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testPrescriptionDetail_WithSubstitutionAllowedPrescription() {
@@ -64,7 +59,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PrescriptionDetailView(store: store)
             .frame(width: 320, height: 1100)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testPrescriptionDetail_WithDirectAssignmentPrescription() {
@@ -72,7 +67,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PrescriptionDetailView(store: store)
             .frame(width: 320, height: 1100)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testPrescriptionDetail_WithErrorPrescription() {
@@ -80,16 +75,40 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PrescriptionDetailView(store: store)
             .frame(width: 320, height: 1100)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
+    }
+
+    func testPrescriptionDetail_WithComputedStatusWaiting() {
+        withDependencies {
+            $0.date = DateGenerator { Date() }
+        } operation: {
+            let store = store(with: ErxTask.Fixtures.erxTask8)
+            let sut = PrescriptionDetailView(store: store)
+                .frame(width: 320, height: 200)
+
+            assertSnapshots(matching: sut, as: snapshotModi())
+        }
+    }
+
+    func testPrescriptionDetail_WithInProgressStatus() {
+        withDependencies {
+            $0.date = DateGenerator { Date() }
+        } operation: {
+            let store = store(with: ErxTask.Fixtures.erxTask9)
+            let sut = PrescriptionDetailView(store: store)
+                .frame(width: 320, height: 200)
+
+            assertSnapshots(matching: sut, as: snapshotModi())
+        }
     }
 
     func testPrescriptionDetail_WithScannedPrescription() {
         let store = store(with: ErxTask.Fixtures.scannedTask)
         let sut = PrescriptionDetailView(store: store)
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPrescriptionDetail_PkvWithoutChargeItem() {
@@ -102,7 +121,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PrescriptionDetailView(store: store)
             .frame(width: 320, height: 1100)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testPrescriptionDetail_PkvWithoutConsent() {
@@ -115,7 +134,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PrescriptionDetailView(store: store)
             .frame(width: 320, height: 1100)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testPrescriptionDetail_PkvWithChargeItem() {
@@ -129,7 +148,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PrescriptionDetailView(store: store)
             .frame(width: 320, height: 1100)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testPrescriptionDetail_TechnicalInformations() {
@@ -144,9 +163,9 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPrescriptionDetail_PatientView() {
@@ -158,9 +177,9 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPrescriptionDetail_PractitionerView() {
@@ -172,9 +191,9 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPrescriptionDetail_OrganizationView() {
@@ -186,9 +205,9 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPrescriptionDetail_AccidentInfoView() {
@@ -200,9 +219,9 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPrescriptionDetail_ValidityView() {
@@ -224,9 +243,9 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
                 }
             )
         }
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPrescriptionDetail_MVO() {
@@ -251,8 +270,17 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
                 }
             )
         }
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPrescriptionDetail_WithSelfPayerPrescription() {
+        let store = store(with: ErxTask.Fixtures.erxTaskSelfPayer)
+        let sut = PrescriptionDetailView(store: store)
+
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

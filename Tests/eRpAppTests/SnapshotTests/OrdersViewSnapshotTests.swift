@@ -25,13 +25,6 @@ import SwiftUI
 import XCTest
 
 final class OrdersViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-
-        SnapshotHelper.fixOffsetProblem()
-    }
-
     func testEmptyOdersView() {
         let sut = OrdersView(
             store: StoreOf<OrdersDomain>(
@@ -41,9 +34,9 @@ final class OrdersViewSnapshotTests: ERPSnapshotTestCase {
                 EmptyReducer()
             }
         )
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOdersView() {
@@ -55,8 +48,8 @@ final class OrdersViewSnapshotTests: ERPSnapshotTestCase {
                 EmptyReducer()
             }
         )
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

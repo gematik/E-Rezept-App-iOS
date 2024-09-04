@@ -325,7 +325,19 @@ extension ErxTask {
             phone: "555 1234567",
             status: "Mitglied",
             insurance: "AOK Rheinland/Hamburg",
-            insuranceId: "A123456789"
+            insuranceId: "A123456789",
+            coverageType: .GKV
+        )
+
+        static let demoSelfPayerPatient = ErxPatient(
+            name: "Ludger von Königsstein",
+            address: "Musterstr. 1 \n10624 Berlin",
+            birthDate: "22.6.1936",
+            phone: "555 1234568",
+            status: "Mitglied",
+            insurance: "AOK Rheinland/Hamburg",
+            insuranceId: "A123456788",
+            coverageType: .SEL
         )
 
         static let demoPractitioner = ErxPractitioner(
@@ -530,7 +542,7 @@ extension ErxTask {
 
         static let erxTask8: ErxTask = .init(
             identifier: "6370f983-1e67-11b2-8555-63bf44e44fb8",
-            status: .ready,
+            status: .computed(status: .waiting),
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
@@ -543,7 +555,8 @@ extension ErxTask {
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization
+            organization: demoOrganization,
+            communications: [ErxTask.Communication.Fixtures.communicationDispReqComputedDate]
         )
 
         static let erxTask9: ErxTask = .init(
@@ -552,6 +565,7 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
+            lastModified: DemoDate.createDemoDate(.weekBefore),
             expiresOn: DemoDate.createDemoDate(.twelveDaysAhead),
             acceptedUntil: DemoDate.createDemoDate(.twelveDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
@@ -702,6 +716,27 @@ extension ErxTask {
                 multiplePrescription: demoMultiplePrescription
             ),
             patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization
+        )
+
+        static let erxTaskSelfPayer: ErxTask = .init(
+            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.today),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication1,
+            medicationRequest: .init(
+                dosageInstructions: "1-0-1-0",
+                substitutionAllowed: true,
+                accidentInfo: demoAccidentInfo,
+                quantity: .init(value: "2", unit: "Packungen")
+            ),
+            patient: demoSelfPayerPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization
         )

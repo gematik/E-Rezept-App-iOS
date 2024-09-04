@@ -24,11 +24,6 @@ import SwiftUI
 import XCTest
 
 final class MainViewSnapshotTests: ERPSnapshotTestCase {
-    override class func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     private func store(for state: MainDomain.State) -> StoreOf<MainDomain> {
         StoreOf<MainDomain>(initialState: state) {
             EmptyReducer()
@@ -71,9 +66,9 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
                 selectedProfileId: nil
             )
         )))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testMainView_Empty_ProfileConnected() {
@@ -87,9 +82,9 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
                 selectedProfileId: UserProfile.Dummies.profileA.id
             )
         )))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testMainView() {
@@ -103,7 +98,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
             .frame(width: 320, height: 700)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testMainView_LowDetailPrescriptions() {
@@ -115,22 +110,26 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testMainView_ALotOfPrescriptions() {
-        let prescriptions = Prescription.Fixtures.prescriptions
+        withDependencies {
+            $0.date = DateGenerator { Date() }
+        } operation: {
+            let prescriptions = Prescription.Fixtures.prescriptions
 
-        let sut = MainView(store: store(for: MainDomain.State(
-            prescriptionListState: PrescriptionListDomain.State(
-                prescriptions: prescriptions,
-                profile: UserProfile.Dummies.profileA
-            ),
-            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
-        )))
-            .frame(width: 320, height: 2000)
+            let sut = MainView(store: store(for: MainDomain.State(
+                prescriptionListState: PrescriptionListDomain.State(
+                    prescriptions: prescriptions,
+                    profile: UserProfile.Dummies.profileA
+                ),
+                horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
+            )))
+                .frame(width: 320, height: 2000)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+            assertSnapshots(of: sut, as: snapshotModi())
+        }
     }
 
     func testMainView_WelcomeDrawer() {
@@ -140,9 +139,9 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
                 horizontalProfileSelectionState: .init()
             )))
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testMainView_GrantChargeItemConsentDrawer() {
@@ -152,8 +151,8 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
                 horizontalProfileSelectionState: .init()
             )))
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

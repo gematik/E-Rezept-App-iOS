@@ -122,6 +122,46 @@
 			<string>%li receptů nebylo možné uplatnit</string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>Předpis nelze uplatnit</string>
+			<key>other</key>
+			<string>Předpisy nelze uplatnit</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>Recept %% @ již nelze uplatnit. Možná jste jej již uplatnili jiným způsobem nebo byl smazán.</string>
+			<key>other</key>
+			<string>Následující recepty již nelze uplatnit: %% @. Možná jste je již uplatnili jinými prostředky nebo byly smazány.</string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -160,6 +200,26 @@
 			<string>Hotovo, přidejte recept</string>
 			<key>other</key>
 			<string>Hotovo, přidejte recepty</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Vaše pojištění nepokryje žádné náklady na %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>předpis</string>
+			<key>other</key>
+			<string>předpisy</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

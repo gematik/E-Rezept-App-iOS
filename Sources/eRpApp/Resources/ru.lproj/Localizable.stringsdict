@@ -122,6 +122,46 @@
 			<string>%li рецептов не удалось обменять</string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Рецепты не подлежат возврату</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>Рецепт нельзя выкупить</string>
+			<key>other</key>
+			<string>Рецепты не подлежат возврату</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>Рецепт %% @ больше не подлежит обмену. Возможно, вы уже активировали его другим способом или он мог быть удален.</string>
+			<key>other</key>
+			<string>Следующие рецепты больше нельзя использовать: %% @. Возможно, вы уже активировали их другими способами или они могли быть удалены.</string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -160,6 +200,26 @@
 			<string>Готово, добавляю рецепт</string>
 			<key>other</key>
 			<string>Готово, добавляйте рецепты</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Ваша страховка не покрывает никаких расходов на %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>рецепт</string>
+			<key>other</key>
+			<string>рецепты</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

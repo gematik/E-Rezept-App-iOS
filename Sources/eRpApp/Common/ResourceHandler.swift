@@ -23,9 +23,16 @@ protocol ResourceHandler {
     func canOpenURL(_ url: URL) -> Bool
 
     func open(_ url: URL)
+
+    #if compiler(>=6.0)
+    func open(_ url: URL,
+              options: [UIApplication.OpenExternalURLOptionsKey: Any],
+              completionHandler completion: (@MainActor @Sendable (Bool) -> Void)?)
+    #else
     func open(_ url: URL,
               options: [UIApplication.OpenExternalURLOptionsKey: Any],
               completionHandler completion: ((Bool) -> Void)?)
+    #endif
 }
 
 extension UIApplication: ResourceHandler {

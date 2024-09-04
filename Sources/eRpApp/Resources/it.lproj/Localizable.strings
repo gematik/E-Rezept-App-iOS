@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Pronto";
 "dmc_txt_code_multiple" = "Codice di raccolta";
 "dmc_txt_code_single" = "Codice unico";
+"dmc_txt_number_medications_%d" = "%d farmaci";
+"dmc_txt_share_message_%@" = "Ti è stato condiviso un codice di prescrizione tramite l'app di prescrizione elettronica con i seguenti farmaci: %@";
 "dtl_btn_copy_clipboard" = "copia";
 "dtl_btn_delete_disabled_note" = "La prescrizione è attualmente in fase di elaborazione da parte di una farmacia e non può essere cancellata.";
 "dtl_btn_delete_medication" = "Elimina da questo dispositivo";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Apri lo scanner delle ricette";
 "erx_title" = "Ricette";
 "erx_txt_authored" = "Visualizzato";
+"erx_txt_claimed_at_%@" = "Presunto %@";
 "erx_txt_current" = "Attuale";
 "erx_txt_expired_on_%@" = "Scaduto il %@";
 "erx_txt_forced_update_alert_description" = "Ottimizza la tua esperienza con l'app aggiornandola.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "archivio";
 "erx_txt_refresh_loading" = "Caricamento in corso...";
 "erx_txt_scanned_at_%@" = "Scansionato: %@";
+"erx_txt_self_payer" = "Nessun rimborso spese";
+"erx_txt_sent_at_%@" = "Inviato %@";
 "hint_btn_close" = "vicino";
 "hint_btn_open_scn" = "Apri lo scanner";
 "hint_btn_try_demo_mode" = "Avvia la modalità demo";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Il carrello è pronto";
 "ord_detail_shipment_link_btn" = "Aprire il carrello";
 "ord_detail_shipment_link_text" = "Vai al sito web della farmacia per completare l'ordine.";
-"ord_detail_txt_%@_send_to_%@" = "%@ inviato a %@ . Il processo di riscatto digitale è ancora sconosciuto a molte farmacie. Se non ricevete risposta entro domani, vi consigliamo di chiamare per chiedere informazioni in via precauzionale.";
+"ord_detail_txt_%@_send_to_%@" = "%@ inviato a %@ . Alcune farmacie non dispongono ancora di un'opzione di risposta digitale. Se non si riceve risposta entro domani, chiamare per precauzione.";
 "ord_detail_txt_charge_item%@" = "Hai ricevuto una ricevuta per il costo dei tuoi farmaci %@ .";
 "ord_detail_txt_contact" = "Opzioni di contatto";
 "ord_detail_txt_contact_email" = "Scrivi e-mail";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Prefisso e numero di telefono";
 "pha_contact_txt_street" = "Via e numero civico";
 "pha_contact_txt_zip" = "Codice postale";
-"pha_detail_btn_delivery" = "ragazzo delle consegne\n scegliere";
+"pha_detail_btn_delivery" = "Corriere";
 "pha_detail_btn_footer" = "Saperne di più";
 "pha_detail_btn_healthcare_service" = "Richiedi il servizio corriere";
 "pha_detail_btn_location" = "Prenota per il ritiro";
 "pha_detail_btn_login_note" = "Riscatto possibile solo dopo la registrazione";
+"pha_detail_btn_open_mail" = "Scrivi e-mail";
+"pha_detail_btn_open_map" = "Percorso qui";
+"pha_detail_btn_open_phone" = "Chiamata";
 "pha_detail_btn_organization" = "Ricevilo tramite spedizione";
-"pha_detail_btn_pickup" = "collezione\n scegliere";
-"pha_detail_btn_shipment" = "Spedizione\n scegliere";
+"pha_detail_btn_pickup" = "raccolta";
+"pha_detail_btn_shipment" = "Spedizione";
 "pha_detail_contact" = "Contatto";
-"pha_detail_hint_message" = "Si prega di notare che potrebbero essere previsti pagamenti aggiuntivi anche per i farmaci prescritti.";
 "pha_detail_hint_not_erx_ready_message" = "Non è ancora possibile inviare prescrizioni elettroniche a questa farmacia.";
 "pha_detail_hint_not_erx_ready_pic" = "Il farmacista detiene i farmaci";
 "pha_detail_hint_not_erx_ready_title" = "Riscatta solo sul posto";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Nota per le farmacie: otteniamo i dettagli di contatto e le informazioni sulle farmacie da ";
 "pha_detail_txt_no_prescription_toast" = "Non hai prescrizioni da compilare.";
+"pha_detail_txt_open_hour_today" = "Oggi";
+"pha_detail_txt_open_hour_tomorrow" = "Domani";
 "pha_detail_txt_subtitle_fallback" = "Farmacia";
 "pha_detail_txt_title" = "Dettagli";
 "pha_detail_web" = "sito web";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "aggiungere a";
 "pha_redeem_btn_change_pharmacy" = "Modifica";
 "pha_redeem_btn_change_prescription" = "Modifica";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Annulla l'ordine";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Continuare senza questa prescrizione";
 "pha_redeem_btn_redeem" = "Riscattare";
 "pha_redeem_btn_redeem_footnote" = "In questo modo la tua prescrizione verrà inviata a questa farmacia. Non è possibile riscattarlo presso un'altra farmacia.";
 "pha_redeem_btn_select_pharmacy" = "Scegli la farmacia";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Attivare";
 "prsc_dtl_btn_pkv_invoice" = "Ricevuta di spesa";
 "prsc_dtl_btn_redeem" = "Inviare in farmacia";
+"prsc_dtl_btn_self_payer" = "Nessun rimborso spese";
 "prsc_dtl_btn_share" = "Diviso";
 "prsc_dtl_btn_share_title" = "Diviso";
 "prsc_dtl_btn_show_matrix_code" = "Mostra codice";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Ricetta scannerizzata";
 "prsc_dtl_dr_substitution_info_description" = "I farmacisti sono tenuti a dare priorità alla dispensazione dei medicinali per i quali la cassa malati del paziente ha stipulato un accordo di sconto con i produttori dei medicinali. Ciò non si applica solo se il medico esclude la dicitura “Aut idem” nella prescrizione, cosa che non è il caso della tua prescrizione.";
 "prsc_dtl_dr_substitution_info_title" = "Possibile preparazione sostitutiva";
+"prsc_dtl_drawer_self_payer_info_header" = "Nessun rimborso spese";
+"prsc_dtl_drawer_self_payer_info_message" = "Di norma l’assicurazione sanitaria non copre i costi di questa prescrizione. Come paziente sei quindi responsabile del pagamento completo. Occorre verificare individualmente se i costi verranno rimborsati nell'ambito di un'assicurazione complementare o di prestazioni previste dalla legge.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Apri healthy.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Puoi trovare informazioni verificate da esperti su malattie, codici ICD e argomenti di prevenzione e cura nel Portale sanitario nazionale.";
 "prsc_dtl_med_ingredient_name" = "Nome del principio attivo";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen- Answeren";
 "prsc_fd_txt_substitution_title" = "Possibile preparazione sostitutiva";
 "prsc_redeem_note_direct_assignment" = "Questa prescrizione verrà riscattata per te come parte di un trattamento.";
-"prsc_status_canceled" = "Annullato";
+"prsc_status_canceled" = "Eliminato";
 "prsc_status_completed" = "Redento";
 "prsc_status_direct_assigned" = "Sarà riscattato per te";
 "prsc_status_error" = "Ricetta errata";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "La strada inserita supera la lunghezza massima consentita di %@ caratteri.";
 "riv_ti_invalid_zip_%@" = "Il codice postale inserito supera la lunghezza massima consentita di %@ caratteri.";
 "riv_ti_wrong_version" = "Numero di versione non valido.";
-"rph_btn_close_alert_keep" = "Non riscattato";
-"rph_btn_close_alert_mark_redeemed" = "Redento";
-"rph_txt_close_alert_message" = "Vuoi contrassegnare questa ricetta come riscattata?";
-"rph_txt_close_alert_title" = "Ricetta compilata?";
 "rph_txt_matrixcode_hint" = "Fai scansionare questo codice di prescrizione presso la tua farmacia.";
 "rph_txt_subtitle" = "Fai scansionare questo codice di prescrizione presso la tua farmacia.";
 "rph_txt_title" = "Codice della ricetta";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Il tuo dispositivo potrebbe avere una sicurezza ridotta";
 "section_txt_is_active_value" = "Selezionato";
 "section_txt_is_inactive_value" = "Non selezionato";
+"self_payer_warning_txt_ending" = "la tua assicurazione non coprirà alcun costo.";
+"self_payer_warning_txt_message_single" = "La tua assicurazione non coprirà alcun costo per questa prescrizione.";
+"self_payer_warning_txt_solo" = "La tua assicurazione non coprirà alcun costo per questa prescrizione.";
 "service_txt_consent_alert_login" = "Registrati";
 "service_txt_consent_alert_okay" = "OK";
 "service_txt_consent_alert_retry" = "Riprova";

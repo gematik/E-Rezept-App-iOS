@@ -157,8 +157,6 @@ final class CardWallIntroductionDomainTests: XCTestCase {
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
 
-        let testError = IDPError.internal(error: .notImplemented)
-
         await sut.send(.task)
         await uiScheduler.run()
         await sut.receive(.response(.profileReceived(.success(profile)))) { state in

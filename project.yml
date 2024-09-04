@@ -114,16 +114,17 @@ packages:
     # majorVersion: 10.0.0
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
-    majorVersion: 1.10.0
+    majorVersion: 1.16.1
 settings:
   base:
     # for DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC see: https://developer.apple.com/forums/thread/128806
     DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC: 1
     CURRENT_PROJECT_VERSION: -1
     CODE_SIGN_IDENTITY: ""
-    SWIFT_VERSION: 5.8
+    SWIFT_VERSION: 5.9
     ALWAYS_SEARCH_USER_PATHS: NO
     FRAMEWORK_SEARCH_PATHS: "$(inherited)"
+    SWIFT_STRICT_CONCURRENCY: complete
   configs:
     Release:
       SWIFT_COMPILATION_MODE: wholemodule
@@ -138,6 +139,10 @@ targets:
   eRpApp:
     type: application
     platform: iOS
+    preBuildScripts:
+      - script: "mint run swiftgen"
+        name: Swiftgen
+        shell: "/bin/sh -l"
         # basedOnDependencyAnalysis: false
     settings:
       base:

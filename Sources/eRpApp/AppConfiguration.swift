@@ -43,10 +43,6 @@ extension AppConfiguration.Environment {
 
 /// Actual AppConfiguration for all backend services
 struct AppConfiguration: Equatable {
-    // [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
-    private static let defaultClientId: String = "eRezeptApp"
-    private static let defaultUserAgent = "eRp-App-iOS/\(AppVersion.current.productVersion) GMTIK/\(defaultClientId)"
-
     internal init?(name: String,
                    trustAnchor: TrustAnchor,
                    idp: Server?,
@@ -54,7 +50,11 @@ struct AppConfiguration: Equatable {
                    erp: Server?,
                    base: String = "https://this.is.the.inner.vau.request/",
                    apoVzd: Server?,
-                   sharedHeader: [String: String] = ["User-Agent": defaultUserAgent]) {
+                   clientId: String,
+                   userAgent: String? = nil) {
+        self.clientId = clientId
+        let userAgent = userAgent ?? "eRp-App-iOS/\(AppVersion.current.productVersion) GMTIK/\(clientId)"
+        let sharedHeader: [String: String] = ["User-Agent": userAgent]
         guard let idp = idp, let erp = erp, let apoVzd = apoVzd else {
             return nil
         }
@@ -90,7 +90,7 @@ struct AppConfiguration: Equatable {
 
     // clientId
     // [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
-    let clientId: String = defaultClientId
+    let clientId: String
     // [REQ:gemSpec_IDP_Frontend:A_20740] Actual redirect uri
     let redirectUri = URL(string: "https://redirect.gematik.de/erezept")! // swiftlint:disable:this force_unwrapping
     let extAuthRedirectUri = URL(
@@ -168,24 +168,6 @@ sE0s7/8CIDZ3EQxclVBV3huM8Bzl9ePbNsV+Lvnjv+Fo1om5+xJ2
 -----END CERTIFICATE-----
 """)
 #endif
-#if TEST_ENVIRONMENT
-
-let IDP_GEMATIK_DEV = AppConfiguration.Server(
-    url: AppConfiguration.Environment.IDP_GEMATIK_DEV_URL,
-    header: ["X-Authorization": AppConfiguration.Environment.IDP_GEMATIK_DEV_X_AUTHORIZATION]
-)
-
-let IDP_GEMATIK_QS = AppConfiguration.Server(
-    url: AppConfiguration.Environment.IDP_GEMATIK_QS_URL,
-    header: ["X-Authorization": AppConfiguration.Environment.IDP_GEMATIK_QS_X_AUTHORIZATION]
-)
-
-let IDP_GEMATIK_PROD = AppConfiguration.Server(
-    url: AppConfiguration.Environment.IDP_GEMATIK_PROD_URL,
-    header: [:]
-)
-
-#endif
 
 #if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_TU
 
@@ -210,25 +192,6 @@ let IDP_RISE_PU = AppConfiguration.Server(
 )
 
 // MARK: - ## ERP
-
-#if TEST_ENVIRONMENT
-
-let ERP_GEMATIK_DEV = AppConfiguration.Server(
-    url: AppConfiguration.Environment.ERP_GEMATIK_DEV_URL,
-    header: ["X-Authorization": AppConfiguration.Environment.ERP_GEMATIK_DEV_X_AUTH]
-)
-
-let ERP_GEMATIK_QS = AppConfiguration.Server(
-    url: AppConfiguration.Environment.ERP_GEMATIK_QS_URL,
-    header: ["X-Authorization": AppConfiguration.Environment.ERP_GEMATIK_QS_X_AUTH]
-)
-
-let ERP_GEMATIK_PROD = AppConfiguration.Server(
-    url: AppConfiguration.Environment.ERP_GEMATIK_PROD_URL,
-    header: [:]
-)
-
-#endif
 
 #if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_TU
 
@@ -275,51 +238,8 @@ let APOVZD_PU = AppConfiguration.Server(
     header: ["X-API-KEY": AppConfiguration.Environment.APOVZD_PU_X_API_KEY]
 )
 // swiftlint:enable identifier_name
-#if TEST_ENVIRONMENT
-
-let environmentGMTKDEV: AppConfiguration? = AppConfiguration(
-    name: "Gematik DEV",
-    trustAnchor: TRUSTANCHOR_GemRootCa3TestOnly,
-    idp: IDP_GEMATIK_DEV,
-    erp: ERP_GEMATIK_DEV,
-    apoVzd: APOVZD_RU
-)
 
 // MARK: - # Environments -
-
-let environmentGMTKQS: AppConfiguration? = AppConfiguration(
-    name: "Gematik QS ⛔️",
-    trustAnchor: TRUSTANCHOR_GemRootCa3TestOnly,
-    idp: IDP_GEMATIK_QS,
-    erp: ERP_GEMATIK_QS,
-    apoVzd: APOVZD_RU
-)
-
-let environmentGMTKPROD: AppConfiguration? = AppConfiguration(
-    name: "Gematik PROD ⛔️",
-    trustAnchor: TRUSTANCHOR_GemRootCa3,
-    idp: IDP_GEMATIK_PROD,
-    erp: ERP_GEMATIK_PROD,
-    apoVzd: APOVZD_RU
-)
-
-let environmentGMTKQSRISE: AppConfiguration? = AppConfiguration(
-    name: "Gematik QS FD + RISE TU",
-    trustAnchor: TRUSTANCHOR_GemRootCa3TestOnly,
-    idp: IDP_RISE_TU,
-    erp: ERP_GEMATIK_QS,
-    apoVzd: APOVZD_RU
-)
-
-let environmentGMTKPRODRISE: AppConfiguration? = AppConfiguration(
-    name: "Gematik PROD FD + RISE RU",
-    trustAnchor: TRUSTANCHOR_GemRootCa3TestOnly,
-    idp: IDP_RISE_RU,
-    erp: ERP_GEMATIK_PROD,
-    apoVzd: APOVZD_RU
-)
-
-#endif
 
 #if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_TU
 
@@ -328,7 +248,8 @@ let environmentTU: AppConfiguration? = AppConfiguration(
     trustAnchor: TRUSTANCHOR_GemRootCa3TestOnly,
     idp: IDP_RISE_TU,
     erp: ERP_IBM_TU,
-    apoVzd: APOVZD_RU
+    apoVzd: APOVZD_RU,
+    clientId: "GEMgemaERevbaI2diOST"
 )
 
 #endif
@@ -340,7 +261,8 @@ let environmentRU: AppConfiguration? = AppConfiguration(
     trustAnchor: TRUSTANCHOR_GemRootCa3TestOnly,
     idp: IDP_RISE_RU,
     erp: ERP_IBM_RU,
-    apoVzd: APOVZD_RU
+    apoVzd: APOVZD_RU,
+    clientId: "GEMgemaERekavvsdiOSR"
 )
 
 #endif
@@ -353,7 +275,8 @@ let environmentRUDEV: AppConfiguration? = AppConfiguration(
     idp: IDP_RISE_RU,
     idpDefaultScopes: ["e-rezept-dev", "openid"],
     erp: ERP_IBM_RU_DEV,
-    apoVzd: APOVZD_RU
+    apoVzd: APOVZD_RU,
+    clientId: "GEMgemaERekavvsdiOSR"
 )
 
 #endif
@@ -364,7 +287,9 @@ let environmentPU: AppConfiguration = {
         trustAnchor: TRUSTANCHOR_GemRootCa3,
         idp: IDP_RISE_PU,
         erp: ERP_IBM_PU,
-        apoVzd: APOVZD_PU
+        apoVzd: APOVZD_PU,
+        // [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
+        clientId: "GEMgemaERe3zGBPBiOSP"
     ) else {
         fatalError(
             // swiftlint:disable:next line_length
@@ -392,11 +317,6 @@ let defaultConfiguration: AppConfiguration = environmentPU
 
 #if TEST_ENVIRONMENT
 let configurations: [String: AppConfiguration] = [
-    "gematik_dev": environmentGMTKDEV,
-    "gematik_qs": environmentGMTKQS,
-    "gematik_prod": environmentGMTKPROD,
-    "gematik_rise_qs": environmentGMTKQSRISE,
-    "gematik_rise_prod": environmentGMTKPRODRISE,
     "TU": environmentTU,
     "RU": environmentRU,
     "RU_DEV": environmentRUDEV,

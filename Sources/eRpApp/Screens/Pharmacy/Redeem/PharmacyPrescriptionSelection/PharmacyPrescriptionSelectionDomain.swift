@@ -25,29 +25,73 @@ import SwiftUI
 struct PharmacyPrescriptionSelectionDomain {
     @ObservableState
     struct State: Equatable {
-        var prescriptions: [Prescription]
-        var selectedPrescriptions: Set<Prescription> = []
+        @Shared var prescriptions: [Prescription]
+        @Shared var selectedPrescriptions: Set<Prescription>
+
+        // copy to enable discarding the changes
+        var selectedPrescriptionsCopy: Set<Prescription>
         var profile: Profile?
+
+        init(
+            prescriptions: Shared<[Prescription]>,
+            selectedPrescriptions: Shared<Set<Prescription>>,
+            profile: Profile? = nil
+        ) {
+            _prescriptions = prescriptions
+            _selectedPrescriptions = selectedPrescriptions
+            selectedPrescriptionsCopy = Set(selectedPrescriptions.wrappedValue)
+            self.profile = profile
+        }
     }
 
     enum Action: Equatable {
         case didSelect(String)
         case saveSelection(Set<Prescription>)
+        case updateRedeemablePrescriptions
+
+        /// Internal actions
+        case response(Response)
+
+        enum Response: Equatable {
+            /// response of `updateRedeemablePrescriptions`
+            case loadLocalPrescriptionsReceived(Result<[Prescription], PrescriptionRepositoryError>)
+        }
     }
+
+    @Dependency(\.dismiss) var dismiss
+    @Dependency(\.prescriptionRepository) var prescriptionRepository: PrescriptionRepository
+    @Dependency(\.schedulers) var schedulers
 
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
+        case .updateRedeemablePrescriptions:
+            return .publisher(
+                prescriptionRepository.loadLocal()
+                    .first()
+                    .receive(on: schedulers.main.animation())
+                    .catchToPublisher()
+                    .map { Action.response(.loadLocalPrescriptionsReceived($0)) }
+                    .eraseToAnyPublisher
+            )
         case let .didSelect(taskID):
             if let prescriptions = state.prescriptions.first(where: { $0.id == taskID }) {
-                if state.selectedPrescriptions.contains(prescriptions) {
-                    state.selectedPrescriptions.remove(prescriptions)
+                if state.selectedPrescriptionsCopy.contains(prescriptions) {
+                    state.selectedPrescriptionsCopy.remove(prescriptions)
                 } else {
-                    state.selectedPrescriptions.insert(prescriptions)
+                    state.selectedPrescriptionsCopy.insert(prescriptions)
                 }
             }
             return .none
-        case .saveSelection:
+        case let .response(.loadLocalPrescriptionsReceived(.success(prescriptions))):
+            state.prescriptions = prescriptions.filter(\.isRedeemable)
             return .none
+        case .response(.loadLocalPrescriptionsReceived(.failure)):
+            return .none
+        case let .saveSelection(prescriptions):
+            state.selectedPrescriptions = prescriptions
+            return .run { _ in
+                await dismiss()
+            }
         }
     }
 }
@@ -55,7 +99,7 @@ struct PharmacyPrescriptionSelectionDomain {
 extension PharmacyPrescriptionSelectionDomain {
     enum Dummies {
         static let state = State(
-            prescriptions: [Prescription.Dummies.prescriptionReady]
+            prescriptions: Shared([Prescription.Dummies.prescriptionReady]), selectedPrescriptions: Shared(Set([]))
         )
 
         static let store = Store(

@@ -149,6 +149,7 @@ internal enum A11y {
       static let erxDetailedPrescriptionName = "erx_detailed_prescription_name"
       static let erxDetailedPrescriptionValidity = "erx_detailed_prescription_validity"
       static let erxDetailedMultiplePrescriptionIndex = "erx_detailed_multiple_prescription_index"
+      static let erxDetailedSelfPayer = "erx_detailed_self_payer"
       static let erxDetailedStatus = "erx_detailed_status"
       static let erxBtnProfile = "erx_btn_profile"
       static let erxImgProfile = "erx_img_profile"
@@ -172,7 +173,7 @@ internal enum A11y {
       static let dmcTxtSubtitle = "dmc_txt_subtitle"
       static let dmcImgLoadingIndicator = "dmc_img_loading_indicator"
       static let dmcImgMatrixcode = "dmc_img_matrixcode"
-      static let dmcBtnClose = "dmc_btn_close"
+      static let dmcBtnShare = "dmc_btn_share"
   }
     internal enum medicationReminder {
       static let medReminderBtnActivationToggle = "med_reminder_btn_activation_toggle"
@@ -256,6 +257,9 @@ internal enum A11y {
       static let ordDetailBtnContactPhone = "ord_detail_btn_contact_phone"
       static let ordDetailBtnContactEmail = "ord_detail_btn_contact_email"
   }
+    internal enum message {
+      static let msgTxtTitle = "msg_txt_title"
+  }
     internal enum pickupCode {
       static let pucTxtTitle = "puc_txt_title"
       static let pucTxtSubtitle = "puc_txt_subtitle"
@@ -304,7 +308,10 @@ internal enum A11y {
       static let phaDetailBtnPickupViaLogin = "pha_detail_btn_pickup_via_login"
       static let phaDetailBtnDeliveryViaLogin = "pha_detail_btn_delivery_via_login"
       static let phaDetailBtnShipmentViaLogin = "pha_detail_btn_shipment_via_login"
-      static let phaDetailHint = "pha_detail_hint"
+      static let phaDetailBtnClose = "pha_detail_btn_close"
+      static let phaDetailBtnOpenMap = "pha_detail_btn_open_map"
+      static let phaDetailBtnOpenPhone = "pha_detail_btn_open_phone"
+      static let phaDetailBtnOpenMail = "pha_detail_btn_open_mail"
       static let phaDetailHintNotErxReady = "pha_detail_hint_not_erx_ready"
       static let phaDetailContact = "pha_detail_contact"
       static let phaDetailWeb = "pha_detail_web"
@@ -399,6 +406,7 @@ internal enum A11y {
       static let prscDtlBtnHeadlineSubstitutionInfo = "prsc_dtl_btn_headline_substitution_info"
       static let prscDtlBtnScannedPrescriptionInfo = "prsc_dtl_btn_scanned_prescription_info"
       static let prscDtlBtnDirectAssignmentInfo = "prsc_dtl_btn_direct_assignment_info"
+      static let prscDtlBtnSelfPayerInfo = "prsc_dtl_btn_self_payer_info"
       static let prscDtlTxtPrescriptionValidity = "prsc_dtl_txt_prescription_validity"
       static let prscDtlBtnPrescriptionValidityInfo = "prsc_dtl_btn_prescription_validity_info"
       static let prscDtlDrawerSubstitutionInfo = "prsc_dtl_drawer_substitution_info"
@@ -425,6 +433,7 @@ internal enum A11y {
       static let prscDtlDrawerDosageInstructionsInfoDescription = "prsc_dtl_drawer_dosage_instructions_info_description"
       static let prscDtlDrawerDosageInstructionsInfo = "prsc_dtl_drawer_dosage_instructions_info"
       static let prscDtlDrawerEmergencyServiceFeeInfo = "prsc_dtl_drawer_emergency_service_fee_info"
+      static let prscDtlDrawerSelfPayerInfo = "prsc_dtl_drawer_self_payer_info"
       static let prscDtlTxtAuthoredOn = "prsc_dtl_txt_authored_on"
       static let prscDtlTxtBvg = "prsc_dtl_txt_bvg"
       static let prscDtlTxtMultiPrescription = "prsc_dtl_txt_multi_prescription"
@@ -517,6 +526,9 @@ internal enum A11y {
       static let secTxtSystemRootDetectionFootnote = "sec_txt_system_root_detection_footnote"
       static let secBtnSystemRootDetectionFootnoteMore = "sec_btn_system_root_detection_footnote_more"
       static let secBtnSystemRootDetectionDone = "sec_btn_system_root_detection_done"
+  }
+    internal enum selfPayerWarning {
+      static let selfPayerWarningTxtMessage = "self_payer_warning_txt_message"
   }
     internal enum settings { 
     internal enum auditEvents {

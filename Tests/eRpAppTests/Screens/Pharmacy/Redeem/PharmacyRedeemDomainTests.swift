@@ -87,9 +87,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         let inputTasks = Prescription.Fixtures.prescriptions
         let sut = testStore(for: PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            prescriptions: inputTasks,
+            prescriptions: Shared(inputTasks),
             pharmacy: pharmacy,
-            selectedPrescriptions: Set(inputTasks)
+            selectedPrescriptions: Shared(Set(inputTasks))
         ))
 
         let expectedShipmentInfo = ShipmentInfo(
@@ -111,7 +111,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
             $0.selectedShipmentInfo = expectedShipmentInfo
         }
 
-        await sut.send(.redeem)
+        await sut.send(.redeem) { $0.redeemInProgress = true }
 
         let expectedCardWallState = CardWallIntroductionDomain.State(
             isNFCReady: true,
@@ -120,6 +120,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         )
         await sut.receive(.showCardWall) {
             $0.destination = PharmacyRedeemDomain.Destination.State.cardWall(expectedCardWallState)
+            $0.redeemInProgress = false
         }
         expect(self.mockPharmacyRepository.savePharmaciesCallsCount) == 0
     }
@@ -140,9 +141,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         let inputTasks = Prescription.Fixtures.prescriptions
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            prescriptions: inputTasks,
+            prescriptions: Shared(inputTasks),
             pharmacy: pharmacy,
-            selectedPrescriptions: Set(inputTasks)
+            selectedPrescriptions: Shared(Set(inputTasks))
         )
         let sut = testStore(for: initialState)
 
@@ -170,8 +171,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
             $0.selectedShipmentInfo = expectedShipmentInfo
         }
 
-        await sut.send(.redeem)
+        await sut.send(.redeem) { $0.redeemInProgress = true }
         await sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
+            $0.redeemInProgress = false
             $0.orderResponses = expectedOrderResponses
             $0.destination = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: .onPremise))
 
@@ -201,9 +203,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         let inputTasks = Prescription.Fixtures.prescriptions
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            prescriptions: inputTasks,
+            prescriptions: Shared(inputTasks),
             pharmacy: pharmacy,
-            selectedPrescriptions: Set(inputTasks)
+            selectedPrescriptions: Shared(Set(inputTasks))
         )
         let sut = testStore(for: initialState)
 
@@ -231,8 +233,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         }
 
         // when redeeming
-        await sut.send(.redeem)
+        await sut.send(.redeem) { $0.redeemInProgress = true }
         await sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
+            $0.redeemInProgress = false
             $0.orderResponses = expectedOrderResponses
             $0.destination = .alert(
                 .info(PharmacyRedeemDomain.AlertStates.failingRequest(count: expectedOrderResponses.failedCount))
@@ -246,9 +249,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         let inputTasks = Prescription.Fixtures.prescriptions
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            prescriptions: inputTasks,
+            prescriptions: Shared(inputTasks),
             pharmacy: pharmacy,
-            selectedPrescriptions: Set(inputTasks)
+            selectedPrescriptions: Shared(Set(inputTasks))
         )
         let sut = testStore(for: initialState)
 
@@ -263,8 +266,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
             .eraseToAnyPublisher()
 
         // when redeeming
-        await sut.send(.redeem)
+        await sut.send(.redeem) { $0.redeemInProgress = true }
         await sut.receive(.redeemReceived(.failure(expectedError))) {
+            $0.redeemInProgress = false
             $0.destination = .alert(.init(for: expectedError))
         }
         expect(self.mockPharmacyRepository.savePharmaciesCallsCount) == 1
@@ -275,9 +279,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
                 redeemOption: .onPremise,
-                prescriptions: inputTasks,
+                prescriptions: Shared(inputTasks),
                 pharmacy: pharmacy,
-                selectedPrescriptions: Set(inputTasks)
+                selectedPrescriptions: Shared(Set(inputTasks))
             )
         )
 
@@ -297,9 +301,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
                 redeemOption: .shipment,
-                prescriptions: inputTasks,
+                prescriptions: Shared(inputTasks),
                 pharmacy: pharmacy,
-                selectedPrescriptions: Set(inputTasks)
+                selectedPrescriptions: Shared(Set(inputTasks))
             )
         )
 
@@ -345,18 +349,24 @@ class PharmacyRedeemDomainTests: XCTestCase {
     }
 
     func testRedeemNoPrescriptionsSelected() async {
-        let inputTasks = Prescription.Fixtures.prescriptions
+        var inputTasks: [Prescription]!
+        withDependencies({ dependencies in
+            dependencies.date = .constant(Date())
+        }, operation: {
+            inputTasks = Prescription.Fixtures.prescriptions
+        })
+
         let sut = testStore(
             for: PharmacyRedeemDomain.State(
                 redeemOption: .shipment,
-                prescriptions: inputTasks,
+                prescriptions: Shared(inputTasks.filter(\.isRedeemable)),
                 pharmacy: pharmacy,
-                selectedPrescriptions: Set(inputTasks)
+                selectedPrescriptions: Shared(Set(inputTasks.filter(\.isRedeemable)))
             )
         )
         let selectionPrescriptionState = PharmacyPrescriptionSelectionDomain.State(
-            prescriptions: sut.state.prescriptions.filter(\.isRedeemable),
-            selectedPrescriptions: sut.state.selectedPrescriptions
+            prescriptions: sut.state.$prescriptions,
+            selectedPrescriptions: sut.state.$selectedPrescriptions
         )
 
         await sut.send(.showPrescriptionSelection) { sut in
@@ -365,9 +375,12 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
         await sut
             .send(.destination(.presented(.prescriptionSelection(.saveSelection(Set<Prescription>()))))) { sut in
-                sut.destination = nil
                 sut.selectedPrescriptions = Set<Prescription>()
             }
+
+        await sut.receive(.destination(.dismiss)) { sut in
+            sut.destination = nil
+        }
 
         await sut.send(.redeem)
         expect(self.mockPharmacyRepository.savePharmaciesCalled).to(beFalse())

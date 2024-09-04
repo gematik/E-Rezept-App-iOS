@@ -20,7 +20,7 @@ import CombineSchedulers
 import CoreData
 import eRpKit
 import Foundation
-import GemCommonsKit
+import OSLog
 
 public protocol ErxTaskCoreDataStore: ErxLocalDataStore {}
 
@@ -86,7 +86,7 @@ public class DefaultErxTaskCoreDataStore: ErxTaskCoreDataStore {
         do {
             results = try context.fetch(request)
         } catch {
-            DLog("Error loading profile entity")
+            Logger.eRpLocalStorage.debug("Error loading profile entity")
         }
 
         guard let result = results.first else { return nil }

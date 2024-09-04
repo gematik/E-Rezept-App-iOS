@@ -15,6 +15,7 @@
 //  limitations under the Licence.
 //  
 //
+// swiftlint:disable file_length
 
 import ComposableArchitecture
 import eRpKit
@@ -408,7 +409,7 @@ extension PharmacyRedeemView {
                                         .padding(.bottom)
                                         .foregroundColor(Colors.systemLabel)
 
-                                        Text(store.selectedPrescriptions.map(\.title).joined(separator: ", "))
+                                        Text(store.selectedPrescriptions.map(\.title).joined(separator: " & "))
                                             .font(Font.subheadline)
                                             .foregroundColor(Colors.systemLabelSecondary)
                                             .lineLimit(1)
@@ -454,6 +455,9 @@ extension PharmacyRedeemView {
                 VStack(spacing: 8) {
                     GreyDivider()
 
+                    SelfPayerWarningView(erxTasks: store.selectedPrescriptions.map(\.erxTask))
+                        .padding()
+
                     if store.selectedPrescriptions.isEmpty {
                         PrimaryTextButton(text: L10n.phaRedeemBtnRedeem,
                                           a11y: A11y.pharmacyRedeem.phaRedeemBtnRedeem,
@@ -461,17 +465,15 @@ extension PharmacyRedeemView {
                             store.send(.redeem)
                         }
                         .padding(.horizontal)
-                        .padding(.bottom)
                     } else {
                         LoadingPrimaryButton(text: L10n.phaRedeemBtnRedeem,
-                                             isLoading: store.orderResponses.inProgress) {
+                                             isLoading: store.orderResponses.inProgress || store.redeemInProgress) {
                             store.send(.redeem)
                         }
                         .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
                         .padding(.horizontal)
-                        .padding(.bottom)
                     }
-                }
+                }.padding(.bottom)
             }
         }
     }

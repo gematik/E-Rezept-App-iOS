@@ -102,4 +102,9 @@ extension SharedTask {
     public init(with task: ErxTask) {
         self.init(id: task.id, accessCode: task.accessCode ?? "")
     }
+
+    /// Creates a string of `ErxTask`'s id and accessCode.
+    public var asString: String {
+        "\(id)|\(accessCode)"
+    }
 }

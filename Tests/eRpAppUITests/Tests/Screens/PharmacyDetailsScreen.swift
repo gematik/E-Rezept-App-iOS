@@ -28,6 +28,21 @@ struct PharmacyDetailsScreen: Screen {
         return RedeemScreen(app: app)
     }
 
+    func expandSheet(file _: StaticString = #file, line _: UInt = #line) {
+        app.scrollViews.firstMatch.swipeUp(velocity: 1000.0)
+    }
+
+    @discardableResult
+    func tapClose(file: StaticString = #file, line: UInt = #line) -> OrderDetailsScreen {
+        button(by: A11y.pharmacyDetail.phaDetailBtnClose, file: file, line: line).tap()
+
+        return .init(app: app)
+    }
+
+    func contactSectionHeader(_ file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        staticText(by: A11y.pharmacyDetail.phaDetailContact, file: file, line: line)
+    }
+
     func buttonForService(_ service: Service, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
         button(by: service.buttonId, file: file, line: line)
     }
@@ -54,6 +69,27 @@ struct PharmacyDetailsScreen: Screen {
                 return A11y.pharmacyDetail.phaDetailBtnShipment
             case .shipmentViaLogin:
                 return A11y.pharmacyDetail.phaDetailBtnShipmentViaLogin
+            }
+        }
+    }
+
+    func buttonForContact(_ contact: Contact, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        button(by: contact.buttonId, file: file, line: line)
+    }
+
+    enum Contact: String, CaseIterable {
+        case phone
+        case mail
+        case map
+
+        var buttonId: String {
+            switch self {
+            case .phone:
+                return A11y.pharmacyDetail.phaDetailBtnOpenPhone
+            case .mail:
+                return A11y.pharmacyDetail.phaDetailBtnOpenMail
+            case .map:
+                return A11y.pharmacyDetail.phaDetailBtnOpenMap
             }
         }
     }

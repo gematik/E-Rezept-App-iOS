@@ -92,7 +92,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Noch 27 Tage einlösbar")))
+        expect(sut.viewStatus).to(equal(.open(until: "Angenommen ")))
         expect(sut.type).to(equal(.regular))
     }
 

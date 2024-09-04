@@ -26,11 +26,6 @@ import SwiftUI
 import XCTest
 
 final class CardWallSnapshotTests: ERPSnapshotTestCase {
-    override class func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testSelectionView() {
         let sut = CardWallIntroductionView(
             store: StoreOf<CardWallIntroductionDomain>(
@@ -45,17 +40,17 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
 
         // This snapshots are subject to feature flags.
         // If these test fail, delete the app within your simulator and restart the test.
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testExtAuthFallbackView() {
         let sut = CardWallExtAuthFallbackView(closeAction: {})
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testIntroductionView() {
@@ -70,9 +65,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testIntroductionViewWithCapabilties() {
@@ -88,9 +83,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testCANInputView() {
@@ -106,9 +101,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testCANInputViewInDemoMode() {
@@ -124,9 +119,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testCANInputWrongCANEnteredView() {
@@ -141,9 +136,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPINInputView() {
@@ -160,9 +155,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPINInputViewInDemoMode() {
@@ -179,9 +174,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPINInputWrongPINEnteredView() {
@@ -198,9 +193,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testLoginOptionView() {
@@ -215,9 +210,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testLoginOptionViewInDemoMode() {
@@ -232,9 +227,9 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     lazy var testProfile = { Profile(name: "testProfile") }()
@@ -267,7 +262,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
     func testReadCardView() {
         let sut = CardWallReadCardView(store: readCardStore(for: .idle))
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardViewInDemoMode() {
@@ -283,13 +278,13 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             )
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardViewStep1() {
         let sut = CardWallReadCardView(store: readCardStore(for: .retrievingChallenge(.loading)))
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardViewFailedStep2() {
@@ -302,20 +297,20 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
                 )
             )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardViewStep3() {
         let sut = CardWallReadCardView(store: readCardStore(for: .verifying(.loading)))
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardViewDone() {
         let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
         let sut = CardWallReadCardView(store: readCardStore(for: .loggedIn(idpToken)))
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardHelpCardView() {
@@ -324,7 +319,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
                 EmptyReducer()
             })
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardHelpPositionView() {
@@ -332,7 +327,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             EmptyReducer()
         })
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardHelpListView() {
@@ -341,7 +336,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
                 EmptyReducer()
             })
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardHelpVideoView() {
@@ -349,6 +344,6 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
             EmptyReducer()
         })
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 }

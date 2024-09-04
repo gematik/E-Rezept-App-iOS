@@ -74,6 +74,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(task.patient?.status) == "1"
         expect(task.patient?.insurance) == "AOK Rheinland/Hamburg"
         expect(task.patient?.insuranceId) == "X234567890"
+        expect(task.patient?.coverageType) == .GKV
         expect(task.practitioner?.lanr) == "838382202"
         expect(task.practitioner?.name) == "Dr. med. Hans Topp-Glücklich"
         expect(task.practitioner?.qualification) == "Hausarzt"
@@ -153,6 +154,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(task.patient?.status) == "1"
         expect(task.patient?.insurance) == "AOK Nordost - Die Gesundheitskasse"
         expect(task.patient?.insuranceId) == "X110498793"
+        expect(task.patient?.coverageType) == .GKV
         // practitioner
         expect(task.practitioner?.lanr) == "445588777"
         expect(task.practitioner?.name) == "Prof. Dr. Hannelore Popówitsch"

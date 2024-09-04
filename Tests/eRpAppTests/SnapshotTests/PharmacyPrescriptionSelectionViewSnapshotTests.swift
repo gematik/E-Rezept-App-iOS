@@ -25,15 +25,10 @@ import SwiftUI
 import XCTest
 
 final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase {
-    override class func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testPharmacyPrescriptionAllSelected() {
         let initialState = PharmacyPrescriptionSelectionDomain.State(
-            prescriptions: Prescription.Fixtures.prescriptions,
-            selectedPrescriptions: Set(Prescription.Fixtures.prescriptions),
+            prescriptions: Shared(Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(Set(Prescription.Fixtures.prescriptions)),
             profile: UserProfile.Fixtures.theo.profile
         )
         let sut = NavigationView {
@@ -45,14 +40,15 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
             })
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testPharmacyPrescriptionNoneSelected() {
         let initialState = PharmacyPrescriptionSelectionDomain.State(
-            prescriptions: Prescription.Fixtures.prescriptions,
+            prescriptions: Shared(Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared([]),
             profile: UserProfile.Fixtures.theo.profile
         )
         let sut = NavigationView {
@@ -64,8 +60,8 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
             })
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

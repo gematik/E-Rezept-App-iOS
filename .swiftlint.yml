@@ -34,6 +34,7 @@ opt_in_rules:
   - empty_string
   - discouraged_optional_collection
   - closure_end_indentation
+  - file_header
 excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Package.swift
   - .build/
@@ -72,4 +73,17 @@ custom_rules:
     regex: "(\/\/[[:space:]]*Created by)"
     message: "Source must not contain author"
     severity: warning
+  must_not_contain_file_header_placeholder:
+    included:
+      - ".*Test\\.swift"
+      - ".*Sources\\.swift"
+    name: "must not contain file header placeholder"
+    regex: "(\/\/[[:space:]]*GEMATIK_COPYRIGHT_STATEMENT*)"
+    message: "Source must not placeholder in file header"
+    severity: warning
 
+file_header:
+  required_pattern: |
+    \/\/
+    \/\/  Copyright \(c\) \d{4} gematik GmbH
+    \/\/

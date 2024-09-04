@@ -71,7 +71,8 @@ extension ErxChargeItem {
                 birthDate: "1976-04-30",
                 status: "1",
                 insurance: "Künstler-Krankenkasse Baden-Württemberg",
-                insuranceId: "X110465770"
+                insuranceId: "X110465770",
+                coverageType: .PKV
             ),
             practitioner: ErxPractitioner(
                 lanr: "443236256",

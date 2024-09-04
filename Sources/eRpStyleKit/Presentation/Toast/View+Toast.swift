@@ -165,6 +165,13 @@ public struct ToastContainerView: View {
                             }
                         }
                     }
+                    .onTapGesture {
+                        if toast?.style.duration == nil {
+                            withAnimation {
+                                isPresented = false
+                            }
+                        }
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .center)

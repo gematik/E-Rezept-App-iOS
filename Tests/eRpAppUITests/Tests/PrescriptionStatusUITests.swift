@@ -64,13 +64,13 @@ class PrescriptionStatusUITests: XCTestCase {
             .init(name: "Ibuprofen 04", status: "In Einlösung"),
             .init(name: "Ibuprofen 05", status: "Einlösbar"),
             .init(name: "Ibuprofen 06", status: "Warte auf Antwort"),
-            .init(name: "Ibuprofen 07", status: "In Einlösung"),
             .init(name: "Ibuprofen 08", status: "In Einlösung"),
+            .init(name: "Ibuprofen 10", status: "In Einlösung"),
         ]
 
         let archiveMedicationStatusMapping: [MedicationNameAndStatus] = [
+            .init(name: "Ibuprofen 07", status: "Nicht mehr gültig"),
             .init(name: "Ibuprofen 09", status: "Eingelöst"),
-            .init(name: "Ibuprofen 10", status: "Nicht mehr gültig"),
         ]
 
         let tabBar = TabBarScreen(app: app)

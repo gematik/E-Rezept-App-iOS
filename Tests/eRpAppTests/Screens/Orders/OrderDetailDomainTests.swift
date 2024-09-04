@@ -22,15 +22,17 @@ import ComposableArchitecture
 @testable import eRpFeatures
 import eRpKit
 import Nimble
+import Pharmacy
 import XCTest
 
 @MainActor
 final class OrderDetailDomainTests: XCTestCase {
     let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
-    let mockRepository = MockErxTaskRepository(
+    let mockErxRepository = MockErxTaskRepository(
         find: Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher(),
         saveCommunications: Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     )
+    let mockPharmacyRepository = MockPharmacyRepository()
     let mockApplication = MockResourceHandler()
     typealias TestStore = TestStoreOf<OrderDetailDomain>
 
@@ -57,7 +59,8 @@ final class OrderDetailDomainTests: XCTestCase {
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.userSession = DummySessionContainer()
-            dependencies.erxTaskRepository = mockRepository
+            dependencies.erxTaskRepository = mockErxRepository
+            dependencies.pharmacyRepository = mockPharmacyRepository
             dependencies.resourceHandler = resourceHandler
         }
     }
@@ -76,9 +79,9 @@ final class OrderDetailDomainTests: XCTestCase {
     func testMarkCommunicationsRead() async {
         let orderId = "12343-1236-432"
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentUnread])
-        mockRepository.saveCommunicationsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+        mockErxRepository.saveCommunicationsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
-        mockRepository.saveChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+        mockErxRepository.saveChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
         let store = testStore(
             for: .init(orderId: orderId, communications: input, chargeItems: []),
@@ -86,16 +89,16 @@ final class OrderDetailDomainTests: XCTestCase {
         )
 
         await store.send(.didDisplayTimelineEntries)
-        expect(self.mockRepository.saveCommunicationsCallsCount) == 1
-        expect(self.mockRepository.saveChargeItemsCalled).to(beFalse())
+        expect(self.mockErxRepository.saveCommunicationsCallsCount) == 1
+        expect(self.mockErxRepository.saveChargeItemsCalled).to(beFalse())
     }
 
     func testMarkCommunicationsAndChargeItemRead() async {
         let orderId = "12343-1236-432"
         let input = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipmentUnread])
-        mockRepository.saveCommunicationsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+        mockErxRepository.saveCommunicationsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
-        mockRepository.saveChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+        mockErxRepository.saveChargeItemsPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
         let store = testStore(
             for: .init(orderId: orderId, communications: input, chargeItems: [ErxChargeItem.Fixtures.chargeItem]),
@@ -103,8 +106,8 @@ final class OrderDetailDomainTests: XCTestCase {
         )
 
         await store.send(.didDisplayTimelineEntries)
-        expect(self.mockRepository.saveCommunicationsCallsCount) == 1
-        expect(self.mockRepository.saveChargeItemsCallsCount) == 1
+        expect(self.mockErxRepository.saveCommunicationsCallsCount) == 1
+        expect(self.mockErxRepository.saveChargeItemsCallsCount) == 1
     }
 
     func testLoadTasks() async {
@@ -119,6 +122,56 @@ final class OrderDetailDomainTests: XCTestCase {
         await store.send(.loadTasks)
         await store.receive(.tasksReceived(tasks)) {
             $0.erxTasks = IdentifiedArrayOf(uniqueElements: tasks)
+        }
+    }
+
+    func testLoadAndShowPharmacy() async {
+        let orderId = "12343-1236-432"
+        let comm = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipment])
+        let pharmacy = Self.pharmacy
+        let remotePharmacy = Self.pharmacyRemote
+        let store = testStore(
+            for: .init(orderId: orderId, communications: comm, chargeItems: [], pharmacy: pharmacy),
+            resourceHandler: mockApplication
+        )
+        mockPharmacyRepository.updateFromRemoteByReturnValue = Just(Self.pharmacyRemote)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        await store.send(.loadAndShowPharmacy)
+
+        await store.receive(.response(.loadAndShowPharmacyReceived(.success(remotePharmacy)))) { state in
+            state.order = Order.lens.pharmacy.set(remotePharmacy)(state.order)
+            state.destination = .pharmacyDetail(.init(
+                prescriptions: Shared([]),
+                selectedPrescriptions: Shared([]),
+                inRedeemProcess: false,
+                inOrdersMessage: true,
+                pharmacyViewModel: .init(pharmacy: remotePharmacy),
+                pharmacyRedeemState: Shared(nil)
+            ))
+        }
+    }
+
+    func testLoadAndShowPharmacy_notFound() async {
+        let orderId = "12343-1236-432"
+        let comm = IdentifiedArrayOf(uniqueElements: [OrderDetailDomainTests.communicationShipment])
+        let pharmacy = Self.pharmacy
+        let store = testStore(
+            for: .init(orderId: orderId, communications: comm, chargeItems: [], pharmacy: pharmacy),
+            resourceHandler: mockApplication
+        )
+        mockPharmacyRepository.updateFromRemoteByReturnValue = Fail(error: PharmacyRepositoryError.remote(.notFound))
+            .eraseToAnyPublisher()
+        mockPharmacyRepository.deletePharmaciesReturnValue = Just(true)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        await store.send(.loadAndShowPharmacy)
+
+        await store.receive(.response(.loadAndShowPharmacyReceived(.failure(.remote(.notFound))))) { state in
+            state.order = Order.lens.pharmacy.set(nil)(state.order)
+            state.destination = .alert(.init(for: PharmacyRepositoryError.remote(.notFound)))
         }
     }
 
@@ -268,7 +321,7 @@ final class OrderDetailDomainTests: XCTestCase {
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
             dependencies.userSession = DummySessionContainer()
-            dependencies.erxTaskRepository = mockRepository
+            dependencies.erxTaskRepository = mockErxRepository
             dependencies.resourceHandler = mockApplication
             dependencies.dateProvider = { date }
             dependencies.currentAppVersion = AppVersion(
@@ -348,5 +401,49 @@ extension OrderDetailDomainTests {
         payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"Checkout your shimpment in the shopping cart.\",\"url\": \"https://www.das-e-rezept-fuer-deutschland.de\"}",
         // swiftlint:disable:previous line_length
         isRead: false
+    )
+
+    static let address = PharmacyLocation.Address(
+        street: "Hinter der Bahn",
+        houseNumber: "6",
+        zip: "12345",
+        city: "Buxtehude"
+    )
+
+    static let telecom = PharmacyLocation.Telecom(
+        phone: "555-Schuh",
+        fax: "555-123456",
+        email: "info@gematik.de",
+        web: "http://www.gematik.de"
+    )
+
+    static let pharmacy = PharmacyLocation(
+        id: "1",
+        status: .active,
+        telematikID: "3-06.2.ycl.123",
+        name: "Apotheke am Wäldchen",
+        types: [.pharm, .emergency, .mobl, .outpharm, .delivery],
+        position: PharmacyLocation.Position(latitude: 49.2470345, longitude: 8.8668786),
+        address: address,
+        telecom: telecom,
+        hoursOfOperation: []
+    )
+
+    static let pharmacyRemote = PharmacyLocation(
+        id: "1",
+        status: .active,
+        telematikID: "3-06.2.ycl.123",
+        name: "Apotheke am Wäldchen",
+        types: [.pharm, .emergency, .mobl, .outpharm, .delivery],
+        position: PharmacyLocation.Position(latitude: 49.2470345, longitude: 8.8668786),
+        address: address,
+        telecom: telecom,
+        hoursOfOperation: [
+            PharmacyLocation.HoursOfOperation(
+                daysOfWeek: ["tue", "wed"],
+                openingTime: "08:00:00",
+                closingTime: "18:00:00"
+            ),
+        ]
     )
 }

@@ -25,11 +25,6 @@ import SwiftUI
 import XCTest
 
 final class MedicationOverviewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-    }
-
     func testMedicationOverview_withThreeDispenses() {
         let sut = NavigationView {
             MedicationOverview(
@@ -45,8 +40,8 @@ final class MedicationOverviewSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

@@ -172,4 +172,22 @@ extension MedicationSchedule {
     }
 }
 
+extension Order {
+    enum lens {
+        static let pharmacy = Lens<Order, PharmacyLocation?>(
+            get: { $0.pharmacy },
+            set: { newPharmacy in
+                { oldOrder in
+                    Order(
+                        orderId: oldOrder.orderId,
+                        communications: oldOrder.communications,
+                        chargeItems: oldOrder.chargeItems,
+                        pharmacy: newPharmacy
+                    )
+                }
+            }
+        )
+    }
+}
+
 // swiftlint:enable opening_brace type_name

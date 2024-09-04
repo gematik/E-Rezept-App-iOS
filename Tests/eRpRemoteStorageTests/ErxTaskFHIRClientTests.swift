@@ -88,6 +88,8 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 expect(erxTaskBundle?.medicationRequest.multiplePrescription?.totalNumber) == 4
                 expect(erxTaskBundle?.medicationRequest.multiplePrescription?.startPeriod) == "2021-01-02"
                 expect(erxTaskBundle?.medicationRequest.multiplePrescription?.endPeriod) == "2021-03-30"
+                expect(erxTaskBundle?.patient?.name) == "Ludger Ludger Königsstein"
+                expect(erxTaskBundle?.patient?.coverageType) == .GKV
             })
     }
 
@@ -131,6 +133,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 expect(erxTaskBundle?.medication?.amount).to(beNil())
                 expect(erxTaskBundle?.medicationRequest.multiplePrescription?.mark).to(beNil())
                 expect(erxTaskBundle?.medicationRequest.multiplePrescription?.numbering).to(beNil())
+                expect(erxTaskBundle?.patient).to(beNil())
             })
     }
 

@@ -16,6 +16,7 @@
 //  
 //
 
+import Dependencies
 @testable import eRpFeatures
 import eRpKit
 import Foundation
@@ -24,7 +25,11 @@ extension Prescription {
     enum Fixtures {
         static let prescriptions = {
             let dateFormatter = UIDateFormatter.testValue
-            return ErxTask.Fixtures.erxTasks.map { Prescription(erxTask: $0, dateFormatter: dateFormatter) }
+            return withDependencies { dependencies in
+                dependencies.date = .constant(Date())
+            } operation: {
+                ErxTask.Fixtures.erxTasks.map { Prescription(erxTask: $0, dateFormatter: dateFormatter) }
+            }
         }()
     }
 }

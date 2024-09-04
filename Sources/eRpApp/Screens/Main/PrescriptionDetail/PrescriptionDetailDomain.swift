@@ -109,6 +109,7 @@ struct PrescriptionDetailDomain {
     @Dependency(\.uiDateFormatter) var uiDateFormatter
     @Dependency(\.resourceHandler) var resourceHandler
     @Dependency(\.medicationReminderParser) var medicationParser
+    @Dependency(\.imageGenerator) var imageGenerator: ImageGenerator
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -199,9 +200,18 @@ struct PrescriptionDetailDomain {
             )
         case let .response(.matrixCodeImageReceived(loadingState)):
             state.loadingState = loadingState
-//            guard let url = state.prescription.erxTask.shareUrl(),
             guard let image = loadingState.value else { return .none }
-            state.destination = .sharePrescription(.init( /* url: url, */ dataMatrixCodeImage: image))
+            state.destination = .sharePrescription(
+                .init(
+                    string: L10n.dmcTxtShareMessage(state.prescription.title).text,
+                    url: state.prescription.erxTask.shareUrl(),
+                    dataMatrixCodeImage: imageGenerator.addCaption(
+                        image,
+                        L10n.dmcTxtCodeSingle.text,
+                        state.prescription.title
+                    )
+                )
+            )
             return .none
         // Delete
         // [REQ:gemSpec_eRp_FdV:A_19229-01#2] Deletion button is tapped -> delete confirmation dialog shows
@@ -394,6 +404,8 @@ struct PrescriptionDetailDomain {
                 state.destination = .prescriptionValidityInfo(validity)
             case .errorInfo:
                 state.destination = .errorInfo(.init())
+            case .selfPayerInfo:
+                state.destination = .selfPayerInfo(.init())
             case .scannedPrescriptionInfo:
                 state.destination = .scannedPrescriptionInfo(.init())
             case .coPaymentInfo:
@@ -454,7 +466,6 @@ struct PrescriptionDetailDomain {
                 state.destination = .matrixCode(
                     .init(
                         type: .erxTask,
-                        isShowAlert: false,
                         erxTasks: [state.prescription.erxTask]
                     )
                 )
@@ -556,14 +567,30 @@ extension RemoteStoreError {
 
 extension ErxTask {
     func shareUrl() -> URL? {
-        let sharedTask = SharedTask(with: self)
-        guard let encoded = try? JSONEncoder().encode([sharedTask]),
-              var urlComponents = URLComponents(string: "https://das-e-rezept-fuer-deutschland.de/prescription") else {
-            return nil
-        }
-        urlComponents.fragment = String(data: encoded, encoding: .utf8)
+        nil
+        // TODO: sharing task data as url fragment must approved by security first //swiftlint:disable:this todo
+//        let sharedTask = SharedTask(with: self)
+//        guard let encoded = try? JSONEncoder().encode([sharedTask]),
+//              var urlComponents = URLComponents(string: "https://erezept.gematik.de/prescription") else {
+//            return nil
+//        }
+//        urlComponents.fragment = String(data: encoded, encoding: .utf8)
+//        return urlComponents.url
+    }
+}
 
-        return urlComponents.url
+extension Collection where Element == ErxTask {
+    func shareUrl() -> URL? {
+        nil
+        // TODO: sharing task data as url fragment must approved by security first //swiftlint:disable:this todo
+//        let shareTasks = map { SharedTask(with: $0).asString }.joined(separator: "&")
+//        guard let encoded = try? JSONEncoder().encode([shareTasks]),
+//              var urlComponents = URLComponents(string: "https://erezept.gematik.de/prescription") else {
+//            return nil
+//        }
+//
+//        urlComponents.fragment = String(data: encoded, encoding: .utf8)
+//        return urlComponents.url
     }
 }
 

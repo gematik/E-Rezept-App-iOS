@@ -168,10 +168,43 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
                 if case let Result.failure(error) = authenticated {
                     return Fail(error: RedeemServiceError.loginHandler(error: error)).eraseToAnyPublisher()
                 } else {
-                    return redeemViaRepository(orders: orders)
+                    return checkAndRedeemViaRepository(orders: orders)
                         .mapError(RedeemServiceError.from)
                         .eraseToAnyPublisher()
                 }
+            }
+            .eraseToAnyPublisher()
+    }
+
+    func checkAndRedeemViaRepository(
+        orders: [OrderRequest]
+    ) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
+        erxTaskRepository.loadRemoteAll(for: nil)
+            .mapError(RedeemServiceError.from)
+            .flatMap { tasks -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> in
+                let taskIds = orders.map(\.taskID)
+                @Dependency(\.uiDateFormatter) var uiDateFormatter
+                @Dependency(\.date) var date
+
+                let updatedTasks = tasks
+                    .filter { taskIds.contains($0.id) }
+                    .map {
+                        Prescription(
+                            erxTask: $0,
+                            date: date(),
+                            dateFormatter: uiDateFormatter
+                        )
+                    }
+
+                let notRedeemablePrescriptions = updatedTasks.filter { !$0.isRedeemable }
+                guard notRedeemablePrescriptions.isEmpty else {
+                    return Fail<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>(
+                        error: RedeemServiceError.prescriptionAlreadyRedeemed(notRedeemablePrescriptions)
+                    ).eraseToAnyPublisher()
+                }
+                return redeemViaRepository(orders: orders)
+                    .mapError(RedeemServiceError.from)
+                    .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
     }

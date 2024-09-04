@@ -335,17 +335,17 @@ struct MainDomain {
         case let .prescriptionList(action: .redeemButtonTapped(openPrescriptions)):
             state.destination = .redeemMethods(
                 RedeemMethodsDomain
-                    .State(prescriptions: openPrescriptions.filter(\.isRedeemable))
+                    .State(prescriptions: Shared(openPrescriptions.filter(\.isRedeemable)))
             )
             return .none
         case .prescriptionList(action: .showArchivedButtonTapped):
             state.destination = .prescriptionArchive(.init())
             return .none
-        case .destination(.presented(.cardWall(action: .delegate(.close)))):
+        case .destination(.presented(.redeemMethods(action: .delegate(.close)))),
+             .destination(.presented(.cardWall(action: .delegate(.close)))):
             state.destination = nil
             return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
-        case .destination(.presented(.redeemMethods(action: .delegate(.close)))),
-             .destination(.presented(.prescriptionArchive(action: .delegate(.close)))),
+        case .destination(.presented(.prescriptionArchive(action: .delegate(.close)))),
              .destination(.presented(.prescriptionDetail(action: .delegate(.close)))):
             state.destination = nil
             return .none
@@ -409,6 +409,7 @@ struct MainDomain {
             }
             return .none
         case .destination(.presented(.toast(.routeToChargeItemsList))):
+            state.destination = nil
             return .run { _ in
                 await environment.router
                     .routeTo(.settings(.editProfile(.chargeItemListFor(environment.userSession.profileId))))
@@ -499,11 +500,16 @@ struct MainDomain {
             }
 
         case let .destination(.presented(.prescriptionDetail(action: .delegate(.redeem(task))))):
+            let prescriptions = Shared([task])
             state.destination = .redeemMethods(
                 RedeemMethodsDomain
                     .State(
-                        prescriptions: [task],
-                        destination: .pharmacySearch(.init(selectedPrescriptions: [task], inRedeemProcess: true))
+                        prescriptions: prescriptions,
+                        destination: .pharmacySearch(.init(
+                            selectedPrescriptions: prescriptions,
+                            inRedeemProcess: true,
+                            pharmacyRedeemState: Shared(nil)
+                        ))
                     )
             )
 

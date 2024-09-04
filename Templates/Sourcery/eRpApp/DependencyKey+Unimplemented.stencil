@@ -48,8 +48,8 @@ import XCTestDynamicOverlay
 
 {% macro unimplementedStubsForProtocol type %}
 {% typed type as Type  %}
-{% if liveValue.type.based.AnyObject %}class{% else %}struct{% endif %} Unimplemented{{ type.name }}: {{ type.name }} {
-    init() {}
+{% if liveValue.type.based.AnyObject or liveValue.type.based.NSObjectProtocol %}class{% else %}struct{% endif %} Unimplemented{{ type.name }}: {% if liveValue.type.based.AnyObject or liveValue.type.based.NSObjectProtocol %}NSObject, {% endif %}{{ type.name }} {
+    {% if liveValue.type.based.AnyObject or liveValue.type.based.NSObjectProtocol %}override {% endif %}init() {}
     
 {% for variable in type.variables where variable.name != "liveValue"%}{% if variable.name != "testValue" %}{% if variable.name != "previewValue" %}
         {% if variable.isOptional %}{% call unimplementedOptionalVariableStub variable %}{% elif variable.isArray or variable.isDictionary %}{% call unimplementedNonOptionalArrayOrDictionaryVariableStub variable %}{% else %}{% call unimplementedNonOptionalVariableStub variable %}{% endif %}

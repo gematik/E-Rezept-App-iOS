@@ -69,7 +69,7 @@ struct MainView: View {
                 }
                 .smallSheet($store.scope(
                     state: \.destination?.grantChargeItemConsentDrawer,
-                    action: \.destination.toast
+                    action: \.destination.grantChargeItemConsentDrawer
                 )) { _ in
                     GrantChargeItemConsentDrawerView(store: store)
                 }

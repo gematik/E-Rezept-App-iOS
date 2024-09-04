@@ -59,6 +59,8 @@ extension PrescriptionDetailDomain {
         case coPaymentInfo(CoPaymentDomain)
         // sourcery: AnalyticsScreen = prescriptionDetail_emergencyServiceFeeInfo
         case emergencyServiceFeeInfo(EmptyDomain)
+        // sourcery: AnalyticsScreen = prescriptionDetail_selfPayerPrescriptionBottomSheet
+        case selfPayerInfo(EmptyDomain)
         // sourcery: AnalyticsScreen = prescriptionDetail_toast
         @ReducerCaseEphemeral
         case toast(ToastState<Toast>)
@@ -103,6 +105,7 @@ extension PrescriptionDetailDomain {
             case errorInfo
             case coPaymentInfo
             case emergencyServiceFeeInfo
+            case selfPayerInfo
             case toast
             case medicationReminder
             case dosageInstructionsInfo

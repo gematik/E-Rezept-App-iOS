@@ -40,4 +40,11 @@ struct TabBarScreen: Screen {
 
         return .init(app: app)
     }
+
+    @discardableResult
+    func tapOrderTab(file: StaticString = #file, line: UInt = #line) -> OrdersScreen {
+        button(within: app.tabBars, by: "Bestellungen", file: file, line: line).tap()
+
+        return .init(app: app)
+    }
 }

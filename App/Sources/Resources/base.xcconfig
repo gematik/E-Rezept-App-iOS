@@ -1,3 +1,4 @@
+DEVELOPMENT_TEAM = A9FL89PFFL
 
 PRODUCT_NAME = eRpApp
 CODE_SIGN_ENTITLEMENTS = App/Sources/Resources/eRpApp.entitlements

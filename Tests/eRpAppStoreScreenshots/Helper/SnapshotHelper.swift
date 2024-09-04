@@ -24,7 +24,7 @@ import XCTest
 extension UIImage {
     private class TestBundleAnchor {}
 
-    static var testBundle = Bundle(for: TestBundleAnchor.self)
+    static let testBundle = Bundle(for: TestBundleAnchor.self)
 
     convenience init?(testBundleNamed: String) {
         self.init(named: testBundleNamed, in: Self.testBundle, with: nil)
@@ -37,6 +37,7 @@ extension ViewImageConfig {
     }
 }
 
+@MainActor
 enum SnapshotHelper {
     private static var didRecord = false
 
@@ -76,10 +77,10 @@ struct OffsetPreview: View {
     }
 }
 
+@MainActor
 class ERPSnapshotTestCase: XCTestCase {
     override func setUp() {
         super.setUp()
-        diffTool = "open"
 
         SnapshotHelper.fixOffsetProblem()
     }

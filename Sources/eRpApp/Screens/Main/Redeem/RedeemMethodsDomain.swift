@@ -27,7 +27,7 @@ import UIKit
 struct RedeemMethodsDomain {
     @ObservableState
     struct State: Equatable {
-        var prescriptions: [Prescription]
+        @Shared var prescriptions: [Prescription]
         @Presents var destination: Destination.State?
     }
 
@@ -79,7 +79,11 @@ struct RedeemMethodsDomain {
                 return .none
             case .showPharmacySearchTapped:
                 state.destination = .pharmacySearch(PharmacySearchDomain
-                    .State(selectedPrescriptions: state.prescriptions.filter(\.isRedeemable), inRedeemProcess: true))
+                    .State(
+                        selectedPrescriptions: state.$prescriptions,
+                        inRedeemProcess: true,
+                        pharmacyRedeemState: Shared(nil)
+                    ))
                 return .none
             case .resetNavigation:
                 state.destination = nil
@@ -95,7 +99,7 @@ struct RedeemMethodsDomain {
 extension RedeemMethodsDomain {
     enum Dummies {
         static let state = State(
-            prescriptions: [Prescription.Dummies.prescriptionReady]
+            prescriptions: Shared([Prescription.Dummies.prescriptionReady])
         )
 
         static let store = Store(

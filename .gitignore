@@ -21,7 +21,6 @@ development.static.env
 
 # Third party files
 vendor/
-.bundle/
 .vscode
 
 # Xcode
@@ -31,6 +30,14 @@ vendor/
 ## Build generated
 build/
 DerivedData/
+*.xcodeproj/*
+!*.xcodeproj/project.xcworkspace
+*.xcodeproj/project.xcworkspace/*
+!*.xcodeproj/project.xcworkspace/xcshareddata
+*.xcodeproj/project.xcworkspace/xcshareddata/*
+!*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
+!*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 
 ## Various settings
 *.pbxuser
@@ -126,4 +133,10 @@ Templates/Sourcery/Generic/errors.stencil
 docs/errors/errors.html
 fastlane/audit_afos.json
 
-.gitattributes
+Gemfile.internal
+Gemfile.internal.lock
+fastlane/Pluginfile.internal
+.bundle
+jenkinsfiles
+
+Templates/Sourcery/Generic/errors.stencil

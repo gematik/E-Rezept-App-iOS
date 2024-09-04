@@ -342,6 +342,8 @@
 "dmc_btn_close" = "מוּכָן";
 "dmc_txt_code_multiple" = "קוד איסוף";
 "dmc_txt_code_single" = "קוד בודד";
+"dmc_txt_number_medications_%d" = "%d תרופות";
+"dmc_txt_share_message_%@" = "שותף לך קוד מרשם באמצעות אפליקציית המרשם האלקטרוני עם התרופות הבאות: %@";
 "dtl_btn_copy_clipboard" = "עותק";
 "dtl_btn_delete_disabled_note" = "המרשם נמצא כעת בעיבוד בבית מרקחת ולא ניתן למחוק אותו.";
 "dtl_btn_delete_medication" = "מחק מהמכשיר הזה";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "פתח את סורק המתכונים";
 "erx_title" = "מתכונים";
 "erx_txt_authored" = "מוצג";
+"erx_txt_claimed_at_%@" = "הניח %@";
 "erx_txt_current" = "נוֹכְחִי";
 "erx_txt_expired_on_%@" = "פג תוקף ב %@";
 "erx_txt_forced_update_alert_description" = "בצע אופטימיזציה של חוויית האפליקציה שלך על ידי עדכון האפליקציה.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "ארכיון";
 "erx_txt_refresh_loading" = "טוען …";
 "erx_txt_scanned_at_%@" = "סרוק: %@";
+"erx_txt_self_payer" = "אין החזר הוצאות";
+"erx_txt_sent_at_%@" = "נשלח %@";
 "hint_btn_close" = "סגור";
 "hint_btn_open_scn" = "פתח את הסורק";
 "hint_btn_try_demo_mode" = "התחל את מצב הדגמה";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "עגלת הקניות מוכנה";
 "ord_detail_shipment_link_btn" = "פתיחת עגלת קניות";
 "ord_detail_shipment_link_text" = "נא להיכנס לאתר בית המרקחת להשלמת ההזמנה.";
-"ord_detail_txt_%@_send_to_%@" = "%@ נשלח ל %@ . תהליך המימוש הדיגיטלי עדיין לא מוכר לבתי מרקחת רבים. אם לא תשמע עד מחר, אנו ממליצים להתקשר לברר כאמצעי זהירות.";
+"ord_detail_txt_%@_send_to_%@" = "%@ נשלח ל %@ . בחלק מבתי המרקחת אין עדיין אפשרות תגובה דיגיטלית. אם לא תהיה תגובה עד מחר, נא להתקשר כאמצעי זהירות.";
 "ord_detail_txt_charge_item%@" = "קיבלת קבלה על עלות התרופה %@ .";
 "ord_detail_txt_contact" = "אפשרויות ליצירת קשר";
 "ord_detail_txt_contact_email" = "כתוב מייל";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "אזור חיוג ומספר טלפון";
 "pha_contact_txt_street" = "מספר רחוב ובית";
 "pha_contact_txt_zip" = "מיקוד";
-"pha_detail_btn_delivery" = "נער שליחויות\n בחר";
+"pha_detail_btn_delivery" = "שָׁלִיחַ";
 "pha_detail_btn_footer" = "למד עוד";
 "pha_detail_btn_healthcare_service" = "בקש שירות שליחים";
 "pha_detail_btn_location" = "שמור לאיסוף";
 "pha_detail_btn_login_note" = "מימוש אפשרי רק לאחר ההרשמה";
+"pha_detail_btn_open_mail" = "כתוב מייל";
+"pha_detail_btn_open_map" = "מסלול כאן";
+"pha_detail_btn_open_phone" = "שִׂיחָה";
 "pha_detail_btn_organization" = "שלח אותו באמצעות משלוח";
-"pha_detail_btn_pickup" = "אוסף\n בחר";
-"pha_detail_btn_shipment" = "מִשׁלוֹחַ\n בחר";
+"pha_detail_btn_pickup" = "לאסוף";
+"pha_detail_btn_shipment" = "מִשׁלוֹחַ";
 "pha_detail_contact" = "איש קשר";
-"pha_detail_hint_message" = "לידיעתך, עשויים לחול תשלומים נוספים גם עבור תרופות שנקבעו.";
 "pha_detail_hint_not_erx_ready_message" = "אתה עדיין לא יכול לשלוח מרשמים אלקטרוניים לבית המרקחת הזה.";
 "pha_detail_hint_not_erx_ready_pic" = "רוקח מחזיק בתרופות";
 "pha_detail_hint_not_erx_ready_title" = "מימוש באתר בלבד";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "הערה לבתי מרקחת: אנו מקבלים את פרטי ההתקשרות והמידע על בתי מרקחת מאת ";
 "pha_detail_txt_no_prescription_toast" = "אין לך מרשמים למלא.";
+"pha_detail_txt_open_hour_today" = "היום";
+"pha_detail_txt_open_hour_tomorrow" = "מָחָר";
 "pha_detail_txt_subtitle_fallback" = "בֵּית מִרקַחַת";
 "pha_detail_txt_title" = "פרטים";
 "pha_detail_web" = "אתר אינטרנט";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "להוסיף ל";
 "pha_redeem_btn_change_pharmacy" = "שינוי";
 "pha_redeem_btn_change_prescription" = "שינוי";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "בטל הזמנה";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "המשך ללא מרשם זה";
 "pha_redeem_btn_redeem" = "לִפְדוֹת";
 "pha_redeem_btn_redeem_footnote" = "זה ישלח את המרשם שלך לבית המרקחת הזה. לא ניתן לממש אותו בבית מרקחת אחר.";
 "pha_redeem_btn_select_pharmacy" = "בחר בית מרקחת";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "לְהַפְעִיל";
 "prsc_dtl_btn_pkv_invoice" = "קבלת עלות";
 "prsc_dtl_btn_redeem" = "שלח לבית מרקחת";
+"prsc_dtl_btn_self_payer" = "אין החזר הוצאות";
 "prsc_dtl_btn_share" = "לְפַצֵל";
 "prsc_dtl_btn_share_title" = "לְפַצֵל";
 "prsc_dtl_btn_show_matrix_code" = "הצג קוד";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "מתכון סרוק";
 "prsc_dtl_dr_substitution_info_description" = "רוקחים מחויבים לתת עדיפות להוצאת תרופות שבגינן סיכמה קופת החולים של החולה הסכם הנחה עם יצרני התרופות. זה לא חל רק אם הרופא מוציא \"Aut idem\" במרשם, וזה לא המקרה עם המרשם שלך.";
 "prsc_dtl_dr_substitution_info_title" = "הכנה להחלפה אפשרית";
+"prsc_dtl_drawer_self_payer_info_header" = "אין החזר הוצאות";
+"prsc_dtl_drawer_self_payer_info_message" = "ככלל, ביטוח הבריאות אינו מכסה את העלויות עבור מרשם זה. כמטופל, לכן אתה אחראי לתשלום מלא. יש לבדוק באופן פרטני האם העלויות יוחזרו במסגרת ביטוחים נוספים או תגמולים סטטוטוריים.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "פתח את health.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "תוכל למצוא מידע מאומת במומחיות על מחלות, קודי ICD ונושאי מניעה וטיפול בפורטל הבריאות הלאומי.";
 "prsc_dtl_med_ingredient_name" = "שם החומר הפעיל";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen- Answeren";
 "prsc_fd_txt_substitution_title" = "הכנה להחלפה אפשרית";
 "prsc_redeem_note_direct_assignment" = "מרשם זה ימומש עבורך במסגרת טיפול.";
-"prsc_status_canceled" = "מבוטל";
+"prsc_status_canceled" = "נמחק";
 "prsc_status_completed" = "נפדה";
 "prsc_status_direct_assigned" = "יגאל עבורך";
 "prsc_status_error" = "מתכון לא נכון";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "הרחוב שהוזן חורג מהאורך המרבי המותר של %@ תווים.";
 "riv_ti_invalid_zip_%@" = "המיקוד שהוזן חורג מהאורך המרבי המותר של %@ תווים.";
 "riv_ti_wrong_version" = "מספר גרסה לא חוקי.";
-"rph_btn_close_alert_keep" = "לא נפדה";
-"rph_btn_close_alert_mark_redeemed" = "נפדה";
-"rph_txt_close_alert_message" = "האם ברצונך לסמן את המתכון הזה כמומש?";
-"rph_txt_close_alert_title" = "מרשם מילא?";
 "rph_txt_matrixcode_hint" = "מסור את קוד המרשם הזה בבית המרקחת שלך.";
 "rph_txt_subtitle" = "מסור את קוד המרשם הזה בבית המרקחת שלך.";
 "rph_txt_title" = "קוד מתכון";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "ייתכן שלמכשיר שלך יש אבטחה מופחתת";
 "section_txt_is_active_value" = "נבחר";
 "section_txt_is_inactive_value" = "לא נבחר";
+"self_payer_warning_txt_ending" = "הביטוח שלך לא יכסה כל עלויות.";
+"self_payer_warning_txt_message_single" = "הביטוח שלך לא יכסה כל עלויות עבור מרשם זה.";
+"self_payer_warning_txt_solo" = "הביטוח שלך לא יכסה כל עלויות עבור מרשם זה.";
 "service_txt_consent_alert_login" = "הירשם";
 "service_txt_consent_alert_okay" = "בסדר";
 "service_txt_consent_alert_retry" = "נסה שוב";

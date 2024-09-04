@@ -732,6 +732,14 @@ import SwiftUI
     internal static let dmcTxtCodeMultiple = StringAsset("dmc_txt_code_multiple")
     /// Single code
     internal static let dmcTxtCodeSingle = StringAsset("dmc_txt_code_single")
+    /// %d medication(s)
+    internal static func dmcTxtNumberMedicationsD(_ element1: Int) -> StringAsset {
+        StringAsset("dmc_txt_number_medications_%d", arguments: [element1])
+    }
+    /// You have been given a prescription code via the e-prescription app with the following medications: %@
+    internal static func dmcTxtShareMessage(_ element1: String) -> StringAsset {
+        StringAsset("dmc_txt_share_message_%@", arguments: [element1])
+    }
     /// Copy
     internal static let dtlBtnCopyClipboard = StringAsset("dtl_btn_copy_clipboard")
     /// The prescription is currently being processed by a pharmacy and cannot be deleted.
@@ -854,6 +862,10 @@ import SwiftUI
     }
     /// Displayed
     internal static let erxTxtAuthored = StringAsset("erx_txt_authored")
+    /// Assumed %@
+    internal static func erxTxtClaimedAt(_ element1: String) -> StringAsset {
+        StringAsset("erx_txt_claimed_at_%@", arguments: [element1])
+    }
     /// Current
     internal static let erxTxtCurrent = StringAsset("erx_txt_current")
     /// Expired on %@
@@ -897,6 +909,12 @@ import SwiftUI
     /// Scanned: %@
     internal static func erxTxtScannedAt(_ element1: String) -> StringAsset {
         StringAsset("erx_txt_scanned_at_%@", arguments: [element1])
+    }
+    /// No reimbursement of costs
+    internal static let erxTxtSelfPayer = StringAsset("erx_txt_self_payer")
+    /// Sent %@
+    internal static func erxTxtSentAt(_ element1: String) -> StringAsset {
+        StringAsset("erx_txt_sent_at_%@", arguments: [element1])
     }
     /// close
     internal static let hintBtnClose = StringAsset("hint_btn_close")
@@ -1752,7 +1770,7 @@ import SwiftUI
     internal static let ordDetailShipmentLinkBtn = StringAsset("ord_detail_shipment_link_btn")
     /// Please go to the pharmacy website to complete the order.
     internal static let ordDetailShipmentLinkText = StringAsset("ord_detail_shipment_link_text")
-    /// %@ sent to %@ . The digital redemption process is still unfamiliar for many pharmacies. If you don't hear back by tomorrow, we recommend calling to inquire as a precaution.
+    /// %@ sent to %@ . Some pharmacies do not yet have a digital response option. If you do not receive a response by tomorrow, please call as a precaution.
     internal static func ordDetailTxtSendTo(_ element1: String, _ element2: String) -> StringAsset {
         StringAsset("ord_detail_txt_%@_send_to_%@", arguments: [element1, element2])
     }
@@ -1888,7 +1906,7 @@ import SwiftUI
     internal static let phaContactTxtStreet = StringAsset("pha_contact_txt_street")
     /// Postcode
     internal static let phaContactTxtZip = StringAsset("pha_contact_txt_zip")
-    /// Delivery
+    /// Courier
     internal static let phaDetailBtnDelivery = StringAsset("pha_detail_btn_delivery")
     /// Find out more
     internal static let phaDetailBtnFooter = StringAsset("pha_detail_btn_footer")
@@ -1898,16 +1916,20 @@ import SwiftUI
     internal static let phaDetailBtnLocation = StringAsset("pha_detail_btn_location")
     /// Redeem only possible after registration
     internal static let phaDetailBtnLoginNote = StringAsset("pha_detail_btn_login_note")
+    /// Write email
+    internal static let phaDetailBtnOpenMail = StringAsset("pha_detail_btn_open_mail")
+    /// Route here
+    internal static let phaDetailBtnOpenMap = StringAsset("pha_detail_btn_open_map")
+    /// Call
+    internal static let phaDetailBtnOpenPhone = StringAsset("pha_detail_btn_open_phone")
     /// Delivery by mail order
     internal static let phaDetailBtnOrganization = StringAsset("pha_detail_btn_organization")
-    /// Pickup
+    /// pick up
     internal static let phaDetailBtnPickup = StringAsset("pha_detail_btn_pickup")
     /// Shipment
     internal static let phaDetailBtnShipment = StringAsset("pha_detail_btn_shipment")
     /// Contact
     internal static let phaDetailContact = StringAsset("pha_detail_contact")
-    /// Please note that prescribed medication may also be subject to additional payments.
-    internal static let phaDetailHintMessage = StringAsset("pha_detail_hint_message")
     /// You cannot yet send e-prescriptions to this pharmacy.
     internal static let phaDetailHintNotErxReadyMessage = StringAsset("pha_detail_hint_not_erx_ready_message")
     /// Pharmacist stocks medicine
@@ -1934,6 +1956,10 @@ import SwiftUI
     internal static let phaDetailTxtFooterStart = StringAsset("pha_detail_txt_footer_start")
     /// You have no prescriptions to redeem.
     internal static let phaDetailTxtNoPrescriptionToast = StringAsset("pha_detail_txt_no_prescription_toast")
+    /// Today
+    internal static let phaDetailTxtOpenHourToday = StringAsset("pha_detail_txt_open_hour_today")
+    /// Tomorrow
+    internal static let phaDetailTxtOpenHourTomorrow = StringAsset("pha_detail_txt_open_hour_tomorrow")
     /// Pharmacy
     internal static let phaDetailTxtSubtitleFallback = StringAsset("pha_detail_txt_subtitle_fallback")
     /// Details
@@ -1960,6 +1986,10 @@ import SwiftUI
     internal static let phaRedeemBtnChangePharmacy = StringAsset("pha_redeem_btn_change_pharmacy")
     /// Change
     internal static let phaRedeemBtnChangePrescription = StringAsset("pha_redeem_btn_change_prescription")
+    /// Cancel order
+    internal static let phaRedeemBtnPrescriptionAlreadyRedeemedAlertDismiss = StringAsset("pha_redeem_btn_prescription_already_redeemed_alert_dismiss")
+    /// Continue without this prescription
+    internal static let phaRedeemBtnPrescriptionAlreadyRedeemedAlertProceedWithout = StringAsset("pha_redeem_btn_prescription_already_redeemed_alert_proceed_without")
     /// Redeem
     internal static let phaRedeemBtnRedeem = StringAsset("pha_redeem_btn_redeem")
     /// Your prescription will be sent to this pharmacy. It is not possible to redeem your prescription at another pharmacy.
@@ -1992,6 +2022,14 @@ import SwiftUI
     internal static let phaRedeemTxtPharmacyHeader = StringAsset("pha_redeem_txt_pharmacy_header")
     /// Prescriptions
     internal static let phaRedeemTxtPrescription = StringAsset("pha_redeem_txt_prescription")
+    /// Plural format key: "%#@variable_0@"
+    internal static func phaRedeemTxtPrescriptionAlreadyRedeemedError(_ element1: Int) -> StringAsset {
+        StringAsset("pha_redeem_txt_prescription_already_redeemed_error", arguments: [element1])
+    }
+    /// Plural format key: "%#@variable_0@"
+    internal static func phaRedeemTxtPrescriptionAlreadyRedeemedErrorSuggestionFormat(_ element1: Int) -> StringAsset {
+        StringAsset("pha_redeem_txt_prescription_already_redeemed_error_suggestion_format", arguments: [element1])
+    }
     /// Prescriptions
     internal static let phaRedeemTxtPrescriptionHeader = StringAsset("pha_redeem_txt_prescription_header")
     /// Substitutes are permitted. You may be given an alternative due to the legal requirements of your health insurance.
@@ -2158,6 +2196,8 @@ import SwiftUI
     internal static let prscDtlBtnPkvInvoice = StringAsset("prsc_dtl_btn_pkv_invoice")
     /// Send to pharmacy
     internal static let prscDtlBtnRedeem = StringAsset("prsc_dtl_btn_redeem")
+    /// No reimbursement of costs
+    internal static let prscDtlBtnSelfPayer = StringAsset("prsc_dtl_btn_self_payer")
     /// Split
     internal static let prscDtlBtnShare = StringAsset("prsc_dtl_btn_share")
     /// Split
@@ -2216,6 +2256,10 @@ import SwiftUI
     internal static let prscDtlDrSubstitutionInfoDescription = StringAsset("prsc_dtl_dr_substitution_info_description")
     /// Substitute medication possible
     internal static let prscDtlDrSubstitutionInfoTitle = StringAsset("prsc_dtl_dr_substitution_info_title")
+    /// No reimbursement of costs
+    internal static let prscDtlDrawerSelfPayerInfoHeader = StringAsset("prsc_dtl_drawer_self_payer_info_header")
+    /// As a rule, health insurance does not cover the costs of this prescription. As a patient, you are therefore responsible for paying the full amount. Whether the costs will be reimbursed as part of supplementary insurance or statutory benefits must be checked individually.
+    internal static let prscDtlDrawerSelfPayerInfoMessage = StringAsset("prsc_dtl_drawer_self_payer_info_message")
     /// Open gesund.bund.de
     internal static let prscDtlHntGesundBundDeBtn = StringAsset("prsc_dtl_hnt_gesund_bund_de_btn")
     /// You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.
@@ -2442,7 +2486,7 @@ import SwiftUI
     internal static let prscFdTxtSubstitutionTitle = StringAsset("prsc_fd_txt_substitution_title")
     /// This prescription will be redeemed for you as part of a treatment.
     internal static let prscRedeemNoteDirectAssignment = StringAsset("prsc_redeem_note_direct_assignment")
-    /// Cancelled
+    /// Deleted
     internal static let prscStatusCanceled = StringAsset("prsc_status_canceled")
     /// Redeemed
     internal static let prscStatusCompleted = StringAsset("prsc_status_completed")
@@ -2570,14 +2614,6 @@ import SwiftUI
     }
     /// Invalid version number.
     internal static let rivTiWrongVersion = StringAsset("riv_ti_wrong_version")
-    /// Not redeemed
-    internal static let rphBtnCloseAlertKeep = StringAsset("rph_btn_close_alert_keep")
-    /// Redeemed
-    internal static let rphBtnCloseAlertMarkRedeemed = StringAsset("rph_btn_close_alert_mark_redeemed")
-    /// Would you like to mark this prescription as redeemed?
-    internal static let rphTxtCloseAlertMessage = StringAsset("rph_txt_close_alert_message")
-    /// Prescription redeemed?
-    internal static let rphTxtCloseAlertTitle = StringAsset("rph_txt_close_alert_title")
     /// Have this prescription code scanned at your pharmacy.
     internal static let rphTxtMatrixcodeHint = StringAsset("rph_txt_matrixcode_hint")
     /// Have this prescription code scanned at your pharmacy.
@@ -2644,6 +2680,16 @@ import SwiftUI
     internal static let sectionTxtIsActiveValue = StringAsset("section_txt_is_active_value")
     /// Not selected
     internal static let sectionTxtIsInactiveValue = StringAsset("section_txt_is_inactive_value")
+    /// your insurance will not cover any costs.
+    internal static let selfPayerWarningTxtEnding = StringAsset("self_payer_warning_txt_ending")
+    /// Plural format key: "Your insurance will not cover any costs for %#@variable_0@ %@ . "
+    internal static func selfPayerWarningTxtMessage(_ element1: Int, _ element2: String) -> StringAsset {
+        StringAsset("self_payer_warning_txt_message", arguments: [element1, element2])
+    }
+    /// Your insurance will not cover the cost of this prescription.
+    internal static let selfPayerWarningTxtMessageSingle = StringAsset("self_payer_warning_txt_message_single")
+    /// Your insurance will not cover the cost of this prescription.
+    internal static let selfPayerWarningTxtSolo = StringAsset("self_payer_warning_txt_solo")
     /// Register
     internal static let serviceTxtConsentAlertLogin = StringAsset("service_txt_consent_alert_login")
     /// OK

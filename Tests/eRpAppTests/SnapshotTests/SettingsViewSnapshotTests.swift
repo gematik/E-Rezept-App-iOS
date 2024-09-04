@@ -26,13 +26,6 @@ import SwiftUI
 import XCTest
 
 final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-        diffTool = "open"
-
-        SnapshotHelper.fixOffsetProblem()
-    }
-
     let debugStore = StoreOf<DebugDomain>(
         initialState: DebugDomain.State(trackingOptIn: true)
     ) {
@@ -84,7 +77,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         })
             .frame(width: 375, height: 2589, alignment: .top)
 
-        assertSnapshots(matching: sut, as: figmaReference())
+        assertSnapshots(of: sut, as: figmaReference())
     }
 
     func testSettingsFigmaVariant2() {
@@ -113,7 +106,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         })
             .frame(width: 375, height: 2589, alignment: .top)
 
-        assertSnapshots(matching: sut, as: figmaReference())
+        assertSnapshots(of: sut, as: figmaReference())
     }
 
     func testSettingsView_DemoMode_Disabled() {
@@ -128,7 +121,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         })
             .frame(width: 320, height: 2000)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testSettingsView_DemoMode_Enabled() {
@@ -141,7 +134,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         })
             .frame(width: 320, height: 2000)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testSettingsView_ComplyTrackingView() {
@@ -154,7 +147,7 @@ final class SettingsViewSnapshotTests: ERPSnapshotTestCase {
         ) {
             EmptyReducer()
         })
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
     private func configuredSettingsDomainState(

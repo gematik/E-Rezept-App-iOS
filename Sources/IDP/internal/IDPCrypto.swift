@@ -83,15 +83,19 @@ struct IDPCrypto {
     }
 
     func generateRandomNonce() throws -> String? {
-        try randomGenerator(nonceLength).hexString()
+        try Self.hexString(from: randomGenerator(nonceLength))
     }
 
     func generateRandomState() throws -> String? {
-        try randomGenerator(stateLength).hexString()
+        try Self.hexString(from: randomGenerator(stateLength))
     }
 
     private static let AES256GCMSpec = Spec(nonceBytes: 12)
     private struct Spec {
         let nonceBytes: Int
+    }
+
+    static func hexString(from data: Data) -> String {
+        data.map { .init(format: "%02X", $0) }.joined()
     }
 }

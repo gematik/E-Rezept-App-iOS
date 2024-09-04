@@ -1,4 +1,22 @@
 // swift-tools-version:5.8
+//
+//  Copyright (c) 2024 gematik GmbH
+//  
+//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
+//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  You may not use this work except in compliance with the Licence.
+//  You may obtain a copy of the Licence at:
+//  
+//      https://joinup.ec.europa.eu/software/page/eupl
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the Licence for the specific language governing permissions and
+//  limitations under the Licence.
+//  
+//
+
 import PackageDescription
 
 let package = Package(
@@ -23,22 +41,22 @@ let package = Package(
         .library(name: "VAUClient", targets: ["VAUClient"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.33.1"),
+        .package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.34.0"),
         .package(url: "https://github.com/AliSoftware/OHHTTPStubs", from: "9.1.0"),
         .package(url: "https://github.com/andyjohns/zxcvbn-ios", revision: "bf6083dc17df950c8bdfcf2063859ee1270015fd"),
         .package(url: "https://github.com/apple/FHIRModels", from: "0.5.0"),
         .package(url: "https://github.com/gematik/ref-GemCommonsKit.git", from: "1.3.0"),
-        .package(url: "https://github.com/pointfreeco/combine-schedulers", from: "1.0.0"),
+        .package(url: "https://github.com/pointfreeco/combine-schedulers", from: "1.0.2"),
         .package(url: "https://github.com/rcasula/composable-core-location", revision: "40a98e18d0350fd1a1efa83c24aca3044b9b7bd2"),
-        .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.4.2"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.11.2"),
-        .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.0"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.1"),
+        .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.4"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.12.1"),
+        .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.6"),
         .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.1"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.2"),
         .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.1.2"),
         .package(url: "https://github.com/Quick/Nimble", from: "9.2.0"), // 10.0.0
-        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.2.0"),
+        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.3.0"),
         .package(url: "https://github.com/zxing-cpp/zxing-cpp", from: "2.2.1"),
         .package(url: "https://github.com/SwiftCommon/DataKit", from: "1.1.0"),
         .package(url: "https://github.com/gematik/ASN1Kit", from: "1.2.1"),

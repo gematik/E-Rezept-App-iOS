@@ -65,7 +65,11 @@ struct AppStartDomain {
                             prescriptionListState: PrescriptionListDomain.State(),
                             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                         ),
-                        pharmacySearch: PharmacySearchDomain.State(inRedeemProcess: false),
+                        pharmacySearch: PharmacySearchDomain.State(
+                            selectedPrescriptions: Shared([]),
+                            inRedeemProcess: false,
+                            pharmacyRedeemState: Shared(nil)
+                        ),
                         orders: OrdersDomain.State(orders: []),
                         settings: .init(
                             isDemoMode: userSession.isDemoMode
@@ -94,7 +98,11 @@ struct AppStartDomain {
                     AppDomain.State(
                         destination: .main,
                         main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
-                        pharmacySearch: PharmacySearchDomain.State(inRedeemProcess: false),
+                        pharmacySearch: PharmacySearchDomain.State(
+                            selectedPrescriptions: Shared([]),
+                            inRedeemProcess: false,
+                            pharmacyRedeemState: Shared(nil)
+                        ),
                         orders: OrdersDomain.State(orders: []),
                         settings: .init(isDemoMode: userSession.isDemoMode),
                         unreadOrderMessageCount: 0,

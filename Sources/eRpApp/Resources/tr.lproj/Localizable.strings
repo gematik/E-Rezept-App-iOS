@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Hazır";
 "dmc_txt_code_multiple" = "Koleksiyon kodu";
 "dmc_txt_code_single" = "Tek kod";
+"dmc_txt_number_medications_%d" = "%d ilaç(lar)";
+"dmc_txt_share_message_%@" = "E-reçete uygulaması aracılığıyla aşağıdaki ilaçları içeren bir reçete kodu paylaşıldı: %@";
 "dtl_btn_copy_clipboard" = "Kopyala";
 "dtl_btn_delete_disabled_note" = "Reçete şu anda eczanede işleniyor ve silinemiyor.";
 "dtl_btn_delete_medication" = "Bu cihazdan sil";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Reçete tarayıcıyı aç";
 "erx_title" = "Reçeteler";
 "erx_txt_authored" = "Görüntülendi";
+"erx_txt_claimed_at_%@" = "Varsayılan %@";
 "erx_txt_current" = "Güncel";
 "erx_txt_expired_on_%@" = "%@ tarihinde süresi doldu";
 "erx_txt_forced_update_alert_description" = "Uygulamayı güncelleyerek uygulama deneyiminizi optimize edin.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "Arşiv";
 "erx_txt_refresh_loading" = "Yükleniyor …";
 "erx_txt_scanned_at_%@" = "Taranan: %@";
+"erx_txt_self_payer" = "Masrafların geri ödenmesi yok";
+"erx_txt_sent_at_%@" = "Gönderilmiş %@";
 "hint_btn_close" = "Kapat";
 "hint_btn_open_scn" = "Tarayıcıyı aç";
 "hint_btn_try_demo_mode" = "Demo modunu başlat";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Alışveriş sepeti hazır";
 "ord_detail_shipment_link_btn" = "Alışveriş sepetini aç";
 "ord_detail_shipment_link_text" = "Siparişi tamamlamak için lütfen eczanenin web sitesine gidin.";
-"ord_detail_txt_%@_send_to_%@" = "%@ a gönderildi %@ . Dijital ödeme süreci birçok eczane için hâlâ bilinmiyor. Yarına kadar haber alamazsanız, önlem olarak arayıp bilgi almanızı öneririz.";
+"ord_detail_txt_%@_send_to_%@" = "%@ a gönderildi %@ . Bazı eczanelerde henüz dijital yanıt seçeneği bulunmamaktadır. Yarına kadar yanıt gelmezse lütfen önlem olarak arayın.";
 "ord_detail_txt_charge_item%@" = "%@ ilacınızın ücretine ilişkin makbuz aldınız.";
 "ord_detail_txt_contact" = "İletişim seçenekleri";
 "ord_detail_txt_contact_email" = "E-posta yaz";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Alan kodu ve telefon numarası";
 "pha_contact_txt_street" = "Sokak ve ev numarası";
 "pha_contact_txt_zip" = "Posta kodu";
-"pha_detail_btn_delivery" = "kurye\n seçmek";
+"pha_detail_btn_delivery" = "Kurye";
 "pha_detail_btn_footer" = "Daha fazla bilgi edinin";
 "pha_detail_btn_healthcare_service" = "Kurye hizmeti talep edin";
 "pha_detail_btn_location" = "Teslim alma için rezerve et";
 "pha_detail_btn_login_note" = "Yalnızca kayıttan sonra kullanılabilir";
+"pha_detail_btn_open_mail" = "E-posta yaz";
+"pha_detail_btn_open_map" = "Buraya rota çizin";
+"pha_detail_btn_open_phone" = "Arama";
 "pha_detail_btn_organization" = "Kargo ile teslim ettir";
-"pha_detail_btn_pickup" = "Toplamak\n seçmek";
-"pha_detail_btn_shipment" = "gönderi\n seçmek";
+"pha_detail_btn_pickup" = "toplamak";
+"pha_detail_btn_shipment" = "gönderi";
 "pha_detail_contact" = "İletişim";
-"pha_detail_hint_message" = "Reçeteli ilaçlar için ek ödemelerin de geçerli olabileceğini lütfen unutmayın.";
 "pha_detail_hint_not_erx_ready_message" = "Henüz bu eczaneye e-reçete gönderemezsiniz.";
 "pha_detail_hint_not_erx_ready_pic" = "Eczacı ilacı sunuyor";
 "pha_detail_hint_not_erx_ready_title" = "Yalnızca sitede kullan";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Eczaneler için not: Eczanelerle ilgili iletişim bilgilerini ve bilgileri şu adresten alıyoruz:";
 "pha_detail_txt_no_prescription_toast" = "Doldurmanız gereken reçeteleriniz yok.";
+"pha_detail_txt_open_hour_today" = "Bugün";
+"pha_detail_txt_open_hour_tomorrow" = "Sabah";
 "pha_detail_txt_subtitle_fallback" = "Eczane";
 "pha_detail_txt_title" = "Ayrıntılar";
 "pha_detail_web" = "Web sitesi";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Ekle";
 "pha_redeem_btn_change_pharmacy" = "Değiştirmek";
 "pha_redeem_btn_change_prescription" = "Değiştirmek";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Siparişi iptal et";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Bu reçete olmadan devam edin";
 "pha_redeem_btn_redeem" = "Kullan";
 "pha_redeem_btn_redeem_footnote" = "Bu vesileyle reçeteniz bu eczaneye gönderilecektir. Başka bir eczanede kullanmak mümkün değildir.";
 "pha_redeem_btn_select_pharmacy" = "Eczane seç";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Etkinleştir";
 "prsc_dtl_btn_pkv_invoice" = "Maliyet makbuzu";
 "prsc_dtl_btn_redeem" = "Eczaneye gönder";
+"prsc_dtl_btn_self_payer" = "Masrafların geri ödenmesi yok";
 "prsc_dtl_btn_share" = "Bölmek";
 "prsc_dtl_btn_share_title" = "Bölmek";
 "prsc_dtl_btn_show_matrix_code" = "Kodu göster";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Taranan tarif";
 "prsc_dtl_dr_substitution_info_description" = "Eczacılar, hastanın sağlık sigortası şirketinin ilaç üreticileriyle indirim anlaşması yaptığı ilaçların dağıtımına öncelik vermekle yükümlüdür. Bu durum yalnızca doktorun reçetede \"Aut idem\" ifadesini hariç tutması durumunda geçerli değildir; sizin reçetenizde durum böyle değildir.";
 "prsc_dtl_dr_substitution_info_title" = "Muadil mümkün";
+"prsc_dtl_drawer_self_payer_info_header" = "Masrafların geri ödenmesi yok";
+"prsc_dtl_drawer_self_payer_info_message" = "Kural olarak sağlık sigortası bu reçete masraflarını karşılamamaktadır. Bu nedenle hasta olarak ödemenin tamamından siz sorumlusunuz. Masrafların ek sigorta veya yasal yardımlar kapsamında geri ödenip ödenmeyeceği ayrı ayrı kontrol edilmelidir.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "gesund.bund.de aç";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Das Nationale Gesundheitsportal'da hastalıklar, ICD kodları ve önleme ve bakım konularında uzmanlar tarafından doğrulanmış bilgileri bulabilirsiniz.";
 "prsc_dtl_med_ingredient_name" = "Aktif madde adı";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Muadil mümkün";
 "prsc_redeem_note_direct_assignment" = "Bu reçete, tedavinin bir parçası olarak sizin için kullanılacaktır.";
-"prsc_status_canceled" = "İptal edildi";
+"prsc_status_canceled" = "Silindi";
 "prsc_status_completed" = "Kullanıldı";
 "prsc_status_direct_assigned" = "Senin için kurtarılacak";
 "prsc_status_error" = "Hatalı reçete";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "Girilen sokak, izin verilen maksimum %@ karakter uzunluğunu aşıyor.";
 "riv_ti_invalid_zip_%@" = "Girilen posta kodu, izin verilen maksimum %@ karakter uzunluğunu aşıyor.";
 "riv_ti_wrong_version" = "Geçersiz sürüm numarası.";
-"rph_btn_close_alert_keep" = "Kullanılmadı";
-"rph_btn_close_alert_mark_redeemed" = "Kullanıldı";
-"rph_txt_close_alert_message" = "Bu reçeteyi kullanılmış olarak işaretlemek ister misiniz?";
-"rph_txt_close_alert_title" = "Reçete kullanıldı mı?";
 "rph_txt_matrixcode_hint" = "Bu reçete kodunu eczanenizde tarayın.";
 "rph_txt_subtitle" = "Bu reçete kodunu eczanenizde tarayın.";
 "rph_txt_title" = "Reçete kodu";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Cihazınızın güvenliği azaltılmış olabilir";
 "section_txt_is_active_value" = "Seçili";
 "section_txt_is_inactive_value" = "Seçilmemiş";
+"self_payer_warning_txt_ending" = "sigortanız hiçbir masrafı karşılamayacaktır.";
+"self_payer_warning_txt_message_single" = "Sigortanız bu reçeteye ilişkin herhangi bir masrafı karşılamayacaktır.";
+"self_payer_warning_txt_solo" = "Sigortanız bu reçeteye ilişkin herhangi bir masrafı karşılamayacaktır.";
 "service_txt_consent_alert_login" = "Kayıt olmak";
 "service_txt_consent_alert_okay" = "Tamam";
 "service_txt_consent_alert_retry" = "Tekrar deneyin";

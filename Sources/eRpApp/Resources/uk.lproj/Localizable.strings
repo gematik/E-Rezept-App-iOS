@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Готово";
 "dmc_txt_code_multiple" = "Код колекції";
 "dmc_txt_code_single" = "Єдиний код";
+"dmc_txt_number_medications_%d" = "%d препарат(ів)";
+"dmc_txt_share_message_%@" = "Ви отримали код рецепта через додаток для електронних рецептів із такими ліками: %@";
 "dtl_btn_copy_clipboard" = "Копіювати";
 "dtl_btn_delete_disabled_note" = "Рецепт зараз опрацьовується в аптеці і не може бути видалений.";
 "dtl_btn_delete_medication" = "Видалити з цього пристрою";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Відкрити сканер рецептів";
 "erx_title" = "Рецепти";
 "erx_txt_authored" = "Відображається";
+"erx_txt_claimed_at_%@" = "Передбачається %@";
 "erx_txt_current" = "Актуальний";
 "erx_txt_expired_on_%@" = "Термін дії закінчився %@";
 "erx_txt_forced_update_alert_description" = "Оновіть програму, оптимізуйте її роботу.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "Архів";
 "erx_txt_refresh_loading" = "Триває завантаження…";
 "erx_txt_scanned_at_%@" = "Відскановано: %@";
+"erx_txt_self_payer" = "Без відшкодування витрат";
+"erx_txt_sent_at_%@" = "Надісланий %@";
 "hint_btn_close" = "Закрити";
 "hint_btn_open_scn" = "Відкрити сканер";
 "hint_btn_try_demo_mode" = "Запустити демо-режим";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Кошик для покупок готовий";
 "ord_detail_shipment_link_btn" = "Відкрити кошик";
 "ord_detail_shipment_link_text" = "Щоб оформити замовлення, перейдіть на сайт аптеки.";
-"ord_detail_txt_%@_send_to_%@" = "%@ відправлено %@ . Процес цифрового викупу досі незнайомий для багатьох аптек. Якщо ви не отримаєте відповідь до завтра, рекомендуємо зателефонувати, щоб дізнатися, як запобіжний захід.";
+"ord_detail_txt_%@_send_to_%@" = "%@ відправлено %@ . Деякі аптеки ще не мають цифрової відповіді. Якщо до завтра не буде відповіді, зателефонуйте як запобіжний захід.";
 "ord_detail_txt_charge_item%@" = "Ви отримали квитанцію про вартість ваших ліків %@ .";
 "ord_detail_txt_contact" = "Варіанти контактів";
 "ord_detail_txt_contact_email" = "Написати електронне повідомлення";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Код міста та номер телефону";
 "pha_contact_txt_street" = "Вулиця та номер будинку";
 "pha_contact_txt_zip" = "Пошт. індекс";
-"pha_detail_btn_delivery" = "кур'єр\n вибрати";
+"pha_detail_btn_delivery" = "Кур'єр";
 "pha_detail_btn_footer" = "Детальніше";
 "pha_detail_btn_healthcare_service" = "Зробити запит кур'єрської служби";
 "pha_detail_btn_location" = "Зарезервуйте для самовивезення";
 "pha_detail_btn_login_note" = "Викуп можливий тільки після реєстрації";
+"pha_detail_btn_open_mail" = "Написати електронне повідомлення";
+"pha_detail_btn_open_map" = "Маршрут тут";
+"pha_detail_btn_open_phone" = "Телефонуйте";
 "pha_detail_btn_organization" = "Доставити поштою";
-"pha_detail_btn_pickup" = "колекція\n вибрати";
-"pha_detail_btn_shipment" = "Відвантаження\n вибрати";
+"pha_detail_btn_pickup" = "забрати";
+"pha_detail_btn_shipment" = "Відвантаження";
 "pha_detail_contact" = "Контакт";
-"pha_detail_hint_message" = "Зауважте, що за виписані ліки також може нараховуватися доплата.";
 "pha_detail_hint_not_erx_ready_message" = "Ви ще не можете надсилати електронні рецепти в цю аптеку.";
 "pha_detail_hint_not_erx_ready_pic" = "Аптекар притримує ліки";
 "pha_detail_hint_not_erx_ready_title" = "Викуповувати лише на сайті";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Указівка для аптек: контактні дані та інформацію про аптеки ми отримуємо від";
 "pha_detail_txt_no_prescription_toast" = "У вас немає рецептів для виконання.";
+"pha_detail_txt_open_hour_today" = "Сьогодні";
+"pha_detail_txt_open_hour_tomorrow" = "Завтра";
 "pha_detail_txt_subtitle_fallback" = "Аптека";
 "pha_detail_txt_title" = "Деталі";
 "pha_detail_web" = "Вебсайт";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Доповнити";
 "pha_redeem_btn_change_pharmacy" = "Зміна";
 "pha_redeem_btn_change_prescription" = "Зміна";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Скасувати замовлення";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Продовжуйте без цього рецепта";
 "pha_redeem_btn_redeem" = "Погасити";
 "pha_redeem_btn_redeem_footnote" = "Таким чином, Ваш рецепт буде надіслано в цю аптеку. Погасити його в іншій аптеці не можливо.";
 "pha_redeem_btn_select_pharmacy" = "Вибрати аптеку";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Активувати";
 "prsc_dtl_btn_pkv_invoice" = "Витратна квитанція";
 "prsc_dtl_btn_redeem" = "Відправити в аптеку";
+"prsc_dtl_btn_self_payer" = "Без відшкодування витрат";
 "prsc_dtl_btn_share" = "Спліт";
 "prsc_dtl_btn_share_title" = "Спліт";
 "prsc_dtl_btn_show_matrix_code" = "Показати код";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Відсканований рецепт";
 "prsc_dtl_dr_substitution_info_description" = "Фармацевти зобов’язані в першочерговому порядку відпускати ліки, на які медична страхова компанія пацієнта уклала з виробниками ліків угоду про знижку. Це не стосується лише випадків, коли лікар виключає «Aut idem» у рецепті, що не стосується вашого рецепту.";
 "prsc_dtl_dr_substitution_info_title" = "Можливий замінник";
+"prsc_dtl_drawer_self_payer_info_header" = "Без відшкодування витрат";
+"prsc_dtl_drawer_self_payer_info_message" = "Як правило, медичне страхування не покриває витрати на цей рецепт. Таким чином, як пацієнт, ви несете відповідальність за повну оплату. Чи будуть витрати відшкодовуватися в рамках додаткового страхування чи передбачених законом виплат, необхідно перевіряти окремо.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Відкрити gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "На Національному порталі охорони здоров’я можна знайти фахово перевірену інформацію про хвороби, коди МКХ та питання щодо профілактики та догляду.";
 "prsc_dtl_med_ingredient_name" = "Назва діючої речовини";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Можливий замінник";
 "prsc_redeem_note_direct_assignment" = "Цей рецепт буде використано для вас як частина лікування.";
-"prsc_status_canceled" = "Скасовано";
+"prsc_status_canceled" = "Видалено";
 "prsc_status_completed" = "Погашено";
 "prsc_status_direct_assigned" = "Буде викуплено для вас";
 "prsc_status_error" = "Невірний рецепт";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "Введена вулиця перевищує максимально дозволену довжину %@ символів.";
 "riv_ti_invalid_zip_%@" = "Введений поштовий індекс перевищує максимально дозволену довжину %@ символів.";
 "riv_ti_wrong_version" = "Недійсний номер версії.";
-"rph_btn_close_alert_keep" = "Не погашено";
-"rph_btn_close_alert_mark_redeemed" = "Погашено";
-"rph_txt_close_alert_message" = "Позначити цей рецепт як погашений?";
-"rph_txt_close_alert_title" = "Рецепт погашено?";
 "rph_txt_matrixcode_hint" = "Відскануйте цей код рецепта у своїй аптеці.";
 "rph_txt_subtitle" = "Відскануйте цей код рецепта у своїй аптеці.";
 "rph_txt_title" = "Код рецепта";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Ваш пристрій може мати знижений рівень безпеки";
 "section_txt_is_active_value" = "Вибрано";
 "section_txt_is_inactive_value" = "Не вибрано";
+"self_payer_warning_txt_ending" = "Ваша страховка не покриває жодних витрат.";
+"self_payer_warning_txt_message_single" = "Ваша страховка не покриває жодних витрат на цей рецепт.";
+"self_payer_warning_txt_solo" = "Ваша страховка не покриває жодних витрат на цей рецепт.";
 "service_txt_consent_alert_login" = "зареєструватися";
 "service_txt_consent_alert_okay" = "Ok";
 "service_txt_consent_alert_retry" = "Спробуйте ще раз";

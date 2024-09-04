@@ -23,15 +23,9 @@ import TestUtils
 import XCTest
 
 final class CardWallExtAuthHelpViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func testList() {
         let sut = CardWallExtAuthHelpView()
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 }

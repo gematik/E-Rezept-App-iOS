@@ -28,7 +28,8 @@ extension ErxTask {
             phone: "555 1234567",
             status: "Mitglied",
             insurance: "AOK Rheinland/Hamburg",
-            insuranceId: "A123456789"
+            insuranceId: "A123456789",
+            coverageType: .GKV
         )
 
         static var demoPatientAnna = ErxPatient(
@@ -38,7 +39,8 @@ extension ErxTask {
             phone: "0221 1234567",
             status: "Mitglied",
             insurance: "Elektriker Krankenkasse",
-            insuranceId: "A234567890"
+            insuranceId: "A234567890",
+            coverageType: .GKV
         )
 
         static var demoPractitionerStorchhausen = ErxPractitioner(

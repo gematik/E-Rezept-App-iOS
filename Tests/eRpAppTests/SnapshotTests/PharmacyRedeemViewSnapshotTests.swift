@@ -25,19 +25,12 @@ import SwiftUI
 import XCTest
 
 final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
-    override class func setUp() {
-        super.setUp()
-        diffTool = "open"
-
-        SnapshotHelper.fixOffsetProblem()
-    }
-
     func testPharmacyRedeemViewMissingAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            prescriptions: Prescription.Fixtures.prescriptions,
+            prescriptions: Shared(Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedPrescriptions: Set(Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(Set(Prescription.Fixtures.prescriptions)),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
@@ -49,15 +42,15 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             })
         }.frame(width: 375, height: 1200, alignment: .top)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testPharmacyRedeemViewFullAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
-            prescriptions: Prescription.Fixtures.prescriptions,
+            prescriptions: Shared(Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedPrescriptions: Set(Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(Set(Prescription.Fixtures.prescriptions)),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Maria Vetter",
                 street: "Benzelrather Str. 29",
@@ -79,15 +72,15 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             })
         }.frame(width: 375, height: 1210, alignment: .top)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testPharmacyRedeemViewTypeShipmentMissingPhone() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
-            prescriptions: Prescription.Fixtures.prescriptions,
+            prescriptions: Shared(Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedPrescriptions: Set(Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(Set(Prescription.Fixtures.prescriptions)),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Vetter",
                 street: "Benzelrather Str. 29",
@@ -106,6 +99,26 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             })
         }.frame(width: 375, height: 1200, alignment: .top)
 
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModi())
+    }
+
+    func testPharmacyRedeemViewSelfPayerWarning() {
+        let initialState = PharmacyRedeemDomain.State(
+            redeemOption: .onPremise,
+            prescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            selectedPrescriptions: Shared(Set([Prescription.Dummies.prescriptionSelfPayer])),
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
+        )
+        let sut = NavigationView {
+            PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
+                initialState: initialState
+
+            ) {
+                EmptyReducer()
+            })
+        }.frame(width: 375, height: 1200, alignment: .top)
+
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 }

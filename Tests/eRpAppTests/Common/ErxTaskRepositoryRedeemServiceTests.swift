@@ -18,6 +18,7 @@
 
 import Combine
 import DataKit
+import Dependencies
 @testable import eRpFeatures
 import eRpKit
 import Foundation
@@ -190,6 +191,48 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
         expect(thirdResponse[1].requested).to(equal(order2))
         expect(thirdResponse[2].isSuccess).to(beTrue())
         expect(thirdResponse[2].requested).to(equal(order3))
+    }
+
+    let now = Date()
+
+    func testRedeemFailsDueToOutdatedPrescriptions() throws {
+        let sut = ErxTaskRepositoryRedeemService(
+            erxTaskRepository: mockRepository,
+            loginHandler: loginHandlerMock(authenticated: true)
+        )
+
+        let task1 = ErxTask(identifier: "task_id_1", status: .inProgress)
+        let task2 = ErxTask(identifier: "task_id_2", status: .ready)
+
+        mockRepository.loadRemoteAndSavedPublisher = Just([task1, task2])
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        @Dependency(\.uiDateFormatter) var uiDateFormatter
+
+        let prescription1 = Prescription(erxTask: task1, date: now, dateFormatter: uiDateFormatter)
+
+        var callsCount = 0
+        mockRepository.redeemClosure = { erxTaskOrder in
+            callsCount += 1
+            return Just(erxTaskOrder)
+                .setFailureType(to: ErxRepositoryError.self)
+                .eraseToAnyPublisher()
+        }
+
+        var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
+        withDependencies { dependencies in
+            dependencies.date = .constant(now)
+        } operation: {
+            sut.redeem([order1, order2])
+                .test(failure: { error in
+                    expect(error).to(equal(RedeemServiceError.prescriptionAlreadyRedeemed([prescription1])))
+                }, expectations: { _ in
+                    fail("not expected to receive any response")
+                })
+        }
+
+        expect(callsCount).to(equal(0))
     }
 
     func testRedeemResponses_All_Fail() throws {

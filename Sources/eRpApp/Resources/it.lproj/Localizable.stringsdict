@@ -98,6 +98,38 @@
 			<string>Impossibile riscattare %li prescrizioni</string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>La prescrizione non può essere riscattata</string>
+			<key>other</key>
+			<string>Le prescrizioni non possono essere riscattate</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>La ricetta %% @ non è più riscattabile. Potresti averlo già riscattato con un altro mezzo o potrebbe essere stato eliminato.</string>
+			<key>other</key>
+			<string>Le seguenti ricette non possono più essere riscattate: %% @. Potresti averli già riscattati con altri mezzi o potrebbero essere stati eliminati.</string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -128,6 +160,22 @@
 			<string>Fatto, aggiungi la ricetta</string>
 			<key>other</key>
 			<string>Fatto, aggiungi le ricette</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>La tua assicurazione non coprirà alcun costo per %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>la prescrizione</string>
+			<key>other</key>
+			<string>le prescrizioni</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

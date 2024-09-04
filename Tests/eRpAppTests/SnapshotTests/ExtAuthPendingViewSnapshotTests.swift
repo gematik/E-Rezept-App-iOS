@@ -39,12 +39,6 @@ final class ExtAuthPendingViewSnapshotTests: ERPSnapshotTestCase {
         )
     }()
 
-    override func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func testExtAuthPendingView_WithSuccess() {
         let mockUserSession = MockUserSession()
         mockUserSession.profileReturnValue = Just(Profile(name: ""))
@@ -67,9 +61,9 @@ final class ExtAuthPendingViewSnapshotTests: ERPSnapshotTestCase {
 
         let sut = ExtAuthPendingView(store: store)
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testExtAuthPendingView_WithPending() {
@@ -94,8 +88,8 @@ final class ExtAuthPendingViewSnapshotTests: ERPSnapshotTestCase {
 
         let sut = ExtAuthPendingView(store: store)
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

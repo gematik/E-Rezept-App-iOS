@@ -247,6 +247,8 @@ public enum ErpPrescription {
             public static let dosageInstructionDj = "Dj"
         }
 
+        /// CoverageType
+        public static let coverageTypeKey = "http://fhir.de/CodeSystem/versicherungsart-de-basis"
         /// Coverage Status
         public static let coverageStatusKey = "http://fhir.de/StructureDefinition/gkv/versichertenart"
         /// Organisation ID

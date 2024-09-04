@@ -98,6 +98,38 @@
 			<string>%li recepter kunne ikke indløses</string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Recept kan ikke indløses</string>
+			<key>other</key>
+			<string>Recepter kan ikke indløses</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Opskriften %% @ kan ikke længere indløses. Du har muligvis allerede indløst den på anden måde, eller den kan være blevet slettet.</string>
+			<key>other</key>
+			<string>Følgende opskrifter kan ikke længere indløses: %% @. Du har muligvis allerede indløst dem på anden måde, eller de kan være blevet slettet.</string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -128,6 +160,22 @@
 			<string>Færdig, tilføj opskrift</string>
 			<key>other</key>
 			<string>Færdig, tilføj opskrifter</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Din forsikring dækker ikke nogen omkostninger for %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>recepten</string>
+			<key>other</key>
+			<string>recepterne</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

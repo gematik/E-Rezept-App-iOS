@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Gotowe";
 "dmc_txt_code_multiple" = "Kod kolekcji";
 "dmc_txt_code_single" = "Pojedynczy kod";
+"dmc_txt_number_medications_%d" = "%d leki";
+"dmc_txt_share_message_%@" = "Za pośrednictwem aplikacji e-recepty udostępniono Ci kod na receptę na następujące leki: %@";
 "dtl_btn_copy_clipboard" = "Kopiuj";
 "dtl_btn_delete_disabled_note" = "Recepta jest obecnie przetwarzana przez aptekę i nie można jej usunąć.";
 "dtl_btn_delete_medication" = "Usuń z tego urządzenia";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Otwórz skaner recept";
 "erx_title" = "Recepty";
 "erx_txt_authored" = "Wystawiany";
+"erx_txt_claimed_at_%@" = "Założono %@";
 "erx_txt_current" = "Aktualne";
 "erx_txt_expired_on_%@" = "Wygasł w %@";
 "erx_txt_forced_update_alert_description" = "Zoptymalizuj działanie aplikacji, aktualizując ją.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "Archiwum";
 "erx_txt_refresh_loading" = "Ładowanie ...";
 "erx_txt_scanned_at_%@" = "Zeskanowano: %@";
+"erx_txt_self_payer" = "Brak zwrotu kosztów";
+"erx_txt_sent_at_%@" = "Wysłano %@";
 "hint_btn_close" = "zamknij";
 "hint_btn_open_scn" = "Otwórz skaner";
 "hint_btn_try_demo_mode" = "Rozpocznij tryb demonstracyjny";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Koszyk jest gotowy";
 "ord_detail_shipment_link_btn" = "Otwórz koszyk";
 "ord_detail_shipment_link_text" = "Aby dokończyć zamówienie, należy wejść na stronę apteki.";
-"ord_detail_txt_%@_send_to_%@" = "%@ wysłane do %@ . Dla wielu aptek proces cyfrowej realizacji zamówienia jest wciąż nieznany. Jeśli nie otrzymasz odpowiedzi do jutra, profilaktycznie zalecamy zadzwonić i zapytać.";
+"ord_detail_txt_%@_send_to_%@" = "%@ wysłane do %@ . Niektóre apteki nie mają jeszcze opcji cyfrowej odpowiedzi. Jeżeli do jutra nie będzie odpowiedzi, proszę profilaktycznie zadzwonić.";
 "ord_detail_txt_charge_item%@" = "Otrzymałeś rachunek za koszt leku %@ .";
 "ord_detail_txt_contact" = "Opcje kontaktu";
 "ord_detail_txt_contact_email" = "Napisz wiadomość e-mail";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Numer telefonu";
 "pha_contact_txt_street" = "Ulica i numer domu";
 "pha_contact_txt_zip" = "Kod pocztowy";
-"pha_detail_btn_delivery" = "dostawca\n wybierać";
+"pha_detail_btn_delivery" = "Kurier";
 "pha_detail_btn_footer" = "Dowiedz się więcej";
 "pha_detail_btn_healthcare_service" = "Zapytaj o usługę kurierską";
 "pha_detail_btn_location" = "Zarezerwuj do odbioru";
 "pha_detail_btn_login_note" = "Realizacja możliwa wyłącznie po rejestracji";
+"pha_detail_btn_open_mail" = "Napisz wiadomość e-mail";
+"pha_detail_btn_open_map" = "Trasa tutaj";
+"pha_detail_btn_open_phone" = "Dzwonić";
 "pha_detail_btn_organization" = "Dostawa wysyłką";
-"pha_detail_btn_pickup" = "kolekcja\n wybierać";
-"pha_detail_btn_shipment" = "Wysyłka\n wybierać";
+"pha_detail_btn_pickup" = "ulec poprawie";
+"pha_detail_btn_shipment" = "Wysyłka";
 "pha_detail_contact" = "Kontakt";
-"pha_detail_hint_message" = "Także w przypadku leków na receptę mogą istnieć dopłaty.";
 "pha_detail_hint_not_erx_ready_message" = "Nie możesz jeszcze wysyłać e-recept do tej apteki.";
 "pha_detail_hint_not_erx_ready_pic" = "Farmaceut(k)a posiada lek";
 "pha_detail_hint_not_erx_ready_title" = "Zrealizuj tylko na miejscu";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Wskazówka dla aptek: Dane kontaktowe i informacje o aptekach pozyskujemy ze strony";
 "pha_detail_txt_no_prescription_toast" = "Nie masz żadnych recept do zrealizowania.";
+"pha_detail_txt_open_hour_today" = "Dzisiaj";
+"pha_detail_txt_open_hour_tomorrow" = "Jutro";
 "pha_detail_txt_subtitle_fallback" = "Apteka";
 "pha_detail_txt_title" = "Szczegóły";
 "pha_detail_web" = "Strona internetowa";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Uzupełnij";
 "pha_redeem_btn_change_pharmacy" = "Zmiana";
 "pha_redeem_btn_change_prescription" = "Zmiana";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Anuluj zamówienie";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Kontynuuj bez tej recepty";
 "pha_redeem_btn_redeem" = "Zrealizuj";
 "pha_redeem_btn_redeem_footnote" = "Twoja recepta zostanie wysłana do tej apteki. Nie ma możliwości zrealizowania recepty w innej aptece.";
 "pha_redeem_btn_select_pharmacy" = "Wybierz aptekę";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Aktywuj";
 "prsc_dtl_btn_pkv_invoice" = "Rachunek kosztów";
 "prsc_dtl_btn_redeem" = "Wyślij do apteki";
+"prsc_dtl_btn_self_payer" = "Brak zwrotu kosztów";
 "prsc_dtl_btn_share" = "Podział";
 "prsc_dtl_btn_share_title" = "Podział";
 "prsc_dtl_btn_show_matrix_code" = "Pokaż kod";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Zeskanowana recepta";
 "prsc_dtl_dr_substitution_info_description" = "Farmaceuci mają obowiązek pierwszeństwa wydawać leki, na które ubezpieczyciel pacjenta zawarł umowę rabatową z producentami leków. Nie dotyczy to sytuacji, gdy lekarz nie umieścił na recepcie słowa „Aut idem”, co nie ma miejsca w przypadku Twojej recepty.";
 "prsc_dtl_dr_substitution_info_title" = "Możliwość wyboru preparatu zastępczego";
+"prsc_dtl_drawer_self_payer_info_header" = "Brak zwrotu kosztów";
+"prsc_dtl_drawer_self_payer_info_message" = "Co do zasady ubezpieczenie zdrowotne nie pokrywa kosztów realizacji tej recepty. Jako pacjent jesteś zatem odpowiedzialny za pełną opłatę. To, czy koszty zostaną zwrócone w ramach dodatkowego ubezpieczenia, czy świadczeń ustawowych, należy sprawdzić indywidualnie.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Otwórz gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Zweryfikowane przez ekspertów informacje dotyczące chorób, kodów ICD i tematów związanych z profilaktyką i opieką znajdziesz na Krajowym Portalu Zdrowia.";
 "prsc_dtl_med_ingredient_name" = "Nazwa składnika aktywnego";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Możliwość wyboru preparatu zastępczego";
 "prsc_redeem_note_direct_assignment" = "Ta recepta zostanie zrealizowana dla Ciebie w ramach leczenia.";
-"prsc_status_canceled" = "Anulowane";
+"prsc_status_canceled" = "Usunięto";
 "prsc_status_completed" = "Zrealizowane";
 "prsc_status_direct_assigned" = "Zostanie dla ciebie odkupiony";
 "prsc_status_error" = "Błędna recepta";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "Wprowadzona ulica przekracza maksymalną dozwoloną długość %@ znaków.";
 "riv_ti_invalid_zip_%@" = "Wprowadzony kod pocztowy przekracza maksymalną dozwoloną długość %@ znaków.";
 "riv_ti_wrong_version" = "Nieprawidłowy numer wersji.";
-"rph_btn_close_alert_keep" = "Niezrealizowana";
-"rph_btn_close_alert_mark_redeemed" = "Zrealizowane";
-"rph_txt_close_alert_message" = "Czy chcesz zaznaczyć tę receptę jako zrealizowaną?";
-"rph_txt_close_alert_title" = "Czy zrealizowano receptę?";
 "rph_txt_matrixcode_hint" = "Zeskanuj ten kod recepty w swojej aptece.";
 "rph_txt_subtitle" = "Zeskanuj ten kod recepty w swojej aptece.";
 "rph_txt_title" = "Kod recepty";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Twoje urządzenie mogło mieć obniżone zabezpieczenia";
 "section_txt_is_active_value" = "Wybrano";
 "section_txt_is_inactive_value" = "Nie wybrano";
+"self_payer_warning_txt_ending" = "twoje ubezpieczenie nie pokryje żadnych kosztów.";
+"self_payer_warning_txt_message_single" = "Twoje ubezpieczenie nie pokryje żadnych kosztów związanych z tą receptą.";
+"self_payer_warning_txt_solo" = "Twoje ubezpieczenie nie pokryje żadnych kosztów związanych z tą receptą.";
 "service_txt_consent_alert_login" = "Rejestr";
 "service_txt_consent_alert_okay" = "OK";
 "service_txt_consent_alert_retry" = "Spróbuj ponownie";

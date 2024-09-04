@@ -19,6 +19,8 @@ screens:
     name: "main:consentDrawer" 
   main_medicationReminder:
     name: "main:medicationReminder"
+  matrixCode_sharePrescription:
+    name: "matrixCode:sharePrescription"
   medicationReminder_repetitionDetails:
     name: "medicationReminder:repetitionDetails"
   medicationReminder_dosageInstruction:
@@ -59,6 +61,8 @@ screens:
     name: "prescriptionDetail:medicationOverview"
   prescriptionDetail_medication_ingredients:
     name: "prescriptionDetail:medication_ingredients"
+  prescriptionDetail_selfPayerPrescriptionBottomSheet:
+    name: "prescriptionDetail:selfPayerPrescriptionBottomSheet"
   prescriptionDetail_toast:
     name: "prescriptionDetail:toast"
   prescriptionDetail_setupMedicationSchedule:
@@ -141,6 +145,8 @@ screens:
     name: "orders:detail"
   orders_pickupCode:
     name: "orders:pickupCode"
+  orders_pharmacyDetail:
+    name: "orders:pharmacyDetail"
   alert:
     name: "General Alert Dialog"
   errorAlert:

@@ -18,7 +18,7 @@
 
 import Combine
 import Foundation
-import GemCommonsKit
+import OSLog
 
 /// Debug Logging interceptor
 ///
@@ -32,17 +32,18 @@ public class LoggingInterceptor: Interceptor {
 
         func log(request: URLRequest) {
             if rawValue > 0 {
-                DLog(">> [\(request.httpMethod ?? "NO-METHOD")] \(request.url?.absoluteString ?? "NO-URL")")
+                Logger.httpClient
+                    .debug(">> [\(request.httpMethod ?? "NO-METHOD")] \(request.url?.absoluteString ?? "NO-URL")")
             }
             if rawValue > 1 {
-                DLog(">> [Headers]: \(request.allHTTPHeaderFields ?? [:])")
+                Logger.httpClient.debug(">> [Headers]: \(request.allHTTPHeaderFields ?? [:])")
             }
             if rawValue > 2 {
                 if let body = request.httpBody {
                     if let bodyString = String(data: body, encoding: .utf8) {
-                        DLog(">> [BODY]: \(bodyString)")
+                        Logger.httpClient.debug(">> [BODY]: \(bodyString)")
                     } else {
-                        DLog(">> [BODY (base64)]: \(body.base64EncodedString())")
+                        Logger.httpClient.debug(">> [BODY (base64)]: \(body.base64EncodedString())")
                     }
                 }
             }
@@ -52,19 +53,20 @@ public class LoggingInterceptor: Interceptor {
             let (data, response, statusCode) = object
             if rawValue > 0 {
                 let url = response.url?.absoluteString ?? "NO-URL"
-                DLog("<< [StatusCode]: \(statusCode) \(url)")
+                Logger.httpClient.debug("<< [StatusCode]: \(statusCode.rawValue) \(url)")
             }
             if rawValue > 1 {
-                DLog("<< [Headers]: \(response.allHeaderFields)")
+                Logger.httpClient.debug("<< [Headers]: \(response.allHeaderFields)")
             }
             if rawValue > 2 {
                 if data.isEmpty {
-                    DLog("<< [BODY]: NO DATA")
+                    Logger.httpClient.debug("<< [BODY]: NO DATA")
+                    Logger.httpClient.info("<< [BODY]: NO DATA (info level")
                 } else {
                     if let responseString = String(data: data, encoding: .utf8) {
-                        DLog("<< [BODY]: \(responseString)")
+                        Logger.httpClient.debug("<< [BODY]: \(responseString)")
                     } else {
-                        DLog("<< [BODY (base64)]: \(data.base64EncodedString())")
+                        Logger.httpClient.debug("<< [BODY (base64)]: \(data.base64EncodedString())")
                     }
                 }
             }

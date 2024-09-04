@@ -342,6 +342,8 @@
 "dmc_btn_close" = "Done";
 "dmc_txt_code_multiple" = "Collection code";
 "dmc_txt_code_single" = "Single code";
+"dmc_txt_number_medications_%d" = "%d medication(s)";
+"dmc_txt_share_message_%@" = "You have been given a prescription code via the e-prescription app with the following medications: %@";
 "dtl_btn_copy_clipboard" = "Copy";
 "dtl_btn_delete_disabled_note" = "The prescription is currently being processed by a pharmacy and cannot be deleted.";
 "dtl_btn_delete_medication" = "Delete from this device";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "Open prescription scanner";
 "erx_title" = "Prescriptions";
 "erx_txt_authored" = "Displayed";
+"erx_txt_claimed_at_%@" = "Assumed %@";
 "erx_txt_current" = "Current";
 "erx_txt_expired_on_%@" = "Expired on %@";
 "erx_txt_forced_update_alert_description" = "Optimize your app experience by updating the app.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "Archive";
 "erx_txt_refresh_loading" = "Loading ...";
 "erx_txt_scanned_at_%@" = "Scanned: %@";
+"erx_txt_self_payer" = "No reimbursement of costs";
+"erx_txt_sent_at_%@" = "Sent %@";
 "hint_btn_close" = "close";
 "hint_btn_open_scn" = "Open scanner";
 "hint_btn_try_demo_mode" = "Launch demo mode";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "Shopping cart is ready";
 "ord_detail_shipment_link_btn" = "Open shopping cart";
 "ord_detail_shipment_link_text" = "Please go to the pharmacy website to complete the order.";
-"ord_detail_txt_%@_send_to_%@" = "%@ sent to %@ . The digital redemption process is still unfamiliar for many pharmacies. If you don't hear back by tomorrow, we recommend calling to inquire as a precaution.";
+"ord_detail_txt_%@_send_to_%@" = "%@ sent to %@ . Some pharmacies do not yet have a digital response option. If you do not receive a response by tomorrow, please call as a precaution.";
 "ord_detail_txt_charge_item%@" = "You have received a receipt for the cost of your medication %@ .";
 "ord_detail_txt_contact" = "Contact options";
 "ord_detail_txt_contact_email" = "Write email";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "Area code and telephone number";
 "pha_contact_txt_street" = "Street and house number";
 "pha_contact_txt_zip" = "Postcode";
-"pha_detail_btn_delivery" = "Delivery";
+"pha_detail_btn_delivery" = "Courier";
 "pha_detail_btn_footer" = "Find out more";
 "pha_detail_btn_healthcare_service" = "Request courier service";
 "pha_detail_btn_location" = "Reserve for collection";
 "pha_detail_btn_login_note" = "Redeem only possible after registration";
+"pha_detail_btn_open_mail" = "Write email";
+"pha_detail_btn_open_map" = "Route here";
+"pha_detail_btn_open_phone" = "Call";
 "pha_detail_btn_organization" = "Delivery by mail order";
-"pha_detail_btn_pickup" = "Pickup";
+"pha_detail_btn_pickup" = "pick up";
 "pha_detail_btn_shipment" = "Shipment";
 "pha_detail_contact" = "Contact";
-"pha_detail_hint_message" = "Please note that prescribed medication may also be subject to additional payments.";
 "pha_detail_hint_not_erx_ready_message" = "You cannot yet send e-prescriptions to this pharmacy.";
 "pha_detail_hint_not_erx_ready_pic" = "Pharmacist stocks medicine";
 "pha_detail_hint_not_erx_ready_title" = "Redeem on site only";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Note to pharmacies: this app obtains the contact details for and information about pharmacies from ";
 "pha_detail_txt_no_prescription_toast" = "You have no prescriptions to redeem.";
+"pha_detail_txt_open_hour_today" = "Today";
+"pha_detail_txt_open_hour_tomorrow" = "Tomorrow";
 "pha_detail_txt_subtitle_fallback" = "Pharmacy";
 "pha_detail_txt_title" = "Details";
 "pha_detail_web" = "Website";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "Add";
 "pha_redeem_btn_change_pharmacy" = "Change";
 "pha_redeem_btn_change_prescription" = "Change";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "Cancel order";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "Continue without this prescription";
 "pha_redeem_btn_redeem" = "Redeem";
 "pha_redeem_btn_redeem_footnote" = "Your prescription will be sent to this pharmacy. It is not possible to redeem your prescription at another pharmacy.";
 "pha_redeem_btn_select_pharmacy" = "Select pharmacy";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "Enable";
 "prsc_dtl_btn_pkv_invoice" = "Cost receipt";
 "prsc_dtl_btn_redeem" = "Send to pharmacy";
+"prsc_dtl_btn_self_payer" = "No reimbursement of costs";
 "prsc_dtl_btn_share" = "Split";
 "prsc_dtl_btn_share_title" = "Split";
 "prsc_dtl_btn_show_matrix_code" = "Show code";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "Scanned prescription";
 "prsc_dtl_dr_substitution_info_description" = "Pharmacists are obliged to give priority to dispensing medicines for which the patient's health insurance company has concluded a discount agreement with drug manufacturers. This only does not apply if the doctor excludes “Aut idem” on the prescription, which is not the case with your prescription.";
 "prsc_dtl_dr_substitution_info_title" = "Substitute medication possible";
+"prsc_dtl_drawer_self_payer_info_header" = "No reimbursement of costs";
+"prsc_dtl_drawer_self_payer_info_message" = "As a rule, health insurance does not cover the costs of this prescription. As a patient, you are therefore responsible for paying the full amount. Whether the costs will be reimbursed as part of supplementary insurance or statutory benefits must be checked individually.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Open gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.";
 "prsc_dtl_med_ingredient_name" = "Active ingredient name";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Substitute medication possible";
 "prsc_redeem_note_direct_assignment" = "This prescription will be redeemed for you as part of a treatment.";
-"prsc_status_canceled" = "Cancelled";
+"prsc_status_canceled" = "Deleted";
 "prsc_status_completed" = "Redeemed";
 "prsc_status_direct_assigned" = "Will be redeemed for you";
 "prsc_status_error" = "Defective prescription";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "The entered street exceeds the allowed maximum length of %@ characters.";
 "riv_ti_invalid_zip_%@" = "The postal code entered exceeds the maximum allowed length of %@ characters.";
 "riv_ti_wrong_version" = "Invalid version number.";
-"rph_btn_close_alert_keep" = "Not redeemed";
-"rph_btn_close_alert_mark_redeemed" = "Redeemed";
-"rph_txt_close_alert_message" = "Would you like to mark this prescription as redeemed?";
-"rph_txt_close_alert_title" = "Prescription redeemed?";
 "rph_txt_matrixcode_hint" = "Have this prescription code scanned at your pharmacy.";
 "rph_txt_subtitle" = "Have this prescription code scanned at your pharmacy.";
 "rph_txt_title" = "Prescription code";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "Your device may have reduced security";
 "section_txt_is_active_value" = "Selected";
 "section_txt_is_inactive_value" = "Not selected";
+"self_payer_warning_txt_ending" = "your insurance will not cover any costs.";
+"self_payer_warning_txt_message_single" = "Your insurance will not cover the cost of this prescription.";
+"self_payer_warning_txt_solo" = "Your insurance will not cover the cost of this prescription.";
 "service_txt_consent_alert_login" = "Register";
 "service_txt_consent_alert_okay" = "OK";
 "service_txt_consent_alert_retry" = "Try again";

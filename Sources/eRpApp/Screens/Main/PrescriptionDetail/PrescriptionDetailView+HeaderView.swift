@@ -64,6 +64,18 @@ extension PrescriptionDetailView {
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
+                    if store.prescription.erxTask.patient?.coverageType == .SEL {
+                        Button(
+                            action: { store.send(.setNavigation(tag: .selfPayerInfo)) },
+                            label: {
+                                Label(L10n.prscDtlBtnSelfPayer, systemImage: SFSymbolName.info)
+                                    .labelStyle(.blueFlag)
+                            }
+                        )
+                        .padding(8)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo)
+                    }
+
                     // Flag/Hints for the prescription type
                     switch store.type {
                     case .directAssignment:
@@ -175,7 +187,7 @@ extension PrescriptionDetailView {
                         .smallSheet($store
                             .scope(state: \.destination?.directAssignmentInfo,
                                    action: \.destination.directAssignmentInfo)) { _ in
-                                ScannedPrescriptionInfoDrawerView()
+                                DirectAssignmentDrawerView()
                         }
                         .accessibility(hidden: true)
                 }

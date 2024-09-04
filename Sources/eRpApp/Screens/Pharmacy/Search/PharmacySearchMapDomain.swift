@@ -37,7 +37,7 @@ struct PharmacySearchMapDomain {
     @ObservableState
     struct State: Equatable {
         /// A storage for the prescriptions that have been selected to be redeemed
-        var selectedPrescriptions: [Prescription] = []
+        @Shared var selectedPrescriptions: [Prescription]
         /// View can be called within the redeeming process or from the tab-bar.
         /// Boolean is true when called within redeeming process
         var inRedeemProcess: Bool
@@ -305,11 +305,13 @@ struct PharmacySearchMapDomain {
             state.detailsPharmacy = viewModel
 
             state.destination = .pharmacy(PharmacyDetailDomain.State(
-                selectedPrescriptions: state.selectedPrescriptions,
+                prescriptions: Shared([]),
+                selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
                 hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                onMapView: true
+                onMapView: true,
+                pharmacyRedeemState: Shared(nil)
             ))
             return .none
         case .onAppear:
@@ -374,9 +376,9 @@ struct PharmacySearchMapDomain {
 
             let redeemState = PharmacyRedeemDomain.State(
                 redeemOption: option,
-                prescriptions: state.pharmacyRedeemState?.prescriptions ?? prescriptions,
+                prescriptions: Shared(state.pharmacyRedeemState?.prescriptions ?? prescriptions),
                 pharmacy: pharmacy.pharmacyLocation,
-                selectedPrescriptions: setOfPrescriptions
+                selectedPrescriptions: Shared(setOfPrescriptions)
             )
             state.destination = destination(service: service, state: redeemState)
             state.pharmacyRedeemState = nil
@@ -386,11 +388,13 @@ struct PharmacySearchMapDomain {
             guard let viewModel = state.detailsPharmacy else { return .none }
 
             state.destination = .pharmacy(PharmacyDetailDomain.State(
-                selectedPrescriptions: state.selectedPrescriptions,
+                prescriptions: Shared([]),
+                selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
                 hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                onMapView: true
+                onMapView: true,
+                pharmacyRedeemState: Shared(nil)
             ))
             return .none
         case .destination(.presented(.redeemViaErxTaskRepository(.delegate(.close)))),

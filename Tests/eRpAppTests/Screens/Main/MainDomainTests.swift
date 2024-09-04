@@ -309,24 +309,28 @@ final class MainDomainTests: XCTestCase {
     }
 
     func testRedeemPrescriptionsOnlyWithReadyStatus() async {
-        // given
-        let sut = testStore(for: .init(
-            prescriptionListState: .init(),
-            horizontalProfileSelectionState: .init()
-        ))
-        let expectedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTask1,
-                                                dateFormatter: UIDateFormatter.testValue)
-        let nonReadyPrescriptions = [
-            Prescription(erxTask: ErxTask.Fixtures.erxTask9, dateFormatter: UIDateFormatter.testValue),
-            Prescription(erxTask: ErxTask.Fixtures.erxTask10, dateFormatter: UIDateFormatter.testValue),
-            Prescription(erxTask: ErxTask.Fixtures.erxTask11, dateFormatter: UIDateFormatter.testValue),
-        ]
-        // when
-        await sut
-            .send(.prescriptionList(action: .redeemButtonTapped(openPrescriptions: nonReadyPrescriptions +
-                    [expectedPrescription]))) { state in
-                    state.destination = .redeemMethods(.init(prescriptions: [expectedPrescription]))
-            }
+        await withDependencies {
+            $0.date = DateGenerator { Date() }
+        } operation: {
+            // given
+            let sut = testStore(for: .init(
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            ))
+            let expectedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTask1,
+                                                    dateFormatter: UIDateFormatter.testValue)
+            let nonReadyPrescriptions = [
+                Prescription(erxTask: ErxTask.Fixtures.erxTask9, dateFormatter: UIDateFormatter.testValue),
+                Prescription(erxTask: ErxTask.Fixtures.erxTask10, dateFormatter: UIDateFormatter.testValue),
+                Prescription(erxTask: ErxTask.Fixtures.erxTask11, dateFormatter: UIDateFormatter.testValue),
+            ]
+            // when
+            await sut
+                .send(.prescriptionList(action: .redeemButtonTapped(openPrescriptions: nonReadyPrescriptions +
+                        [expectedPrescription]))) { state in
+                        state.destination = .redeemMethods(.init(prescriptions: Shared([expectedPrescription])))
+                }
+        }
     }
 
     func testGrantChargeItemConsentActivate_happyPath() async {
@@ -349,6 +353,24 @@ final class MainDomainTests: XCTestCase {
         // then
         await sut.receive(.response(.grantChargeItemsConsentActivate(.success))) { state in
             state.destination = .toast(MainDomain.ToastStates.grantConsentSuccess)
+        }
+    }
+
+    func testGrantChargeItemActivationToastDismissal() async {
+        // given
+        let sut = testStore(
+            for: .init(
+                isDemoMode: false,
+                destination: .toast(MainDomain.ToastStates.grantConsentSuccess),
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )
+        )
+
+        // when
+        await sut.send(.destination(.presented(.toast(.routeToChargeItemsList)))) { state in
+            // then
+            state.destination = nil
         }
     }
 

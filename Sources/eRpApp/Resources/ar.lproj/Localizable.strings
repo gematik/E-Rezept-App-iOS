@@ -342,6 +342,8 @@
 "dmc_btn_close" = "تم";
 "dmc_txt_code_multiple" = "كود الجمع";
 "dmc_txt_code_single" = "رمز واحد";
+"dmc_txt_number_medications_%d" = "%d دواء (أدوية)";
+"dmc_txt_share_message_%@" = "لقد تمت مشاركة رمز الوصفة الطبية لك عبر تطبيق الوصفة الطبية الإلكترونية مع الأدوية التالية: %@";
 "dtl_btn_copy_clipboard" = "ينسخ";
 "dtl_btn_delete_disabled_note" = "الوصفة الطبية قيد المعالجة حاليًا في إحدى الصيدليات ولا يمكن حذفها.";
 "dtl_btn_delete_medication" = "الحذف من هذا الجهاز";
@@ -399,6 +401,7 @@
 "erx_btn_scn_prescription" = "فتح الماسح الضوئي للوصفة";
 "erx_title" = "الوصفات الطبية";
 "erx_txt_authored" = "عرض";
+"erx_txt_claimed_at_%@" = "يفترض %@";
 "erx_txt_current" = "حديث";
 "erx_txt_expired_on_%@" = "انتهت يوم %@";
 "erx_txt_forced_update_alert_description" = "تحسين تجربة التطبيق الخاص بك عن طريق تحديث التطبيق.";
@@ -416,6 +419,8 @@
 "erx_txt_redeemed" = "أرشيف";
 "erx_txt_refresh_loading" = "جاري التحميل ...";
 "erx_txt_scanned_at_%@" = "تم المسح: %@";
+"erx_txt_self_payer" = "لا سداد التكاليف";
+"erx_txt_sent_at_%@" = "مرسل %@";
 "hint_btn_close" = "إغلاق";
 "hint_btn_open_scn" = "فتح الماسح الضوئي";
 "hint_btn_try_demo_mode" = "ابدأ الوضع التجريبي";
@@ -838,7 +843,7 @@
 "ord_detail_sheet_title_shipment" = "عربة التسوق جاهزة";
 "ord_detail_shipment_link_btn" = "فتح عربة التسوق";
 "ord_detail_shipment_link_text" = "برجاء الدخول إلى موقع الصيدلية لإتمام الطلب.";
-"ord_detail_txt_%@_send_to_%@" = "تم إرسال %@ إلى %@ . لا تزال عملية الاسترداد الرقمي غير مألوفة للعديد من الصيدليات. إذا لم تتلقى ردًا بحلول الغد، فنوصيك بالاتصال للاستفسار كإجراء احترازي.";
+"ord_detail_txt_%@_send_to_%@" = "تم إرسال %@ إلى %@ . بعض الصيدليات ليس لديها خيار الاستجابة الرقمية حتى الآن. إذا لم يتم الرد بحلول يوم غد، يرجى الاتصال كإجراء احترازي.";
 "ord_detail_txt_charge_item%@" = "لقد تلقيت إيصالاً بتكلفة الدواء %@ .";
 "ord_detail_txt_contact" = "خيارات الاتصال";
 "ord_detail_txt_contact_email" = "كتابة بريد إلكتروني";
@@ -900,16 +905,18 @@
 "pha_contact_txt_phone" = "الكود ورقم الهاتف";
 "pha_contact_txt_street" = "الشارع ورقم المنزل";
 "pha_contact_txt_zip" = "الرمز البريدي";
-"pha_detail_btn_delivery" = "فتى التوصيل\n يختار";
+"pha_detail_btn_delivery" = "ساعي";
 "pha_detail_btn_footer" = "معرفة المزيد";
 "pha_detail_btn_healthcare_service" = "اطلب خدمة المراسلة";
 "pha_detail_btn_location" = "احجز الاستلام";
 "pha_detail_btn_login_note" = "تخليص ممكن فقط بعد التسجيل";
+"pha_detail_btn_open_mail" = "كتابة بريد إلكتروني";
+"pha_detail_btn_open_map" = "الطريق هنا";
+"pha_detail_btn_open_phone" = "يتصل";
 "pha_detail_btn_organization" = "اطلب خدمة التوصيل";
-"pha_detail_btn_pickup" = "مجموعة\n يختار";
-"pha_detail_btn_shipment" = "شحنة\n يختار";
+"pha_detail_btn_pickup" = "يلتقط";
+"pha_detail_btn_shipment" = "شحنة";
 "pha_detail_contact" = "الاتصال";
-"pha_detail_hint_message" = "يرجى الانتباه إلى أنه قد يتم تطبيق رسوم إضافية مقابل الأدوية الموصوفة أيضًا.";
 "pha_detail_hint_not_erx_ready_message" = "لا يمكنك بعد إرسال الوصفات الطبية الإلكترونية إلى هذه الصيدلية.";
 "pha_detail_hint_not_erx_ready_pic" = "صيدلاني*صيدلانية تحمل دواء";
 "pha_detail_hint_not_erx_ready_title" = "استرداد في الموقع فقط";
@@ -923,6 +930,8 @@
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "ملاحظة للصيدليات: يتم الحصول على تفاصيل الاتصال والمعلومات حول الصيدليات من ";
 "pha_detail_txt_no_prescription_toast" = "ليس لديك وصفات طبية لملءها.";
+"pha_detail_txt_open_hour_today" = "اليوم";
+"pha_detail_txt_open_hour_tomorrow" = "غداً";
 "pha_detail_txt_subtitle_fallback" = "الصيدلية";
 "pha_detail_txt_title" = "التفاصيل";
 "pha_detail_web" = "الموقع الإلكتروني";
@@ -934,6 +943,8 @@
 "pha_redeem_btn_alert_complete" = "استكمال";
 "pha_redeem_btn_change_pharmacy" = "يتغير";
 "pha_redeem_btn_change_prescription" = "يتغير";
+"pha_redeem_btn_prescription_already_redeemed_alert_dismiss" = "إلغاء الطلب";
+"pha_redeem_btn_prescription_already_redeemed_alert_proceed_without" = "استمر بدون هذه الوصفة الطبية";
 "pha_redeem_btn_redeem" = "الصرف";
 "pha_redeem_btn_redeem_footnote" = "سيؤدي هذا إلى إرسال وصفتك الطبيةإلى هذه الصيدلية. لن تتمكن بعد ذلك من صرفها في أي صيدلية أخرى.";
 "pha_redeem_btn_select_pharmacy" = "اختر الصيدلية";
@@ -1030,6 +1041,7 @@
 "prsc_dtl_btn_pkv_hint_activate" = "تفعيل";
 "prsc_dtl_btn_pkv_invoice" = "إيصال التكلفة";
 "prsc_dtl_btn_redeem" = "إرسال إلى الصيدلية";
+"prsc_dtl_btn_self_payer" = "لا سداد التكاليف";
 "prsc_dtl_btn_share" = "ينقسم";
 "prsc_dtl_btn_share_title" = "ينقسم";
 "prsc_dtl_btn_show_matrix_code" = "إظهار الرمز";
@@ -1054,6 +1066,8 @@
 "prsc_dtl_dr_scanned_prescription_info_title" = "الوصفة الطبية التي تم مسحها";
 "prsc_dtl_dr_substitution_info_description" = "يلتزم الصيادلة بإعطاء الأولوية لصرف الأدوية التي أبرمت شركة التأمين الصحي للمريض اتفاقية خصم لها مع الشركات المصنعة للأدوية. لا ينطبق هذا فقط إذا استبعد الطبيب عبارة \"Aut idem\" من الوصفة الطبية، وهو ما لا ينطبق على الوصفة الطبية الخاصة بك.";
 "prsc_dtl_dr_substitution_info_title" = "يمكن تلقي مستحضرًا طبيًا بديلًا";
+"prsc_dtl_drawer_self_payer_info_header" = "لا سداد التكاليف";
+"prsc_dtl_drawer_self_payer_info_message" = "كقاعدة عامة، لا يغطي التأمين الصحي تكاليف هذه الوصفة الطبية. كمريض، أنت بالتالي مسؤول عن الدفع الكامل. ما إذا كان سيتم سداد التكاليف كجزء من التأمين الإضافي أو المزايا القانونية يجب التحقق منها بشكل فردي.";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "افتح gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "تجدون في البوابة الوطنية للصحة معلومات مُراجعة  تخصصيًا عن الأمراض وأكواد ICD وموضوعات الرعاية والتمريض.";
 "prsc_dtl_med_ingredient_name" = "اسم المادة الفعالة";
@@ -1165,7 +1179,7 @@
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "يمكن تلقي مستحضرًا طبيًا بديلًا";
 "prsc_redeem_note_direct_assignment" = "سيتم استبدال هذه الوصفة لك كجزء من العلاج.";
-"prsc_status_canceled" = "تم الإلغاء";
+"prsc_status_canceled" = "تم الحذف";
 "prsc_status_completed" = "تم الصرف";
 "prsc_status_direct_assigned" = "سيتم استبدالها لك";
 "prsc_status_error" = "وصفة غير صحيحة";
@@ -1217,10 +1231,6 @@
 "riv_ti_invalid_street_%@" = "الشارع الذي تم إدخاله يتجاوز الحد الأقصى المسموح به للطول وهو %@ من الأحرف.";
 "riv_ti_invalid_zip_%@" = "يتجاوز الرمز البريدي الذي تم إدخاله الحد الأقصى المسموح به وهو %@ من الأحرف.";
 "riv_ti_wrong_version" = "رقم الإصدار غير صالح.";
-"rph_btn_close_alert_keep" = "لم يتم الصرف";
-"rph_btn_close_alert_mark_redeemed" = "تم الصرف";
-"rph_txt_close_alert_message" = "هل ترغب في تحديد هذه الوصفة باعتبارها تم صرفها؟";
-"rph_txt_close_alert_title" = "تم صرف الوصفة؟";
 "rph_txt_matrixcode_hint" = "قم بمسح كود الوصفة الطبية في صيدليتك.";
 "rph_txt_subtitle" = "قم بمسح كود الوصفة الطبية في صيدليتك.";
 "rph_txt_title" = "كود الوصفة الطبية";
@@ -1251,6 +1261,9 @@
 "sec_txt_system_root_detection_title" = "قد يكون جهازك قد قلل من مستوى الأمان";
 "section_txt_is_active_value" = "تم الاختيار";
 "section_txt_is_inactive_value" = "لم يتم الاختيار";
+"self_payer_warning_txt_ending" = "التأمين الخاص بك لن يغطي أي تكاليف.";
+"self_payer_warning_txt_message_single" = "لن يغطي التأمين الخاص بك أي تكاليف لهذه الوصفة الطبية.";
+"self_payer_warning_txt_solo" = "لن يغطي التأمين الخاص بك أي تكاليف لهذه الوصفة الطبية.";
 "service_txt_consent_alert_login" = "يسجل";
 "service_txt_consent_alert_okay" = "موافق";
 "service_txt_consent_alert_retry" = "جرب مرة أخرى";

@@ -69,8 +69,6 @@ struct PrescriptionView: View {
     struct PrescriptionStatusView: View {
         let prescription: Prescription
 
-        @State private var isAnimating = false
-
         var body: some View {
             HStack(alignment: .top, spacing: 8) {
                 HStack(spacing: 4) {
@@ -82,7 +80,7 @@ struct PrescriptionView: View {
                         .font(Font.subheadline.weight(.semibold))
                         .foregroundColor(prescription.imageTint)
 
-                    if prescription.loadingIndicator {
+                    if prescription.isLoading {
                         ProgressView()
                             .scaleEffect(0.85)
                             .tint(prescription.imageTint)
@@ -103,6 +101,17 @@ struct PrescriptionView: View {
                         .cornerRadius(8)
                         .accessibility(identifier: A11y.mainScreen
                             .erxDetailedMultiplePrescriptionIndex)
+                }
+
+                if prescription.erxTask.patient?.coverageType == .SEL {
+                    Image(systemName: SFSymbolName.euroSign)
+                        .font(Font.subheadline.weight(.regular))
+                        .padding(8)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .background(Colors.backgroundSecondary)
+                        .cornerRadius(8)
+                        .accessibilityLabel(L10n.erxTxtSelfPayer)
+                        .accessibility(identifier: A11y.mainScreen.erxDetailedSelfPayer)
                 }
             }
             .padding(.top, 8)

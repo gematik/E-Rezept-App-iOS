@@ -49,7 +49,7 @@ struct PharmacyPrescriptionSelectionView: View {
                                            TitleWithSubtitleCellView(
                                                title: prescription.title,
                                                subtitle: "",
-                                               isSelected: store.selectedPrescriptions.contains(prescription)
+                                               isSelected: store.selectedPrescriptionsCopy.contains(prescription)
                                            ).multilineTextAlignment(.leading)
                                        })
                                     .sectionContainerIsLastElement(index == store.prescriptions.count - 1)
@@ -62,10 +62,13 @@ struct PharmacyPrescriptionSelectionView: View {
             .background(Color(.secondarySystemBackground))
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(L10n.phaRedeemTxtPrescriptionHeader)
+            .task {
+                store.send(.updateRedeemablePrescriptions)
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        store.send(.saveSelection(store.selectedPrescriptions))
+                        store.send(.saveSelection(store.selectedPrescriptionsCopy))
                     }, label: {
                         Text(L10n.phaRedeemTxtSelectedPrescriptionSave)
                     })

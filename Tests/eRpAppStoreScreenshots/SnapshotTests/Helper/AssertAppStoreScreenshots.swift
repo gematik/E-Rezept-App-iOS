@@ -52,7 +52,7 @@ func assertAppStoreSnapshots<SnapshotContent: View>(
         transaction.disablesAnimations = true
         withTransaction(transaction) {
             assertSnapshot(
-                matching: AppStorePreview(
+                of: AppStorePreview(
                     .image(
                         precision: precision,
                         perceptualPrecision: perceptualPrecision,

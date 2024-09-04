@@ -43,26 +43,46 @@ struct OrderMessageView: View {
                     .foregroundColor(Colors.systemLabel)
                     .padding(.horizontal)
 
-                Text(timelineEntry.text)
-                    .font(Font.subheadline)
-                    .multilineTextAlignment(.leading)
-                    .padding(.horizontal)
-                    .foregroundColor(Colors.systemLabelSecondary)
+                Group {
+                    if let entryText = try? AttributedString(markdown: timelineEntry.text) {
+                        Text(entryText)
+                    } else {
+                        Text(timelineEntry.text)
+                    }
+                }
+                .accessibility(identifier: A11y.orderDetail.message.msgTxtTitle)
+                .font(Font.subheadline)
+                .multilineTextAlignment(.leading)
+                .padding(.horizontal)
+                .foregroundColor(Colors.systemLabelSecondary)
+                // handle inline link action for dispReq entries
+                .environment(\.openURL, OpenURLAction { _ in
+                    if case .dispReq = timelineEntry,
+                       let buttonText = timelineEntry.actions.keys.first,
+                       let action = timelineEntry.actions[buttonText] {
+                        store.send(action)
+                    }
+                    return .discarded
+                })
 
-                ForEach(Array(timelineEntry.actions.keys), id: \.self) { buttonText in
-                    if let action = timelineEntry.actions[buttonText] {
-                        Button {
-                            store.send(action)
-                        } label: {
-                            HStack(spacing: 4) {
-                                Text(buttonText)
-                                    .font(Font.subheadline)
-                                Image(systemName: SFSymbolName.chevronRight)
-                                    .font(Font.subheadline.weight(.semibold))
+                if case .dispReq = timelineEntry {
+                    // ignore action here since it's used as inline text link
+                } else {
+                    ForEach(Array(timelineEntry.actions.keys), id: \.self) { buttonText in
+                        if let action = timelineEntry.actions[buttonText] {
+                            Button {
+                                store.send(action)
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text(buttonText)
+                                        .font(Font.subheadline)
+                                    Image(systemName: SFSymbolName.chevronRight)
+                                        .font(Font.subheadline.weight(.semibold))
+                                }
+                                .padding(.top)
+                                .padding(.horizontal)
+                                .foregroundColor(Colors.primary600)
                             }
-                            .padding(.top)
-                            .padding(.horizontal)
-                            .foregroundColor(Colors.primary600)
                         }
                     }
                 }

@@ -26,12 +26,6 @@ import SwiftUI
 import XCTest
 
 final class AuditEventsSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func testAuditEventsLoadedSnapshots() {
         let elements: [AuditEventsDomain.State.AuditEvent] = [
             .init(id: "abc",
@@ -66,9 +60,9 @@ final class AuditEventsSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testEmptyAuditEventsSnapshots() {
@@ -81,9 +75,9 @@ final class AuditEventsSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testAuditEventsListWhenAuthenticationNeeded() {
@@ -98,9 +92,9 @@ final class AuditEventsSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testLoadingAuditEventsSnapshots() {
@@ -115,8 +109,8 @@ final class AuditEventsSnapshotTests: ERPSnapshotTestCase {
             )
         }
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

@@ -98,6 +98,38 @@
 			<string>%li рецепти не можаха да бъдат осребрени</string>
 		</dict>
 	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Рецептата не може да бъде осребрена</string>
+			<key>other</key>
+			<string>Рецептите не могат да бъдат осребрени</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_txt_prescription_already_redeemed_error_suggestion_format</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Рецептата %% @ вече не може да се използва. Може вече да сте го осребрили по друг начин или може да е изтрит.</string>
+			<key>other</key>
+			<string>Следните рецепти вече не могат да бъдат осребрени: %% @. Може вече да сте ги изкупили по друг начин или може да са били изтрити.</string>
+		</dict>
+	</dict>
 	<key>prsc_fd_txt_details_actual_medication_title</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -128,6 +160,22 @@
 			<string>Готово, добавете рецепта</string>
 			<key>other</key>
 			<string>Готово, добавете рецепти</string>
+		</dict>
+	</dict>
+	<key>self_payer_warning_txt_message</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>Вашата застраховка няма да покрие никакви разходи за %#@variable_0@ %@ . </string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>предписанието</string>
+			<key>other</key>
+			<string>предписанията</string>
 		</dict>
 	</dict>
 	<key>stg_txt_card_reset_rc_alert_wrong_pin_message</key>

@@ -26,12 +26,6 @@ import SwiftUI
 import XCTest
 
 final class MedicationReminderListViewSnapshotTests: ERPSnapshotTestCase {
-    override func setUp() {
-        super.setUp()
-
-        diffTool = "open"
-    }
-
     func testMedicationReminderListView() {
         let sut = MedicationReminderListView(
             store: .init(
@@ -47,9 +41,9 @@ final class MedicationReminderListViewSnapshotTests: ERPSnapshotTestCase {
             }
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }
 
