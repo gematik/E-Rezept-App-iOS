@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -47,15 +47,11 @@ struct EditProfileView: View {
                     }
                     .padding(.top, 24)
 
-                    NavigationLink(item: $store.scope(state: \.destination?.editProfilePicture,
-                                                      action: \.destination.editProfilePicture),
-                                   onTap: { store.send(.editProfilePictureTapped) },
-                                   destination: { store in
-                                       EditProfilePictureView(store: store)
-                                           .navigationTitle(L10n.editPictureTxt)
-                                           .navigationBarTitleDisplayMode(.inline)
-                                   },
-                                   label: { Text(L10n.stgBtnEditPicture) })
+                    Button {
+                        store.send(.editProfilePictureTapped)
+                    } label: {
+                        Text(L10n.stgBtnEditPicture)
+                    }
 
                     SingleElementSectionContainer(footer: {
                         WithPerceptionTracking {
@@ -97,6 +93,14 @@ struct EditProfileView: View {
                 UIApplication.shared.dismissKeyboard()
             })
             .navigationTitle(L10n.stgTxtEditProfileTitle)
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.editProfilePicture,
+                                   action: \.destination.editProfilePicture)
+            ) { store in
+                EditProfilePictureView(store: store)
+                    .navigationTitle(L10n.editPictureTxt)
+                    .navigationBarTitleDisplayMode(.inline)
+            }
             .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             .task {
                 await store.send(.task).finish()
@@ -232,25 +236,27 @@ extension EditProfileView {
                     content: {
                         EmptyView()
 
-                        NavigationLink(item: $store.scope(state: \.destination?.chargeItemList,
-                                                          action: \.destination.chargeItemList),
-                                       onTap: { store.send(.chargeItemListTapped) },
-                                       destination: { store in
-                                           ChargeItemListView(store: store)
-                                       },
-                                       label: { Label(
-                                           title: { Text(L10n.stgBtnEditProfileChargeItemList) },
-                                           icon: {
-                                               Image(systemName: SFSymbolName.euroSign)
-                                           }
-                                       )
-                                       })
-                            .buttonStyle(.navigation)
-                            .accessibilityElement(children: .combine)
-                            .accessibility(identifier: A11y.settings.editProfile
-                                .stgTxtEditProfileChargeItemListSectionShowChargeItemList)
+                        Button {
+                            store.send(.chargeItemListTapped)
+                        } label: {
+                            Label {
+                                Text(L10n.stgBtnEditProfileChargeItemList)
+                            } icon: {
+                                Image(systemName: SFSymbolName.euroSign)
+                            }
+                        }
+                        .buttonStyle(.navigation)
+                        .accessibilityElement(children: .combine)
+                        .accessibility(identifier: A11y.settings.editProfile
+                            .stgTxtEditProfileChargeItemListSectionShowChargeItemList)
                     }
                 )
+                .navigationDestination(
+                    item: $store.scope(state: \.destination?.chargeItemList,
+                                       action: \.destination.chargeItemList)
+                ) { store in
+                    ChargeItemListView(store: store)
+                }
             }
         }
     }
@@ -333,21 +339,26 @@ extension EditProfileView {
                     .accessibility(
                         identifier: A11y.settings.editProfile.stgTxtEditProfileLoginSectionActivate
                     )
-                    NavigationLink(item: $store.scope(state: \.destination?.registeredDevices,
-                                                      action: \.destination.registeredDevices),
-                                   onTap: { store.send(.registeredDevicesTapped) },
-                                   destination: { store in
-                                       RegisteredDevicesView(store: store)
-                                   },
-                                   label: { Label(
-                                       title: { Text(L10n.stgBtnEditProfileRegisteredDevices) },
-                                       icon: {}
-                                   )
-                                   }).buttonStyle(.navigation)
-                        .accessibilityElement(children: .combine)
-                        .accessibility(identifier: A11y.settings.editProfile
-                            .stgTxtEditProfileLoginSectionConnectedDevices)
+
+                    Button {
+                        store.send(.registeredDevicesTapped)
+                    } label: {
+                        Label {
+                            Text(L10n.stgBtnEditProfileRegisteredDevices)
+                        } icon: {
+                            EmptyView()
+                        }
+                    }
+                    .buttonStyle(.navigation)
+                    .accessibilityElement(children: .combine)
+                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileLoginSectionConnectedDevices)
                 })
+                    .navigationDestination(
+                        item: $store.scope(state: \.destination?.registeredDevices,
+                                           action: \.destination.registeredDevices)
+                    ) { store in
+                        RegisteredDevicesView(store: store)
+                    }
             }
         }
 
@@ -411,27 +422,27 @@ extension EditProfileView {
             WithPerceptionTracking {
                 // [REQ:gemSpec_eRp_FdV:A_19177#2,A_19185#3] Actual Button to open the audit events
                 // [REQ:BSI-eRp-ePA:O.Auth_6#2] Actual Button to open the audit events
-                NavigationLink(item: $store.scope(state: \.destination?.auditEvents,
-                                                  action: \.destination.auditEvents),
-                               onTap: { store.send(.auditEventsTapped) },
-                               destination: { store in AuditEventsView(store: store) },
-                               label: {
-                                   Label(
-                                       title: {
-                                           SubTitle(
-                                               title: L10n.stgTxtEditProfileSecurityShowAuditEventsLabel,
-                                               description: L10n.stgTxtEditProfileSecurityShowAuditEventsDescription
-                                           )
-                                       },
-                                       icon: {
-                                           Image(systemName: SFSymbolName.arrowUpArrowDown)
-                                       }
-                                   )
-                               })
-                    .buttonStyle(.navigation)
-                    .accessibilityElement(children: .combine)
-                    .accessibility(identifier: A11y.settings.editProfile
-                        .stgBtnEditProfileSecuritySectionShowAuditEvents)
+                Button {
+                    store.send(.auditEventsTapped)
+                } label: {
+                    Label {
+                        SubTitle(
+                            title: L10n.stgTxtEditProfileSecurityShowAuditEventsLabel,
+                            description: L10n.stgTxtEditProfileSecurityShowAuditEventsDescription
+                        )
+                    } icon: {
+                        Image(systemName: SFSymbolName.arrowUpArrowDown)
+                    }
+                }
+                .buttonStyle(.navigation)
+                .accessibilityElement(children: .combine)
+                .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowAuditEvents)
+
+                .navigationDestination(
+                    item: $store.scope(state: \.destination?.auditEvents, action: \.destination.auditEvents)
+                ) { store in
+                    AuditEventsView(store: store)
+                }
             }
         }
     }
@@ -440,7 +451,7 @@ extension EditProfileView {
 struct ProfileView_Preview: PreviewProvider {
     static var previews: some View {
         Group {
-            NavigationView {
+            NavigationStack {
                 EditProfileView(
                     store: .init(
                         initialState: {
@@ -454,7 +465,7 @@ struct ProfileView_Preview: PreviewProvider {
                 )
             }
 
-            NavigationView {
+            NavigationStack {
                 EditProfileView(store: EditProfileDomain.Dummies.store)
             }
         }

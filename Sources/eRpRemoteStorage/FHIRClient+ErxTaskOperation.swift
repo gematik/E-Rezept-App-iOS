@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 // swiftlint:disable file_length
 
@@ -75,44 +75,45 @@ extension FHIRClient {
         return execute(operation: ErxTaskFHIROperation.taskBy(id: id, accessCode: accessCode, handler: handler))
     }
 
-    /// Convenience function for requesting all task ids
+    /// Convenience function for requesting all tasks
     ///
     /// - Note: the simplifier (and the gematik specification) documentation is not clear as how to handle multiple
     ///         tasks in one bundle/requests
     ///
-    /// - Returns: `AnyPublisher` that emits the ids for the found  tasks
+    /// - Returns: `AnyPublisher` that emits all sparse tasks
     /// - Parameter referenceDate: Tasks with modification date greater or equal `referenceDate` will be fetched
-    public func fetchAllTaskIDs(after referenceDate: String?)
-        -> AnyPublisher<PagedContent<[String]>, FHIRClient.Error> {
-        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[String]> in
-            let decoder = JSONDecoder()
-
-            do {
-                let resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
-                return try resource.parseErxTasksIDsContainer()
-            } catch {
-                throw Error.decoding(error)
-            }
-        }
-
-        return execute(operation: ErxTaskFHIROperation.allTasks(referenceDate: referenceDate, handler: handler))
-    }
-
-    /// Convenience function for requesting all task ids of a next page from a previous page.
-    /// - Parameter previousPage: The previous page retrieved from the service
-    public func fetchTasksNextPage(of previousPage: PagedContent<[ErxTask]>)
-        -> AnyPublisher<PagedContent<[String]>, FHIRClient.Error> {
+    public func fetchAllTasks(after referenceDate: String?)
+        -> AnyPublisher<PagedContent<[ErxTask]>, FHIRClient.Error> {
         let handler =
-            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[String]> in
+            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[ErxTask]> in
+                let decoder = JSONDecoder()
+
                 do {
-                    let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
-                    return try resource.parseErxTasksIDsContainer()
+                    let resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                    return try resource.parseErxTasksContainer()
                 } catch {
                     throw Error.decoding(error)
                 }
             }
 
-        guard let url = previousPage.next else {
+        return execute(operation: ErxTaskFHIROperation.allTasks(referenceDate: referenceDate, handler: handler))
+    }
+
+    /// Convenience function for requesting all  tasks of a next page from a previous page.
+    /// - Parameter previousPage: The previous page retrieved from the service
+    public func fetchTasksNextPage(for url: URL?)
+        -> AnyPublisher<PagedContent<[ErxTask]>, FHIRClient.Error> {
+        let handler =
+            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[ErxTask]> in
+                do {
+                    let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                    return try resource.parseErxTasksContainer()
+                } catch {
+                    throw Error.decoding(error)
+                }
+            }
+
+        guard let url else {
             return Fail(error: FHIRClient.Error.internalError("Requesting next page without link."))
                 .eraseToAnyPublisher()
         }

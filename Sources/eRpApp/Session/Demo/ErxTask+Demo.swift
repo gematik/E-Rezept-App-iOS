@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import eRpKit
@@ -406,8 +406,10 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
-            expiresOn: DemoDate.createDemoDate(.yesterday),
-            acceptedUntil: DemoDate.createDemoDate(.dayBeforeYesterday),
+            expiresOn: FHIRDateFormatter.liveValue
+                .stringWithLongUTCTimeZone(from: Date(timeIntervalSince1970: 1_706_612_400)),
+            acceptedUntil: FHIRDateFormatter.liveValue
+                .stringWithLongUTCTimeZone(from: Date(timeIntervalSince1970: 1_704_106_800)),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication8,
             medicationRequest: .init(

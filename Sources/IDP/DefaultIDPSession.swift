@@ -1,26 +1,25 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
 
 import Combine
 import CombineSchedulers
-import DataKit
 import Foundation
 import HTTPClient
 import OSLog
@@ -453,7 +452,7 @@ public class DefaultIDPSession: IDPSession {
                     return Fail(error: IDPError.internal(error: .startExtAuthUnexpectedNil)).eraseToAnyPublisher()
                 }
                 guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
-                      let codeChallenge = verifierCode.sha256()?.encodeBase64urlsafe().asciiString else {
+                      let codeChallenge = verifierCode.sha256()?.encodeBase64UrlSafe()?.asciiString else {
                     return Fail(error: IDPError.internal(error: .extAuthVerifierCodeCreation))
                         .eraseToAnyPublisher()
                 }
@@ -623,7 +622,7 @@ extension DefaultIDPSession {
                 // Generate a verifierCode
                 // [REQ:gemSpec_IDP_Frontend:A_20309] generation and hashing for codeChallenge
                 guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
-                      let codeChallenge = verifierCode.sha256()?.encodeBase64urlsafe().asciiString else {
+                      let codeChallenge = verifierCode.sha256()?.encodeBase64UrlSafe()?.asciiString else {
                     return Fail(error: IDPError.internal(error: .verifierCodeCreation)).eraseToAnyPublisher()
                 }
                 guard let state = try? self.cryptoBox.generateRandomState(),

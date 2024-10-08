@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 import Combine
 import ComposableArchitecture
@@ -561,7 +561,7 @@ class PharmacySearchDomainTests: XCTestCase {
             redeemOption: .onPremise,
             prescriptions: Shared(prescriptions.filter(\.isRedeemable)),
             pharmacy: oldPharmacy.pharmacyLocation,
-            selectedPrescriptions: Shared(Set())
+            selectedPrescriptions: Shared([])
         )
         let newPharmacyRedeemState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
@@ -873,7 +873,8 @@ class PharmacySearchDomainTests: XCTestCase {
                                                          mapLocation: .manual(expectedMapRegion),
                                                          pharmacies: pharmaciesAfterCalculatedLocation,
                                                          pharmacyFilterOptions: Shared([]),
-                                                         showOnlyTextSearchResult: true))
+                                                         showOnlyTextSearchResult: true,
+                                                         searchText: testSearchText))
         }
 
         await sut
@@ -889,7 +890,8 @@ class PharmacySearchDomainTests: XCTestCase {
                                                              pharmacies: pharmaciesAfterCalculatedLocation,
                                                              pharmacyFilterOptions: Shared([]),
                                                              searchAfterAuthorized: true,
-                                                             showOnlyTextSearchResult: true))
+                                                             showOnlyTextSearchResult: true,
+                                                             searchText: testSearchText))
             }
 
         await sut
@@ -905,7 +907,8 @@ class PharmacySearchDomainTests: XCTestCase {
                                                              pharmacies: pharmaciesAfterCalculatedLocation,
                                                              pharmacyFilterOptions: Shared([]),
                                                              searchAfterAuthorized: true,
-                                                             showOnlyTextSearchResult: true))
+                                                             showOnlyTextSearchResult: true,
+                                                             searchText: testSearchText))
             }
 
         await sut.receive(.destination(.presented(.pharmacyMapSearch(.setMapAfterLocationUpdate)))) { state in
@@ -916,7 +919,8 @@ class PharmacySearchDomainTests: XCTestCase {
                                                          pharmacies: pharmaciesAfterAllow,
                                                          pharmacyFilterOptions: Shared([]),
                                                          searchAfterAuthorized: true,
-                                                         showOnlyTextSearchResult: true))
+                                                         showOnlyTextSearchResult: true,
+                                                         searchText: testSearchText))
         }
 
         await sut
@@ -951,7 +955,8 @@ class PharmacySearchDomainTests: XCTestCase {
                                                          mapLocation: .manual(locationMapRegion),
                                                          pharmacies: pharmaciesAfterAllow,
                                                          pharmacyFilterOptions: Shared([]),
-                                                         showOnlyTextSearchResult: true))
+                                                         showOnlyTextSearchResult: true,
+                                                         searchText: testSearchTextBahn))
         }
 
         await sut
@@ -969,7 +974,8 @@ class PharmacySearchDomainTests: XCTestCase {
                                                              destination: .alert(PharmacySearchMapDomain
                                                                  .locationPermissionAlertState),
                                                              searchAfterAuthorized: false,
-                                                             showOnlyTextSearchResult: true))
+                                                             showOnlyTextSearchResult: true,
+                                                             searchText: testSearchTextBahn))
             }
 
         await sut
@@ -1006,7 +1012,8 @@ class PharmacySearchDomainTests: XCTestCase {
                                                          mapLocation: .manual(expectedMapRegion),
                                                          pharmacies: pharmaciesAfterCalculatedLocation,
                                                          pharmacyFilterOptions: Shared([]),
-                                                         showOnlyTextSearchResult: true))
+                                                         showOnlyTextSearchResult: true,
+                                                         searchText: testSearchText))
         }
     }
 

@@ -284,7 +284,7 @@ internal enum A11y {
     internal enum list {
       static let ordTxtEmptyList = "ord_txt_empty_list"
       static let ordTxtList = "ord_txt_list"
-      static let ordTxtTitle = "ord_txt_title"
+      static let msgTxtTitle = "msg_txt_title"
   }
     }
     internal enum pharmacyContact {

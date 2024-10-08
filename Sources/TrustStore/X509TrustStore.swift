@@ -1,34 +1,33 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Foundation
-import GemCommonsKit
 import OpenSSL
 
 struct X509TrustStore: TrustStore {
     // [REQ:gemSpec_Krypt:A_21218]
     // [REQ:gemSpec_eRp_FdV:A_20032-01]
     // Category A: Cross root certificates
-    private let rootCa: X509
-    private let addRoots: [X509]
+    let rootCa: X509
+    let addRoots: [X509]
 
     // Category B: Certificate Authority certificates
-    private let caCerts: [X509]
+    let caCerts: [X509]
 
     // Category C: The VAU certificate
     let vauCert: X509
@@ -36,11 +35,20 @@ struct X509TrustStore: TrustStore {
     // Category D: IDP certificates
     let idpCerts: [X509]
 
-    init(trustAnchor: X509, addRoots _: [X509], caCerts: [X509], eeCerts: [X509]) throws {
+    init(trustAnchor: X509, addRoots: [X509], caCerts: [X509], eeCerts: [X509]) throws {
         rootCa = trustAnchor
 
         // Category A:
-        addRoots = [] // TODO: implement me (when test data has been provided) // swiftlint:disable:this todo
+        // Before adding an addRoot we check if it can be validated by the currently potential trust store.
+        // We expect the incoming addRoots to be chronically ordered (i.e. ["RCA3->RCA4", "RCA4->RCA5", ...])
+        //  so a simple forEach loop is already sufficient here. See also gemSpec_Krypt A_21216.
+        var validatedAddRoots: [X509] = []
+        try addRoots.forEach { addRoot in
+            if try addRoot.validateWith(trustStore: [trustAnchor] + validatedAddRoots) {
+                validatedAddRoots.append(addRoot)
+            }
+        }
+        self.addRoots = validatedAddRoots
 
         // Category B:
         self.caCerts = Self.filter(caCerts: caCerts, trusting: [rootCa] + addRoots)
@@ -53,28 +61,6 @@ struct X509TrustStore: TrustStore {
         self.vauCert = vauCert
         idpCerts = vauAndIdpCerts.idpCerts
     }
-
-    #if DEBUG
-    // For test purposes only, until cross validation of `addRoots` parameter in above initializer is implemented.
-    // Do NOT call this initializer in the productive code.
-    init(trustAnchor: X509, unvalidatedAddRoots: [X509], caCerts: [X509], eeCerts: [X509]) throws {
-        rootCa = trustAnchor
-
-        // Category A:
-        addRoots = unvalidatedAddRoots
-
-        // Category B:
-        self.caCerts = Self.filter(caCerts: caCerts, trusting: [rootCa] + addRoots)
-
-        // Category C and D:
-        let vauAndIdpCerts = Self.filter(eeCerts: eeCerts, trusting: [rootCa] + addRoots + self.caCerts)
-        guard let vauCert = vauAndIdpCerts.vauCerts.first, vauAndIdpCerts.vauCerts.count == 1 else {
-            throw TrustStoreError.noCertificateFound
-        }
-        self.vauCert = vauCert
-        idpCerts = vauAndIdpCerts.idpCerts
-    }
-    #endif
 
     init(trustAnchor: TrustAnchor, certList: CertList) throws {
         // Expect certificates to be DER formatted
@@ -173,7 +159,10 @@ extension X509TrustStore {
                 return false
             }
 
-            let commonNameCheck = !Self.caCertRegex.matches(in: subjectOneLine, range: subjectOneLine.fullRange).isEmpty
+            let commonNameCheck = !Self.caCertRegex.matches(
+                in: subjectOneLine,
+                range: NSRange(location: 0, length: subjectOneLine.count)
+            ).isEmpty
             return chainCheck && commonNameCheck
         }
     }

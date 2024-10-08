@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -107,6 +107,12 @@ class MockErxTaskRepository: ErxTaskRepository {
         deleteChargeItemsCallsCount > 0
     }
 
+    var deleteLocalChargeItemsPublisher: AnyPublisher<Bool, ErxRepositoryError>
+    var deleteLocalChargeItemsCallsCount = 0
+    var deleteLocalChargeItemsCalled: Bool {
+        deleteLocalChargeItemsCallsCount > 0
+    }
+
     var loadLocalChargeItemsPublisher: AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError>
     var loadLocalChargeItemsCallsCount = 0
     var loadLocalChargeItemsCalled: Bool {
@@ -133,7 +139,8 @@ class MockErxTaskRepository: ErxTaskRepository {
          loadRemoteAuditEventsPage: AnyPublisher<PagedContent<[ErxAuditEvent]>, ErxRepositoryError> = failing(),
          findChargeItem: AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> = failing(),
          saveChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing(),
-         deleteChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing()) {
+         deleteChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing(),
+         deleteLocalChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing()) {
         loadLocalAllPublisher = Just(erxTasks)
             .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
@@ -159,6 +166,7 @@ class MockErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
         saveChargeItemsPublisher = saveChargeItems
         deleteChargeItemsPublisher = deleteChargeItems
+        deleteLocalChargeItemsPublisher = deleteLocalChargeItems
     }
 
     var loadRemoteByIdPublisher: AnyPublisher<ErxTask?, ErxRepositoryError>
@@ -264,6 +272,11 @@ class MockErxTaskRepository: ErxTaskRepository {
     func delete(chargeItems _: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         deleteChargeItemsCallsCount += 1
         return deleteChargeItemsPublisher
+    }
+
+    func deleteLocal(chargeItems _: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        deleteLocalChargeItemsCallsCount += 1
+        return deleteLocalChargeItemsPublisher
     }
 
     static func failing() -> AnyPublisher<ErxTask?, ErxRepositoryError> {

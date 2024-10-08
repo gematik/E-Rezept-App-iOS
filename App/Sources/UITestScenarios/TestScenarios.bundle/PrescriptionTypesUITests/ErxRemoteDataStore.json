@@ -1,0 +1,512 @@
+{
+    "listMedicationDispensesForRecordings":
+    {
+        "type": "repeated",
+        "payload": []
+    },
+    "listAllCommunicationsAfterForRecordings":
+    {
+        "type": "repeated",
+        "payload": []
+    },
+    "listAllTasksAfterRecordings":
+    {
+        "type": "repeated",
+        "payload":
+            {
+                "content":
+                [
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": false,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE:-10D}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-10D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.01",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-18D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.02",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-21m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": false,
+                            "hasEmergencyServiceFee": true,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-12D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.03",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-22m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": true,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-12D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.04",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-22m}}"
+                    }
+                ]
+            }
+    },
+    "listDetailedTasksForRecordings":
+    {
+        "type": "repeated",
+        "payload":
+            {
+                "content":
+                [
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": false,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "No Substitution|No Emergency Fee",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.01",
+                        "authoredOn": "{{DATE:-10D}}",
+                        "status": "ready",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.01",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416, Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.01",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
+                    },
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "Substitution|No Emergency Fee",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.02",
+                        "authoredOn": "{{DATE:-18D}}",
+                        "status": "ready",
+                        "expiresOn": "{{DATE:+90D}}",
+                        "acceptedUntil": "{{DATE:+24D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.02",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416, Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.02",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-21m}}"
+                    },
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": false,
+                            "hasEmergencyServiceFee": true,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "No Substitution|Emergency Fee",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.03",
+                        "authoredOn": "{{DATE:-12D}}",
+                        "status": "ready",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+22D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.03",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416, Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.03",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-22m}}"
+                    },
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": true,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "Substitution|Emergency Fee",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.03",
+                        "authoredOn": "{{DATE:-12D}}",
+                        "status": "ready",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+22D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.04",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416, Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.04",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-22m}}"
+                    }
+                ]
+            }
+    }
+}

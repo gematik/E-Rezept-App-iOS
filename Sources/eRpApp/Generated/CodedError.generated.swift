@@ -1608,6 +1608,8 @@ extension RedeemServiceError: CodedError {
                 return [erpErrorCode]
             case let .loginHandler(error):
                 return [erpErrorCode] + error.erpErrorCodeList
+            case .prescriptionAlreadyRedeemed:
+                return [erpErrorCode]
             default:
                 return [erpErrorCode]
         }
@@ -1805,6 +1807,21 @@ extension SecureEnclaveSignatureProviderError: CodedError {
             case .`internal`:
                 return [erpErrorCode]
             default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension ShareSheetDomain.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .shareFailure:
+                return "i-03801"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .shareFailure:
                 return [erpErrorCode]
         }
     }

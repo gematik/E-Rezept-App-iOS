@@ -220,6 +220,9 @@ struct UnimplementedErxTaskRepository: ErxTaskRepository {
     func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         fatalError("delete(chargeItems:) has not been implemented")
     }
+    func deleteLocal(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        fatalError("deleteLocal(chargeItems:) has not been implemented")
+    }
     func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError> {
         fatalError("grantConsent(_:) has not been implemented")
     }

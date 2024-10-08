@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23173.10" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23G93" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AuthEntry" representedClassName="AuthEntry" syncable="YES" codeGenerationType="class">
         <attribute name="gID" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="insuranceID" optional="YES" attributeType="String"/>
@@ -75,6 +75,7 @@
         <attribute name="form" optional="YES" attributeType="String"/>
         <attribute name="fullUrl" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="identifier" optional="YES" attributeType="String"/>
+        <attribute name="lastMedicationDispense" optional="YES" attributeType="String"/>
         <attribute name="lastModified" optional="YES" attributeType="String"/>
         <attribute name="noctuFeeWaiver" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="prescriptionId" optional="YES" attributeType="String"/>

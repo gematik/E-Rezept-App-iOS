@@ -12,6 +12,109 @@
                 "content":
                 [
                     {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.15",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-17",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-7D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.17",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-8D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.16",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
+                    }
+                ]
+            }
+    },
+    "listDetailedTasksForRecordings":
+    {
+        "type": "repeated",
+        "payload":
+            {
+                "content":
+                [
+                    {
                         "flowType":
                         {
                             "pharmacyOnly":

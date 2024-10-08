@@ -314,7 +314,7 @@ orders:
   list:
     - ord_txt_empty_list
     - ord_txt_list
-    - ord_txt_title
+    - msg_txt_title
 orderDetail:
   list:
     - ord_detail_title

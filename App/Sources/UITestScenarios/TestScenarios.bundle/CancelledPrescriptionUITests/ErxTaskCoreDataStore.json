@@ -1,0 +1,90 @@
+{
+    "listAllTasksRecordings":
+    {
+        "type": "queue",
+        "payload":
+        [
+            [
+                {
+                    "identifier": "1234",
+                    "accessCode": "1234567",
+                    "authoredOn": "2024-07-09T08:58:48+00:0009.",
+                    "practitioner":
+                    {
+                        "name": "Adelheid Ulmenwald",
+                        "qualification": "doctor"
+                    },
+                    "prescriptionId": "1234",
+                    "communications":
+                    [],
+                    "flowType":
+                    {
+                        "pharmacyOnly":
+                        {}
+                    },
+                    "author": "Les Moore",
+                    "source": "server",
+                    "medication":
+                    {
+                        "ingredients":
+                        [],
+                        "normSizeCode": "N1",
+                        "dosageForm": "TRS",
+                        "profile": "pzn",
+                        "amount":
+                        {
+                            "denominator":
+                            {
+                                "value": "1"
+                            },
+                            "numerator":
+                            {
+                                "unit": "Stk",
+                                "value": "14"
+                            }
+                        },
+                        "name": "HomöopaTea",
+                        "isVaccine": false,
+                        "drugCategory": "00",
+                        "pzn": "03678010"
+                    },
+                    "medicationDispenses":
+                    [],
+                    "expiresOn": "{{DATE:+2D}}",
+                    "status": "cancelled",
+                    "medicationRequest":
+                    {
+                        "multiplePrescription":
+                        {
+                            "numbering": 0,
+                            "mark": false,
+                            "totalNumber": 0
+                        },
+                        "substitutionAllowed": true,
+                        "coPaymentStatus": "0",
+                        "dosageInstructions": "1-0-2-0-0-3-1",
+                        "bvg": true,
+                        "quantity":
+                        {
+                            "unit": "{Package}",
+                            "value": "15"
+                        },
+                        "hasEmergencyServiceFee": false
+                    },
+                    "organization":
+                    {
+                        "email": "test@mail.com",
+                        "name": "Les Moore",
+                        "phone": "+49-98765431",
+                        "address": "Hauptstrasse 58\n30647, Karlfeld",
+                        "identifier": "9654312"
+                    },
+                    "avsTransactions":
+                    [],
+                    "acceptedUntil": "{{DATE:+1D}}",
+                    "lastModified": "2024-07-09T08:58:48+00:00"
+                }
+            ]
+        ]
+    }
+}

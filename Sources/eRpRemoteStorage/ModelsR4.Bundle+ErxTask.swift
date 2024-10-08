@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import eRpKit
@@ -27,28 +27,41 @@ public enum RemoteStorageBundleParsingError: Swift.Error {
 }
 
 extension ModelsR4.Bundle {
-    func parseErxTasksIDsContainer() throws -> PagedContent<[String]> {
-        PagedContent(content: try parseErxTaskIDs(), next: parseNext())
+    func parseErxTasksContainer() throws -> PagedContent<[ErxTask]> {
+        PagedContent(content: try parseErxTasksFromContainer(), next: parseNext())
     }
 
-    /// Parse and extract all found ErxTask IDs from `Self`
+    /// Parse and extract all found ErxTasks from `Self`
     ///
-    /// - Returns: Array with all found task ID's
+    /// - Returns: Array with all found task's
     /// - Throws: `ModelsR4.Bundle.Error`
-    func parseErxTaskIDs() throws -> [String] {
-        // Collect and parse all ErxTask id's
+    func parseErxTasksFromContainer() throws -> [ErxTask] {
         try entry?.compactMap {
             guard let task = $0.resource?.get(if: ModelsR4.Task.self) else {
-                return nil
-            }
-            guard let status = task.status.value?.rawValue,
-                  ErxTask.Status(rawValue: status) != .cancelled else {
                 return nil
             }
             guard let identifier = task.id?.value?.string else {
                 throw RemoteStorageBundleParsingError.parseError("Could not parse id from task.")
             }
-            return identifier
+
+            guard let status = task.status.value?.rawValue,
+                  let erxTaskStatus = ErxTask.Status(rawValue: status) else {
+                return ErxTask(identifier: identifier, status: .error(.missingStatus))
+            }
+
+            return ErxTask(
+                identifier: identifier,
+                status: erxTaskStatus,
+                flowType: ErxTask.FlowType(rawValue: task.flowTypeCode),
+                accessCode: task.accessCode,
+                fullUrl: $0.fullUrl?.value?.url.absoluteString,
+                authoredOn: task.authoredOn?.value?.description,
+                lastModified: task.lastModified?.value?.description,
+                expiresOn: task.expiryDate,
+                acceptedUntil: task.acceptDate,
+                lastMedicationDispense: task.lastMedicationDispense,
+                prescriptionId: task.prescriptionId
+            )
         } ?? []
     }
 
@@ -88,6 +101,7 @@ extension ModelsR4.Bundle {
                 lastModified: task.lastModified?.value?.description,
                 expiresOn: task.expiryDate,
                 acceptedUntil: task.acceptDate,
+                lastMedicationDispense: task.lastMedicationDispense,
                 prescriptionId: task.prescriptionId
             )
         }
@@ -102,6 +116,7 @@ extension ModelsR4.Bundle {
                 lastModified: task.lastModified?.value?.description,
                 expiresOn: task.expiryDate,
                 acceptedUntil: task.acceptDate,
+                lastMedicationDispense: task.lastMedicationDispense,
                 prescriptionId: task.prescriptionId
             )
         }
@@ -118,6 +133,7 @@ extension ModelsR4.Bundle {
                 lastModified: task.lastModified?.value?.description,
                 expiresOn: task.expiryDate,
                 acceptedUntil: task.acceptDate,
+                lastMedicationDispense: task.lastMedicationDispense,
                 prescriptionId: task.prescriptionId
             )
         }
@@ -136,6 +152,7 @@ extension ModelsR4.Bundle {
             lastModified: task.lastModified?.value?.description,
             expiresOn: task.expiryDate,
             acceptedUntil: task.acceptDate,
+            lastMedicationDispense: task.lastMedicationDispense,
             author: patientReceiptBundle.organization?.author,
             prescriptionId: task.prescriptionId,
             source: .server,
@@ -292,6 +309,20 @@ extension ModelsR4.Task {
                case let Extension.ValueX.date(date) = valueX,
                let acceptDateString = date.value?.description {
                 return acceptDateString
+            }
+            return nil
+        }
+    }
+
+    var lastMedicationDispense: String? {
+        `extension`?.first { anExtension in
+            Workflow.Key.lastMedicationDispense.contains { $0.value == anExtension.url.value?.url.absoluteString }
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case let Extension.ValueX.instant(instantValue) = valueX,
+               let dateString = instantValue.value?.description {
+                return dateString
             }
             return nil
         }

@@ -1,23 +1,22 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
-import DataKit
 import Foundation
 @testable import IDP
 import Nimble
@@ -73,7 +72,7 @@ class JWETests: XCTestCase {
         // sanity check
         XCTAssert(ephemeralPublic == ephemeralPrivate.publicKey)
 
-        let iv = try "OX_3DCbccZztqyLd".decodeBase64URLEncoded()
+        let iv = "OX_3DCbccZztqyLd".decodeBase64URLEncoded()!
 
         let payload =
             "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwiY3R5IjoiTkpXVCIsIng1YyI6WyJNSUlDK2pDQ0FxQ2dBd0lCQWdJSEF3QVRhbGRmVlRBS0JnZ3Foa2pPUFFRREFqQ0JsakVMTUFrR0ExVUVCaE1DUkVVeEh6QWRCZ05WQkFvTUZtZGxiV0YwYVdzZ1IyMWlTQ0JPVDFRdFZrRk1TVVF4UlRCREJnTlZCQXNNUEVWc1pXdDBjbTl1YVhOamFHVWdSMlZ6ZFc1a2FHVnBkSE5yWVhKMFpTMURRU0JrWlhJZ1ZHVnNaVzFoZEdscmFXNW1jbUZ6ZEhKMWEzUjFjakVmTUIwR0ExVUVBd3dXUjBWTkxrVkhTeTFEUVRFd0lGUkZVMVF0VDA1TVdUQWVGdzB4T1RBME1EZ3lNakF3TURCYUZ3MHlOREEwTURneU1UVTVOVGxhTUgweEN6QUpCZ05WQkFZVEFrUkZNUkV3RHdZRFZRUUtEQWhCVDBzZ1VHeDFjekVTTUJBR0ExVUVDd3dKTVRBNU5UQXdPVFk1TVJNd0VRWURWUVFMREFwWU1URTBOREk0TlRNd01RNHdEQVlEVlFRRURBVkdkV05vY3pFTk1Bc0dBMVVFS2d3RVNuVnVZVEVUTUJFR0ExVUVBd3dLU25WdVlTQkdkV05vY3pCYU1CUUdCeXFHU000OUFnRUdDU3NrQXdNQ0NBRUJCd05DQUFSMU5kcnJJOG9LTWl2MHh0VVhGNW9zUzd6YkZJS3hHdC9Cd2lzdWtXb0VLNUdzSjFjQ3lHRXBDSDBzczhKdkQ0T0FISlM4SU1tMS9yTTU5amxpUysxT280SHZNSUhzTUIwR0ExVWREZ1FXQkJTY0VaNUgxVXhTTWhQc09jV1poRzhaUWVXaHZUQU1CZ05WSFJNQkFmOEVBakFBTURBR0JTc2tDQU1EQkNjd0pUQWpNQ0V3SHpBZE1CQU1EbFpsY25OcFkyaGxjblJsTHkxeU1Ba0dCeXFDRkFCTUJERXdId1lEVlIwakJCZ3dGb0FVUkxGTUFWaFVIdHpaTjc3a3NqOHFicVJjaVIwd0lBWURWUjBnQkJrd0Z6QUtCZ2dxZ2hRQVRBU0JJekFKQmdjcWdoUUFUQVJHTUE0R0ExVWREd0VCL3dRRUF3SUhnREE0QmdnckJnRUZCUWNCQVFRc01Db3dLQVlJS3dZQkJRVUhNQUdHSEdoMGRIQTZMeTlsYUdOaExtZGxiV0YwYVdzdVpHVXZiMk56Y0M4d0NnWUlLb1pJemowRUF3SURTQUF3UlFJaEFJUEljYkdqSlF4dVVHYkptQlVpbVd2YlVpN20rU3VYWUJjUkdGeVowaklKQWlBbTFJV0lmdi9nTmMvV213NFpPKzczMFE5QzVkY2NGbk1qbXZiSmU3aTc1Zz09Il19.eyJuand0IjoiZXlKaGJHY2lPaUpDVURJMU5sSXhJaXdpZEhsd0lqb2lTbGRVSWl3aWEybGtJam9pY0hWclgybGtjRjl6YVdjaWZRLmV5SnBjM01pT2lKb2RIUndjem92TDJsa2NDNTZaVzUwY21Gc0xtbGtjQzV6Y0d4cGRHUnVjeTUwYVMxa2FXVnVjM1JsTG1SbElpd2ljbVZ6Y0c5dWMyVmZkSGx3WlNJNkltTnZaR1VpTENKemJtTWlPaUp4UTFSbWJVb3dOWGhSU1RWVWMzWnJVV3RKVkV3eFpsSnlVVVJoZG5oQ1ZsUjNWVzFPTUhCQ1FYUjNJaXdpWTI5a1pWOWphR0ZzYkdWdVoyVmZiV1YwYUc5a0lqb2lVekkxTmlJc0luUnZhMlZ1WDNSNWNHVWlPaUpqYUdGc2JHVnVaMlVpTENKdWIyNWpaU0k2SW1sbFFtczRhMUJsVEdad01tSTJjMEZaVGxKaklpd2lZMnhwWlc1MFgybGtJam9pWlZKbGVtVndkRUZ3Y0NJc0luTmpiM0JsSWpvaWIzQmxibWxrSUdVdGNtVjZaWEIwSWl3aWMzUmhkR1VpT2lKbVNVbDJlbW8zZVZadlpGb3diekZNWVRVeFZDSXNJbkpsWkdseVpXTjBYM1Z5YVNJNkltaDBkSEE2THk5eVpXUnBjbVZqZEM1blpXMWhkR2xyTG1SbEwyVnlaWHBsY0hRaUxDSmxlSEFpT2pFMk1UWTBNVFkzTmpZc0ltbGhkQ0k2TVRZeE5qUXhOalU0Tml3aVkyOWtaVjlqYUdGc2JHVnVaMlVpT2lJeU9HUkhNWFJKVG13eU1GaERjWGxMYkhWRGVWSmxlWGRMWVVRd09UVnBlRjlEWWpCSFQzZDVlbVpqSWl3aWFuUnBJam9pWXpVeU5UYzNOMlkyWmpkaE16UTBNeUo5LmpaUzc2V09NeEIwT0swd29QelFNcWp3Zm9FWk1FcEY1MVBhelFscFhpa0NuZW9kUHZKQVNmdkQ4ODhYRkhuVVY3bVFFQkZrZ056N25NMjhkQ0NYeHdBIn0.IbbCIWFrKpE0L25c8Q-X7h2cr_njnNNKSY_RBSbw9k536p0GE2dDwIDdaNHpduX-T_TXy40DeaewLHtnaTTChg"
@@ -96,7 +95,7 @@ class JWETests: XCTestCase {
     }
 
     func testAESDecryption() throws {
-        let symmetricKeyData = try "QnJVVzdQb0hKR1NhTnlEZG5PcThVQzRkZTMwRmtNcUg".decodeBase64URLEncoded()
+        let symmetricKeyData = "QnJVVzdQb0hKR1NhTnlEZG5PcThVQzRkZTMwRmtNcUg".decodeBase64URLEncoded()!
         let symmetricKey = SymmetricKey(data: symmetricKeyData)
 
         let rawJwe =

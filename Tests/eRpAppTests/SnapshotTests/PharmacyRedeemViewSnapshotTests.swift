@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -30,10 +30,10 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             redeemOption: .onPremise,
             prescriptions: Shared(Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedPrescriptions: Shared(Set(Prescription.Fixtures.prescriptions)),
+            selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
                 initialState: initialState
 
@@ -50,7 +50,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             redeemOption: .shipment,
             prescriptions: Shared(Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedPrescriptions: Shared(Set(Prescription.Fixtures.prescriptions)),
+            selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Maria Vetter",
                 street: "Benzelrather Str. 29",
@@ -63,7 +63,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             ),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
                 initialState: initialState
 
@@ -80,7 +80,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             redeemOption: .shipment,
             prescriptions: Shared(Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedPrescriptions: Shared(Set(Prescription.Fixtures.prescriptions)),
+            selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Vetter",
                 street: "Benzelrather Str. 29",
@@ -90,7 +90,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             ),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
                 initialState: initialState
 
@@ -107,10 +107,10 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             redeemOption: .onPremise,
             prescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedPrescriptions: Shared(Set([Prescription.Dummies.prescriptionSelfPayer])),
+            selectedPrescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
                 initialState: initialState
 

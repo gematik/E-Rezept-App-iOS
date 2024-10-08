@@ -1,21 +1,21 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
 //
-// swiftlint:disable type_body_length
+//
+// swiftlint:disable type_body_length file_length
 
 import Combine
 import Foundation
@@ -158,6 +158,9 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                 self.cloud.listAllTasks(after: lastModified)
                     .mapError(ErrorType.remote)
             }
+            .flatMap { tasks -> AnyPublisher<PagedContent<[ErxTask]>, ErrorType> in
+                self.loadAndUpdateAllDetailedTasks(tasks)
+            }
             .flatMap { tasks -> AnyPublisher<Bool, ErrorType> in
                 self.loadRemoteMedicationDispenses(for: tasks.content)
                     .flatMap {
@@ -180,6 +183,9 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
         cloud.listTasksNextPage(of: previousPage)
             .first() // only read once, we are interested in latest event to fetch all younger events.
             .mapError(ErrorType.remote)
+            .flatMap { tasks -> AnyPublisher<PagedContent<[ErxTask]>, ErrorType> in
+                self.loadAndUpdateAllDetailedTasks(tasks)
+            }
             .flatMap { tasks -> AnyPublisher<Bool, ErrorType> in
                 self.loadRemoteMedicationDispenses(for: tasks.content)
                     .flatMap {
@@ -194,6 +200,51 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                         }
                     }
                     .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+
+    private func loadAndUpdateAllDetailedTasks(_ tasks: PagedContent<[ErxTask]>)
+        -> AnyPublisher<PagedContent<[ErxTask]>, ErrorType> {
+        // Load and update cancelled local ErxTasks
+        let cancelledTaskPublishers = tasks.content
+            .filter { $0.status == .cancelled }
+            .map { task in
+                self.disk.fetchTask(by: task.identifier, accessCode: nil)
+                    .first()
+                    .compactMap {
+                        $0?.cancelled(on: task.lastModified)
+                    }
+                    .mapError(ErrorType.local)
+                    .eraseToAnyPublisher()
+            }
+
+        // Load all other ErxTasks from remote
+        let detailedTasks = cloud.listDetailedTasks(
+            for: PagedContent(
+                content: tasks.content
+                    .filter { $0.status != .cancelled },
+                next: tasks.next
+            )
+        )
+        .first()
+        .mapError(ErrorType.remote)
+        .eraseToAnyPublisher()
+
+        // Early out if no cancelled tasks are present
+        guard !cancelledTaskPublishers.isEmpty else {
+            return detailedTasks
+        }
+
+        return Publishers.MergeMany(cancelledTaskPublishers)
+            .collect()
+            .flatMap { cancelled in
+                detailedTasks.map {
+                    PagedContent(
+                        content: $0.content + cancelled,
+                        next: $0.next
+                    )
+                }
             }
             .eraseToAnyPublisher()
     }
@@ -432,6 +483,12 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
+    public func deleteLocal(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        disk.delete(chargeItems: chargeItems.map(\.sparseChargeItem))
+            .mapError(ErrorType.local)
+            .eraseToAnyPublisher()
+    }
+
     public func fetchConsents() -> AnyPublisher<[ErxConsent], ErrorType> {
         cloud.fetchConsents()
             .mapError(ErrorType.remote)
@@ -451,4 +508,4 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     }
 }
 
-// swiftlint:enable type_body_length
+// swiftlint:enable type_body_length file_length

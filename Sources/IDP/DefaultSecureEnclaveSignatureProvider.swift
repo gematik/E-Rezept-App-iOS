@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -64,7 +64,7 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595,A_21595] Store pairing data
         certificateStorage.set(certificate: certificate)
         certificateStorage.set(keyIdentifier: pairingSession.tempKeyIdentifier)
-        guard let identifier = pairingSession.tempKeyIdentifier.encodeBase64urlsafe().utf8string else {
+        guard let identifier = pairingSession.tempKeyIdentifier.encodeBase64UrlSafe()?.utf8string else {
             return Fail(error: SecureEnclaveSignatureProviderError.fetchingPrivateKey(nil))
                 .eraseToAnyPublisher()
         }
@@ -84,7 +84,7 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
         certificateStorage.set(keyIdentifier: nil)
         // [REQ:gemSpec_IDP_Frontend:A_21595] case deletion
         certificateStorage.set(certificate: nil)
-        guard let keyIdentifier = pairingSession.tempKeyIdentifier.encodeBase64urlsafe().utf8string else {
+        guard let keyIdentifier = pairingSession.tempKeyIdentifier.encodeBase64UrlSafe()?.utf8string else {
             return
         }
         _ = try PrivateKeyContainer.deleteExistingKey(for: keyIdentifier)
@@ -113,7 +113,7 @@ extension DefaultSecureEnclaveSignatureProvider {
             .flatMap { identifier -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> in
                 // [REQ:gemSpec_IDP_Frontend:A_21588] usage as base64 encoded string
                 guard let someIdentifier = identifier,
-                      let identifier = someIdentifier.encodeBase64urlsafe().utf8string else {
+                      let identifier = someIdentifier.encodeBase64UrlSafe()?.utf8string else {
                     return Fail(error: SecureEnclaveSignatureProviderError.internal("keyMissing", nil))
                         .eraseToAnyPublisher()
                 }
@@ -127,7 +127,7 @@ extension DefaultSecureEnclaveSignatureProvider {
 
                 guard let expiresInterval = try? certificate.notAfter().timeIntervalSince1970,
                       let authCertRaw = certificate.derBytes,
-                      let authCert = authCertRaw.encodeBase64urlsafe().utf8string else {
+                      let authCert = authCertRaw.encodeBase64UrlSafe()?.utf8string else {
                     return Fail(error: SecureEnclaveSignatureProviderError.packagingAuthCertificate)
                         .eraseToAnyPublisher()
                 }

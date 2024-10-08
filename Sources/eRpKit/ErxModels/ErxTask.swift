@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Foundation
@@ -31,6 +31,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
         lastModified: String? = nil,
         expiresOn: String? = nil,
         acceptedUntil: String? = nil,
+        lastMedicationDispense: String? = nil,
         redeemedOn: String? = nil,
         avsTransactions: [AVSTransaction] = [],
         author: String? = nil,
@@ -55,6 +56,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
         self.prescriptionId = prescriptionId
         self.expiresOn = expiresOn
         self.acceptedUntil = acceptedUntil
+        self.lastMedicationDispense = lastMedicationDispense
         self.redeemedOn = redeemedOn
         self.author = author
         self.source = source
@@ -96,6 +98,8 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
     /// Date until which a prescription can be redeemed in the pharmacy without paying
     /// the entire prescription. Note that `acceptDate <= expireDate`
     public let acceptedUntil: String?
+
+    public let lastMedicationDispense: String?
     /// Prescription Id of the task
     public let prescriptionId: String?
     /// Access code authorizing for the task
@@ -143,6 +147,33 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
             self.redeemedOn = nil
             status = .ready
         }
+    }
+
+    public func cancelled(on date: String?) -> Self {
+        ErxTask(
+            identifier: identifier,
+            status: .cancelled,
+            flowType: flowType,
+            accessCode: accessCode,
+            fullUrl: fullUrl,
+            authoredOn: authoredOn,
+            lastModified: date,
+            expiresOn: prescriptionId,
+            acceptedUntil: expiresOn,
+            redeemedOn: acceptedUntil,
+            avsTransactions: avsTransactions,
+            author: author,
+            prescriptionId: prescriptionId,
+            source: source,
+            medication: medication,
+            medicationRequest: medicationRequest,
+            medicationSchedule: medicationSchedule,
+            patient: patient,
+            practitioner: practitioner,
+            organization: organization,
+            communications: communications,
+            medicationDispenses: medicationDispenses
+        )
     }
 }
 

@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -35,18 +35,14 @@ struct MedicationView: View {
                 case .ingredient, .compounding:
                     CompoundingMedicationView(store: store)
                 }
-
-                // IngredientView
-                NavigationLink(
-                    item: $store.scope(state: \.destination?.ingredient, action: \.destination.ingredient)
-                ) { store in
-                    IngredientView(store: store)
-                } label: {
-                    EmptyView()
-                }
-                .accessibility(hidden: true)
             }
             .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
+            // IngredientView
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.ingredient, action: \.destination.ingredient)
+            ) { store in
+                IngredientView(store: store)
+            }
         }
     }
 
@@ -302,7 +298,7 @@ struct MedicationView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             // PZN
-            NavigationView {
+            NavigationStack {
                 MedicationView(
                     store: .init(
                         initialState: .init(subscribed: ErxTask.Demo.pznMedication)
@@ -312,7 +308,7 @@ struct MedicationView_Previews: PreviewProvider {
                 )
             }
             // Freetext
-            NavigationView {
+            NavigationStack {
                 MedicationView(
                     store: .init(
                         initialState: .init(subscribed: ErxTask.Demo.freeTextMedication)
@@ -323,7 +319,7 @@ struct MedicationView_Previews: PreviewProvider {
             }.preferredColorScheme(.dark)
 
             // Ingredient/Compounding
-            NavigationView {
+            NavigationStack {
                 MedicationView(
                     store: .init(
                         initialState: .init(subscribed: ErxTask.Demo.compoundingMedication)
@@ -334,7 +330,7 @@ struct MedicationView_Previews: PreviewProvider {
             }.preferredColorScheme(.dark)
 
             // Dispensed Ingredient/Compounding
-            NavigationView {
+            NavigationStack {
                 MedicationView(
                     store: .init(
                         initialState: .init(

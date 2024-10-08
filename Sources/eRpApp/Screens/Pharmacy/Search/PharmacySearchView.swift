@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -105,16 +105,17 @@ struct PharmacySearchView: View {
                 Spacer(minLength: 0)
 
                 if store.inRedeemProcess {
-                    NavigationLink(item: $store.scope(
-                        state: \.destination?.pharmacyMapSearch,
-                        action: \.destination.pharmacyMapSearch
-                    )) { store in
-                        PharmacySearchMapView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .hidden()
-                    .accessibility(hidden: true)
+                    Rectangle()
+                        .frame(width: 0, height: 0, alignment: .center)
+                        .navigationDestination(
+                            item: $store.scope(
+                                state: \.destination?.pharmacyMapSearch,
+                                action: \.destination.pharmacyMapSearch
+                            )
+                        ) { store in
+                            PharmacySearchMapView(store: store)
+                        }
+                        .accessibility(hidden: true)
                 } else {
                     Rectangle()
                         .frame(width: 0, height: 0, alignment: .center)
@@ -122,7 +123,7 @@ struct PharmacySearchView: View {
                             state: \.destination?.pharmacyMapSearch,
                             action: \.destination.pharmacyMapSearch
                         )) { store in
-                            NavigationView {
+                            NavigationStack {
                                 PharmacySearchMapView(store: store)
                                     .navigationViewStyle(StackNavigationViewStyle())
                             }
@@ -130,53 +131,8 @@ struct PharmacySearchView: View {
                         .hidden()
                         .accessibility(hidden: true)
                 }
-
-                NavigationLink(
-                    item: $store.scope(
-                        state: \.destination?.pharmacyDetail,
-                        action: \.destination.pharmacyDetail
-                    )
-                ) { store in
-                    PharmacyDetailView(store: store)
-                } label: {
-                    EmptyView()
-                }
-                .hidden()
-                .accessibility(hidden: true)
-
-                NavigationLink(
-                    item: $store.scope(
-                        state: \.destination?.redeemViaAVS,
-                        action: \.destination.redeemViaAVS
-                    )
-                ) { store in
-                    PharmacyRedeemView(store: store)
-                } label: {
-                    EmptyView()
-                }
-                .hidden()
-                .accessibility(hidden: true)
-
-                NavigationLink(
-                    item: $store.scope(
-                        state: \.destination?.redeemViaErxTaskRepository,
-                        action: \.destination.redeemViaErxTaskRepository
-                    )
-                ) { store in
-                    PharmacyRedeemView(store: store)
-                } label: {
-                    EmptyView()
-                }
-                .hidden()
-                .accessibility(hidden: true)
             }
-            .smallSheet($store.scope(
-                state: \.destination?.pharmacyFilter,
-                action: \.destination.pharmacyFilter
-            )) { store in
-                PharmacySearchFilterView(store: store)
-                    .accentColor(Colors.primary600)
-            }
+            .destinations(store: $store)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if store.inRedeemProcess {
@@ -195,7 +151,6 @@ struct PharmacySearchView: View {
             .onSubmit(of: .search) {
                 store.send(.performSearch, animation: .default)
             }
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             .task {
                 await store.send(.task).finish()
             }
@@ -264,6 +219,43 @@ struct PharmacySearchView: View {
                 accessibilityIdentifier: option.rawValue
             )
         }
+    }
+}
+
+extension View {
+    func destinations(store: Perception.Bindable<StoreOf<PharmacySearchDomain>>) -> some View {
+        navigationDestination(
+            item: store.scope(
+                state: \.destination?.pharmacyDetail,
+                action: \.destination.pharmacyDetail
+            )
+        ) { store in
+            PharmacyDetailView(store: store)
+        }
+        .navigationDestination(
+            item: store.scope(
+                state: \.destination?.redeemViaAVS,
+                action: \.destination.redeemViaAVS
+            )
+        ) { store in
+            PharmacyRedeemView(store: store)
+        }
+        .navigationDestination(
+            item: store.scope(
+                state: \.destination?.redeemViaErxTaskRepository,
+                action: \.destination.redeemViaErxTaskRepository
+            )
+        ) { store in
+            PharmacyRedeemView(store: store)
+        }
+        .smallSheet(store.scope(
+            state: \.destination?.pharmacyFilter,
+            action: \.destination.pharmacyFilter
+        )) { store in
+            PharmacySearchFilterView(store: store)
+                .accentColor(Colors.primary600)
+        }
+        .alert(store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
     }
 }
 
@@ -420,12 +412,12 @@ extension PharmacySearchView {
 
 struct PharmacySearchView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             PharmacySearchView(store: PharmacySearchDomain.Dummies.store)
         }
         .accentColor(Colors.primary700)
 
-        NavigationView {
+        NavigationStack {
             PharmacySearchView(
                 store: PharmacySearchDomain.Dummies.storeOf(PharmacySearchDomain.Dummies.stateSearchResultOk)
             )

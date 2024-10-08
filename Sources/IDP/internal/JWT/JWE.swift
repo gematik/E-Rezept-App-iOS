@@ -1,24 +1,23 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
 import CryptoKit
-import DataKit
 import Foundation
 import OpenSSL
 
@@ -94,12 +93,22 @@ public struct JWE {
             throw Error.invalidJWE
         }
 
+        guard
+            let header = elements[0].decodeBase64URLEncoded(),
+            let wrappedKey = elements[1].decodeBase64URLEncoded(),
+            let iv = elements[2].decodeBase64URLEncoded(), // swiftlint:disable:this identifier_name
+            let ciphertext = elements[3].decodeBase64URLEncoded(),
+            let tag = elements[4].decodeBase64URLEncoded()
+        else {
+            throw Error.encodingError
+        }
+
         let backing = Backing(
-            header: try elements[0].decodeBase64URLEncoded(),
-            wrappedKey: try elements[1].decodeBase64URLEncoded(),
-            iv: try elements[2].decodeBase64URLEncoded(),
-            ciphertext: try elements[3].decodeBase64URLEncoded(),
-            tag: try elements[4].decodeBase64URLEncoded()
+            header: header,
+            wrappedKey: wrappedKey,
+            iv: iv,
+            ciphertext: ciphertext,
+            tag: tag
         )
 
         let payload: Data
@@ -210,7 +219,7 @@ extension JWE {
 extension JWK {
     /// Initializer for creating a  JWK (JSON web key) from a brainpool curve's public key
     /// - Parameter publicKey: A brainpoolP256r1 public key
-    /// - Throws: When encoding the coordinates from the public key falis
+    /// - Throws: When encoding the coordinates from the public key fails
     /// - Returns: A JWK
     static func from(brainpoolP256r1 publicKey: BrainpoolP256r1.KeyExchange.PublicKey) throws -> Self {
         // Contains  04 || x || y
@@ -220,8 +229,8 @@ extension JWK {
         let rangeX: Range<Data.Index> = 1 ..< 33
         let rangeY: Range<Data.Index> = 33 ..< 65
 
-        guard let xCoordinate = try raw().subdata(in: rangeX).encodeBase64urlsafe().utf8string,
-              let yCoordinate = try raw().subdata(in: rangeY).encodeBase64urlsafe().utf8string else {
+        guard let xCoordinate = try raw().subdata(in: rangeX).encodeBase64UrlSafe()?.utf8string,
+              let yCoordinate = try raw().subdata(in: rangeY).encodeBase64UrlSafe()?.utf8string else {
             throw JWE.Error.encodingError
         }
 
@@ -237,24 +246,19 @@ extension JWE {
     }
 }
 
-extension Data {
-    // TODO: Workaround for bug in DataKit swiftlint:disable:this todo
-    func safeEncodeBase64urlsafe() -> Data {
-        if count > 2 {
-            return encodeBase64urlsafe()
-        }
-        return self
-    }
-}
-
 extension JWE.Backing {
     private static let dot = Data([0x2E]) // "."
 
     func encoded() -> Data {
-        header.safeEncodeBase64urlsafe() + Self.dot +
-            wrappedKey.safeEncodeBase64urlsafe() + Self.dot +
-            iv.safeEncodeBase64urlsafe() + Self.dot +
-            ciphertext.safeEncodeBase64urlsafe() + Self.dot +
-            tag.safeEncodeBase64urlsafe()
+        let encodedHeader = header.encodeBase64UrlSafe() ?? Data()
+        let encodedWrappedKey = wrappedKey.encodeBase64UrlSafe() ?? Data()
+        let encodedIV = iv.encodeBase64UrlSafe() ?? Data()
+        let encodedCiphertext = ciphertext.encodeBase64UrlSafe() ?? Data()
+        let encodedTag = tag.encodeBase64UrlSafe() ?? Data()
+        return encodedHeader + Self.dot +
+            encodedWrappedKey + Self.dot +
+            encodedIV + Self.dot +
+            encodedCiphertext + Self.dot +
+            encodedTag
     }
 }

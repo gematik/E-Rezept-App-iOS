@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -98,8 +98,6 @@ struct RegisterAuthenticationDomain {
 
         case comparePasswords
         case enterButtonTapped
-        case saveSelection
-        case saveSelectionSuccess
         case continueBiometry
         case nextPage
         case alert(PresentationAction<Alert>)
@@ -185,16 +183,16 @@ struct RegisterAuthenticationDomain {
                 }
                 return .none
             case .binding(\.passwordA):
-                // [REQ:BSI-eRp-ePA:O.Pass_2#3] Testing the acutal password strength
+                // [REQ:BSI-eRp-ePA:O.Pass_2#3] Testing the actual password strength
                 state.passwordStrength = passwordStrengthTester.passwordStrength(for: state.passwordA)
-                state.showPasswordErrorMessage = false
+                if state.passwordA.isEmpty { return .none }
                 return .run { [timeout = state.timeout] send in
                     try await schedulers.main.sleep(for: timeout)
                     await send(.comparePasswords)
                 }
                 .animation()
             case .binding(\.passwordB):
-                state.showPasswordErrorMessage = false
+                if state.passwordB.isEmpty { return .none }
                 return .run { [timeout = state.timeout] send in
                     try await schedulers.main.sleep(for: timeout)
                     await send(.comparePasswords)
@@ -202,9 +200,15 @@ struct RegisterAuthenticationDomain {
                 .animation()
             case .comparePasswords:
                 if state.hasValidPasswordEntries {
+                    // Only dismiss keyboard when verdict changes from "error" to "valid"
+                    // Don't dismiss keyboard when verdict was already "valid" so user can modify the password
+                    if state.showPasswordErrorMessage {
+                        UIApplication.shared.dismissKeyboard()
+                    }
                     state.showPasswordErrorMessage = false
                     state.showNoSelectionMessage = false
-                    UIApplication.shared.dismissKeyboard()
+                } else if state.passwordA.isEmpty, state.passwordB.isEmpty {
+                    state.showPasswordErrorMessage = false
                 } else {
                     state.showPasswordErrorMessage = true
                 }
@@ -215,35 +219,11 @@ struct RegisterAuthenticationDomain {
                     await send(.comparePasswords)
                 }
                 .animation()
-            case .saveSelection:
-                guard state.hasValidSelection,
-                      state.selectedSecurityOption != .unsecured else {
-                    if state.selectedSecurityOption == .password {
-                        state.showPasswordErrorMessage = true
-                        state.showNoSelectionMessage = false
-                    } else {
-                        state.showPasswordErrorMessage = false
-                        state.showNoSelectionMessage = true
-                    }
-                    return .none
-                }
-
-                if case .password = state.selectedSecurityOption {
-                    guard let success = try? appSecurityManager
-                        .save(password: state.passwordA),
-                        success == true else {
-                        state.showNoSelectionMessage = true
-                        return .none
-                    }
-                    userDataStore.set(appSecurityOption: state.selectedSecurityOption)
-                    return Effect.send(.saveSelectionSuccess)
-                } else {
-                    userDataStore.set(appSecurityOption: state.selectedSecurityOption)
-                    return Effect.send(.saveSelectionSuccess)
-                }
-            case .saveSelectionSuccess,
-                 .continueBiometry,
-                 .nextPage,
+            case .nextPage:
+                UIApplication.shared.dismissKeyboard()
+                // handled by OnboardingDomain
+                return .none
+            case .continueBiometry,
                  .binding,
                  .alert:
                 // handled by OnboardingDomain

@@ -1,20 +1,20 @@
 // swiftlint:disable:this file_name
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Foundation
@@ -65,79 +65,105 @@ public enum Workflow {
         case v1_1_1
         /// https://simplifier.net/packages/de.gematik.erezept-workflow.r4/1.2.0
         case v1_2_0
+        /// https://simplifier.net/packages/de.gematik.erezept-workflow.r4/1.3.0
+        case v1_3_0
     }
 
     /// Supported Keys of GEM `Workflow` definitions
     public enum Key {
+        /// indicates when that last medication dispense has been created
+        public static let lastMedicationDispense: [Version: String] = [
+            .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_LastMedicationDispense",
+        ]
+
         /// Prescription Type
         public static let prescriptionTypeKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/StructureDefinition/PrescriptionType",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
+            .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
         ]
         /// Flow Type
         public static let flowTypeKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/CodeSystem/Flowtype",
             .v1_2_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
+            .v1_3_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
         ]
         /// Document Type
         public static let documentTypeKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/CodeSystem/Documenttype",
             .v1_2_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
+            .v1_3_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
         ]
         /// Prescription ID
         public static let prescriptionIdKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/NamingSystem/PrescriptionID",
             .v1_2_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+            .v1_3_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
         ]
         /// Access Code
         public static let accessCodeKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/NamingSystem/AccessCode",
             .v1_2_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
+            .v1_3_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
         ]
         /// Accept Date
         public static let acceptDateKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/StructureDefinition/AcceptDate",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AcceptDate",
+            .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AcceptDate",
         ]
         /// Expiry Date
         public static let expiryDateKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ExpiryDate",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_ExpiryDate",
+            .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_ExpiryDate",
         ]
         /// Telematik ID
         public static let telematikIdKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/NamingSystem/TelematikID",
             .v1_2_0: "https://gematik.de/fhir/sid/telematik-id",
+            .v1_3_0: "https://gematik.de/fhir/sid/telematik-id",
         ]
         /// Communication Reply
         public static let communicationReply: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationReply",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Reply",
+            .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Reply",
         ]
         /// Communication Dispense Request
         public static let communicationDispReq: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
+            .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
         ]
         /// Communication Info Request
         public static let communicationInfoReq: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationInfoReq",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_InfoReq",
+            .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_InfoReq",
         ]
         /// Communication Representative
         public static let communicationRepresentative: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationRepresentative",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Representative",
+            .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Representative",
         ]
         /// Insured Person ID
         public static let kvIDKeys: [Version: String] = [
             .v1_1_1: "http://fhir.de/NamingSystem/gkv/kvid-10",
             .v1_2_0: "http://fhir.de/sid/gkv/kvid-10",
+            .v1_3_0: "http://fhir.de/sid/gkv/kvid-10",
+        ]
+        /// Insured Person ID
+        public static let pkvIDKeys: [Version: String] = [
+            .v1_2_0: "http://fhir.de/sid/pkv/kvid-10",
+            .v1_3_0: "http://fhir.de/sid/pkv/kvid-10",
         ]
         /// Order ID
         public static let orderIdKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/NamingSystem/OrderID",
             .v1_2_0: "https://gematik.de/fhir/NamingSystem/OrderID",
+            .v1_3_0: "https://gematik.de/fhir/NamingSystem/OrderID",
         ]
     }
 }

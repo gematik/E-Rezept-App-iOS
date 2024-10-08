@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import eRpKit
@@ -138,6 +138,19 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 expect(sortedIds)
                     .to(equal(["5e00e907-1e4f-11b2-80be-b806a73c0cd0", "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"]))
             })
+
+        sut.listDetailedTasks(
+            for: PagedContent(
+                content: [
+                    ErxTask(identifier: "5e00e907-1e4f-11b2-80be-b806a73c0cd0", status: .ready),
+                    ErxTask(identifier: "61704e3f-1e4f-11b2-80f4-b806a73c0cd0", status: .ready),
+                ],
+                next: nil
+            )
+        )
+        .test(expectations: { erxTasks in
+            expect(erxTasks.content.count).to(equal(2))
+        })
 
         // test if all subs have been called
         expect(counter) == 3
@@ -642,7 +655,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
     private var expectedChargeConsentRequestBody: Data = {
         String(
-            "{\"category\":[{\"coding\":[{\"code\":\"CHARGCONS\",\"system\":\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/CodeSystem\\/GEM_ERPCHRG_CS_ConsentType\"}]}],\"dateTime\":\"2023-02-15\",\"id\":\"CHARGCONS-X764228532\",\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/StructureDefinition\\/GEM_ERPCHRG_PR_Consent|1.0\"]},\"patient\":{\"identifier\":{\"system\":\"http:\\/\\/fhir.de\\/NamingSystem\\/gkv\\/kvid-10\",\"value\":\"X764228532\"}},\"policyRule\":{\"coding\":[{\"code\":\"OPTIN\",\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/v3-ActCode\"}]},\"resourceType\":\"Consent\",\"scope\":{\"coding\":[{\"code\":\"patient-privacy\",\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/consentscope\"}]},\"status\":\"active\"}"
+            "{\"category\":[{\"coding\":[{\"code\":\"CHARGCONS\",\"system\":\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/CodeSystem\\/GEM_ERPCHRG_CS_ConsentType\"}]}],\"dateTime\":\"2023-02-15\",\"id\":\"CHARGCONS-X764228532\",\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/StructureDefinition\\/GEM_ERPCHRG_PR_Consent|1.0\"]},\"patient\":{\"identifier\":{\"system\":\"http:\\/\\/fhir.de\\/sid\\/pkv\\/kvid-10\",\"value\":\"X764228532\"}},\"policyRule\":{\"coding\":[{\"code\":\"OPTIN\",\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/v3-ActCode\"}]},\"resourceType\":\"Consent\",\"scope\":{\"coding\":[{\"code\":\"patient-privacy\",\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/consentscope\"}]},\"status\":\"active\"}"
         ).data(using: .utf8)!
     }()
 

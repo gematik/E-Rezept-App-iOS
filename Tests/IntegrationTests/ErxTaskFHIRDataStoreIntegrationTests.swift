@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -143,14 +143,9 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         expect(didLoadCommunications).to(beTrue())
     }
 
-    // Temporarily deactivated, since the test is only configured for RUDev but not working there
-    func deactivated_testConsentFlow() throws {
+    func testConsentFlow() throws {
         guard let signer = environment.brainpool256r1Signer else {
             throw XCTSkip("Skip test because no signing entity available")
-        }
-        guard environment.appConfiguration == integrationTestsEnvironmentRUDev.appConfiguration
-        else {
-            throw XCTSkip("Skip test because it`s only configured for RUDev")
         }
 
         let didLogin = login(with: signer)
@@ -160,7 +155,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         cloudStorage.revokeConsent(.chargcons)
             .first()
             .replaceError(with: false)
-            .test(expectations: { _ in })
+            .test(timeout: 60.0, expectations: { _ in })
 
         let consent = grantConsent()
         expect(consent?.category).to(equal(.chargcons))
@@ -174,34 +169,6 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
 
         let consentsEmpty = getConsents()
         expect(consentsEmpty).to(beEmpty())
-    }
-
-    func testRedeemFlow() throws {
-        guard let signer = environment.brainpool256r1Signer else {
-            throw XCTSkip("Skip test because no signing entity available")
-        }
-        guard environment.appConfiguration == integrationTestsEnvironmentTU.appConfiguration
-        else {
-            throw XCTSkip("Skip test because it`s only configured for TU")
-            // NOTE: If this test fails, it might be because we cannot assure that a task is available for X114428530.
-            // Before, this was guaranteed by calling a Jenkins job ERX-FD-CLI-NG from the Jenkins-Pipeline.
-            // That job has been abandoned and cannot be used anymore to properly setup this test.
-        }
-
-        let didLogin = login(with: signer)
-        expect(didLogin).to(beTrue())
-
-        let receivedErxTasks = loadAllTasks()
-        expect(receivedErxTasks.count).to(beGreaterThan(0))
-
-        let erxTasks = receivedErxTasks.filter { $0.status == .ready }
-        guard let erxTask = erxTasks.first else {
-            fail("There is no task at the fachdienst that can be used to redeem it for the integration test")
-            return
-        }
-
-        let didSendRedeem = redeem(erxTask)
-        expect(didSendRedeem).to(beTrue())
     }
 
     func redeem(_ erxTask: ErxTask) -> Bool {

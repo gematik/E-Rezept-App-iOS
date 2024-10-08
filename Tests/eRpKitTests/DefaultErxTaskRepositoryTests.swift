@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -52,6 +52,18 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
                     .eraseToAnyPublisher()
             } else {
                 return Fail(error: LocalStoreError.notImplemented).eraseToAnyPublisher()
+            }
+        }
+
+        mockRemoteDataStore.listDetailedTasksForClosure = { sparseTask in
+            if sparseTask.next == Fixtures.erxTaskPageA.next {
+                return Just(Fixtures.erxTaskPageA).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            } else if sparseTask.next == Fixtures.erxTaskPageB.next {
+                return Just(Fixtures.erxTaskPageB).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            } else if sparseTask.next == Fixtures.erxTaskPageC.next {
+                return Just(Fixtures.erxTaskPageC).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            } else {
+                return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
             }
         }
 
@@ -115,6 +127,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         let expectedCallOrder = [
             "lastModifiedErxTaskLocal",
             "listTasksRemote",
+            "listDetailedTasksRemote",
             "listMDRemote",
             "saveMDLocal",
             "saveTasksLocal",
@@ -132,6 +145,11 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         }
         mockRemoteDataStore.listAllTasksAfterClosure = { _ in
             actualCallOrder.append("listTasksRemote")
+            return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
+                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+        }
+        mockRemoteDataStore.listDetailedTasksForClosure = { _ in
+            actualCallOrder.append("listDetailedTasksRemote")
             return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
                 .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
         }
@@ -198,6 +216,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         let expectedCallOrder = [
             "lastModifiedErxTaskLocal",
             "listTasksRemote",
+            "listDetailedTasksRemote",
             "listMDRemote",
             "saveMDLocal",
             "saveTasksLocal",
@@ -218,6 +237,11 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         }
         mockRemoteDataStore.listAllTasksAfterClosure = { _ in
             actualCallOrder.append("listTasksRemote")
+            return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
+                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+        }
+        mockRemoteDataStore.listDetailedTasksForClosure = { _ in
+            actualCallOrder.append("listDetailedTasksRemote")
             return Just(PagedContent(content: [Fixtures.taskCompleted], next: nil))
                 .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
         }
@@ -400,6 +424,99 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         expect(actualDeleteCalls).to(equal(1))
     }
 
+    func testUpdateCancelledTask() async throws {
+        let mockLocalDataStore = MockErxLocalDataStore()
+        let mockRemoteDataStore = MockErxRemoteDataStore()
+        var actualCallOrder = [String]()
+        let profilePublisher = Just(Profile(name: "Profile"))
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+
+        let sut = DefaultErxTaskRepository(
+            disk: mockLocalDataStore,
+            cloud: mockRemoteDataStore,
+            medicationScheduleRepository: mockMedicationScheduleRepository,
+            profile: profilePublisher
+        )
+
+        let task = ErxTask(identifier: "1234-5678-9098", status: .ready)
+
+        // tasks
+        mockLocalDataStore.fetchLatestLastModifiedForErxTasksClosure = {
+            actualCallOrder.append("lastModifiedErxTaskLocal")
+            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        mockRemoteDataStore.listAllTasksAfterClosure = { _ in
+            actualCallOrder.append("listAllTasksRemote")
+            return Just(PagedContent(content: [ErxTask(identifier: task.identifier, status: .cancelled)], next: nil))
+                .setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
+        }
+
+        mockRemoteDataStore.listDetailedTasksForClosure = { _ in
+            actualCallOrder.append("listDetailedTasksRemote")
+            return Just(PagedContent(
+                content: [task],
+                next: nil
+            ))
+                .setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+        }
+
+        mockLocalDataStore.fetchTaskByAccessCodeClosure = { _, _ in
+            actualCallOrder.append("fetchTaskByAccessCodeLocal")
+            return Just(task)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        }
+
+        mockLocalDataStore.saveTasksUpdateProfileLastAuthenticatedClosure = { _, _ in
+            actualCallOrder.append("saveTasksLocal")
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        mockLocalDataStore.listAllTasksClosure = {
+            actualCallOrder.append("listAllTasksLocal")
+            return Just([]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        // communications
+        mockLocalDataStore.fetchLatestTimestampForCommunicationsClosure = {
+            actualCallOrder.append("latestTimestampCommunicationLocal")
+            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+        mockRemoteDataStore.listAllCommunicationsAfterForClosure = { _, _ in
+            actualCallOrder.append("listAllCommunicationsRemote")
+            return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+        }
+        mockLocalDataStore.saveCommunicationsClosure = { _ in
+            actualCallOrder.append("saveCommunicationsLocal")
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        // audit events
+        mockRemoteDataStore.listAllAuditEventsAfterForClosure = { _, _ in
+            actualCallOrder.append("listAllAuditEventsRemote")
+            return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
+        }
+
+        let expectedCallOrder = [
+            "lastModifiedErxTaskLocal",
+            "listAllTasksRemote",
+            "fetchTaskByAccessCodeLocal",
+            "listDetailedTasksRemote",
+            "saveTasksLocal",
+            "latestTimestampCommunicationLocal",
+            "listAllCommunicationsRemote",
+            "saveCommunicationsLocal",
+            "listAllTasksLocal",
+        ]
+
+        let result = try awaitPublisher(sut.loadRemoteAll(for: nil))
+        expect(result) == []
+        expect(actualCallOrder) == expectedCallOrder
+    }
+
     actor TestActor {
         private var callCount = 0
 
@@ -481,6 +598,7 @@ extension DefaultErxTaskRepositoryTests {
         static let erxTask7 = ErxTask(identifier: "task7", status: .ready)
         static let erxTask8 = ErxTask(identifier: "task8", status: .ready)
         static let erxTask9 = ErxTask(identifier: "task9", status: .ready)
+
         static let scannedTaskWithMedicationSchedule = ErxTask(
             identifier: "scannedTask",
             status: .ready,

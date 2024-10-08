@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import CombineSchedulers
@@ -52,6 +52,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
             .frame(width: 320, height: 1100)
 
         assertSnapshots(of: sut, as: snapshotModi())
+        assertSnapshots(of: sut, as: snapshotModiContentSizeXL())
     }
 
     func testPrescriptionDetail_WithSubstitutionAllowedPrescription() {
@@ -108,6 +109,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibilityXL())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
@@ -152,7 +154,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testPrescriptionDetail_TechnicalInformations() {
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PrescriptionDetailView.TechnicalInformationsView(
                 store: Store(initialState: .init(
                     taskId: "34235f983-1e67-321g-8955-63bf44e44fb8",
@@ -169,7 +171,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testPrescriptionDetail_PatientView() {
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PrescriptionDetailView.PatientView(
                 store: Store(initialState: .init(patient: ErxTask.Fixtures.demoPatient)) {
                     EmptyReducer()
@@ -183,7 +185,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testPrescriptionDetail_PractitionerView() {
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PrescriptionDetailView.PractitionerView(
                 store: Store(initialState: .init(practitioner: ErxTask.Fixtures.demoPractitioner)) {
                     EmptyReducer()
@@ -197,7 +199,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testPrescriptionDetail_OrganizationView() {
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PrescriptionDetailView.OrganizationView(
                 store: Store(initialState: .init(organization: ErxTask.Fixtures.demoOrganization)) {
                     EmptyReducer()
@@ -211,7 +213,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testPrescriptionDetail_AccidentInfoView() {
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PrescriptionDetailView.AccidentInfoView(
                 store: Store(initialState: .init(accidentInfo: ErxTask.Fixtures.demoAccidentInfo)) {
                     EmptyReducer()
@@ -230,7 +232,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let expiresBegin = "26.03.2024"
         let expiresEnd = "24.06.2024"
 
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PrescriptionDetailView.HeaderView.PrescriptionValidityView(
                 store: Store(initialState: .init(
                     acceptBeginDisplayDate: acceptBegin,
@@ -253,7 +255,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
         let oneDay: TimeInterval = 60 * 60 * 24
         let uiDateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
 
-        let sut = NavigationView {
+        let sut = NavigationStack {
             PrescriptionDetailView.HeaderView.PrescriptionValidityView(
                 store: Store(initialState: .init(
                     acceptBeginDisplayDate: uiDateFormatter

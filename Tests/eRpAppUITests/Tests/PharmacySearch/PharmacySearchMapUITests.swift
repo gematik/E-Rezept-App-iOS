@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Foundation
@@ -34,6 +34,7 @@ final class PharmacySearchMapUITests: XCTestCase {
 
     var notificationAlertMonitor: NSObjectProtocol?
 
+    @MainActor
     override func setUp() {
         super.setUp()
 
@@ -54,6 +55,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         _ = app.wait(for: .runningForeground, timeout: 10.0)
     }
 
+    @MainActor
     func testPharmacySearchMapFilterOptions() {
         let tabBar = TabBarScreen(app: app)
 
@@ -70,6 +72,7 @@ final class PharmacySearchMapUITests: XCTestCase {
             .tapFilterOption("Aktuell geöffnet")
     }
 
+    @MainActor
     func testAllowLocation() throws {
         if #available(iOS 16.4, *) {
             XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 52.52291, longitude: 13.38757))
@@ -91,6 +94,7 @@ final class PharmacySearchMapUITests: XCTestCase {
             .waitForExistence(timeout: 5))
     }
 
+    @MainActor
     func testDeniedLocation() {
         let tabBar = TabBarScreen(app: app)
 
@@ -109,6 +113,7 @@ final class PharmacySearchMapUITests: XCTestCase {
             .exists)
     }
 
+    @MainActor
     func testCloseFullMap() {
         let tabBar = TabBarScreen(app: app)
 
@@ -135,6 +140,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label like 'Rezepte'")).element.exists)
     }
 
+    @MainActor
     func testCloseMap() {
         let tabBar = TabBarScreen(app: app)
 
@@ -156,6 +162,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label like 'Apothekensuche'")).element.exists)
     }
 
+    @MainActor
     func testTapOnAnnotation() {
         let tabBar = TabBarScreen(app: app)
 
@@ -180,6 +187,7 @@ final class PharmacySearchMapUITests: XCTestCase {
             .element.waitForExistence(timeout: 5))
     }
 
+    @MainActor
     func testTapOnClusterAnnotation() {
         let tabBar = TabBarScreen(app: app)
 
@@ -206,6 +214,7 @@ final class PharmacySearchMapUITests: XCTestCase {
             .element.waitForExistence(timeout: 5))
     }
 
+    @MainActor
     func testTapOnSearchHere() {
         let tabBar = TabBarScreen(app: app)
 
@@ -236,6 +245,7 @@ final class PharmacySearchMapUITests: XCTestCase {
             .count == 3)
     }
 
+    @MainActor
     func testGoToUser() throws {
         if #available(iOS 16.4, *) {
             XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 52.52291, longitude: 13.38757))
@@ -270,6 +280,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         expect(currentLocationAnnotation.isHittable).toEventually(beTrue())
     }
 
+    @MainActor
     private func setupLocationAlertForAcceptance() {
         notificationAlertMonitor = addUIInterruptionMonitor(
             withDescription: "Location Permission Alert"
@@ -288,6 +299,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         }
     }
 
+    @MainActor
     private func setupLocationAlertForDenial() {
         notificationAlertMonitor = addUIInterruptionMonitor(
             withDescription: "Location Permission Alert"

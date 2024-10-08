@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -149,13 +149,13 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
         }
 
-        sut.fetchAllTaskIDs(after: nil)
+        sut.fetchAllTasks(after: nil)
             .test { error in
                 fail("unexpected fail with error: \(error)")
-            } expectations: { taskIDs in
-                expect(taskIDs.content.count) == 2
-                expect(taskIDs.content[0]) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
-                expect(taskIDs.content[1]) == "5e00e907-1e4f-11b2-80be-b806a73c0cd0"
+            } expectations: { tasks in
+                expect(tasks.content.count) == 2
+                expect(tasks.content[0].identifier) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
+                expect(tasks.content[1].identifier) == "5e00e907-1e4f-11b2-80be-b806a73c0cd0"
             }
         expect(counter) == 1
     }
@@ -177,11 +177,11 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
         }
 
-        sut.fetchAllTaskIDs(after: lastModified)
+        sut.fetchAllTasks(after: lastModified)
             .test { error in
                 fail("unexpected fail with error: \(error)")
-            } expectations: { taskIDs in
-                expect(taskIDs.content.count) == 2
+            } expectations: { tasks in
+                expect(tasks.content.count) == 2
             }
         expect(counter) == 1
     }

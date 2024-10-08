@@ -1,23 +1,22 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import AVS
-import DataKit
 @testable import eRpFeatures
 import eRpKit
 import Foundation
@@ -88,7 +87,7 @@ extension OrderRequest {
         static let certificates = [x509]
 
         static let x509: X509 = {
-            let derBytes = try! Base64.decode(string: derBase64Cert)
+            let derBytes = Data(base64Encoded: derBase64Cert)!
             return try! X509(der: derBytes)
         }()
 

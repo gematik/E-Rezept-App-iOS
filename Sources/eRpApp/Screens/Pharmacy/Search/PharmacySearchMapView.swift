@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -90,13 +90,18 @@ struct PharmacySearchMapView: View {
                             HStack {
                                 Spacer()
                                 Button(action: { store.send(.goToUser) }, label: {
-                                    Image(systemName: SFSymbolName.location)
-                                        .font(.system(size: 16, weight: .bold))
-                                        .foregroundColor(Colors.primary)
-                                        .padding(16)
-                                        .background(Circle().foregroundColor(Colors.systemColorWhite))
-                                        .padding(.all, 16)
-                                        .shadow(color: Colors.separator, radius: 4)
+                                    Image(systemName: store.pharmacyFilterOptions
+                                        .contains(.currentLocation) ? SFSymbolName.locationFill : SFSymbolName.location)
+                                                                            .font(.system(size: 16, weight: .bold))
+                                                                            .foregroundColor(store.pharmacyFilterOptions
+                                                                                .contains(.currentLocation) ? Colors
+                                                                                .primary700 : Colors.systemGray)
+                                                                            .padding(16)
+                                                                            .background(Circle()
+                                                                                .foregroundColor(Colors
+                                                                                    .systemColorWhite))
+                                                                            .padding(.all, 16)
+                                                                            .shadow(color: Colors.separator, radius: 4)
                                 }).accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapBtnGoToUser)
                             }
                             Button {
@@ -108,30 +113,23 @@ struct PharmacySearchMapView: View {
                             .accessibility(identifier: A11y.pharmacySearchMap.phaSearchMapBtnSearchHere)
                         }.padding(.bottom, 24)
                     }
+                }
+                .navigationDestination(
+                    item: $store.scope(
+                        state: \.destination?.redeemViaAVS,
+                        action: \.destination.redeemViaAVS
+                    )
+                ) { store in
+                    PharmacyRedeemView(store: store)
+                }
 
-                    NavigationLink(
-                        item: $store.scope(
-                            state: \.destination?.redeemViaAVS,
-                            action: \.destination.redeemViaAVS
-                        )
-                    ) { store in
-                        PharmacyRedeemView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .accessibility(hidden: true)
-
-                    NavigationLink(
-                        item: $store.scope(
-                            state: \.destination?.redeemViaErxTaskRepository,
-                            action: \.destination.redeemViaErxTaskRepository
-                        )
-                    ) { store in
-                        PharmacyRedeemView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .accessibility(hidden: true)
+                .navigationDestination(
+                    item: $store.scope(
+                        state: \.destination?.redeemViaErxTaskRepository,
+                        action: \.destination.redeemViaErxTaskRepository
+                    )
+                ) { store in
+                    PharmacyRedeemView(store: store)
                 }
                 .alert($store.scope(
                     state: \.destination?.alert?.alert,
@@ -144,12 +142,8 @@ struct PharmacySearchMapView: View {
             }
             .sheet(item: $store.scope(state: \.destination?.clusterSheet,
                                       action: \.destination.clusterSheet)) { store in
-                if #available(iOS 16, *) {
-                    ClusterView(store: store)
-                        .presentationDetents([.fraction(0.45), .fraction(0.85), .large])
-                } else {
-                    ClusterView(store: store)
-                }
+                ClusterView(store: store)
+                    .presentationDetents([.fraction(0.45), .fraction(0.85), .large])
             }
             .smallSheet($store.scope(
                 state: \.destination?.filter,

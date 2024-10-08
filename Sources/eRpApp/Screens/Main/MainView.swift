@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -41,7 +41,7 @@ struct MainView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            NavigationView {
+            NavigationStack {
                 ZStack(alignment: .topLeading) {
                     PrescriptionListView(
                         store: store.scope(state: \.prescriptionListState, action: \.prescriptionList)
@@ -76,7 +76,7 @@ struct MainView: View {
                 .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
                 .navigationTitle(Text(L10n.erxTitle))
                 .navigationBarTitleDisplayMode(.automatic)
-                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17)) { navigationController in
+                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
                     let navigationBar = navigationController.navigationBar
                     navigationBar.barTintColor = UIColor(Colors.systemBackground)
                     let navigationBarAppearance = UINavigationBarAppearance()
@@ -194,31 +194,27 @@ private extension MainView {
                     .hidden()
                     .accessibility(hidden: true)
 
-                // Navigation into details
-                NavigationLink(
-                    item: $store.scope(
-                        state: \.destination?.prescriptionDetail,
-                        action: \.destination.prescriptionDetail
-                    )
-                ) { store in
-                    PrescriptionDetailView(store: store)
-                } label: {
-                    EmptyView()
-                }
-                .accessibility(hidden: true)
-
-                // Navigation into archived prescriptions
-                NavigationLink(
-                    item: $store.scope(
-                        state: \.destination?.prescriptionArchive,
-                        action: \.destination.prescriptionArchive
-                    )
-                ) { store in
-                    PrescriptionArchiveView(store: store)
-                } label: {
-                    EmptyView()
-                }
-                .accessibility(hidden: true)
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    // Navigation into details
+                    .navigationDestination(
+                        item: $store.scope(
+                            state: \.destination?.prescriptionDetail,
+                            action: \.destination.prescriptionDetail
+                        )
+                    ) { store in
+                        PrescriptionDetailView(store: store)
+                    }
+                    // Navigation into archived prescriptions
+                    .navigationDestination(
+                        item: $store.scope(
+                            state: \.destination?.prescriptionArchive,
+                            action: \.destination.prescriptionArchive
+                        )
+                    ) { store in
+                        PrescriptionArchiveView(store: store)
+                    }
+                    .accessibility(hidden: true)
 
                 // RedeemMethodsView sheet presentation
                 Rectangle()

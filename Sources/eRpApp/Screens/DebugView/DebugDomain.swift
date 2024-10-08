@@ -1,23 +1,24 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
 import ComposableArchitecture
+import DataKit
 import eRpKit
 import Foundation
 import IDP
@@ -92,6 +93,7 @@ struct DebugDomain {
         case resetCanButtonTapped
         case deleteKeyAndEGKAuthCertForBiometric
         case deleteSSOToken
+        case falsifySSOToken
         case resetOcspAndCertListButtonTapped
         case isAuthenticatedReceived(Bool?)
         case logoutButtonTapped
@@ -140,6 +142,24 @@ struct DebugDomain {
         case .resetCanButtonTapped:
             userSession.secureUserStore.set(can: nil)
             return .none
+        case .invalidateAccessToken:
+            if let token = state.token {
+                state.lastIDPToken = token
+                state.accessCodeText = token.accessToken
+
+                let modifiedToken = IDPToken(
+                    accessToken: token.accessToken,
+                    expires: Date(),
+                    idToken: token.idToken,
+                    ssoToken: token.ssoToken,
+                    redirect: token.redirect
+                )
+                userSession.secureUserStore.set(token: modifiedToken)
+            } else {
+                state.alertText = "No idp token available!"
+                state.showAlert = true
+            }
+            return .none
         case .deleteSSOToken:
             if let token = state.token {
                 let modifiedToken = IDPToken(
@@ -150,6 +170,26 @@ struct DebugDomain {
                     redirect: token.redirect
                 )
                 userSession.secureUserStore.set(token: modifiedToken)
+            } else {
+                state.alertText = "No idp token available!"
+                state.showAlert = true
+            }
+            return .none
+        case .falsifySSOToken:
+            if let token = state.token,
+               let ssoToken = token.ssoToken,
+               let falseSSOToken = falsify(ssoToken: ssoToken) {
+                let modifiedToken = IDPToken(
+                    accessToken: token.accessToken,
+                    expires: Date(), // set expire to use sso token
+                    idToken: token.idToken,
+                    ssoToken: falseSSOToken,
+                    redirect: token.redirect
+                )
+                userSession.secureUserStore.set(token: modifiedToken)
+            } else {
+                state.alertText = "No idp token available!"
+                state.showAlert = true
             }
             return .none
         case .deleteKeyAndEGKAuthCertForBiometric:
@@ -207,21 +247,6 @@ struct DebugDomain {
                 state.accessCodeText = token.accessToken
             }
             userSession.secureUserStore.set(token: nil)
-            return .none
-        case .invalidateAccessToken:
-            if let token = state.token {
-                state.lastIDPToken = token
-                state.accessCodeText = token.accessToken
-
-                let modifiedToken = IDPToken(
-                    accessToken: token.accessToken,
-                    expires: Date(),
-                    idToken: token.idToken,
-                    ssoToken: token.ssoToken,
-                    redirect: token.redirect
-                )
-                userSession.secureUserStore.set(token: modifiedToken)
-            }
             return .none
         case let .configurationReceived(configuration):
             state.selectedEnvironment = configuration
@@ -293,7 +318,7 @@ struct DebugDomain {
 
     var body: some Reducer<State, Action> {
         #if ENABLE_DEBUG_VIEW
-        Scope(state: \.logState, action: /Action.logAction) {
+        Scope(state: \.logState, action: \.logAction) {
             DebugLogsDomain(loggingStore: DebugLiveLogger.shared)
         }
 
@@ -308,6 +333,30 @@ struct DebugDomain {
 
 #if ENABLE_DEBUG_VIEW
 extension DebugDomain {
+    func falsify(ssoToken: String) -> String? {
+        // <Header>.<Encrypted Key>.<IV>.<Ciphertext>.<Authentication Tag>
+        var jweElements = ssoToken.split(separator: ".").map { String($0) }
+        if let jweHeader = jweElements.first,
+           let decodedHeader = try? Base64.decode(string: jweHeader),
+           let header = try? JSONDecoder().decode(SSOTokenHeader.self, from: decodedHeader) {
+            let modifiedHeader = SSOTokenHeader(
+                exp: header.exp,
+                enc: header.enc,
+                alg: header.alg,
+                cty: header.cty,
+                kid: "invalid"
+            )
+            guard let headerData = try? JSONEncoder().encode(modifiedHeader) else {
+                return nil
+            }
+            let headerBase64 = headerData.base64EncodedString()
+            jweElements[0] = headerBase64
+            return jweElements.joined(separator: ".")
+        } else {
+            return nil
+        }
+    }
+
     func onReceiveHideOnboarding() -> Effect<DebugDomain.Action> {
         .publisher(
             localUserStore.onboardingVersion

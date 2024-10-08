@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Foundation
@@ -61,9 +61,7 @@ public struct ErxPatient: Hashable, Codable {
 
 extension ErxPatient {
     /// https://simplifier.net/packages/de.basisprofil.r4/1.5.0/files/2461199/
-    public enum CoverageType: Hashable, Equatable, RawRepresentable, Codable {
-        public typealias RawValue = String?
-
+    public enum CoverageType: String, Codable, Equatable, Hashable {
         public enum CodingKeysV2 {
             public static var gesetzlicheKrankenversicherung = "GKV"
             public static var privateKrankenversicherung = "PKV"
@@ -91,10 +89,8 @@ extension ErxPatient {
         case PPV
         /// Beihilfe
         case BEI
-        /// all other (unknown) cases
-        case unknown(String)
 
-        public init?(rawValue: RawValue) {
+        public init?(rawValue: String?) {
             guard let rawValue = rawValue else { return nil }
             switch rawValue {
             case CodingKeysV2.gesetzlicheKrankenversicherung: self = .GKV
@@ -105,7 +101,7 @@ extension ErxPatient {
             case CodingKeysV2.gesetzlichePflegeversicherung: self = .GPV
             case CodingKeysV2.PrivatePflegeversicherung: self = .PPV
             case CodingKeysV2.Beihilfe: self = .BEI
-            default: self = .unknown(rawValue)
+            default: return nil
             }
         }
 
@@ -119,7 +115,6 @@ extension ErxPatient {
             case .GPV: return CodingKeysV2.gesetzlichePflegeversicherung
             case .PPV: return CodingKeysV2.PrivatePflegeversicherung
             case .BEI: return CodingKeysV2.Beihilfe
-            case let .unknown(type): return type
             }
         }
     }

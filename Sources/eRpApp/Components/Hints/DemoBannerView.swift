@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -75,7 +75,7 @@ struct DemoBannerViewModifier<InnerContent: View>: ViewModifier {
                 turnDemoModeOffCallback: turnDemoModeOffCallback
             )
             content
-                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17)) { navigationController in
+                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
                     let appearance = UINavigationBarAppearance()
                     appearance.configureWithOpaqueBackground()
                     if visible {
@@ -107,7 +107,7 @@ extension View {
 struct DemoBannerView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            NavigationView {
+            NavigationStack {
                 List {
                     Text("abc")
                         .frame(height: 1000, alignment: .top)

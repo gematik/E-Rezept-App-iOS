@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import SwiftUI
@@ -45,22 +45,21 @@ public struct SectionContainerCellModifier: ViewModifier {
     }
 
     public func body(content: Content) -> some View {
-        Group {
-            content
-                .labelStyle(SectionContainerLabelStyle(showSeparator: !last))
-                .buttonStyle(SectionContainerButtonStyle(showSeparator: !last))
-                .toggleStyle(FormToggleStyle(showSeparator: !last))
-                .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: !last))
-                .keyValuePairStyle(SeparatedKeyValuePairStyle(showSeparator: !last))
-                .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-                .sectionContainerIsLastElement(last)
-        }
+        content
+            .labelStyle(SectionContainerLabelStyle(showSeparator: !last))
+            .buttonStyle(SectionContainerButtonStyle(showSeparator: !last))
+            .toggleStyle(FormToggleStyle(showSeparator: !last))
+            .subTitleStyle(SectionContainerSubTitleStyle(showSeparator: !last))
+            .keyValuePairStyle(SeparatedKeyValuePairStyle(showSeparator: !last))
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            .labeledContentStyle(SectionContainerLabeledContentStyle(showSeparator: !last))
+            .sectionContainerIsLastElement(last)
     }
 }
 
 struct ListsAtoms_Preview: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(spacing: 8) {
                     SectionContainer {

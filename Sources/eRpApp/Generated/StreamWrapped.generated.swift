@@ -267,6 +267,15 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
 	}
 
+	func deleteLocal(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        stream
+        	.map { $0.deleteLocal(
+				chargeItems: chargeItems
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
 	func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError> {
         stream
         	.map { $0.grantConsent(

@@ -1,24 +1,23 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
 import ComposableArchitecture
-import DataKit
 import eRpKit
 import eRpLocalStorage
 import Foundation
@@ -299,7 +298,7 @@ struct EditProfileDomain {
                 profileId: state.profileId,
                 color: state.color,
                 picture: state.image ?? .none,
-                userImageData: state.userImageData ?? .empty,
+                userImageData: state.userImageData ?? Data(),
                 isFullScreenPresented: true
             ))
             return .none
@@ -428,7 +427,7 @@ extension EditProfileDomain {
             .flatMap { pairingToken, keyIdentifier -> AnyPublisher<Action, Never> in
                 guard let keyIdentifier = keyIdentifier,
                       let pairingToken = pairingToken,
-                      let deviceIdentifier = Base64.urlSafe.encode(data: keyIdentifier, with: .none).utf8string else {
+                      let deviceIdentifier = keyIdentifier.encodeBase64UrlSafe()?.utf8string else {
                     return Just(Action.relogin).eraseToAnyPublisher()
                 }
 

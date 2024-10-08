@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import DataKit
@@ -75,6 +75,16 @@ final class X509TrustStoreTests: XCTestCase {
     lazy var rootCa3TestOnly: X509 = {
         let file = "GEM.RCA3-TEST-ONLY"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
+    }()
+
+    lazy var rootCa4TestOnlyCrossRootCa3TestOnly: X509 = {
+        let file = "GEM.RCA4_TEST-ONLY-CROSS-GEM.RCA3_TEST-ONLY"
+        return try! X509(der: CertificateResourceFileReader.readFromCertificatesBundle(file: file, inForm: .der))
+    }()
+
+    lazy var rootCa5TestOnlyCrossRootCa4TestOnly: X509 = {
+        let file = "GEM.RCA5_TEST-ONLY-CROSS-GEM.RCA4_TEST-ONLY"
+        return try! X509(der: CertificateResourceFileReader.readFromCertificatesBundle(file: file, inForm: .der))
     }()
 
     lazy var idpSigReference1: X509 = {
@@ -228,6 +238,51 @@ final class X509TrustStoreTests: XCTestCase {
         expect(sut.containsEECert(self.kompCa10TestOnly)) == false
     }
 
+    func testCrossValidation_succes() throws {
+        // given
+        // rca3TestOnly validates rca4TestOnly
+        // rc4TestOnly validates rca5TestOnly
+        // rca5TestOnly validates kompCa51TestOnly
+        let addRootCerts = [rootCa4TestOnlyCrossRootCa3TestOnly, rootCa5TestOnlyCrossRootCa4TestOnly]
+        let caCerts = [kompCa10TestOnly, kompCa51TestOnly]
+        let eeCerts = [vauEncReference]
+
+        // when
+        let sut = try X509TrustStore(
+            trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
+            addRoots: addRootCerts,
+            caCerts: caCerts,
+            eeCerts: eeCerts
+        )
+
+        // then
+        expect(sut.addRoots.contains([self.rootCa4TestOnlyCrossRootCa3TestOnly])).to(beTrue())
+        expect(sut.addRoots.contains([self.rootCa5TestOnlyCrossRootCa4TestOnly])).to(beTrue())
+        expect(sut.caCerts.contains([self.kompCa51TestOnly])).to(beTrue())
+    }
+
+    func testCrossValidation_cossCertificateMissing() throws {
+        // given
+        // rca3TestOnly cross rca4TestOnly missing!
+        // rc4TestOnly validates rca5TestOnly
+        // rca5TestOnly validates kompCa51TestOnly
+        let addRootCerts = [rootCa5TestOnlyCrossRootCa4TestOnly]
+        let caCerts = [kompCa10TestOnly, kompCa51TestOnly]
+        let eeCerts = [vauEncReference]
+
+        // when
+        let sut = try X509TrustStore(
+            trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
+            addRoots: addRootCerts,
+            caCerts: caCerts,
+            eeCerts: eeCerts
+        )
+
+        // then
+        expect(sut.addRoots.contains([self.rootCa5TestOnlyCrossRootCa4TestOnly])).to(beFalse())
+        expect(sut.caCerts.contains([self.kompCa51TestOnly])).to(beFalse())
+    }
+
     private lazy var ocspList_FdEnc: OCSPList = {
         guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc",
                                           withExtension: "json",
@@ -265,12 +320,12 @@ final class X509TrustStoreTests: XCTestCase {
     func testCheckCertificateStatus_FdEnc() throws {
         // given
         // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
-        let addRootCerts = [rca5TestOnly]
+        let addRootCerts = [rootCa4TestOnlyCrossRootCa3TestOnly, rootCa5TestOnlyCrossRootCa4TestOnly]
         let caCerts = [kompCa10TestOnly, kompCa51TestOnly]
         let eeCerts = [vauEncReference]
         let sut = try X509TrustStore(
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
-            unvalidatedAddRoots: addRootCerts,
+            addRoots: addRootCerts,
             caCerts: caCerts,
             eeCerts: eeCerts
         )
@@ -284,12 +339,12 @@ final class X509TrustStoreTests: XCTestCase {
     func testCheckCertificateStatus_FdEncIdpSig1IdpSig3() throws {
         // given
         // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
-        let addRootCerts = [rca5TestOnly]
+        let addRootCerts = [rootCa4TestOnlyCrossRootCa3TestOnly, rootCa5TestOnlyCrossRootCa4TestOnly]
         let caCerts = [kompCa10TestOnly, kompCa51TestOnly]
         let eeCerts = [vauEncReference, idpSigReference1, idpSigReference3]
         let sut = try X509TrustStore(
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
-            unvalidatedAddRoots: addRootCerts,
+            addRoots: addRootCerts,
             caCerts: caCerts,
             eeCerts: eeCerts
         )

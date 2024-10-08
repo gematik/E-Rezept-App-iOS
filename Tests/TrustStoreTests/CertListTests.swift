@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Foundation
@@ -64,6 +64,32 @@ final class CertListTests: XCTestCase {
 
         // then
         expect(try CertList.from(data: data)).to(throwError(errorType: DecodingError.self))
+    }
+
+    func testDecodeAddRootChain() throws {
+        // given
+        guard let url = Bundle.module.url(
+            forResource: "addRoots-chain",
+            withExtension: "json",
+            subdirectory: "Resources/CertList.bundle"
+        ),
+            let data = try? Data(contentsOf: url)
+        else {
+            fatalError("Could not load json")
+        }
+
+        // when
+        let certList = try CertList.from(data: data)
+        let certListBase64 = try CertList.Base64.from(data: data)
+
+        // then
+        expect(certList.addRoots.count) == 2
+        expect(certList.caCerts.count) == 3
+        expect(certList.eeCerts.count) == 2
+
+        expect(certListBase64.addRoots.count) == 2
+        expect(certListBase64.caCerts.count) == 3
+        expect(certListBase64.eeCerts.count) == 2
     }
 
     func testJsonCodable() throws {

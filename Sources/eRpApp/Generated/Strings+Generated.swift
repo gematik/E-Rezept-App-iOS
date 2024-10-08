@@ -726,6 +726,8 @@ import SwiftUI
     internal static let davTxtDirectAssignmentHint = StringAsset("dav_txt_direct_assignment_hint")
     /// What is a direct assignment?
     internal static let davTxtDirectAssignmentTitle = StringAsset("dav_txt_direct_assignment_title")
+    /// Sharing failed
+    internal static let dmcAlertTitle = StringAsset("dmc_alert_title")
     /// Done
     internal static let dmcBtnClose = StringAsset("dmc_btn_close")
     /// Collection code
@@ -780,6 +782,8 @@ import SwiftUI
     internal static func dtlTxtMedAuthoredOn(_ element1: String) -> StringAsset {
         StringAsset("dtl_txt_med_authored_on_%@", arguments: [element1])
     }
+    /// Deleted
+    internal static let dtlTxtMedDeleted = StringAsset("dtl_txt_med_deleted")
     /// Technical information
     internal static let dtlTxtMedInfo = StringAsset("dtl_txt_med_info")
     /// Log
@@ -868,6 +872,10 @@ import SwiftUI
     }
     /// Current
     internal static let erxTxtCurrent = StringAsset("erx_txt_current")
+    /// Plural format key: "%#@variable_0@"
+    internal static func erxTxtDeletedAt(_ element1: Int) -> StringAsset {
+        StringAsset("erx_txt_deleted_at", arguments: [element1])
+    }
     /// Expired on %@
     internal static func erxTxtExpiredOn(_ element1: String) -> StringAsset {
         StringAsset("erx_txt_expired_on_%@", arguments: [element1])
@@ -1534,6 +1542,10 @@ import SwiftUI
     internal static let mainTxtConsentServiceErrorNotLoggedInMessage = StringAsset("main_txt_consent_service_error_not_logged_in_message")
     /// Not logged in
     internal static let mainTxtConsentServiceErrorNotLoggedInTitle = StringAsset("main_txt_consent_service_error_not_logged_in_title")
+    /// Logged in
+    internal static let mainTxtLoggedInState = StringAsset("main_txt_logged_in_state")
+    /// Not logged in
+    internal static let mainTxtLoggedOutState = StringAsset("main_txt_logged_out_state")
     /// Cancel
     internal static let mainTxtPendingextauthCancel = StringAsset("main_txt_pendingextauth_cancel")
     /// Authentication with %@ failed
@@ -1554,9 +1566,9 @@ import SwiftUI
     internal static func mainTxtPendingextauthSuccessful(_ element1: String) -> StringAsset {
         StringAsset("main_txt_pendingextauth_successful_%@", arguments: [element1])
     }
-    /// Status: Disconnected from the prescription server
+    /// Profile picture with status: Not logged in
     internal static let mainTxtProfileStatusOffline = StringAsset("main_txt_profile_status_offline")
-    /// Status: Profile logged in
+    /// Profile picture with status: Logged in
     internal static let mainTxtProfileStatusOnline = StringAsset("main_txt_profile_status_online")
     /// Remind me
     internal static let medReminderBtnActivationToggle = StringAsset("med_reminder_btn_activation_toggle")
@@ -1624,6 +1636,10 @@ import SwiftUI
     internal static let mgmTxtAlertMessageProfileCreation = StringAsset("mgm_txt_alert_message_profile_creation")
     /// The app is already up to date
     internal static let mgmTxtAlertMessageUpToDate = StringAsset("mgm_txt_alert_message_up_to_date")
+    /// No news
+    internal static let msgTxtEmptyListTitle = StringAsset("msg_txt_empty_list_title")
+    /// News
+    internal static let msgTxtTitle = StringAsset("msg_txt_title")
     /// Back
     internal static let navBack = StringAsset("nav_back")
     /// Cancel
@@ -1760,6 +1776,10 @@ import SwiftUI
     internal static let ordDetailBtnShipment = StringAsset("ord_detail_btn_shipment")
     /// Unfortunately, your pharmacy's message was empty. Please contact your pharmacy.
     internal static let ordDetailMsgsTxtEmpty = StringAsset("ord_detail_msgs_txt_empty")
+    /// 🎉 Your order is ready for collection. Please show this collection code to identify yourself.
+    internal static let ordDetailMsgsTxtOnPremise = StringAsset("ord_detail_msgs_txt_on_premise")
+    /// The pharmacy has provided you with a link.
+    internal static let ordDetailMsgsTxtUrl = StringAsset("ord_detail_msgs_txt_url")
     /// Shopping cart is ready
     internal static let ordDetailSheetTitle = StringAsset("ord_detail_sheet_title")
     /// Receive pickup code
@@ -1792,8 +1812,6 @@ import SwiftUI
     internal static let ordDetailTxtError = StringAsset("ord_detail_txt_error")
     /// Defective message received
     internal static let ordDetailTxtErrorTitle = StringAsset("ord_detail_txt_error_title")
-    /// Course
-    internal static let ordDetailTxtHistory = StringAsset("ord_detail_txt_history")
     /// Dear Service Team, I received a message from a pharmacy. Unfortunately, however, I could not pass the message on to my user because I did not understand it. Please check what happened here and help us. Thank you very much! The e-prescription app
     internal static let ordDetailTxtMailBody1 = StringAsset("ord_detail_txt_mail_body1")
     /// You are sending us this information for purposes of troubleshooting. Please note that your email address and any name you include will also be transferred. If you do not wish to transfer this information either in full or in part, please remove it from this email. 
@@ -1804,6 +1822,8 @@ import SwiftUI
     internal static let ordDetailTxtMailError = StringAsset("ord_detail_txt_mail_error")
     /// Error message from the e-prescription app
     internal static let ordDetailTxtMailSubject = StringAsset("ord_detail_txt_mail_subject")
+    /// News
+    internal static let ordDetailTxtMessages = StringAsset("ord_detail_txt_messages")
     /// The email app could not be opened. Please use the hotline
     internal static let ordDetailTxtOpenMailError = StringAsset("ord_detail_txt_open_mail_error")
     /// Error
@@ -1814,8 +1834,6 @@ import SwiftUI
     internal static func ordDetailTxtPresc(_ element1: Int) -> StringAsset {
         StringAsset("ord_detail_txt_presc", arguments: [element1])
     }
-    /// Order overview
-    internal static let ordDetailTxtTitle = StringAsset("ord_detail_txt_title")
     /// Plural format key: "%#@variable_0@"
     internal static func ordListStatusCount(_ element1: Int) -> StringAsset {
         StringAsset("ord_list_status_count", arguments: [element1])
@@ -1824,12 +1842,8 @@ import SwiftUI
     internal static let ordListStatusNew = StringAsset("ord_list_status_new")
     /// You haven't redeemed any prescriptions yet
     internal static let ordTxtEmptyListMessage = StringAsset("ord_txt_empty_list_message")
-    /// No orders
-    internal static let ordTxtEmptyListTitle = StringAsset("ord_txt_empty_list_title")
     /// Unknown pharmacy
     internal static let ordTxtNoPharmacyName = StringAsset("ord_txt_no_pharmacy_name")
-    /// Orders
-    internal static let ordTxtTitle = StringAsset("ord_txt_title")
     /// How to identify an NFC-enabled medical card
     internal static let orderEgkBtnInfoButton = StringAsset("order_egk_btn_info_button")
     /// PIN
@@ -1878,6 +1892,8 @@ import SwiftUI
     internal static let orderEgkTxtServiceInquiryHealthcardAndPin = StringAsset("order_egk_txt_service_inquiry_healthcard_and_pin")
     /// PIN only
     internal static let orderEgkTxtServiceInquiryOnlyPin = StringAsset("order_egk_txt_service_inquiry_only_pin")
+    /// Copy
+    internal static let orderTxtCopyToClipboard = StringAsset("order_txt_copy_to_clipboard")
     /// Different delivery address
     internal static let phaContactBtnNewAddress = StringAsset("pha_contact_btn_new_address")
     /// Address on your prescription
@@ -2680,8 +2696,6 @@ import SwiftUI
     internal static let sectionTxtIsActiveValue = StringAsset("section_txt_is_active_value")
     /// Not selected
     internal static let sectionTxtIsInactiveValue = StringAsset("section_txt_is_inactive_value")
-    /// your insurance will not cover any costs.
-    internal static let selfPayerWarningTxtEnding = StringAsset("self_payer_warning_txt_ending")
     /// Plural format key: "Your insurance will not cover any costs for %#@variable_0@ %@ . "
     internal static func selfPayerWarningTxtMessage(_ element1: Int, _ element2: String) -> StringAsset {
         StringAsset("self_payer_warning_txt_message", arguments: [element1, element2])
@@ -2882,10 +2896,10 @@ import SwiftUI
     internal static let stgLnoTxtTextIssuer = StringAsset("stg_lno_txt_text_issuer")
     /// We strive to use gender-sensitive language. If you notice any errors, we would be pleased to hear from you by email.
     internal static let stgLnoTxtTextNote = StringAsset("stg_lno_txt_text_note")
-    /// Dr. Florian Hartge
+    /// Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge
     internal static let stgLnoTxtTextResponsible = StringAsset("stg_lno_txt_text_responsible")
-    /// Managing Director: Dr. Florian Hartge
-    ///  Registration court: Berlin-Charlottenburg District Court
+    /// Managing Directors: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge
+    ///  Register court: District Court of Berlin-Charlottenburg
     ///  Commercial register number: HRB 96351
     ///  VAT identification number: DE241843684
     internal static let stgLnoTxtTextTaxAndMore = StringAsset("stg_lno_txt_text_taxAndMore")
@@ -3263,8 +3277,8 @@ import SwiftUI
     }
     /// Prescriptions
     internal static let tabTxtMain = StringAsset("tab_txt_main")
-    /// Orders
-    internal static let tabTxtOrders = StringAsset("tab_txt_orders")
+    /// News
+    internal static let tabTxtMessages = StringAsset("tab_txt_messages")
     /// Redeem
     internal static let tabTxtPharmacySearch = StringAsset("tab_txt_pharmacy_search")
     /// Settings

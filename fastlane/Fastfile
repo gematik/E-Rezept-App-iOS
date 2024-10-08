@@ -423,6 +423,7 @@ lane :integration_tests do |options|
     scheme: "AllIntegrationTests_iOS",
     configuration: "Debug",
     test_without_building: true,
+    number_of_retries: 3,
     output_directory: "./fastlane/test_output/#{app_conf}" # default is ./fastlane/test_output
   )
 rescue => ex
@@ -1442,7 +1443,7 @@ def add_mr_note_if_possible
     owner = ENV['APPCENTER_OWNER_NAME']
     appcenter_url = "https://install.appcenter.ms/orgs/#{owner}/apps/#{app_name}/releases/#{id}"
     gitlab_login()
-    sh("glab mr note #{mr} --message \"[Download Test Version in AppCenter](#{appcenter_url}) or scan [QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=#{ERB::Util.url_encode(appcenter_url)})\"")
+    sh("glab mr note #{mr} --message \"[Download Test Version in AppCenter](#{appcenter_url}) or scan\n\n![QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=#{ERB::Util.url_encode(appcenter_url)})\"")
   end
 end
 
@@ -1520,10 +1521,21 @@ lane :pull_api_keys do |options|
     apovzd_environments = 'RU, PU'
   end
 
+  gitlab_api_token = nil
+  # For ci build nodes, the API Token is a separate one for accessing the restricted repository
+  # for local machines, the personal GITLAB_API_TOKEN has also access to the restricted repository
+  if is_ci
+    gitlab_api_token = ENV['RESTRICTED_REPO_API_TOKEN'] # injected via calling Fastfile/Jenkinsfile
+  else
+    gitlab_api_token = ENV['GITLAB_API_TOKEN']
+  end
+  raise "Error: environment varible RESTRICTED_REPO_API_TOKEN/GITLAB_API_TOKEN not set for process, please specify" unless gitlab_api_token
+
   api_key_pull_into_file(
     version: "iOS #{version}",
     fd_environments: fd_environments,
     apovzd_environments: apovzd_environments,
+    gitlab_api_token: gitlab_api_token,
     output_file: output_file
   )
 end
@@ -1551,8 +1563,12 @@ lane :pull_shared_environment_variables do |options|
     environments = 'TU, RU, PU, GEMATIK_DEV, GEMATIK_QS, GEMATIK_PROD'
   end
 
+  gitlab_api_token = ENV['GITLAB_API_TOKEN']
+  raise "Error: environment varible GITLAB_API_TOKEN not set for process, please specify" unless gitlab_api_token
+
   pull_environment_varibles_into_file(
     environments: environments,
+    gitlab_api_token: gitlab_api_token,
     output_file: output_file
   )
 end

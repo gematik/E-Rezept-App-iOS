@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -38,22 +38,28 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func listAllTasks(after referenceDate: String?) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
-        fhirClient.fetchAllTaskIDs(after: referenceDate)
+    public func listAllTasks(after referenceDate: String?)
+        -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        fhirClient.fetchAllTasks(after: referenceDate)
             .mapError { RemoteStoreError.fhirClient($0) }
             .first()
-            .flatMap { self.collectAndCombineLatestTaskPublishers(taskIds: $0) }
             .eraseToAnyPublisher()
     }
 
     public func listTasksNextPage(of previousPage: eRpKit
         .PagedContent<[eRpKit.ErxTask]>)
         -> AnyPublisher<eRpKit.PagedContent<[eRpKit.ErxTask]>, eRpKit.RemoteStoreError> {
-        fhirClient.fetchTasksNextPage(of: previousPage)
+        fhirClient.fetchTasksNextPage(for: previousPage.next)
             .mapError(RemoteStoreError.fhirClient)
             .first()
-            .flatMap { self.collectAndCombineLatestTaskPublishers(taskIds: $0) }
             .eraseToAnyPublisher()
+    }
+
+    public func listDetailedTasks(for tasks: PagedContent<[ErxTask]>)
+        -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        collectAndCombineLatestTaskPublishers(
+            taskIds: PagedContent(content: tasks.content.map(\.identifier), next: tasks.next)
+        )
     }
 
     private func collectAndCombineLatestTaskPublishers(

@@ -38,6 +38,24 @@
 			<string>Only redeemable today</string>
 		</dict>
 	</dict>
+	<key>erx_txt_deleted_at</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Deleted: %% @</string>
+			<key>other</key>
+			<string>Deleted on: %% @</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
 	<key>erx_txt_expires_in</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

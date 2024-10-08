@@ -1,25 +1,23 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
-import DataKit
 import Foundation
-import GemCommonsKit
 
 typealias Base64URLEncodedData = Data
 
@@ -55,7 +53,7 @@ public struct JWT {
         /// Regex magic
         /// if we find a match we should have a parsable JWT structure.
         /// Note: the signature is not validated at this point
-        let result = Self.jwtRegex.matches(in: string, range: string.fullRange)
+        let result = Self.jwtRegex.matches(in: string, range: NSRange(location: 0, length: string.count))
         guard !result.isEmpty else {
             throw Error.malformedJWT
         }
@@ -80,7 +78,7 @@ public struct JWT {
             throw Error.encodingError
         }
         if result[0].range(at: 4).location != NSNotFound {
-            backing = try (
+            backing = (
                 rawHeader,
                 payload,
                 (string as NSString).substring(with: result[0].range(at: 4)).decodeBase64URLEncoded()
@@ -104,7 +102,10 @@ public struct JWT {
     }()
 
     private static func header(from data: Base64URLEncodedData, parser: JSONDecoder) throws -> Header {
-        try parser.decode(Header.self, from: data.decodeBase64URLEncoded())
+        guard let decodedData = data.decodeBase64URLEncoded() else {
+            throw Error.encodingError
+        }
+        return try parser.decode(Header.self, from: decodedData)
     }
 
     /// JSON Decode the payload into a given `type`
@@ -114,7 +115,10 @@ public struct JWT {
     /// - Returns: decoded instance of `type`
     /// - Throws: An error if any value throws an error during decoding.
     public func decodePayload<T: Claims>(type: T.Type) throws -> T {
-        try Self.jsonDecoder.decode(type, from: backing.payload.decodeBase64URLEncoded())
+        guard let decodedPayload = backing.payload.decodeBase64URLEncoded() else {
+            throw Error.encodingError
+        }
+        return try Self.jsonDecoder.decode(type, from: decodedPayload)
     }
 
     /// Verify the JWT by checking the signature
@@ -136,7 +140,9 @@ public struct JWT {
             let data = backing.rawHeader + Self.dot + backing.payload
             return signer.sign(message: data)
                 .tryMap { signature in
-                    try JWT(from: data + Self.dot + signature.encodeBase64urlsafe())
+                    guard let encodedSignature = signature.encodeBase64UrlSafe()
+                    else { throw Error.encodingError }
+                    return try JWT(from: data + Self.dot + encodedSignature)
                 }
                 .eraseToAnyPublisher()
         }.eraseToAnyPublisher()
@@ -147,9 +153,10 @@ public struct JWT {
     /// - Returns: serialized base64 urlsafe encoded string
     public func serialize() -> String {
         var data = backing.rawHeader + Self.dot + backing.payload
-        if let signature = signature {
+        if let signature = signature,
+           let encodedSignature = signature.encodeBase64UrlSafe() {
             data.append(Self.dot) // .
-            data.append(signature.encodeBase64urlsafe())
+            data.append(encodedSignature)
         }
         return data.asciiString! // swiftlint:disable:this force_unwrapping
     }
@@ -232,7 +239,10 @@ extension JWT {
 
         let header = try jsonEncoder.encode(header)
         let serializedPayload = try jsonEncoder.encode(payload)
-        try self.init(from: header.encodeBase64urlsafe() + JWT.dot + serializedPayload.encodeBase64urlsafe())
+        guard let encodedHeader = header.encodeBase64UrlSafe(),
+              let encodedPayload = serializedPayload.encodeBase64UrlSafe()
+        else { throw Error.encodingError }
+        try self.init(from: encodedHeader + JWT.dot + encodedPayload)
     }
 }
 

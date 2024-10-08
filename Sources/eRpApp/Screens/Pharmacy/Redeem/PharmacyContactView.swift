@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -31,99 +31,91 @@ struct PharmacyContactView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            NavigationView {
-                VStack(alignment: .leading) {
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            if store.service.isAVS {
-                                SectionContainer(header: {
-                                    Text(L10n.phaContactTitleContact)
-                                }, content: {
-                                    FormTextFieldView(
-                                        placeholder: L10n.phaContactPlaceholder.text,
-                                        subtitle: L10n.phaContactTxtPhone,
-                                        text: $store.contactInfo.phone
-                                    )
-                                    .textContentType(.telephoneNumber)
-                                    .keyboardType(.phonePad)
-                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
-
-                                    FormTextFieldView(
-                                        placeholder: L10n.phaContactPlaceholder.text,
-                                        subtitle: L10n.phaContactTxtMail,
-                                        text: $store.contactInfo.mail,
-                                        showSeparator: false
-                                    )
-                                    .textContentType(.emailAddress)
-                                    .keyboardType(.emailAddress)
-                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressMail)
-                                })
-                            } else {
-                                SingleElementSectionContainer(header: {
-                                    Text(L10n.phaContactTitleContact)
-                                }, content: {
-                                    FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                                      subtitle: L10n.phaContactTxtPhone,
-                                                      text: $store.contactInfo.phone,
-                                                      showSeparator: false)
-                                        .textContentType(.telephoneNumber)
-                                        .keyboardType(.phonePad)
-                                        .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
-                                })
-                            }
-
+            NavigationStack {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        if store.service.isAVS {
                             SectionContainer(header: {
-                                Text(L10n.phaContactTitleAddress)
+                                Text(L10n.phaContactTitleContact)
                             }, content: {
-                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                                  subtitle: L10n.phaContactTxtName,
-                                                  text: $store.contactInfo.name)
-                                    .textContentType(.name)
-                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressName)
+                                LabeledContent(L10n.phaContactTxtPhone) {
+                                    TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.phone)
+                                        .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
+                                }
+                                .textContentType(.telephoneNumber)
+                                .keyboardType(.phonePad)
 
-                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                                  subtitle: L10n.phaContactTxtStreet,
-                                                  text: $store.contactInfo.street)
-                                    .textContentType(.streetAddressLine1)
-                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressStreet)
-
-                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                                  subtitle: L10n.phaContactTxtZip,
-                                                  text: $store.contactInfo.zip)
-                                    .textContentType(.postalCode)
-                                    .keyboardType(.numberPad)
-                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressZip)
-
-                                FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
-                                                  subtitle: L10n.phaContactTxtCity,
-                                                  text: $store.contactInfo.city)
-                                    .textContentType(.addressCity)
-                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressCity)
-
-                                FormTextFieldView(placeholder: L10n.phaContactPlaceholderDeliveryInfo.text,
-                                                  subtitle: L10n.phaContactTxtDeliveryInfo,
-                                                  text: $store.contactInfo.deliveryInfo,
-                                                  showSeparator: false)
-                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressInfo)
+                                LabeledContent(L10n.phaContactTxtMail) {
+                                    TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.mail)
+                                        .accessibility(identifier: A11y.pharmacyContact.phaContactAddressMail)
+                                }
+                                .textContentType(.emailAddress)
+                                .keyboardType(.emailAddress)
+                            })
+                        } else {
+                            SingleElementSectionContainer(header: {
+                                Text(L10n.phaContactTitleContact)
+                            }, content: {
+                                LabeledContent(L10n.phaContactTxtPhone) {
+                                    TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.phone)
+                                        .accessibility(identifier: A11y.pharmacyContact.phaContactAddressPhone)
+                                }
+                                .textContentType(.telephoneNumber)
+                                .keyboardType(.phonePad)
                             })
                         }
+
+                        SectionContainer(header: {
+                            Text(L10n.phaContactTitleAddress)
+                        }, content: {
+                            LabeledContent(L10n.phaContactTxtName) {
+                                TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.name)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressName)
+                            }
+                            .textContentType(.name)
+
+                            LabeledContent(L10n.phaContactTxtStreet) {
+                                TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.street)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressStreet)
+                            }
+                            .textContentType(.streetAddressLine1)
+
+                            LabeledContent(L10n.phaContactTxtZip) {
+                                TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.zip)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressZip)
+                            }
+                            .textContentType(.postalCode)
+                            .keyboardType(.numberPad)
+
+                            LabeledContent(L10n.phaContactTxtCity) {
+                                TextField(L10n.phaContactPlaceholder, text: $store.contactInfo.city)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressCity)
+                            }
+                            .textContentType(.addressCity)
+
+                            LabeledContent(L10n.phaContactTxtDeliveryInfo) {
+                                TextField(L10n.phaContactPlaceholderDeliveryInfo,
+                                          text: $store.contactInfo.deliveryInfo)
+                                    .accessibility(identifier: A11y.pharmacyContact.phaContactAddressInfo)
+                            }
+                        })
                     }
-                    .accentColor(Colors.primary600)
-                    .background(Color(.secondarySystemBackground).ignoresSafeArea())
-                    .navigationBarTitle(L10n.phaContactTitleContact, displayMode: .inline)
-                    .navigationBarItems(
-                        leading: NavigationBarCloseItem {
-                            store.send(.closeButtonTapped)
-                        },
-                        trailing: NavigationBarSaveItem(disabled: !store.state.isNewContactInfo) {
-                            store.send(.save)
-                        }
-                    )
-                    .alert($store.scope(
-                        state: \.alertState,
-                        action: \.alert
-                    ))
                 }
+                .accentColor(Colors.primary600)
+                .background(Color(.secondarySystemBackground).ignoresSafeArea())
+                .navigationBarTitle(L10n.phaContactTitleContact, displayMode: .inline)
+                .navigationBarItems(
+                    leading: NavigationBarCloseItem {
+                        store.send(.closeButtonTapped)
+                    },
+                    trailing: NavigationBarSaveItem(disabled: !store.state.isNewContactInfo) {
+                        store.send(.save)
+                    }
+                )
+                .alert($store.scope(
+                    state: \.alertState,
+                    action: \.alert
+                ))
             }
             .navigationViewStyle(StackNavigationViewStyle())
         }

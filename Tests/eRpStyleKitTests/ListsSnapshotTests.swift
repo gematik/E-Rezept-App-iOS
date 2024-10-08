@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import eRpStyleKit
@@ -21,7 +21,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-final class ListsSnapshotTests: XCTestCase {
+final class ListsSnapshotTests: ERPSnapshotTestCase {
     struct SnapshotExampleView: View {
         var body: some View {
             ScrollView {
@@ -125,7 +125,7 @@ final class ListsSnapshotTests: XCTestCase {
     }
 
     func testSimpleGroupedList() {
-        let sut = NavigationView {
+        let sut = NavigationStack {
             SnapshotExampleView()
                 .navigationBarTitle("Lists")
                 .background(Color(.secondarySystemBackground).ignoresSafeArea())
@@ -136,7 +136,7 @@ final class ListsSnapshotTests: XCTestCase {
     }
 
     func testBorderedGroupedListStyle() {
-        let sut = NavigationView {
+        let sut = NavigationStack {
             SnapshotExampleView()
                 .sectionContainerStyle(BorderSectionContainerStyle())
                 .navigationBarTitle("Lists")
@@ -147,7 +147,7 @@ final class ListsSnapshotTests: XCTestCase {
     }
 
     func testInlineListStyle() {
-        let sut = NavigationView {
+        let sut = NavigationStack {
             SnapshotExampleView()
                 .sectionContainerStyle(.inline)
                 .navigationBarTitle("Lists")
@@ -155,26 +155,5 @@ final class ListsSnapshotTests: XCTestCase {
         .frame(width: 375, height: 1400)
 
         assertSnapshots(of: sut, as: snapshotModi())
-    }
-}
-
-/// The default `precision` to use if a specific value is not provided.
-private let defaultPrecision: Float = 0.99
-/// The default `perceptualPrecision` to use if a specific value is not provided.
-private let defaultPerceptualPrecision: Float = 0.97
-
-extension XCTestCase {
-    func snapshotModi<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
-        [
-            "light": .image(
-                precision: defaultPrecision,
-                perceptualPrecision: defaultPerceptualPrecision
-            ),
-            "dark": .image(
-                precision: defaultPrecision,
-                perceptualPrecision: defaultPerceptualPrecision,
-                traits: UITraitCollection(userInterfaceStyle: .dark)
-            ),
-        ]
     }
 }

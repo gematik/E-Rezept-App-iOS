@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -27,7 +27,7 @@ import XCTest
 
 @MainActor
 final class MatrixCodeDomainTests: XCTestCase {
-    let testScheduler = DispatchQueue.test
+    let testScheduler = DispatchQueue.immediate
     let mockDMCGenerator = MockErxMatrixCodeGenerator()
     let isDismissInvoked = LockIsolated(false)
 
@@ -97,7 +97,6 @@ final class MatrixCodeDomainTests: XCTestCase {
 
         // when
         await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800)))
-        await testScheduler.advance()
         await store.receive(.response(.matrixCodeImageReceived(expected))) { sut in
             sut.loadingState = expected
         }
@@ -112,7 +111,6 @@ final class MatrixCodeDomainTests: XCTestCase {
 
         // when
         await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800)))
-        await testScheduler.advance()
         await store.receive(.response(.matrixCodeImageReceived(expected))) { sut in
             sut.loadingState = expected
         }
@@ -161,6 +159,49 @@ final class MatrixCodeDomainTests: XCTestCase {
         }
     }
 
+    func testShareMatrixCodeWithError() async {
+        let task = ErxTask.Fixtures.erxTaskRedeemed
+        let dmcImage = Asset.qrcode.image
+        let testState = MatrixCodeDomain.State(
+            type: .erxTask,
+            erxTasks: [task],
+            loadingState: .value(
+                [MatrixCodeDomain.State.IdentifiedImage(
+                    identifier: UUID(),
+                    image: dmcImage,
+                    chunk: [task]
+                )]
+            )
+        )
+
+        let store = TestStore(initialState: testState) {
+            MatrixCodeDomain()
+        } withDependencies: { dependencies in
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+        }
+
+        await store.send(.shareButtonTapped) {
+            $0
+                .destination = .sharePrescription(
+                    .init(
+                        string: L10n.dmcTxtShareMessage(task.medication!.displayName).text,
+                        url: nil, // currently nil because we need to check the format first
+                        dataMatrixCodeImage: ImageGenerator.testValue.addCaption(UIImage(), "", "")
+                    )
+                )
+        }
+        let expectedError = ShareSheetDomain.Error.shareFailure("038.01")
+        await store
+            .send(.destination(.presented(.sharePrescription(.delegate(ShareSheetDomain.Action.Delegate
+                    .close(expectedError)))))) {
+                    $0.destination = nil
+            }
+
+        await store.receive(.showAlert(expectedError)) {
+            $0.destination = .alert(.init(for: expectedError, title: L10n.dmcAlertTitle))
+        }
+    }
+
     func testChunkingOfErxTasks() async {
         let tasks = [
             ErxTask.Fixtures.erxTask1,
@@ -193,7 +234,6 @@ final class MatrixCodeDomainTests: XCTestCase {
         }
 
         await store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 100, height: 100)))
-        await testScheduler.advance()
 
         let expectedElements: [MatrixCodeDomain.State.IdentifiedImage] = [
             .init(

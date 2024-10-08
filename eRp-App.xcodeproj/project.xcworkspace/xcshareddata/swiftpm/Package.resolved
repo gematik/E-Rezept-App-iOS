@@ -112,26 +112,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gematik/OpenSSL-Swift",
       "state" : {
-        "revision" : "37e10b7ef220afca4483d614a9d67697fb345959",
-        "version" : "4.2.0"
-      }
-    },
-    {
-      "identity" : "ref-gemcommonskit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/gematik/ref-GemCommonsKit",
-      "state" : {
-        "revision" : "e19c2961ad48cf8897b679bde109988cf96fbb59",
-        "version" : "1.3.0"
+        "revision" : "c07b5380a4e1b324856e5edb7852d21e1835df1e",
+        "version" : "4.3.0"
       }
     },
     {
       "identity" : "ref-openhealthcardkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/gematik/ref-OpenHealthCardKit/",
+      "location" : "https://github.com/gematik/ref-OpenHealthCardKit",
       "state" : {
-        "revision" : "0440510a1ae1756725a73162c210f3f15c4d4727",
-        "version" : "5.8.0"
+        "revision" : "4230060f01eaf707379949ade9866b325ab21cea",
+        "version" : "5.10.1"
       }
     },
     {
@@ -247,8 +238,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "c097f955b4e724690f0fc8ffb7a6d4b881c9c4e3",
-        "version" : "1.17.2"
+        "revision" : "e883fc9ea51e76dc9ed13fd4a92b0ee258a1e8c9",
+        "version" : "1.17.3"
       }
     },
     {

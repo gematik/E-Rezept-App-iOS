@@ -67,19 +67,30 @@ custom_rules:
     severity: warning
   must_not_contain_author:
     included:
-      - ".*Test\\.swift"
-      - ".*Sources\\.swift"
+      - "App/.*\\.swift"
+      - "Test/.*\\.swift"
+      - "Sources/.*\\.swift"
     name: "must not contain author"
     regex: "(\/\/[[:space:]]*Created by)"
     message: "Source must not contain author"
     severity: warning
   must_not_contain_file_header_placeholder:
     included:
-      - ".*Test\\.swift"
-      - ".*Sources\\.swift"
+      - "App/.*\\.swift"
+      - "Test/.*\\.swift"
+      - "Sources/.*\\.swift"
     name: "must not contain file header placeholder"
     regex: "(\/\/[[:space:]]*GEMATIK_COPYRIGHT_STATEMENT*)"
-    message: "Source must not placeholder in file header"
+    message: "Source must not contain placeholder in file header"
+    severity: warning
+  must_not_contain_file_header_apache_license:
+    included:
+      - "App/.*\\.swift"
+      - "Test/.*\\.swift"
+      - "Sources/.*\\.swift"
+    name: "must not contain file header apache license"
+    regex: "Licensed under the Apache License"
+    message: "Source must not contain Apache License in file header"
     severity: warning
 
 file_header:

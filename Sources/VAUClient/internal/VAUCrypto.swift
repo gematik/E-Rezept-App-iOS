@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -164,14 +164,9 @@ enum Ecies {
         let secretKey = SymmetricKey(data: sharedSecret)
 
         // b-d) HKDF
-        #if os(iOS)
         let cek = HKDF<SHA256>.deriveKey(inputKeyMaterial: secretKey,
                                          info: spec.info,
                                          outputByteCount: spec.hkdfOutputCount)
-        #else
-        // TODO: HKDF not available in macOS 10.15, see also VAUCryptoTests // swiftlint:disable:this todo
-        let cek = SymmetricKey(data: Data())
-        #endif
 
         // e) Generate nonce
         let nonceData = try nonceDataGenerator()

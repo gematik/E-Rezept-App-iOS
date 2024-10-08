@@ -12,6 +12,47 @@
                 "content":
                 [
                     {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.15",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
+                    }
+                ]
+            },
+    },
+    "listDetailedTasksForRecordings":
+    {
+        "type": "repeated",
+        "payload":
+            {
+                "content":
+                [
+                    {
                         "flowType":
                         {
                             "pharmacyOnly":

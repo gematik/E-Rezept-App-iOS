@@ -2,17 +2,11 @@
 	"isAuthenticatedRecordings":
     {
         "type": "repeated",
-        "payload": {
-        	"payload": true,
-    	    "contentType": 0
-    	}
+        "payload": true
     },
     "isAuthenticatedOrAuthenticateRecordings":
     {
         "type": "repeated",
-        "payload": {
-        	"payload": true,
-    	    "contentType": 0
-    	}
+        "payload": true
     }
 }

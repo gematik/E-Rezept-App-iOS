@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import eRpKit
@@ -51,10 +51,6 @@ extension ModelsR4.Bundle {
                 .parseError("Could not parse reference or extract task id and access code from communication.")
         }
 
-        guard let telematikId = communication.telematikId(for: profile) else {
-            return nil
-        }
-
         guard let userKVID = communication.kvID(for: profile) else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse userKVID from communication")
         }
@@ -72,7 +68,7 @@ extension ModelsR4.Bundle {
             profile: profile,
             taskId: task.id,
             userId: userKVID,
-            telematikId: telematikId,
+            telematikId: communication.telematikId(for: profile) ?? "",
             orderId: communication.orderId,
             timestamp: timestamp,
             payloadJSON: payloadContent,
@@ -204,5 +200,26 @@ private struct TaskCheck: Identifiable, Hashable {
         guard let taskId = taskString.match(pattern: Self.taskIdPattern) else { return nil }
         id = taskId
         accessCode = taskString.match(pattern: Self.accessCodePattern)
+    }
+}
+
+extension String {
+    /**
+         Returns the nth found group by the pattern matched as a string.
+     */
+    func match(pattern: String, group number: Int = 1) -> String? {
+        guard let regex = try? NSRegularExpression(pattern: "\(pattern)") else {
+            return nil
+        }
+        let result = regex.matches(in: self, options: [], range: NSRange(location: 0, length: count))
+        guard
+            !result.isEmpty,
+            result[0].numberOfRanges > 1,
+            result[0].numberOfRanges > number
+        else {
+            return nil
+        }
+
+        return (self as NSString).substring(with: result[0].range(at: number))
     }
 }

@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import eRpKit
@@ -28,6 +28,7 @@ struct Prescription: Equatable, Identifiable {
         case open(until: String)
         case redeem(at: String) // swiftlint:disable:this identifier_name
         case archived(message: String)
+        case deleted(at: String) // swiftlint:disable:this identifier_name
         case undefined
         case error(message: String)
 
@@ -164,7 +165,17 @@ struct Prescription: Equatable, Identifiable {
         case .completed:
             let redeemedOnDate = uiDateFormatter.relativeDate(whenHandedOver) ?? L10n.prscFdTxtNa.text
             return .archived(message: L10n.dtlTxtMedRedeemedOn(redeemedOnDate).text)
-        case .draft, .cancelled, .undefined:
+        case .cancelled:
+            if let lastModified = erxTask.lastModified?.date,
+               let elapsedDays = lastModified.days(until: date) {
+                let localizedDateString = uiDateFormatter.relativeDate(from: lastModified)
+                // check for relative date formatting (e.g. today, yesterday)
+                return .deleted(
+                    at: String(format: L10n.erxTxtDeletedAt(elapsedDays > 2 ? 2 : 1).text, localizedDateString)
+                )
+            }
+            return .deleted(at: L10n.dtlTxtMedDeleted.text)
+        case .draft, .undefined:
             return .undefined
         case .error:
             let authoredOn = uiDateFormatter.relativeDate(erxTask.authoredOn) ?? L10n.prscFdTxtNa.text
@@ -192,6 +203,7 @@ struct Prescription: Equatable, Identifiable {
         case let .open(until: localizedString): return localizedString
         case let .redeem(at: localizedString): return localizedString
         case let .archived(message: localizedString): return localizedString
+        case let .deleted(at: localizedString): return localizedString
         case .undefined: return L10n.prscFdTxtNa.text
         case let .error(message: localizedString): return localizedString
         }
@@ -202,6 +214,7 @@ struct Prescription: Equatable, Identifiable {
         case .archived: return true
         case .open,
              .redeem,
+             .deleted,
              .undefined,
              .error:
             return false
@@ -322,7 +335,7 @@ extension Prescription {
     var statusTitle: String {
         guard type != .directAssignment else {
             switch viewStatus {
-            case .open, .redeem, .undefined, .error:
+            case .open, .redeem, .deleted, .undefined, .error:
                 return L10n.prscStatusDirectAssigned.text
             case .archived:
                 return L10n.prscStatusCompleted.text
@@ -348,7 +361,7 @@ extension Prescription {
     var image: Image? {
         guard type != .directAssignment else {
             switch viewStatus {
-            case .open, .redeem, .undefined, .error:
+            case .open, .redeem, .deleted, .undefined, .error:
                 return nil
             case .archived:
                 return Image(systemName: SFSymbolName.hourglass)
@@ -364,7 +377,7 @@ extension Prescription {
         case (.computed(.sent), _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.computed(.waiting), _): return nil
         case (.completed, _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
-        case (.cancelled, _): return Image(systemName: SFSymbolName.cross)
+        case (.cancelled, _): return Image(systemName: SFSymbolName.trash)
         case (.draft, _),
              (.undefined, _): return Image(systemName: SFSymbolName.calendarWarning)
         case (.error, _): return Image(systemName: SFSymbolName.exclamationMark)
@@ -389,11 +402,11 @@ extension Prescription {
              (.computed(.sent), _),
              (.computed(.waiting), _),
              (.inProgress, .archived),
-             (.ready, .archived): return Colors.systemGray
+             (.ready, .archived),
+             (.cancelled, _): return Colors.systemGray
         case (.ready, .redeem),
              (.inProgress, _): return Colors.yellow900
         case (.ready, _): return Colors.primary900
-        case (.cancelled, _): return Colors.red900
         case (.error, _): return Colors.red900
         }
     }
@@ -409,11 +422,11 @@ extension Prescription {
              (.computed(.waiting), _),
              (.computed(.sent), _),
              (.inProgress, .archived),
-             (.ready, .archived): return Colors.systemGray2
+             (.ready, .archived),
+             (.cancelled, _): return Colors.systemGray2
         case (.ready, .redeem),
              (.inProgress, _): return Colors.yellow500
         case (.ready, _): return Colors.primary500
-        case (.cancelled, _): return Colors.red500
         case (.error, _): return Colors.red500
         }
     }
@@ -429,11 +442,11 @@ extension Prescription {
              (.computed(.sent), _),
              (.computed(.waiting), _),
              (.inProgress, .archived),
-             (.ready, .archived): return Colors.secondary
+             (.ready, .archived),
+             (.cancelled, _): return Colors.secondary
         case (.ready, .redeem),
              (.inProgress, _): return Colors.yellow200
         case (.ready, _): return Colors.primary100
-        case (.cancelled, _): return Colors.red100
         case (.error, _): return Colors.red100
         }
     }
