@@ -38,6 +38,24 @@
 			<string>Încă poate fi răscumpărat pentru %u zile</string>
 		</dict>
 	</dict>
+	<key>erx_txt_deleted_at</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>one</key>
+			<string>Șters: %% @</string>
+			<key>other</key>
+			<string>Șters pe: %% @</string>
+		</dict>
+	</dict>
 	<key>erx_txt_expires_in</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

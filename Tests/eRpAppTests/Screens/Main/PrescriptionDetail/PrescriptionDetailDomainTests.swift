@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -528,6 +528,39 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         await sut.receive(.response(.matrixCodeImageReceived(expectedLoadingState))) {
             $0.loadingState = expectedLoadingState
             $0.destination = .sharePrescription(expectedShareState)
+        }
+    }
+
+    func testLoadingImageAndShowShareSheetWithError() async {
+        let sut = testStore()
+        let expectedUrl: URL? = nil // sut.state.prescription.erxTask.shareUrl()!
+        let expectedImage = mockMatrixCodeGenerator.uiImage
+        let expectedLoadingState: LoadingState<UIImage, PrescriptionDetailDomain.LoadingImageError> =
+            .value(expectedImage)
+
+        let expectedShareState = ShareSheetDomain.State(
+            string: L10n.dmcTxtShareMessage("Saflorblüten-Extrakt Pulver Peroral").text,
+            url: expectedUrl,
+            dataMatrixCodeImage: ImageGenerator.testValue.addCaption(UIImage(), "", "")
+        )
+        await sut.send(.loadMatrixCodeImage(screenSize: CGSize(width: 100.0, height: 100.0))) {
+            $0.loadingState = .loading(nil)
+        }
+
+        await sut.receive(.response(.matrixCodeImageReceived(expectedLoadingState))) {
+            $0.loadingState = expectedLoadingState
+            $0.destination = .sharePrescription(expectedShareState)
+        }
+
+        let expectedError = ShareSheetDomain.Error.shareFailure("038.01")
+        await sut
+            .send(.destination(.presented(.sharePrescription(.delegate(ShareSheetDomain.Action.Delegate
+                    .close(expectedError)))))) {
+                    $0.destination = nil
+            }
+
+        await sut.receive(.showAlert(expectedError)) {
+            $0.destination = .alert(.init(for: expectedError, title: L10n.dmcAlertTitle))
         }
     }
 

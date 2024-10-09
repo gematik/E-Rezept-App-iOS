@@ -492,6 +492,8 @@ extension MatrixCodeDomain.State {
         switch destination {
             case let .sharePrescription(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case .alert:
+                return destination.analyticsName
         }
     }
 }
@@ -1296,6 +1298,8 @@ extension MatrixCodeDomain.Destination.State {
         switch self {
             case .sharePrescription: 
                 return "sharePrescription"
+            case .alert: 
+                return "alert"
         }
     }
 }

@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import CoreData
@@ -47,6 +47,7 @@ extension ErxTaskEntity {
         noctuFeeWaiver = task.medicationRequest.hasEmergencyServiceFee
         substitutionAllowed = task.medicationRequest.substitutionAllowed
         quantity = ErxTaskQuantityEntity(quantity: task.medicationRequest.quantity, in: context)
+        lastMedicationDispense = task.lastMedicationDispense
 
         accidentInfo = ErxTaskAccidentInfoEntity(
             accident: task.medicationRequest.accidentInfo,
@@ -158,21 +159,30 @@ extension ErxTask {
                 }
             } ?? []
 
-        if erxTaskStatus == .ready {
-            if source == .scanner {
-                erxTaskStatus = ErxTask.updatedStatusForRedeemedScannedTask(
-                    communications: mappedCommunications,
-                    avsTransactions: avsTransactions,
-                    currentDate: now
-                ) ?? erxTaskStatus
-            } else if source == .server {
-                erxTaskStatus = ErxTask
-                    .updatedStatusForServerTask(
-                        lastModified: entity.lastModified?.date,
-                        communications: mappedCommunications,
-                        currentDate: now
-                    ) ?? erxTaskStatus
-            }
+        let medicationDispenses: [ErxMedicationDispense] = entity.medicationDispenses?
+            .compactMap { medicationDispense in
+                if let entity = medicationDispense as? ErxTaskMedicationDispenseEntity {
+                    return ErxMedicationDispense(entity: entity)
+                } else {
+                    return nil
+                }
+            } ?? []
+
+        switch (erxTaskStatus, source) {
+        case (.ready, .scanner):
+            erxTaskStatus = ErxTask.updatedStatusForRedeemedScannedTask(
+                communications: mappedCommunications,
+                avsTransactions: avsTransactions,
+                currentDate: now
+            ) ?? erxTaskStatus
+        case (.ready, .server):
+            erxTaskStatus = ErxTask.updatedStatusForServerTask(
+                lastModified: entity.lastModified?.date,
+                communications: mappedCommunications,
+                currentDate: now
+            ) ?? erxTaskStatus
+        default:
+            break
         }
 
         var quantity: ErxMedication.Quantity?
@@ -195,8 +205,10 @@ extension ErxTask {
             lastModified: entity.lastModified,
             expiresOn: entity.expiresOn,
             acceptedUntil: entity.acceptedUntil,
+            lastMedicationDispense: entity.lastMedicationDispense,
             redeemedOn: entity.redeemedOn,
-            avsTransactions: avsTransactions.sorted { $0.groupedRedeemTime < $1.groupedRedeemTime },
+            avsTransactions: avsTransactions
+                .sorted { $0.groupedRedeemTime < $1.groupedRedeemTime },
             author: entity.author,
             prescriptionId: entity.prescriptionId,
             source: source,
@@ -218,15 +230,8 @@ extension ErxTask {
             organization: ErxOrganization(entity: entity.organization),
             communications: mappedCommunications
                 .sorted { $0.timestamp < $1.timestamp },
-            medicationDispenses: entity.medicationDispenses?
-                .compactMap { medicationDispense in
-                    if let entity = medicationDispense as? ErxTaskMedicationDispenseEntity {
-                        return ErxMedicationDispense(entity: entity)
-                    } else {
-                        return nil
-                    }
-                }
-                .sorted { $0.identifier < $1.identifier } ?? []
+            medicationDispenses: medicationDispenses
+                .sorted { $0.identifier < $1.identifier }
         )
     }
 }

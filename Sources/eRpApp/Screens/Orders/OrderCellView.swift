@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import eRpStyleKit
@@ -21,6 +21,7 @@ import SwiftUI
 
 struct OrderCellView: View {
     let title: String
+    let message: String
     let subtitle: String
 
     var isNew: Bool
@@ -29,11 +30,13 @@ struct OrderCellView: View {
     let action: () -> Void
 
     init(title: String,
+         message: String,
          subtitle: String,
          isNew: Bool = false,
          prescriptionCount: Int = 0,
          action: @escaping () -> Void) {
         self.title = title
+        self.message = message
         self.subtitle = subtitle
         self.isNew = isNew
         self.prescriptionCount = prescriptionCount
@@ -46,8 +49,13 @@ struct OrderCellView: View {
                 HStack(spacing: 8) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(title)
+                            .lineLimit(1)
                             .font(Font.body.weight(.semibold))
                             .multilineTextAlignment(.leading)
+                            .foregroundColor(Colors.systemLabel)
+
+                        Text(message)
+                            .lineLimit(1)
                             .foregroundColor(Colors.systemLabel)
 
                         Text(subtitle)
@@ -84,8 +92,18 @@ struct OrderCellView: View {
 struct OrderRowView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            OrderCellView(title: "Albrecht Apotheke ", subtitle: "02.09.2022", prescriptionCount: 1) {}
-            OrderCellView(title: "Albrecht Apotheke", subtitle: "01.09.2022", isNew: true) {}
+            OrderCellView(
+                title: "Albrecht Apotheke ",
+                message: "Ihre Bestellung ist Bereit",
+                subtitle: "02.09.2022",
+                prescriptionCount: 1
+            ) {}
+            OrderCellView(
+                title: "Albrecht Apotheke",
+                message: "Ihre Bestellung ist Bereit",
+                subtitle: "01.09.2022",
+                isNew: true
+            ) {}
         }
     }
 }

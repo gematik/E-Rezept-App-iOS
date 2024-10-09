@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ASN1Kit
@@ -181,7 +181,7 @@ final class IDPIntegrationTests: XCTestCase {
 
     func testBiometrieFlow() throws {
         let keyIdentifier = try! generateSecureRandom(length: 32)
-        let keyTag = keyIdentifier.encodeBase64urlsafe().utf8string!
+        let keyTag = keyIdentifier.encodeBase64UrlSafeIntTest()!.utf8string!
         let privateKeyContainer: PrivateKeyContainer
 
         do {
@@ -373,7 +373,7 @@ final class IDPIntegrationTests: XCTestCase {
                                                     idTokenValidator: { _ in .success(true) })
             }
             .first()
-            .test(timeout: 10,
+            .test(timeout: 60,
                   failure: { error in
                       fail("\(error)")
                   },
@@ -451,7 +451,7 @@ final class IDPIntegrationTests: XCTestCase {
 
         session.loadDirectoryKKApps()
             .test(
-                timeout: 10,
+                timeout: 60,
                 failure: { error in
                     fail("\(error)")
                 },
@@ -511,7 +511,12 @@ final class IDPIntegrationTests: XCTestCase {
         components.host = idpsekURL.host
         components.port = idpsekURL.port
         components.path = idpsekURL.path
-        components.queryItems?.append(.init(name: "user_id", value: "12345678"))
+        components.queryItems?.append(.init(name: "user_id", value: "X123456784"))
+        if let clientIdIndex = components.queryItems?.firstIndex(where: { item in
+            item.name == "client_id"
+        }) {
+            components.queryItems?.remove(at: clientIdIndex)
+        }
 
         // MARK: - STEP 4 - 7
 
@@ -603,5 +608,18 @@ class MockTrustStoreSession: TrustStoreSession {
 
     func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError> {
         Just(try! X509(der: Data())).setFailureType(to: TrustStoreError.self).eraseToAnyPublisher()
+    }
+}
+
+extension Data {
+    // Note: We duplicate the function `encodeBase64UrlSafe()` and rename it
+    //   because we imported it already twice from IDP and eRpFeatures.
+    // swiftlint:disable:next strict_fileprivate
+    fileprivate func encodeBase64UrlSafeIntTest() -> Data? {
+        base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+            .data(using: .utf8)
     }
 }

@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -33,12 +33,7 @@ public protocol VAUStorage {
 // [REQ:gemSpec_Krypt:A_20175#2|2] Implementation of VAUStorage is using the Filesystem
 public class FileVAUStorage: VAUStorage {
     let userPseudonymFilePath: URL
-    #if os(iOS)
     let writingOptions: Data.WritingOptions = [.atomicWrite, .completeFileProtectionUnlessOpen]
-    #else
-    // TODO: .completeFileProtectionUnlessOpen not available in macOS 10.15 // swiftlint:disable:this todo
-    let writingOptions: Data.WritingOptions = [.atomicWrite]
-    #endif
 
     public init(vauStorageBaseFilePath: URL) {
         userPseudonymFilePath = vauStorageBaseFilePath.appendingPathComponent("userPseudonym")
@@ -89,4 +84,30 @@ public class FileVAUStorage: VAUStorage {
     private static let jsonDecoder = JSONDecoder()
 
     private static let jsonEncoder = JSONEncoder()
+}
+
+extension Data {
+    /// Result Tuple/Pair with information about the write action.
+    /// Where it was written and what was written.
+    typealias WriteResult = (url: URL, data: Data)
+
+    /**
+        Save Data to file and capture response/exception in Result
+
+        - Parameters:
+            - file: the URL file/path to write to
+            - options: Writing settings. Default: .atomicWrite
+
+        - Returns: Result of the write by returning the URL and self upon success.
+     */
+    func save(to file: URL, options: WritingOptions = .atomicWrite) -> Result<WriteResult, Error> {
+        Result {
+            try FileManager.default.createDirectory(
+                at: file.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            try self.write(to: file, options: options)
+            return (file, self)
+        }
+    }
 }

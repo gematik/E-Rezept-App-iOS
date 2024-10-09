@@ -1,25 +1,24 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 #if ENABLE_DEBUG_VIEW
 
 import AVFoundation
-import DataKit
 import eRpStyleKit
 import OpenSSL
 import SwiftUI
@@ -42,20 +41,16 @@ struct DebugEGKScannerView: View {
                           supportedCodeTypes: [.qr, .dataMatrix],
                           scanning: show) { output in
                 guard case let .text(keyBase64Wrapped) = output.first,
-                      let keyBase64 = keyBase64Wrapped else { return }
-                do {
-                    let data = try Base64.decode(string: keyBase64)
+                      let keyBase64 = keyBase64Wrapped,
+                      let data = Data(base64Encoded: keyBase64)
+                else { return }
 
-                    if (try? BrainpoolP256r1.Verify.PrivateKey(raw: data)) != nil {
-                        validPrkFound = true
-                        prkCHAUTbase64 = keyBase64
-                    } else if (try? X509(der: data)) != nil {
-                        validPukFound = true
-                        cCHAUTbase64 = keyBase64
-                    }
-                } catch {
-                    print(error)
-                    return
+                if (try? BrainpoolP256r1.Verify.PrivateKey(raw: data)) != nil {
+                    validPrkFound = true
+                    prkCHAUTbase64 = keyBase64
+                } else if (try? X509(der: data)) != nil {
+                    validPukFound = true
+                    cCHAUTbase64 = keyBase64
                 }
             }
 
@@ -95,7 +90,7 @@ struct DebugEGKScannerView: View {
 
 struct DebugEGKScannerView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             DebugEGKScannerView(show: .constant(true),
                                 prkCHAUTbase64: .constant(""),
                                 cCHAUTbase64: .constant(""),

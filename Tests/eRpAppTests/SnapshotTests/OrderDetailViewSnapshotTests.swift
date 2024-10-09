@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import CombineSchedulers
@@ -89,19 +89,37 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         isRead: true
     )
 
+    let communicationWithEmptyInfoText = ErxTask.Communication(
+        identifier: "1",
+        profile: .reply,
+        taskId: "taskID",
+        userId: "userID",
+        telematikId: "telematikID",
+        timestamp: "2021-05-26T10:59:37.098245933+00:00",
+        payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"\", \"pickUpCodeHR\":\"4711\", \"url\": \"https://das-e-rezept-fuer-deutschland.de\"}" // swiftlint:disable:this line_length
+    )
+
+    let communicationWithInfoTextPhoneNumber = ErxTask.Communication(
+        identifier: "1",
+        profile: .reply,
+        taskId: "taskID",
+        userId: "userID",
+        telematikId: "telematikID",
+        timestamp: "2021-05-26T10:59:37.098245933+00:00",
+        payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs or call us at: +49 30 89 00 43 33.\", \"pickUpCodeHR\":\"4711\", \"url\": \"https://das-e-rezept-fuer-deutschland.de\"}" // swiftlint:disable:this line_length
+    )
+
     func testOderDetailViewWithOneCommunicationDispRequest() {
         let order = Order(
             orderId: "test",
             communications: [communicationDispRequest],
             chargeItems: []
         )
-        let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(
             store: StoreOf<OrderDetailDomain>(
                 initialState: .init(
                     order: order,
-                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),
-                    timelineEntries: timeline
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
                 )
             ) {
                 EmptyReducer()
@@ -120,13 +138,11 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
                              communicationDelivery],
             chargeItems: [ErxChargeItem.Fixtures.chargeItem]
         )
-        let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(
             store: StoreOf<OrderDetailDomain>(
                 initialState: .init(
                     order: order,
-                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),
-                    timelineEntries: timeline
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
                 )
             ) {
                 EmptyReducer()
@@ -144,17 +160,56 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
                              communicationWithoutPayload],
             chargeItems: []
         )
-        let timeline = OrderDetailDomain.loadTimeline(for: order)
         let sut = OrderDetailView(store:
             StoreOf<OrderDetailDomain>(
                 initialState: .init(
                     order: order,
-                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1),
-                    timelineEntries: timeline
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
                 )
             ) {
                 EmptyReducer()
             })
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testOderDetailViewWithEmptyTextButPickupCode() {
+        let order = Order(
+            orderId: "test",
+            communications: [communicationWithEmptyInfoText],
+            chargeItems: []
+        )
+        let sut = OrderDetailView(store:
+            StoreOf<OrderDetailDomain>(
+                initialState: .init(
+                    order: order,
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
+                )
+            ) {
+                EmptyReducer()
+            })
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testOderDetailViewWithInfoTextPhoneNumber() {
+        let order = Order(
+            orderId: "test",
+            communications: [communicationWithInfoTextPhoneNumber],
+            chargeItems: []
+        )
+        let sut = OrderDetailView(
+            store: StoreOf<OrderDetailDomain>(
+                initialState: .init(
+                    order: order,
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
+                )
+            ) {
+                EmptyReducer()
+            }
+        )
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())

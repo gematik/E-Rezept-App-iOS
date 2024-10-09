@@ -37,11 +37,6 @@ extension FootnoteView {
         self.init(text: text.key, a11y: a11y)
     }
 }
-extension FormTextFieldView {
-    init(placeholder: String? = nil, subtitle: StringAsset? = nil, text: Binding<String>, showSeparator: Bool = true) {
-    self.init(placeholder: placeholder, subtitle: subtitle?.key, text: text, showSeparator: showSeparator)
-    }
-}
 extension HeadernoteView {
     init(text: StringAsset, a11y: String) {
         self.init(text: text.key, a11y: a11y)

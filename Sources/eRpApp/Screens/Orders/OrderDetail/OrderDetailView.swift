@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -39,12 +39,12 @@ struct OrderDetailView: View {
             VStack(alignment: .leading, spacing: 0) {
                 ScrollView(.vertical) {
                     TitleView(
-                        title: L10n.ordDetailTxtHistory.key,
+                        title: L10n.ordDetailTxtMessages.key,
                         a11y: ""
                     )
 
                     VStack(alignment: .leading, spacing: 0) {
-                        ForEach(store.timelineEntries) { entry in
+                        ForEach(store.order.timelineEntries) { entry in
                             WithPerceptionTracking {
                                 OrderMessageView(store: store, timelineEntry: entry, style: style(for: entry))
                             }
@@ -52,7 +52,7 @@ struct OrderDetailView: View {
                         .accessibilityElement(children: .contain)
                         .accessibility(identifier: A11y.orderDetail.list.ordDetailTxtMsgList)
                     }
-                    .padding(.top, 12)
+                    .padding(.top, 32)
                     .padding(.bottom, 56)
 
                     TitleView(
@@ -78,16 +78,17 @@ struct OrderDetailView: View {
 
                 // prescription details
 
-                NavigationLink(item: $store.scope(
-                    state: \.destination?.prescriptionDetail,
-                    action: \.destination.prescriptionDetail
-                )) { store in
-                    PrescriptionDetailView(store: store)
-                } label: {
-                    EmptyView()
-                }
-                .hidden()
-                .accessibility(hidden: true)
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .navigationDestination(
+                        item: $store.scope(
+                            state: \.destination?.prescriptionDetail,
+                            action: \.destination.prescriptionDetail
+                        )
+                    ) { store in
+                        PrescriptionDetailView(store: store)
+                    }
+                    .accessibility(hidden: true)
 
                 // charge item detail
 
@@ -99,7 +100,6 @@ struct OrderDetailView: View {
                     )) { store in
                         ChargeItemView(store: store)
                     }
-                    .hidden()
                     .accessibility(hidden: true)
 
                 // pickup code
@@ -140,7 +140,8 @@ struct OrderDetailView: View {
                     .hidden()
                     .accessibility(hidden: true)
             }
-            .navigationBarTitle(L10n.ordDetailTxtTitle, displayMode: .inline)
+            .navigationBarBackButtonHidden(true)
+            .navigationBarTitle(store.order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text, displayMode: .inline)
             .accessibility(identifier: A11y.orderDetail.list.ordDetailTitle)
             .alert($store.scope(
                 state: \.destination?.alert?.alert,
@@ -186,18 +187,34 @@ struct OrderDetailView: View {
                             .accessibility(label: Text(L10n.ordDetailTxtContact))
                     }
                 }
+
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        store.send(.delegate(.close))
+                    }, label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: SFSymbolName.back)
+                                .font(Font.headline.weight(.semibold))
+                                .foregroundColor(Colors.primary600)
+
+                            Text(L10n.cdwBtnRcHelpBack)
+                                .font(.body)
+                                .foregroundColor(Colors.primary600)
+                        }
+                    })
+                }
             }
         }
     }
 
-    private func style(for entry: OrderDetailDomain.TimelineEntry) -> OrderMessageView.Indicator.Style {
+    private func style(for entry: Order.TimelineEntry) -> OrderMessageView.Indicator.Style {
         switch entry {
-        case store.timelineEntries.first:
-            if store.timelineEntries.count == 1 {
+        case store.order.timelineEntries.first:
+            if store.order.timelineEntries.count == 1 {
                 return .single
             }
             return .first
-        case store.timelineEntries.last:
+        case store.order.timelineEntries.last:
             return .last
         default:
             return .middle
@@ -225,7 +242,7 @@ struct OrderDetailView: View {
 
         var body: some View {
             WithPerceptionTracking {
-                NavigationView {
+                NavigationStack {
                     VStack(spacing: 0) {
                         Text(L10n.ordDetailSheetTitleShipment)
                             .foregroundColor(Colors.systemLabel)
@@ -258,7 +275,7 @@ struct OrderDetailView: View {
 
 struct MessagesView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             OrderDetailView(store: OrderDetailDomain.Dummies.store)
         }
     }

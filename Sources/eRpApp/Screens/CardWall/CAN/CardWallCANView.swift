@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -40,19 +40,16 @@ struct CardWallCANView: View {
                                   a11y: A11y.cardWall.canInput.cdwBtnCanDone,
                                   isEnabled: store.state.can.count == 6) {
                     // workaround: dismiss keyboard to fix safearea bug for iOS 16
-                    if #available(iOS 16, *) {
-                        UIApplication.shared.dismissKeyboard()
-                    }
+                    UIApplication.shared.dismissKeyboard()
                     store.send(.advance)
-                }.padding(.horizontal)
-
-                NavigationLink(item: $store.scope(state: \.destination?.pin, action: \.destination.pin)) { store in
-                    CardWallPINView(store: store)
-                } label: {
-                    EmptyView()
                 }
-                .hidden()
-                .accessibility(hidden: true)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+                .navigationDestination(
+                    item: $store.scope(state: \.destination?.pin, action: \.destination.pin)
+                ) { store in
+                    CardWallPINView(store: store)
+                }
             }
             .demoBanner(isPresented: store.isDemoModus) {
                 Text(L10n.cdwTxtCanDemoModeInfo)
@@ -123,7 +120,7 @@ struct CardWallCANView: View {
                             .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanMore)
                             .fullScreenCover(item: $store
                                 .scope(state: \.destination?.egk, action: \.destination.egk)) { store in
-                                    NavigationView {
+                                    NavigationStack {
                                         OrderHealthCardListView(store: store)
                                             .accentColor(Colors.primary700)
                                             .navigationViewStyle(StackNavigationViewStyle())
@@ -156,7 +153,7 @@ struct CardWallCANView: View {
                     ),
                     onDismiss: {},
                     content: {
-                        NavigationView {
+                        NavigationStack {
                             CANCameraScanner(canScan: $scannedcan) { canScan in
                                 if let canScan = scannedcan {
                                     store.send(.update(can: canScan))
@@ -221,7 +218,7 @@ struct CardWallCANView: View {
 struct CardWallCANView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            NavigationView {
+            NavigationStack {
                 CardWallCANView(
                     store: CardWallCANDomain.Dummies.store
                 )

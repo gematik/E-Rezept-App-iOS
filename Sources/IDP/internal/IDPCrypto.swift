@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import CommonCrypto
@@ -79,7 +79,7 @@ struct IDPCrypto {
     func generateRandomVerifier() throws -> String? {
         // [REQ:gemSpec_IDP_Frontend:A_20309] verifierLength is 32 bytes, encoded to base64 this results in 43 chars
         // (32 * 4 / 3 = 42,6)
-        try randomGenerator(verifierLength).encodeBase64urlsafe().utf8string
+        try randomGenerator(verifierLength).encodeBase64UrlSafe()?.utf8string
     }
 
     func generateRandomNonce() throws -> String? {

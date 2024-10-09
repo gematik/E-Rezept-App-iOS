@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import CasePaths
@@ -59,6 +59,8 @@ struct PharmacySearchMapDomain {
         var searchAfterAuthorized = false
         /// Boolean for only displaying the result from the text search result and not from the map
         var showOnlyTextSearchResult = false
+        /// The value of the search text field
+        var searchText = ""
     }
 
     @Reducer(state: .equatable, action: .equatable)
@@ -188,7 +190,8 @@ struct PharmacySearchMapDomain {
             return .run { [
                 center = state.mapLocation.region.center,
                 filter = state.pharmacyFilterOptions,
-                pharmacies = state.pharmacies
+                pharmacies = state.pharmacies,
+                text = state.searchText
             ] send in
             let locationStatus = await locationManager.authorizationStatus()
             if locationStatus == .notDetermined {
@@ -196,7 +199,8 @@ struct PharmacySearchMapDomain {
             } else if pharmacies.isEmpty {
                 guard let action = try? await searchPharmacies(
                     location: Location(rawValue: .init(latitude: center.latitude, longitude: center.longitude)),
-                    filter: filter.filter { $0 != .currentLocation }
+                    filter: filter,
+                    searchText: text
                 ) else {
                     return
                 }
@@ -208,10 +212,11 @@ struct PharmacySearchMapDomain {
             guard let currentUserLocation = state.currentUserLocation else { return .none }
             if state.searchAfterAuthorized, !state.showOnlyTextSearchResult {
                 state.searchAfterAuthorized = false
-                return .run { [filter = state.pharmacyFilterOptions] send in
+                return .run { [filter = state.pharmacyFilterOptions, text = state.searchText] send in
                     guard let action = try? await searchPharmacies(
                         location: currentUserLocation,
-                        filter: filter.filter { $0 != .currentLocation }
+                        filter: filter,
+                        searchText: text
                     ) else {
                         return
                     }
@@ -243,16 +248,16 @@ struct PharmacySearchMapDomain {
             guard let currentUserLocation = state.currentUserLocation else {
                 return Effect.send(.requestLocation)
             }
-            return .run { [filter = state.pharmacyFilterOptions] send in
-                guard let action = try? await searchPharmacies(
-                    location: currentUserLocation,
-                    filter: filter.filter { $0 != .currentLocation }
-                ) else {
-                    return
-                }
-
-                await send(action)
+            if !state.pharmacyFilterOptions.contains(.currentLocation) {
+                state.pharmacyFilterOptions.append(.currentLocation)
+                // nothing else to do here: state change of pharmacyFilterOptions will automatically start quicksearch
+                return .none
             }
+            return loadSearchAction(
+                location: currentUserLocation,
+                filter: state.pharmacyFilterOptions,
+                text: state.searchText
+            )
         case let .showClusterSheet(cluster):
             let pharmacyArray = cluster.map(\.pharmacy)
             state.destination = .clusterSheet(.init(clusterPharmacies: pharmacyArray))
@@ -264,17 +269,18 @@ struct PharmacySearchMapDomain {
                 await send(.showDetails(viewModel))
             }
         case .performSearch:
-            // [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
-            return .run { [center = state.mapLocation.region.center, filter = state.pharmacyFilterOptions] send in
-                guard let action = try? await searchPharmacies(
-                    location: Location(rawValue: .init(latitude: center.latitude, longitude: center.longitude)),
-                    filter: filter.filter { $0 != .currentLocation }
-                ) else {
-                    return
-                }
-
-                await send(action)
+            if let index = state.pharmacyFilterOptions.firstIndex(of: .currentLocation) {
+                state.pharmacyFilterOptions.remove(at: index)
+                // nothing else to do here: state change of pharmacyFilterOptions will automatically start quicksearch
+                return .none
             }
+            // [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
+            let center = state.mapLocation.region.center
+            return loadSearchAction(
+                location: Location(rawValue: .init(latitude: center.latitude, longitude: center.longitude)),
+                filter: state.pharmacyFilterOptions,
+                text: state.searchText
+            )
         case let .response(.pharmaciesReceived(result, location)):
             switch result {
             case let .success(pharmacies):
@@ -288,7 +294,7 @@ struct PharmacySearchMapDomain {
                         timeOnlyFormatter: timeOnlyFormatter
                     )
                 }
-                .filter(by: state.pharmacyFilterOptions.filter { $0 != .currentLocation })
+                .filter(by: state.pharmacyFilterOptions)
 
                 state.mapLocation = .manual(.init(
                     center: location,
@@ -335,15 +341,27 @@ struct PharmacySearchMapDomain {
                 try await schedulers.main.sleep(for: 0.1)
                 await send(.delegate(.close))
             }
-        case .destination(.presented(.alert(.performSearch))):
-            return Effect.send(.performSearch)
+        case .destination(.presented(.alert(.performSearch))),
+             .quickSearch:
+            if state.pharmacyFilterOptions.contains(.currentLocation) {
+                guard let currentUserLocation = state.currentUserLocation else {
+                    return Effect.send(.requestLocation)
+                }
+                return loadSearchAction(
+                    location: currentUserLocation,
+                    filter: state.pharmacyFilterOptions,
+                    text: state.searchText
+                )
+            }
+            let center = state.mapLocation.region.center
+            return loadSearchAction(
+                location: Location(rawValue: .init(latitude: center.latitude, longitude: center.longitude)),
+                filter: state.pharmacyFilterOptions,
+                text: state.searchText
+            )
         case .destination(.presented(.alert(.close))):
             state.destination = nil
             return .none
-        case .quickSearch:
-            return .run { send in
-                await send(.performSearch)
-            }
         case .destination(.presented(.filter(.delegate(.close)))):
             state.destination = nil
             return .none
@@ -360,25 +378,22 @@ struct PharmacySearchMapDomain {
         )))):
             guard let pharmacy = state.detailsPharmacy else { return .none }
 
-            // An set of prescriptions that represents the selected prescriptions.
-            let setOfPrescriptions: Set<Prescription>
+            // An array of prescriptions that represents the selected prescriptions.
+            var arrayOfPrescriptions: [Prescription] = []
             if let redeemPrescriptions = state.pharmacyRedeemState?.selectedPrescriptions {
                 // If the user has already selected prescription from the current redeeming process,
                 // these will be used first
-                setOfPrescriptions = redeemPrescriptions
+                arrayOfPrescriptions = redeemPrescriptions
             } else if state.inRedeemProcess {
                 // If the user has started the redeeming process from the main view, we select these prescriptions.
-                setOfPrescriptions = Set(selectedPrescriptions)
-            } else {
-                // If neither case applies, no prescription is selected.
-                setOfPrescriptions = Set()
+                arrayOfPrescriptions = selectedPrescriptions
             }
 
             let redeemState = PharmacyRedeemDomain.State(
                 redeemOption: option,
                 prescriptions: Shared(state.pharmacyRedeemState?.prescriptions ?? prescriptions),
                 pharmacy: pharmacy.pharmacyLocation,
-                selectedPrescriptions: Shared(setOfPrescriptions)
+                selectedPrescriptions: Shared(arrayOfPrescriptions)
             )
             state.destination = destination(service: service, state: redeemState)
             state.pharmacyRedeemState = nil
@@ -457,7 +472,7 @@ struct PharmacySearchMapDomain {
         case .showPharmacyFilter:
             state.destination = .filter(.init(
                 pharmacyFilterOptions: state.$pharmacyFilterOptions,
-                pharmacyFilterShow: [.open, .delivery, .shipment]
+                pharmacyFilterShow: [.open, .delivery, .shipment, .currentLocation]
             ))
             return .none
         case .resetNavigation:
@@ -514,11 +529,12 @@ extension PharmacySearchMapDomain {
 
     func searchPharmacies(
         location: ComposableCoreLocation.Location,
-        filter: [PharmacySearchFilterDomain.PharmacyFilterOption]
+        filter: [PharmacySearchFilterDomain.PharmacyFilterOption],
+        searchText: String = ""
     ) async throws -> PharmacySearchMapDomain.Action {
         let position = Position(lat: location.coordinate.latitude, lon: location.coordinate.longitude)
         return try await pharmacyRepository.searchRemote(
-            searchTerm: "",
+            searchTerm: searchText,
             position: position,
             filter: filter.asPharmacyRepositoryFilters
         )
@@ -546,7 +562,7 @@ extension PharmacySearchMapDomain {
         .filter { $0.distanceInM != nil }
 
         let seventhOrLast = min(filteredAndSorted.count, 7)
-        if let seventhLocation = filteredAndSorted[seventhOrLast - 1].position?.coordinate {
+        if !filteredAndSorted.isEmpty, let seventhLocation = filteredAndSorted[seventhOrLast - 1].position?.coordinate {
             /// Now calculating lat/long - delta by subtracting the seventhLocation from the currentLocation
             /// and multiplying by 2 for adjusting the zoom level
             let latitudeDelta = 2 * abs(currentLocation.latitude - seventhLocation.latitude)
@@ -587,6 +603,22 @@ extension PharmacySearchMapDomain {
             return .redeemViaErxTaskRepository(state)
         case .noService:
             return nil
+        }
+    }
+
+    func loadSearchAction(location: Location,
+                          filter: [PharmacySearchFilterDomain.PharmacyFilterOption],
+                          text: String) -> Effect<Action> {
+        .run { send in
+            guard let action = try? await searchPharmacies(
+                location: location,
+                filter: filter,
+                searchText: text
+            ) else {
+                return
+            }
+
+            await send(action)
         }
     }
 }

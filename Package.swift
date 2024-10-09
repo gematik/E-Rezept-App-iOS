@@ -23,7 +23,7 @@ let package = Package(
     name: "eRpKit",
     defaultLocalization: "de",
     platforms: [
-        .iOS(.v15), .macOS(.v12)
+        .iOS(.v16), .macOS(.v12)
     ],
     products: [
         .library(name: "eRpFeatures", targets: ["eRpFeatures"]),
@@ -45,7 +45,6 @@ let package = Package(
         .package(url: "https://github.com/AliSoftware/OHHTTPStubs", from: "9.1.0"),
         .package(url: "https://github.com/andyjohns/zxcvbn-ios", revision: "bf6083dc17df950c8bdfcf2063859ee1270015fd"),
         .package(url: "https://github.com/apple/FHIRModels", from: "0.5.0"),
-        .package(url: "https://github.com/gematik/ref-GemCommonsKit.git", from: "1.3.0"),
         .package(url: "https://github.com/pointfreeco/combine-schedulers", from: "1.0.2"),
         .package(url: "https://github.com/rcasula/composable-core-location", revision: "40a98e18d0350fd1a1efa83c24aca3044b9b7bd2"),
         .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.4"),
@@ -84,7 +83,6 @@ let package = Package(
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "ContentsquareModule", package: "CS_iOS_SDK"),
                 .product(name: "Zxcvbn", package: "zxcvbn-ios"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "ComposableCoreLocation", package: "composable-core-location"),
                 .product(name: "CasePaths", package: "swift-case-paths"),
@@ -144,7 +142,6 @@ let package = Package(
             dependencies: [
                 "eRpKit",
                 .product(name: "ModelsR4", package: "FHIRModels"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
             ],
@@ -187,7 +184,6 @@ let package = Package(
                 "TrustStore",
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
                 .product(name: "DataKit", package: "DataKit"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
             ]
@@ -202,9 +198,7 @@ let package = Package(
         ),
         .target(
             name: "HTTPClient",
-            dependencies: [
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
-            ]
+            dependencies:  []
         ),
         .target(
             name: "TrustStore",
@@ -212,7 +206,6 @@ let package = Package(
                 "HTTPClient",
                 .product(name: "DataKit", package: "DataKit"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
             ]
         ),
         .target(
@@ -286,7 +279,6 @@ let package = Package(
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "Nimble", package: "Nimble"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
             ],
             resources: [
                 .copy("Resources")
@@ -300,7 +292,6 @@ let package = Package(
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "Nimble", package: "Nimble"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
             ],
             resources: [
                 .copy("Resources")
@@ -325,7 +316,6 @@ let package = Package(
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "Nimble", package: "Nimble"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
             ],
             resources: [
                 .copy("Resources")
@@ -339,7 +329,6 @@ let package = Package(
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "Nimble", package: "Nimble"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
             ],
             resources: [
                 .copy("Resources")
@@ -364,7 +353,6 @@ let package = Package(
                 "TrustStore",
                 "TestUtils",
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
-                .product(name: "GemCommonsKit", package: "ref-GemCommonsKit"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "Nimble", package: "Nimble"),
             ],

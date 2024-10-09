@@ -34,6 +34,22 @@
 			<string>Все още може да се използва за %u дни</string>
 		</dict>
 	</dict>
+	<key>erx_txt_deleted_at</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Изтрито: %% @</string>
+			<key>other</key>
+			<string>Изтрито на: %% @</string>
+		</dict>
+	</dict>
 	<key>erx_txt_expires_in</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

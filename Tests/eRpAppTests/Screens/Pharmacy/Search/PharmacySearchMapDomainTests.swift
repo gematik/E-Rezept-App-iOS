@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 import Combine
 import ComposableArchitecture
@@ -92,6 +92,8 @@ class PharmacySearchMapDomainTests: XCTestCase {
                                                                longitudeDelta: 9.841382800000005
                                                            )))
         }
+
+        expect(mockPharmacyRepo.searchRemoteSearchTermPositionFilterReceivedArguments?.searchTerm).to(equal("Adler"))
     }
 
     func test_FirstOpenAndAllowingLocation() async {
@@ -148,7 +150,11 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
         await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate)))
 
-        await sut.send(.goToUser)
+        await sut.send(.goToUser) { state in
+            state.pharmacyFilterOptions = [.currentLocation]
+        }
+
+        await sut.receive(.quickSearch(filters: [.currentLocation]))
 
         await testScheduler.advance()
 
@@ -192,7 +198,11 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
         await sut.receive(.response(.pharmaciesReceived(expected, expectedLocation.coordinate)))
 
-        await sut.send(.goToUser)
+        await sut.send(.goToUser) { state in
+            state.pharmacyFilterOptions = [.currentLocation]
+        }
+
+        await sut.receive(.quickSearch(filters: [.currentLocation]))
 
         await testScheduler.advance()
 
@@ -341,7 +351,10 @@ class PharmacySearchMapDomainTests: XCTestCase {
         await testScheduler.run()
 
         await sut.send(.showPharmacyFilter) { state in
-            state.destination = .filter(.init(pharmacyFilterShow: [.open, .delivery, .shipment]))
+            state.destination = .filter(.init(
+                pharmacyFilterOptions: state.$pharmacyFilterOptions,
+                pharmacyFilterShow: [.open, .delivery, .shipment, .currentLocation]
+            ))
         }
 
         await sut.send(.destination(.presented(.filter(.toggleFilter(.delivery))))) { state in
@@ -351,7 +364,6 @@ class PharmacySearchMapDomainTests: XCTestCase {
         await testScheduler.run()
 
         await sut.receive(\.quickSearch, [.delivery])
-        await sut.receive(.performSearch)
 
         await sut.receive(\.response.pharmaciesReceived)
         await onAppear.cancel()
@@ -372,7 +384,7 @@ class PharmacySearchMapDomainTests: XCTestCase {
             redeemOption: .onPremise,
             prescriptions: Shared(inputTask.filter(\.isRedeemable)),
             pharmacy: oldPharmacy.pharmacyLocation,
-            selectedPrescriptions: Shared(Set())
+            selectedPrescriptions: Shared([])
         )
         let newPharmacyRedeemState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
@@ -687,24 +699,29 @@ extension PharmacySearchMapDomainTests {
                                 .center.longitude)),
                         referenceDate: TestData.openHoursTestReferenceDate
                     )
-                }
+                },
+                pharmacyFilterOptions: Shared([]),
+                searchText: "Adler"
             )
         /// Test-Data PharmacyDomain.State
-        public static let stateWithLocation =
+        static var stateWithLocation: PharmacySearchMapDomain.State {
             PharmacySearchMapDomain.State(
                 selectedPrescriptions: Shared([]),
                 inRedeemProcess: false,
                 currentUserLocation: TestData.testLocation,
                 mapLocation: .manual(.init(center: TestData.testLocation.coordinate,
                                            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))),
-                pharmacies: pharmaciesWithLocations.map { pharmacies in
+                pharmacies: PharmacySearchMapDomainTests.TestData.pharmaciesWithLocations.map { pharmacies in
                     PharmacyLocationViewModel(
                         pharmacy: pharmacies,
                         referenceLocation: TestData.testLocation,
                         referenceDate: TestData.openHoursTestReferenceDate
                     )
-                }
+                },
+                pharmacyFilterOptions: Shared([])
             )
+        }
+
         /// Test location
         public static let testLocation = Location(
             rawValue: CLLocation(latitude: 49.5270345, longitude: 8.4668786)

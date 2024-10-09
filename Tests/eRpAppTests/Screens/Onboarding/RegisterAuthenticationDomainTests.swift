@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -125,20 +125,11 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.passwordA = "Secure Pass word"
             state.passwordB = ""
             state.passwordStrength = .strong
-            state.showPasswordErrorMessage = false
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
         await testScheduler.run()
-        await store.receive(.comparePasswords) { state in
-            state.showPasswordErrorMessage = true
-            state.selectedSecurityOption = .password
-            state.passwordA = "Secure Pass word"
-            state.passwordB = ""
-            state.passwordStrength = .strong
-            let message = state.passwordErrorMessage
-            expect(message).to(beNil())
-        }
+        await store.receive(.comparePasswords)
     }
 
     func testSelectingStrongAndEqualPasswords() async {
@@ -175,12 +166,14 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.passwordA = "Secure Pass word"
             state.passwordB = "Secure Pass word"
             state.passwordStrength = .strong
-            state.showPasswordErrorMessage = false
+            state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
             expect(message).to(beNil())
         }
         await testScheduler.run()
-        await store.receive(.comparePasswords)
+        await store.receive(.comparePasswords) { state in
+            state.showPasswordErrorMessage = false
+        }
     }
 
     func testSelectingFaceIDWithPreviousPasswordSelection() async {
@@ -312,15 +305,14 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 selectedSecurityOption: .unsecured,
                 passwordA: "",
                 passwordB: "",
+                showPasswordErrorMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
             )
         )
 
-        await store.send(.saveSelection) { state in
-            state.showNoSelectionMessage = true
-        }
+        await store.send(.comparePasswords)
     }
 
     func testSaveSelectionPasswordNotEqual() async {
@@ -337,7 +329,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        await store.send(.saveSelection) { state in
+        await store.send(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
         }
     }
@@ -351,15 +343,14 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 passwordA: "abc",
                 passwordB: "abc",
                 passwordStrength: .veryStrong,
+                showPasswordErrorMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
             )
         )
 
-        await store.send(.saveSelection)
-        await testScheduler.advance()
-        await store.receive(.saveSelectionSuccess)
+        await store.send(.comparePasswords)
     }
 
     func testSaveBiometrics() async {
@@ -378,8 +369,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
-        await store.send(.saveSelection)
-        await store.receive(.saveSelectionSuccess)
+        await store.send(.comparePasswords)
     }
 
     func testSelectBiometricsSucceeds() async {
@@ -479,7 +469,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = .weak
 
-        await store.send(.saveSelection) { state in
+        await store.send(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
             expect(message) == L10n.onbAuthTxtPasswordStrengthInsufficient.text

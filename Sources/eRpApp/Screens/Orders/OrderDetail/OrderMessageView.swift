@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -21,16 +21,17 @@ import eRpKit
 import eRpStyleKit
 import Perception
 import SwiftUI
+import UIKit
 
 struct OrderMessageView: View {
     let store: StoreOf<OrderDetailDomain>
-    let timelineEntry: OrderDetailDomain.TimelineEntry
+    let timelineEntry: Order.TimelineEntry
     var style: Indicator.Style = .middle
 
     @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
     var body: some View {
-        HStack(alignment: .center) {
+        HStack {
             Indicator(style: style)
                 .frame(maxHeight: .infinity)
 
@@ -43,65 +44,65 @@ struct OrderMessageView: View {
                     .foregroundColor(Colors.systemLabel)
                     .padding(.horizontal)
 
-                Group {
-                    if let entryText = try? AttributedString(markdown: timelineEntry.text) {
-                        Text(entryText)
-                    } else {
-                        Text(timelineEntry.text)
-                    }
-                }
-                .accessibility(identifier: A11y.orderDetail.message.msgTxtTitle)
-                .font(Font.subheadline)
-                .multilineTextAlignment(.leading)
-                .padding(.horizontal)
-                .foregroundColor(Colors.systemLabelSecondary)
-                // handle inline link action for dispReq entries
-                .environment(\.openURL, OpenURLAction { _ in
-                    if case .dispReq = timelineEntry,
-                       let buttonText = timelineEntry.actions.keys.first,
-                       let action = timelineEntry.actions[buttonText] {
-                        store.send(action)
-                    }
-                    return .discarded
-                })
+                Text(timelineEntry.formattedText)
+                    .contextMenu(ContextMenu {
+                        Button(L10n.orderTxtCopyToClipboard) {
+                            UIPasteboard.general.string = timelineEntry.text
+                        }
+                    })
+                    .accentColor(Colors.primary)
+                    .accessibility(identifier: A11y.orderDetail.message.msgTxtTitle)
+                    .font(Font.subheadline)
+                    .multilineTextAlignment(.leading)
+                    .padding(.horizontal)
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    // handle inline link action for dispReq and reply entries
+                    .environment(\.openURL, OpenURLAction { url in
+                        switch timelineEntry {
+                        case .dispReq:
+                            if let action = timelineEntry.actions.first?.action {
+                                store.send(action)
+                            }
+                            return .handled
+                        case .reply:
+                            store.send(.openPhoneAppWith(url: url))
+                            return .handled
+                        case .chargeItem:
+                            return .systemAction
+                        }
+                    })
 
                 if case .dispReq = timelineEntry {
                     // ignore action here since it's used as inline text link
                 } else {
-                    ForEach(Array(timelineEntry.actions.keys), id: \.self) { buttonText in
-                        if let action = timelineEntry.actions[buttonText] {
-                            Button {
-                                store.send(action)
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Text(buttonText)
-                                        .font(Font.subheadline)
-                                    Image(systemName: SFSymbolName.chevronRight)
-                                        .font(Font.subheadline.weight(.semibold))
-                                }
-                                .padding(.top)
-                                .padding(.horizontal)
-                                .foregroundColor(Colors.primary600)
+                    ForEach(timelineEntry.actions) { timelineEntry in
+                        Button {
+                            store.send(timelineEntry.action)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(timelineEntry.name)
+                                    .font(Font.subheadline)
+                                Image(systemName: SFSymbolName.chevronRight)
+                                    .font(Font.subheadline.weight(.semibold))
                             }
+                            .padding(.top)
+                            .padding(.horizontal)
+                            .foregroundColor(Colors.primary600)
                         }
                     }
                 }
 
                 if ![.last, .single].contains(style) {
-                    Divider()
-                        .padding(.top, 8)
-                        .padding(.leading)
-                        .padding(.bottom)
-                } else {
                     Rectangle()
                         .frame(maxWidth: .infinity, maxHeight: 0)
-                        .padding(.top, 8)
+                        .padding(.top, 40)
                         .padding(.leading)
                         .padding(.bottom)
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         .fixedSize(horizontal: false, vertical: true)
         .padding(.leading)
     }
@@ -111,16 +112,16 @@ struct OrderMessageView: View {
         let style: Indicator.Style
 
         var body: some View {
-            ZStack {
+            ZStack(alignment: .top) {
                 switch style {
                 case .single:
-                    VLine(style: .topHalf)
-                        .stroke(style: StrokeStyle(lineWidth: 2, dash: [4]))
+                    VLine(style: .topSmall)
+                        .stroke(style: StrokeStyle(lineWidth: 2))
                         .foregroundColor(Colors.systemGray5)
                         .frame(width: 1)
-                        .offset(x: 0.5, y: offsetY / 2)
+                        .offset(x: 0.5, y: offsetY)
                 case .first:
-                    VLine(style: .bottomHalf)
+                    VLine(style: .full)
                         .stroke(style: StrokeStyle(lineWidth: 2))
                         .foregroundColor(Colors.systemGray5)
                         .frame(width: 1)
@@ -132,7 +133,7 @@ struct OrderMessageView: View {
                         .frame(width: 1)
                         .offset(x: 0.5, y: offsetY)
                 case .last:
-                    VLine(style: .topHalf)
+                    VLine(style: .topSmall)
                         .stroke(style: StrokeStyle(lineWidth: 2))
                         .foregroundColor(Colors.systemGray5)
                         .frame(width: 1)
@@ -143,7 +144,6 @@ struct OrderMessageView: View {
                     .strokeBorder(Colors.systemGray5, lineWidth: 5)
                     .background(Colors.systemBackground)
                     .frame(width: 16, height: 16)
-                    .offset(x: 0, y: offsetY)
             }
         }
 
@@ -159,15 +159,13 @@ struct OrderMessageView: View {
 
             func path(in rect: CGRect) -> Path {
                 var path = Path()
-                var startY = rect.minY
+                let startY = rect.minY
                 var endY = rect.maxY
                 switch style {
                 case .full:
                     break
-                case .topHalf:
-                    endY = rect.midY
-                case .bottomHalf:
-                    startY = rect.midY
+                case .topSmall:
+                    endY = rect.minY + 15
                 }
                 path.move(to: CGPoint(x: rect.minX, y: startY))
                 path.addLine(to: CGPoint(x: rect.minX, y: endY))
@@ -176,8 +174,7 @@ struct OrderMessageView: View {
 
             enum Style {
                 case full
-                case topHalf
-                case bottomHalf
+                case topSmall
             }
         }
     }

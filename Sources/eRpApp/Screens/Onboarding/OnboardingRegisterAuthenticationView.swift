@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -144,16 +144,14 @@ extension OnboardingRegisterAuthenticationView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
-                OnboardingRegisterAuthenticationView.BiometryButton(text: L10n.authBtnBiometricsFaceid,
-                                                                    image: Image(
-                                                                        systemName: isSelected ? SFSymbolName
-                                                                            .checkmark : SFSymbolName.faceId
-                                                                    ),
-                                                                    backgroundColor: isSelected ? Colors
-                                                                        .alertPositiv : Colors.primary,
-                                                                    action: action)
-                    .padding()
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnFaceid)
+                OnboardingRegisterAuthenticationView.BiometryButton(
+                    text: L10n.authBtnBiometricsFaceid,
+                    image: Image(systemName: isSelected ? SFSymbolName.checkmark : SFSymbolName.faceId),
+                    backgroundColor: isSelected ? Colors.alertPositiv : Colors.primary,
+                    action: action
+                )
+                .padding()
+                .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnFaceid)
             }
             .padding(.top, 42)
         }
@@ -166,18 +164,16 @@ extension OnboardingRegisterAuthenticationView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
-                OnboardingRegisterAuthenticationView.BiometryButton(text: L10n.authBtnBiometricsTouchid,
-                                                                    image: Image(
-                                                                        systemName: isSelected ? SFSymbolName
-                                                                            .checkmark : SFSymbolName.touchId
-                                                                    ),
-                                                                    backgroundColor: isSelected ? Colors
-                                                                        .alertPositiv : Colors.primary,
-                                                                    action: action)
-                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnTouchid)
-                    .padding()
-                    .padding(.top, 50)
-                    .padding(.horizontal)
+                OnboardingRegisterAuthenticationView.BiometryButton(
+                    text: L10n.authBtnBiometricsTouchid,
+                    image: Image(systemName: isSelected ? SFSymbolName.checkmark : SFSymbolName.touchId),
+                    backgroundColor: isSelected ? Colors.alertPositiv : Colors.primary,
+                    action: action
+                )
+                .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnTouchid)
+                .padding()
+                .padding(.top, 50)
+                .padding(.horizontal)
             }
             .padding(.top, 42)
         }
@@ -246,10 +242,12 @@ extension OnboardingRegisterAuthenticationView {
                         .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
 
                     // [REQ:BSI-eRp-ePA:O.Pass_2#2] Password strength view within onboarding.
-                    PasswordStrengthView(strength: store.passwordStrength,
-                                         barBackgroundColor: Color(.secondarySystemBackground))
-                        .padding(.bottom, 16)
-                        .animation(.easeInOut, value: store.passwordA)
+                    PasswordStrengthView(
+                        strength: store.passwordStrength,
+                        barBackgroundColor: Color(.secondarySystemBackground)
+                    )
+                    .padding(.bottom, 16)
+                    .animation(.easeInOut, value: store.passwordA)
 
                     VStack(alignment: .leading, spacing: 11) {
                         SecureField(L10n.cpwInpPasswordBPlaceholder, text: $store.passwordB)

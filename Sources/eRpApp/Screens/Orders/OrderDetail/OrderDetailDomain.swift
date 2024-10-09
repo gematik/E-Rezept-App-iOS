@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -22,8 +22,6 @@ import eRpKit
 import MapKit
 import Pharmacy
 import SwiftUI
-
-// swiftlint:disable file_length
 
 @Reducer
 struct OrderDetailDomain {
@@ -51,8 +49,6 @@ struct OrderDetailDomain {
         var order: Order
         var erxTasks: IdentifiedArrayOf<ErxTask> = []
         var openUrlSheetUrl: URL?
-        var timelineEntries: [TimelineEntry] = []
-
         @Presents var destination: Destination.State?
     }
 
@@ -61,7 +57,6 @@ struct OrderDetailDomain {
 
         case didDisplayTimelineEntries
         case loadTasks
-        case loadTimeline
         case tasksReceived([ErxTask])
         case didSelectMedication(ErxTask)
 
@@ -74,7 +69,9 @@ struct OrderDetailDomain {
         case openMail(message: String)
         case openMapApp
         case openPhoneApp
+        case openPhoneAppWith(url: URL)
         case openMailApp
+        case delegate(Delegate)
 
         case resetNavigation
         case destination(PresentationAction<Destination.Action>)
@@ -82,6 +79,10 @@ struct OrderDetailDomain {
 
         enum Response: Equatable {
             case loadAndShowPharmacyReceived(Result<PharmacyLocation, PharmacyRepositoryError>)
+        }
+
+        enum Delegate: Equatable {
+            case close
         }
     }
 
@@ -108,12 +109,8 @@ struct OrderDetailDomain {
         case .task:
             return .merge(
                 .send(.didDisplayTimelineEntries),
-                .send(.loadTasks),
-                .send(.loadTimeline)
+                .send(.loadTasks)
             )
-        case .loadTimeline:
-            state.timelineEntries = Self.loadTimeline(for: state.order)
-            return .none
         case let .didSelectMedication(erxTask):
             let prescription = Prescription(erxTask: erxTask, dateFormatter: uiDateFormatter)
             state.destination = .prescriptionDetail(
@@ -241,6 +238,9 @@ struct OrderDetailDomain {
                 application.open(number)
             }
             return .none
+        case let .openPhoneAppWith(url: url):
+            application.open(url)
+            return .none
         case .openMailApp:
             if let email = state.order.pharmacy?.telecom?.email,
                let url = Self.createEmailUrl(to: email) {
@@ -253,7 +253,8 @@ struct OrderDetailDomain {
              .destination(.presented(.prescriptionDetail(action: .delegate(.close)))):
             state.destination = nil
             return .none
-        case .destination:
+        case .destination,
+             .delegate:
             return .none
         }
     }
@@ -313,133 +314,9 @@ extension OrderDetailDomain {
             .receive(on: schedulers.main)
             .eraseToAnyPublisher()
     }
-
-    static func loadTimeline(for order: Order) -> [TimelineEntry] {
-        let displayedCommunications = IdentifiedArray(uniqueElements: order.communications.filterUnique())
-        var timelineEntries: [TimelineEntry] = displayedCommunications.compactMap { communication in
-            switch communication.profile {
-            case .dispReq:
-                return .dispReq(communication, pharmacy: order.pharmacy)
-            case .reply:
-                return .reply(communication)
-            default:
-                return nil
-            }
-        }
-        timelineEntries.append(contentsOf: order.chargeItems.map { TimelineEntry.chargeItem($0) })
-        return timelineEntries.sorted { $0.lastUpdated > $1.lastUpdated }
-    }
 }
 
 extension OrderDetailDomain {
-    struct Timeline<T> {
-        let value: T
-        let name: String
-    }
-
-    enum Markdown: Equatable {
-        case orderPharmacy(_ name: String)
-
-        var link: String {
-            switch self {
-            case let .orderPharmacy(name):
-                return "[\(name)](screen://OrderPharmacyView)"
-            }
-        }
-    }
-
-    enum TimelineEntry: Equatable, Identifiable {
-        case dispReq(ErxTask.Communication, pharmacy: PharmacyLocation?)
-        case reply(ErxTask.Communication)
-        case chargeItem(ErxChargeItem)
-
-        var id: String {
-            switch self {
-            case let .dispReq(communication, _):
-                return communication.identifier
-            case let .reply(communication):
-                return communication.identifier
-            case let .chargeItem(chargeItem):
-                return chargeItem.identifier
-            }
-        }
-
-        var lastUpdated: String {
-            switch self {
-            case let .dispReq(communication, _):
-                return communication.timestamp
-            case let .reply(communication):
-                return communication.timestamp
-            case let .chargeItem(chargeItem):
-                return chargeItem.enteredDate ?? ""
-            }
-        }
-
-        var isRead: Bool {
-            switch self {
-            case let .dispReq(communication, _):
-                return communication.isRead
-            case let .reply(communication):
-                return communication.isRead
-            case let .chargeItem(chargeItem):
-                return chargeItem.isRead
-            }
-        }
-
-        var text: String {
-            switch self {
-            case let .dispReq(_, pharmacy):
-                var pharmacyName = L10n.ordTxtNoPharmacyName.text
-                if let name = pharmacy?.name {
-                    pharmacyName = "\(Markdown.orderPharmacy(name).link)"
-                }
-                return L10n.ordDetailTxtSendTo(
-                    L10n.ordDetailTxtPresc(1).text,
-                    pharmacyName
-                ).text
-            case let .reply(communication):
-                guard let payload = communication.payload else {
-                    return L10n.ordDetailTxtError.text
-                }
-
-                if let text = payload.infoText, !text.isEmpty {
-                    return text
-                } else {
-                    return L10n.ordDetailMsgsTxtEmpty.text
-                }
-            case let .chargeItem(chargeItem):
-                return L10n.ordDetailTxtChargeItem(chargeItem.medication?.name ?? "").text
-            }
-        }
-
-        var actions: [String: OrderDetailDomain.Action] {
-            switch self {
-            case let .dispReq(_, pharmacy):
-                guard let name = pharmacy?.name else {
-                    return [:]
-                }
-                return [name: .loadAndShowPharmacy]
-            case let .reply(communication):
-                guard let payload = communication.payload else {
-                    return [L10n.ordDetailBtnError.text: .openMail(message: communication.payloadJSON)]
-                }
-                var actions: [String: OrderDetailDomain.Action] = [:]
-                if !payload.isPickupCodeEmptyOrNil {
-                    actions[L10n.ordDetailBtnOnPremise.text] = .showPickupCode(dmcCode: payload.pickUpCodeDMC,
-                                                                               hrCode: payload.pickUpCodeHR)
-                }
-                if let urlString = payload.url,
-                   !urlString.isEmpty,
-                   let url = URL(string: urlString) {
-                    actions[L10n.ordDetailBtnLink.text] = .openUrl(url: url)
-                }
-                return actions
-            case let .chargeItem(chargeItem):
-                return [L10n.ordDetailBtnChargeItem.text: .showChargeItem(chargeItem)]
-            }
-        }
-    }
-
     struct DeviceInformations {
         let model: String
         let systemName: String
@@ -544,5 +421,3 @@ extension OrderDetailDomain {
         }
     }
 }
-
-// swiftlint:enable file_length

@@ -1,23 +1,24 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import XCTest
 
+@MainActor
 struct PrescriptionDetailsScreen<Previous>: Screen where Previous: Screen {
     let app: XCUIApplication
     let previous: Previous
@@ -91,12 +92,57 @@ struct PrescriptionDetailsScreen<Previous>: Screen where Previous: Screen {
         )
     }
 
+    func autIdemInfoButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        button(
+            by: A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
+    }
+
     func tapAutIdemInfoButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
         button(by: A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo, file: file, line: line).tap()
 
         return Drawer(
             app: app,
             identifier: A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo,
+            file: file,
+            line: line
+        )
+    }
+
+    func emergencyFeeButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.prescriptionDetails.prscDtlBtnEmergencyServiceFee, file: file, line: line)
+    }
+
+    func tapEmergencyFeeButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
+        button(by: A11y.prescriptionDetails.prscDtlBtnEmergencyServiceFee, file: file, line: line).tap()
+
+        return Drawer(
+            app: app,
+            identifier: A11y.prescriptionDetails.prscDtlDrawerEmergencyServiceFeeInfo,
+            file: file,
+            line: line
+        )
+    }
+
+    func selfPayerHeadlineButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        button(
+            by: A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
+    }
+
+    func tapSelfPayerHeadlineButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
+        button(by: A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo, file: file, line: line, checkExistence: false)
+            .tap()
+
+        return Drawer(
+            app: app,
+            identifier: A11y.prescriptionDetails.prscDtlDrawerSelfPayerInfo,
             file: file,
             line: line
         )

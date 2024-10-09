@@ -253,6 +253,357 @@
             {
                 "content":
                 [
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "error: missingPatientReceiptIdentifier",
+                        "identifier": "160.000.006.456.999.01",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-10D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.01",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-11D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.02",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-21m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-12D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.03",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-22m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-13D}}",
+                        "status": "in-progress",
+                        "identifier": "160.000.006.456.334.04",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-23m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-14D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.05",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-8m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-15D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.06",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-25m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-91D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.07",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-26m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-17D}}",
+                        "status": "in-progress",
+                        "identifier": "160.000.006.456.334.08",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-27m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-18D}}",
+                        "status": "completed",
+                        "identifier": "160.000.006.456.334.09",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-28m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "2024-01-16",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "01.01.2022",
+                        "status": "in-progress",
+                        "identifier": "160.000.006.456.334.10",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-28m}}"
+                    }
+                ]
+            }
+    },
+    "listDetailedTasksForRecordings":
+    {
+        "type": "repeated",
+        "payload":
+            {
+                "content":
+                [
                                         {
                         "flowType":
                         {

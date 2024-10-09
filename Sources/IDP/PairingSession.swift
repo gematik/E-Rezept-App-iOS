@@ -1,24 +1,23 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ASN1Kit
 import Combine
-import DataKit
 import Foundation
 import OpenSSL
 
@@ -36,17 +35,15 @@ public class PairingSession {
 
     func pairingData(certificate: X509, privateKeyContainer: PrivateKeyContainer) throws -> JWT {
         guard let authCertSubjectPublicKeyInfoRaw = try? certificate.brainpoolP256r1VerifyPublicKey()?.asn1Encoded(),
-              let authCertSubjectPublicKeyInfo = Base64.urlSafe.encode(
-                  data: authCertSubjectPublicKeyInfoRaw,
-                  with: .none
-              ).utf8string else {
+              let authCertSubjectPublicKeyInfo = authCertSubjectPublicKeyInfoRaw.encodeBase64UrlSafe()?.utf8string
+        else {
             throw SecureEnclaveSignatureProviderError.packagingAuthCertificate
         }
 
         // Secure Enclave Public Key and signing certificate's issuer data
         guard let seSubjectPublicKeyInfoRaw = try? privateKeyContainer.asn1PublicKey(),
-              let seSubjectPublicKeyInfo = Base64.urlSafe.encode(data: seSubjectPublicKeyInfoRaw).utf8string,
-              let issuer = certificate.issuerX500PrincipalDEREncoded()?.safeEncodeBase64urlsafe().utf8string else {
+              let seSubjectPublicKeyInfo = seSubjectPublicKeyInfoRaw.encodeBase64UrlSafe()?.utf8string,
+              let issuer = certificate.issuerX500PrincipalDEREncoded()?.encodeBase64UrlSafe()?.utf8string else {
             throw SecureEnclaveSignatureProviderError.packagingSeCertificate
         }
 
@@ -70,7 +67,7 @@ public class PairingSession {
         self.certificate = certificate
 
         guard let authCertRaw = certificate.derBytes,
-              let authCert = Base64.urlSafe.encode(data: authCertRaw).utf8string else {
+              let authCert = authCertRaw.encodeBase64UrlSafe()?.utf8string else {
             return Fail(error: SecureEnclaveSignatureProviderError.packagingAuthCertificate).eraseToAnyPublisher()
         }
         do {

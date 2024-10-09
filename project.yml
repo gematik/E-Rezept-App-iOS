@@ -6,7 +6,7 @@ options:
   useBaseInternationalization: false
   deploymentTarget:
     macOS: 12.0
-    iOS: 15.0
+    iOS: 16.0
 schemes:
   UITests_iOS:
     build:
@@ -114,7 +114,7 @@ packages:
     # majorVersion: 10.0.0
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
-    majorVersion: 1.16.1
+    majorVersion: 1.16.2
 settings:
   base:
     # for DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC see: https://developer.apple.com/forums/thread/128806

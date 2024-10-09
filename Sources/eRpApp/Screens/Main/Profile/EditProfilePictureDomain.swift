@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -47,7 +47,7 @@ struct EditProfilePictureDomain {
         let profileId: UUID?
         var color: ProfileColor = .grey
         var picture: ProfilePicture = .none
-        var userImageData: Data = .empty
+        var userImageData = Data()
         var isFullScreenPresented = false
 
         @Presents var destination: Destination.State?
@@ -56,7 +56,7 @@ struct EditProfilePictureDomain {
             profileId: UUID? = nil,
             color: ProfileColor = .grey,
             picture: ProfilePicture = .none,
-            userImageData: Data = .empty,
+            userImageData: Data = Data(),
             isFullScreenPresented: Bool = false,
             destination: Destination.State? = nil
         ) {
@@ -135,12 +135,12 @@ struct EditProfilePictureDomain {
             return .none
         case .resetPictureButtonTapped:
             state.picture = .none
-            state.userImageData = .empty
+            state.userImageData = Data()
             // Check if isNewProfile, because "updateProfile" fails without profileID and then is reversing the change
             if let profileId = state.profileId {
                 return updateProfile(with: profileId) { profile in
                     profile.image = ProfilePicture.none.erxPicture
-                    profile.userImageData = .empty
+                    profile.userImageData = Data()
                 }
                 .map(Action.updateProfileReceived)
             }

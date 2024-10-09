@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -48,14 +48,14 @@ struct CardWallPINView: View {
                 .padding(.bottom, 8)
 
                 if store.transition == .push {
-                    NavigationLink(item: $store
-                        .scope(state: \.destination?.login, action: \.destination.login)) { store in
+                    Rectangle()
+                        .navigationDestination(
+                            item: $store.scope(state: \.destination?.login, action: \.destination.login)
+                        ) { store in
                             CardWallLoginOptionView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .hidden()
-                    .accessibility(hidden: true)
+                        }
+                        .frame(width: 0, height: 0)
+                        .accessibilityHidden(true)
                 } else {
                     Rectangle()
                         .fullScreenCover(
@@ -110,7 +110,7 @@ struct CardWallPINView: View {
                     }
                     .fullScreenCover(item: $store
                         .scope(state: \.destination?.egk, action: \.destination.egk)) { store in
-                            NavigationView {
+                            NavigationStack {
                                 OrderHealthCardListView(store: store)
                             }
                             .accentColor(Colors.primary700)
@@ -224,7 +224,7 @@ struct CardWallPINView: View {
 struct CardWallPINView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            NavigationView {
+            NavigationStack {
                 CardWallPINView(
                     store: CardWallPINDomain.Dummies.store
                 )

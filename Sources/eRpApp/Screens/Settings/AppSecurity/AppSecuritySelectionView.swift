@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -27,75 +27,67 @@ struct AppSecuritySelectionView: View {
     var body: some View {
         WithPerceptionTracking {
             ScrollView {
-                VStack {
-                    SectionContainer(
-                        header: { HeaderView(store: store) },
-                        content: {
-                            let isBiometricSelected = store.isBiometricSelected
-                            if store.availableSecurityOptions.contains(.biometry(.faceID)) {
+                SectionContainer(
+                    header: { HeaderView(store: store) },
+                    content: {
+                        let isBiometricSelected = store.isBiometricSelected
+                        if store.availableSecurityOptions.contains(.biometry(.faceID)) {
+                            Toggle(isOn: .init(
+                                get: { isBiometricSelected },
+                                set: { _ in store.send(.toggleBiometricSelected(.faceID)) }
+                            )) {
+                                Label(L10n.stgTxtSecurityOptionFaceidTitle)
+                            }
+                            .accessibility(identifier: A18n.settings.security.stgTglSecurityFaceid)
+                        }
+
+                        if store.availableSecurityOptions.contains(.biometry(.touchID)) {
+                            Toggle(isOn: .init(
+                                get: { isBiometricSelected },
+                                set: { _ in store.send(.toggleBiometricSelected(.touchID)) }
+                            )) {
+                                Label(L10n.stgTxtSecurityOptionTouchidTitle)
+                            }
+                            .accessibility(identifier: A18n.settings.security.stgTglSecurityTouchid)
+                        }
+
+                        let isPasswordSelected = store.isPasswordSelected
+                        if store.availableSecurityOptions.contains(.password) {
+                            WithPerceptionTracking {
                                 Toggle(isOn: .init(
-                                    get: { isBiometricSelected },
-                                    set: { _ in store.send(.toggleBiometricSelected(.faceID)) }
+                                    get: { isPasswordSelected },
+                                    set: { _ in store.send(.togglePasswordSelected) }
                                 )) {
-                                    Label(L10n.stgTxtSecurityOptionFaceidTitle)
+                                    Label(L10n.stgTxtSecurityOptionPasswordTitle)
                                 }
-                                .accessibility(identifier: A18n.settings.security.stgTglSecurityFaceid)
-                            }
-
-                            if store.availableSecurityOptions.contains(.biometry(.touchID)) {
-                                Toggle(isOn: .init(
-                                    get: { isBiometricSelected },
-                                    set: { _ in store.send(.toggleBiometricSelected(.touchID)) }
-                                )) {
-                                    Label(L10n.stgTxtSecurityOptionTouchidTitle)
-                                }
-                                .accessibility(identifier: A18n.settings.security.stgTglSecurityTouchid)
-                            }
-
-                            let isPasswordSelected = store.isPasswordSelected
-                            if store.availableSecurityOptions.contains(.password) {
-                                WithPerceptionTracking {
-                                    Toggle(isOn: .init(
-                                        get: { isPasswordSelected },
-                                        set: { _ in store.send(.togglePasswordSelected) }
-                                    )) {
-                                        Label(L10n.stgTxtSecurityOptionPasswordTitle)
-                                    }
-                                    .accessibility(identifier: A18n.settings.security.stgTglSecurityPassword)
-                                }
-                            }
-
-                            if store.availableSecurityOptions.contains(.password),
-                               isPasswordSelected {
-                                Button {
-                                    store.send(.appPasswordTapped)
-                                } label: {
-                                    Label(L10n.stgTxtSecurityOptionChangePasswordTitle)
-                                        .padding(.bottom, 4)
-                                }
-                                .accessibility(identifier: A18n.settings.security.stgBtnSecurityChangePassword)
-                                .buttonStyle(.navigation)
+                                .accessibility(identifier: A18n.settings.security.stgTglSecurityPassword)
                             }
                         }
-                    )
-                    NavigationLink(
-                        item: $store.scope(
-                            state: \.destination?.appPassword,
-                            action: \.destination.appPassword
-                        )
-                    ) { store in
-                        CreatePasswordView(store: store)
-                    } label: {
-                        EmptyView()
+
+                        if store.availableSecurityOptions.contains(.password),
+                           isPasswordSelected {
+                            Button {
+                                store.send(.appPasswordTapped)
+                            } label: {
+                                Label(L10n.stgTxtSecurityOptionChangePasswordTitle)
+                                    .padding(.bottom, 4)
+                            }
+                            .accessibility(identifier: A18n.settings.security.stgBtnSecurityChangePassword)
+                            .buttonStyle(.navigation)
+                        }
                     }
-                    .hidden()
-                    .accessibility(hidden: true)
-                }.onAppear {
-                    store.send(.loadSecurityOption)
-                }
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle(L10n.stgBtnDeviceSecurity)
+                )
             }
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.appPassword, action: \.destination.appPassword)
+            ) { store in
+                CreatePasswordView(store: store)
+            }
+            .onAppear {
+                store.send(.loadSecurityOption)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(L10n.stgBtnDeviceSecurity)
             .background(Color(.secondarySystemBackground))
         }
     }
@@ -143,7 +135,7 @@ struct AppSecuritySelectionView: View {
 
 struct AppSecuritySelectionView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             AppSecuritySelectionView(store: AppSecurityDomain.Dummies.store)
         }
     }

@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import SnapshotTesting
@@ -21,9 +21,9 @@ import SwiftUI
 import XCTest
 
 /// The default `precision` to use if a specific value is not provided.
-private let defaultPrecision: Float = 0.99
+private let defaultPrecision: Float = 1
 /// The default `perceptualPrecision` to use if a specific value is not provided.
-private let defaultPerceptualPrecision: Float = 0.93
+private let defaultPerceptualPrecision: Float = 1
 
 extension ViewImageConfig {
     func noInsets() -> Self {
@@ -66,6 +66,16 @@ extension XCTestCase {
                 precision: defaultPrecision,
                 perceptualPrecision: defaultPerceptualPrecision,
                 traits: UITraitCollection(preferredContentSizeCategory: .extraSmall)
+            ),
+        ]
+    }
+
+    func snapshotModiContentSizeXL<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
+        [
+            "accessibilityXL": .image(
+                precision: defaultPrecision,
+                perceptualPrecision: defaultPerceptualPrecision,
+                traits: UITraitCollection(preferredContentSizeCategory: .accessibilityExtraLarge)
             ),
         ]
     }
@@ -147,6 +157,19 @@ extension XCTestCase {
         ]
     }
 
+    func snapshotModiOnDevicesWithAccessibilityXL<T>() -> [String: Snapshotting<T, UIImage>]
+        where T: SwiftUI.View {
+        [
+            "iPhoneX.light.xl":
+                .image(
+                    precision: defaultPrecision,
+                    perceptualPrecision: defaultPerceptualPrecision,
+                    layout: .device(config: ViewImageConfig.iPhoneX.noInsets()),
+                    traits: UITraitCollection(preferredContentSizeCategory: .accessibilityExtraLarge)
+                ),
+        ]
+    }
+
     func snapshotModiOnDevicesWithTheming<T>(mode: UIUserInterfaceStyle = .dark) -> [String: Snapshotting<T, UIImage>]
         where T: SwiftUI.View {
         [
@@ -199,8 +222,14 @@ enum SnapshotHelper {
     }
 }
 
-@MainActor
 class ERPSnapshotTestCase: XCTestCase {
+    override func invokeTest() {
+        withSnapshotTesting(record: .failed, diffTool: "open") {
+            super.invokeTest()
+        }
+    }
+
+    @MainActor
     override func setUp() {
         super.setUp()
         SnapshotHelper.fixOffsetProblem()
@@ -216,7 +245,7 @@ struct OffsetPreview: View {
 
     var body: some View {
         Snapshot(self.snapshotting) {
-            NavigationView {
+            NavigationStack {
                 Text("*")
                     .navigationTitle("⚕︎ Redeem")
             }

@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -32,7 +32,7 @@ struct PickupCodeView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            NavigationView {
+            NavigationStack {
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(spacing: 0) {
                         if let dmcCode = store.pickupCodeDMC {
@@ -51,7 +51,7 @@ struct PickupCodeView: View {
                 }
                 .navigationBarItems(trailing: CloseButton { store.send(.delegate(.close)) })
                 .navigationBarTitleDisplayMode(.inline)
-                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17)) { navigationController in
+                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
                     let navigationBar = navigationController.navigationBar
                     navigationBar.barTintColor = UIColor(Colors.systemBackground)
                     let navigationBarAppearance = UINavigationBarAppearance()

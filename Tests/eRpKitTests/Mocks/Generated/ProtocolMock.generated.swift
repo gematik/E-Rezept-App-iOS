@@ -368,6 +368,24 @@ final class MockErxRemoteDataStore: ErxRemoteDataStore {
         return listTasksNextPageOfClosure.map({ $0(previousPage) }) ?? listTasksNextPageOfReturnValue
     }
     
+   // MARK: - listDetailedTasks
+
+    var listDetailedTasksForCallsCount = 0
+    var listDetailedTasksForCalled: Bool {
+        listDetailedTasksForCallsCount > 0
+    }
+    var listDetailedTasksForReceivedTasks: PagedContent<[ErxTask]>?
+    var listDetailedTasksForReceivedInvocations: [PagedContent<[ErxTask]>] = []
+    var listDetailedTasksForReturnValue: AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>!
+    var listDetailedTasksForClosure: ((PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError>)?
+
+    func listDetailedTasks(for tasks: PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        listDetailedTasksForCallsCount += 1
+        listDetailedTasksForReceivedTasks = tasks
+        listDetailedTasksForReceivedInvocations.append(tasks)
+        return listDetailedTasksForClosure.map({ $0(tasks) }) ?? listDetailedTasksForReturnValue
+    }
+    
    // MARK: - delete
 
     var deleteTasksCallsCount = 0

@@ -27,6 +27,7 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
         fetchTaskByAccessCodeRecordings = mocks?.fetchTaskByAccessCodeRecordings ?? .delegate
         listAllTasksAfterRecordings = mocks?.listAllTasksAfterRecordings ?? .delegate
         listTasksNextPageOfRecordings = mocks?.listTasksNextPageOfRecordings ?? .delegate
+        listDetailedTasksForRecordings = mocks?.listDetailedTasksForRecordings ?? .delegate
         deleteTasksRecordings = mocks?.deleteTasksRecordings ?? .delegate
         redeemOrderRecordings = mocks?.redeemOrderRecordings ?? .delegate
         listAllCommunicationsAfterForRecordings = mocks?.listAllCommunicationsAfterForRecordings ?? .delegate
@@ -112,6 +113,30 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
         } else {
             return wrapped.listTasksNextPage(
                     of: previousPage
+            )
+        }
+    }
+
+    var listDetailedTasksForRecordings: MockAnswer<PagedContent<[ErxTask]>>
+
+    func listDetailedTasks(for tasks: PagedContent<[ErxTask]>) -> AnyPublisher<PagedContent<[ErxTask]>, RemoteStoreError> {
+        guard !isRecording else {
+            let result = wrapped.listDetailedTasks(
+                    for: tasks
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.listDetailedTasksForRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = listDetailedTasksForRecordings.next() {
+            return Just(value)
+                .setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.listDetailedTasks(
+                    for: tasks
             )
         }
     }
@@ -436,6 +461,7 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
         var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>? = .delegate
         var listAllTasksAfterRecordings: MockAnswer<PagedContent<[ErxTask]>>? = .delegate
         var listTasksNextPageOfRecordings: MockAnswer<PagedContent<[ErxTask]>>? = .delegate
+        var listDetailedTasksForRecordings: MockAnswer<PagedContent<[ErxTask]>>? = .delegate
         var deleteTasksRecordings: MockAnswer<Bool>? = .delegate
         var redeemOrderRecordings: MockAnswer<ErxTaskOrder>? = .delegate
         var listAllCommunicationsAfterForRecordings: MockAnswer<[ErxTask.Communication]>? = .delegate
@@ -457,6 +483,7 @@ class SmartMockErxRemoteDataStore: ErxRemoteDataStore, SmartMock {
                 fetchTaskByAccessCodeRecordings: fetchTaskByAccessCodeRecordings,
                 listAllTasksAfterRecordings: listAllTasksAfterRecordings,
                 listTasksNextPageOfRecordings: listTasksNextPageOfRecordings,
+                listDetailedTasksForRecordings: listDetailedTasksForRecordings,
                 deleteTasksRecordings: deleteTasksRecordings,
                 redeemOrderRecordings: redeemOrderRecordings,
                 listAllCommunicationsAfterForRecordings: listAllCommunicationsAfterForRecordings,
@@ -1343,20 +1370,20 @@ class SmartMockLoginHandler: LoginHandler, SmartMock {
         isAuthenticatedOrAuthenticateRecordings = mocks?.isAuthenticatedOrAuthenticateRecordings ?? .delegate
     }
 
-    var isAuthenticatedRecordings: MockAnswer<Result<Bool, LoginHandlerError>>
+    var isAuthenticatedRecordings: MockAnswer<SerializableResult<Bool, LoginHandlerError>>
 
     func isAuthenticated() -> AnyPublisher<LoginResult, Never> {
         guard !isRecording else {
             let result = wrapped.isAuthenticated(
             )
                 .handleEvents(receiveOutput: { [weak self] value in
-                    self?.isAuthenticatedRecordings.record(value)
+                    self?.isAuthenticatedRecordings.record(SerializableResult.from(value))
                 })
                 .eraseToAnyPublisher()
             return result
         }
         if let value = isAuthenticatedRecordings.next() {
-            return Just(value)
+            return Just(value.unwrap())
                 .setFailureType(to: Never.self)
                 .eraseToAnyPublisher()
         } else {
@@ -1365,20 +1392,20 @@ class SmartMockLoginHandler: LoginHandler, SmartMock {
         }
     }
 
-    var isAuthenticatedOrAuthenticateRecordings: MockAnswer<Result<Bool, LoginHandlerError>>
+    var isAuthenticatedOrAuthenticateRecordings: MockAnswer<SerializableResult<Bool, LoginHandlerError>>
 
     func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never> {
         guard !isRecording else {
             let result = wrapped.isAuthenticatedOrAuthenticate(
             )
                 .handleEvents(receiveOutput: { [weak self] value in
-                    self?.isAuthenticatedOrAuthenticateRecordings.record(value)
+                    self?.isAuthenticatedOrAuthenticateRecordings.record(SerializableResult.from(value))
                 })
                 .eraseToAnyPublisher()
             return result
         }
         if let value = isAuthenticatedOrAuthenticateRecordings.next() {
-            return Just(value)
+            return Just(value.unwrap())
                 .setFailureType(to: Never.self)
                 .eraseToAnyPublisher()
         } else {
@@ -1388,8 +1415,8 @@ class SmartMockLoginHandler: LoginHandler, SmartMock {
     }
 
     struct Mocks: Codable {
-        var isAuthenticatedRecordings: MockAnswer<Result<Bool, LoginHandlerError>>? = .delegate
-        var isAuthenticatedOrAuthenticateRecordings: MockAnswer<Result<Bool, LoginHandlerError>>? = .delegate
+        var isAuthenticatedRecordings: MockAnswer<SerializableResult<Bool, LoginHandlerError>>? = .delegate
+        var isAuthenticatedOrAuthenticateRecordings: MockAnswer<SerializableResult<Bool, LoginHandlerError>>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -1484,7 +1511,7 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
             return result
         }
         if let value = loadAvsCertificatesForRecordings.next() {
-            return Just(value.unwrap)
+            return Just(value.unwrap())
                 .setFailureType(to: PharmacyFHIRDataSource.Error.self)
                 .eraseToAnyPublisher()
         } else {
@@ -1930,13 +1957,57 @@ struct SerializableX509: Codable {
         let x509Data = try container.decode(Data.self)
         payload = try X509(der: x509Data)
     }
-    var unwrap: X509 {
+    func unwrap() -> X509 {
+        return payload
+    }
+}
+
+struct SerializableResult<T: Codable, E: Swift.Error & Codable>: Codable {
+    let payload: Result<T, E>
+    init(with payload: Result<T, E>) {
+        self.payload = payload
+    }
+    static func from(_ list: Array<Result<T, E>>) -> Array<Self> {
+        list.map { Self(with: $0) }
+    }
+
+    static func from(_ value: Result<T, E>) -> Self {
+        Self(with: value)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self.payload {
+        case .success(let value):
+            try container.encode(value)
+        case .failure(let error):
+            try container.encode(error)
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let success = try? container.decode(T.self) {
+            payload = .success(success)
+        } else if let failure = try? container.decode(E.self) {
+            payload = .failure(failure)
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Failed to decode Result")
+        }
+    }
+    func unwrap() -> Result<T, E> {
         return payload
     }
 }
 
 extension Array where Element == SerializableX509 {
-    var unwrap: [X509] {
+    func unwrap() -> [X509] {
+        map(\.payload)
+    }
+}
+
+extension Array {
+    func unwrap<T: Codable, E: Codable & Swift.Error>() -> [Result<T, E>] where Element == SerializableResult<T, E> {
         map(\.payload)
     }
 }

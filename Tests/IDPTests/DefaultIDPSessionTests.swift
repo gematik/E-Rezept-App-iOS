@@ -1,26 +1,25 @@
 // swiftlint:disable file_length
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
 import CombineSchedulers
 import CryptoKit
-import DataKit
 import Foundation
 @testable import IDP
 import Nimble
@@ -390,7 +389,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         let challengeExpirationDate = dateFormatter.date(from: "2021-03-16 14:58:38.0000+0000")!
 
         let codeVerifier = "very-random-string"
-        let codeChallenge = codeVerifier.encodeBase64urlsafe().sha256().encodeBase64urlsafe().asciiString!
+        let codeChallenge = codeVerifier.encodeBase64urlsafe()!.sha256().encodeBase64UrlSafe()?.asciiString!
         var randomGeneratorCalls = 0
         var randomGeneratorParams = [Int]()
         let stateOrNonce = Data([0x1, 0x2, 0x3])
@@ -1201,7 +1200,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 }
 
 extension String {
-    func encodeBase64urlsafe() -> Data {
-        Base64.urlSafe.encode(data: data(using: .utf8) ?? Data(), with: .none)
+    func encodeBase64urlsafe() -> Data? {
+        data(using: .utf8)?.encodeBase64UrlSafe()
     }
 }

@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import ComposableArchitecture
@@ -28,7 +28,7 @@ struct SettingsView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            NavigationView {
+            NavigationStack {
                 ScrollView {
                     VStack(spacing: 0) {
                         // [REQ:BSI-eRp-ePA:O.Source_8#3] Debug menu is only visible on debug builds
@@ -75,41 +75,26 @@ struct SettingsView: View {
                                 .accentColor(Colors.primary600)
                         }
                         .accessibility(hidden: true)
-
-                    NavigationLink(
-                        item: $store.scope(state: \.destination?.editProfile,
-                                           action: \.destination.editProfile)
-                    ) { store in
-                        EditProfileView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .hidden()
-                    .accessibility(hidden: true)
-
-                    NavigationLink(
-                        item: $store.scope(state: \.destination?.appSecurity,
-                                           action: \.destination.appSecurity)
-                    ) { store in
-                        AppSecuritySelectionView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .hidden()
-                    .accessibility(hidden: true)
-
-                    NavigationLink(
-                        item: $store.scope(
-                            state: \.destination?.medicationReminderList,
-                            action: \.destination.medicationReminderList
-                        )
-                    ) { store in
-                        MedicationReminderListView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .hidden()
-                    .accessibility(hidden: true)
+                }
+                .navigationDestination(
+                    item: $store.scope(state: \.destination?.editProfile,
+                                       action: \.destination.editProfile)
+                ) { store in
+                    EditProfileView(store: store)
+                }
+                .navigationDestination(
+                    item: $store.scope(state: \.destination?.appSecurity,
+                                       action: \.destination.appSecurity)
+                ) { store in
+                    AppSecuritySelectionView(store: store)
+                }
+                .navigationDestination(
+                    item: $store.scope(
+                        state: \.destination?.medicationReminderList,
+                        action: \.destination.medicationReminderList
+                    )
+                ) { store in
+                    MedicationReminderListView(store: store)
                 }
                 .accentColor(Colors.primary600)
                 .background(Color(.secondarySystemBackground).ignoresSafeArea())
@@ -209,13 +194,18 @@ extension SettingsView {
                     .accessibilityIdentifier("stg_txt_debug_title")
             }, content: {
                 WithPerceptionTracking {
-                    NavigationLink(
-                        item: $store.scope(state: \.destination?.debug, action: \.destination.debug),
-                        onTap: { store.send(.showDebug) },
-                        destination: { store in DebugView(store: store) },
-                        label: { Label("Debug", systemImage: SFSymbolName.ant) }
-                    ).accessibility(identifier: "stg_btn_debug")
-                        .buttonStyle(.navigation)
+                    Button {
+                        store.send(.showDebug)
+                    } label: {
+                        Label("Debug", systemImage: SFSymbolName.ant)
+                    }
+                    .accessibility(identifier: "stg_btn_debug")
+                    .buttonStyle(.navigation)
+                    .navigationDestination(
+                        item: $store.scope(state: \.destination?.debug, action: \.destination.debug)
+                    ) { store in
+                        DebugView(store: store)
+                    }
                 }
             })
         }
@@ -241,7 +231,7 @@ extension SettingsView {
 
         var body: some View {
             WithPerceptionTracking {
-                NavigationView {
+                NavigationStack {
                     VStack(alignment: .center, spacing: 16) {
                         ScrollView(.vertical) {
                             Text(L10n.stgTrkTxtAlertTitle)
@@ -279,7 +269,8 @@ extension SettingsView {
                             .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
                     )
                     .navigationBarTitleDisplayMode(.inline)
-                    .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17)) { navigationController in
+                    .introspect(.navigationView(style: .stack),
+                                on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
                         let navigationBar = navigationController.navigationBar
                         navigationBar.barTintColor = UIColor(Colors.systemBackground)
                         let navigationBarAppearance = UINavigationBarAppearance()

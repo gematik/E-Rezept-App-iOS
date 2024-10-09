@@ -1,24 +1,23 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
 import CryptoKit
-import DataKit
 import Foundation
 import OpenSSL
 
@@ -75,7 +74,8 @@ extension JWE {
                 let nonceData: Data = try nonceGenerator()
                 let nonce = try AES.GCM.Nonce(data: nonceData)
 
-                let authenticationData = headerEncoded.encodeBase64urlsafe()
+                guard let authenticationData = headerEncoded.encodeBase64UrlSafe()
+                else { throw JWE.Error.encodingError }
                 let sealedBox = try AES.GCM.seal(payload,
                                                  using: header.encryptionContext.symmetricKey,
                                                  nonce: nonce,
@@ -109,7 +109,10 @@ extension JWE {
                 tag: jwe.tag
             )
 
-            return try AES.GCM.open(sealedBox, using: key, authenticating: jwe.header.encodeBase64urlsafe())
+            guard let jweHeaderEncoded = jwe.header.encodeBase64UrlSafe()
+            else { throw JWE.Error.encodingError }
+
+            return try AES.GCM.open(sealedBox, using: key, authenticating: jweHeaderEncoded)
         }
     }
 }

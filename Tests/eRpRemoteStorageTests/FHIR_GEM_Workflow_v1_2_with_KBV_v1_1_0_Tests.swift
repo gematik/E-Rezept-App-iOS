@@ -1,25 +1,24 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import eRpKit
 @testable import eRpRemoteStorage
 import Foundation
-import GemCommonsKit
 import ModelsR4
 import Nimble
 import SwiftUI
@@ -174,16 +173,6 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
 
         expect(first.payloadJSON) ==
             "{ \"version\": \"1\", \"supplyOptionsType\": \"delivery\", \"name\": \"Dr. Maximilian von Muster\", \"address\": [ \"wohnhaft bei Emilia Fischer\", \"Bundesallee 312\", \"123. OG\", \"12345 Berlin\" ], \"hint\": \"Bitte im Morsecode klingeln: -.-.\", \"phone\": \"004916094858168\" }" // swiftlint:disable:this line_length
-    }
-
-    func testParseErxTaskCommunicationInfoReq() throws {
-        let communicationBundle = try decode(
-            resource: "CommunicationInfoReq-8ca3c379-ac86-470f-bc12-178c9008f5c9.json"
-        )
-
-        let communications = try communicationBundle.parseErxTaskCommunications()
-        // InfoRequest is not jet supported
-        expect(communications.count) == 0
     }
 
     func testParseErxTaskMedicationDispense_with_contained_Medication_PZN() throws {

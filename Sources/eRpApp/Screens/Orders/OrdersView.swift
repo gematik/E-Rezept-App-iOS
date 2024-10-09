@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -35,7 +35,7 @@ struct OrdersView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            NavigationView {
+            NavigationStack {
                 VStack {
                     if !store.state.orders.isEmpty || store.isLoading {
                         ScrollView(.vertical) {
@@ -43,6 +43,7 @@ struct OrdersView: View {
                                 ForEach(store.orders) { order in
                                     OrderCellView(
                                         title: order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text,
+                                        message: order.latestMessage,
                                         subtitle: uiDateFormatter.relativeDate(order.lastUpdated) ?? "",
                                         isNew: order.hasUnreadEntries,
                                         prescriptionCount: order.tasksCount
@@ -62,21 +63,18 @@ struct OrdersView: View {
                         NoOrdersView()
                             .padding()
                     }
-
-                    // Navigation into details
-                    NavigationLink(
-                        item: $store.scope(
-                            state: \.destination?.orderDetail,
-                            action: \.destination.orderDetail
-                        )
-                    ) { store in
-                        OrderDetailView(store: store)
-                    } label: {
-                        EmptyView()
-                    }.accessibility(hidden: true)
                 }
-                .navigationBarTitle(L10n.ordTxtTitle, displayMode: .automatic)
-                .accessibility(identifier: A11y.orders.list.ordTxtTitle)
+                // Navigation into details
+                .navigationDestination(
+                    item: $store.scope(
+                        state: \.destination?.orderDetail,
+                        action: \.destination.orderDetail
+                    )
+                ) { store in
+                    OrderDetailView(store: store)
+                }
+                .navigationBarTitle(L10n.msgTxtTitle, displayMode: .automatic)
+                .accessibility(identifier: A11y.orders.list.msgTxtTitle)
                 .alert($store.scope(
                     state: \.destination?.alert?.alert,
                     action: \.destination.alert
@@ -94,7 +92,7 @@ struct OrdersView: View {
     struct NoOrdersView: View {
         var body: some View {
             VStack(spacing: 8) {
-                Text(L10n.ordTxtEmptyListTitle)
+                Text(L10n.msgTxtEmptyListTitle)
                     .font(.headline)
                 Text(L10n.ordTxtEmptyListMessage)
                     .font(.subheadline)

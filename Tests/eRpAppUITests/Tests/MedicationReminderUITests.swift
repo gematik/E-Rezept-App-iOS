@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Foundation
@@ -31,6 +31,7 @@ final class MedicationReminderUITests: XCTestCase {
 
     var notificationAlertMonitor: NSObjectProtocol?
 
+    @MainActor
     override func setUp() {
         super.setUp()
 
@@ -68,6 +69,7 @@ final class MedicationReminderUITests: XCTestCase {
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.01, dy: 0.01)).tap()
     }
 
+    @MainActor
     func testParsableMedicationReminderSetupHappyPath() {
         let medicationName = "Adavomilproston"
 
@@ -135,6 +137,7 @@ final class MedicationReminderUITests: XCTestCase {
         expect(reminderSetup2.timeSetupAtPosition(3).buttons.firstMatch.value as? String).to(equal("20:00"))
     }
 
+    @MainActor
     func testMedicationReminderSetupHappyPath() {
         // Rezept Freitext | Unbegrenzt
 
@@ -209,6 +212,7 @@ final class MedicationReminderUITests: XCTestCase {
     }
 
     // Rezept DJ | Begrenzt
+    @MainActor
     func testMedicationReminderSetupLimited() {
         // create a Rezept (DJ)->
         let medicationName = "Ibuprofen"
@@ -290,6 +294,7 @@ final class MedicationReminderUITests: XCTestCase {
     }
 
     // Rezept Keine Angabe | Begrenzt - start date in future
+    @MainActor
     func testMedicationReminderSetupForFuture() {
         // create a Rezept (Keine Angabe)->
         let medicationName = "Ibuprofen"
@@ -397,6 +402,7 @@ final class MedicationReminderUITests: XCTestCase {
     }
 
     // Multiple Rezepts sorting | Settings screen
+    @MainActor
     func testMedicationReminderSetupSortTest() {
         let medicationName1 = "Ibuprofen"
         let medicationName2 = "Paracetamol"

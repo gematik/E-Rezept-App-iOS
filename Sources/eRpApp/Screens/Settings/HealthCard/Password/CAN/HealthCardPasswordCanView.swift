@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -36,49 +36,47 @@ struct HealthCardPasswordCanView: View {
 
                 if store.mode == .forgotPin {
                     // Unlock card and set new secret
-                    NavigationLink(
-                        item: $store.scope(
-                            state: \.destination?.puk,
-                            action: \.destination.puk
-                        )
-                    ) {
-                        store.send(.advance)
-                    } destination: { store in
-                        HealthCardPasswordPukView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .accessibility(hidden: true)
+                    Rectangle()
+                        .frame(width: 0, height: 0, alignment: .center)
+                        .navigationDestination(
+                            item: $store.scope(
+                                state: \.destination?.puk,
+                                action: \.destination.puk
+                            )
+                        ) { store in
+                            HealthCardPasswordPukView(store: store)
+                        }
+                        .accessibility(hidden: true)
                 }
 
                 if store.mode == .setCustomPin {
                     // Set custom PIN
-                    NavigationLink(
-                        item: $store.scope(
-                            state: \.destination?.oldPin,
-                            action: \.destination.oldPin
-                        )
-                    ) { store in
-                        HealthCardPasswordOldPinView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .accessibility(hidden: true)
+                    Rectangle()
+                        .frame(width: 0, height: 0, alignment: .center)
+                        .navigationDestination(
+                            item: $store.scope(
+                                state: \.destination?.oldPin,
+                                action: \.destination.oldPin
+                            )
+                        ) { store in
+                            HealthCardPasswordOldPinView(store: store)
+                        }
+                        .accessibility(hidden: true)
                 }
 
                 if store.mode == .unlockCard {
                     // Unlock card
-                    NavigationLink(
-                        item: $store.scope(
-                            state: \.destination?.puk,
-                            action: \.destination.puk
-                        )
-                    ) { store in
-                        HealthCardPasswordPukView(store: store)
-                    } label: {
-                        EmptyView()
-                    }
-                    .accessibility(hidden: true)
+                    Rectangle()
+                        .frame(width: 0, height: 0, alignment: .center)
+                        .navigationDestination(
+                            item: $store.scope(
+                                state: \.destination?.puk,
+                                action: \.destination.puk
+                            )
+                        ) { store in
+                            HealthCardPasswordPukView(store: store)
+                        }
+                        .accessibility(hidden: true)
                 }
 
                 Button(
@@ -163,7 +161,7 @@ struct HealthCardPasswordCanView: View {
                     ),
                     onDismiss: {},
                     content: {
-                        NavigationView {
+                        NavigationStack {
                             CANCameraScanner(canScan: $scannedcan) { canScan in
                                 if let canScan = scannedcan {
                                     store.send(.updateCan(canScan))
@@ -197,7 +195,7 @@ struct HealthCardPasswordCanView: View {
 
 struct HealthCardPasswordCanView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationStack {
             HealthCardPasswordCanView(
                 store: HealthCardPasswordCanDomain.Dummies.store
             )

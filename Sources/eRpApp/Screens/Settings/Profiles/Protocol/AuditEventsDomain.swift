@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import Combine
@@ -77,7 +77,7 @@ struct AuditEventsDomain {
     @Dependency(\.auditEventsService) var auditEventsService: AuditEventsService
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.uiDateFormatter.compactDateAndTimeFormatter) var dateFormatter: DateFormatter
-    var currentLanguageCode = Locale.current.languageCode
+    var currentLanguageCode = Locale.current.language.languageCode?.identifier ?? "de"
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
@@ -222,7 +222,7 @@ extension AuditEventsDomain {
         static let state = State(profileUUID: DemoProfileDataStore.anna.id)
 
         static let store = StoreOf<AuditEventsDomain>(initialState: state) {
-            AuditEventsDomain(currentLanguageCode: Locale.current.languageCode)
+            AuditEventsDomain(currentLanguageCode: Locale.current.language.languageCode?.identifier ?? "de")
         }
     }
 }

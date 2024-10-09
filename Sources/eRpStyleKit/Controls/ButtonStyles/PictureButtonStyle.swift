@@ -1,19 +1,19 @@
 //
 //  Copyright (c) 2024 gematik GmbH
-//  
+//
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
 //  You may not use this work except in compliance with the Licence.
 //  You may obtain a copy of the Licence at:
-//  
+//
 //      https://joinup.ec.europa.eu/software/page/eupl
-//  
+//
 //  Unless required by applicable law or agreed to in writing, software
 //  distributed under the Licence is distributed on an "AS IS" basis,
 //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //  See the Licence for the specific language governing permissions and
 //  limitations under the Licence.
-//  
+//
 //
 
 import SwiftUI
@@ -27,9 +27,10 @@ public struct PictureButtonStyle: ButtonStyle {
 
     var style: PictureLabelStyle.Style
     var isActive: Bool
-    var width: Width
+    var width: Size
+    var height: Size
 
-    public enum Width {
+    public enum Size {
         case infinite
         case narrow
     }
@@ -43,17 +44,28 @@ public struct PictureButtonStyle: ButtonStyle {
         }
     }
 
-    public init(style: PictureLabelStyle.Style = .default, active: Bool = false, width: Width = .infinite) {
+    public init(
+        style: PictureLabelStyle.Style = .default,
+        active: Bool = false,
+        width: Size = .infinite,
+        height: Size = .narrow
+    ) {
         self.style = style
         isActive = active
         self.width = width
+        self.height = height
     }
 
     public func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .labelStyle(PictureLabelStyle(style: style))
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .frame(maxWidth: (width == .infinite) ? .infinity : nil, minHeight: 52, alignment: .center)
+            .frame(
+                maxWidth: (width == .infinite) ? .infinity : nil,
+                minHeight: 52,
+                maxHeight: (height == .infinite) ? .infinity : nil,
+                alignment: .center
+            )
             .padding(isLarge ? 16 : 8)
             .background(
                 Colors.systemBackgroundTertiary
@@ -105,7 +117,7 @@ public struct PictureLabelStyle: LabelStyle {
         VStack(alignment: .center, spacing: 8) {
             configuration.icon
                 .frame(width: isLarge ? 56 : 32, height: isLarge ? 56 : 32)
-                .clipped()
+                .scaledToFit()
                 .shadow(color: .black.opacity(0.16), radius: 8, x: 0, y: 4)
 
             configuration.title
@@ -127,8 +139,13 @@ extension ButtonStyle where Self == PictureButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primary(isEnabled:,isDestructive: false))`` modifier.
-    public static func picture(style: Self.Style = .default, isActive: Bool = false) -> PictureButtonStyle {
-        PictureButtonStyle(style: style, active: isActive)
+    public static func picture(
+        style: Self.Style = .default,
+        isActive: Bool = false,
+        width: Self.Size = .infinite,
+        height: Self.Size = .infinite
+    ) -> PictureButtonStyle {
+        PictureButtonStyle(style: style, active: isActive, width: width, height: height)
     }
 }
 
