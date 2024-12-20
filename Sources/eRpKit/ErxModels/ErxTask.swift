@@ -19,7 +19,7 @@
 import Foundation
 
 /// Represents all information needed by the Erx App to handle profiled Erx Tasks (e.g. Prescriptions).
-public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
+public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
     /// ErxTask default initializer
     public init(
         identifier: String,
@@ -179,7 +179,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable {
 
 extension ErxTask {
     /// https://simplifier.net/packages/kbv.ita.for/1.1.0/files/720086
-    public enum CoPaymentStatus: String, Equatable, Codable {
+    public enum CoPaymentStatus: String, Equatable, Codable, Sendable {
         /// Von Zuzahlungspflicht nicht befreit / gebührenpflichtig
         case subjectToCharge = "0"
         /// Von Zuzahlungspflicht befreit / gebührenfrei
@@ -188,7 +188,7 @@ extension ErxTask {
         case artificialInsemination = "2"
     }
 
-    public enum FlowType: Equatable, RawRepresentable, Codable {
+    public enum FlowType: Equatable, RawRepresentable, Codable, Sendable {
         public enum Code {
             public static var kPharmacyOnly = "160"
             public static var kNarcotic = "165"
@@ -253,7 +253,7 @@ extension ErxTask {
         }
     }
 
-    public enum Source: String, Codable {
+    public enum Source: String, Codable, Sendable {
         case scanner
         case server
     }

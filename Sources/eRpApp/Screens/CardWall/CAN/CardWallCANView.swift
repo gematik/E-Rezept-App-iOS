@@ -222,7 +222,7 @@ struct CardWallCANView_Previews: PreviewProvider {
                 CardWallCANView(
                     store: CardWallCANDomain.Dummies.store
                 )
-            }.generateVariations()
+            }
         }
     }
 }

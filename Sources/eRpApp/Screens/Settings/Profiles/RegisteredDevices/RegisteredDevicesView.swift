@@ -27,9 +27,8 @@ struct RegisteredDevicesView: View {
 
     func delete(at offsets: IndexSet) {
         let deviceKeysToDelete: [String] = offsets.compactMap { offset in
-            if let entries = (/RegisteredDevicesDomain.State.Content.loaded)
-                .extract(from: store.content),
-                entries.count > offset {
+            if let entries = store.content[case: \RegisteredDevicesDomain.State.Content.Cases.loaded],
+               entries.count > offset {
                 return entries[offset].keyIdentifier
             }
             return nil

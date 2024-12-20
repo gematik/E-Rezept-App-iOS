@@ -26,5 +26,10 @@
     {
         "type": "repeated",
         "payload": "2.0.0"
+    },
+    "onboardingDateRecordings":
+    {
+        "type": "repeated",
+        "payload": 742827752.591564
     }
 }

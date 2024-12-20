@@ -22,29 +22,29 @@ import XCTest
 struct TabBarScreen: Screen {
     let app: XCUIApplication
 
-    func tapPrescriptionsTab(file: StaticString = #file, line: UInt = #line) -> MainScreen {
-        button(within: app.tabBars, by: "Rezepte", file: file, line: line)
+    func tapPrescriptionsTab(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> MainScreen {
+        button(within: app.tabBars, by: "Rezepte", fileID: fileID, file: file, line: line)
             .tap()
 
         return .init(app: app)
     }
 
-    func tapSettingsTab(file: StaticString = #file, line: UInt = #line) -> SettingsScreen {
-        button(within: app.tabBars, by: "Einstellungen", file: file, line: line).tap()
+    func tapSettingsTab(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> SettingsScreen {
+        button(within: app.tabBars, by: "Einstellungen", fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
     @discardableResult
-    func tapRedeemTab(file: StaticString = #file, line: UInt = #line) -> PharmacySearchScreen {
-        button(within: app.tabBars, by: "Apothekensuche", file: file, line: line).tap()
+    func tapRedeemTab(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> PharmacySearchScreen {
+        button(within: app.tabBars, by: "Apothekensuche", fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
     @discardableResult
-    func tapOrderTab(file: StaticString = #file, line: UInt = #line) -> OrdersScreen {
-        button(within: app.tabBars, by: "Nachrichten", file: file, line: line).tap()
+    func tapOrderTab(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> OrdersScreen {
+        button(within: app.tabBars, by: "Nachrichten", fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }

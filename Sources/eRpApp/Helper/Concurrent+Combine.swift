@@ -22,8 +22,20 @@ import Combine
 import Dependencies
 import Foundation
 
-enum AsyncError: Error {
+enum AsyncError: Error, Equatable {
+    static func ==(lhs: AsyncError, rhs: AsyncError) -> Bool {
+        switch (lhs, rhs) {
+        case (.finishedWithoutValue, .finishedWithoutValue):
+            return true
+        case let (.error(lhsError), .error(rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        default:
+            return false
+        }
+    }
+
     case finishedWithoutValue
+    case error(Swift.Error)
 }
 
 extension Publisher where Self.Failure == Never {
@@ -39,6 +51,17 @@ extension Publisher {
     /// Use for awaiting exactly one value (as with `Publisher.first()`)
     ///
     /// - Parameter: use `transformError` to try to embed the thrown error into another one
+    func async<E2: Swift.Error>(_ transformError: CaseKeyPath<E2, Self.Failure>) async throws -> Output {
+        do {
+            return try await _async()
+        } catch let error as Self.Failure {
+            throw transformError(error)
+        } catch {
+            throw error
+        }
+    }
+
+    @available(*, deprecated, message: "use CaseKeyPath version")
     func async<E2: Swift.Error>(_ transformError: AnyCasePath<E2, Self.Failure>) async throws -> Output {
         do {
             return try await _async()
@@ -54,16 +77,23 @@ extension Publisher {
     ///
     /// - Parameter: use `transformError` to try to embed the thrown error into another one
     /// - Returns: Result type of output and transformed error or throws if unable to transform the error
-    func asyncResult<E2: Swift.Error>(_ transformError: AnyCasePath<E2, Self.Failure>) async throws
+    func asyncResult<E2: Swift.Error>(_ transformError: CaseKeyPath<E2, Self.Failure>) async throws
         -> Result<Self.Output, E2> {
         do {
             let result = try await _async()
             return .success(result)
         } catch let error as Self.Failure {
-            return .failure(transformError.embed(error))
+            return .failure(transformError(error))
         } catch {
             throw error
         }
+    }
+
+    /// Bridges from AnyPublisher to structured concurrent code.
+    /// Use for awaiting exactly one value (as with `Publisher.first()`)
+    /// - Returns: Results a `Result` type of the output or an `AsyncError`
+    func asyncResult() async -> Result<Self.Output, AsyncError> {
+        await _asyncResult()
     }
 
     /// Bridges from AnyPublisher to structured concurrent code.
@@ -94,6 +124,30 @@ extension Publisher {
                 } receiveValue: { value in
                     finishedWithoutValue = false
                     continuation.resume(with: .success(value))
+                    cancellable?.cancel()
+                }
+        }
+    }
+
+    private func _asyncResult() async -> Result<Output, AsyncError> {
+        await withCheckedContinuation { continuation in
+            var cancellable: AnyCancellable?
+            var finishedWithoutValue = true
+            cancellable = first()
+                .sink { result in
+                    switch result {
+                    case .finished:
+                        if finishedWithoutValue {
+                            continuation.resume(returning: .failure(AsyncError.finishedWithoutValue))
+                        }
+                    case let .failure(error):
+                        continuation.resume(returning: .failure(AsyncError.error(error)))
+                    }
+                    cancellable?.cancel()
+                } receiveValue: { value in
+                    finishedWithoutValue = false
+                    continuation.resume(returning: .success(value))
+                    cancellable?.cancel()
                 }
         }
     }

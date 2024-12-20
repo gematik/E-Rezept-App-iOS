@@ -46,19 +46,42 @@ final class ConcurrentCombineTests: XCTestCase {
         expect(runSuccess) == true
     }
 
-    func testPublisherToConcurrent_embedError() async throws {
-        enum InnerError: Equatable, Error {
-            case error
-        }
-        enum OuterError: Equatable, Error {
-            case inner(InnerError)
-        }
+    func testPublisherToConcurrentResult() async throws {
+        let publisher = [1, 2, 3].publisher
+        let result = await publisher.asyncResult()
+        expect(result) == .success(1)
 
+        let emptySequence: [Int] = []
+        let emptyPublisher = emptySequence.publisher
+        var runSuccess = false
+        do {
+            _ = try await emptyPublisher.async()
+        } catch {
+            guard let error = error as? AsyncError
+            else { Nimble.fail("unexpected error")
+                return
+            }
+            expect(error) == .finishedWithoutValue
+            runSuccess = true
+        }
+        expect(runSuccess) == true
+    }
+
+    @CasePathable
+    enum OuterError: Equatable, Error {
+        case inner(InnerError)
+    }
+
+    enum InnerError: Equatable, Error {
+        case error
+    }
+
+    func testPublisherToConcurrent_embedError() async throws {
         let publisher = Fail<Any, InnerError>(error: InnerError.error).eraseToAnyPublisher()
 
         var runSuccess = false
         do {
-            _ = try await publisher.async(/OuterError.inner)
+            _ = try await publisher.async(\ConcurrentCombineTests.OuterError.Cases.inner)
         } catch {
             guard let error = error as? OuterError
             else { Nimble.fail("unexpected error")

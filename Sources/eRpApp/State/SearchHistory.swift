@@ -27,7 +27,10 @@ protocol SearchHistory {
 struct SearchHistoryDependency: DependencyKey {
     static let liveValue: SearchHistory = DefaultSearchHistory.pharmacySearch
     static let previewValue: SearchHistory = DefaultSearchHistory.pharmacySearch
-    static let testValue: SearchHistory = unimplemented("\(Self.self).SearchHistory")
+    static let testValue: SearchHistory = unimplemented(
+        "\(Self.self).SearchHistory",
+        placeholder: DefaultSearchHistory.pharmacySearch
+    )
 }
 
 extension DependencyValues {

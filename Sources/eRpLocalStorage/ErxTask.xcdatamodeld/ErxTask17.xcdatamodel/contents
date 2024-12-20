@@ -261,6 +261,7 @@
     <entity name="ProfileEntity" representedClassName="ProfileEntity" syncable="YES">
         <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="displayName" optional="YES" attributeType="String"/>
         <attribute name="familyName" optional="YES" attributeType="String"/>
         <attribute name="gIdEntry" optional="YES" attributeType="Binary"/>
         <attribute name="givenName" optional="YES" attributeType="String"/>

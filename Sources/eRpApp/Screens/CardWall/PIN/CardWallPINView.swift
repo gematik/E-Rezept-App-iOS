@@ -229,6 +229,6 @@ struct CardWallPINView_Previews: PreviewProvider {
                     store: CardWallPINDomain.Dummies.store
                 )
             }
-        }.generateVariations()
+        }
     }
 }

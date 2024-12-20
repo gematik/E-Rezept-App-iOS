@@ -23,15 +23,16 @@ import XCTest
 struct OrderHealthCardInsuranceCompanyScreen: Screen {
     let app: XCUIApplication
 
-    func tapPin(file: StaticString = #file, line: UInt = #line) -> OrderHealthCardContactInsuranceCompanyScreen<Self> {
-        button(by: A11y.orderEGK.ogkBtnPinOnly, file: file, line: line).tap()
+    func tapPin(fileID: String = #fileID, file: String = #filePath,
+                line: UInt = #line) -> OrderHealthCardContactInsuranceCompanyScreen<Self> {
+        button(by: A11y.orderEGK.ogkBtnPinOnly, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app, previous: self)
     }
 
-    func tapPinAndCard(file: StaticString = #file,
+    func tapPinAndCard(fileID: String = #fileID, file: String = #filePath,
                        line: UInt = #line) -> OrderHealthCardContactInsuranceCompanyScreen<Self> {
-        button(by: A11y.orderEGK.ogkBtnPinAndCard, file: file, line: line).tap()
+        button(by: A11y.orderEGK.ogkBtnPinAndCard, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app, previous: self)
     }

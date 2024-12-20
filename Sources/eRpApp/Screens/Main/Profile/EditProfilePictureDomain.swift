@@ -105,7 +105,6 @@ struct EditProfilePictureDomain {
                 return updateProfile(with: profileId) { profile in
                     profile.color = color.erxColor
                 }
-                .map(Action.updateProfileReceived)
             }
             return .none
         case let .editPicture(picture):
@@ -115,7 +114,6 @@ struct EditProfilePictureDomain {
                 return updateProfile(with: profileId) { profile in
                     profile.image = picture.erxPicture
                 }
-                .map(Action.updateProfileReceived)
             }
             return .none
         case .updateProfileReceived(.success):
@@ -130,7 +128,6 @@ struct EditProfilePictureDomain {
                 return updateProfile(with: profileId) { profile in
                     profile.userImageData = image
                 }
-                .map(Action.updateProfileReceived)
             }
             return .none
         case .resetPictureButtonTapped:
@@ -142,7 +139,6 @@ struct EditProfilePictureDomain {
                     profile.image = ProfilePicture.none.erxPicture
                     profile.userImageData = Data()
                 }
-                .map(Action.updateProfileReceived)
             }
             return .none
         case .destination(.presented(.alert(.cameraPicker))):
@@ -196,13 +192,14 @@ extension EditProfilePictureDomain {
     func updateProfile(
         with profileId: UUID,
         mutating: @escaping (inout eRpKit.Profile) -> Void
-    ) -> Effect<Result<Bool, UserProfileServiceError>> {
+    ) -> Effect<Action> {
         .publisher(
             userProfileService
                 .update(profileId: profileId, mutating: mutating)
                 .receive(on: schedulers.main)
                 .first()
                 .catchToPublisher()
+                .map(Action.updateProfileReceived)
                 .eraseToAnyPublisher
         )
     }

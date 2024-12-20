@@ -37,18 +37,18 @@ struct OrdersView: View {
         WithPerceptionTracking {
             NavigationStack {
                 VStack {
-                    if !store.state.orders.isEmpty || store.isLoading {
+                    if !store.state.communicationMessage.isEmpty || store.isLoading {
                         ScrollView(.vertical) {
                             VStack(alignment: .leading, spacing: 8) {
-                                ForEach(store.orders) { order in
+                                ForEach(store.communicationMessage) { message in
                                     OrderCellView(
-                                        title: order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text,
-                                        message: order.latestMessage,
-                                        subtitle: uiDateFormatter.relativeDate(order.lastUpdated) ?? "",
-                                        isNew: order.hasUnreadEntries,
-                                        prescriptionCount: order.tasksCount
+                                        title: message.title,
+                                        message: message.latestMessage,
+                                        subtitle: uiDateFormatter.relativeDate(message.lastUpdated) ?? "",
+                                        isNew: message.hasUnreadMessages,
+                                        prescriptionCount: message.order?.tasksCount ?? 0
                                     ) {
-                                        store.send(.didSelect(order.orderId))
+                                        store.send(.didSelect(message.id))
                                     }
                                 }
                                 .redacted(reason: store.isLoading ? .placeholder : .init())
@@ -107,7 +107,7 @@ struct OrdersView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             OrdersView(store: OrdersDomain.Dummies.store)
-            OrdersView(store: OrdersDomain.Dummies.storeFor(OrdersDomain.State(orders: [])))
+            OrdersView(store: OrdersDomain.Dummies.storeFor(OrdersDomain.State(communicationMessage: [])))
         }
     }
 }

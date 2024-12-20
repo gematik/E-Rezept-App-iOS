@@ -40,6 +40,9 @@ final class OnboardingSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testOnboardingRegisterAuthenticationView_NoBiometrics() {
+        // Pickers `selected` parameter is false positive triggering the perception tracking on iOS 18
+        Perception.isPerceptionCheckingEnabled = false
+
         let state = RegisterAuthenticationDomain.State(
             availableSecurityOptions: [.password],
             selectedSecurityOption: .password,

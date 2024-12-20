@@ -36,4 +36,14 @@ public class AdditionalHeaderInterceptor: Interceptor {
 
         return chain.proceed(request: request)
     }
+
+    public func interceptAsync(chain: Chain) async throws -> HTTPResponse {
+        var request = chain.request
+
+        for (header, value) in additionalHeader {
+            request.setValue(value, forHTTPHeaderField: header)
+        }
+
+        return try await chain.proceedAsync(request: request)
+    }
 }

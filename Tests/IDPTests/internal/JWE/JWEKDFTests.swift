@@ -18,7 +18,6 @@
 
 import Combine
 import CryptoKit
-import DataKit
 import Foundation
 @testable import IDP
 import Nimble

@@ -47,7 +47,9 @@ class OrderHealthCardUITests: XCTestCase {
     }
 
     @MainActor
-    func testStatus() {
+    func testStatus() async {
+        await UITestBridgeClient().sendMessage(.loginStatus(false))
+
         let tabBar = TabBarScreen(app: app)
 
         let orderHealthCard = tabBar

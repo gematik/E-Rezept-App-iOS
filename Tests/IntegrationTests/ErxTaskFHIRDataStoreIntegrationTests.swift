@@ -467,6 +467,10 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 }
                 .eraseToAnyPublisher()
         }
+
+        func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
+            throw HTTPClientError.internalError("notImplemented")
+        }
     }
 
     // swiftlint:enable line_length

@@ -139,13 +139,13 @@ struct PrescriptionDetailDomain {
         case .fetchChargeItemLocal:
             return .run { [identifier = state.prescription.id] send in
                 let result = try await erxTaskRepository.loadLocal(by: identifier)
-                    .asyncResult(/ErxRepositoryError.self)
+                    .asyncResult(\.self)
                 await send(.response(.fetchChargeItemLocal(result)))
             }
         case .registerActiveUserProfileListener:
             return .run { send in
                 let result = try await userProfileService.activeUserProfilePublisher()
-                    .asyncResult(/UserProfileServiceError.self)
+                    .asyncResult(\.self)
                 await send(.response(.activeUserProfileReceived(result)))
             }
         case .response(.activeUserProfileReceived(.failure)):

@@ -45,6 +45,7 @@ extension ProfileEntity {
         created = profile.created
         givenName = profile.givenName
         familyName = profile.familyName
+        displayName = profile.displayName
         insurance = profile.insurance
         insuranceId = profile.insuranceId
         insuranceType = profile.insuranceType.rawValue
@@ -54,11 +55,13 @@ extension ProfileEntity {
         lastAuthenticated = profile.lastAuthenticated
         // Note: update of erxTasks is set when saving tasks in `save(tasks:)`
         hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
+        shouldAutoUpdateNameAtNextLogin = profile.shouldAutoUpdateNameAtNextLogin
         self.gIdEntry = gIdEntry
     }
 }
 
 extension Profile {
+    // swiftlint:disable function_body_length
     init?(entity: ProfileEntity,
           dateProvider: () -> Date,
           decoder: JSONDecoder = JSONDecoder()) {
@@ -98,6 +101,7 @@ extension Profile {
         }
 
         let hidePkvConsentDrawerOnMainView = entity.hidePkvConsentDrawerOnMainView
+        let shouldAutoUpdateNameAtNextLogin = entity.shouldAutoUpdateNameAtNextLogin
 
         let gIdEntry = try? decoder.decode(KKAppDirectory.Entry.self, from: entity.gIdEntry ?? Data())
 
@@ -107,6 +111,7 @@ extension Profile {
             created: created,
             givenName: entity.givenName,
             familyName: entity.familyName,
+            displayName: entity.displayName,
             insurance: entity.insurance,
             insuranceId: entity.insuranceId,
             insuranceType: insuranceType,
@@ -116,7 +121,9 @@ extension Profile {
             lastAuthenticated: entity.lastAuthenticated,
             erxTasks: tasks,
             hidePkvConsentDrawerOnMainView: hidePkvConsentDrawerOnMainView,
+            shouldAutoUpdateNameAtNextLogin: shouldAutoUpdateNameAtNextLogin,
             gIdEntry: gIdEntry
         )
     }
+    // swiftlint:enable function_body_length
 }

@@ -1,0 +1,157 @@
+{
+    "task": {
+        "medicationRequest":
+        {
+            "substitutionAllowed": true,
+            "hasEmergencyServiceFee": false,
+            "quantity":
+            {
+                "value": "15",
+                "unit": "{Package}"
+            },
+            "dosageInstructions": "",
+            "bvg": true,
+            "coPaymentStatus": "0",
+            "authoredOn": "2024-01-16",
+            "multiplePrescription":
+            {
+                "mark": false
+            }
+        },
+        "medicationDispenses":
+        [],
+        "authoredOn": "{{DATE:-17D}}",
+        "status": "in-progress",
+        "identifier": "{{TASKID}}",
+        "source": "server",
+        "communications":
+        [],
+        "avsTransactions":
+        [],
+        "lastModified": "{{DATETIME:-27m}}"
+    },
+    "taskDetail": {
+        "flowType":
+        {
+            "pharmacyOnly":
+            {}
+        },
+        "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+        "medicationRequest":
+        {
+            "substitutionAllowed": true,
+            "hasEmergencyServiceFee": false,
+            "quantity":
+            {
+                "value": "15",
+                "unit": "{Package}"
+            },
+            "dosageInstructions": "",
+            "bvg": true,
+            "coPaymentStatus": "0",
+            "authoredOn": "2024-01-16",
+            "multiplePrescription":
+            {
+                "mark": false
+            }
+        },
+        "medicationDispenses":
+        [],
+        "medication":
+        {
+            "isVaccine": false,
+            "amount":
+            {
+                "numerator":
+                {
+                    "unit": "Stk",
+                    "value": "14"
+                },
+                "denominator":
+                {
+                    "value": "1"
+                }
+            },
+            "profile": "pzn",
+            "normSizeCode": "N1",
+            "pzn": "03678010",
+            "dosageForm": "TRS",
+            "name": "Ibuprofen 08",
+            "drugCategory": "00",
+            "ingredients":
+            []
+        },
+        "author": "Count Orff",
+        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/{{TASKID}}",
+        "authoredOn": "{{DATE:-17D}}",
+        "status": "in-progress",
+        "expiresOn": "{{DATE:+90D}}",
+        "acceptedUntil": "{{DATE:+24D}}",
+        "practitioner":
+        {
+            "qualification": "travel agent",
+            "lanr": "312108073",
+            "name": "Dr. Adelheid Ulmenwald"
+        },
+        "identifier": "{{TASKID}}",
+        "organization":
+        {
+            "name": "Count Orff",
+            "email": "hauke.albrecht@mehl.net",
+            "identifier": "500756630",
+            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+            "phone": "+49-200-3809918"
+        },
+        "patient":
+        {
+            "birthDate": "1987-09-30",
+            "name": "Boaty Mc Boatface",
+            "status": "5",
+            "insurance": "Vaillant BKK",
+            "address": "Straßburger Str. 2\n82416, Nord Ricardobrunn",
+            "insuranceId": "M070759114"
+        },
+        "prescriptionId": "{{TASKID}}",
+        "source": "server",
+        "communications":
+        [],
+        "avsTransactions":
+        [],
+        "lastModified": "{{DATETIME:-27m}}"
+    },
+    "dispReq": {
+        "orderId": "{{UUID}}",
+        "insuranceId": "M070759114",
+        "payloadJSON": "{\"address\":[\"Straßburger Str. 2\",\"12345\",\"Nord Ricardobrunn\"],\"hint\":\"\",\"name\":\"Boaty Mc Boatface\",\"phone\":\"1234567890\",\"supplyOptionsType\":\"shipment\",\"version\":1}",
+        "payload":
+        {
+            "version": 1,
+            "supplyOptionsType": "shipment"
+        },
+        "identifier": "{{UUID}}",
+        "isRead": false,
+        "taskId": "{{TASKID}}",
+        "profile": "dispReq",
+        "timestamp": "{{DATETIME:-11m}}",
+        "telematikId": "{{TELEMATIKID}}"
+    },
+    "reply": {
+        "telematikId": "{{TELEMATIKID}}",
+        "isRead": false,
+        "identifier": "{{UUID}}",
+        "payload":
+        {
+            "supplyOptionsType": "onPremise",
+            "pickUpCodeDMC": "Test_01___Rezept_01___abcdefg12345",
+            "url": "https://www.tree.fm/forest/33",
+            "version": 1,
+            "infoText": "jetzt ist es aber da",
+            "pickUpCodeHR": "T01__R01"
+        },
+        "insuranceId": "M070759114",
+        "taskId": "{{TASKID}}",
+        "profile": "reply",
+        "payloadJSON": "{\"version\":1,\"supplyOptionsType\":\"onPremise\",\"info_text\":\"jetzt ist es aber da\",\"pickUpCodeHR\":\"T01__R01\",\"pickUpCodeDMC\":\"Test_01___Rezept_01___abcdefg12345\",\"url\":\"https://www.tree.fm/forest/33\"}",
+        "timestamp": "{{TIMESTAMP}}"
+    }
+}

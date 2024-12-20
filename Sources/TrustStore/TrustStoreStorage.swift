@@ -36,16 +36,47 @@ public protocol TrustStoreStorage {
     ///
     /// - Parameter ocspList: OCSPList to save. Pass in nil to unset.
     func set(ocspList: OCSPList?)
+
+    /// Retrieve the previously saved PKICertificates
+    func getPKICertificates() -> PKICertificates?
+
+    /// Set and save the TrustStore PKICertificates
+    ///
+    /// - Parameter pkiCertificates: PKICertificates to save. Pass in nil to unset.
+    func set(pkiCertificates: PKICertificates?)
+
+    /// Retrieve the previously saved VAU certificate
+    func getVauCertificate() -> Data?
+
+    /// Set and save the VAU certificate
+    ///
+    /// - Parameter vauCertificate: Data of the VAU certificate to save. Pass in nil
+    func set(vauCertificate: Data?)
+
+    /// Retrieve the previously saved OCSP response for the VAU certificate
+    func getVauCertificateOcspResponse() -> Data?
+
+    /// Set and save the OCSP response for the VAU certificate
+    ///
+    /// - Parameter vauCertificateOcspResponse: Data of the OCSP response to save. Pass in nil
+    func set(vauCertificateOcspResponse: Data?)
 }
 
 public class TrustStoreFileStorage: TrustStoreStorage {
     let certListFilePath: URL
     let ocspListFilePath: URL
+    let pkiCertificatesFilePath: URL
+    let vauCertificateFilePath: URL
+    let vauCertificateOcspResponseFilePath: URL
     let writingOptions: Data.WritingOptions = [.atomicWrite, .completeFileProtectionUnlessOpen]
 
     public init(trustStoreStorageBaseFilePath: URL) {
         certListFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("trustStoreCertList")
         ocspListFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("trustStoreOCSPList")
+        pkiCertificatesFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("trustStorePKICertificates")
+        vauCertificateFilePath = trustStoreStorageBaseFilePath.appendingPathComponent("vauCertificate")
+        vauCertificateOcspResponseFilePath = trustStoreStorageBaseFilePath
+            .appendingPathComponent("vauCertificateOcspResponse")
     }
 
     public var certList: AnyPublisher<CertList?, Never> {
@@ -130,6 +161,66 @@ public class TrustStoreFileStorage: TrustStoreStorage {
         }
         .merge(with: ocspListPassthrough)
         .eraseToAnyPublisher()
+    }
+
+    public func getPKICertificates() -> PKICertificates? {
+        guard let data = try? Data(contentsOf: pkiCertificatesFilePath),
+              let pkiCertificates = try? Self.jsonDecoder.decode(PKICertificates.self, from: data)
+        else {
+            return nil
+        }
+        return pkiCertificates
+    }
+
+    public func set(pkiCertificates: PKICertificates?) {
+        do {
+            if let pkiCertificates {
+                _ = try Self.jsonEncoder.encode(pkiCertificates)
+                    .save(to: pkiCertificatesFilePath, options: writingOptions)
+            } else {
+                try FileManager.default.removeItem(at: pkiCertificatesFilePath)
+            }
+        } catch {
+            // no feedback
+        }
+    }
+
+    public func getVauCertificate() -> Data? {
+        guard let data = try? Data(contentsOf: vauCertificateFilePath) else {
+            return nil
+        }
+        return data
+    }
+
+    public func set(vauCertificate: Data?) {
+        do {
+            if let vauCertificate {
+                _ = vauCertificate.save(to: vauCertificateFilePath, options: writingOptions)
+            } else {
+                try FileManager.default.removeItem(at: vauCertificateFilePath)
+            }
+        } catch {
+            // no feedback
+        }
+    }
+
+    public func getVauCertificateOcspResponse() -> Data? {
+        guard let data = try? Data(contentsOf: vauCertificateOcspResponseFilePath) else {
+            return nil
+        }
+        return data
+    }
+
+    public func set(vauCertificateOcspResponse: Data?) {
+        do {
+            if let vauCertificateOcspResponse {
+                _ = vauCertificateOcspResponse.save(to: vauCertificateOcspResponseFilePath, options: writingOptions)
+            } else {
+                try FileManager.default.removeItem(at: vauCertificateOcspResponseFilePath)
+            }
+        } catch {
+            // no feedback
+        }
     }
 
     private static let jsonDecoder = JSONDecoder()

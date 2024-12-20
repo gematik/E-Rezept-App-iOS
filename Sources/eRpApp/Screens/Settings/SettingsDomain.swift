@@ -18,13 +18,20 @@
 
 import Combine
 import ComposableArchitecture
-import DataKit
 import eRpKit
 import Foundation
 import IDP
 import UIKit
 
-@Reducer
+// sourcery: CodedError = "039"
+enum SettingsDomainError: Swift.Error, Equatable {
+    // sourcery: errorCode = "01"
+    case organDonorJumpError(OrganDonorJumpServiceError)
+    // sourcery: errorCode = "02"
+    case organDonorUnknownError
+}
+
+@Reducer // swiftlint:disable:next type_body_length
 struct SettingsDomain {
     @ObservableState
     struct State: Equatable {
@@ -73,6 +80,7 @@ struct SettingsDomain {
             case dismiss
             case profile(SettingsDomain.Action)
             case openSettings
+            case openDonorRegister
         }
     }
 
@@ -101,6 +109,8 @@ struct SettingsDomain {
         case tappedCustomPin
         case tappedUnlockCard
 
+        case tappedOpenOrganspenderegister
+
         case resetNavigation
         case languageSettingsTapped
 
@@ -108,6 +118,7 @@ struct SettingsDomain {
             case trackerStatusReceived(Bool)
             case demoModeStatusReceived(Bool)
             case showChargeItemListReceived(UserProfile)
+            case showAlert(SettingsDomainError)
         }
     }
 
@@ -115,6 +126,7 @@ struct SettingsDomain {
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.tracker) var tracker: Tracker
     @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
+    @Dependency(\.organDonorJumpService) var organDonorJumpService: OrganDonorJumpService
 
     var body: some Reducer<State, Action> {
         Scope(state: \.profiles, action: \.profiles) {
@@ -240,6 +252,19 @@ struct SettingsDomain {
                 )
             )
             return .none
+        case .tappedOpenOrganspenderegister:
+            state.destination = .alert(.info(SettingsDomain.donorRegisterAlertState))
+            return .none
+        case .destination(.presented(.alert(.openDonorRegister))):
+            return .run { send in
+                do {
+                    try await organDonorJumpService.jump()
+                } catch let error as OrganDonorJumpServiceError {
+                    await send(.response(.showAlert(SettingsDomainError.organDonorJumpError(error))))
+                } catch {
+                    await send(.response(.showAlert(SettingsDomainError.organDonorUnknownError)))
+                }
+            }
         case .resetNavigation:
             state.destination = nil
             return .none
@@ -266,7 +291,7 @@ struct SettingsDomain {
         case let .showChargeItemListFor(profileId):
             return .run { send in
                 guard let profile = try await userProfileService.userProfilesPublisher()
-                    .async(/UserProfileServiceError.self)
+                    .async(\.self)
                     .first(where: { $0.id == profileId })
                 else { return }
                 await send(.response(.showChargeItemListReceived(profile)))
@@ -276,6 +301,9 @@ struct SettingsDomain {
                 profile: profile,
                 routeToChargeItemList: true
             ))
+            return .none
+        case let .response(.showAlert(error)):
+            state.destination = .alert(.init(for: error))
             return .none
         case let .destination(.presented(.editProfile(.delegate(action)))):
             switch action {
@@ -339,6 +367,20 @@ extension SettingsDomain {
             message: { TextState(L10n.stgTxtAlertMessageDemoModeOff) }
         )
     }()
+
+    static var donorRegisterAlertState: AlertState<Destination.Alert> =
+        AlertState(
+            title: { TextState(L10n.stgTxtDonorRegisterAlertTitle) },
+            actions: {
+                ButtonState(role: .cancel, action: .send(.dismiss)) {
+                    TextState(L10n.stgConBtnOrganDonorAlertCancel)
+                }
+                ButtonState(action: .send(.openDonorRegister)) {
+                    TextState(L10n.stgBtnDonorRegisterAlertOpen)
+                }
+            },
+            message: { TextState(L10n.stgTxtDonorRegisterAlertMessage) }
+        )
 }
 
 extension SettingsDomain {

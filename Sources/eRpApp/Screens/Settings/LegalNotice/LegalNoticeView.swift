@@ -143,6 +143,6 @@ struct LegalNoticeView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             LegalNoticeView()
-        }.generateVariations(selection: .devices, oneDark: true)
+        }
     }
 }

@@ -17,7 +17,6 @@
 //
 
 import CryptoKit
-import DataKit
 import Foundation
 import Nimble
 import OpenSSL

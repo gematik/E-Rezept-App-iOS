@@ -27,8 +27,11 @@ extension ProfileEntity {
 
     @NSManaged public var color: String?
     @NSManaged public var created: Date?
+    @NSManaged public var displayName: String?
     @NSManaged public var familyName: String?
+    @NSManaged public var gIdEntry: Data?
     @NSManaged public var givenName: String?
+    @NSManaged public var hidePkvConsentDrawerOnMainView: Bool
     @NSManaged public var identifier: UUID?
     @NSManaged public var image: String?
     @NSManaged public var insurance: String?
@@ -37,10 +40,9 @@ extension ProfileEntity {
     @NSManaged public var lastAuthenticated: Date?
     @NSManaged public var name: String?
     @NSManaged public var userImageData: Data?
-    @NSManaged public var hidePkvConsentDrawerOnMainView: Bool
+    @NSManaged public var shouldAutoUpdateNameAtNextLogin: Bool
     @NSManaged public var chargeItems: NSSet?
     @NSManaged public var erxTasks: NSSet?
-    @NSManaged public var gIdEntry: Data?
 }
 
 // MARK: Generated accessors for chargeItems

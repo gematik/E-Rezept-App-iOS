@@ -57,6 +57,7 @@ final class ScannedPrescriptionUITests: XCTestCase {
         XCTAssertTrue(app.buttons[A11y.prescriptionDetails.prscDtlBtnEditTitle].exists)
     }
 
+    @MainActor
     func testEditPrescriptionTitle_editName() {
         // given
         app.buttons.element(matching: .init(format: "label == %@", "Rezepte")).tap()

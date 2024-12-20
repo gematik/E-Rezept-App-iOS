@@ -69,6 +69,10 @@ class VAUInterceptor: Interceptor {
             }
             .eraseToAnyPublisher()
     }
+
+    func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
+        throw HTTPClientError.internalError("notImplemented")
+    }
 }
 
 // swiftlint:disable:next large_tuple

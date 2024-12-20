@@ -17,7 +17,7 @@
 #
 
 xcodes(
-  version: ENV["FL_XCODE_VERSION"] || "15.2.0",
+  version: ENV["FL_XCODE_VERSION"] || "16.0.0",
   select_for_current_build_only: true, 
   update_list: false
 )
@@ -267,7 +267,7 @@ lane :build_mac do |options|
   elsif ENV["G_MAC_DESTINATION"]
     destination = ENV["G_MAC_DESTINATION"]
   else
-    destination = "platform=macOS,arch=x86_64"
+    destination = "platform=macOS,arch=arm64"
   end
 
   if options[:configuration]
@@ -1205,7 +1205,7 @@ lane :build_tu_archive do |options|
     skip_package_ipa: true,
     export_method: "app-store",
     archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
-    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"DEFAULT_ENVIRONMENT_TU\""
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) DEFAULT_ENVIRONMENT_TU\""
   )
 end
 
@@ -1219,7 +1219,7 @@ lane :build_ru_archive do |options|
     skip_package_ipa: true,
     export_method: "app-store",
     archive_path: "./distribution/eRPApp_#{build_version}.xcarchive",
-    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"DEFAULT_ENVIRONMENT_RU\""
+    xcargs: "GEMATIK_SOURCE_VERSION=\"#{git_version}\" GEMATIK_BUNDLE_VERSION=\"#{build_version}\" SWIFT_ACTIVE_COMPILATION_CONDITIONS=\"\\$(inherited) DEFAULT_ENVIRONMENT_RU\""
   )
 end
 
@@ -1307,20 +1307,45 @@ def isDryRun(options)
   return dry_run
 end
 
+# Localizable.strings and Localizable.stringsdict
 lane :update_localization do |option|
+  languages = ["de", "en_GB", "tr", "ru", "ar", "uk", "pl", "bg", "da", "he_IL", "cs", "nl", "it", "ro"]
+  language_dirs = languages.map { |lang| lang.gsub('_', '-') }
+  
   lokalise(
     project_identifier: ENV['LOCALISE_PROJECT_ID'],
     destination: "./Sources/eRpApp/Resources/",
-    languages: ["de", "en_GB", "tr", "ru", "ar", "uk", "pl", "bg", "da", "he_IL", "cs", "nl", "it", "ro"],
+    languages: languages,
     include_comments: false,
-    use_original: true
+    use_original: true,
+    replace_breaks: true
   )
 
-  languages = ["de", "en-GB", "tr", "ru", "ar", "uk", "pl", "bg", "da", "he-IL", "cs", "nl", "it", "ro"]
-  for language_code in languages
+  for language_code in language_dirs
     sh "sort ../Sources/eRpApp/Resources/#{language_code}.lproj/Localizable.strings -o ../Sources/eRpApp/Resources/#{language_code}.lproj/Localizable.strings"
     sh "plutil -convert xml1 ../Sources/eRpApp/Resources/#{language_code}.lproj/Localizable.stringsdict"
   end
+end
+
+# Internal Messages (Change log / Communications) 
+lane :update_localization_internal_messages do |option|
+  languages = ["de", "en_GB", "tr", "ru", "ar", "uk", "pl", "bg", "da", "he_IL", "cs", "nl", "it", "ro"]
+
+  sh "mkdir -p ../Sources/eRpApp/Resources_Internal_Messages"
+  lokalise(
+    destination: "./Sources/eRpApp/Resources_Internal_Messages/",
+    clean_destination: true,
+    languages: languages,
+    format: "json",
+    include_comments: false,
+    bundle_structure: "%LANG_ISO%.lproj/internal_messages.%FORMAT%",
+    use_original: false,
+    replace_breaks: false
+  )
+  for language_code in languages
+    sh "cp ../Sources/eRpApp/Resources_Internal_Messages/#{language_code}.lproj/internal_messages.json ../Sources/eRpApp/Resources/#{language_code.gsub('_', '-')}.lproj/"
+  end
+  sh "rm -rf ../Sources/eRpApp/Resources_Internal_Messages"
 end
 
 desc "Build AdHoc Version against TU Environment"

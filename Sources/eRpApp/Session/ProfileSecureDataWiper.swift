@@ -61,7 +61,8 @@ class DefaultProfileSecureDataWiper: ProfileSecureDataWiper {
                 storage.set(keyIdentifier: nil)
 
                 if let someIdentifier = identifier,
-                   let identifier = someIdentifier.encodeBase64UrlSafe()?.utf8string {
+                   let encodedIdentifier = someIdentifier.encodeBase64UrlSafe(),
+                   let identifier = String(data: encodedIdentifier, encoding: .utf8) {
                     // If deletion fails we cannot do anything
                     // [REQ:gemSpec_IDP_Frontend:A_21603] PrK_SE_AUT/PuK_SE_AUT
                     _ = try? PrivateKeyContainer.deleteExistingKey(for: identifier)

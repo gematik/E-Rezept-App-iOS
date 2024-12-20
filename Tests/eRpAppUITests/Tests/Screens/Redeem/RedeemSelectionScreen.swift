@@ -23,14 +23,16 @@ import XCTest
 struct RedeemSelectionScreen: Screen {
     let app: XCUIApplication
 
-    func tapRedeemRemote(file: StaticString = #file, line: UInt = #line) -> PharmacySearchScreen {
-        button(by: A11y.redeem.overview.rdmBtnDeliveryTile, file: file, line: line).tap()
+    func tapRedeemRemote(fileID: String = #fileID, file: String = #filePath,
+                         line: UInt = #line) -> PharmacySearchScreen {
+        button(by: A11y.redeem.overview.rdmBtnDeliveryTile, fileID: fileID, file: file, line: line).tap()
 
         return PharmacySearchScreen(app: app)
     }
 
-    func tapRedeemLocal(file: StaticString = #file, line: UInt = #line) -> RedeemMatrixCodeScreen<Self> {
-        button(by: A11y.redeem.overview.rdmBtnPharmacyTile, file: file, line: line).tap()
+    func tapRedeemLocal(fileID: String = #fileID, file: String = #filePath,
+                        line: UInt = #line) -> RedeemMatrixCodeScreen<Self> {
+        button(by: A11y.redeem.overview.rdmBtnPharmacyTile, fileID: fileID, file: file, line: line).tap()
 
         return RedeemMatrixCodeScreen(app: app, previous: self)
     }

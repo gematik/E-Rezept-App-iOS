@@ -81,7 +81,8 @@ struct Prescription: Equatable, Identifiable {
         viewStatus = Self.evaluateViewStatus(
             for: erxTask,
             type: type,
-            whenHandedOver: erxTask.medicationDispenses.first?.whenHandedOver ?? erxTask.redeemedOn,
+            whenHandedOver: erxTask.medicationDispenses.first?.whenHandedOver ?? erxTask
+                .lastMedicationDispense ?? erxTask.redeemedOn,
             date: date,
             uiDateFormatter: dateFormatter
         )
@@ -122,6 +123,10 @@ struct Prescription: Equatable, Identifiable {
             } else {
                 return .open(until: L10n.erxTxtSentAt("").text)
             }
+        case .computed(status: .dispensed):
+            let redeemedOnDate = uiDateFormatter
+                .relativeDate(whenHandedOver, formattingContext: .middleOfSentence) ?? L10n.prscFdTxtNa.text
+            return .open(until: L10n.erxTxtDispensedAt(redeemedOnDate).text)
         case .ready, .computed(status: .sent):
             if type == .scanned,
                let authoredOn = erxTask.authoredOn?.date {
@@ -194,8 +199,10 @@ struct Prescription: Equatable, Identifiable {
     }
 
     var statusMessage: String {
-        guard type != .directAssignment
-        else {
+        guard type != .directAssignment else {
+            if case let .archived(message: localizedString) = viewStatus {
+                return localizedString
+            }
             return L10n.prscRedeemNoteDirectAssignment.text
         }
 
@@ -244,6 +251,7 @@ struct Prescription: Equatable, Identifiable {
              (.completed, _),
              (.computed(.sent), _),
              (.computed(.waiting), _),
+             (.computed(.dispensed), _),
              (.undefined, _),
              (.error, _): return false
         }
@@ -352,6 +360,7 @@ extension Prescription {
         case (.cancelled, _): return L10n.prscStatusCanceled.text
         case (.computed(.sent), _): return L10n.prscStatusSent.text
         case (.computed(.waiting), _): return L10n.prscStatusWaiting.text
+        case (.computed(.dispensed), _): return L10n.prscStatusDispensed.text
         case (.draft, _),
              (.undefined, _): return L10n.prscStatusUndefined.text
         case (.error, _): return L10n.prscStatusError.text
@@ -364,7 +373,7 @@ extension Prescription {
             case .open, .redeem, .deleted, .undefined, .error:
                 return nil
             case .archived:
-                return Image(systemName: SFSymbolName.hourglass)
+                return Image(asset: Asset.Prescriptions.checkmarkDouble)
             }
         }
 
@@ -376,6 +385,7 @@ extension Prescription {
         case (.inProgress, _): return nil
         case (.computed(.sent), _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.computed(.waiting), _): return nil
+        case (.computed(.dispensed), _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.completed, _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.cancelled, _): return Image(systemName: SFSymbolName.trash)
         case (.draft, _),
@@ -406,7 +416,8 @@ extension Prescription {
              (.cancelled, _): return Colors.systemGray
         case (.ready, .redeem),
              (.inProgress, _): return Colors.yellow900
-        case (.ready, _): return Colors.primary900
+        case (.ready, _),
+             (.computed(.dispensed), _): return Colors.primary900
         case (.error, _): return Colors.red900
         }
     }
@@ -426,7 +437,7 @@ extension Prescription {
              (.cancelled, _): return Colors.systemGray2
         case (.ready, .redeem),
              (.inProgress, _): return Colors.yellow500
-        case (.ready, _): return Colors.primary500
+        case (.ready, _), (.computed(.dispensed), _): return Colors.primary500
         case (.error, _): return Colors.red500
         }
     }
@@ -446,7 +457,7 @@ extension Prescription {
              (.cancelled, _): return Colors.secondary
         case (.ready, .redeem),
              (.inProgress, _): return Colors.yellow200
-        case (.ready, _): return Colors.primary100
+        case (.ready, _), (.computed(.dispensed), _): return Colors.primary100
         case (.error, _): return Colors.red100
         }
     }

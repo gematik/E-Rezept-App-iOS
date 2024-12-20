@@ -28,7 +28,9 @@ struct MedicationReminderParser {
 extension MedicationReminderParser: DependencyKey {
     static var liveValue: MedicationReminderParser = .live
 
-    static var testValue: MedicationReminderParser = unimplemented()
+    static var testValue = MedicationReminderParser(
+        parse: unimplemented("MedicationReminderParser.parse", placeholder: MedicationSchedule.mock1)
+    )
 }
 
 extension MedicationReminderParser {
@@ -183,17 +185,5 @@ extension DependencyValues {
     var medicationReminderParser: MedicationReminderParser {
         get { self[MedicationReminderParser.self] }
         set { self[MedicationReminderParser.self] = newValue }
-    }
-}
-
-extension MedicationSchedule.Entry: CustomStringConvertible {
-    public var description: String {
-        "\(hourComponent) : \(minuteComponent)"
-    }
-}
-
-extension MedicationSchedule: CustomStringConvertible {
-    public var description: String {
-        "Medication (\(id)) \(title) \(dosageInstructions) \(entries)"
     }
 }

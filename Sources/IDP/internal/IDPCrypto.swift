@@ -79,7 +79,10 @@ struct IDPCrypto {
     func generateRandomVerifier() throws -> String? {
         // [REQ:gemSpec_IDP_Frontend:A_20309] verifierLength is 32 bytes, encoded to base64 this results in 43 chars
         // (32 * 4 / 3 = 42,6)
-        try randomGenerator(verifierLength).encodeBase64UrlSafe()?.utf8string
+        guard let encoded = try randomGenerator(verifierLength).encodeBase64UrlSafe() else {
+            return nil
+        }
+        return String(data: encoded, encoding: .utf8)
     }
 
     func generateRandomNonce() throws -> String? {

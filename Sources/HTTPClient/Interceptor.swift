@@ -28,4 +28,12 @@ public protocol Interceptor {
     /// - Note: A call to `chain.proceed(request:)` is critical when implementing this protocol function.
     /// - Returns: `AnyPublisher` that emits the response as `HTTPClient.Response`
     func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError>
+
+    /// Intercept the chain (e.g. modify it's request)
+    ///
+    /// - Parameter chain: request chain to be intercepted
+    /// - Note: A call to `chain.proceed(request:)` is critical when implementing this protocol function.
+    /// - Note: Only `HTTPClientError` are supposed to be thrown.
+    /// - Returns: Response emitted as `HTTPClient.Response`
+    func interceptAsync(chain: Chain) async throws -> HTTPResponse
 }

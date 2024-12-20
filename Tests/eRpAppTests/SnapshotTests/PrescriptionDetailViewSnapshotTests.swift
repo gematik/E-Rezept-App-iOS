@@ -87,7 +87,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
             let sut = PrescriptionDetailView(store: store)
                 .frame(width: 320, height: 200)
 
-            assertSnapshots(matching: sut, as: snapshotModi())
+            assertSnapshots(of: sut, as: snapshotModi())
         }
     }
 
@@ -99,7 +99,7 @@ final class PrescriptionDetailViewSnapshotTests: ERPSnapshotTestCase {
             let sut = PrescriptionDetailView(store: store)
                 .frame(width: 320, height: 200)
 
-            assertSnapshots(matching: sut, as: snapshotModi())
+            assertSnapshots(of: sut, as: snapshotModi())
         }
     }
 

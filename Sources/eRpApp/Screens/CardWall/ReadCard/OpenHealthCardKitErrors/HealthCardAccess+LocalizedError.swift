@@ -21,7 +21,8 @@ import Foundation
 import HealthCardAccess
 import HealthCardControl
 
-extension HealthCard.Error: LocalizedError {
+extension HealthCard.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .operational:
@@ -39,7 +40,8 @@ extension HealthCard.Error: LocalizedError {
     }
 }
 
-extension ApplicationIdentifier.Error: LocalizedError {
+extension ApplicationIdentifier.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .illegalArgument(arg):
@@ -50,7 +52,8 @@ extension ApplicationIdentifier.Error: LocalizedError {
     }
 }
 
-extension FileControlParameter.Error: LocalizedError {
+extension FileControlParameter.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .illegalArgument(arg):
@@ -63,7 +66,8 @@ extension FileControlParameter.Error: LocalizedError {
     }
 }
 
-extension FileIdentifier.Error: LocalizedError {
+extension FileIdentifier.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .illegalArgument(arg):
@@ -74,7 +78,8 @@ extension FileIdentifier.Error: LocalizedError {
     }
 }
 
-extension Format2Pin.Error: LocalizedError {
+extension Format2Pin.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .illegalArgument(arg):
@@ -83,7 +88,8 @@ extension Format2Pin.Error: LocalizedError {
     }
 }
 
-extension GemCvCertificate.Error: LocalizedError {
+extension GemCvCertificate.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .unexpected(tag: tag):
@@ -96,7 +102,8 @@ extension GemCvCertificate.Error: LocalizedError {
     }
 }
 
-extension Key.Error: LocalizedError {
+extension Key.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .illegalArgument(arg):
@@ -105,7 +112,8 @@ extension Key.Error: LocalizedError {
     }
 }
 
-extension Password.Error: LocalizedError {
+extension Password.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .illegalArgument(arg):
@@ -114,7 +122,8 @@ extension Password.Error: LocalizedError {
     }
 }
 
-extension ShortFileIdentifier.Error: LocalizedError {
+extension ShortFileIdentifier.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .illegalArgument(arg):
@@ -123,7 +132,8 @@ extension ShortFileIdentifier.Error: LocalizedError {
     }
 }
 
-extension CardVersion2.Error: LocalizedError {
+extension CardVersion2.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .parseError(error):
@@ -132,7 +142,7 @@ extension CardVersion2.Error: LocalizedError {
     }
 }
 
-extension HealthCardCommandBuilder.InvalidArgument: LocalizedError {
+extension HealthCardCommandBuilder.InvalidArgument: @retroactive LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .offsetOutOfBounds(offset, usingShortFileIdentifier: isShort):

@@ -23,7 +23,7 @@ let package = Package(
     name: "eRpKit",
     defaultLocalization: "de",
     platforms: [
-        .iOS(.v16), .macOS(.v12)
+        .iOS(.v16), .macOS(.v13)
     ],
     products: [
         .library(name: "eRpFeatures", targets: ["eRpFeatures"]),
@@ -41,23 +41,22 @@ let package = Package(
         .library(name: "VAUClient", targets: ["VAUClient"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.34.0"),
+        .package(url: "https://github.com/ContentSquare/CS_iOS_SDK.git", from: "4.37.1"),
         .package(url: "https://github.com/AliSoftware/OHHTTPStubs", from: "9.1.0"),
         .package(url: "https://github.com/andyjohns/zxcvbn-ios", revision: "bf6083dc17df950c8bdfcf2063859ee1270015fd"),
         .package(url: "https://github.com/apple/FHIRModels", from: "0.5.0"),
         .package(url: "https://github.com/pointfreeco/combine-schedulers", from: "1.0.2"),
         .package(url: "https://github.com/rcasula/composable-core-location", revision: "40a98e18d0350fd1a1efa83c24aca3044b9b7bd2"),
-        .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.4"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.12.1"),
+        .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.6"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.15.0"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.6"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.4.1"),
         .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.2"),
         .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.1.2"),
-        .package(url: "https://github.com/Quick/Nimble", from: "9.2.0"), // 10.0.0
+        .package(url: "https://github.com/Quick/Nimble", from: "13.0.0"),
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.3.0"),
         .package(url: "https://github.com/zxing-cpp/zxing-cpp", from: "2.2.1"),
-        .package(url: "https://github.com/SwiftCommon/DataKit", from: "1.1.0"),
         .package(url: "https://github.com/gematik/ASN1Kit", from: "1.2.1"),
         .package(url: "https://github.com/gematik/OpenSSL-Swift", from: "4.2.0"),
         .package(url: "https://github.com/gematik/swift-gemPDFKit", from: "0.1.1"),
@@ -79,7 +78,6 @@ let package = Package(
                 "VAUClient",
                 "AVS",
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
-                .product(name: "DataKit", package: "DataKit"),
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "ContentsquareModule", package: "CS_iOS_SDK"),
                 .product(name: "Zxcvbn", package: "zxcvbn-ios"),
@@ -144,6 +142,7 @@ let package = Package(
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
             ],
             swiftSettings: [
                 .define("ENABLE_DEBUG_VIEW", .when(configuration: .debug))
@@ -164,7 +163,6 @@ let package = Package(
                 "HTTPClient",
                 "FHIRClient",
                 "eRpKit",
-                .product(name: "DataKit", package: "DataKit"),
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
             ]
@@ -183,7 +181,6 @@ let package = Package(
                 "HTTPClient",
                 "TrustStore",
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
-                .product(name: "DataKit", package: "DataKit"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
             ]
@@ -204,7 +201,6 @@ let package = Package(
             name: "TrustStore",
             dependencies: [
                 "HTTPClient",
-                .product(name: "DataKit", package: "DataKit"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
             ]
         ),
@@ -213,7 +209,6 @@ let package = Package(
             dependencies: [
                 "HTTPClient",
                 "TrustStore",
-                .product(name: "DataKit", package: "DataKit"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
             ]
         ),
@@ -242,7 +237,8 @@ let package = Package(
             ],
             path: "Tests/eRpAppTests",
             resources: [
-                .copy("Resources/PDF.bundle")
+                .copy("Resources/PDF.bundle"),
+                .copy("Resources/JWT.bundle")
             ]
         ),
         .testTarget(
@@ -302,7 +298,6 @@ let package = Package(
             dependencies: [
                 "AVS",
                 "TestUtils",
-                .product(name: "DataKit", package: "DataKit"),
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                 .product(name: "Nimble", package: "Nimble"),
             ]

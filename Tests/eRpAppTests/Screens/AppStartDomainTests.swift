@@ -27,6 +27,7 @@ import XCTest
 @MainActor
 final class AppStartDomainTests: XCTestCase {
     var mockUserDataStore: MockUserDataStore!
+    static let now = Date()
 
     typealias TestStore = TestStoreOf<AppStartDomain>
 
@@ -50,6 +51,7 @@ final class AppStartDomainTests: XCTestCase {
             )
             dependencies.appSecurityManager = MockAppSecurityManager()
             dependencies.router = MockRouting()
+            dependencies.date = DateGenerator.constant(Self.now)
         }
     }
 
@@ -84,9 +86,10 @@ final class AppStartDomainTests: XCTestCase {
                         pharmacyRedeemState: Shared(nil),
                         pharmacyFilterOptions: Shared([])
                     ),
-                    orders: OrdersDomain.State(orders: []),
+                    orders: OrdersDomain.State(communicationMessage: []),
                     settings: SettingsDomain.State(isDemoMode: false),
                     unreadOrderMessageCount: 0,
+                    unreadInternalCommunicationCount: 0,
                     isDemoMode: false
                 )
             )
@@ -113,9 +116,10 @@ final class AppStartDomainTests: XCTestCase {
                                                                inRedeemProcess: false,
                                                                pharmacyRedeemState: Shared(nil),
                                                                pharmacyFilterOptions: Shared([])),
-                    orders: OrdersDomain.State(orders: []),
+                    orders: OrdersDomain.State(communicationMessage: []),
                     settings: .init(isDemoMode: false),
                     unreadOrderMessageCount: 0,
+                    unreadInternalCommunicationCount: 0,
                     isDemoMode: false
                 )
             )

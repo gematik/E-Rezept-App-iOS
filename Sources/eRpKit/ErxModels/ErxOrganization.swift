@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct ErxOrganization: Hashable, Codable {
+public struct ErxOrganization: Hashable, Codable, Sendable {
     public init(identifier: String? = nil,
                 name: String? = nil,
                 phone: String? = nil,

@@ -19,6 +19,7 @@
 import Combine
 import CombineSchedulers
 import CoreData
+import Dependencies
 import eRpKit
 import Foundation
 
@@ -26,7 +27,11 @@ import Foundation
 public protocol ModelMigrating {
     /// Starts a migration process from the passed version number to the next number
     /// - Parameter currentVersion: The version from which migration should be done
-    func startModelMigration(from currentVersion: ModelVersion) -> AnyPublisher<ModelVersion, MigrationError>
+    /// - Parameter defaultProfileName: The apps localized default (onboarding) profile name.
+    func startModelMigration(
+        from currentVersion: ModelVersion,
+        defaultProfileName: String
+    ) -> AnyPublisher<ModelVersion, MigrationError>
 }
 
 public class MigrationManager: ModelMigrating {
@@ -50,7 +55,10 @@ public class MigrationManager: ModelMigrating {
         erxTaskDataStore = erxTaskCoreDataStore
     }
 
-    public func startModelMigration(from currentVersion: ModelVersion) -> AnyPublisher<ModelVersion, MigrationError> {
+    public func startModelMigration(
+        from currentVersion: ModelVersion,
+        defaultProfileName: String
+    ) -> AnyPublisher<ModelVersion, MigrationError> {
         do {
             coreDataController = try coreDataControllerFactory.loadCoreDataController()
         } catch {
@@ -82,6 +90,17 @@ public class MigrationManager: ModelMigrating {
                     .eraseToAnyPublisher()
             case .pKV:
                 return migrateToModelVersion6()
+            case .onboardingDate:
+                @Dependency(\.date) var date
+                userDataStore.set(onboardingDate: date.now)
+                userDataStore.set(hideWelcomeMessage: true)
+                return Just(toVersion)
+                    .setFailureType(to: MigrationError.self)
+                    .eraseToAnyPublisher()
+            case .displayName:
+                return migrateToModelVersion8()
+            case .shouldAutoUpdateNameAtNextLogin:
+                return migrateToModelVersion9(defaultProfileName: defaultProfileName)
             }
         } else {
             return Fail(error: .isLatestVersion)
@@ -215,10 +234,76 @@ extension MigrationManager: CoreDataCrudable {
                                 profile.insuranceType = "unknown"
                             }
                         }
-                        print(profiles)
 
                         try moc.save()
                         promise(.success(ModelVersion.pKV))
+                    } catch {
+                        promise(.failure(.write(error: error)))
+                        moc.reset()
+                    }
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
+    func migrateToModelVersion8() -> AnyPublisher<ModelVersion, MigrationError> {
+        Deferred {
+            Future<ModelVersion, MigrationError> { [weak self] promise in
+                guard let self = self,
+                      let moc = self.coreDataController?.container.newBackgroundContext() else {
+                    return
+                }
+
+                moc.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                moc.performAndWait {
+                    do {
+                        let profiles = try self.fetchProfiles(in: moc)
+                        for profile in profiles {
+                            if let givenName = profile.givenName, let familyName = profile.familyName {
+                                profile.displayName = "\(givenName) \(familyName)"
+                            }
+                        }
+
+                        try moc.save()
+                        promise(.success(ModelVersion.displayName))
+                    } catch {
+                        promise(.failure(.write(error: error)))
+                        moc.reset()
+                    }
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
+    func migrateToModelVersion9(defaultProfileName: String) -> AnyPublisher<ModelVersion, MigrationError> {
+        Deferred {
+            Future<ModelVersion, MigrationError> { [weak self] promise in
+                guard let self = self,
+                      let moc = self.coreDataController?.container.newBackgroundContext() else {
+                    return
+                }
+
+                moc.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                moc.performAndWait {
+                    do {
+                        let profiles = try self.fetchProfiles(in: moc)
+                        for profile in profiles {
+                            if let name = profile.name {
+                                if name == defaultProfileName {
+                                    // User (probably) has not chosen this default name (e.g. "Profil 1") deliberately
+                                    // and therefore it's marked for auto update.
+                                    profile.shouldAutoUpdateNameAtNextLogin = true
+                                } else {
+                                    // User has chosen a name and therefore it should be kept.
+                                    profile.shouldAutoUpdateNameAtNextLogin = false
+                                }
+                            }
+                        }
+
+                        try moc.save()
+                        promise(.success(ModelVersion.shouldAutoUpdateNameAtNextLogin))
                     } catch {
                         promise(.failure(.write(error: error)))
                         moc.reset()

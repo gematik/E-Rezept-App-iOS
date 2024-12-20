@@ -27,7 +27,8 @@ public protocol IDPEndpoint {
     var cert: X509 { get }
 }
 
-extension BrainpoolP256r1.KeyExchange.PublicKey: Equatable {
+extension BrainpoolP256r1.KeyExchange.PublicKey: @retroactive
+Equatable {
     public static func ==(lhs: BrainpoolP256r1.KeyExchange.PublicKey,
                           rhs: BrainpoolP256r1.KeyExchange.PublicKey) -> Bool {
         guard let lhsValue = try? lhs.rawValue(),

@@ -78,6 +78,14 @@ final class MockUserDataStore: UserDataStore {
     }
     var underlyingIsOnboardingHidden: Bool!
     
+   // MARK: - onboardingDate
+
+    var onboardingDate: AnyPublisher<Date?, Never> {
+        get { underlyingOnboardingDate }
+        set(value) { underlyingOnboardingDate = value }
+    }
+    var underlyingOnboardingDate: AnyPublisher<Date?, Never>!
+    
    // MARK: - onboardingVersion
 
     var onboardingVersion: AnyPublisher<String?, Never> {
@@ -158,6 +166,39 @@ final class MockUserDataStore: UserDataStore {
         set(value) { underlyingHideWelcomeDrawer = value }
     }
     var underlyingHideWelcomeDrawer: Bool!
+    
+   // MARK: - readInternalCommunications
+
+    var readInternalCommunications: AnyPublisher<[String], Never> {
+        get { underlyingReadInternalCommunications }
+        set(value) { underlyingReadInternalCommunications = value }
+    }
+    var underlyingReadInternalCommunications: AnyPublisher<[String], Never>!
+    
+   // MARK: - hideWelcomeMessage
+
+    var hideWelcomeMessage: AnyPublisher<Bool, Never> {
+        get { underlyingHideWelcomeMessage }
+        set(value) { underlyingHideWelcomeMessage = value }
+    }
+    var underlyingHideWelcomeMessage: AnyPublisher<Bool, Never>!
+    
+   // MARK: - set
+
+    var setOnboardingDateCallsCount = 0
+    var setOnboardingDateCalled: Bool {
+        setOnboardingDateCallsCount > 0
+    }
+    var setOnboardingDateReceivedOnboardingDate: Date?
+    var setOnboardingDateReceivedInvocations: [Date?] = []
+    var setOnboardingDateClosure: ((Date?) -> Void)?
+
+    func set(onboardingDate: Date?) {
+        setOnboardingDateCallsCount += 1
+        setOnboardingDateReceivedOnboardingDate = onboardingDate
+        setOnboardingDateReceivedInvocations.append(onboardingDate)
+        setOnboardingDateClosure?(onboardingDate)
+    }
     
    // MARK: - set
 
@@ -306,5 +347,39 @@ final class MockUserDataStore: UserDataStore {
     func wipeAll() {
         wipeAllCallsCount += 1
         wipeAllClosure?()
+    }
+    
+   // MARK: - markInternalCommunicationAsRead
+
+    var markInternalCommunicationAsReadMessageIdCallsCount = 0
+    var markInternalCommunicationAsReadMessageIdCalled: Bool {
+        markInternalCommunicationAsReadMessageIdCallsCount > 0
+    }
+    var markInternalCommunicationAsReadMessageIdReceivedMessageId: String?
+    var markInternalCommunicationAsReadMessageIdReceivedInvocations: [String] = []
+    var markInternalCommunicationAsReadMessageIdClosure: ((String) -> Void)?
+
+    func markInternalCommunicationAsRead(messageId: String) {
+        markInternalCommunicationAsReadMessageIdCallsCount += 1
+        markInternalCommunicationAsReadMessageIdReceivedMessageId = messageId
+        markInternalCommunicationAsReadMessageIdReceivedInvocations.append(messageId)
+        markInternalCommunicationAsReadMessageIdClosure?(messageId)
+    }
+    
+   // MARK: - set
+
+    var setHideWelcomeMessageCallsCount = 0
+    var setHideWelcomeMessageCalled: Bool {
+        setHideWelcomeMessageCallsCount > 0
+    }
+    var setHideWelcomeMessageReceivedHideWelcomeMessage: Bool?
+    var setHideWelcomeMessageReceivedInvocations: [Bool] = []
+    var setHideWelcomeMessageClosure: ((Bool) -> Void)?
+
+    func set(hideWelcomeMessage: Bool) {
+        setHideWelcomeMessageCallsCount += 1
+        setHideWelcomeMessageReceivedHideWelcomeMessage = hideWelcomeMessage
+        setHideWelcomeMessageReceivedInvocations.append(hideWelcomeMessage)
+        setHideWelcomeMessageClosure?(hideWelcomeMessage)
     }
 }

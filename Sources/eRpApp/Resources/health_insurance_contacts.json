@@ -220,17 +220,6 @@
     "bodyPinMail": ""
   },
   {
-    "name": "BKK BPW Bergische Achsen KG",
-    "healthCardAndPinPhone": "",
-    "healthCardAndPinMail": "",
-    "healthCardAndPinUrl": "",
-    "pinUrl": "",
-    "subjectCardAndPinMail": "#eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte und PIN",
-    "bodyCardAndPinMail": "Sehr geehrte Damen und Herren,\nich möchte die E-Rezept-App der gematik nutzen.\n\nName:\nVorname:\nVersichertennummer/ KVNR:\n\nBitte senden Sie mir hierfür eine NFC-fähige Gesundheitskarte zu. Ich benötige zu der Gesundheitskarte auch die PIN. Bitte senden Sie mir Informationen zu, wie ich die PIN erhalten kann.\n\nMit freundlichen Grüßen\nIhr Versicherter/ Ihre Versicherte",
-    "subjectPinMail": "#PIN# Bestellung einer PIN zur Gesundheitskarte",
-    "bodyPinMail": "Sehr geehrte Damen und Herren,\nich möchte die E-Rezept-App der gematik nutzen.\n\nName:\nVorname:\nVersichertennummer/ KVNR:\n\nIch benötige zu der Gesundheitskarte  die PIN. Bitte senden Sie mir Informationen zu, wie ich die PIN erhalten kann.\n\nMit freundlichen Grüßen\nIhr Versicherter/ Ihre Versicherte"
-  },
-  {
     "name": "BKK EUREGIO",
     "healthCardAndPinPhone": "",
     "healthCardAndPinMail": "",
@@ -245,7 +234,7 @@
     "name": "BKK EVM",
     "healthCardAndPinPhone": "",
     "healthCardAndPinMail": "",
-    "healthCardAndPinUrl": "",
+    "healthCardAndPinUrl": "https://www.bkk-evm.de",
     "pinUrl": "",
     "subjectCardAndPinMail": "",
     "bodyCardAndPinMail": "",
@@ -352,32 +341,10 @@
     "bodyPinMail": ""
   },
   {
-    "name": "BKK Herford Minden Ravensberg",
-    "healthCardAndPinPhone": "",
-    "healthCardAndPinMail": "",
-    "healthCardAndPinUrl": "",
-    "pinUrl": "",
-    "subjectCardAndPinMail": "",
-    "bodyCardAndPinMail": "",
-    "subjectPinMail": "",
-    "bodyPinMail": ""
-  },
-  {
     "name": "BKK Herkules",
     "healthCardAndPinPhone": "+49561208550",
     "healthCardAndPinMail": "info@bkk-herkules.de",
     "healthCardAndPinUrl": "https://www.bkk-herkules.de/service/gesundheitskarte-und-lichtbild/",
-    "pinUrl": "",
-    "subjectCardAndPinMail": "",
-    "bodyCardAndPinMail": "",
-    "subjectPinMail": "",
-    "bodyPinMail": ""
-  },
-  {
-    "name": "BKK HMR",
-    "healthCardAndPinPhone": "+4952211026210",
-    "healthCardAndPinMail": "",
-    "healthCardAndPinUrl": "",
     "pinUrl": "",
     "subjectCardAndPinMail": "",
     "bodyCardAndPinMail": "",
@@ -408,7 +375,7 @@
   },
   {
     "name": "BKK Melitta HMR",
-    "healthCardAndPinPhone": "+4957197590",
+    "healthCardAndPinPhone": "+49571934090",
     "healthCardAndPinMail": "info@bkk-melitta.de",
     "healthCardAndPinUrl": "https://www.bkk-melitta.de/",
     "pinUrl": "",

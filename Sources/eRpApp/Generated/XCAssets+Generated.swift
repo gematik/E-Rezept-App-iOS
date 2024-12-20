@@ -138,9 +138,9 @@ internal enum Asset {
   }
   internal enum TabIcon {
     internal static let appLogoTabItem = ImageAsset(name: "AppLogoTabItem")
-    internal static let bag = ImageAsset(name: "bag")
     internal static let gearshape = ImageAsset(name: "gearshape")
     internal static let mapPinAndEllipse = ImageAsset(name: "mapPinAndEllipse")
+    internal static let message = ImageAsset(name: "message")
   }
   internal static let findCan = ImageAsset(name: "find_can")
   internal enum LaunchAssets {

@@ -984,6 +984,29 @@ extension IDTokenValidatorError: CodedError {
     }
 }
 
+extension InternalCommunicationError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .decodingError:
+                return "i-03801"
+            case .invalidURL:
+                return "i-03802"
+            case .emptyOnboardingDate:
+                return "i-03803"
+            case .unknownError:
+                return "i-03804"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .decodingError:
+                return [erpErrorCode]
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension JWE.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1403,6 +1426,25 @@ extension NFCSignatureProviderError.VerifyPINError: CodedError {
     }
 }
 
+extension OrganDonorJumpServiceError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .fetchingProfile:
+                return "i-04001"
+            case .generatingGenericUrl:
+                return "i-04002"
+            case .openingSpecificUrl:
+                return "i-04003"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension PharmacyBundleParsingError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1806,6 +1848,25 @@ extension SecureEnclaveSignatureProviderError: CodedError {
                 return [erpErrorCode]
             case .`internal`:
                 return [erpErrorCode]
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension SettingsDomainError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .organDonorJumpError:
+                return "i-03901"
+            case .organDonorUnknownError:
+                return "i-03902"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .organDonorJumpError(error):
+                return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
         }

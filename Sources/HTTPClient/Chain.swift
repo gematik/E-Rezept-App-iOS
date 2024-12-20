@@ -29,4 +29,11 @@ public protocol Chain {
     /// - Parameter request: the `URLRequest` to proceed
     /// - Returns: `AnyPublisher` that emits a response as `HTTPClient.Response`
     func proceed(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError>
+
+    /// Launch the chain processing of the given input.
+    ///
+    /// - Parameter request: the `URLRequest` to proceed
+    /// - Note: Only `HTTPClientError`s are supposed to be thrown.
+    /// - Returns: Response emitted as `HTTPClient.Response`
+    func proceedAsync(request: URLRequest) async throws -> HTTPResponse
 }

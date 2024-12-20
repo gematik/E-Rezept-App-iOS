@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Wystawiany";
 "erx_txt_claimed_at_%@" = "Założono %@";
 "erx_txt_current" = "Aktualne";
+"erx_txt_dispensed_at_%@" = "Pod warunkiem, że %@";
 "erx_txt_expired_on_%@" = "Wygasł w %@";
 "erx_txt_forced_update_alert_description" = "Zoptymalizuj działanie aplikacji, aktualizując ją.";
 "erx_txt_forced_update_alert_ignore" = "Może później";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "Nowe wiadomości";
 "idp_err_not_available_in_demo_mode_recovery" = "Wyjdź z trybu demonstracyjnego, aby skorzystać z tej funkcji.";
 "idp_err_not_available_in_demo_mode_text" = "Niedostępne w trybie demonstracyjnym";
+"intern_msg_change_log_chip_%@" = "Co nowego w wersji aplikacji %@";
+"intern_msg_error_empty_onboarding_date" = "Jeśli błąd się powtórzy, zainstaluj ponownie aplikację";
+"intern_msg_error_invalid_url" = "Nie można znaleźć pliku JSON";
+"intern_msg_error_unknown_error" = "Wystąpił błąd";
+"intern_msg_welcome" = "Witamy w aplikacji e-recepty! Dzięki tej aplikacji możesz cyfrowo otrzymywać e-recepty i wysyłać je do wybranej apteki. To, czy chcesz zarezerwować tam receptę do odbioru, czy też zamówić dostawę do domu, zależy wyłącznie od Ciebie. Oczywiście możesz także zarządzać przepisami swojej rodziny. Aby otrzymywać recepty w formie cyfrowej, wymagana jest rejestracja.\n\nCieszę się, że tu jesteś!\nTwój zespół ds. aplikacji e-recept";
+"intern_msg_welcome_chip" = "🎉 Witamy!";
 "kbv_code_dosage_form_aeo" = "Olejek eteryczny";
 "kbv_code_dosage_form_amp" = "Ampułki";
 "kbv_code_dosage_form_apa" = "Pary ampułek";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Usunięto";
 "prsc_status_completed" = "Zrealizowane";
 "prsc_status_direct_assigned" = "Zostanie dla ciebie odkupiony";
+"prsc_status_dispensed" = "Pod warunkiem, że";
 "prsc_status_error" = "Błędna recepta";
 "prsc_status_expired" = "Upłynął termin";
-"prsc_status_in_progress" = "W odkupieniu";
+"prsc_status_in_progress" = "Jest przetwarzane";
 "prsc_status_multiple_prsc" = "Możliwość wykorzystania później";
 "prsc_status_ready" = "Gotowe do odbioru";
 "prsc_status_sent" = "Wysłano";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "Aby uzyskać przegląd wpływów z kosztów";
 "stg_btn_charge_item_share" = "Składać";
 "stg_btn_device_security" = "Bezpieczeństwo aplikacji";
+"stg_btn_donor_register_alert_open" = "Otwarte";
 "stg_btn_edit_picture" = "Edytować";
 "stg_btn_edit_profile_action_camera" = "zrobić zdjęcie";
 "stg_btn_edit_profile_action_library" = "wybierz zdjęcie";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Zapisz";
 "stg_btn_reg_devices_load" = "Rejestr";
 "stg_con_btn_gemmunity" = "Forum e-recept";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "Rejestr dawstwa narządów";
+"stg_con_btn_organ_donor_alert_cancel" = "Anulować";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Informacje zwrotne z aplikacji E-recepta";
 "stg_con_hotline_ava" = "Bezpłatnie dla dzwoniącego. Godziny świadczenia usług: Pon. - Pt. 8:00 - 20:00 z wyjątkiem świąt państwowych";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "Powtórz PIN";
 "stg_edt_card_reset_puk_input" = "Wpisz PUK";
 "stg_edt_card_reset_puk_input_label" = "Wraz z kodem PIN otrzymałeś od swojej firmy ubezpieczeniowej 8-cyfrowy kod PUK.";
+"stg_exp_txt_title" = "Badać";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Otwórz stronę internetową";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\nFriedrichstr. 136\n10117 Berlin";
 "stg_lno_txt_text_note" = "Staramy się używać sformułowań neutralnych płciowo. W razie zauważenia błędów prosimy o informację drogą mailową.";
 "stg_lno_txt_text_responsible" = "dr. Floriana Fuhrmanna, Brenyi Adjei, dr. Floriana Hartge'a";
-"stg_lno_txt_text_taxAndMore" = "Dyrektor zarządzający: dr hab. Floriana Fuhrmanna, Brenyi Adjei, dr. Floriana Hartge'a\n Sąd rejestrowy: Sąd Rejonowy Berlin-Charlottenburg\n Numer rejestru handlowego: HRB 96351\n Numer identyfikacyjny VAT: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Zarządzanie: dr. Floriana Fuhrmanna, Brenyi Adjei, dr. Florian Hartge\nSąd rejestrowy: Sąd Rejonowy Berlin-Charlottenburg\nNumer rejestru handlowego: HRB 96351\nNumer identyfikacyjny VAT: DE241843684";
 "stg_lno_txt_title_contact" = "Kontakt";
 "stg_lno_txt_title_issuer" = "Wydawca";
 "stg_lno_txt_title_note" = "Wskazówka";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Odkupiony";
 "stg_txt_charge_item_sum" = "cena całkowita";
 "stg_txt_demo_mode" = "Tryb demonstracyjny";
+"stg_txt_donor_register_alert_message" = "Zostaniesz przekierowany do rejestru dawców narządów. Aby przeglądać i zmieniać dane dotyczące dawstwa narządów, musisz się tam zalogować.";
+"stg_txt_donor_register_alert_title" = "Otwarty rejestr dawstwa narządów?";
 "stg_txt_edit_profile_background_section_title" = "Kolor tła";
 "stg_txt_edit_profile_charge_item_list_section_title" = "wpływy z wydatków";
 "stg_txt_edit_profile_default_name" = "Nazwa profilu";

@@ -47,7 +47,9 @@ class ExtAuthUITests: XCTestCase {
     }
 
     @MainActor
-    func testExtAuthHelpScreen() {
+    func testExtAuthHelpScreen() async {
+        await UITestBridgeClient().sendMessage(.loginStatus(false))
+
         let tabBar = TabBarScreen(app: app)
 
         let helpScreen = tabBar

@@ -70,4 +70,5 @@ extension OrdersRepository {}
 extension JWTSigner {}
 extension AppSecurityManager {}
 extension KeychainAccessHelper {}
+extension InternalCommunicationProtocol {}
 // sourcery:end

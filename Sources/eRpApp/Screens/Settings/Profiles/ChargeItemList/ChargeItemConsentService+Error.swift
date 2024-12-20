@@ -16,13 +16,15 @@
 //
 //
 
+import CasePaths
 import eRpKit
 import Foundation
 import SwiftUI
-import SwiftUINavigationCore
+import SwiftUINavigation
 
 extension ChargeItemConsentService {
     // sourcery: CodedError = "036"
+    @CasePathable
     enum Error: LocalizedError, Equatable, Swift.Error {
         // sourcery: errorCode = "01"
         case localStore(LocalStoreError)

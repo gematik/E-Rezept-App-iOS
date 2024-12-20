@@ -1,3 +1,82 @@
+# Release 1.27.0
+
+### changed (1 change)
+
+- Hide contact option menu if no contact option available
+
+### other (1 change)
+
+- Remove dependency on DataKit
+
+### added (7 changes)
+
+- Add Link to organ donor register with optional quick login if user used gID
+- Update the user's profile name to the one receive from IDP
+- Add UITests for Messages
+- Add InternalCommunication fixes and Tests
+- Add early dispense information which will be introduces with the workflow version 1.3
+- Add UITests for prescription checkin while redeeming
+- Add InternalMessage to MessageView/Domain
+
+### internal (7 changes)
+
+- Change test pharmacy names to make them sortable
+- Add JSON References for UITest mocks
+- Remove more warnings and deprecations
+- Add Sendable conformance to several value types
+- Change build pipeline to use Xcode 16
+- Add deleting multiple tasks to debug menu
+- Fix Xcode 18 compiler crashing for some weird reason
+
+### fixed (5 changes)
+
+- Edit profile name clear button bug
+- Fix swipe back gesture not working correctly
+- Fix some iOS 18 UI findings
+- Fix Direktzuweisung display information
+- Fix triggering IDP endpoint GET /auth
+- Fix scrollToRefresh not working
+
+# Release 1.26.0
+
+### fixed (10 changes)
+
+- Fix scrollToRefresh not working
+- Related to ERA-11320 fix map view to have filter option 'close to me'
+- Fix deletion of local charge items after consent got revoked
+- Fix closing share sheet and add alert in case of error closing or sharing
+- Fix SnapshotTests by removing dynamic dates
+- Fix accessibility for PharmacyContactView
+- Fix relative date formatting for deleted tasks
+- Related to ERA-11266 fix map view to take the text search into account
+- Fix chargeItem navigation won't work in OrderDetailsView
+- Fix auto-deselect of password field during onboarding
+
+### added (6 changes)
+
+- Add Bridge between UITests and Application to prepare for more dynamic mocks.
+- Add selectable phone numbers and copy function for order messages
+- Add support for FHIR workflow version 1.3
+- TrustStore can handle cross certificates
+- Add UITests for Noctu and Substitution
+- Update local cancelled tasks
+
+### internal (8 changes)
+
+- Refactor Base64 encoding to Foundation
+- Rerecord Snapshots with iOS 17.2
+- Update fastlane plugins to make API token injectable
+- Use visual QR-Code for MR-Comments instead of a link
+- Refactor Base64 decoding to Foundation
+- Remove deprecated API Tokens in favor of newer ones
+- Remove dependency on GemCommonsKit
+- Fix tests for Xcode 16 beta
+
+### changed (2 changes)
+
+- Change minimum deployment target to iOS 16
+- Changed UI of OrderView and OderDetailView
+
 # Release 1.25.0
 
 ### fixed (5 changes)

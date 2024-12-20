@@ -70,10 +70,10 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
             store: store(for: PharmacyDetailViewSnapshotTests.Fixtures.sheetNoServiceState)
         )
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibilityXL())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibilityXL())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }
 

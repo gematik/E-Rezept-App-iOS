@@ -17,7 +17,6 @@
 //
 
 @testable import AVS
-import DataKit
 import Foundation
 import Nimble
 import OpenSSL
@@ -65,8 +64,8 @@ final class AuthEnvelopedWithUnauthAttributesTests: XCTestCase {
     }
 
     func testExtractTeleTrustAdmissionRegistrationNumber() throws {
-        let result = try x509rsa.extractTeleTrustAdmissionRegistrationNumber()
-        expect(result?.utf8string) == "3-SMC-B-Testkarte-883110000116873"
+        let result = try x509rsa.extractTeleTrustAdmissionRegistrationNumber()!
+        expect(String(data: result, encoding: .utf8)) == "3-SMC-B-Testkarte-883110000116873"
     }
 
     static let x509rsaPem =

@@ -22,7 +22,7 @@ import Foundation
 
 /// Repository for the app to the MedicationSchedule data layer handling the syncing between its data stores.
 public struct MedicationScheduleRepository {
-    /// Create a MEdicationSchedule
+    /// Create a MedicationSchedule
     public var create: @Sendable (MedicationSchedule) async throws -> Void
     /// Load all MedicationSchedule
     public var readAll: @Sendable () async throws -> [MedicationSchedule]
@@ -283,7 +283,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     private func loadRemoteMedicationDispenses(for tasks: [ErxTask]) -> AnyPublisher<[ErxTask], ErrorType> {
         let taskPublishers: [AnyPublisher<ErxTask, ErrorType>] =
             tasks.compactMap { task in
-                if task.status == .completed {
+                if task.lastMedicationDispense != nil || task.status == .completed {
                     return self.cloud.listMedicationDispenses(for: task.id)
                         .mapError(ErrorType.remote)
                         .flatMap {

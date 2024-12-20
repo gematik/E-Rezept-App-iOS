@@ -725,6 +725,44 @@ final class MockIDPSession: IDPSession {
 }
 
 
+// MARK: - MockInternalCommunicationProtocol -
+
+final class MockInternalCommunicationProtocol: InternalCommunicationProtocol {
+    
+   // MARK: - load
+
+    var loadThrowableError: Error?
+    var loadCallsCount = 0
+    var loadCalled: Bool {
+        loadCallsCount > 0
+    }
+    var loadReturnValue: IdentifiedArray<String, InternalCommunication>!
+    var loadClosure: (() throws -> IdentifiedArray<String, InternalCommunication>)?
+
+    func load() throws -> IdentifiedArray<String, InternalCommunication> {
+        if let error = loadThrowableError {
+            throw error
+        }
+        loadCallsCount += 1
+        return try loadClosure.map({ try $0() }) ?? loadReturnValue
+    }
+    
+   // MARK: - loadUnreadInternalCommunicationsCount
+
+    var loadUnreadInternalCommunicationsCountCallsCount = 0
+    var loadUnreadInternalCommunicationsCountCalled: Bool {
+        loadUnreadInternalCommunicationsCountCallsCount > 0
+    }
+    var loadUnreadInternalCommunicationsCountReturnValue: AsyncThrowingStream<Int, Swift.Error>!
+    var loadUnreadInternalCommunicationsCountClosure: (() -> AsyncThrowingStream<Int, Swift.Error>)?
+
+    func loadUnreadInternalCommunicationsCount() -> AsyncThrowingStream<Int, Swift.Error> {
+        loadUnreadInternalCommunicationsCountCallsCount += 1
+        return loadUnreadInternalCommunicationsCountClosure.map({ $0() }) ?? loadUnreadInternalCommunicationsCountReturnValue
+    }
+}
+
+
 // MARK: - MockJWTSigner -
 
 final class MockJWTSigner: JWTSigner {
@@ -996,20 +1034,20 @@ final class MockModelMigrating: ModelMigrating {
     
    // MARK: - startModelMigration
 
-    var startModelMigrationFromCallsCount = 0
-    var startModelMigrationFromCalled: Bool {
-        startModelMigrationFromCallsCount > 0
+    var startModelMigrationFromDefaultProfileNameCallsCount = 0
+    var startModelMigrationFromDefaultProfileNameCalled: Bool {
+        startModelMigrationFromDefaultProfileNameCallsCount > 0
     }
-    var startModelMigrationFromReceivedCurrentVersion: ModelVersion?
-    var startModelMigrationFromReceivedInvocations: [ModelVersion] = []
-    var startModelMigrationFromReturnValue: AnyPublisher<ModelVersion, MigrationError>!
-    var startModelMigrationFromClosure: ((ModelVersion) -> AnyPublisher<ModelVersion, MigrationError>)?
+    var startModelMigrationFromDefaultProfileNameReceivedArguments: (currentVersion: ModelVersion, defaultProfileName: String)?
+    var startModelMigrationFromDefaultProfileNameReceivedInvocations: [(currentVersion: ModelVersion, defaultProfileName: String)] = []
+    var startModelMigrationFromDefaultProfileNameReturnValue: AnyPublisher<ModelVersion, MigrationError>!
+    var startModelMigrationFromDefaultProfileNameClosure: ((ModelVersion, String) -> AnyPublisher<ModelVersion, MigrationError>)?
 
-    func startModelMigration(from currentVersion: ModelVersion) -> AnyPublisher<ModelVersion, MigrationError> {
-        startModelMigrationFromCallsCount += 1
-        startModelMigrationFromReceivedCurrentVersion = currentVersion
-        startModelMigrationFromReceivedInvocations.append(currentVersion)
-        return startModelMigrationFromClosure.map({ $0(currentVersion) }) ?? startModelMigrationFromReturnValue
+    func startModelMigration(from currentVersion: ModelVersion, defaultProfileName: String) -> AnyPublisher<ModelVersion, MigrationError> {
+        startModelMigrationFromDefaultProfileNameCallsCount += 1
+        startModelMigrationFromDefaultProfileNameReceivedArguments = (currentVersion: currentVersion, defaultProfileName: defaultProfileName)
+        startModelMigrationFromDefaultProfileNameReceivedInvocations.append((currentVersion: currentVersion, defaultProfileName: defaultProfileName))
+        return startModelMigrationFromDefaultProfileNameClosure.map({ $0(currentVersion, defaultProfileName) }) ?? startModelMigrationFromDefaultProfileNameReturnValue
     }
 }
 
@@ -2293,6 +2331,14 @@ final class MockUserDataStore: UserDataStore {
     }
     var underlyingIsOnboardingHidden: Bool!
     
+   // MARK: - onboardingDate
+
+    var onboardingDate: AnyPublisher<Date?, Never> {
+        get { underlyingOnboardingDate }
+        set(value) { underlyingOnboardingDate = value }
+    }
+    var underlyingOnboardingDate: AnyPublisher<Date?, Never>!
+    
    // MARK: - onboardingVersion
 
     var onboardingVersion: AnyPublisher<String?, Never> {
@@ -2373,6 +2419,39 @@ final class MockUserDataStore: UserDataStore {
         set(value) { underlyingHideWelcomeDrawer = value }
     }
     var underlyingHideWelcomeDrawer: Bool!
+    
+   // MARK: - readInternalCommunications
+
+    var readInternalCommunications: AnyPublisher<[String], Never> {
+        get { underlyingReadInternalCommunications }
+        set(value) { underlyingReadInternalCommunications = value }
+    }
+    var underlyingReadInternalCommunications: AnyPublisher<[String], Never>!
+    
+   // MARK: - hideWelcomeMessage
+
+    var hideWelcomeMessage: AnyPublisher<Bool, Never> {
+        get { underlyingHideWelcomeMessage }
+        set(value) { underlyingHideWelcomeMessage = value }
+    }
+    var underlyingHideWelcomeMessage: AnyPublisher<Bool, Never>!
+    
+   // MARK: - set
+
+    var setOnboardingDateCallsCount = 0
+    var setOnboardingDateCalled: Bool {
+        setOnboardingDateCallsCount > 0
+    }
+    var setOnboardingDateReceivedOnboardingDate: Date?
+    var setOnboardingDateReceivedInvocations: [Date?] = []
+    var setOnboardingDateClosure: ((Date?) -> Void)?
+
+    func set(onboardingDate: Date?) {
+        setOnboardingDateCallsCount += 1
+        setOnboardingDateReceivedOnboardingDate = onboardingDate
+        setOnboardingDateReceivedInvocations.append(onboardingDate)
+        setOnboardingDateClosure?(onboardingDate)
+    }
     
    // MARK: - set
 
@@ -2521,6 +2600,40 @@ final class MockUserDataStore: UserDataStore {
     func wipeAll() {
         wipeAllCallsCount += 1
         wipeAllClosure?()
+    }
+    
+   // MARK: - markInternalCommunicationAsRead
+
+    var markInternalCommunicationAsReadMessageIdCallsCount = 0
+    var markInternalCommunicationAsReadMessageIdCalled: Bool {
+        markInternalCommunicationAsReadMessageIdCallsCount > 0
+    }
+    var markInternalCommunicationAsReadMessageIdReceivedMessageId: String?
+    var markInternalCommunicationAsReadMessageIdReceivedInvocations: [String] = []
+    var markInternalCommunicationAsReadMessageIdClosure: ((String) -> Void)?
+
+    func markInternalCommunicationAsRead(messageId: String) {
+        markInternalCommunicationAsReadMessageIdCallsCount += 1
+        markInternalCommunicationAsReadMessageIdReceivedMessageId = messageId
+        markInternalCommunicationAsReadMessageIdReceivedInvocations.append(messageId)
+        markInternalCommunicationAsReadMessageIdClosure?(messageId)
+    }
+    
+   // MARK: - set
+
+    var setHideWelcomeMessageCallsCount = 0
+    var setHideWelcomeMessageCalled: Bool {
+        setHideWelcomeMessageCallsCount > 0
+    }
+    var setHideWelcomeMessageReceivedHideWelcomeMessage: Bool?
+    var setHideWelcomeMessageReceivedInvocations: [Bool] = []
+    var setHideWelcomeMessageClosure: ((Bool) -> Void)?
+
+    func set(hideWelcomeMessage: Bool) {
+        setHideWelcomeMessageCallsCount += 1
+        setHideWelcomeMessageReceivedHideWelcomeMessage = hideWelcomeMessage
+        setHideWelcomeMessageReceivedInvocations.append(hideWelcomeMessage)
+        setHideWelcomeMessageClosure?(hideWelcomeMessage)
     }
 }
 

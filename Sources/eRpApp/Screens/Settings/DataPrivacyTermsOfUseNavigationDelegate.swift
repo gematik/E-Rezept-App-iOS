@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WebKit
+@preconcurrency import WebKit
 
 // [REQ:BSI-eRp-ePA:O.Plat_10#2] Delegate disables unused schemes
 class DataPrivacyTermsOfUseNavigationDelegate: NSObject, WKNavigationDelegate {

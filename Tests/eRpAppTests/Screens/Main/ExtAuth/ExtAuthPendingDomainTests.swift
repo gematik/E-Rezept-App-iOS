@@ -35,6 +35,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
     var mockProfileDataStore: MockProfileDataStore!
     let uiScheduler = DispatchQueue.test
+    var mockUserSession: MockUserSession!
     lazy var schedulers: Schedulers = {
         Schedulers(
             uiScheduler: uiScheduler.eraseToAnyScheduler(),
@@ -46,14 +47,13 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
+        mockUserSession = MockUserSession()
         idpSessionMock = IDPSessionMock()
         extAuthRequestStorageMock = ExtAuthRequestStorageMock()
         mockProfileDataStore = MockProfileDataStore()
     }
 
     func testStore(for state: ExtAuthPendingDomain.State) -> TestStore {
-        let mockUserSession = MockUserSession()
         mockUserSession.profileId = testProfile.id
         mockUserSession.profileDataStore = mockProfileDataStore
         mockUserSession.profileReturnValue = Just(testProfile).setFailureType(to: LocalStoreError.self)
@@ -351,5 +351,87 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state.extAuthState = .extAuthFailed
             state.destination = .extAuthAlert(ExtAuthPendingDomain.saveProfileAlert)
         }
+    }
+
+    let idpToken: IDPToken = {
+        let decryptedTokenPayload: TokenPayload = {
+            let tokenPath = Bundle.module
+                .testResourceFilePath(in: "JWT", for: "idp_token_decrypted.json")
+            let tokenData = try! tokenPath.readFileContents()
+            return try! JSONDecoder().decode(TokenPayload.self, from: tokenData)
+        }()
+        let exchangeToken = IDPExchangeToken(code: "code", sso: "sso-token", state: "state", redirect: "redirect")
+        return IDPToken(
+            accessToken: decryptedTokenPayload.accessToken,
+            expires: Date(),
+            idToken: decryptedTokenPayload.idToken,
+            ssoToken: exchangeToken.sso,
+            redirect: "redirect"
+        )
+    }()
+
+    func testSaveProfileWithDefaultNameOnFirstLogin() async {
+        let healthInsurance = KKAppDirectory.Entry(name: "KK name", identifier: "kk id")
+        let sut = testStore(for: .init(extAuthState: .extAuthReceived(healthInsurance)))
+        var profile = Profile(
+            name: "Profil 1",
+            shouldAutoUpdateNameAtNextLogin: true
+        )
+        mockUserSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        mockProfileDataStore.updateProfileIdMutatingClosure = { _, mutating in
+            mutating(&profile)
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        await sut.send(.response(.externalLoginReceived(.success(idpToken)))) {
+            $0.extAuthState = .extAuthSuccessful(
+                KKAppDirectory.Entry(
+                    name: "KK name",
+                    identifier: "kk id",
+                    gId: false,
+                    logo: nil
+                )
+            )
+        }
+
+        await uiScheduler.run()
+        await sut.receive(.hide) { state in
+            state.extAuthState = .empty
+        }
+
+        expect(profile.name) == "Heinz Hillbert Cördes"
+    }
+
+    func testSaveProfileWithDefaultNameLoggedInBefore() async {
+        let healthInsurance = KKAppDirectory.Entry(name: "KK name", identifier: "kk id")
+        let sut = testStore(for: .init(extAuthState: .extAuthReceived(healthInsurance)))
+        var profile = Profile(name: "Profil 1", lastAuthenticated: Date.distantPast)
+        mockUserSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        mockProfileDataStore.updateProfileIdMutatingClosure = { _, mutating in
+            mutating(&profile)
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        await sut.send(.response(.externalLoginReceived(.success(idpToken)))) {
+            $0.extAuthState = .extAuthSuccessful(
+                KKAppDirectory.Entry(
+                    name: "KK name",
+                    identifier: "kk id",
+                    gId: false,
+                    logo: nil
+                )
+            )
+        }
+
+        await uiScheduler.run()
+        await sut.receive(.hide) { state in
+            state.extAuthState = .empty
+        }
+
+        expect(profile.name) == "Profil 1"
     }
 }

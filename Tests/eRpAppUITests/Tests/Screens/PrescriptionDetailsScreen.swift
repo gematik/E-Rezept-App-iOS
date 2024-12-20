@@ -28,141 +28,188 @@ struct PrescriptionDetailsScreen<Previous>: Screen where Previous: Screen {
         self.previous = previous
     }
 
-    func medicationReminderCell(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.prescriptionDetails.prscDtlBtnMedicationReminder, file: file, line: line)
+    func medicationReminderCell(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.prescriptionDetails.prscDtlBtnMedicationReminder, fileID: fileID, file: file, line: line)
     }
 
-    func dosageInstructionCell(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.prescriptionDetails.prscDtlTxtDosageInstructions, file: file, line: line)
+    func dosageInstructionCell(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.prescriptionDetails.prscDtlTxtDosageInstructions, fileID: fileID, file: file, line: line)
     }
 
-    func tapDosageInstructionCell(file: StaticString = #file, line: UInt = #line) -> DosageInstructionsScreen {
+    func tapDosageInstructionCell(fileID: String = #fileID, file: String = #filePath,
+                                  line: UInt = #line) -> DosageInstructionsScreen {
         dosageInstructionCell(file: file, line: line).tap()
 
         let container = container(
             by: A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfo,
+            fileID: fileID,
             file: file,
             line: line
         )
         return DosageInstructionsScreen(app: app, rootElement: container)
     }
 
-    func tapSetupMedicationReminder(file: StaticString = #file,
+    func tapSetupMedicationReminder(fileID: String = #fileID, file: String = #filePath,
                                     line: UInt = #line) -> MedicationReminderSetupScreen<Self> {
-        medicationReminderCell(file: file, line: line).tap()
+        medicationReminderCell(fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app, previous: self)
     }
 
-    func tapBackButton(file: StaticString = #file, line: UInt = #line) -> MainScreen {
-        button(within: app.navigationBars, by: "Rezepte", file: file, line: line).tap()
+    func tapBackButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> MainScreen {
+        button(within: app.navigationBars, by: "Rezepte", fileID: fileID, file: file, line: line).tap()
 
         return MainScreen(app: app)
     }
 
-    func tapRedeemPharmacyButton(file: StaticString = #file, line: UInt = #line) -> PharmacySearchScreen {
-        button(by: A11y.prescriptionDetails.prscDtlBtnRedeem, file: file, line: line).tap()
+    func tapRedeemPharmacyButton(fileID: String = #fileID, file: String = #filePath,
+                                 line: UInt = #line) -> PharmacySearchScreen {
+        button(by: A11y.prescriptionDetails.prscDtlBtnRedeem, fileID: fileID, file: file, line: line).tap()
 
         return PharmacySearchScreen(app: app)
     }
 
-    func tapShowMatrixCodeButton(file: StaticString = #file, line: UInt = #line) -> RedeemMatrixCodeScreen<Self> {
-        button(by: A11y.prescriptionDetails.prscDtlBtnShowMatrixCode, file: file, line: line).tap()
+    func tapShowMatrixCodeButton(fileID: String = #fileID, file: String = #filePath,
+                                 line: UInt = #line) -> RedeemMatrixCodeScreen<Self> {
+        button(by: A11y.prescriptionDetails.prscDtlBtnShowMatrixCode, fileID: fileID, file: file, line: line).tap()
 
         return RedeemMatrixCodeScreen(app: app, previous: self)
     }
 
-    func autIdemHeadlineButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+    func autIdemHeadlineButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
         button(
             by: A11y.prescriptionDetails.prscDtlBtnHeadlineSubstitutionInfo,
+            fileID: fileID,
             file: file,
             line: line,
             checkExistence: false
         )
     }
 
-    func tapAutIdemHeadlineButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
-        button(by: A11y.prescriptionDetails.prscDtlBtnHeadlineSubstitutionInfo, file: file, line: line).tap()
-
-        return Drawer(
-            app: app,
-            identifier: A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo,
-            file: file,
-            line: line
-        )
-    }
-
-    func autIdemInfoButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(
-            by: A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo,
-            file: file,
-            line: line,
-            checkExistence: false
-        )
-    }
-
-    func tapAutIdemInfoButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
-        button(by: A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo, file: file, line: line).tap()
-
-        return Drawer(
-            app: app,
-            identifier: A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo,
-            file: file,
-            line: line
-        )
-    }
-
-    func emergencyFeeButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.prescriptionDetails.prscDtlBtnEmergencyServiceFee, file: file, line: line)
-    }
-
-    func tapEmergencyFeeButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
-        button(by: A11y.prescriptionDetails.prscDtlBtnEmergencyServiceFee, file: file, line: line).tap()
-
-        return Drawer(
-            app: app,
-            identifier: A11y.prescriptionDetails.prscDtlDrawerEmergencyServiceFeeInfo,
-            file: file,
-            line: line
-        )
-    }
-
-    func selfPayerHeadlineButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(
-            by: A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo,
-            file: file,
-            line: line,
-            checkExistence: false
-        )
-    }
-
-    func tapSelfPayerHeadlineButton(file: StaticString = #file, line: UInt = #line) -> Drawer {
-        button(by: A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo, file: file, line: line, checkExistence: false)
+    func tapAutIdemHeadlineButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> Drawer {
+        button(by: A11y.prescriptionDetails.prscDtlBtnHeadlineSubstitutionInfo, fileID: fileID, file: file, line: line)
             .tap()
 
         return Drawer(
             app: app,
-            identifier: A11y.prescriptionDetails.prscDtlDrawerSelfPayerInfo,
+            identifier: A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo,
+            fileID: fileID,
             file: file,
             line: line
         )
     }
 
+    func autIdemInfoButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(
+            by: A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo,
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
+    }
+
+    func tapAutIdemInfoButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> Drawer {
+        button(by: A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo, fileID: fileID, file: file, line: line).tap()
+
+        return Drawer(
+            app: app,
+            identifier: A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
+    }
+
+    func medicationButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(
+            by: A11y.prescriptionDetails.prscDtlBtnMedication,
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
+    }
+
+    func tapMedicationButton(fileID: String = #fileID, file: String = #filePath,
+                             line: UInt = #line) -> MedicationDetailsScreen<Self> {
+        button(by: A11y.prescriptionDetails.prscDtlBtnMedication, fileID: fileID, file: file, line: line).tap()
+
+        return MedicationDetailsScreen(
+            app: app,
+            previous: self
+        )
+    }
+
+    func emergencyFeeButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.prescriptionDetails.prscDtlBtnEmergencyServiceFee, fileID: fileID, file: file, line: line)
+    }
+
+    func tapEmergencyFeeButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> Drawer {
+        button(by: A11y.prescriptionDetails.prscDtlBtnEmergencyServiceFee, fileID: fileID, file: file, line: line).tap()
+
+        return Drawer(
+            app: app,
+            identifier: A11y.prescriptionDetails.prscDtlDrawerEmergencyServiceFeeInfo,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
+    }
+
+    func selfPayerHeadlineButton(fileID: String = #fileID, file: String = #filePath,
+                                 line: UInt = #line) -> XCUIElement {
+        button(
+            by: A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo,
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
+    }
+
+    func tapSelfPayerHeadlineButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> Drawer {
+        button(
+            by: A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo,
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
+        .tap()
+
+        return Drawer(
+            app: app,
+            identifier: A11y.prescriptionDetails.prscDtlDrawerSelfPayerInfo,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
+    }
+
+    @MainActor
     struct Drawer: Screen {
         let app: XCUIApplication
         let container: XCUIElement
 
-        init(app: XCUIApplication, identifier: String, file _: StaticString = #file, line _: UInt = #line) {
+        init(
+            app: XCUIApplication,
+            identifier: String,
+            fileID _: String = #fileID,
+            file _: String = #filePath,
+            line _: UInt = #line
+        ) {
             self.app = app
             container = app.otherElements[identifier]
         }
 
-        func title(file: StaticString = #file, line: UInt = #line) -> String? {
-            staticText(by: A11y.prescriptionDetails.prscDtlDrawerTitle, file: file, line: line).label
+        func title(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> String? {
+            staticText(by: A11y.prescriptionDetails.prscDtlDrawerTitle, fileID: fileID, file: file, line: line).label
         }
 
-        func description(file: StaticString = #file, line: UInt = #line) -> String? {
-            staticText(by: A11y.prescriptionDetails.prscDtlDrawerDescription, file: file, line: line).label
+        func description(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> String? {
+            staticText(by: A11y.prescriptionDetails.prscDtlDrawerDescription, fileID: fileID, file: file, line: line)
+                .label
         }
 
         func close(file _: StaticString = #file, line _: UInt = #line) {
@@ -170,25 +217,32 @@ struct PrescriptionDetailsScreen<Previous>: Screen where Previous: Screen {
         }
     }
 
+    @MainActor
     struct DosageInstructionsScreen: Screen {
         let app: XCUIApplication
 
         let rootElement: XCUIElement
 
-        func title(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-            staticText(by: A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfoTitle, file: file, line: line)
-        }
-
-        func description(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        func title(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
             staticText(
-                by: A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfoDescription,
+                by: A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfoTitle,
+                fileID: fileID,
                 file: file,
                 line: line
             )
         }
 
-        func close(file: StaticString = #file, line: UInt = #line) {
-            button(by: A11y.prescriptionDetails.prscDtlTxtDosageInstructions, file: file, line: line)
+        func description(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+            staticText(
+                by: A11y.prescriptionDetails.prscDtlDrawerDosageInstructionsInfoDescription,
+                fileID: fileID,
+                file: file,
+                line: line
+            )
+        }
+
+        func close(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+            button(by: A11y.prescriptionDetails.prscDtlTxtDosageInstructions, fileID: fileID, file: file, line: line)
                 .coordinate(withNormalizedOffset: .zero)
                 .tap()
         }

@@ -521,9 +521,9 @@ final class RealIDPClientTests: XCTestCase {
     )
 
     let ssoToken: String = {
-        try! Bundle.module
+        try! String(data: Bundle.module
             .path(forResource: "sso-token", ofType: "jwt", inDirectory: "Resources/JWT.bundle")!
-            .readFileContents().asciiString!
+            .readFileContents(), encoding: .nonLossyASCII)!
     }()
 
     let exchangeToken: Data = {

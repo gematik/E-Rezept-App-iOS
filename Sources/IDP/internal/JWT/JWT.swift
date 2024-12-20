@@ -158,7 +158,7 @@ public struct JWT {
             data.append(Self.dot) // .
             data.append(encodedSignature)
         }
-        return data.asciiString! // swiftlint:disable:this force_unwrapping
+        return String(data: data, encoding: .nonLossyASCII)! // swiftlint:disable:this force_unwrapping
     }
 
     private static let jwtRegex =

@@ -20,7 +20,7 @@ import Foundation
 
 /// An `Array` of `Codable` element  can now be stored within `UserDefaults`
 /// or with the @AppStorage property wrapper
-extension Array: RawRepresentable where Element: Codable {
+extension Array: @retroactive RawRepresentable where Element: Codable {
     public init?(rawValue: String) {
         guard let data = rawValue.data(using: .utf8),
               let result = try? JSONDecoder().decode([Element].self, from: data)

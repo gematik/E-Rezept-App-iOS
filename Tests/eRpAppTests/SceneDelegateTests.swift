@@ -119,7 +119,7 @@ final class SceneDelegateTests: XCTestCase {
                 coreDataControllerFactory: factory,
                 backgroundQueue: AnyScheduler.main
             )
-            let profile = try profileCoreDataStore.createProfile(with: "Test Name")
+            let profile = try profileCoreDataStore.createProfile(name: "Test Name")
             sut.userDataStore.set(selectedProfileId: profile.id)
             let hasProfile = try profileCoreDataStore.hasProfile()
             expect(hasProfile) == true

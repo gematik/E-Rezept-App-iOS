@@ -33,25 +33,25 @@ extension PrescriptionDetailDomain {
 
     func save(erxTasks: [ErxTask]) -> Effect<PrescriptionDetailDomain.Action> {
         .run { send in
-            let result = try await erxTaskRepository.save(erxTasks: erxTasks).async(/ErxRepositoryError.self)
+            let result = try await erxTaskRepository.save(erxTasks: erxTasks).async(\.self)
             await send(.response(.redeemedOnSavedReceived(result)))
         }
     }
 
     func delete(erxTask: ErxTask) -> Effect<PrescriptionDetailDomain.Action> {
         .run { send in
-            let result = try await erxTaskRepository.delete(erxTasks: [erxTask]).asyncResult(/ErxRepositoryError.self)
+            let result = try await erxTaskRepository.delete(erxTasks: [erxTask]).asyncResult(\.self)
             await send(.response(.taskDeletedReceived(result)))
         }
     }
 
     func deleteChargeItem(erxTask: ErxTask) -> Effect<PrescriptionDetailDomain.Action> {
         .run { send in
-            let chargeItems = try await erxTaskRepository.loadRemoteChargeItems().async(/ErxRepositoryError.self)
+            let chargeItems = try await erxTaskRepository.loadRemoteChargeItems().async(\.self)
             if let sparseChargeItem = chargeItems.first(where: { $0.taskId == erxTask.id }) {
                 if let chargeItem = sparseChargeItem.chargeItem {
                     let result = try await erxTaskRepository.delete(chargeItems: [chargeItem])
-                        .asyncResult(/ErxRepositoryError.self)
+                        .asyncResult(\.self)
                     await send(.response(.chargeItemDeletedReceived(result)))
                 } else {
                     // Parsing failed, can't delete item

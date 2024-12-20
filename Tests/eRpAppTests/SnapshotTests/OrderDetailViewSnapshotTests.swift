@@ -118,7 +118,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = OrderDetailView(
             store: StoreOf<OrderDetailDomain>(
                 initialState: .init(
-                    order: order,
+                    communicationMessage: CommunicationMessage.order(order),
                     erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
                 )
             ) {
@@ -141,7 +141,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = OrderDetailView(
             store: StoreOf<OrderDetailDomain>(
                 initialState: .init(
-                    order: order,
+                    communicationMessage: CommunicationMessage.order(order),
                     erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
                 )
             ) {
@@ -163,7 +163,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = OrderDetailView(store:
             StoreOf<OrderDetailDomain>(
                 initialState: .init(
-                    order: order,
+                    communicationMessage: CommunicationMessage.order(order),
                     erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
                 )
             ) {
@@ -183,7 +183,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = OrderDetailView(store:
             StoreOf<OrderDetailDomain>(
                 initialState: .init(
-                    order: order,
+                    communicationMessage: CommunicationMessage.order(order),
                     erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
                 )
             ) {
@@ -203,7 +203,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = OrderDetailView(
             store: StoreOf<OrderDetailDomain>(
                 initialState: .init(
-                    order: order,
+                    communicationMessage: CommunicationMessage.order(order),
                     erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
                 )
             ) {

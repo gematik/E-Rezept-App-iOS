@@ -101,10 +101,11 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
         let userSession = userSessionProvider.userSession(for: profileId)
         return userSession.secureUserStore.keyIdentifier.first()
             .map { identifier in
-                guard let identifier = identifier else {
+                guard let identifier = identifier,
+                      let base64Identifier = identifier.encodeBase64UrlSafe() else {
                     return nil
                 }
-                return identifier.encodeBase64UrlSafe()?.utf8string
+                return String(data: base64Identifier, encoding: .utf8)
             }
             .eraseToAnyPublisher()
     }

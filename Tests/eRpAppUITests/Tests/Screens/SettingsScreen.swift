@@ -22,25 +22,28 @@ import XCTest
 struct SettingsScreen: Screen {
     let app: XCUIApplication
 
-    func tapMedicationReminder(file: StaticString = #file, line: UInt = #line) -> MedicationReminderListScreen {
-        button(by: A11y.settings.security.stgBtnMedicationReminder, file: file, line: line).tap()
+    func tapMedicationReminder(fileID: String = #fileID, file: String = #filePath,
+                               line: UInt = #line) -> MedicationReminderListScreen {
+        button(by: A11y.settings.security.stgBtnMedicationReminder, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
-    func tapLanguageSettingsButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.settings.security.stgBtnLanguageSettings, file: file, line: line).tap()
+    func tapLanguageSettingsButton(fileID: String = #fileID, file: String = #filePath,
+                                   line: UInt = #line) -> XCUIElement {
+        button(by: A11y.settings.security.stgBtnLanguageSettings, fileID: fileID, file: file, line: line).tap()
 
         return app.alerts.firstMatch
     }
 
-    func tapAppSecuritySelection(file: StaticString = #file, line: UInt = #line) -> AppSecuritySelectionScreen {
-        button(by: A11y.settings.security.stgBtnDeviceSecurity, file: file, line: line).tap()
+    func tapAppSecuritySelection(fileID: String = #fileID, file: String = #filePath,
+                                 line: UInt = #line) -> AppSecuritySelectionScreen {
+        button(by: A11y.settings.security.stgBtnDeviceSecurity, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
-    func tapDemoMode(file: StaticString = #file, line: UInt = #line) {
-        switches(by: A11y.settings.demo.stgTxtDemoMode, file: file, line: line).tap()
+    func tapDemoMode(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        switches(by: A11y.settings.demo.stgTxtDemoMode, fileID: fileID, file: file, line: line).tap()
     }
 }

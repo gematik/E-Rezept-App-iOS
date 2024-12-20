@@ -19,7 +19,8 @@
 import AVS
 import Foundation
 
-extension AVSError: LocalizedError {
+extension AVSError: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .network(error: error):
@@ -56,7 +57,7 @@ extension AVSError: LocalizedError {
     }
 }
 
-extension AVSError.InternalError: LocalizedError {
+extension AVSError.InternalError: @retroactive LocalizedError {
     public var errorDescription: String? {
         L10n.avsErrInternal(String(describing: self)).text // TODO: pass error ID // swiftlint:disable:this todo
     }

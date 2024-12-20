@@ -50,7 +50,7 @@ extension PharmacyLocation {
             id: "Adler2",
             status: .active,
             telematikID: "12345.2",
-            name: "Adler Apotheke",
+            name: "Bdler Apotheke",
             types: [PharmacyLocation.PharmacyType.mobl, PharmacyLocation.PharmacyType.emergency],
             address: .init(street: "Zooweg", houseNumber: "1", zip: "12099", city: "Berlin"),
             hoursOfOperation: [

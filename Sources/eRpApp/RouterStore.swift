@@ -19,25 +19,25 @@
 import ComposableArchitecture
 import Foundation
 
-enum Endpoint: Equatable {
+enum Endpoint: Equatable, Sendable {
     case settings(SettingsScreen?)
     case scanner
     case orders
     case mainScreen(MainScreen?)
     case universalLink(URL)
 
-    enum MainScreen: Equatable {
+    enum MainScreen: Equatable, Sendable {
         case login
         case medicationReminder([UUID])
     }
 
-    enum SettingsScreen: Equatable {
+    enum SettingsScreen: Equatable, Sendable {
         case unlockCard
         case editProfile(EditProfileScreen)
         case medicationSchedule
     }
 
-    enum EditProfileScreen: Equatable {
+    enum EditProfileScreen: Equatable, Sendable {
         case chargeItemListFor(_ profileId: UserProfile.ID)
     }
 }
@@ -104,9 +104,9 @@ struct RouterReducer<ContentReducer: Reducer>
         Reduce { state, action in
             switch action {
             case let .action(action):
-                return contentReducer.reduce(into: &state, action: action).map(Action.action)
+                return contentReducer.reduce(into: &state, action: action).map { Action.action($0) }
             case let .routeTo(route):
-                return router(route).map(Action.action)
+                return router(route).map { Action.action($0) }
             }
         }
     }

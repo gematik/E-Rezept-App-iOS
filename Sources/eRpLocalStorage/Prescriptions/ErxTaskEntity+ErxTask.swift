@@ -130,7 +130,7 @@ extension ErxTask {
     static let minTimeIntervalForCompletion: TimeInterval = 600
     #endif
 
-    // swiftlint:disable:next function_body_length
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     init?(entity: ErxTaskEntity, dateProvider: () -> Date) {
         guard let identifier = entity.identifier else {
             return nil
@@ -181,6 +181,12 @@ extension ErxTask {
                 communications: mappedCommunications,
                 currentDate: now
             ) ?? erxTaskStatus
+        case (.inProgress, _):
+            guard entity.lastMedicationDispense == nil else {
+                erxTaskStatus = .computed(status: .dispensed)
+                break
+            }
+            erxTaskStatus = .inProgress
         default:
             break
         }

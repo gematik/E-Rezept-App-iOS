@@ -46,10 +46,24 @@ struct OrderDetailDomain {
 
     @ObservableState
     struct State: Equatable {
-        var order: Order
+        var order: Order?
         var erxTasks: IdentifiedArrayOf<ErxTask> = []
         var openUrlSheetUrl: URL?
+        var communicationMessage: CommunicationMessage
+        var timelineEntries: [TimelineEntry]
         @Presents var destination: Destination.State?
+
+        init(communicationMessage: CommunicationMessage,
+             erxTasks: IdentifiedArrayOf<ErxTask> = [],
+             openUrlSheetUrl: URL? = nil,
+             destination: Destination.State? = nil) {
+            self.communicationMessage = communicationMessage
+            self.erxTasks = erxTasks
+            self.openUrlSheetUrl = openUrlSheetUrl
+            order = communicationMessage.order
+            timelineEntries = communicationMessage.timelineEntries.sorted { $0.lastUpdated > $1.lastUpdated }
+            self.destination = destination
+        }
     }
 
     enum Action: Equatable {
@@ -97,6 +111,7 @@ struct OrderDetailDomain {
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
@@ -121,14 +136,34 @@ struct OrderDetailDomain {
             )
             return .none
         case .didDisplayTimelineEntries:
-            let communications = state.order.communications.elements
-            let chargeItems = state.order.chargeItems.elements
-            return .run { _ in
-                _ = try await self.setReadState(for: communications).async()
-                _ = try await self.setReadState(for: chargeItems).async()
+            if let order = state.order {
+                let communications = order.communications.elements
+                let chargeItems = order.chargeItems.elements
+                return .run { _ in
+                    _ = try await self.setReadState(for: communications).async()
+                    _ = try await self.setReadState(for: chargeItems).async()
+                }
             }
+
+            let internalMessages = state.timelineEntries.compactMap { entry in
+                if case let .internalCommunication(message) = entry {
+                    return message
+                }
+                return nil
+            }
+
+            let readMessageIDs = internalMessages
+                .filter { !$0.isRead }
+                .map(\.id)
+
+            readMessageIDs.forEach { messageId in
+                userDataStore.markInternalCommunicationAsRead(messageId: messageId)
+            }
+
+            return .none
         case .loadTasks:
-            let taskIds = Set(state.order.communications.map(\.taskId))
+            guard let order = state.order else { return .none }
+            let taskIds = Set(order.communications.map(\.taskId))
             guard !taskIds.isEmpty else {
                 return .none
             }
@@ -139,7 +174,7 @@ struct OrderDetailDomain {
         case let .showPickupCode(dmcCode: dmcCode, hrCode: hrCode):
             state.destination = .pickupCode(
                 .init(
-                    pharmacyName: state.order.pharmacy?.name,
+                    pharmacyName: state.order?.pharmacy?.name,
                     pickupCodeHR: hrCode,
                     pickupCodeDMC: dmcCode
                 )
@@ -155,17 +190,18 @@ struct OrderDetailDomain {
             )
             return .none
         case .loadAndShowPharmacy:
-            guard let pharmacy = state.order.pharmacy else { return .none }
+            guard let pharmacy = state.order?.pharmacy else { return .none }
             return .run { send in
                 await send(.response(.loadAndShowPharmacyReceived(
                     try await pharmacyRepository.updateFromRemote(by: pharmacy.telematikID)
-                        .asyncResult(/PharmacyRepositoryError.self)
+                        .asyncResult(\.self)
                 )))
             }
         case let .response(.loadAndShowPharmacyReceived(result)):
             switch result {
             case let .success(pharmacy):
-                state.order = Order.lens.pharmacy.set(pharmacy)(state.order)
+                guard let order = state.order else { return .none }
+                state.order = Order.lens.pharmacy.set(pharmacy)(order)
 
                 state.destination = .pharmacyDetail(
                     PharmacyDetailDomain.State(
@@ -182,9 +218,9 @@ struct OrderDetailDomain {
                 )
             case let .failure(error):
                 state.destination = .alert(.init(for: error))
-                if PharmacyRepositoryError.remote(.notFound) == error,
-                   let pharmacy = state.order.pharmacy {
-                    state.order = Order.lens.pharmacy.set(nil)(state.order)
+                if let pharmacy = state.order?.pharmacy, let order = state.order,
+                   PharmacyRepositoryError.remote(.notFound) == error {
+                    state.order = Order.lens.pharmacy.set(nil)(order)
                     return .run { _ in
                         _ = try await pharmacyRepository.delete(pharmacy: pharmacy).async()
                     }
@@ -221,7 +257,7 @@ struct OrderDetailDomain {
             state.openUrlSheetUrl = url
             return .none
         case .openMapApp:
-            guard let pharmacy = state.order.pharmacy,
+            guard let pharmacy = state.order?.pharmacy,
                   let longitude = pharmacy.position?.longitude?.doubleValue,
                   let latitude = pharmacy.position?.latitude?.doubleValue else {
                 return .none
@@ -233,7 +269,7 @@ struct OrderDetailDomain {
             mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
             return .none
         case .openPhoneApp:
-            if let phone = state.order.pharmacy?.telecom?.phone,
+            if let phone = state.order?.pharmacy?.telecom?.phone,
                let number = URL(phoneNumber: phone) {
                 application.open(number)
             }
@@ -242,7 +278,7 @@ struct OrderDetailDomain {
             application.open(url)
             return .none
         case .openMailApp:
-            if let email = state.order.pharmacy?.telecom?.email,
+            if let email = state.order?.pharmacy?.telecom?.email,
                let url = Self.createEmailUrl(to: email) {
                 application.open(url)
             }
@@ -406,7 +442,7 @@ extension OrderDetailDomain {
 extension OrderDetailDomain {
     enum Dummies {
         static let state = State(
-            order: Order.Dummies.orderCommunications1,
+            communicationMessage: CommunicationMessage.order(Order.Dummies.orderCommunications1),
             erxTasks: [ErxTask.Demo.erxTask1, ErxTask.Demo.erxTask13]
         )
 

@@ -63,11 +63,12 @@ class PrescriptionStatusUITests: XCTestCase {
             .init(name: "Ibuprofen 01", status: "Einlösbar"),
             .init(name: "Ibuprofen 02", status: "Warte auf Antwort"),
             .init(name: "Ibuprofen 03", status: "Einlösbar"),
-            .init(name: "Ibuprofen 04", status: "In Einlösung"),
+            .init(name: "Ibuprofen 04", status: "Wird bearbeitet"),
             .init(name: "Ibuprofen 05", status: "Einlösbar"),
             .init(name: "Ibuprofen 06", status: "Warte auf Antwort"),
-            .init(name: "Ibuprofen 08", status: "In Einlösung"),
-            .init(name: "Ibuprofen 10", status: "In Einlösung"),
+            .init(name: "Ibuprofen 08", status: "Wird bearbeitet"),
+            .init(name: "Ibuprofen 10", status: "Wird bearbeitet"),
+            .init(name: "Ibuprofen 11", status: "Bereitgestellt"),
         ]
 
         let archiveMedicationStatusMapping: [MedicationNameAndStatus] = [
@@ -92,5 +93,17 @@ class PrescriptionStatusUITests: XCTestCase {
             expect(cell.staticTexts["erx_detailed_status"].label)
                 .to(equal(mapping.status), description: "Status for \(mapping.name)")
         }
+    }
+
+    @MainActor
+    func testProvidedStatus() {
+        let details = TabBarScreen(app: app)
+            .tapPrescriptionsTab()
+            .tapDetailsForPrescriptionNamed("Ibuprofen 11")
+
+        expect(details.medicationButton()).to(exist("Ibuprofen 11"))
+        let medicationDetails = details.tapMedicationButton()
+
+        expect(medicationDetails.tradingName()).to(equal("Ibuprofen 11"))
     }
 }

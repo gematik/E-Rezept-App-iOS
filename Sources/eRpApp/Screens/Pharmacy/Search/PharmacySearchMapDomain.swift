@@ -561,17 +561,17 @@ extension PharmacySearchMapDomain {
         }
         .filter { $0.distanceInM != nil }
 
-        let seventhOrLast = min(filteredAndSorted.count, 7)
-        if !filteredAndSorted.isEmpty, let seventhLocation = filteredAndSorted[seventhOrLast - 1].position?.coordinate {
-            /// Now calculating lat/long - delta by subtracting the seventhLocation from the currentLocation
-            /// and multiplying by 2 for adjusting the zoom level
-            let latitudeDelta = 2 * abs(currentLocation.latitude - seventhLocation.latitude)
-            let longitudeDelta = 2 * abs(currentLocation.longitude - seventhLocation.longitude)
+        let locations = filteredAndSorted.prefix(7).compactMap { $0.position?.coordinate }
+        if !locations.isEmpty {
+            let maxLatitudeDelta = locations.map { 2 * abs(currentLocation.latitude - $0.latitude) }.max(by: <)
+            let maxLongitudeDelta = locations.map { 2 * abs(currentLocation.longitude - $0.longitude) }.max(by: <)
+
             return MKCoordinateSpan(
-                latitudeDelta: max(latitudeDelta, 0.01),
-                longitudeDelta: max(longitudeDelta, 0.01)
+                latitudeDelta: max(maxLatitudeDelta ?? 0.01, 0.01),
+                longitudeDelta: max(maxLongitudeDelta ?? 0.01, 0.01)
             )
         }
+
         return MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
     }
 
@@ -623,7 +623,8 @@ extension PharmacySearchMapDomain {
     }
 }
 
-extension MKCoordinateRegion: Equatable {
+extension MKCoordinateRegion: @retroactive
+Equatable {
     public static func ==(lhs: MKCoordinateRegion, rhs: MKCoordinateRegion) -> Bool {
         lhs.center == rhs.center && lhs.span == rhs.span
     }
@@ -634,13 +635,14 @@ extension MKCoordinateRegion: Equatable {
     )
 }
 
-extension CLLocationCoordinate2D: Equatable {
+extension CLLocationCoordinate2D: @retroactive
+Equatable {
     public static func ==(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
         lhs.latitude == rhs.latitude && lhs.longitude == lhs.longitude
     }
 }
 
-extension MKCoordinateSpan: Equatable {
+extension MKCoordinateSpan: @retroactive Equatable {
     public static func ==(lhs: MKCoordinateSpan, rhs: MKCoordinateSpan) -> Bool {
         lhs.latitudeDelta == rhs.latitudeDelta && lhs.longitudeDelta == lhs.longitudeDelta
     }

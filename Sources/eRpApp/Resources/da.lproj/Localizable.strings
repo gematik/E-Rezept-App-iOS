@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Vises";
 "erx_txt_claimed_at_%@" = "Antaget %@";
 "erx_txt_current" = "Nuværende";
+"erx_txt_dispensed_at_%@" = "Forudsat %@";
 "erx_txt_expired_on_%@" = "Udløb den %@";
 "erx_txt_forced_update_alert_description" = "Optimer din app-oplevelse ved at opdatere appen.";
 "erx_txt_forced_update_alert_ignore" = "Måske senere";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "Nye beskeder";
 "idp_err_not_available_in_demo_mode_recovery" = "Afslut demotilstand for at bruge funktionen.";
 "idp_err_not_available_in_demo_mode_text" = "Ikke tilgængelig i demotilstand";
+"intern_msg_change_log_chip_%@" = "Hvad er nyt i appversionen %@";
+"intern_msg_error_empty_onboarding_date" = "Hvis denne fejl opstår igen, skal du geninstallere programmet";
+"intern_msg_error_invalid_url" = "JSON-filen kunne ikke findes";
+"intern_msg_error_unknown_error" = "Der er opstået en fejl";
+"intern_msg_welcome" = "Velkommen til e-recept-appen! Med denne app kan du digitalt modtage e-recepter og sende dem til et apotek efter eget valg. Om du vil reservere recepten der til afhentning eller få den leveret hjem til dig er helt op til dig. Du kan selvfølgelig også administrere din families opskrifter. For at modtage recepter digitalt kræves tilmelding.\n\nDejligt at have dig her!\nDit e-recept-app-team";
+"intern_msg_welcome_chip" = "🎉 Velkommen!";
 "kbv_code_dosage_form_aeo" = "Flygtig olie";
 "kbv_code_dosage_form_amp" = "Ampuller";
 "kbv_code_dosage_form_apa" = "Par ampuller";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Slettet";
 "prsc_status_completed" = "Forløst";
 "prsc_status_direct_assigned" = "Vil blive indløst for dig";
+"prsc_status_dispensed" = "Forudsat";
 "prsc_status_error" = "Forkert opskrift";
 "prsc_status_expired" = "Udløbet";
-"prsc_status_in_progress" = "I forløsning";
+"prsc_status_in_progress" = "Er under behandling";
 "prsc_status_multiple_prsc" = "Indløses senere";
 "prsc_status_ready" = "Indløses";
 "prsc_status_sent" = "Udsendt";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "For en oversigt over omkostningskvitteringerne";
 "stg_btn_charge_item_share" = "Indsend";
 "stg_btn_device_security" = "App sikkerhed";
+"stg_btn_donor_register_alert_open" = "Åben";
 "stg_btn_edit_picture" = "Redigere";
 "stg_btn_edit_profile_action_camera" = "tag et billede";
 "stg_btn_edit_profile_action_library" = "vælg billede";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Gemme";
 "stg_btn_reg_devices_load" = "Tilmeld";
 "stg_con_btn_gemmunity" = "E-receptforum";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "Organdonationsregister";
+"stg_con_btn_organ_donor_alert_cancel" = "Ophæve";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback fra e-recept-appen";
 "stg_con_hotline_ava" = "Gratis for den, der ringer op. Tjenestetider: Man - Fre 8:00 - 20:00 undtagen på nationale helligdage";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "Gentag PIN-koden";
 "stg_edt_card_reset_puk_input" = "Indtast PUK";
 "stg_edt_card_reset_puk_input_label" = "Med din PIN-kode har du modtaget en 8-cifret PUK fra dit forsikringsselskab.";
+"stg_exp_txt_title" = "Udforske";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Åben hjemmeside";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\n Friedrichstr. 136\n 10117 Berlin";
 "stg_lno_txt_text_note" = "Vi bestræber os på at bruge et ligestillet sprog. Hvis du bemærker fejl, hører vi gerne fra dig via e-mail.";
 "stg_lno_txt_text_responsible" = "Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge";
-"stg_lno_txt_text_taxAndMore" = "administrerende direktør: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\n Registreringsret: Berlin-Charlottenburg District Court\n Handelsregisternummer: HRB 96351\n Momsidentifikationsnummer: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Ledelse: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\nRegistreringsret: Berlin-Charlottenburg District Court\nHandelsregisternummer: HRB 96351\nMomsidentifikationsnummer: DE241843684";
 "stg_lno_txt_title_contact" = "Kontakt";
 "stg_lno_txt_title_issuer" = "redaktør";
 "stg_lno_txt_title_note" = "Varsel";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Indløst på";
 "stg_txt_charge_item_sum" = "total pris";
 "stg_txt_demo_mode" = "Demo-tilstand";
+"stg_txt_donor_register_alert_message" = "Du vil blive omdirigeret til organdonationsregistret. For at se og ændre dine organdonationsdata skal du logge ind der.";
+"stg_txt_donor_register_alert_title" = "Åbent organdonationsregister?";
 "stg_txt_edit_profile_background_section_title" = "baggrundsfarve";
 "stg_txt_edit_profile_charge_item_list_section_title" = "udgiftskvitteringer";
 "stg_txt_edit_profile_default_name" = "Profil navn";

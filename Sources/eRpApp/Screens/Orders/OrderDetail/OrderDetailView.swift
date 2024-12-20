@@ -44,7 +44,7 @@ struct OrderDetailView: View {
                     )
 
                     VStack(alignment: .leading, spacing: 0) {
-                        ForEach(store.order.timelineEntries) { entry in
+                        ForEach(store.timelineEntries) { entry in
                             WithPerceptionTracking {
                                 OrderMessageView(store: store, timelineEntry: entry, style: style(for: entry))
                             }
@@ -55,25 +55,27 @@ struct OrderDetailView: View {
                     .padding(.top, 32)
                     .padding(.bottom, 56)
 
-                    TitleView(
-                        title: L10n.ordDetailTxtOrders.key,
-                        a11y: ""
-                    )
-                    .padding(.top, 24)
-                    .topBorder(strokeWith: 0.5, color: Colors.separator)
+                    if !store.erxTasks.isEmpty {
+                        TitleView(
+                            title: L10n.ordDetailTxtOrders.key,
+                            a11y: ""
+                        )
+                        .padding(.top, 24)
+                        .topBorder(strokeWith: 0.5, color: Colors.separator)
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(store.erxTasks) { task in
-                            Button {
-                                store.send(.didSelectMedication(task))
-                            } label: {
-                                OrderMedicationView(medication: task.medication)
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(store.erxTasks) { task in
+                                Button {
+                                    store.send(.didSelectMedication(task))
+                                } label: {
+                                    OrderMedicationView(medication: task.medication)
+                                }
                             }
+                            .accessibilityElement(children: .contain)
+                            .accessibility(identifier: A11y.orderDetail.list.ordDetailTxtMedList)
                         }
-                        .accessibilityElement(children: .contain)
-                        .accessibility(identifier: A11y.orderDetail.list.ordDetailTxtMedList)
+                        .padding(.top, 8)
                     }
-                    .padding(.top, 8)
                 }
 
                 // prescription details
@@ -140,8 +142,7 @@ struct OrderDetailView: View {
                     .hidden()
                     .accessibility(hidden: true)
             }
-            .navigationBarBackButtonHidden(true)
-            .navigationBarTitle(store.order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text, displayMode: .inline)
+            .navigationBarTitle(store.communicationMessage.title, displayMode: .inline)
             .accessibility(identifier: A11y.orderDetail.list.ordDetailTitle)
             .alert($store.scope(
                 state: \.destination?.alert?.alert,
@@ -151,70 +152,58 @@ struct OrderDetailView: View {
                 await store.send(.task).finish()
             }
             .toolbar {
-                let hasLocation = store.order.pharmacy?.position != nil
-                let hasPhoneContact = store.order.pharmacy?.telecom?.phone != nil
-                let hasEmailContact = store.order.pharmacy?.telecom?.email != nil
+                let hasLocation = store.order?.pharmacy?.position != nil
+                let hasPhoneContact = store.order?.pharmacy?.telecom?.phone != nil
+                let hasEmailContact = store.order?.pharmacy?.telecom?.email != nil
 
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button(action: {
-                            store.send(.openMapApp)
-                        }, label: {
-                            Text(L10n.ordDetailTxtContactMap)
-                        })
-                            .disabled(!hasLocation)
-                            .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContactMap)
+                // Only show the contact option menu if at least one option is available
+                // (e.g. not the case for the internal (change log) communications)
+                if hasLocation || hasPhoneContact || hasEmailContact {
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        Menu {
+                            Button(action: {
+                                store.send(.openMapApp)
+                            }, label: {
+                                Text(L10n.ordDetailTxtContactMap)
+                            })
+                                .disabled(!hasLocation)
+                                .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContactMap)
 
-                        Button(action: {
-                            store.send(.openPhoneApp)
-                        }, label: {
-                            Text(L10n.ordDetailTxtContactPhone)
-                        })
-                            .disabled(!hasPhoneContact)
-                            .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContactPhone)
+                            Button(action: {
+                                store.send(.openPhoneApp)
+                            }, label: {
+                                Text(L10n.ordDetailTxtContactPhone)
+                            })
+                                .disabled(!hasPhoneContact)
+                                .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContactPhone)
 
-                        Button(action: {
-                            store.send(.openMailApp)
-                        }, label: {
-                            Text(L10n.ordDetailTxtContactEmail)
-                        })
-                            .disabled(!hasEmailContact)
-                            .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContactEmail)
-                    } label: {
-                        Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.ellipsis)
-                            .foregroundColor(Colors.primary700)
-                            .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContact)
-                            .accessibility(label: Text(L10n.ordDetailTxtContact))
-                    }
-                }
-
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: {
-                        store.send(.delegate(.close))
-                    }, label: {
-                        HStack(spacing: 5) {
-                            Image(systemName: SFSymbolName.back)
-                                .font(Font.headline.weight(.semibold))
-                                .foregroundColor(Colors.primary600)
-
-                            Text(L10n.cdwBtnRcHelpBack)
-                                .font(.body)
-                                .foregroundColor(Colors.primary600)
+                            Button(action: {
+                                store.send(.openMailApp)
+                            }, label: {
+                                Text(L10n.ordDetailTxtContactEmail)
+                            })
+                                .disabled(!hasEmailContact)
+                                .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContactEmail)
+                        } label: {
+                            Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.ellipsis)
+                                .foregroundColor(Colors.primary700)
+                                .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContact)
+                                .accessibility(label: Text(L10n.ordDetailTxtContact))
                         }
-                    })
+                    }
                 }
             }
         }
     }
 
-    private func style(for entry: Order.TimelineEntry) -> OrderMessageView.Indicator.Style {
+    private func style(for entry: TimelineEntry) -> OrderMessageView.Indicator.Style {
         switch entry {
-        case store.order.timelineEntries.first:
-            if store.order.timelineEntries.count == 1 {
+        case store.timelineEntries.first:
+            if store.timelineEntries.count == 1 {
                 return .single
             }
             return .first
-        case store.order.timelineEntries.last:
+        case store.timelineEntries.last:
             return .last
         default:
             return .middle

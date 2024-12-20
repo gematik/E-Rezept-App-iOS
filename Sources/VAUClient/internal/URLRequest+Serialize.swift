@@ -49,7 +49,8 @@ extension URLRequest {
             string += headers.map { key, value -> String in "\(key): \(value)" }.joined(separator: "\r\n") + "\r\n"
         }
         string += "\r\n"
-        if let body = httpBody, let utf8 = body.utf8string {
+        if let body = httpBody,
+           let utf8 = String(data: body, encoding: .utf8) {
             string += utf8
         }
 

@@ -16,7 +16,6 @@
 //
 //
 
-import Dependencies
 import eRpKit
 import Foundation
 import IdentifiedCollections
@@ -43,9 +42,9 @@ struct Order: Identifiable, Equatable {
         self.communications = communications
         self.chargeItems = chargeItems
         self.pharmacy = pharmacy
-        let communicationTimestamp = communications.max { $0.timestamp > $1.timestamp }?.timestamp ?? ""
-        if let chargeItemTimestamp = chargeItems.max(by: { $0.enteredDate ?? "" > $1.enteredDate ?? "" })?.enteredDate {
-            lastUpdated = [communicationTimestamp, chargeItemTimestamp].max(by: >) ?? ""
+        let communicationTimestamp = communications.max { $0.timestamp < $1.timestamp }?.timestamp ?? ""
+        if let chargeItemTimestamp = chargeItems.max(by: { $0.enteredDate ?? "" < $1.enteredDate ?? "" })?.enteredDate {
+            lastUpdated = [communicationTimestamp, chargeItemTimestamp].max(by: <) ?? ""
         } else {
             lastUpdated = communicationTimestamp
         }
@@ -73,184 +72,6 @@ struct Order: Identifiable, Equatable {
 
     var hasUnreadEntries: Bool {
         communications.contains { !$0.isRead } || chargeItems.contains { !$0.isRead }
-    }
-}
-
-extension Order {
-    enum Markdown: Equatable {
-        case orderPharmacy(_ name: String)
-        case phoneNumber(_ name: String)
-
-        var link: String {
-            switch self {
-            case let .orderPharmacy(name):
-                return "[\(name)](screen://OrderPharmacyView)"
-            case let .phoneNumber(number):
-                let rawNumber = number.filter { $0.isWholeNumber || $0 == "+" }
-                return "[\(number)](tel:\(rawNumber))"
-            }
-        }
-    }
-
-    enum TimelineEntry: Equatable, Identifiable {
-        case dispReq(ErxTask.Communication, pharmacy: PharmacyLocation?)
-        case reply(ErxTask.Communication)
-        case chargeItem(ErxChargeItem)
-
-        var id: String {
-            switch self {
-            case let .dispReq(communication, _):
-                return communication.identifier
-            case let .reply(communication):
-                return communication.identifier
-            case let .chargeItem(chargeItem):
-                return chargeItem.identifier
-            }
-        }
-
-        var lastUpdated: String {
-            switch self {
-            case let .dispReq(communication, _):
-                return communication.timestamp
-            case let .reply(communication):
-                return communication.timestamp
-            case let .chargeItem(chargeItem):
-                return chargeItem.enteredDate ?? ""
-            }
-        }
-
-        var isRead: Bool {
-            switch self {
-            case let .dispReq(communication, _):
-                return communication.isRead
-            case let .reply(communication):
-                return communication.isRead
-            case let .chargeItem(chargeItem):
-                return chargeItem.isRead
-            }
-        }
-
-        var text: String {
-            switch self {
-            case let .dispReq(_, pharmacy):
-                let pharmacyName = pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text
-                return L10n.ordDetailTxtSendTo(
-                    L10n.ordDetailTxtPresc(1).text,
-                    pharmacyName
-                ).text
-            case let .reply(communication):
-                guard let payload = communication.payload else {
-                    return L10n.ordDetailTxtError.text
-                }
-                if let text = communication.payload?.infoText, !text.isEmpty {
-                    return text
-                } else if !payload.isPickupCodeEmptyOrNil {
-                    return L10n.ordDetailMsgsTxtOnPremise.text
-                } else if payload.url != nil {
-                    return L10n.ordDetailMsgsTxtUrl.text
-                } else {
-                    return L10n.ordDetailMsgsTxtEmpty.text
-                }
-            case let .chargeItem(chargeItem):
-                return L10n.ordDetailTxtChargeItem(chargeItem.medication?.name ?? "").text
-            }
-        }
-
-        /// Returns formatted text  (e.g. inline markdown)
-        var formattedText: AttributedString {
-            switch self {
-            case let .dispReq(_, pharmacy):
-                if let name = pharmacy?.name,
-                   let formattedText = try? AttributedString(markdown: L10n.ordDetailTxtSendTo(
-                       L10n.ordDetailTxtPresc(1).text,
-                       Markdown.orderPharmacy(name).link
-                   ).text) {
-                    return formattedText
-                }
-                return AttributedString(text)
-            case let .reply(communication):
-                if let payload = communication.payload,
-                   let text = payload.infoText, !text.isEmpty {
-                    @Dependency(\.dataDetector) var dataDetector: DataDetector
-                    // Replace all detected phone numbers with markdown links
-                    var formattedText = text
-                    if let numbers = try? dataDetector.phoneNumbers(text), !numbers.isEmpty {
-                        for number in numbers {
-                            let formattedNumber = Markdown.phoneNumber(number).link
-                            formattedText = formattedText.replacingOccurrences(of: number, with: formattedNumber)
-                        }
-                    }
-                    if let attributedText = try? AttributedString(markdown: formattedText) {
-                        return attributedText
-                    }
-                }
-                return AttributedString(text)
-            case .chargeItem:
-                return AttributedString(text)
-            }
-        }
-
-        struct ActionEntry: Identifiable {
-            let id: ActionType
-            let name: String
-            let action: OrderDetailDomain.Action
-
-            enum ActionType: String {
-                case loadAndShowPharmacy
-                case ordDetailBtnError
-                case ordDetailBtnOnPremise
-                case ordDetailBtnLink
-                case ordDetailBtnChargeItem
-            }
-        }
-
-        var actions: IdentifiedArrayOf<ActionEntry> {
-            switch self {
-            case let .dispReq(_, pharmacy):
-                guard let name = pharmacy?.name else {
-                    return IdentifiedArray(uniqueElements: [])
-                }
-                return IdentifiedArray(uniqueElements: [
-                    ActionEntry(id: .loadAndShowPharmacy, name: name, action: .loadAndShowPharmacy),
-                ])
-            case let .reply(communication):
-                guard let payload = communication.payload else {
-                    return IdentifiedArray(uniqueElements: [
-                        ActionEntry(
-                            id: .ordDetailBtnError,
-                            name: L10n.ordDetailBtnError.text,
-                            action: .openMail(message: communication.payloadJSON)
-                        ),
-                    ])
-                }
-                var actions: IdentifiedArrayOf<ActionEntry> = .init(uniqueElements: [])
-                if !payload.isPickupCodeEmptyOrNil {
-                    actions.append(ActionEntry(
-                        id: .ordDetailBtnOnPremise,
-                        name: L10n.ordDetailBtnOnPremise.text,
-                        action: .showPickupCode(dmcCode: payload.pickUpCodeDMC, hrCode: payload.pickUpCodeHR)
-                    ))
-                }
-                if let urlString = payload.url,
-                   !urlString.isEmpty,
-                   let url = URL(string: urlString) {
-                    actions.append(ActionEntry(
-                        id: .ordDetailBtnLink,
-                        name: L10n.ordDetailBtnLink.text,
-                        action: .openUrl(url: url)
-                    ))
-                }
-                return actions
-            case let .chargeItem(chargeItem):
-                return IdentifiedArray(uniqueElements: [
-                    ActionEntry(
-                        id: .ordDetailBtnChargeItem,
-                        name: L10n.ordDetailBtnChargeItem.text,
-                        action: .showChargeItem(chargeItem)
-                    ),
-                ])
-            }
-        }
     }
 }
 

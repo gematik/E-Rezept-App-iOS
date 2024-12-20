@@ -35,6 +35,16 @@ class DemoUserDefaultsStore: UserDataStore {
         hideOnboardingCurrentValue.send(hideOnboarding)
     }
 
+    private var onboardingDateCurrentValue: CurrentValueSubject<Date?, Never> = CurrentValueSubject(nil)
+
+    var onboardingDate: AnyPublisher<Date?, Never> {
+        onboardingDateCurrentValue.eraseToAnyPublisher()
+    }
+
+    func set(onboardingDate: Date?) {
+        onboardingDateCurrentValue.send(onboardingDate)
+    }
+
     /// Indicates if the card wall intro screen should be displayed
     var hideCardWallIntro: AnyPublisher<Bool, Never> {
         hideCardWallIntroCurrentValue.eraseToAnyPublisher()
@@ -127,6 +137,30 @@ class DemoUserDefaultsStore: UserDataStore {
     var hideWelcomeDrawer: Bool {
         get { hideWelcomeDrawerValue }
         set { hideWelcomeDrawerValue = newValue }
+    }
+
+    var readInternalCommunications: AnyPublisher<[String], Never> {
+        readInternalCommunicationsCurrentValue.eraseToAnyPublisher()
+    }
+
+    var allReadInternalCommunications: [String] = []
+
+    private var readInternalCommunicationsCurrentValue: CurrentValueSubject<[String], Never> = CurrentValueSubject([])
+
+    func markInternalCommunicationAsRead(messageId: String) {
+        var newReadInternalCommunications = allReadInternalCommunications
+        newReadInternalCommunications.append(messageId)
+        readInternalCommunicationsCurrentValue.send(newReadInternalCommunications)
+    }
+
+    var hideWelcomeMessage: AnyPublisher<Bool, Never> {
+        hideWelcomeMessageCurrentValue.eraseToAnyPublisher()
+    }
+
+    private var hideWelcomeMessageCurrentValue: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
+
+    func set(hideWelcomeMessage: Bool) {
+        hideWelcomeMessageCurrentValue.send(hideWelcomeMessage)
     }
 
     func wipeAll() {}

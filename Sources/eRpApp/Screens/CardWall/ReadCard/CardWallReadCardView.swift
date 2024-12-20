@@ -99,9 +99,6 @@ struct CardWallReadCardView: View {
             }
             .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
-            .task {
-                await store.send(.getChallenge).finish()
-            }
         }
         .statusBar(hidden: true)
     }

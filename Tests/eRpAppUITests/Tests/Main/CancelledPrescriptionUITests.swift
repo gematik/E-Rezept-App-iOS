@@ -23,6 +23,7 @@ import XCTest
 final class CancelledPrescriptionUITests: XCTestCase {
     var app: XCUIApplication!
 
+    @MainActor
     override func setUp() {
         super.setUp()
 

@@ -23,7 +23,7 @@ import Foundation
 /// MedicationDispenses are created by the pharmacy and can contain different medications from the prescription
 /// even when the `substitutionAllowed` flag is false
 /// Profile: https://simplifier.net/packages/de.gematik.erezept-workflow.r4/1.2.0/files/721016
-public struct ErxMedicationDispense: Hashable, Codable {
+public struct ErxMedicationDispense: Hashable, Codable, Sendable {
     /// Default initializer for a MedicationDispense which represent a ModulesR4.MedicationDispense
     public init(
         identifier: String,

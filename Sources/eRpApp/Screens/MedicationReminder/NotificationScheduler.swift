@@ -108,7 +108,7 @@ extension NotificationScheduler: DependencyKey {
         cancelAllPendingRequests: unimplemented("cancel"),
         removeDeliveredNotification: unimplemented("removeDeliveredNotification"),
         requestAuthorization: unimplemented("requestAuthorization"),
-        isAuthorized: unimplemented("isAuthorized")
+        isAuthorized: unimplemented("isAuthorized", placeholder: false)
     )
 }
 

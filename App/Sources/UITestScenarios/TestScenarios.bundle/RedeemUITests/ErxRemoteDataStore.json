@@ -6,8 +6,9 @@
     },
     "listAllTasksAfterRecordings":
     {
-        "type": "repeated",
+        "type": "steps",
         "payload":
+        [
             {
                 "content":
                 [
@@ -41,14 +42,181 @@
                         "avsTransactions":
                         [],
                         "lastModified": "{{DATETIME:-20m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.15",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-20m}}"
                     }
                 ]
             },
+            {
+                "content":
+                [
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "in-progress",
+                        "identifier": "160.000.006.456.334.15",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-2m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "ready",
+                        "identifier": "160.000.006.456.334.16",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-21m}}"
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "in-progress",
+                        "identifier": "160.000.006.456.334.15",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-2m}}"
+                    },
+                    {
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "in-progress",
+                        "identifier": "160.000.006.456.334.16",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-1m}}"
+                    }
+                ]
+            }
+        ]
     },
     "listDetailedTasksForRecordings":
     {
-        "type": "repeated",
+        "type": "steps",
         "payload":
+        [
             {
                 "content":
                 [
@@ -140,9 +308,465 @@
                         "avsTransactions":
                         [],
                         "lastModified": "{{DATETIME:-20m}}"
+                    },
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300341",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "Bdavomilproston",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.16",
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "ready",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.16",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416 Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.16",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-21m}}"
                     }
                 ]
             },
+            {
+                "content":
+                [
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "Adavomilproston",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.15",
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "in-progress",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.15",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416 Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.15",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-2m}}"
+                    },
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300341",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "Bdavomilproston",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.16",
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "ready",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.16",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416 Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.16",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-21m}}"
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "Adavomilproston",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.15",
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "in-progress",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.15",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416 Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.15",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-2m}}"
+                    },
+                    {
+                        "flowType":
+                        {
+                            "pharmacyOnly":
+                            {}
+                        },
+                        "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300341",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": true,
+                            "hasEmergencyServiceFee": false,
+                            "quantity":
+                            {
+                                "value": "15",
+                                "unit": "{Package}"
+                            },
+                            "dosageInstructions": "1-1-1-1",
+                            "bvg": true,
+                            "coPaymentStatus": "0",
+                            "authoredOn": "{{DATE}}",
+                            "multiplePrescription":
+                            {
+                                "mark": false
+                            }
+                        },
+                        "medicationDispenses":
+                        [],
+                        "medication":
+                        {
+                            "isVaccine": false,
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "unit": "Stk",
+                                    "value": "14"
+                                },
+                                "denominator":
+                                {
+                                    "value": "1"
+                                }
+                            },
+                            "profile": "pzn",
+                            "normSizeCode": "N1",
+                            "pzn": "03678010",
+                            "dosageForm": "TRS",
+                            "name": "Bdavomilproston",
+                            "drugCategory": "00",
+                            "ingredients":
+                            []
+                        },
+                        "author": "Count Orff",
+                        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.16",
+                        "authoredOn": "{{DATE:-9D}}",
+                        "status": "in-progress",
+                        "expiresOn": "{{DATE:+30D}}",
+                        "acceptedUntil": "{{DATE:+20D}}",
+                        "practitioner":
+                        {
+                            "qualification": "travel agent",
+                            "lanr": "312108073",
+                            "name": "Dr. Adelheid Ulmenwald"
+                        },
+                        "identifier": "160.000.006.456.334.16",
+                        "organization":
+                        {
+                            "name": "Count Orff",
+                            "email": "hauke.albrecht@mehl.net",
+                            "identifier": "500756630",
+                            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+                            "phone": "+49-200-3809918"
+                        },
+                        "patient":
+                        {
+                            "birthDate": "1987-09-30",
+                            "name": "Boaty Mc Boatface",
+                            "status": "5",
+                            "insurance": "Vaillant BKK",
+                            "address": "Straßburger Str. 2\n82416 Nord Ricardobrunn",
+                            "insuranceId": "M070759114"
+                        },
+                        "prescriptionId": "160.000.006.456.334.16",
+                        "source": "server",
+                        "communications":
+                        [],
+                        "avsTransactions":
+                        [],
+                        "lastModified": "{{DATETIME:-21m}}"
+                    }
+                ]
+            }
+        ]
     },
     "redeemOrderRecordings": {
         "type": "repeated",

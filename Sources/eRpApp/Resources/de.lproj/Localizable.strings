@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Ausgestellt";
 "erx_txt_claimed_at_%@" = "Angenommen %@";
 "erx_txt_current" = "Aktuell";
+"erx_txt_dispensed_at_%@" = "Bereitgestellt %@";
 "erx_txt_expired_on_%@" = "Abgelaufen am %@";
 "erx_txt_forced_update_alert_description" = "Optimieren Sie Ihr App-Erlebnis, indem Sie die die App aktualisieren.";
 "erx_txt_forced_update_alert_ignore" = "Vielleicht später";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "Neue Nachrichten";
 "idp_err_not_available_in_demo_mode_recovery" = "Beenden Sie den Demo-Modus, um die Funktion nutzen zu können.";
 "idp_err_not_available_in_demo_mode_text" = "Nicht verfügbar im Demo-Modus";
+"intern_msg_change_log_chip_%@" = "Neuerungen in der App Version %@";
+"intern_msg_error_empty_onboarding_date" = "If this Error reoccurs, please reinstall the application";
+"intern_msg_error_invalid_url" = "JSON file could not be found";
+"intern_msg_error_unknown_error" = "An error has occurred";
+"intern_msg_welcome" = "Herzlich Willkommen in der E-Rezept App! Mit dieser App können Sie digital E-Rezepte empfangen und an eine Apotheke Ihrer Wahl senden. Ob Sie das Rezept dort zur Abholung reservieren oder nach Hause liefern lassen möchten, liegt ganz bei Ihnen. Selbstverständlich können Sie auch die Rezepte Ihrer Familie verwalten. Um Rezepte digital zu erhalten, ist eine Anmeldung erforderlich.\n\nSchön, dass Sie da sind!\nIhr E-Rezept App Team";
+"intern_msg_welcome_chip" = "🎉 Herzlich Willkommen!";
 "kbv_code_dosage_form_aeo" = "Ätherisches-Öl";
 "kbv_code_dosage_form_amp" = "Ampullen";
 "kbv_code_dosage_form_apa" = "Ampullenpaare";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Gelöscht";
 "prsc_status_completed" = "Eingelöst";
 "prsc_status_direct_assigned" = "Wird für Sie eingelöst";
+"prsc_status_dispensed" = "Bereitgestellt";
 "prsc_status_error" = "Fehlerhaftes Rezept";
 "prsc_status_expired" = "Abgelaufen";
-"prsc_status_in_progress" = "In Einlösung";
+"prsc_status_in_progress" = "Wird bearbeitet";
 "prsc_status_multiple_prsc" = "Später einlösbar";
 "prsc_status_ready" = "Einlösbar";
 "prsc_status_sent" = "Gesendet";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "Zur Übersicht der Kostenbelege";
 "stg_btn_charge_item_share" = "Einreichen";
 "stg_btn_device_security" = "App Sicherheit";
+"stg_btn_donor_register_alert_open" = "Öffnen";
 "stg_btn_edit_picture" = "Bearbeiten";
 "stg_btn_edit_profile_action_camera" = "Foto aufnehmen";
 "stg_btn_edit_profile_action_library" = "Bild auswählen";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Speichern";
 "stg_btn_reg_devices_load" = "Anmelden";
 "stg_con_btn_gemmunity" = "Forum zum E-Rezept";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "Organspenderegister";
+"stg_con_btn_organ_donor_alert_cancel" = "Abbrechen";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback aus der E-Rezept App";
 "stg_con_hotline_ava" = "Kostenfrei für den Anrufenden. Servicezeiten: Mo. - Fr. 08:00 - 20:00 Uhr außer an bundeseinheitlichen Feiertagen";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "PIN wiederholen";
 "stg_edt_card_reset_puk_input" = "PUK eingeben";
 "stg_edt_card_reset_puk_input_label" = "Mit Ihrer PIN haben Sie eine 8-stellige PUK von Ihrer Versicherung erhalten.";
+"stg_exp_txt_title" = "Erkunden";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Webseite öffnen";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\nFriedrichstr. 136\n10117 Berlin";
 "stg_lno_txt_text_note" = "Wir bemühen uns um eine geschlechtergerechte Sprache. Sollten Ihnen Fehler auffallen, freuen wir uns über eine Mitteilung per Mail.";
 "stg_lno_txt_text_responsible" = "Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge";
-"stg_lno_txt_text_taxAndMore" = "Geschäftsführer: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\nRegistergericht: Amtsgericht Berlin-Charlottenburg\nHandelsregister-Nr.: HRB 96351\nUmsatzsteueridentifikationsnummer: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Geschäftsführung: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\nRegistergericht: Amtsgericht Berlin-Charlottenburg\nHandelsregister-Nr.: HRB 96351\nUmsatzsteueridentifikationsnummer: DE241843684";
 "stg_lno_txt_title_contact" = "Kontakt";
 "stg_lno_txt_title_issuer" = "Herausgeber";
 "stg_lno_txt_title_note" = "Hinweis";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Eingelöst am";
 "stg_txt_charge_item_sum" = "Gesamtpreis";
 "stg_txt_demo_mode" = "Demo-Modus";
+"stg_txt_donor_register_alert_message" = "Sie werden zum Organspenderegister weitergeleitet. Um Ihre Daten zur Organspende einsehen und ändern zu können, müssen Sie sich dort anmelden.";
+"stg_txt_donor_register_alert_title" = "Organspenderegister öffnen?";
 "stg_txt_edit_profile_background_section_title" = "Hintergrundfarbe";
 "stg_txt_edit_profile_charge_item_list_section_title" = "Kostenbelege";
 "stg_txt_edit_profile_default_name" = "Profilname";

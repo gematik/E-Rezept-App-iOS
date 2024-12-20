@@ -23,20 +23,23 @@ import XCTest
 struct CardWallIntroductionScreen: Screen {
     let app: XCUIApplication
 
-    func tapOrderHealthCard(file: StaticString = #file, line: UInt = #line) -> OrderHealthCardScreen {
-        button(by: A11y.cardWall.intro.cdwBtnIntroMore, file: file, line: line).tap()
+    func tapOrderHealthCard(fileID: String = #fileID, file: String = #filePath,
+                            line: UInt = #line) -> OrderHealthCardScreen {
+        button(by: A11y.cardWall.intro.cdwBtnIntroMore, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
-    func tapExtAuth(file: StaticString = #file, line: UInt = #line) -> CardWallExtAuthSelectionScreen {
-        button(by: A11y.cardWall.intro.cdwBtnIntroLater, file: file, line: line).tap()
+    func tapExtAuth(fileID: String = #fileID, file: String = #filePath,
+                    line: UInt = #line) -> CardWallExtAuthSelectionScreen {
+        button(by: A11y.cardWall.intro.cdwBtnIntroLater, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
-    func tapDirectExtAuth(file: StaticString = #file, line: UInt = #line) -> CardWallExtAuthConfirmationScreen {
-        button(by: A11y.cardWall.intro.cdwBtnIntroDirectGid, file: file, line: line).tap()
+    func tapDirectExtAuth(fileID: String = #fileID, file: String = #filePath,
+                          line: UInt = #line) -> CardWallExtAuthConfirmationScreen {
+        button(by: A11y.cardWall.intro.cdwBtnIntroDirectGid, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }

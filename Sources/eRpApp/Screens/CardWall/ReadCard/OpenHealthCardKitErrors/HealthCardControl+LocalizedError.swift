@@ -20,7 +20,7 @@
 import Foundation
 import HealthCardControl
 
-extension KeyAgreement.Error: LocalizedError {
+extension KeyAgreement.Error: @retroactive LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .illegalArgument:

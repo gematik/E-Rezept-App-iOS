@@ -27,6 +27,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         created: Date = Date(),
         givenName: String? = nil,
         familyName: String? = nil,
+        displayName: String? = nil,
         insurance: String? = nil,
         insuranceId: String? = nil,
         insuranceType: InsuranceType = .unknown,
@@ -36,6 +37,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         lastAuthenticated: Date? = nil,
         erxTasks: [ErxTask] = [],
         hidePkvConsentDrawerOnMainView: Bool = false,
+        shouldAutoUpdateNameAtNextLogin: Bool = false,
         gIdEntry: KKAppDirectory.Entry? = nil
     ) {
         self.name = name
@@ -43,6 +45,8 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         self.created = created
         self.givenName = givenName
         self.familyName = familyName
+        self.displayName = displayName ?? ((givenName ?? "") + " " + (familyName ?? ""))
+            .trimmingCharacters(in: .whitespaces)
         self.insurance = insurance
         self.insuranceId = insuranceId
         self.insuranceType = insuranceType
@@ -52,6 +56,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         self.lastAuthenticated = lastAuthenticated
         self.erxTasks = erxTasks
         self.hidePkvConsentDrawerOnMainView = hidePkvConsentDrawerOnMainView
+        self.shouldAutoUpdateNameAtNextLogin = shouldAutoUpdateNameAtNextLogin
         self.gIdEntry = gIdEntry
     }
 
@@ -64,6 +69,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
     public let created: Date
     public var givenName: String?
     public var familyName: String?
+    public var displayName: String?
     public var insurance: String?
     public var insuranceId: String?
     public var insuranceType: InsuranceType
@@ -74,12 +80,17 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
     public var erxTasks: [ErxTask]
     // Note: When the list of preferences per Profile keeps growing, consider extracting them to separate struct.
     public var hidePkvConsentDrawerOnMainView: Bool
+    public var shouldAutoUpdateNameAtNextLogin: Bool
     public var gIdEntry: KKAppDirectory.Entry?
 
     public var fullName: String? {
-        [givenName, familyName]
-            .compactMap { $0 }
-            .joined(separator: " ")
+        if displayName != nil {
+            return displayName
+        } else {
+            return [givenName, familyName]
+                .compactMap { $0 }
+                .joined(separator: " ")
+        }
     }
 
     public var isLinkedToInsuranceId: Bool {

@@ -52,6 +52,16 @@ struct DebugLogsView: View {
                 Section(header: Text("Sort/Filter")) {
                     Toggle("Logging enabled", isOn: $store.isLoggingEnabled)
 
+                    if !store.logs.isEmpty {
+                        HStack {
+                            Text("Reset Log Messages")
+                            Spacer()
+                            Button("Reset") {
+                                store.send(.resetLogMessages, animation: .easeInOut)
+                            }
+                        }
+                    }
+
                     TextField("Filter Domain", text: $store.filter)
                     Picker("Sortierung", selection: $store.sort) {
                         ForEach(DebugLogsDomain.State.Sort.allCases, id: \.id) { sortMethod in
@@ -119,8 +129,14 @@ struct DebugLogsView: View {
                             .font(.system(.headline, design: .monospaced))
                             .foregroundColor(log.responseStatus?.isSuccessful ?? false ? .green : .red)
                     }
-                    Text(log.requestUrl)
-                        .font(.headline)
+
+                    if let method = log.request.httpMethod {
+                        Text("\(method) \(log.requestUrl)")
+                            .font(.headline)
+                    } else {
+                        Text(log.requestUrl)
+                            .font(.headline)
+                    }
                 }
 
                 HStack {

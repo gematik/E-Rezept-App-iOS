@@ -42,6 +42,16 @@ struct DebugLogView: View {
                 Text(store.log.id.uuidString)
 
                 Section(header: Text("Request")) {
+                    if let method = store.log.request.httpMethod {
+                        HStack {
+                            Text("Method")
+                                .font(.headline)
+                            Spacer()
+                            Text(method)
+                                .font(.system(.body, design: .monospaced))
+                        }
+                    }
+
                     HStack {
                         Text("URL")
                             .font(.headline)

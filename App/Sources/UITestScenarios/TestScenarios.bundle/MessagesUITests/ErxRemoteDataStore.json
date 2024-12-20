@@ -1,0 +1,212 @@
+{
+    "listMedicationDispensesForRecordings":
+    {
+        "type": "repeated",
+        "payload": []
+    },
+    "redeemOrderRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        {
+            "identifier": "FDBB85D0-D818-413F-A91D-71ABB8AF46FD",
+            "pharmacyTelematikId": "3-01.2.2023001.16.204",
+            "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+            "erxTaskId": "160.000.006.456.334.16",
+            "payload":
+            {
+                "name": "Boaty Mc Boatface",
+                "address":
+                [
+                    "Straßburger Str. 2",
+                    "12345",
+                    "Nord Ricardobrunn"
+                ],
+                "hint": "",
+                "phone": "1234567890",
+                "version": 1,
+                "supplyOptionsType": "shipment"
+            }
+        }
+    },
+    "listAllCommunicationsAfterForRecordings":
+    {
+        "type": "repeated",
+        "payload":
+        [
+            {
+                "_FILE": "Generics.json#dispReq",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.01"
+                }
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.01",
+                    "{{TIMESTAMP}}": "{{DATETIME:-10m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"onPremise\" , \"info_text\":\"01 Info/Para + HRcode/Para + DMC/Para + URL/Para\" , \"pickUpCodeHR\":\"T01__R01\" , \"pickUpCodeDMC\":\"Test_01___Rezept_01___abcdefg12345\" , \"url\":\"https://www.gematik.de\"}"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.01",
+                    "{{TIMESTAMP}}": "{{DATETIME:-9m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"onPremise\" , \"info_text\":\"\" , \"pickUpCodeHR\" : \"\" , \"pickUpCodeDMC\" : \"\" }"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.01",
+                    "{{TIMESTAMP}}": "{{DATETIME:-8m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"onPremise\" , \"pickUpCodeHR\":\"T03__R01\" , \"pickUpCodeDMC\":\"Test_03___Rezept_01___abcdefg12345\" , \"url\":\"https://www.gematik.de\"}"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.01",
+                    "{{TIMESTAMP}}": "{{DATETIME:-7m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"onPremise\" , \"info_text\":\"04 Info_Para + HRcode_Para + DMC_noPara + URL_Para\" , \"pickUpCodeHR\":\"T04__R01\" , \"pickUpCodeDMC\":\"\" , \"url\": \"https://www.gematik.de\"}"
+            },
+            {
+                "_FILE": "Generics.json#dispReq",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
+                    "{{TASKID}}": "160.000.006.456.334.02"
+                }
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
+                    "{{TASKID}}": "160.000.006.456.334.02",
+                    "{{TIMESTAMP}}": "{{DATETIME:-10m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"delivery\" , \"info_text\":\"05 Info/Para + NoHRcode + NoDMC + URL/Para\", \"url\": \"https://www.gematik.de\"}"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
+                    "{{TASKID}}": "160.000.006.456.334.02",
+                    "{{TIMESTAMP}}": "{{DATETIME:-9m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"delivery\" , \"info_text\":\"\" }"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
+                    "{{TASKID}}": "160.000.006.456.334.02",
+                    "{{TIMESTAMP}}": "{{DATETIME:-8m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"delivery\" }"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
+                    "{{TASKID}}": "160.000.006.456.334.02",
+                    "{{TIMESTAMP}}": "{{DATETIME:-7m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"delivery\" , \"info_text\":\"08 Info/Para + NoHRcode + NoDMC + NoURL\" }"
+            },
+            {
+                "_FILE": "Generics.json#dispReq",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
+                    "{{TASKID}}": "160.000.006.456.334.03"
+                }
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
+                    "{{TASKID}}": "160.000.006.456.334.03",
+                    "{{TIMESTAMP}}": "{{DATETIME:-10m}}"
+                },
+                "payloadJSON": "{\"version\":1,\"supplyOptionsType\":\"shipment\",\"info_text\":\"\"}"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
+                    "{{TASKID}}": "160.000.006.456.334.03",
+                    "{{TIMESTAMP}}": "{{DATETIME:-9m}}"
+                },
+                "payloadJSON": "{\"version\":1,\"supplyOptionsType\":\"shipment\",\"info_text\":\"10 Info/Para + NoHRcode + NoDMC + URL/Para\" ,\"url\":\"https://www.gematik.de\"}"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
+                    "{{TASKID}}": "160.000.006.456.334.03",
+                    "{{TIMESTAMP}}": "{{DATETIME:-8m}}"
+                },
+                "payloadJSON": "{\"version\":1,\"supplyOptionsType\":\"shipment\",\"info_text\":\"11 Info/Para + NoHRcode + NoDMC + NoURL\" }"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
+                    "{{TASKID}}": "160.000.006.456.334.03",
+                    "{{TIMESTAMP}}": "{{DATETIME:-7m}}"
+                },
+                "payloadJSON": "{\"version\":1,\"supplyOptionsType\":\"shipment\",\"url\":\"https://www.gematik.de\"}"
+            }
+        ]
+    },
+    "listAllTasksAfterRecordings":
+    {
+        "type": "repeated",
+        "payload":
+            {
+                "content":
+                [
+                    {
+                        "_FILE": "Generics.json#task",
+                        "_REPLACE": {
+                            "{{TASKID}}": "160.000.006.456.334.01"
+                        }
+                    },
+                    {
+                        "_FILE": "Generics.json#task",
+                        "_REPLACE": {
+                            "{{TASKID}}": "160.000.006.456.334.02"
+                        }
+                    }
+                ]
+            }
+    },
+    "listDetailedTasksForRecordings":
+    {
+        "type": "repeated",
+        "payload":
+            {
+                "content":
+                [
+                    {
+                        "_FILE": "Generics.json#task",
+                        "_REPLACE": {
+                            "{{TASKID}}": "160.000.006.456.334.01"
+                        }
+                    },
+                    {
+                        "_FILE": "Generics.json#task",
+                        "_REPLACE": {
+                            "{{TASKID}}": "160.000.006.456.334.02"
+                        }
+                    }
+                ]
+            }
+    }
+}

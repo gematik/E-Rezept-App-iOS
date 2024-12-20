@@ -23,26 +23,26 @@ import Nimble
 /// Checks a URL for a set of matching GET parameters.
 /// - Parameter parameters: Expected parameters for the match
 /// - Returns: Predicate indicating the result
-public func containsParameters(_ parameters: [String: String]) -> Nimble.Predicate<URL> {
-    Predicate { actualExpression throws -> PredicateResult in
+public func containsParameters(_ parameters: [String: String]) -> Nimble.Matcher<URL> {
+    Matcher { actualExpression throws -> MatcherResult in
         let msg = ExpectationMessage.expectedActualValueTo("equal <\(parameters)>")
         if let actualValue = try actualExpression.evaluate() {
             let comps = NSURLComponents(url: actualValue, resolvingAgainstBaseURL: true)
             if let queryItems = comps?.queryItems {
                 for (paramKey, paramValue) in parameters
                     where queryItems.filter({ item in item.name == paramKey && item.value == paramValue }).isEmpty {
-                    return PredicateResult(
+                    return MatcherResult(
                         bool: false,
                         message: msg.appended(message: "Missing or unmatched parameter \(paramKey)")
                     )
                 }
-                return PredicateResult(
+                return MatcherResult(
                     bool: true,
                     message: msg
                 )
             }
         }
-        return PredicateResult(
+        return MatcherResult(
             status: .fail,
             message: msg.appendedBeNilHint()
         )
@@ -50,7 +50,7 @@ public func containsParameters(_ parameters: [String: String]) -> Nimble.Predica
 }
 
 /// Helper function to assert by diffing data structures
-public func nodiff<T: Equatable>(_ expectedValue: T?) -> Nimble.Predicate<T> {
+public func nodiff<T: Equatable>(_ expectedValue: T?) -> Nimble.Matcher<T> {
     nodiff(expectedValue, by: ==)
 }
 
@@ -58,14 +58,14 @@ public func nodiff<T: Equatable>(_ expectedValue: T?) -> Nimble.Predicate<T> {
 public func nodiff<T>(
     _ expectedValue: T?,
     by areEquivalent: @escaping (T, T) -> Bool
-) -> Nimble.Predicate<T> {
-    Predicate.define("equal <\(stringify(expectedValue))>") { actualExpression, msg in
+) -> Nimble.Matcher<T> {
+    Matcher.define("equal <\(stringify(expectedValue))>") { actualExpression, msg in
         let actualValue = try actualExpression.evaluate()
         switch (expectedValue, actualValue) {
         case (nil, _?):
-            return PredicateResult(status: .fail, message: msg.appendedBeNilHint())
+            return MatcherResult(status: .fail, message: msg.appendedBeNilHint())
         case (_, nil):
-            return PredicateResult(status: .fail, message: msg)
+            return MatcherResult(status: .fail, message: msg)
         case let (expected?, actual?):
             let matches = areEquivalent(expected, actual)
             var msg = msg
@@ -73,7 +73,7 @@ public func nodiff<T>(
                let difference = diff(actualValue, expectedValue, format: DiffFormat.proportional) {
                 msg = .fail(difference)
             }
-            return PredicateResult(bool: matches, message: msg)
+            return MatcherResult(bool: matches, message: msg)
         }
     }
 }

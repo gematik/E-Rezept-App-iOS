@@ -18,7 +18,6 @@
 
 import Combine
 import CryptoKit
-import DataKit
 import Foundation
 import OpenSSL
 
@@ -127,7 +126,7 @@ class EciesVAUCrypto: VAUCrypto {
         // [REQ:gemSpec_Krypt:A_20174#13] 3: Decrypt using AES symmetric key
         guard let sealed = try? AES.GCM.SealedBox(combined: data),
               let decrypted = try? AES.GCM.open(sealed, using: symmetricKey),
-              let utf8 = decrypted.utf8string
+              let utf8 = String(data: decrypted, encoding: .utf8)
         else {
             throw VAUError.responseValidation
         }

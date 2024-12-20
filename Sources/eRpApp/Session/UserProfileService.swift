@@ -75,6 +75,7 @@ class DummyUserProfileService: UserProfileService {
 }
 
 // sourcery: CodedError = "022"
+@CasePathable
 enum UserProfileServiceError: Error, Equatable {
     // sourcery: errorCode = "01"
     case localStoreError(LocalStoreError)

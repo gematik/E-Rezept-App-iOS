@@ -23,17 +23,22 @@ import XCTest
 struct PharmacySearchScreen: Screen {
     let app: XCUIApplication
 
-    func pharmacyDetailsForPharmacy(_ name: String, file: StaticString = #file,
+    func pharmacyDetailsForPharmacy(_ name: String, fileID: String = #fileID, file: String = #filePath,
                                     line: UInt = #line) -> PharmacyDetailsScreen {
         app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
         app.typeText("A")
 
         XCUIApplication().keyboards.buttons["Suchen"].tap()
 
-        let pharmacyCell = container(by: A11y.pharmacySearch.phaSearchTxtResultList, file: file, line: line)
-            .children(matching: .button)
-            .containing(NSPredicate(format: "label like '\(name)'"))
-            .element
+        let pharmacyCell = container(
+            by: A11y.pharmacySearch.phaSearchTxtResultList,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
+        .children(matching: .button)
+        .containing(NSPredicate(format: "label like '\(name)'"))
+        .element
 
         expect(file: file, line: line, pharmacyCell.exists).to(beTrue())
         pharmacyCell.tap()
@@ -48,8 +53,9 @@ struct PharmacySearchScreen: Screen {
         XCUIApplication().keyboards.buttons["Suchen"].tap()
     }
 
-    func tapFilter(file: StaticString = #file, line: UInt = #line) -> PharmacyFilterScreen<Self> {
-        button(by: A11y.pharmacySearch.phaFilterOpenFilter, file: file, line: line).tap()
+    func tapFilter(fileID: String = #fileID, file: String = #filePath,
+                   line: UInt = #line) -> PharmacyFilterScreen<Self> {
+        button(by: A11y.pharmacySearch.phaFilterOpenFilter, fileID: fileID, file: file, line: line).tap()
         return PharmacyFilterScreen(app: app, previous: self)
     }
 
@@ -60,9 +66,10 @@ struct PharmacySearchScreen: Screen {
     }
 
     @discardableResult
-    func tapCancelButton(file: StaticString = #file, line: UInt = #line) -> RedeemSelectionScreen {
+    func tapCancelButton(fileID: String = #fileID, file: String = #filePath,
+                         line: UInt = #line) -> RedeemSelectionScreen {
         print(app.debugDescription)
-        button(within: app.navigationBars, by: "Abbrechen", file: file, line: line).tap()
+        button(within: app.navigationBars, by: "Abbrechen", fileID: fileID, file: file, line: line).tap()
 
         return RedeemSelectionScreen(app: app)
     }

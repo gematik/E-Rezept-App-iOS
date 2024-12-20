@@ -138,7 +138,9 @@ struct MainDomain {
             case showUpdateAlertResponse(Bool)
         }
     }
+
     // sourcery: CodedError = "015"
+    @CasePathable
     enum Error: Swift.Error, Equatable {
         // sourcery: errorCode = "01"
         case localStoreError(LocalStoreError)

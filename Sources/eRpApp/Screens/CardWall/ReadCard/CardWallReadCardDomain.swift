@@ -26,10 +26,6 @@ import UIKit
 
 @Reducer
 struct CardWallReadCardDomain {
-    private enum CancelID {
-        case getChallenge
-    }
-
     @ObservableState
     struct State: Equatable {
         let isDemoModus: Bool
@@ -53,7 +49,7 @@ struct CardWallReadCardDomain {
             case dismiss
             case close
             case unlockCard
-            case getChallenge
+            case signChallenge
             case wrongCAN
             case wrongPIN
             case openMail(String)
@@ -62,8 +58,7 @@ struct CardWallReadCardDomain {
     }
 
     enum Action: Equatable {
-        case getChallenge
-        case signChallenge(IDPChallengeSession)
+        case signChallenge
         case saveError(LocalStoreError)
         case openHelpView
 
@@ -121,15 +116,6 @@ struct CardWallReadCardDomain {
     // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case .getChallenge,
-             .destination(.presented(.alert(.getChallenge))):
-            state.destination = nil
-            return .run { [profileId = state.profileId] send in
-                for await value in environment.idpChallengePublisher(for: profileId) {
-                    await send(value)
-                }
-            }
-            .cancellable(id: CancelID.getChallenge, cancelInFlight: true)
         case let .response(.state(.loggedIn(idpToken))):
             let payload = try? idpToken.idTokenPayload()
             state.output = .loggedIn(idpToken)
@@ -148,8 +134,7 @@ struct CardWallReadCardDomain {
             defer { CommandLogger.commands = [] }
 
             switch output {
-            case let .retrievingChallenge(.error(error)),
-                 let .signingChallenge(.error(error)),
+            case let .signingChallenge(.error(error)),
                  let .verifying(.error(error)):
                 switch error {
                 case .signChallengeError(.verifyCardError(.passwordBlocked)),
@@ -193,7 +178,8 @@ struct CardWallReadCardDomain {
             }
             return .none
         // [REQ:BSI-eRp-ePA:O.Auth_3#2] Implementation of eGK connection
-        case let .signChallenge(challenge):
+        case .signChallenge,
+             .destination(.presented(.alert(.signChallenge))):
             let pin = state.pin
             let biometrieFlow = state.loginOption == .withBiometry
             let profileID = state.profileId
@@ -202,7 +188,7 @@ struct CardWallReadCardDomain {
             return .run { [profileId = state.profileId] send in
                 let can = try await environment.sessionProvider.userDataStore(for: profileId).can.async()
                 guard let can = can else {
-                    await send(.response(.state(State.Output.retrievingChallenge(.error(.inputError(.missingCAN))))))
+                    await send(.response(.state(State.Output.signingChallenge(.error(.inputError(.missingCAN))))))
                     return
                 }
 
@@ -218,7 +204,6 @@ struct CardWallReadCardDomain {
                         can: can,
                         pin: pin,
                         profileID: profileID,
-                        challenge: challenge,
                         send: send
                     )
                 }

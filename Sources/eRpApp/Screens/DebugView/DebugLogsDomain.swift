@@ -83,6 +83,7 @@ struct DebugLogsDomain {
         case destination(PresentationAction<Destination.Action>)
         case binding(BindingAction<State>)
         case loadLogs
+        case resetLogMessages
         case share
         case showSingleLog(DebugLiveLogger.RequestLog)
     }
@@ -94,6 +95,10 @@ struct DebugLogsDomain {
         case .loadLogs:
             state.updateLogs(from: loggingStore)
             state.isLoggingEnabled = loggingStore.isLoggingEnabled
+            return .none
+        case .resetLogMessages:
+            loggingStore.requests = []
+            state.logs = []
             return .none
         case .share:
             state.destination = .share(ShareSheetDomain.State(string: DebugLiveLogger.shared.serializedHARFile()))

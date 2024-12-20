@@ -115,29 +115,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
                                      profileId: mockUserSession.profileId,
                                      pin: "123456",
                                      loginOption: .withoutBiometry,
-                                     output: .challengeLoaded(challenge))
-    }
-
-    func testOnAppearTriggersRequestIDPChallenge() async {
-        let sut = testStore(
-            initialState: CardWallReadCardDomain.State(
-                isDemoModus: false,
-                profileId: mockUserSession.profileId,
-                pin: "123456",
-                loginOption: .withoutBiometry,
-                output: .idle
-            )
-        )
-
-        await sut.send(.getChallenge)
-        await sut.receive(.response(.state(.retrievingChallenge(.loading)))) { state in
-            state.output = .retrievingChallenge(.loading)
-        }
-        await networkScheduler.advance()
-        await uiScheduler.advance()
-        await sut.receive(.response(.state(.challengeLoaded(challenge)))) { state in
-            state.output = .challengeLoaded(self.challenge)
-        }
+                                     output: .idle)
     }
 
     func testHappyPathSigning() async {
@@ -153,7 +131,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let sut = testStore(initialState: defaultState)
 
         let idpToken = IDPSessionMock.fixtureIDPToken
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
 
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
@@ -171,7 +149,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         await sut.receive(.delegate(.close))
     }
 
-    func testWhenOnAppearIDPChallengeFails_ViewIsInErrorState() async {
+    func testWhenIDPChallengeFails_ViewIsInErrorState() async {
         let passthrough = PassthroughSubject<IDPChallengeSession, IDPError>()
         idpMock.requestChallenge_Publisher = passthrough.eraseToAnyPublisher()
 
@@ -181,9 +159,9 @@ final class CardWallReadCardDomainTests: XCTestCase {
                                                                        loginOption: .withoutBiometry,
                                                                        output: .idle))
 
-        await sut.send(.getChallenge)
-        await sut.receive(.response(.state(.retrievingChallenge(.loading)))) { state in
-            state.output = .retrievingChallenge(.loading)
+        await sut.send(.signChallenge)
+        await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
+            state.output = .signingChallenge(.loading)
         }
         passthrough.send(completion: .failure(idpError))
         await networkScheduler.advance()
@@ -192,34 +170,13 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let error = CardWallReadCardDomain.State.Error.idpError(idpError)
 
         await sut.receive(CardWallReadCardDomain.Action
-            .response(.state(.retrievingChallenge(.error(error))))) { state in
-                state.output = .retrievingChallenge(.error(error))
+            .response(.state(.signingChallenge(.error(error))))) { state in
+                state.output = .signingChallenge(.error(error))
                 state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(error))
         }
     }
 
-    func testWhenOnAppearIDPChallengeFails_ButtonPressStartsAnotherRequest() async {
-        let testStore = testStore(
-            initialState: CardWallReadCardDomain.State(
-                isDemoModus: false,
-                profileId: mockUserSession.profileId,
-                pin: "123456",
-                loginOption: .withoutBiometry,
-                output: .retrievingChallenge(.error(.idpError(idpError)))
-            )
-        )
-
-        await testStore.send(.getChallenge)
-        await testStore.receive(.response(.state(.retrievingChallenge(.loading)))) { state in
-            state.output = .retrievingChallenge(.loading)
-        }
-        await uiScheduler.advance()
-        await testStore.receive(CardWallReadCardDomain.Action.response(.state(.challengeLoaded(challenge)))) { state in
-            state.output = .challengeLoaded(self.challenge)
-        }
-    }
-
-    func testWhenIDPChallengeAvailable_SigningStates_HappyPath() async {
+    func testSigningStates_HappyPath() async {
         let verifyPassthrough: PassthroughSubject<IDPExchangeToken, IDPError> = PassthroughSubject()
         let exchangeToken = IDPExchangeToken(code: "abc", sso: "def", state: "ghi", redirect: "redirect")
 
@@ -231,7 +188,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .success(signedChallenge)
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -249,12 +206,12 @@ final class CardWallReadCardDomainTests: XCTestCase {
         await sut.receive(.delegate(.close))
     }
 
-    func testWhenIDPChallengeAvailable_SigningStates_PinError() async {
+    func testSigningStates_PinError() async {
         let sut = testStore(initialState: defaultState)
         let pinError = NFCSignatureProviderError.verifyCardError(.wrongSecretWarning(retryCount: 2))
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(pinError)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -268,12 +225,12 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
     }
 
-    func testWhenIDPChallengeAvailable_SigningStates_CanError() async {
+    func testSigningStates_CanError() async {
         let sut = testStore(initialState: defaultState)
         let canError = NFCSignatureProviderError.wrongCAN(GenericTestError.genericError)
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(canError)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -288,12 +245,12 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
     }
 
-    func testWhenIDPChallengeAvailable_SigningStates_Error_To_Report() async {
+    func testSigningStates_Error_To_Report() async {
         let sut = testStore(initialState: defaultState)
         let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -318,8 +275,8 @@ final class CardWallReadCardDomainTests: XCTestCase {
                 profileId: mockUserSession.profileId,
                 pin: "123456",
                 loginOption: .withoutBiometry,
-                output: .challengeLoaded(challenge),
-                destination: .alert(.info(.init(title: TextState("dummy"))))
+                output: .idle,
+                destination: .alert(.info(.init(title: { TextState("dummy") })))
             ))
 
             let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
@@ -343,7 +300,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .success(signedChallenge)
 
         let idpToken = IDPSessionMock.fixtureIDPToken
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
 
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
@@ -376,7 +333,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         ).eraseToAnyPublisher()
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .success(signedChallenge)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
 
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
@@ -401,7 +358,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let error = NFCSignatureProviderError.verifyCardError(.passwordNotFound)
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -422,7 +379,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let error = NFCSignatureProviderError.verifyCardError(.passwordNotUsable)
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -443,7 +400,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let error = NFCSignatureProviderError.verifyCardError(.securityStatusNotSatisfied)
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -464,7 +421,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let error = NFCSignatureProviderError.verifyCardError(.memoryFailure)
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -484,7 +441,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let error = NFCSignatureProviderError.verifyCardError(.unknownFailure)
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -505,7 +462,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -526,7 +483,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -548,7 +505,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         mockNFCSessionProvider.signCanPinChallengeReturnValue = .failure(error)
 
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
-        await sut.send(.signChallenge(challenge))
+        await sut.send(.signChallenge)
         await uiScheduler.advance()
         await sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
@@ -561,5 +518,63 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
             state.destination = .alert(CardWallReadCardDomain.AlertStates.alertBlockedCard(stateError))
         }
+    }
+
+    let idpToken: IDPToken = {
+        let decryptedTokenPayload: TokenPayload = {
+            let tokenPath = Bundle.module
+                .testResourceFilePath(in: "JWT", for: "idp_token_decrypted.json")
+            let tokenData = try! tokenPath.readFileContents()
+            return try! JSONDecoder().decode(TokenPayload.self, from: tokenData)
+        }()
+        let exchangeToken = IDPExchangeToken(code: "code", sso: "sso-token", state: "state", redirect: "redirect")
+        return IDPToken(
+            accessToken: decryptedTokenPayload.accessToken,
+            expires: Date(),
+            idToken: decryptedTokenPayload.idToken,
+            ssoToken: exchangeToken.sso,
+            redirect: "redirect"
+        )
+    }()
+
+    func testSaveProfileWithDefaultNameOnFirstLogin() async {
+        let sut = testStore(initialState: defaultState)
+        var profile = Profile(
+            name: "Profil 1",
+            shouldAutoUpdateNameAtNextLogin: true
+        )
+        mockUserSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        mockProfileDataStore.updateProfileIdMutatingClosure = { _, mutating in
+            mutating(&profile)
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        await sut.send(.response(.state(.loggedIn(idpToken)))) { state in
+            state.output = .loggedIn(self.idpToken)
+        }
+        await uiScheduler.advance()
+        await sut.receive(.delegate(.close))
+
+        expect(profile.name) == "Heinz Hillbert Cördes"
+    }
+
+    func testSaveProfileWithDefaultNameLoggedInBefore() async {
+        let sut = testStore(initialState: defaultState)
+        var profile = Profile(name: "Profil 1", lastAuthenticated: Date.distantPast)
+        mockUserSession.profileReturnValue = Just(profile).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        mockProfileDataStore.updateProfileIdMutatingClosure = { _, mutating in
+            mutating(&profile)
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        await sut.send(.response(.state(.loggedIn(idpToken)))) { state in
+            state.output = .loggedIn(self.idpToken)
+        }
+        await uiScheduler.advance()
+        await sut.receive(.delegate(.close))
+
+        expect(profile.name) == "Profil 1"
     }
 }

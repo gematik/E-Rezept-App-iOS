@@ -19,6 +19,7 @@
 
 import Combine
 import CombineSchedulers
+import Dependencies
 import eRpKit
 @testable import eRpLocalStorage
 import Foundation
@@ -135,12 +136,15 @@ final class MigrationManagerTests: XCTestCase {
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
         let cancellable =
-            sut.startModelMigration(from: ModelVersion.taskStatus)
-                .sink(receiveCompletion: { completion in
-                    receivedCompletions.append(completion)
-                }, receiveValue: { modelVersion in
-                    receivedResults.append(modelVersion)
-                })
+            sut.startModelMigration(
+                from: ModelVersion.taskStatus,
+                defaultProfileName: "DummyValue"
+            )
+            .sink(receiveCompletion: { completion in
+                receivedCompletions.append(completion)
+            }, receiveValue: { modelVersion in
+                receivedResults.append(modelVersion)
+            })
 
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .profiles
@@ -222,13 +226,15 @@ final class MigrationManagerTests: XCTestCase {
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
-        let cancellable =
-            sut.startModelMigration(from: .taskStatus)
-                .sink(receiveCompletion: { completion in
-                    receivedCompletions.append(completion)
-                }, receiveValue: { modelVersion in
-                    receivedResults.append(modelVersion)
-                })
+        let cancellable = sut.startModelMigration(
+            from: ModelVersion.taskStatus,
+            defaultProfileName: "DummyValue"
+        )
+        .sink(receiveCompletion: { completion in
+            receivedCompletions.append(completion)
+        }, receiveValue: { modelVersion in
+            receivedResults.append(modelVersion)
+        })
 
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .profiles
@@ -287,13 +293,15 @@ final class MigrationManagerTests: XCTestCase {
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
-        let cancellable =
-            sut.startModelMigration(from: ModelVersion.taskStatus)
-                .sink(receiveCompletion: { completion in
-                    receivedCompletions.append(completion)
-                }, receiveValue: { modelVersion in
-                    receivedResults.append(modelVersion)
-                })
+        let cancellable = sut.startModelMigration(
+            from: ModelVersion.taskStatus,
+            defaultProfileName: "DummyValue"
+        )
+        .sink(receiveCompletion: { completion in
+            receivedCompletions.append(completion)
+        }, receiveValue: { modelVersion in
+            receivedResults.append(modelVersion)
+        })
 
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .profiles
@@ -345,13 +353,15 @@ final class MigrationManagerTests: XCTestCase {
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
-        let cancellable =
-            sut.startModelMigration(from: ModelVersion.profiles)
-                .sink(receiveCompletion: { completion in
-                    receivedCompletions.append(completion)
-                }, receiveValue: { modelVersion in
-                    receivedResults.append(modelVersion)
-                })
+        let cancellable = sut.startModelMigration(
+            from: ModelVersion.profiles,
+            defaultProfileName: "DummyValue"
+        )
+        .sink(receiveCompletion: { completion in
+            receivedCompletions.append(completion)
+        }, receiveValue: { modelVersion in
+            receivedResults.append(modelVersion)
+        })
 
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .auditEventsInProfile
@@ -377,12 +387,15 @@ final class MigrationManagerTests: XCTestCase {
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
         let cancellable =
-            sut.startModelMigration(from: ModelVersion.profiles)
-                .sink(receiveCompletion: { completion in
-                    receivedCompletions.append(completion)
-                }, receiveValue: { modelVersion in
-                    receivedResults.append(modelVersion)
-                })
+            sut.startModelMigration(
+                from: ModelVersion.profiles,
+                defaultProfileName: "DummyValue"
+            )
+            .sink(receiveCompletion: { completion in
+                receivedCompletions.append(completion)
+            }, receiveValue: { modelVersion in
+                receivedResults.append(modelVersion)
+            })
 
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .auditEventsInProfile
@@ -429,12 +442,15 @@ final class MigrationManagerTests: XCTestCase {
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
         var receivedResults = [ModelVersion]()
         let cancellable =
-            sut.startModelMigration(from: ModelVersion.auditEventsInProfile)
-                .sink(receiveCompletion: { completion in
-                    receivedCompletions.append(completion)
-                }, receiveValue: { modelVersion in
-                    receivedResults.append(modelVersion)
-                })
+            sut.startModelMigration(
+                from: ModelVersion.auditEventsInProfile,
+                defaultProfileName: "DummyValue"
+            )
+            .sink(receiveCompletion: { completion in
+                receivedCompletions.append(completion)
+            }, receiveValue: { modelVersion in
+                receivedResults.append(modelVersion)
+            })
 
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .pKV
@@ -471,6 +487,50 @@ final class MigrationManagerTests: XCTestCase {
         expect(profileC.insuranceType).to(equal(Profile.InsuranceType.unknown))
 
         cancellable.cancel()
+    }
+
+    func testMigrationFromVersion6ToVersion7OnboardingDate() throws {
+        let userDataStore = MockUserDataStore()
+        let factory = MockCoreDataControllerFactory()
+        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
+        let erxTaskStore = DefaultErxTaskCoreDataStore(profileId: UUID(),
+                                                       coreDataControllerFactory: factory,
+                                                       foregroundQueue: foregroundQueue,
+                                                       backgroundQueue: backgroundQueue,
+                                                       dateProvider: { Date() })
+
+        let sut = MigrationManager(
+            factory: factory,
+            erxTaskCoreDataStore: erxTaskStore,
+            userDataStore: userDataStore
+        )
+
+        var receivedCompletions = [Subscribers.Completion<MigrationError>]()
+        var receivedResults = [ModelVersion]()
+        let now = Date()
+
+        withDependencies { dependencies in
+            dependencies.date = .constant(now)
+        } operation: {
+            let cancellable =
+                sut.startModelMigration(
+                    from: ModelVersion.pKV,
+                    defaultProfileName: "DummyValue"
+                )
+                .sink(receiveCompletion: { completion in
+                    receivedCompletions.append(completion)
+                }, receiveValue: { modelVersion in
+                    receivedResults.append(modelVersion)
+                })
+
+            expect(receivedResults.count).toEventually(equal(1))
+            expect(receivedResults.first) == .onboardingDate
+
+            expect(userDataStore.setOnboardingDateCallsCount).toEventually(equal(1))
+            expect(userDataStore.setOnboardingDateCalled).to(beTrue())
+
+            cancellable.cancel()
+        }
     }
 }
 

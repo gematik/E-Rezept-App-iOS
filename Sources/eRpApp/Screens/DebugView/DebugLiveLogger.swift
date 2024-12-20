@@ -134,6 +134,24 @@ class DebugLiveLogger {
             return chain.proceed(request: chain.request)
             #endif
         }
+
+        func interceptAsync(chain: Chain) async throws -> HTTPResponse {
+            #if ENABLE_DEBUG_VIEW
+            let request = chain.request
+            let sentAt = Date()
+
+            let (data, response, status) = try await chain.proceedAsync(request: request)
+            DebugLiveLogger.shared.log(
+                request: request,
+                sentAt: sentAt,
+                response: (data, response, status),
+                receivedAt: Date()
+            )
+            return (data, response, status)
+            #else
+            return try await chain.proceedAsync(request: chain.request)
+            #endif
+        }
     }
 }
 
@@ -162,7 +180,7 @@ extension DebugLiveLogger {
 
         var requestBody: String {
             guard let body = request.httpBody else { return "no request body" }
-            if let utf8String = body.utf8string {
+            if let utf8String = String(data: body, encoding: .utf8) {
                 return utf8String
             }
             return body.base64EncodedString()
@@ -177,7 +195,11 @@ extension DebugLiveLogger {
         }
 
         var responseBody: String {
-            response?.data.utf8string ?? "no response body"
+            guard let data = response?.data,
+                  let utf8string = String(data: data, encoding: .utf8) else {
+                return "no response body"
+            }
+            return utf8string
         }
 
         var responseHeader: [AnyHashable: Any] {
@@ -212,7 +234,7 @@ extension DebugLiveLogger {
                 .reduce("", +)
             }
             if let body = request.httpBody {
-                if let utf8body = body.utf8string {
+                if let utf8body = String(data: body, encoding: .utf8) {
                     share += "\n\(utf8body)\n"
                 }
             }
@@ -228,7 +250,7 @@ extension DebugLiveLogger {
                 }
                 .reduce("", +)
 
-                if let utf8body = response.data.utf8string {
+                if let utf8body = String(data: response.data, encoding: .utf8) {
                     share += "\n\(utf8body)\n"
                 }
             }

@@ -24,17 +24,17 @@ struct RedeemMatrixCodeScreen<Previous: Screen>: Screen {
     let app: XCUIApplication
     let previous: Previous
 
-    func tapBackButton(file: StaticString = #file, line: UInt = #line) -> Previous {
-        button(within: app.navigationBars, by: "Rezepte", file: file, line: line).tap()
+    func tapBackButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> Previous {
+        button(within: app.navigationBars, by: "Rezepte", fileID: fileID, file: file, line: line).tap()
 
         return previous
     }
 
-    func title(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        staticText(by: A11y.matrixCode.dmcTxtTitle, file: file, line: line)
+    func title(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        staticText(by: A11y.matrixCode.dmcTxtTitle, fileID: fileID, file: file, line: line)
     }
 
-    func selfPayerWarning(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        staticText(by: A11y.selfPayerWarning.selfPayerWarningTxtMessage, file: file, line: line)
+    func selfPayerWarning(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        staticText(by: A11y.selfPayerWarning.selfPayerWarningTxtMessage, fileID: fileID, file: file, line: line)
     }
 }

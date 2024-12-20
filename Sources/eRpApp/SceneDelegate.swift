@@ -315,7 +315,10 @@ extension SceneDelegate {
             // [REQ:gemSpec_eRp_FdV:A_19090-01] activate after optIn is granted
             tracker.stopTracking()
 
-            let profile = try store.createProfile(with: L10n.onbProfileName.text)
+            let profile = try store.createProfile(
+                name: L10n.onbProfileName.text,
+                shouldAutoUpdateNameAtNextLogin: true
+            )
             userDataStore.set(selectedProfileId: profile.id)
         }
     }

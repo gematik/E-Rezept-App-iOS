@@ -35,12 +35,16 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
         case apps = "fed_idp_list"
     }
 
-    public struct Entry: Hashable, Codable, Equatable {
+    public struct Entry: Hashable, Codable, Equatable, Identifiable {
         public init(name: String, identifier: String, gId: Bool = false, logo: String? = nil) {
             self.name = name
             self.identifier = identifier
             self.gId = gId
             self.logo = logo
+        }
+
+        public var id: String {
+            identifier
         }
 
         public let name: String

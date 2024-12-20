@@ -19,34 +19,36 @@
 import Nimble
 import XCTest
 
-func exist(_ identifier: String) -> Nimble.Predicate<XCUIElement> {
-    Predicate { actualExpression throws -> PredicateResult in
+@MainActor
+func exist(_ identifier: String) -> Nimble.Matcher<XCUIElement> {
+    Matcher { actualExpression throws -> MatcherResult in
         let msg = ExpectationMessage.expectedTo("find Element with identifier '\(identifier)'")
 
         if let actualValue = try actualExpression.evaluate() {
-            return PredicateResult(
+            return MatcherResult(
                 bool: actualValue.exists,
                 message: msg
             )
         }
-        return PredicateResult(
+        return MatcherResult(
             status: .fail,
             message: msg.appendedBeNilHint()
         )
     }
 }
 
-func isDisabledOrDoesNotExist(_ identifier: String) -> Nimble.Predicate<XCUIElement> {
-    Predicate { actualExpression throws -> PredicateResult in
+@MainActor
+func isDisabledOrDoesNotExist(_ identifier: String) -> Nimble.Matcher<XCUIElement> {
+    Matcher { actualExpression throws -> MatcherResult in
         let msg = ExpectationMessage.expectedTo("find Element with identifier '\(identifier)'")
 
         if let actualValue = try actualExpression.evaluate() {
-            return PredicateResult(
+            return MatcherResult(
                 bool: actualValue.exists ? !actualValue.isEnabled : true,
                 message: msg
             )
         }
-        return PredicateResult(
+        return MatcherResult(
             status: .fail,
             message: msg.appendedBeNilHint()
         )

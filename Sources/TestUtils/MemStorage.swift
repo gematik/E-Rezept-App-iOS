@@ -76,6 +76,33 @@ public class MemStorage: IDPStorage, SecureEGKCertificateStorage, TrustStoreStor
         ocspListState = ocspList
     }
 
+    @Published private(set) var pkiCertificatesState: PKICertificates?
+    public func getPKICertificates() -> PKICertificates? {
+        pkiCertificatesState
+    }
+
+    public func set(pkiCertificates: PKICertificates?) {
+        pkiCertificatesState = pkiCertificates
+    }
+
+    @Published private(set) var vauCertificateState: Data?
+    public func getVauCertificate() -> Data? {
+        vauCertificateState
+    }
+
+    public func set(vauCertificate: Data?) {
+        vauCertificateState = vauCertificate
+    }
+
+    @Published private(set) var vauCertificateOcspResponseState: Data?
+    public func getVauCertificateOcspResponse() -> Data? {
+        vauCertificateOcspResponseState
+    }
+
+    public func set(vauCertificateOcspResponse: Data?) {
+        vauCertificateOcspResponseState = vauCertificateOcspResponse
+    }
+
     @Published private(set) var userPseudonymState: String?
     public var userPseudonym: AnyPublisher<String?, Never> {
         $userPseudonymState.eraseToAnyPublisher()

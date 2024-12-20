@@ -23,14 +23,17 @@ import XCTest
 struct CardWallExtAuthSelectionScreen: Screen {
     let app: XCUIApplication
 
-    func tapBackButton(file: StaticString = #file, line: UInt = #line) -> CardWallIntroductionScreen {
-        button(within: app.navigationBars, by: "Zurück", file: file, line: line).tap()
+    func tapBackButton(fileID: String = #fileID, file: String = #filePath,
+                       line: UInt = #line) -> CardWallIntroductionScreen {
+        button(within: app.navigationBars, by: "Zurück", fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
-    func tapHelpButton(file: StaticString = #file, line: UInt = #line) -> CardWallExtAuthHelpScreen {
-        button(by: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionHelp, file: file, line: line).tap()
+    func tapHelpButton(fileID: String = #fileID, file: String = #filePath,
+                       line: UInt = #line) -> CardWallExtAuthHelpScreen {
+        button(by: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionHelp, fileID: fileID, file: file, line: line)
+            .tap()
 
         return .init(app: app)
     }

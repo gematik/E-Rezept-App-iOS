@@ -59,7 +59,12 @@ struct AppDomain {
         var orders: OrdersDomain.State
         var settings: SettingsDomain.State
 
+        var unreadMessageCount: Int {
+            unreadOrderMessageCount + unreadInternalCommunicationCount
+        }
+
         var unreadOrderMessageCount: Int
+        var unreadInternalCommunicationCount: Int
         var isDemoMode: Bool
 
         init(
@@ -69,6 +74,7 @@ struct AppDomain {
             orders: OrdersDomain.State,
             settings: SettingsDomain.State,
             unreadOrderMessageCount: Int,
+            unreadInternalCommunicationCount: Int,
             isDemoMode: Bool
         ) {
             self.destination = destination
@@ -77,6 +83,7 @@ struct AppDomain {
             self.orders = orders
             self.settings = settings
             self.unreadOrderMessageCount = unreadOrderMessageCount
+            self.unreadInternalCommunicationCount = unreadInternalCommunicationCount
             self.isDemoMode = isDemoMode
         }
     }
@@ -86,8 +93,9 @@ struct AppDomain {
 
         case isDemoModeReceived(Bool)
         case registerDemoModeListener
-        case registerNewOrderMessageListener
+        case registerNewMessageListener
         case newOrderMessageReceived(Int)
+        case newInternalCommunicationReceived(Int)
         case setNavigation(Destinations.State)
 
         case main(action: MainDomain.Action)
@@ -99,6 +107,7 @@ struct AppDomain {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.changeableUserSessionContainer) var userSessionContainer: UsersSessionContainer
     @Dependency(\.entireErxTaskRepository) var entireErxTaskRepository
+    @Dependency(\.internalCommunicationProtocol) var internalCommunicationProtocol: InternalCommunicationProtocol
 
     var body: some Reducer<State, Action> {
         Scope(state: \.main, action: \.main) {
@@ -126,7 +135,7 @@ struct AppDomain {
         case .task:
             return .merge(
                 .send(.registerDemoModeListener),
-                .send(.registerNewOrderMessageListener)
+                .send(.registerNewMessageListener)
             )
         case .settings(
             action: .destination(
@@ -154,17 +163,31 @@ struct AppDomain {
                     .map(AppDomain.Action.isDemoModeReceived)
                     .eraseToAnyPublisher
             )
-        case .registerNewOrderMessageListener:
-            return .publisher(
-                entireErxTaskRepository
-                    .countAllUnreadCommunicationsAndChargeItems(for: .all)
-                    .receive(on: schedulers.main.animation())
-                    .map(AppDomain.Action.newOrderMessageReceived)
-                    .catch { _ in Empty() }
-                    .eraseToAnyPublisher
+        case .registerNewMessageListener:
+            return .merge(
+                .publisher(
+                    entireErxTaskRepository
+                        .countAllUnreadCommunicationsAndChargeItems(for: .all)
+                        .receive(on: schedulers.main.animation())
+                        .map(AppDomain.Action.newOrderMessageReceived)
+                        .catch { _ in Empty() }
+                        .eraseToAnyPublisher
+                ),
+                .run { send in
+                    do {
+                        for try await counter in internalCommunicationProtocol.loadUnreadInternalCommunicationsCount() {
+                            await send(.newInternalCommunicationReceived(counter))
+                        }
+                    } catch {
+                        await send(.newInternalCommunicationReceived(0))
+                    }
+                }
             )
         case let .newOrderMessageReceived(unreadOrderMessageCount):
             state.unreadOrderMessageCount = unreadOrderMessageCount
+            return .none
+        case let .newInternalCommunicationReceived(unreadInternalCommunicationCount):
+            state.unreadInternalCommunicationCount = unreadInternalCommunicationCount
             return .none
         case let .setNavigation(destination):
             if state.destination == destination {
@@ -207,6 +230,7 @@ extension AppDomain {
             orders: OrdersDomain.Dummies.state,
             settings: SettingsDomain.Dummies.state,
             unreadOrderMessageCount: 0,
+            unreadInternalCommunicationCount: 0,
             isDemoMode: false
         )
     }
