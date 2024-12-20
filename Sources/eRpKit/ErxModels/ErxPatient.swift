@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct ErxPatient: Hashable, Codable {
+public struct ErxPatient: Hashable, Codable, Sendable {
     public init(title: String? = nil,
                 name: String? = nil,
                 address: String? = nil,
@@ -61,7 +61,7 @@ public struct ErxPatient: Hashable, Codable {
 
 extension ErxPatient {
     /// https://simplifier.net/packages/de.basisprofil.r4/1.5.0/files/2461199/
-    public enum CoverageType: String, Codable, Equatable, Hashable {
+    public enum CoverageType: String, Codable, Equatable, Hashable, Sendable {
         public enum CodingKeysV2 {
             public static var gesetzlicheKrankenversicherung = "GKV"
             public static var privateKrankenversicherung = "PKV"

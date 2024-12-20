@@ -28,6 +28,12 @@ public enum ModelVersion: Int, Codable, CaseIterable {
     case auditEventsInProfile = 5
     // Introduces pKV profiles
     case pKV = 6
+    // Introduces onboardingDate in userDataStore
+    case onboardingDate = 7
+    // Introduce displayName
+    case displayName = 8
+    // Introduces whether the Profile's name should be automatically updated when user logs in next time
+    case shouldAutoUpdateNameAtNextLogin = 9
 
     /// Creates a `ModelVersion` of the next case related to self
     /// - Returns: Returns the next case if it is not the last case or returns nil

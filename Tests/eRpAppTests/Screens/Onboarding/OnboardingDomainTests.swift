@@ -28,6 +28,7 @@ final class OnboardingDomainTests: XCTestCase {
     let mockUserDataStore = MockUserDataStore()
     let mockAppSecurityManager = MockAppSecurityManager()
     let testScheduler = DispatchQueue.test
+    static let now = Date()
     typealias TestStore = TestStoreOf<OnboardingDomain>
 
     func testStore(with state: OnboardingDomain.State = OnboardingDomain.Dummies.state) -> TestStore {
@@ -41,6 +42,7 @@ final class OnboardingDomainTests: XCTestCase {
             dependencies.appSecurityManager = mockAppSecurityManager
             dependencies.userDataStore = mockUserDataStore
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.date = DateGenerator.constant(Self.now)
         }
     }
 

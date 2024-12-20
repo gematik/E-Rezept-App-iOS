@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct AccidentInfo: Hashable, Codable {
+public struct AccidentInfo: Hashable, Codable, Sendable {
     public init(type: AccidentType?,
                 workPlaceIdentifier: String? = nil,
                 date: String?) {
@@ -35,7 +35,7 @@ public struct AccidentInfo: Hashable, Codable {
     public let date: String?
 
     /// https://simplifier.net/erezept/kbvvserpaccidenttype
-    public enum AccidentType: String, Equatable, Codable {
+    public enum AccidentType: String, Equatable, Codable, Sendable {
         /// Unfall
         case accident = "1"
         /// Arbeitsunfall (Berufsgenossenschaft/Unfallkasse)

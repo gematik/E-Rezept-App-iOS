@@ -19,7 +19,7 @@
 import Foundation
 import IdentifiedCollections
 
-public struct MedicationSchedule: Codable, Equatable, Identifiable {
+public struct MedicationSchedule: Codable, Equatable, Identifiable, Sendable {
     public init(
         id: UUID = UUID(),
         start: Date,
@@ -49,7 +49,7 @@ public struct MedicationSchedule: Codable, Equatable, Identifiable {
     public var isActive: Bool
     public var entries: IdentifiedArrayOf<MedicationSchedule.Entry>
 
-    public struct Entry: Codable, Equatable, Identifiable {
+    public struct Entry: Codable, Equatable, Identifiable, Sendable {
         public init(
             id: UUID = UUID(),
             title: String = "",
@@ -72,5 +72,17 @@ public struct MedicationSchedule: Codable, Equatable, Identifiable {
         public var minuteComponent: Int
         public var dosageForm: String
         public var amount: String
+    }
+}
+
+extension MedicationSchedule.Entry: CustomStringConvertible {
+    public var description: String {
+        "\(hourComponent) : \(minuteComponent)"
+    }
+}
+
+extension MedicationSchedule: CustomStringConvertible {
+    public var description: String {
+        "Medication (\(id)) \(title) \(dosageInstructions) \(entries)"
     }
 }

@@ -10,18 +10,22 @@ module Fastlane
         project_identifier = params[:project_identifier]
         destination = params[:destination]
         clean_destination = params[:clean_destination]
+        format = params[:format] ? params[:format] : "ios_sdk"
+        bundle_structure = params[:bundle_structure] ? params[:bundle_structure] : "%LANG_ISO%.lproj/Localizable.%FORMAT%"
         include_comments = params[:include_comments]
         original_filenames = params[:use_original]
+        replace_breaks = params[:replace_breaks] ? true : false
 
         body = {
-          format: "ios_sdk",
+          format: format,
           original_filenames: original_filenames,
           bundle_filename: "Localization.zip",
-          bundle_structure: "%LANG_ISO%.lproj/Localizable.%FORMAT%",
+          bundle_structure: bundle_structure,
+          all_platforms: true,
           export_empty_as: "base",
           export_sort: "a_z",
           include_comments: include_comments,
-          replace_breaks: true
+          replace_breaks: replace_breaks
         }
 
         filter_langs = params[:languages]
@@ -138,6 +142,15 @@ module Fastlane
                                        verify_block: proc do |value|
                                           UI.user_error! "Language codes should be passed as array" unless value.kind_of? Array
                                        end),
+          FastlaneCore::ConfigItem.new(key: :format,
+                                        description: "File format (e.g. json, strings, xml). Must be file extension of any of the file formats we support. May also be <code>ios_sdk</code> or <code>android_sdk</code> for respective OTA SDK bundles",
+                                        optional: true,
+                                        is_string: true,
+                                        default_value: "ios_sdk",
+                                        verify_block: proc do |value|
+                                          UI.user_error! "Format should be a string" unless value.kind_of? String
+                                        end
+                                      ),
             FastlaneCore::ConfigItem.new(key: :include_comments,
                                        description: "Include comments in exported files",
                                        optional: true,
@@ -146,6 +159,15 @@ module Fastlane
                                        verify_block: proc do |value|
                                          UI.user_error! "Include comments should be true or false" unless [true, false].include? value
                                        end),
+            FastlaneCore::ConfigItem.new(key: :bundle_structure,
+                                        description: "Bundle structure, used when <code>original_filenames</code> set to <code>false</code>. Allowed placeholders are <code>%LANG_ISO%</code>, <code>%LANG_NAME%</code>, <code>%FORMAT%</code> and <code>%PROJECT_NAME%</code>)",
+                                        optional: true,
+                                        is_string: true,
+                                        default_value: "%LANG_ISO%.lproj/Localizable.%FORMAT%",
+                                        verify_block: proc do |value|
+                                          UI.user_error! "Bundle structure should be a string" unless value.kind_of? String
+                                        end
+                                      ),                           
             FastlaneCore::ConfigItem.new(key: :use_original,
                                        description: "Use original filenames/formats (bundle_structure parameter is ignored then)",
                                        optional: true,
@@ -160,6 +182,14 @@ module Fastlane
                                         is_string: false,
                                         verify_block: proc do |value|
                                           UI.user_error! "Tags should be passed as array" unless value.kind_of? Array
+                                        end),
+            FastlaneCore::ConfigItem.new(key: :replace_breaks,
+                                        description: "Replace breaks",
+                                        optional: true,
+                                        is_string: false,
+                                        default_value: false,
+                                        verify_block: proc do |value|
+                                          UI.user_error! "Replace break should be true or false" unless [true, false].include? value
                                         end),
 
         ]

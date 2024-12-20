@@ -339,7 +339,7 @@ public class DefaultIDPSession: IDPSession {
                                                    with: document.encryptionPublicKey,
                                                    using: self.cryptoBox,
                                                    expiry: tokenPayload.exp),
-                      let encryptedAccessToken = tokenJWE.encoded().utf8string
+                      let encryptedAccessToken = String(data: tokenJWE.encoded(), encoding: .utf8)
                 else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
                 }
@@ -364,7 +364,7 @@ public class DefaultIDPSession: IDPSession {
                                                    with: document.encryptionPublicKey,
                                                    using: self.cryptoBox,
                                                    expiry: tokenPayload.exp),
-                      let encryptedAccessToken = tokenJWE.encoded().utf8string
+                      let encryptedAccessToken = String(data: tokenJWE.encoded(), encoding: .utf8)
                 else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
                 }
@@ -388,7 +388,7 @@ public class DefaultIDPSession: IDPSession {
                                                    with: document.encryptionPublicKey,
                                                    using: self.cryptoBox,
                                                    expiry: tokenPayload.exp),
-                      let encryptedAccessToken = tokenJWE.encoded().utf8string
+                      let encryptedAccessToken = String(data: tokenJWE.encoded(), encoding: .utf8)
                 else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
                 }
@@ -452,7 +452,8 @@ public class DefaultIDPSession: IDPSession {
                     return Fail(error: IDPError.internal(error: .startExtAuthUnexpectedNil)).eraseToAnyPublisher()
                 }
                 guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
-                      let codeChallenge = verifierCode.sha256()?.encodeBase64UrlSafe()?.asciiString else {
+                      let base64Verifier = verifierCode.data(using: .utf8)?.sha256().encodeBase64UrlSafe(),
+                      let codeChallenge = String(data: base64Verifier, encoding: .nonLossyASCII) else {
                     return Fail(error: IDPError.internal(error: .extAuthVerifierCodeCreation))
                         .eraseToAnyPublisher()
                 }
@@ -622,7 +623,8 @@ extension DefaultIDPSession {
                 // Generate a verifierCode
                 // [REQ:gemSpec_IDP_Frontend:A_20309] generation and hashing for codeChallenge
                 guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
-                      let codeChallenge = verifierCode.sha256()?.encodeBase64UrlSafe()?.asciiString else {
+                      let base64Verifier = verifierCode.data(using: .utf8)?.sha256().encodeBase64UrlSafe(),
+                      let codeChallenge = String(data: base64Verifier, encoding: .nonLossyASCII) else {
                     return Fail(error: IDPError.internal(error: .verifierCodeCreation)).eraseToAnyPublisher()
                 }
                 guard let state = try? self.cryptoBox.generateRandomState(),

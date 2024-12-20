@@ -58,7 +58,6 @@ struct EditProfileNameDomain {
             let name = name.trimmed()
             if name.lengthOfBytes(using: .utf8) > 0 {
                 return updateProfile(with: state.profileId, name: state.profileName)
-                    .map(Action.saveEditedProfileNameReceived)
             }
             return .send(.delegate(.close))
         case .saveEditedProfileNameReceived(.success):
@@ -75,12 +74,19 @@ extension EditProfileNameDomain {
     func updateProfile(
         with profileId: UUID,
         name: String
-    ) -> Effect<Result<Bool, UserProfileServiceError>> {
+    ) -> Effect<EditProfileNameDomain.Action> {
         .publisher(
             userProfileService
-                .update(profileId: profileId, mutating: ({ profile in profile.name = name }))
+                .update(
+                    profileId: profileId,
+                    mutating: ({ profile in
+                        profile.name = name
+                        profile.shouldAutoUpdateNameAtNextLogin = false
+                    })
+                )
                 .receive(on: schedulers.main)
                 .catchToPublisher()
+                .map(Action.saveEditedProfileNameReceived)
                 .eraseToAnyPublisher
         )
     }

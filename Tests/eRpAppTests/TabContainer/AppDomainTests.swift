@@ -44,6 +44,7 @@ final class AppDomainTests: XCTestCase {
                     destination: nil
                 ),
                 unreadOrderMessageCount: 0,
+                unreadInternalCommunicationCount: 0,
                 isDemoMode: false
             )
         ) {
@@ -66,6 +67,7 @@ final class AppDomainTests: XCTestCase {
                     destination: .healthCardPasswordForgotPin(.init(mode: .forgotPin))
                 ),
                 unreadOrderMessageCount: 0,
+                unreadInternalCommunicationCount: 0,
                 isDemoMode: false
             )
         ) {
@@ -103,6 +105,7 @@ final class AppDomainTests: XCTestCase {
                     ))
                 ),
                 unreadOrderMessageCount: 0,
+                unreadInternalCommunicationCount: 0,
                 isDemoMode: false
             )
         ) {

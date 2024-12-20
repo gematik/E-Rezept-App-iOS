@@ -35,15 +35,19 @@ public class PairingSession {
 
     func pairingData(certificate: X509, privateKeyContainer: PrivateKeyContainer) throws -> JWT {
         guard let authCertSubjectPublicKeyInfoRaw = try? certificate.brainpoolP256r1VerifyPublicKey()?.asn1Encoded(),
-              let authCertSubjectPublicKeyInfo = authCertSubjectPublicKeyInfoRaw.encodeBase64UrlSafe()?.utf8string
+              let encoded = authCertSubjectPublicKeyInfoRaw.encodeBase64UrlSafe(),
+              let authCertSubjectPublicKeyInfo = String(data: encoded, encoding: .utf8)
         else {
             throw SecureEnclaveSignatureProviderError.packagingAuthCertificate
         }
 
         // Secure Enclave Public Key and signing certificate's issuer data
         guard let seSubjectPublicKeyInfoRaw = try? privateKeyContainer.asn1PublicKey(),
-              let seSubjectPublicKeyInfo = seSubjectPublicKeyInfoRaw.encodeBase64UrlSafe()?.utf8string,
-              let issuer = certificate.issuerX500PrincipalDEREncoded()?.encodeBase64UrlSafe()?.utf8string else {
+              let base64seSubjectPublicKeyInfoRaw = seSubjectPublicKeyInfoRaw.encodeBase64UrlSafe(),
+              let seSubjectPublicKeyInfo = String(data: base64seSubjectPublicKeyInfoRaw, encoding: .utf8),
+              let base64Issuer = certificate.issuerX500PrincipalDEREncoded()?.encodeBase64UrlSafe(),
+              let issuer = String(data: base64Issuer, encoding: .utf8)
+        else {
             throw SecureEnclaveSignatureProviderError.packagingSeCertificate
         }
 
@@ -67,7 +71,8 @@ public class PairingSession {
         self.certificate = certificate
 
         guard let authCertRaw = certificate.derBytes,
-              let authCert = authCertRaw.encodeBase64UrlSafe()?.utf8string else {
+              let base64authCertRaw = authCertRaw.encodeBase64UrlSafe(),
+              let authCert = String(data: base64authCertRaw, encoding: .utf8) else {
             return Fail(error: SecureEnclaveSignatureProviderError.packagingAuthCertificate).eraseToAnyPublisher()
         }
         do {

@@ -23,16 +23,21 @@ import XCTest
 struct RedeemEditAddress: Screen {
     let app: XCUIApplication
 
-    func setPLZ(_ plz: String, file: StaticString = #file, line: UInt = #line) {
-        let textField = textField(by: A11y.pharmacyContact.phaContactAddressZip, file: file, line: line)
+    func setPLZ(_ plz: String, fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        let textField = textField(by: A11y.pharmacyContact.phaContactAddressZip, fileID: fileID, file: file, line: line)
         textField
             .coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.1)) // offset to accomodate for label spacing
             .tap()
         textField.typeText(plz)
     }
 
-    func setPhoneNumber(_ phoneNumber: String, file: StaticString = #file, line: UInt = #line) {
-        let textField = textField(by: A11y.pharmacyContact.phaContactAddressPhone, file: file, line: line)
+    func setPhoneNumber(_ phoneNumber: String, fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        let textField = textField(
+            by: A11y.pharmacyContact.phaContactAddressPhone,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
         textField
             .coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.1)) // offset to accomodate for label spacing
             .tap()
@@ -41,8 +46,8 @@ struct RedeemEditAddress: Screen {
 
     @discardableResult
     @MainActor
-    func tapSave(file: StaticString = #file, line: UInt = #line) async throws -> RedeemScreen {
-        button(by: A11y.pharmacyContact.phaContactBtnSave, file: file, line: line).tap()
+    func tapSave(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) async throws -> RedeemScreen {
+        button(by: A11y.pharmacyContact.phaContactBtnSave, fileID: fileID, file: file, line: line).tap()
 
         // closing the edit address screen takes some time to finish animations
         try await Task.sleep(nanoseconds: NSEC_PER_SEC * 1)

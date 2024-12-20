@@ -75,7 +75,7 @@ final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
         )
 
         // View takes current device Size into account, other devices would record wrong representations
-        assertSnapshots(matching: sut, as: snapshotModiCurrentDevice())
+        assertSnapshots(of: sut, as: snapshotModiCurrentDevice())
     }
 
     func testRedeemMatrixCodeMultiplePrescriptionsViewSnapshot() {

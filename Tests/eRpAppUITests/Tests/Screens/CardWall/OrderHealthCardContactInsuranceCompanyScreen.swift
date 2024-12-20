@@ -24,21 +24,21 @@ struct OrderHealthCardContactInsuranceCompanyScreen<PreviousScreen: Screen>: Scr
     let app: XCUIApplication
     let previous: PreviousScreen
 
-    func tapBackButton(file: StaticString = #file, line: UInt = #line) -> PreviousScreen {
-        button(within: app.navigationBars, by: "Zurück", file: file, line: line).tap()
+    func tapBackButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> PreviousScreen {
+        button(within: app.navigationBars, by: "Zurück", fileID: fileID, file: file, line: line).tap()
 
         return previous
     }
 
-    func phoneBtn(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.orderEGK.ogkBtnPhone, file: file, line: line, checkExistence: false)
+    func phoneBtn(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.orderEGK.ogkBtnPhone, fileID: fileID, file: file, line: line, checkExistence: false)
     }
 
-    func webBtn(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.orderEGK.ogkBtnWeb, file: file, line: line, checkExistence: false)
+    func webBtn(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.orderEGK.ogkBtnWeb, fileID: fileID, file: file, line: line, checkExistence: false)
     }
 
-    func mailBtn(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.orderEGK.ogkBtnMail, file: file, line: line, checkExistence: false)
+    func mailBtn(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.orderEGK.ogkBtnMail, fileID: fileID, file: file, line: line, checkExistence: false)
     }
 }

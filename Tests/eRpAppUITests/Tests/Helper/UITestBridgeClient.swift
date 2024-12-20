@@ -27,41 +27,71 @@ extension Logger {
 // Singleton class that connects to a port of a UITestBridgeServer and sends messages to the UITest
 @MainActor
 class UITestBridgeClient {
-    private static let sharedInst = UITestBridgeClient()
-
-    static func shared() -> UITestBridgeClient {
-        sharedInst
-    }
-
     private let connection: NWConnection
+    private var isConnected = false
 
-    private init() {
+    init() {
+        Logger.bridgeClient.log(level: .debug, "Init")
         connection = NWConnection(to: .hostPort(host: "localhost", port: 9999), using: .tcp)
-        connection.stateUpdateHandler = { newState in
-            switch newState {
-            case .ready:
-                Logger.bridgeClient.log(level: .debug, "Client connected to server")
-            case let .failed(error):
-                Logger.bridgeClient.log(level: .error, "Connection failed with error: \(error)")
-            default:
-                break
+        connection.stateUpdateHandler = { [weak self] newState in
+            Task { @MainActor in
+                self?.handleStateUpdate(newState)
             }
         }
         connection.start(queue: .init(label: "UITestBridgeClient"))
     }
 
-    func sendMessage(_ message: UITestBridgeMessage) {
-        guard let message = try? JSONEncoder().encode(message) else {
+    private func handleStateUpdate(_ newState: NWConnection.State) {
+        switch newState {
+        case .ready:
+            Logger.bridgeClient.log(level: .debug, "Client connected to server")
+            isConnected = true
+        case let .failed(error):
+            Logger.bridgeClient.log(level: .error, "Connection failed with error: \(error)")
+            isConnected = false
+        default:
+            break
+        }
+    }
+
+    func sendMessage(_ message: UITestBridgeMessage) async {
+        Logger.bridgeClient.log(level: .debug, "Send")
+        guard let messageData = try? JSONEncoder().encode(message) else {
             Logger.bridgeClient.log(level: .error, "Error encoding message")
             return
         }
-        connection.send(content: message, completion: .contentProcessed { error in
-            if let error = error {
-                Logger.bridgeClient.log(level: .error, "Error sending message: \(error)")
-            } else {
-                Logger.bridgeClient.log(level: .debug, "Sent message: \(message)")
-            }
-        })
+        Logger.bridgeClient.log(level: .debug, "Wait for Connection")
+
+        await waitForConnection()
+
+        Logger.bridgeClient.log(level: .debug, "Connection established")
+
+        do {
+            try await send(data: messageData)
+            Logger.bridgeClient.log(level: .debug, "Sent message: \(messageData)")
+        } catch {
+            Logger.bridgeClient.log(level: .error, "Error sending message: \(error)")
+        }
+
+        try! await Task.sleep(nanoseconds: 100_000_000)
+    }
+
+    private func waitForConnection() async {
+        while !isConnected {
+            try! await Task.sleep(nanoseconds: 100_000_000) // Sleep for 100 milliseconds
+        }
+    }
+
+    private func send(data: Data) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            connection.send(content: data, completion: .contentProcessed { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            })
+        }
     }
 }
 

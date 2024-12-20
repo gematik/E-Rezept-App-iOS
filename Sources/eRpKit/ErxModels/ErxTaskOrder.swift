@@ -124,7 +124,7 @@ extension ErxTaskOrder {
     }
 }
 
-public enum RedeemOption: String, Codable, Equatable, CaseIterable {
+public enum RedeemOption: String, Codable, Equatable, CaseIterable, Sendable {
     case onPremise
     case delivery
     case shipment

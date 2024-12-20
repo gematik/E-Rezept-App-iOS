@@ -876,6 +876,10 @@ import SwiftUI
     internal static func erxTxtDeletedAt(_ element1: Int) -> StringAsset {
         StringAsset("erx_txt_deleted_at", arguments: [element1])
     }
+    /// Provided %@
+    internal static func erxTxtDispensedAt(_ element1: String) -> StringAsset {
+        StringAsset("erx_txt_dispensed_at_%@", arguments: [element1])
+    }
     /// Expired on %@
     internal static func erxTxtExpiredOn(_ element1: String) -> StringAsset {
         StringAsset("erx_txt_expired_on_%@", arguments: [element1])
@@ -952,6 +956,23 @@ import SwiftUI
     internal static let idpErrNotAvailableInDemoModeRecovery = StringAsset("idp_err_not_available_in_demo_mode_recovery")
     /// Not available in demo mode
     internal static let idpErrNotAvailableInDemoModeText = StringAsset("idp_err_not_available_in_demo_mode_text")
+    /// New features in the app version %@
+    internal static func internMsgChangeLogChip(_ element1: String) -> StringAsset {
+        StringAsset("intern_msg_change_log_chip_%@", arguments: [element1])
+    }
+    /// If this error reoccurs, please reinstall the application
+    internal static let internMsgErrorEmptyOnboardingDate = StringAsset("intern_msg_error_empty_onboarding_date")
+    /// JSON file could not be found
+    internal static let internMsgErrorInvalidUrl = StringAsset("intern_msg_error_invalid_url")
+    /// An error has occurred
+    internal static let internMsgErrorUnknownError = StringAsset("intern_msg_error_unknown_error")
+    /// Welcome to the e-prescription app! With this app you can receive e-prescriptions digitally and send them to a pharmacy of your choice. It is up to you whether you want to reserve the prescription there for collection or have it delivered to your home. Of course you can also manage your family's prescriptions. To receive prescriptions digitally you must register.
+    /// 
+    /// Nice to have you here!
+    /// Your e-prescription app team
+    internal static let internMsgWelcome = StringAsset("intern_msg_welcome")
+    /// 🎉 Welcome!
+    internal static let internMsgWelcomeChip = StringAsset("intern_msg_welcome_chip")
     /// Essential oil
     internal static let kbvCodeDosageFormAeo = StringAsset("kbv_code_dosage_form_aeo")
     /// Ampoules
@@ -2508,11 +2529,13 @@ import SwiftUI
     internal static let prscStatusCompleted = StringAsset("prsc_status_completed")
     /// Will be redeemed for you
     internal static let prscStatusDirectAssigned = StringAsset("prsc_status_direct_assigned")
+    /// Provided
+    internal static let prscStatusDispensed = StringAsset("prsc_status_dispensed")
     /// Defective prescription
     internal static let prscStatusError = StringAsset("prsc_status_error")
     /// Expired
     internal static let prscStatusExpired = StringAsset("prsc_status_expired")
-    /// In redemption
+    /// Is being processed
     internal static let prscStatusInProgress = StringAsset("prsc_status_in_progress")
     /// Redeemable later
     internal static let prscStatusMultiplePrsc = StringAsset("prsc_status_multiple_prsc")
@@ -2816,6 +2839,8 @@ import SwiftUI
     internal static let stgBtnChargeItemShare = StringAsset("stg_btn_charge_item_share")
     /// App security
     internal static let stgBtnDeviceSecurity = StringAsset("stg_btn_device_security")
+    /// Open
+    internal static let stgBtnDonorRegisterAlertOpen = StringAsset("stg_btn_donor_register_alert_open")
     /// Edit
     internal static let stgBtnEditPicture = StringAsset("stg_btn_edit_picture")
     /// take a picture
@@ -2846,6 +2871,12 @@ import SwiftUI
     internal static let stgBtnRegDevicesLoad = StringAsset("stg_btn_reg_devices_load")
     /// E-prescription forum
     internal static let stgConBtnGemmunity = StringAsset("stg_con_btn_gemmunity")
+    /// gesundbund.de
+    internal static let stgConBtnGesundBundDe = StringAsset("stg_con_btn_gesund_bund_de")
+    /// organ donation register
+    internal static let stgConBtnOrganDonor = StringAsset("stg_con_btn_organ_donor")
+    /// Cancel
+    internal static let stgConBtnOrganDonorAlertCancel = StringAsset("stg_con_btn_organ_donor_alert_cancel")
     /// app-feedback@gematik.de
     internal static let stgConFbkMail = StringAsset("stg_con_fbk_mail")
     /// Feedback from the e-prescription app
@@ -2876,6 +2907,8 @@ import SwiftUI
     internal static let stgEdtCardResetPukInput = StringAsset("stg_edt_card_reset_puk_input")
     /// With your PIN you have received an 8-digit PUK from your insurance company.
     internal static let stgEdtCardResetPukInputLabel = StringAsset("stg_edt_card_reset_puk_input_label")
+    /// Explore
+    internal static let stgExpTxtTitle = StringAsset("stg_exp_txt_title")
     /// https://www.das-e-rezept-fuer-deutschland.de/
     internal static let stgLnoLinkContact = StringAsset("stg_lno_link_contact")
     /// Open website
@@ -2898,10 +2931,10 @@ import SwiftUI
     internal static let stgLnoTxtTextNote = StringAsset("stg_lno_txt_text_note")
     /// Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge
     internal static let stgLnoTxtTextResponsible = StringAsset("stg_lno_txt_text_responsible")
-    /// Managing Directors: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge
-    ///  Register court: District Court of Berlin-Charlottenburg
-    ///  Commercial register number: HRB 96351
-    ///  VAT identification number: DE241843684
+    /// Management: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge
+    /// Register court: District Court of Berlin-Charlottenburg
+    /// Commercial Register No.: HRB 96351
+    /// VAT identification number: DE241843684
     internal static let stgLnoTxtTextTaxAndMore = StringAsset("stg_lno_txt_text_taxAndMore")
     /// Contact
     internal static let stgLnoTxtTitleContact = StringAsset("stg_lno_txt_title_contact")
@@ -3141,6 +3174,10 @@ import SwiftUI
     internal static let stgTxtChargeItemSum = StringAsset("stg_txt_charge_item_sum")
     /// Demo mode
     internal static let stgTxtDemoMode = StringAsset("stg_txt_demo_mode")
+    /// You will be redirected to the organ donation register. In order to view and change your organ donation data, you must log in there.
+    internal static let stgTxtDonorRegisterAlertMessage = StringAsset("stg_txt_donor_register_alert_message")
+    /// Open organ donation register?
+    internal static let stgTxtDonorRegisterAlertTitle = StringAsset("stg_txt_donor_register_alert_title")
     /// Background colour
     internal static let stgTxtEditProfileBackgroundSectionTitle = StringAsset("stg_txt_edit_profile_background_section_title")
     /// cost receipts

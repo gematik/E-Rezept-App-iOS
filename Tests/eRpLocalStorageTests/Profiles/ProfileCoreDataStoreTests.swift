@@ -143,7 +143,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         let hasProfileBefore = try store.hasProfile()
         expect(hasProfileBefore) == false
 
-        let profile = try store.createProfile(with: "Test Name")
+        let profile = try store.createProfile(name: "Test Name")
 
         let hasProfile = try store.hasProfile()
         expect(hasProfile) == true
@@ -180,6 +180,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                                      created: profileWithTasks.created,
                                      givenName: profileWithTasks.givenName,
                                      familyName: profileWithTasks.familyName,
+                                     displayName: profileWithTasks.displayName,
                                      insurance: profileWithTasks.insurance,
                                      insuranceId: profileWithTasks.insuranceId,
                                      color: profileWithTasks.color,
@@ -285,6 +286,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         expect(result?.name) == updatedProfile.name
         expect(result?.givenName) == updatedProfile.givenName
         expect(result?.familyName) == updatedProfile.familyName
+        expect(result?.displayName) == updatedProfile.displayName
         expect(result?.insurance) == updatedProfile.insurance
         expect(result?.insuranceId) == updatedProfile.insuranceId
         expect(result?.lastAuthenticated) == updatedProfile.lastAuthenticated
@@ -469,6 +471,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         expect(profile.identifier) == profileWithTasks.identifier
         expect(profile.givenName) == profileWithTasks.givenName
         expect(profile.familyName) == profileWithTasks.familyName
+        expect(profile.displayName) == profileWithTasks.displayName
         expect(profile.insurance) == profileWithTasks.insurance
         expect(profile.erxTasks).to(contain(profileWithTasks.erxTasks))
         cancellable.cancel()

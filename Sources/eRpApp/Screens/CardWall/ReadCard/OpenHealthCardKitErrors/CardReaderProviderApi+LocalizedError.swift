@@ -20,7 +20,8 @@
 import CardReaderProviderApi
 import Foundation
 
-extension CardError: LocalizedError {
+extension CardError: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .securityError(error):
@@ -35,7 +36,7 @@ extension CardError: LocalizedError {
     }
 }
 
-extension APDU.Error: LocalizedError {
+extension APDU.Error: @retroactive LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .commandBodyDataTooLarge:

@@ -55,7 +55,7 @@ extension CardWallReadCardDomain {
                     ButtonState(action: .openHelpView) {
                         .init(L10n.cdwBtnRcHelp)
                     }
-                    ButtonState(role: .cancel, action: .getChallenge) {
+                    ButtonState(role: .cancel, action: .signChallenge) {
                         .init(L10n.cdwBtnRcRetry)
                     }
                 })
@@ -65,7 +65,7 @@ extension CardWallReadCardDomain {
                     ButtonState(action: .openMail(report)) {
                         .init(L10n.cdwBtnRcAlertReport)
                     }
-                    ButtonState(role: .cancel, action: .getChallenge) {
+                    ButtonState(role: .cancel, action: .signChallenge) {
                         .init(L10n.cdwBtnRcRetry)
                     }
                 })
@@ -108,7 +108,7 @@ extension CardWallReadCardDomain {
                 ButtonState(action: .openMail(report)) {
                     .init(L10n.cdwBtnRcAlertReport)
                 }
-                ButtonState(role: .cancel, action: .getChallenge) {
+                ButtonState(role: .cancel, action: .signChallenge) {
                     .init(L10n.cdwBtnRcRetry)
                 }
             })

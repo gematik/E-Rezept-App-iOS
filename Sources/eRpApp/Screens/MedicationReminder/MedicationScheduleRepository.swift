@@ -21,7 +21,8 @@ import eRpKit
 import eRpLocalStorage
 import Foundation
 
-extension MedicationScheduleRepository: DependencyKey {
+extension MedicationScheduleRepository: @retroactive
+DependencyKey {
     public static var liveValue: MedicationScheduleRepository {
         @Dependency(\.medicationScheduleStore) var medicationScheduleStore
         @Dependency(\.notificationScheduler) var notificationScheduler
@@ -64,9 +65,9 @@ extension MedicationScheduleRepository: DependencyKey {
         .init { _ in
             unimplemented(".create not implemented")
         } readAll: {
-            unimplemented(".readAll not implemented")
+            unimplemented(".readAll not implemented", placeholder: [])
         } read: { _ in
-            unimplemented(".read not implemented")
+            unimplemented(".read not implemented", placeholder: nil)
         } delete: { _ in
             unimplemented(".delete not implemented")
         }

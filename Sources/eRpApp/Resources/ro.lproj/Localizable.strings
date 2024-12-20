@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Afișat";
 "erx_txt_claimed_at_%@" = "Asumat %@";
 "erx_txt_current" = "Actual";
+"erx_txt_dispensed_at_%@" = "Furnizat %@";
 "erx_txt_expired_on_%@" = "A expirat pe %@";
 "erx_txt_forced_update_alert_description" = "Optimizați-vă experiența aplicației actualizând aplicația.";
 "erx_txt_forced_update_alert_ignore" = "Poate mai târziu";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "Mesaje noi";
 "idp_err_not_available_in_demo_mode_recovery" = "Ieșiți din modul demo pentru a utiliza funcția.";
 "idp_err_not_available_in_demo_mode_text" = "Nu este disponibil în modul demonstrativ";
+"intern_msg_change_log_chip_%@" = "Ce este nou în versiunea aplicației %@";
+"intern_msg_error_empty_onboarding_date" = "Dacă această eroare reapare, reinstalați aplicația";
+"intern_msg_error_invalid_url" = "Fișierul JSON nu a putut fi găsit";
+"intern_msg_error_unknown_error" = "A apărut o eroare";
+"intern_msg_welcome" = "Bine ați venit la aplicația e-rețetă! Cu această aplicație puteți primi digital rețete electronice și le puteți trimite la o farmacie la alegere. Dacă doriți să rezervați rețeta acolo pentru ridicare sau să vi se livreze acasă, depinde în totalitate de dvs. Desigur, poți gestiona și rețetele familiei tale. Pentru a primi rețetele digital, este necesară înregistrarea.\n\nMă bucur că ești aici!\nEchipa dvs. de aplicație e-rețetă";
+"intern_msg_welcome_chip" = "🎉 Bine ați venit!";
 "kbv_code_dosage_form_aeo" = "Ulei volatil";
 "kbv_code_dosage_form_amp" = "Fiole";
 "kbv_code_dosage_form_apa" = "Perechi de fiole";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Șters";
 "prsc_status_completed" = "Răscumpărat";
 "prsc_status_direct_assigned" = "Va fi răscumpărat pentru tine";
+"prsc_status_dispensed" = "Prevăzut";
 "prsc_status_error" = "Rețetă incorectă";
 "prsc_status_expired" = "Expirat";
-"prsc_status_in_progress" = "În răscumpărare";
+"prsc_status_in_progress" = "Este în curs de procesare";
 "prsc_status_multiple_prsc" = "Rambursabil mai târziu";
 "prsc_status_ready" = "Rambursabil";
 "prsc_status_sent" = "Postat";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "Pentru o privire de ansamblu asupra încasărilor de cost";
 "stg_btn_charge_item_share" = "Trimite";
 "stg_btn_device_security" = "Securitatea aplicației";
+"stg_btn_donor_register_alert_open" = "Deschide";
 "stg_btn_edit_picture" = "Editați | ×";
 "stg_btn_edit_profile_action_camera" = "Fa o fotografie";
 "stg_btn_edit_profile_action_library" = "alege poza";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Salvați";
 "stg_btn_reg_devices_load" = "Inregistreaza-te";
 "stg_con_btn_gemmunity" = "Forumul de prescriptie electronica";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "Registrul donărilor de organe";
+"stg_con_btn_organ_donor_alert_cancel" = "Anula";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback din aplicația e-rețetă";
 "stg_con_hotline_ava" = "Gratuit pentru apelant. Orele de serviciu: Luni - Vineri 8:00 - 20:00, cu excepția sărbătorilor naționale";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "Repetați codul PIN";
 "stg_edt_card_reset_puk_input" = "Introduceți PUK";
 "stg_edt_card_reset_puk_input_label" = "Cu PIN-ul dvs. ați primit un PUK de 8 cifre de la compania dvs. de asigurări.";
+"stg_exp_txt_title" = "Explora";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Deschide site-ul web";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\n Friedrichstr. 136\n 10117 Berlin";
 "stg_lno_txt_text_note" = "Ne străduim să folosim un limbaj echitabil de gen. Dacă observați vreo eroare, ne-am bucura să vă primim un e-mail.";
 "stg_lno_txt_text_responsible" = "Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge";
-"stg_lno_txt_text_taxAndMore" = "Director general: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\n Judecătoria de înregistrare: Judecătoria Berlin-Charlottenburg\n Număr registru comercial: HRB 96351\n Număr de identificare TVA: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Management: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\nJudecătoria de înregistrare: Judecătoria Berlin-Charlottenburg\nNumăr registru comercial: HRB 96351\nNumăr de identificare TVA: DE241843684";
 "stg_lno_txt_title_contact" = "a lua legatura";
 "stg_lno_txt_title_issuer" = "editor";
 "stg_lno_txt_title_note" = "Înștiințare";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Răscumpărat pe";
 "stg_txt_charge_item_sum" = "pretul total";
 "stg_txt_demo_mode" = "Modul demonstrativ";
+"stg_txt_donor_register_alert_message" = "Veți fi redirecționat către registrul donatorilor de organe. Pentru a vizualiza și modifica datele despre donarea de organe, trebuie să vă conectați acolo.";
+"stg_txt_donor_register_alert_title" = "Deschideți registrul donării de organe?";
 "stg_txt_edit_profile_background_section_title" = "culoare de fundal";
 "stg_txt_edit_profile_charge_item_list_section_title" = "chitanțe de cheltuieli";
 "stg_txt_edit_profile_default_name" = "Numele profilului";

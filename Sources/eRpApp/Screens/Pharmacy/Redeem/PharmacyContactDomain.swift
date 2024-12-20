@@ -69,7 +69,7 @@ struct PharmacyContactDomain {
     var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce(core)
-            .ifLet(\.$alertState, action: /Action.alert)
+            .ifLet(\.$alertState, action: \.alert)
     }
 
     // swiftlint:disable:next function_body_length cyclomatic_complexity

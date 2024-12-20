@@ -142,15 +142,18 @@ struct CardWallExtAuthConfirmationDomain {
             return .none
         case .openContactSheet:
             state.contactActionSheet = ConfirmationDialogState<Action.ContactSheet>(
-                title: TextState(L10n.cdwTxtExtauthConfirmContactsheetTitle),
-                buttons: [
-                    .default(
-                        TextState(L10n.cdwTxtExtauthConfirmContactsheetTelephone),
-                        action: .send(.contactByTelephone)
-                    ),
-                    .default(TextState(L10n.cdwTxtExtauthConfirmContactsheetMail), action: .send(.contactByMail)),
-                    .cancel(TextState(L10n.alertBtnClose), action: .send(.none)),
-                ]
+                title: { TextState(L10n.cdwTxtExtauthConfirmContactsheetTitle) },
+                actions: {
+                    ButtonState(action: .send(.contactByTelephone)) {
+                        TextState(L10n.cdwTxtExtauthConfirmContactsheetTelephone)
+                    }
+                    ButtonState(action: .send(.contactByMail)) {
+                        TextState(L10n.cdwTxtExtauthConfirmContactsheetMail)
+                    }
+                    ButtonState(role: .cancel, action: .send(.none)) {
+                        TextState(L10n.alertBtnClose)
+                    }
+                }
             )
             return .none
         case .contactSheet(.presented(.contactByTelephone)):

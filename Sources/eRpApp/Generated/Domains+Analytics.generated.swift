@@ -1297,9 +1297,9 @@ extension MatrixCodeDomain.Destination.State {
     var analyticsName: String {
         switch self {
             case .sharePrescription: 
-                return "sharePrescription"
+                return Analytics.Screens.matrixCode_sharePrescription.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
         }
     }
 }

@@ -317,6 +317,16 @@ struct UnimplementedIDPSession: IDPSession {
         fatalError("asVAUAccessTokenProvider has not been implemented")
     }
 }
+struct UnimplementedInternalCommunicationProtocol: InternalCommunicationProtocol {
+    init() {}
+
+    func load() async throws -> IdentifiedArray<String, InternalCommunication> {
+        fatalError("load has not been implemented")
+    }
+    func loadUnreadInternalCommunicationsCount() -> AsyncThrowingStream<Int, Swift.Error> {
+        fatalError("loadUnreadInternalCommunicationsCount has not been implemented")
+    }
+}
 struct UnimplementedMatrixCodeGenerator: MatrixCodeGenerator {
     init() {}
 
@@ -349,8 +359,8 @@ struct UnimplementedMedicationScheduleStore: MedicationScheduleStore {
 struct UnimplementedModelMigrating: ModelMigrating {
     init() {}
 
-    func startModelMigration(from currentVersion: ModelVersion) -> AnyPublisher<ModelVersion, MigrationError> {
-        fatalError("startModelMigration(from:) has not been implemented")
+    func startModelMigration(from currentVersion: ModelVersion, defaultProfileName: String) -> AnyPublisher<ModelVersion, MigrationError> {
+        fatalError("startModelMigration(from:defaultProfileName:) has not been implemented")
     }
 }
 struct UnimplementedNFCHealthCardPasswordController: NFCHealthCardPasswordController {
@@ -581,17 +591,12 @@ struct UnimplementedResourceHandler: ResourceHandler {
     func open(_ url: URL) -> Void {
         fatalError("open(_:) has not been implemented")
     }
-
-    // Caution! This is manual until Xcode 16 is rolled out.
-#if compiler(>=6.0)
     func open(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any], completionHandler completion: (@MainActor @Sendable (Bool) -> Void)?) -> Void {
         fatalError("open(_:options:completionHandler:) has not been implemented")
     }
-#else
     func open(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any], completionHandler completion: ((Bool) -> Void)?) -> Void {
         fatalError("open(_:options:completionHandler:) has not been implemented")
     }
-#endif
 }
 class UnimplementedRouting: NSObject, Routing {
     override init() {}
@@ -713,6 +718,11 @@ class UnimplementedUserDataStore: NSObject, UserDataStore {
         set(value) { fatalError("") }
     }
 
+    var onboardingDate: AnyPublisher<Date?, Never> {
+        get { fatalError("") }
+        set(value) { fatalError("") }
+    }
+
     var onboardingVersion: AnyPublisher<String?, Never> {
         get { fatalError("") }
         set(value) { fatalError("") }
@@ -764,6 +774,16 @@ class UnimplementedUserDataStore: NSObject, UserDataStore {
         set(value) { fatalError("") }
     }
 
+    var readInternalCommunications: AnyPublisher<[String], Never> {
+        get { fatalError("") }
+        set(value) { fatalError("") }
+    }
+
+    var hideWelcomeMessage: AnyPublisher<Bool, Never> {
+        get { fatalError("") }
+        set(value) { fatalError("") }
+    }
+
     var configuration: AnyPublisher<AppConfiguration, Never> {
         get { fatalError("") }
         set(value) { fatalError("") }
@@ -774,6 +794,9 @@ class UnimplementedUserDataStore: NSObject, UserDataStore {
         set(value) { fatalError("") }
     }
 
+    func set(onboardingDate: Date?) -> Void {
+        fatalError("set(onboardingDate:) has not been implemented")
+    }
     func set(hideOnboarding: Bool) -> Void {
         fatalError("set(hideOnboarding:) has not been implemented")
     }
@@ -800,6 +823,12 @@ class UnimplementedUserDataStore: NSObject, UserDataStore {
     }
     func wipeAll() -> Void {
         fatalError("wipeAll has not been implemented")
+    }
+    func markInternalCommunicationAsRead(messageId: String) -> Void {
+        fatalError("markInternalCommunicationAsRead(messageId:) has not been implemented")
+    }
+    func set(hideWelcomeMessage: Bool) -> Void {
+        fatalError("set(hideWelcomeMessage:) has not been implemented")
     }
 }
 struct UnimplementedUserProfileService: UserProfileService {

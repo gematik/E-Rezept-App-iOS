@@ -43,6 +43,15 @@ public class UserDefaultsStore: UserDataStore {
         userDefaults.shouldHideOnboarding
     }
 
+    public var onboardingDate: AnyPublisher<Date?, Never> {
+        userDefaults.publisher(for: \UserDefaults.onboardingDate)
+            .eraseToAnyPublisher()
+    }
+
+    public func set(onboardingDate: Date?) {
+        userDefaults.onboardingDate = onboardingDate
+    }
+
     public var onboardingVersion: AnyPublisher<String?, Never> {
         userDefaults.publisher(for: \UserDefaults.onboardingVersion)
             .eraseToAnyPublisher()
@@ -153,6 +162,24 @@ public class UserDefaultsStore: UserDataStore {
         get { userDefaults.hideWelcomeDrawer }
         set { userDefaults.hideWelcomeDrawer = newValue }
     }
+
+    // MARK: - Messages
+
+    public var readInternalCommunications: AnyPublisher<[String], Never> {
+        userDefaults.publisher(for: \UserDefaults.readInternalCommunications).eraseToAnyPublisher()
+    }
+
+    public func markInternalCommunicationAsRead(messageId: String) {
+        userDefaults.readInternalCommunications.append(messageId)
+    }
+
+    public var hideWelcomeMessage: AnyPublisher<Bool, Never> {
+        userDefaults.publisher(for: \UserDefaults.hideWelcomeMessage).eraseToAnyPublisher()
+    }
+
+    public func set(hideWelcomeMessage: Bool) {
+        userDefaults.hideWelcomeMessage = hideWelcomeMessage
+    }
 }
 
 extension UserDefaults {
@@ -182,6 +209,12 @@ extension UserDefaults {
     public static let kAppStartCounter = "kAppStartCounter"
     ///
     public static let kHideWelcomeDrawer = "kHideWelcomeDrawer"
+    ///
+    public static let kHasReadInternalCommunications = "kHasReadInternalCommunications"
+    ///
+    public static let kOnboardingDate = "kOnboardingDate"
+    ///
+    public static let kHideWelcomeMessage = "kHideWelcomeMessage"
 
     @objc var serverEnvironmentConfiguration: String? {
         get {
@@ -252,9 +285,32 @@ extension UserDefaults {
         set { set(newValue, forKey: Self.kAppInstallSent) }
     }
 
-    ///
+    /// Store if welcome drawer should be hidden
     @objc public var hideWelcomeDrawer: Bool {
         get { bool(forKey: Self.kHideWelcomeDrawer) }
         set { set(newValue, forKey: Self.kHideWelcomeDrawer) }
+    }
+
+    /// Store for all read internal messages (Id)
+    @objc public var readInternalCommunications: [String] {
+        get {
+            guard let readIds = stringArray(forKey: Self.kHasReadInternalCommunications) else {
+                return []
+            }
+            return readIds
+        }
+        set { set(newValue, forKey: Self.kHasReadInternalCommunications) }
+    }
+
+    /// Store for the date when the onboarding finished
+    @objc public var onboardingDate: Date? {
+        get { object(forKey: Self.kOnboardingDate) as? Date }
+        set { set(newValue, forKey: Self.kOnboardingDate) }
+    }
+
+    /// Store if welcome message should be hidden
+    @objc public var hideWelcomeMessage: Bool {
+        get { bool(forKey: Self.kHideWelcomeMessage) }
+        set { set(newValue, forKey: Self.kHideWelcomeMessage) }
     }
 }

@@ -25,7 +25,8 @@ import XCTestDynamicOverlay
 
 import eRpKit
 
-extension FHIRDateFormatter: DependencyKey {
+extension FHIRDateFormatter: @retroactive
+DependencyKey {
     public static let liveValue = FHIRDateFormatter.shared
 
     public static let testValue = FHIRDateFormatter.shared
@@ -85,6 +86,26 @@ extension DependencyValues {
     var ordersRepository: OrdersRepository {
         get { self[OrdersRepositoryDependency.self] ?? changeableUserSessionContainer.userSession.ordersRepository }
         set { self[OrdersRepositoryDependency.self] = newValue }
+    }
+}
+
+struct InternalCommunicationProtocolDependency: DependencyKey {
+    static let liveValue: InternalCommunicationProtocol = {
+        @Dependency(\.userDataStore) var userDataStore
+        @Dependency(\.internalCommunicationsRepository) var internalCommunicationsRepository
+        return DefaultInternalCommunication(userDataStore: userDataStore,
+                                            internalCommunicationsRepository: internalCommunicationsRepository)
+    }()
+
+    static var previewValue: InternalCommunicationProtocol = DummyInternalCommunicationProtocol()
+
+    static var testValue: InternalCommunicationProtocol = UnimplementedInternalCommunicationProtocol()
+}
+
+extension DependencyValues {
+    var internalCommunicationProtocol: InternalCommunicationProtocol {
+        get { self[InternalCommunicationProtocolDependency.self] }
+        set { self[InternalCommunicationProtocolDependency.self] = newValue }
     }
 }
 
@@ -199,7 +220,8 @@ extension DependencyValues {
     }
 }
 
-extension ProfileCoreDataStore: DependencyKey {
+extension ProfileCoreDataStore: @retroactive
+DependencyKey {
     public static let liveValue = ProfileCoreDataStore(
         coreDataControllerFactory: CoreDataControllerFactoryDependency.liveValue
     )

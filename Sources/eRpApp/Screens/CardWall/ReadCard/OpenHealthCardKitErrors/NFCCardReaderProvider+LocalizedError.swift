@@ -20,7 +20,8 @@
 import CoreNFC
 import NFCCardReaderProvider
 
-extension NFCTagReaderSession.Error: LocalizedError {
+extension NFCTagReaderSession.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .couldNotInitializeSession:
@@ -52,7 +53,8 @@ extension NFCTagReaderSession.Error: LocalizedError {
     }
 }
 
-extension NFCCardError: LocalizedError {
+extension NFCCardError: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .noCardPresent:
@@ -82,7 +84,8 @@ extension NFCCardError: LocalizedError {
     }
 }
 
-extension CoreNFCError: LocalizedError {
+extension CoreNFCError: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .tagConnectionLost:

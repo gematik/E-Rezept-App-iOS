@@ -50,6 +50,7 @@ struct AppConfiguration: Equatable {
                    erp: Server?,
                    base: String = "https://this.is.the.inner.vau.request/",
                    apoVzd: Server?,
+                   organDonationUrl: URL?,
                    clientId: String,
                    userAgent: String? = nil) {
         self.clientId = clientId
@@ -68,6 +69,7 @@ struct AppConfiguration: Equatable {
         erpAdditionalHeader = sharedHeader.merging(erp.header) { _, new in new }
         self.apoVzd = apoVzd.url
         apoVzdAdditionalHeader = sharedHeader.merging(apoVzd.header) { _, new in new }
+        self.organDonationUrl = organDonationUrl
     }
 
     let name: String
@@ -100,6 +102,8 @@ struct AppConfiguration: Equatable {
     // apo vzd
     let apoVzd: URL
     let apoVzdAdditionalHeader: [String: String]
+
+    let organDonationUrl: URL?
 
     struct Server {
         let url: URL
@@ -237,6 +241,17 @@ let APOVZD_PU = AppConfiguration.Server(
     url: AppConfiguration.Environment.APOVZD_PU_URL_TEMP,
     header: ["X-API-KEY": AppConfiguration.Environment.APOVZD_PU_X_API_KEY]
 )
+
+// MARK: - ## OrganDonation
+
+#if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_TU || DEFAULT_ENVIRONMENT_RU || DEFAULT_ENVIRONMENT_RU_DEV
+
+let ORGAN_DONATION_REGISTER_RU_URL = URL(string: AppConfiguration.Environment.ORGAN_DONATION_REGISTER_RU)
+
+#endif
+
+let ORGAN_DONATION_REGISTER_PU_URL = URL(string: AppConfiguration.Environment.ORGAN_DONATION_REGISTER_PU)
+
 // swiftlint:enable identifier_name
 
 // MARK: - # Environments -
@@ -249,7 +264,8 @@ let environmentTU: AppConfiguration? = AppConfiguration(
     idp: IDP_RISE_TU,
     erp: ERP_IBM_TU,
     apoVzd: APOVZD_RU,
-    clientId: "GEMgemaERevbaI2diOST"
+    organDonationUrl: ORGAN_DONATION_REGISTER_RU_URL,
+    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_TU
 )
 
 #endif
@@ -262,7 +278,8 @@ let environmentRU: AppConfiguration? = AppConfiguration(
     idp: IDP_RISE_RU,
     erp: ERP_IBM_RU,
     apoVzd: APOVZD_RU,
-    clientId: "GEMgemaERekavvsdiOSR"
+    organDonationUrl: ORGAN_DONATION_REGISTER_RU_URL,
+    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_RU
 )
 
 #endif
@@ -276,7 +293,8 @@ let environmentRUDEV: AppConfiguration? = AppConfiguration(
     idpDefaultScopes: ["e-rezept-dev", "openid"],
     erp: ERP_IBM_RU_DEV,
     apoVzd: APOVZD_RU,
-    clientId: "GEMgemaERekavvsdiOSR"
+    organDonationUrl: ORGAN_DONATION_REGISTER_RU_URL,
+    clientId: AppConfiguration.Environment.ERP_CLIENT_ID_RU_DEV
 )
 
 #endif
@@ -288,8 +306,9 @@ let environmentPU: AppConfiguration = {
         idp: IDP_RISE_PU,
         erp: ERP_IBM_PU,
         apoVzd: APOVZD_PU,
+        organDonationUrl: ORGAN_DONATION_REGISTER_PU_URL,
         // [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
-        clientId: "GEMgemaERe3zGBPBiOSP"
+        clientId: AppConfiguration.Environment.ERP_CLIENT_ID_PU
     ) else {
         fatalError(
             // swiftlint:disable:next line_length

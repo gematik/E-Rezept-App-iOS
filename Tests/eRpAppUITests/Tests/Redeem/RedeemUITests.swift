@@ -27,6 +27,7 @@ final class RedeemUITests: XCTestCase {
         super.tearDown()
     }
 
+    @MainActor
     override func setUp() {
         super.setUp()
 
@@ -88,6 +89,75 @@ final class RedeemUITests: XCTestCase {
         if app.buttons["Später"].exists {
             app.buttons["Später"].tap()
         }
+    }
+
+    @MainActor
+    func testRedeemChecksForInProgressPrescriptions() async throws {
+        let bridge = UITestBridgeClient()
+
+        let redeemScreen = TabBarScreen(app: app)
+            .tapPrescriptionsTab()
+            .tapRedeem()
+            .tapRedeemRemote()
+            .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
+            .tapRedeem()
+
+        await bridge.sendMessage(.scenarioStep(1))
+
+        let editAdressScreen = redeemScreen
+            .tapEditAddress()
+
+        editAdressScreen.setPhoneNumber("1234567890")
+        try await editAdressScreen.tapSave()
+
+        redeemScreen.redeemButton().tap()
+
+        let alert = app.alerts["Rezept nicht einlösbar"]
+        expect(alert.waitForExistence(timeout: 1)).to(beTrue())
+        let alertButtonA = alert.buttons["Ohne dieses Rezept fortfahren"]
+        expect(alertButtonA.exists).to(beTrue())
+        alertButtonA.tap()
+
+        let successScreen = SuccessScreen(app: app)
+        try await successScreen.tapClose()
+    }
+
+    @MainActor
+    func testRedeemChecksForInProgressPrescriptionsB() async throws {
+        let bridge = UITestBridgeClient()
+
+        let redeemScreen = TabBarScreen(app: app)
+            .tapPrescriptionsTab()
+            .tapRedeem()
+            .tapRedeemRemote()
+            .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
+            .tapRedeem()
+
+        await bridge.sendMessage(.scenarioStep(1))
+
+        let editAdressScreen = redeemScreen
+            .tapEditAddress()
+
+        editAdressScreen.setPhoneNumber("1234567890")
+        try await editAdressScreen.tapSave()
+
+        redeemScreen.redeemButton().tap()
+
+        let alert = app.alerts["Rezept nicht einlösbar"]
+        expect(alert.waitForExistence(timeout: 1)).to(beTrue())
+        let alertButtonA = alert.buttons["Abbrechen"]
+        expect(alertButtonA.exists).to(beTrue())
+        alertButtonA.tap()
+
+        await bridge.sendMessage(.scenarioStep(2))
+
+        redeemScreen.redeemButton().tap()
+
+        let alertB = app.alerts["Rezept nicht einlösbar"]
+        expect(alertB.waitForExistence(timeout: 1)).to(beTrue())
+        let alertButtonB = alert.buttons["Bestellung verwerfen"]
+        expect(alertButtonB.exists).to(beTrue())
+        alertButtonB.tap()
     }
 
     @MainActor

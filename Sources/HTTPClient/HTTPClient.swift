@@ -45,6 +45,19 @@ public protocol HTTPClient {
     func send(request: URLRequest, interceptors: [Interceptor], redirect handler: RedirectHandler?)
         -> AnyPublisher<HTTPResponse, HTTPClientError>
 
+    /// Send the given request. The request will be processed by the list of `Interceptors`.
+    ///
+    /// - Parameter request: The request to be (modified and) sent.
+    /// - Parameter interceptors: per request interceptors.
+    /// - Parameter handler: handler that should be called in case of redirect.
+    /// - Note: Only `HTTPClientError`s are supposed to be thrown.
+    /// - Returns: The response as `HTTPResponse`
+    func sendAsync(
+        request: URLRequest,
+        interceptors: [Interceptor],
+        redirect handler: RedirectHandler?
+    ) async throws -> HTTPResponse
+
     /// List of all active interceptors of the HTTP client.
     var interceptors: [Interceptor] { get }
 }
@@ -65,6 +78,25 @@ extension HTTPClient {
     /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
     public func send(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         send(request: request, interceptors: [])
+    }
+
+    /// Send the given request. The request will be processed by the list of `Interceptors`.
+    ///
+    /// - Parameter request: The request to be (modified and) sent.
+    /// - Parameter interceptors: per request interceptors.
+    /// - Note: Only `HTTPClientError`s are supposed to be thrown.
+    /// - Returns: The response as `HTTPResponse`
+    public func sendAsync(request: URLRequest, interceptors: [Interceptor]) async throws -> HTTPResponse {
+        try await sendAsync(request: request, interceptors: interceptors, redirect: nil)
+    }
+
+    /// Send the given request. The request will be processed by the list of `Interceptors`.
+    ///
+    /// - Parameter request: The request to be (modified and) sent.
+    /// - Note: Only `HTTPClientError`s are supposed to be thrown.
+    /// - Returns: The response as `HTTPResponse`
+    public func sendAsync(request: URLRequest) async throws -> HTTPResponse {
+        try await sendAsync(request: request, interceptors: [])
     }
 }
 

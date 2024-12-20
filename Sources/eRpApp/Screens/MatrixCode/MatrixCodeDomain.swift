@@ -84,7 +84,7 @@ struct MatrixCodeDomain {
 
     @Reducer(state: .equatable, action: .equatable)
     enum Destination {
-        // sourcery: AnalyticsScreen = matrixCode_shareSheet
+        // sourcery: AnalyticsScreen = matrixCode_sharePrescription
         case sharePrescription(ShareSheetDomain)
         // sourcery: AnalyticsScreen = alert
         @ReducerCaseEphemeral

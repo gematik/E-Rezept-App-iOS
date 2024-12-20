@@ -44,6 +44,7 @@ protocol NFCSignatureProvider {
 }
 
 // sourcery: CodedError = "004"
+@CasePathable
 enum NFCSignatureProviderError: Error {
     // sourcery: errorCode = "01"
     /// Error while establishing a connection to the card
@@ -374,7 +375,7 @@ final class EGKSignatureProvider: NFCSignatureProvider {
                         with: jwtSigner,
                         certificate: cert
                     )
-                    .async(/NFCSignatureProviderError.secureEnclaveError)
+                    .async(\NFCSignatureProviderError.Cases.secureEnclaveError)
                 } catch let error as CoreNFCError {
                     return .failure(.nfcHealthCardSession(.coreNFC(error)))
                 } catch {

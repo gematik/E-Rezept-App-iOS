@@ -281,13 +281,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
-    func testReadCardViewStep1() {
-        let sut = CardWallReadCardView(store: readCardStore(for: .retrievingChallenge(.loading)))
-
-        assertSnapshots(of: sut, as: snapshotModiOnDevices())
-    }
-
-    func testReadCardViewFailedStep2() {
+    func testReadCardViewFailedSigningChallenge() {
         let sut =
             CardWallReadCardView(
                 store: readCardStore(
@@ -300,7 +294,7 @@ final class CardWallSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }
 
-    func testReadCardViewStep3() {
+    func testReadCardViewVerifying() {
         let sut = CardWallReadCardView(store: readCardStore(for: .verifying(.loading)))
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())

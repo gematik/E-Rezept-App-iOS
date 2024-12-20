@@ -41,4 +41,10 @@ public class PassThroughChain: Chain {
             .setFailureType(to: HTTPClientError.self)
             .eraseToAnyPublisher()
     }
+
+    public func proceedAsync(request: URLRequest) async -> HTTPResponse {
+        incomingProceedRequests.append(request)
+        let fallback = HTTPResponse(data: responseData, response: response, status: statusCode)
+        return httpResponse ?? fallback
+    }
 }

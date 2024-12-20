@@ -122,9 +122,6 @@ internal enum A11y {
       static let ctlBtnSearchBarDeleteText = "ctl_btn_search_bar_delete_text"
       static let ctlBtnSearchBarCancel = "ctl_btn_search_bar_cancel"
   }
-    internal enum textfieldwithdelete {
-      static let ctlBtnTextfieldDelete = "ctl_btn_textfield_delete"
-  }
     internal enum tooltips {
       static let ctlTooltipContainer = "ctl_tooltip_container"
   }
@@ -252,6 +249,8 @@ internal enum A11y {
       static let ordDetailTitle = "ord_detail_title"
       static let ordDetailTxtMsgList = "ord_detail_txt_msg_list"
       static let ordDetailTxtMedList = "ord_detail_txt_med_list"
+      static let ordDetailBtnLink = "ord_detail_btn_link"
+      static let ordDetailBtnDmc = "ord_detail_btn_dmc"
       static let ordDetailBtnContact = "ord_detail_btn_contact"
       static let ordDetailBtnContactMap = "ord_detail_btn_contact_map"
       static let ordDetailBtnContactPhone = "ord_detail_btn_contact_phone"
@@ -264,6 +263,7 @@ internal enum A11y {
       static let pucTxtTitle = "puc_txt_title"
       static let pucTxtSubtitle = "puc_txt_subtitle"
       static let pucTxtHrCode = "puc_txt_hrCode"
+      static let pucBtnClose = "puc_btn_close"
   }
     }
     internal enum orderEGK {
@@ -591,6 +591,7 @@ internal enum A11y {
       static let stgConTxtFootnote = "stg_con_txt_footnote"
       static let stgConTxtMail = "stg_con_txt_mail"
       static let stgConTxtSurvey = "stg_con_txt_survey"
+      static let stgConBtnOrganDonor = "stg_con_btn_organ_donor"
   }
     internal enum createPassword {
       static let cpwBtnSave = "cpw_btn_save"
@@ -644,6 +645,12 @@ internal enum A11y {
       static let stgEppBtnChooseType = "stg_epp_btn_choose_type"
       static let stgEppBtnActionCamera = "stg_epp_btn_action_camera"
       static let stgEppBtnActionLibrary = "stg_epp_btn_action_library"
+  }
+    internal enum explore {
+      static let stgConHeaderExplore = "stg_con_header_explore"
+      static let stgConBtnOrganDonor = "stg_con_btn_organ_donor"
+      static let stgConBtnGemmunity = "stg_con_btn_gemmunity"
+      static let stgConBtnGesundbundde = "stg_con_btn_gesundbundde"
   }
     internal enum foss {
       static let stgDprTxtFoss = "stg_dpr_txt_foss"

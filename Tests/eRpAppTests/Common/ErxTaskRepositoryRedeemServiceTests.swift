@@ -17,7 +17,6 @@
 //
 
 import Combine
-import DataKit
 import Dependencies
 @testable import eRpFeatures
 import eRpKit
@@ -220,7 +219,6 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
 
-        var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
         withDependencies { dependencies in
             dependencies.date = .constant(now)
         } operation: {

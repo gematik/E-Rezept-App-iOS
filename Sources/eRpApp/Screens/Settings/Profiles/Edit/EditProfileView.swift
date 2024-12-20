@@ -53,20 +53,26 @@ struct EditProfileView: View {
                         Text(L10n.stgBtnEditPicture)
                     }
 
-                    SingleElementSectionContainer(footer: {
-                        WithPerceptionTracking {
-                            if store.name.lengthOfBytes(using: .utf8) == 0 {
-                                EmptyProfileError()
+                    SingleElementSectionContainer(
+                        footer: {
+                            WithPerceptionTracking {
+                                if store.name.lengthOfBytes(using: .utf8) == 0 {
+                                    EmptyProfileError()
+                                }
                             }
+                        },
+                        content: {
+                            TextField(text: $store.name) {
+                                Text(L10n.stgTxtEditProfileNamePlaceholder.key, bundle: .module)
+                            }
+                            .padding()
+                            .font(Font.body)
+                            .foregroundColor(Color(.label))
+                            .accessibility(label: Text(L10n.stgTxtEditProfileNamePlaceholder.key, bundle: .module))
+                            .animation(.easeInOut, value: store.name)
+                            .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileNameInput)
                         }
-                    }, content: {
-                        TextFieldWithDelete(
-                            title: L10n.stgTxtEditProfileNamePlaceholder.key,
-                            text: $store.name
-                        )
-                        .animation(.easeInOut, value: store.name)
-                        .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileNameInput)
-                    })
+                    )
 
                     ConnectedProfile(store: store)
 

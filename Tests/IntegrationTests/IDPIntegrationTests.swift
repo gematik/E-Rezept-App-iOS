@@ -181,7 +181,7 @@ final class IDPIntegrationTests: XCTestCase {
 
     func testBiometrieFlow() throws {
         let keyIdentifier = try! generateSecureRandom(length: 32)
-        let keyTag = keyIdentifier.encodeBase64UrlSafeIntTest()!.utf8string!
+        let keyTag = String(data: keyIdentifier.encodeBase64UrlSafeIntTest()!, encoding: .utf8)!
         let privateKeyContainer: PrivateKeyContainer
 
         do {

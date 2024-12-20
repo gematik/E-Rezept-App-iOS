@@ -42,7 +42,7 @@ extension AlertState {
 
         var actionsWithCancel = actions()
         if !actionsWithCancel.contains(where: { $0.role == .cancel }) {
-            actionsWithCancel.insert(.cancel(TextState(L10n.alertBtnOk)), at: 0)
+            actionsWithCancel.insert(.init(role: .cancel) { TextState(L10n.alertBtnOk) }, at: 0)
         }
 
         self.init(

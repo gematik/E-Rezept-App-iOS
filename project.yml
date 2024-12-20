@@ -5,7 +5,7 @@ options:
   developmentLanguage: en-GB
   useBaseInternationalization: false
   deploymentTarget:
-    macOS: 12.0
+    macOS: 13.0
     iOS: 16.0
 schemes:
   UITests_iOS:
@@ -110,8 +110,7 @@ packages:
     path: ./
   Nimble:
     url: https://github.com/Quick/Nimble
-    majorVersion: 9.2.0
-    # majorVersion: 10.0.0
+    majorVersion: 13.0.0
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
     majorVersion: 1.16.2

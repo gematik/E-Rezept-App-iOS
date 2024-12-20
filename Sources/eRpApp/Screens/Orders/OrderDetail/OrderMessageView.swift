@@ -19,15 +19,16 @@
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import Foundation
 import Perception
 import SwiftUI
 import UIKit
 
 struct OrderMessageView: View {
     let store: StoreOf<OrderDetailDomain>
-    let timelineEntry: Order.TimelineEntry
+    let timelineEntry: TimelineEntry
     var style: Indicator.Style = .middle
-
+    @State var calculatedHeight = CGFloat(1)
     @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
     var body: some View {
@@ -44,33 +45,42 @@ struct OrderMessageView: View {
                     .foregroundColor(Colors.systemLabel)
                     .padding(.horizontal)
 
-                Text(timelineEntry.formattedText)
-                    .contextMenu(ContextMenu {
-                        Button(L10n.orderTxtCopyToClipboard) {
-                            UIPasteboard.general.string = timelineEntry.text
+                if let chipText = timelineEntry.chipText {
+                    Text(chipText)
+                        .font(Font.caption)
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(Colors.systemLabel)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Colors.primary100)
+                        .cornerRadius(16)
+                        .padding(.horizontal)
+                }
+
+                UIKitTextView(attributedString: timelineEntry.formattedText,
+                              calculatedHeight: $calculatedHeight) { url in
+                    switch timelineEntry {
+                    case .dispReq:
+                        if let action = timelineEntry.actions.first?.action {
+                            store.send(action)
                         }
-                    })
-                    .accentColor(Colors.primary)
-                    .accessibility(identifier: A11y.orderDetail.message.msgTxtTitle)
-                    .font(Font.subheadline)
-                    .multilineTextAlignment(.leading)
-                    .padding(.horizontal)
-                    .foregroundColor(Colors.systemLabelSecondary)
-                    // handle inline link action for dispReq and reply entries
-                    .environment(\.openURL, OpenURLAction { url in
-                        switch timelineEntry {
-                        case .dispReq:
-                            if let action = timelineEntry.actions.first?.action {
-                                store.send(action)
-                            }
-                            return .handled
-                        case .reply:
-                            store.send(.openPhoneAppWith(url: url))
-                            return .handled
-                        case .chargeItem:
-                            return .systemAction
-                        }
-                    })
+                    case .reply:
+                        store.send(.openPhoneAppWith(url: url))
+                    case .chargeItem,
+                         .internalCommunication:
+                        // cases have no custom URLs
+                        store.send(.openUrl(url: url))
+                    }
+                }
+                .frame(height: calculatedHeight)
+                .contextMenu(ContextMenu {
+                    Button(L10n.orderTxtCopyToClipboard) {
+                        UIPasteboard.general.string = timelineEntry.text
+                    }
+                })
+                .accessibilityElement(children: .contain)
+                .accessibility(identifier: A11y.orderDetail.message.msgTxtTitle)
+                .padding(.horizontal)
 
                 if case .dispReq = timelineEntry {
                     // ignore action here since it's used as inline text link
@@ -89,6 +99,7 @@ struct OrderMessageView: View {
                             .padding(.horizontal)
                             .foregroundColor(Colors.primary600)
                         }
+                        .accessibilityIdentifier(timelineEntry.accessibilityIdentifier)
                     }
                 }
 
@@ -100,11 +111,12 @@ struct OrderMessageView: View {
                         .padding(.bottom)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .fixedSize(horizontal: false, vertical: true)
         }
-        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+        .frame(minWidth: 0, maxWidth: .infinity)
         .fixedSize(horizontal: false, vertical: true)
-        .padding(.leading)
+        .padding(.horizontal)
     }
 
     struct Indicator: View {
@@ -185,6 +197,19 @@ struct OrderMessageView_Previews: PreviewProvider {
         VStack(spacing: 0) {
             OrderMessageView(
                 store: OrderDetailDomain.Dummies.store,
+                timelineEntry: TimelineEntry.internalCommunication(
+                    InternalCommunication.Message(
+                        id: "12431234",
+                        timestamp: Date(),
+                        text: "Some change log text and explanations 1.27.0",
+                        version: "1.27.0"
+                    )
+                ),
+                style: .first
+            )
+
+            OrderMessageView(
+                store: OrderDetailDomain.Dummies.store,
                 timelineEntry: .reply(
                     ErxTask.Communication(
                         identifier: "4",
@@ -195,8 +220,7 @@ struct OrderMessageView_Previews: PreviewProvider {
                         timestamp: "2021-05-29T10:59:37.098245933+00:00",
                         payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"delivery\",\"info_text\": \"Your prescription is on the way. Make sure you are at home. We will not come back and bring you more drugs! Just kidding ;)\", \"url\":\"https://www.tree.fm/forest/33\"}" // swiftlint:disable:this line_length
                     )
-                ),
-                style: .first
+                )
             )
 
             OrderMessageView(
@@ -267,5 +291,70 @@ struct OrderMessageView_Previews: PreviewProvider {
                                                          fhirData: Data()))
             )
         }
+    }
+}
+
+struct UIKitTextView: UIViewRepresentable {
+    private var attributedString: NSMutableAttributedString
+    @Binding private var calculatedHeight: CGFloat
+    var onLinkTap: (URL) -> Void
+
+    init(attributedString: AttributedString, calculatedHeight: Binding<CGFloat>, onLinkTap: @escaping (URL) -> Void) {
+        _calculatedHeight = calculatedHeight
+        let result = NSMutableAttributedString(attributedString)
+        result.addAttribute(.font,
+                            value: UIFont.monospacedDigitSystemFont(ofSize: 16, weight: .regular),
+                            range: NSRange(location: 0, length: result.length))
+        result.addAttribute(.foregroundColor,
+                            value: UIColor.secondaryLabel,
+                            range: NSRange(location: 0, length: result.length))
+        self.attributedString = result
+        self.onLinkTap = onLinkTap
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        textView.isScrollEnabled = false
+        textView.delegate = context.coordinator
+        textView.attributedText = attributedString
+        textView.isEditable = false
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.anchorPoint = .zero
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context _: Context) {
+        let newSize = uiView.sizeThatFits(CGSize(width: uiView.frame.width,
+                                                 height: .greatestFiniteMagnitude))
+
+        guard calculatedHeight != newSize.height else { return }
+
+        DispatchQueue.main.async { $calculatedHeight.wrappedValue = newSize.height }
+    }
+
+    class Coordinator: NSObject, UITextViewDelegate {
+        var parent: UIKitTextView
+
+        init(parent: UIKitTextView) {
+            self.parent = parent
+        }
+
+        func textView(_: UITextView, shouldInteractWith URL: URL, in _: NSRange,
+                      interaction _: UITextItemInteraction) -> Bool {
+            if URL.absoluteString.hasPrefix("https://") {
+                // return true when normal https link
+                return true
+            } else {
+                // handle custom link
+                parent.onLinkTap(URL)
+                return false
+            }
+        }
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
     }
 }

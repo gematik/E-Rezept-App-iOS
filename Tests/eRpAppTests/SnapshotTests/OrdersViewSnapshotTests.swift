@@ -28,7 +28,7 @@ final class OrdersViewSnapshotTests: ERPSnapshotTestCase {
     func testEmptyOdersView() {
         let sut = OrdersView(
             store: StoreOf<OrdersDomain>(
-                initialState: OrdersDomain.State(orders: [])
+                initialState: OrdersDomain.State(communicationMessage: [])
 
             ) {
                 EmptyReducer()

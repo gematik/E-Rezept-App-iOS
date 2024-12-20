@@ -24,11 +24,13 @@ struct RedeemEditPrescriptionListScreen: Screen {
     let app: XCUIApplication
 
     @discardableResult
-    func cellForPrescriptionNamed(_ name: String, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: name, file: file, line: line)
+    func cellForPrescriptionNamed(_ name: String, fileID: String = #fileID, file: String = #filePath,
+                                  line: UInt = #line) -> XCUIElement {
+        button(by: name, fileID: fileID, file: file, line: line)
     }
 
-    func tapSave(file: StaticString = #file, line: UInt = #line) {
-        button(by: A11y.pharmacyPrescriptionList.phaPrescriptionListBtnSave, file: file, line: line).tap()
+    func tapSave(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        button(by: A11y.pharmacyPrescriptionList.phaPrescriptionListBtnSave, fileID: fileID, file: file, line: line)
+            .tap()
     }
 }

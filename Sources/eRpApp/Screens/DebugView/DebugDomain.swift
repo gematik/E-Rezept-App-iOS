@@ -18,12 +18,11 @@
 
 import Combine
 import ComposableArchitecture
-import DataKit
 import eRpKit
 import Foundation
 import IDP
 
-// swiftlint:disable type_body_length
+// swiftlint:disable type_body_length file_length
 @Reducer
 struct DebugDomain {
     @ObservableState
@@ -31,6 +30,7 @@ struct DebugDomain {
         var trackingOptIn: Bool
 
         #if ENABLE_DEBUG_VIEW
+        var localTasks: [ErxTask] = []
         var hideOnboarding = true
 
         var hideCardWallIntro = true
@@ -92,6 +92,10 @@ struct DebugDomain {
         case hideCardWallIntroReceived(Bool)
         case resetCanButtonTapped
         case deleteKeyAndEGKAuthCertForBiometric
+        case loadAllLocalTasksReceived(Result<[ErxTask], ErxRepositoryError>)
+        case deleteAllTasks
+        case deleteAllTasksReceived(String?)
+        case markCommunicationsAsRead
         case deleteSSOToken
         case falsifySSOToken
         case resetOcspAndCertListButtonTapped
@@ -248,6 +252,81 @@ struct DebugDomain {
             }
             userSession.secureUserStore.set(token: nil)
             return .none
+
+        case let .loadAllLocalTasksReceived(result):
+            switch result {
+            case let .success(tasks):
+                state.localTasks = tasks
+            case let .failure(error):
+                state.alertText = error.localizedDescription
+                state.showAlert = true
+            }
+            return .none
+        case .deleteAllTasks:
+            guard !state.localTasks.isEmpty else {
+                return .none
+            }
+            return .run { [tasks = state.localTasks] send in
+                var responses: [Response<ErxTask>] = []
+                for task in tasks {
+                    do {
+                        _ = try await userSession.erxTaskRepository.delete(erxTasks: [task])
+                            .async(\.self)
+                        responses.append(.init(value: task, result: .success))
+                    } catch {
+                        responses.append(.init(value: task, result: .failure(error)))
+                    }
+                }
+
+                let errorResponses = responses.compactMap { response in
+                    if case let .failure(error) = response.result {
+                        return "task (\(response.value.id)) failed: \(error.localizedDescription)"
+                    } else {
+                        return nil
+                    }
+                }
+
+                if !errorResponses.isEmpty {
+                    await send(.deleteAllTasksReceived(errorResponses.joined(separator: "\n")))
+                } else {
+                    await send(.deleteAllTasksReceived(nil))
+                }
+            }
+        case .markCommunicationsAsRead:
+            guard !state.localTasks.isEmpty else {
+                return .none
+            }
+
+            let communications = state.localTasks
+                .map(\.communications)
+                .flatMap { $0 }
+                .map { communication -> ErxTask.Communication in
+                    var readCommunication = communication
+                    readCommunication.isRead = true
+                    return readCommunication
+                }
+
+            return .run { [profile = state.profile] _ in
+                _ = try await userSession.erxTaskRepository.saveLocal(communications: communications).async()
+                if profile?.insuranceType == .pKV {
+                    for taskId in Set(communications.map(\.taskId)) {
+                        if var chargeItem = try await userSession.erxTaskRepository.loadLocal(by: taskId).async()?
+                            .chargeItem {
+                            chargeItem.isRead = true
+                            _ = try await userSession.erxTaskRepository.save(chargeItems: [chargeItem.sparseChargeItem])
+                                .async()
+                        }
+                    }
+                }
+            }
+        case let .deleteAllTasksReceived(localizedError):
+            if let localizedError = localizedError {
+                state.alertText = localizedError
+            } else {
+                state.alertText = "Did delete all tasks!"
+            }
+            state.showAlert = true
+            return .none
         case let .configurationReceived(configuration):
             state.selectedEnvironment = configuration
             return .none
@@ -271,6 +350,7 @@ struct DebugDomain {
         case .appear:
             state.trackingOptIn = tracker.optIn
             return .merge(
+                loadAllLocalTasks(),
                 onReceiveHideOnboarding(),
                 onReceiveHideCardWallIntro(),
                 onReceiveIsAuthenticated(),
@@ -329,6 +409,16 @@ struct DebugDomain {
         EmptyReducer()
         #endif
     }
+
+    struct Response<T> {
+        let value: T
+        let result: Result
+
+        enum Result {
+            case success
+            case failure(Error)
+        }
+    }
 }
 
 #if ENABLE_DEBUG_VIEW
@@ -337,7 +427,8 @@ extension DebugDomain {
         // <Header>.<Encrypted Key>.<IV>.<Ciphertext>.<Authentication Tag>
         var jweElements = ssoToken.split(separator: ".").map { String($0) }
         if let jweHeader = jweElements.first,
-           let decodedHeader = try? Base64.decode(string: jweHeader),
+//           let decodedHeader = try? Base64.decode(string: jweHeader),
+           let decodedHeader = Data(base64Encoded: jweHeader),
            let header = try? JSONDecoder().decode(SSOTokenHeader.self, from: decodedHeader) {
             let modifiedHeader = SSOTokenHeader(
                 exp: header.exp,
@@ -355,6 +446,16 @@ extension DebugDomain {
         } else {
             return nil
         }
+    }
+
+    func loadAllLocalTasks() -> Effect<DebugDomain.Action> {
+        .publisher(
+            userSession.erxTaskRepository.loadLocalAll()
+                .catchToPublisher()
+                .receive(on: schedulers.main)
+                .map(DebugDomain.Action.loadAllLocalTasksReceived)
+                .eraseToAnyPublisher
+        )
     }
 
     func onReceiveHideOnboarding() -> Effect<DebugDomain.Action> {
@@ -474,4 +575,4 @@ extension DebugDomain {
     }
 }
 
-// swiftlint:enable type_body_length
+// swiftlint:enable type_body_length file_length

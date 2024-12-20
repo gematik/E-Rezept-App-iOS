@@ -44,7 +44,7 @@ final class DefaultOrdersRepository: OrdersRepository {
                         var pharmacyLocations: [String: PharmacyLocation] = [:]
                         for id in communications.map(\.telematikId).unique() {
                             if let pharmacy = try await pharmacyRepository.loadCached(by: id)
-                                .async(/Error.pharmacyRepository) {
+                                .async(\Error.Cases.pharmacyRepository) {
                                 pharmacyLocations[pharmacy.telematikID] = pharmacy
                             }
                         }
@@ -72,7 +72,15 @@ final class DefaultOrdersRepository: OrdersRepository {
 
                         continuation
                             .yield(IdentifiedArray(uniqueElements: orders
-                                    .sorted { $0.lastUpdated > $1.lastUpdated }))
+                                    .sorted {
+                                        if $0.lastUpdated == $1.lastUpdated,
+                                           let pharmacy1Name = $0.pharmacy?.name,
+                                           let pharmacy2Name = $1.pharmacy?.name {
+                                            return pharmacy1Name < pharmacy2Name
+                                        } else {
+                                            return $0.lastUpdated > $1.lastUpdated
+                                        }
+                                    }))
                     }
 
                     continuation.finish()
@@ -98,6 +106,7 @@ final class DefaultOrdersRepository: OrdersRepository {
     }
 
     // sourcery: CodedError = "037"
+    @CasePathable
     enum Error: Swift.Error, Equatable, LocalizedError {
         // sourcery: errorCode = "01"
         case erxRepository(ErxRepositoryError)

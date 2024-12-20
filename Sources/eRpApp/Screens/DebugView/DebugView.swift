@@ -117,9 +117,9 @@ extension DebugView {
 
         var body: some View {
             WithPerceptionTracking {
-                Section(header: Text("Local Task Status")) {
+                Section(header: Text("Prescriptions")) {
                     VStack(alignment: .leading) {
-                        Text("Fake task status for:")
+                        Text("Fake prescription status for:")
                         HStack {
                             TextField("Test", text: $store.fakeTaskStatus)
                                 .keyboardType(.numberPad)
@@ -127,6 +127,20 @@ extension DebugView {
                                 .foregroundColor(.gray)
                         }
                         .font(.system(.body, design: .monospaced))
+                    }
+                    HStack {
+                        Text("Mark Messages as read")
+                        Spacer()
+                        Button("Mark") {
+                            store.send(.markCommunicationsAsRead)
+                        }
+                    }
+                    HStack {
+                        Text("Local tasks: \($store.localTasks.count)")
+                        Spacer()
+                        Button("Delete") {
+                            store.send(.deleteAllTasks)
+                        }
                     }
                 }
             }

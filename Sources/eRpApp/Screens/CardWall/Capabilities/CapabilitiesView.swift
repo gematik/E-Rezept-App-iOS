@@ -81,6 +81,6 @@ struct NotForYouView_Previews: PreviewProvider {
             CapabilitiesView(
                 store: CardWallIntroductionDomain.Dummies.store
             )
-        }.generateVariations()
+        }
     }
 }

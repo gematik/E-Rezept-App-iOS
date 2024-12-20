@@ -33,6 +33,9 @@ final class RealTrustStoreClientTests: XCTestCase {
 
     let serviceURL = URL(string: "http://vau.gematik")!
     let certListURL = URL(string: "http://vau.gematik/CertList")!
+    let pkiCertificatesURL = URL(string: "http://vau.gematik/PKICertificates")!
+    let vauCertURL = URL(string: "http://vau.gematik/VAUCertificate")!
+    let ocspResponseURL = URL(string: "http://vau.gematik/OCSPResponse")!
 
     var certListPath: String {
         guard let certListPath = Bundle.module
@@ -61,5 +64,72 @@ final class RealTrustStoreClientTests: XCTestCase {
                 expect(certList.eeCerts.count) == 2
             })
         expect(counter) == 1
+    }
+
+    func testLoadPKICertificates() async throws {
+        // given
+        var counter = 0
+        let json = """
+        {
+            "add_roots": ["YWRkX3Jvb3RzXzE="],
+            "ca_certs": ["Y2FfY2VydF9zXzE=", "Y2FfY2VydF9zXzI="]
+        }
+        """
+        stub(
+            condition: isAbsoluteURLString(pkiCertificatesURL.absoluteString + "?currentRoot=GEM.RCA3")
+                && isMethodGET()
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(data: Data(json.data(using: .utf8)!), statusCode: 200, headers: nil)
+        }
+
+        let sut = RealTrustStoreClient(serverURL: serviceURL)
+
+        // when
+        let pkiCertificates = try await sut.loadPKICertificatesFromServer(rootSubjectCn: "GEM.RCA3")
+
+        // then
+        expect(counter) == 1
+        expect(pkiCertificates.addRoots.count) == 1
+        expect(pkiCertificates.caCerts.count) == 2
+    }
+
+    func testLoadVauCertificate() async throws {
+        // given
+        var counter = 0
+        stub(condition: isAbsoluteURLString(vauCertURL.absoluteString) && isMethodGET()) { _ in
+            counter += 1
+            return HTTPStubsResponse(data: Data([0x0]), statusCode: 200, headers: nil)
+        }
+
+        let sut = RealTrustStoreClient(serverURL: serviceURL)
+
+        // when
+        let vauCertificate = try await sut.loadVauCertificateFromServer()
+
+        // then
+        expect(counter) == 1
+        expect(vauCertificate) == Data([0x0])
+    }
+
+    func testLoadOcspResponse() async throws {
+        // given
+        var counter = 0
+        stub(
+            condition: isAbsoluteURLString(ocspResponseURL.absoluteString + "?issuer-cn=abcd&serial-nr=9313")
+                && isMethodGET()
+        ) { _ in
+            counter += 1
+            return HTTPStubsResponse(data: Data([0x1]), statusCode: 200, headers: nil)
+        }
+
+        let sut = RealTrustStoreClient(serverURL: serviceURL)
+
+        // when
+        let vauCertificate = try await sut.loadOcspResponseFromServer(issuerCn: "abcd", serialNr: "9313")
+
+        // then
+        expect(counter) == 1
+        expect(vauCertificate) == Data([0x1])
     }
 }

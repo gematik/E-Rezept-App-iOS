@@ -22,11 +22,11 @@ import SnapshotTesting
 import TestUtils
 import XCTest
 
-final class ImageGeneratorTests: XCTestCase {
+final class ImageGeneratorTests: ERPSnapshotTestCase {
     func testGeneratingDataMatrixCodeWithCaption() {
         let matrixCodeImage = UIImage(asset: Asset.qrcode)!
         let sut = ImageGenerator.liveValue.addCaption(matrixCodeImage, "single code", "Medication Name")
 
-        assertSnapshots(matching: sut, as: [.image])
+        assertSnapshots(of: sut, as: [.image])
     }
 }

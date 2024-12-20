@@ -50,7 +50,7 @@ extension MainDomain {
 
             // show consent drawer?
             do {
-                let profile = try await userSession.profile().async(/MainDomain.Error.localStoreError)
+                let profile = try await userSession.profile().async(\MainDomain.Error.Cases.localStoreError)
                 if profile.insuranceType == .pKV,
                    profile.hidePkvConsentDrawerOnMainView == false,
                    // Only if the service responded successfully that the consent has not been granted yet
@@ -130,7 +130,7 @@ extension MainDomain {
             return try await profileDataStore.update(profileId: profileId) {
                 $0.hidePkvConsentDrawerOnMainView = true
             }
-            .async(/MainDomain.Error.localStoreError)
+            .async(\MainDomain.Error.Cases.localStoreError)
         }
     }
 }

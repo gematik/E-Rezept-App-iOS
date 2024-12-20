@@ -57,17 +57,6 @@ struct SettingsContactInfoView: View {
                 .buttonStyle(.navigation)
 
             Button(action: {
-                guard let url = URL(string: "https://www.das-e-rezept-fuer-deutschland.de/ext/community"),
-                      UIApplication.shared.canOpenURL(url) else { return }
-
-                UIApplication.shared.open(url)
-            }, label: {
-                Label(L10n.stgConBtnGemmunity, systemImage: SFSymbolName.person2)
-            })
-                .accessibility(identifier: A11y.settings.contact.stgConTxtSurvey)
-                .buttonStyle(.navigation)
-
-            Button(action: {
                 let phoneNumberformatted = "tel://" + L10n.stgConHotlineContact.text
                 guard let url = URL(string: phoneNumberformatted) else { return }
                 UIApplication.shared.open(url)

@@ -70,11 +70,12 @@ struct AppStartDomain {
                             inRedeemProcess: false,
                             pharmacyRedeemState: Shared(nil)
                         ),
-                        orders: OrdersDomain.State(orders: []),
+                        orders: OrdersDomain.State(),
                         settings: .init(
                             isDemoMode: userSession.isDemoMode
                         ),
                         unreadOrderMessageCount: 0,
+                        unreadInternalCommunicationCount: 0,
                         isDemoMode: false
                     )
                 )
@@ -103,9 +104,10 @@ struct AppStartDomain {
                             inRedeemProcess: false,
                             pharmacyRedeemState: Shared(nil)
                         ),
-                        orders: OrdersDomain.State(orders: []),
+                        orders: OrdersDomain.State(),
                         settings: .init(isDemoMode: userSession.isDemoMode),
                         unreadOrderMessageCount: 0,
+                        unreadInternalCommunicationCount: 0,
                         isDemoMode: false
                     )
                 )
@@ -123,14 +125,14 @@ struct AppStartDomain {
             case .unlockCard:
                 return .run { send in
                     // reset destination of settings tab
-                    await send(.destination(.app(.settings(action: .popToRootView))))
+                    send(.destination(.app(.settings(action: .popToRootView))))
                     // wait for running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to the settings tab
-                    await send(.destination(.app(.setNavigation(.settings))))
+                    send(.destination(.app(.setNavigation(.settings))))
                     // set actual destination in settings tab
-                    await send(
+                    send(
                         .destination(
                             .app(.settings(action: .tappedUnlockCard))
                         )
@@ -141,14 +143,14 @@ struct AppStartDomain {
                 case let .chargeItemListFor(profileId):
                     return .run { send in
                         // reset destination of settings tab
-                        await send(.destination(.app(.settings(action: .popToRootView))))
+                        send(.destination(.app(.settings(action: .popToRootView))))
                         // wait for running effects to finish
                         @Dependency(\.schedulers) var schedulers
                         try await schedulers.main.sleep(for: 0.5)
                         // switch to settings tab
-                        await send(.destination(.app(.setNavigation(.settings))))
+                        send(.destination(.app(.setNavigation(.settings))))
                         // set actual destination in settings tab
-                        await send(
+                        send(
                             .destination(
                                 .app(.settings(action: .showChargeItemListFor(profileId: profileId)))
                             )
@@ -158,85 +160,85 @@ struct AppStartDomain {
             case .medicationSchedule:
                 return .run { send in
                     // reset destination of settings tab
-                    await send(.destination(.app(.settings(action: .popToRootView))))
+                    send(.destination(.app(.settings(action: .popToRootView))))
                     // wait for running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to settings tab
-                    await send(.destination(.app(.setNavigation(.settings))))
+                    send(.destination(.app(.setNavigation(.settings))))
                     // set actual destination in settings tab
-                    await send(
+                    send(
                         .destination(.app(.settings(action: .showMedicationReminderList)))
                     )
                 }
             default:
                 return .run { send in
-                    await send(.destination(.app(.settings(action: .popToRootView))))
+                    send(.destination(.app(.settings(action: .popToRootView))))
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
-                    await send(.destination(.app(.setNavigation(.settings))))
+                    send(.destination(.app(.setNavigation(.settings))))
                 }
             }
 
         case .scanner:
             return .run { send in
                 // reset destination of settings tab
-                await send(.destination(.app(.main(action: .setNavigation(tag: .none)))))
+                send(.destination(.app(.main(action: .setNavigation(tag: .none)))))
                 // wait for possible running effects to finish
                 @Dependency(\.schedulers) var schedulers
                 try await schedulers.main.sleep(for: 0.5)
                 // switch to main tab
-                await send(.destination(.app(.setNavigation(.main))))
+                send(.destination(.app(.setNavigation(.main))))
                 // set actual destination in main tab
-                await send(.destination(.app(.main(action: .showScannerView))))
+                send(.destination(.app(.main(action: .showScannerView))))
             }
         case .orders:
             return .run { send in
                 // reset destination of orders tab
-                await send(.destination(.app(.orders(action: .resetNavigation))))
+                send(.destination(.app(.orders(action: .resetNavigation))))
                 // wait for possible running effects to finish
                 @Dependency(\.schedulers) var schedulers
                 try await schedulers.main.sleep(for: 0.5)
                 // switch to orders tab
-                await send(.destination(.app(.setNavigation(.orders))))
+                send(.destination(.app(.setNavigation(.orders))))
             }
         case let .mainScreen(endpoint):
             switch endpoint {
             case let .medicationReminder(scheduleEntries):
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
+                    send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
-                    await send(.destination(.app(.setNavigation(.main))))
+                    send(.destination(.app(.setNavigation(.main))))
                     // set actual destination in main tab
-                    await send(
+                    send(
                         .destination(.app(.main(action: .showMedicationReminder(scheduleEntries))))
                     )
                 }
             case .login:
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
+                    send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
-                    await send(.destination(.app(.setNavigation(.main))))
+                    send(.destination(.app(.setNavigation(.main))))
                     // set actual destination in main tab
-                    await send(.destination(.app(.main(action: .prescriptionList(action: .refresh)))))
+                    send(.destination(.app(.main(action: .prescriptionList(action: .refresh)))))
                 }
             default:
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
+                    send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
-                    await send(.destination(.app(.setNavigation(.main))))
+                    send(.destination(.app(.setNavigation(.main))))
                 }
             }
         // [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
@@ -246,37 +248,37 @@ struct AppStartDomain {
             case "/extauth":
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
+                    send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
-                    await send(.destination(.app(.setNavigation(.main))))
+                    send(.destination(.app(.setNavigation(.main))))
                     // // [REQ:gemSpec_IDP_Frontend:A_22301-01#5] set actual destination in main tab
-                    await send(.destination(.app(.main(action: .externalLogin(url)))))
+                    send(.destination(.app(.main(action: .externalLogin(url)))))
                 }
             case "/pharmacies/index.html",
                  "/pharmacies":
                 return .run { send in
                     // reset destination of pharmacy tab
-                    await send(.destination(.app(.pharmacySearch(action: .resetNavigation))))
+                    send(.destination(.app(.pharmacySearch(action: .resetNavigation))))
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
-                    await send(.destination(.app(.setNavigation(.pharmacySearch))))
+                    send(.destination(.app(.setNavigation(.pharmacySearch))))
                     // set actual destination in pharmacy tab
-                    await send(.destination(.app(.pharmacySearch(action: .universalLink(url)))))
+                    send(.destination(.app(.pharmacySearch(action: .universalLink(url)))))
                 }
             case "/prescription":
                 return .run { send in
                     // reset destination of main tab
-                    await send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
+                    send(.destination(.app(.main(action: .setNavigation(tag: nil)))))
                     // wait for possible running effects to finish
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
                     // switch to main tab
-                    await send(.destination(.app(.setNavigation(.main))))
+                    send(.destination(.app(.setNavigation(.main))))
                     // set actual destination in main tab
-                    await send(.destination(.app(.main(action: .importTaskByUrl(url)))))
+                    send(.destination(.app(.main(action: .importTaskByUrl(url)))))
                 }
             default:
                 return .none

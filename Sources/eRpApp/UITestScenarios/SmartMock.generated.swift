@@ -1356,80 +1356,6 @@ class SmartMockIDPSession: IDPSession, SmartMock {
 }
 
 
-// MARK: - SmartMockLoginHandler -
-
-class SmartMockLoginHandler: LoginHandler, SmartMock {
-    private var wrapped: LoginHandler
-    private var isRecording: Bool
-
-    init(wrapped: LoginHandler, mocks: Mocks?, isRecording: Bool = false) {
-        self.wrapped = wrapped
-        self.isRecording = isRecording
-
-        isAuthenticatedRecordings = mocks?.isAuthenticatedRecordings ?? .delegate
-        isAuthenticatedOrAuthenticateRecordings = mocks?.isAuthenticatedOrAuthenticateRecordings ?? .delegate
-    }
-
-    var isAuthenticatedRecordings: MockAnswer<SerializableResult<Bool, LoginHandlerError>>
-
-    func isAuthenticated() -> AnyPublisher<LoginResult, Never> {
-        guard !isRecording else {
-            let result = wrapped.isAuthenticated(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.isAuthenticatedRecordings.record(SerializableResult.from(value))
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = isAuthenticatedRecordings.next() {
-            return Just(value.unwrap())
-                .setFailureType(to: Never.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.isAuthenticated(
-            )
-        }
-    }
-
-    var isAuthenticatedOrAuthenticateRecordings: MockAnswer<SerializableResult<Bool, LoginHandlerError>>
-
-    func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never> {
-        guard !isRecording else {
-            let result = wrapped.isAuthenticatedOrAuthenticate(
-            )
-                .handleEvents(receiveOutput: { [weak self] value in
-                    self?.isAuthenticatedOrAuthenticateRecordings.record(SerializableResult.from(value))
-                })
-                .eraseToAnyPublisher()
-            return result
-        }
-        if let value = isAuthenticatedOrAuthenticateRecordings.next() {
-            return Just(value.unwrap())
-                .setFailureType(to: Never.self)
-                .eraseToAnyPublisher()
-        } else {
-            return wrapped.isAuthenticatedOrAuthenticate(
-            )
-        }
-    }
-
-    struct Mocks: Codable {
-        var isAuthenticatedRecordings: MockAnswer<SerializableResult<Bool, LoginHandlerError>>? = .delegate
-        var isAuthenticatedOrAuthenticateRecordings: MockAnswer<SerializableResult<Bool, LoginHandlerError>>? = .delegate
-    }
-    func recordedData() throws -> CodableMock {
-        return try CodableMock(
-            "LoginHandler",
-            Mocks(
-                isAuthenticatedRecordings: isAuthenticatedRecordings,
-                isAuthenticatedOrAuthenticateRecordings: isAuthenticatedOrAuthenticateRecordings
-            )
-        )
-    }
-}
-
-
 // MARK: - SmartMockPharmacyRemoteDataStore -
 
 class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
@@ -1602,6 +1528,7 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
 
         hideOnboardingRecordings = mocks?.hideOnboardingRecordings ?? .delegate
         isOnboardingHiddenRecordings = mocks?.isOnboardingHiddenRecordings ?? .delegate
+        onboardingDateRecordings = mocks?.onboardingDateRecordings ?? .delegate
         onboardingVersionRecordings = mocks?.onboardingVersionRecordings ?? .delegate
         hideCardWallIntroRecordings = mocks?.hideCardWallIntroRecordings ?? .delegate
         serverEnvironmentConfigurationRecordings = mocks?.serverEnvironmentConfigurationRecordings ?? .delegate
@@ -1613,6 +1540,8 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
         latestCompatibleModelVersionRecordings = mocks?.latestCompatibleModelVersionRecordings ?? .delegate
         appStartCounterRecordings = mocks?.appStartCounterRecordings ?? .delegate
         hideWelcomeDrawerRecordings = mocks?.hideWelcomeDrawerRecordings ?? .delegate
+        readInternalCommunicationsRecordings = mocks?.readInternalCommunicationsRecordings ?? .delegate
+        hideWelcomeMessageRecordings = mocks?.hideWelcomeMessageRecordings ?? .delegate
     }
 
     var hideOnboardingRecordings: MockAnswer<Bool>
@@ -1644,6 +1573,24 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
             return first
         }
         return wrapped.isOnboardingHidden
+    }
+    var onboardingDateRecordings: MockAnswer<Date?>
+
+    var onboardingDate: AnyPublisher<Date?, Never> {
+        guard !isRecording else {
+            return wrapped.onboardingDate
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.onboardingDateRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+        }
+        if let value = onboardingDateRecordings.next() {
+            return Just(value)
+                .setFailureType(to: Never.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.onboardingDate
+        }
     }
     var onboardingVersionRecordings: MockAnswer<String?>
 
@@ -1843,6 +1790,48 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
             return wrapped.hideWelcomeDrawer
         }
     }
+    var readInternalCommunicationsRecordings: MockAnswer<[String]>
+
+    var readInternalCommunications: AnyPublisher<[String], Never> {
+        guard !isRecording else {
+            return wrapped.readInternalCommunications
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.readInternalCommunicationsRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+        }
+        if let value = readInternalCommunicationsRecordings.next() {
+            return Just(value)
+                .setFailureType(to: Never.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.readInternalCommunications
+        }
+    }
+    var hideWelcomeMessageRecordings: MockAnswer<Bool>
+
+    var hideWelcomeMessage: AnyPublisher<Bool, Never> {
+        guard !isRecording else {
+            return wrapped.hideWelcomeMessage
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.hideWelcomeMessageRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+        }
+        if let value = hideWelcomeMessageRecordings.next() {
+            return Just(value)
+                .setFailureType(to: Never.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.hideWelcomeMessage
+        }
+    }
+    func set(onboardingDate: Date?) {
+        wrapped.set(
+                    onboardingDate: onboardingDate
+            )
+    }
+
     func set(hideOnboarding: Bool) {
         wrapped.set(
                     hideOnboarding: hideOnboarding
@@ -1896,10 +1885,23 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
             )
     }
 
+    func markInternalCommunicationAsRead(messageId: String) {
+        wrapped.markInternalCommunicationAsRead(
+                    messageId: messageId
+            )
+    }
+
+    func set(hideWelcomeMessage: Bool) {
+        wrapped.set(
+                    hideWelcomeMessage: hideWelcomeMessage
+            )
+    }
+
     /// AnyObject
     struct Mocks: Codable {
         var hideOnboardingRecordings: MockAnswer<Bool>? = .delegate
         var isOnboardingHiddenRecordings: MockAnswer<Bool>? = .delegate
+        var onboardingDateRecordings: MockAnswer<Date?>? = .delegate
         var onboardingVersionRecordings: MockAnswer<String?>? = .delegate
         var hideCardWallIntroRecordings: MockAnswer<Bool>? = .delegate
         var serverEnvironmentConfigurationRecordings: MockAnswer<String?>? = .delegate
@@ -1911,6 +1913,8 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
         var latestCompatibleModelVersionRecordings: MockAnswer<ModelVersion>? = .delegate
         var appStartCounterRecordings: MockAnswer<Int>? = .delegate
         var hideWelcomeDrawerRecordings: MockAnswer<Bool>? = .delegate
+        var readInternalCommunicationsRecordings: MockAnswer<[String]>? = .delegate
+        var hideWelcomeMessageRecordings: MockAnswer<Bool>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -1918,6 +1922,7 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
             Mocks(
                 hideOnboardingRecordings:hideOnboardingRecordings,
                 isOnboardingHiddenRecordings: isOnboardingHiddenRecordings,
+                onboardingDateRecordings:onboardingDateRecordings,
                 onboardingVersionRecordings:onboardingVersionRecordings,
                 hideCardWallIntroRecordings:hideCardWallIntroRecordings,
                 serverEnvironmentConfigurationRecordings:serverEnvironmentConfigurationRecordings,
@@ -1928,7 +1933,9 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
                 selectedProfileIdRecordings:selectedProfileIdRecordings,
                 latestCompatibleModelVersionRecordings: latestCompatibleModelVersionRecordings,
                 appStartCounterRecordings: appStartCounterRecordings,
-                hideWelcomeDrawerRecordings: hideWelcomeDrawerRecordings
+                hideWelcomeDrawerRecordings: hideWelcomeDrawerRecordings,
+                readInternalCommunicationsRecordings:readInternalCommunicationsRecordings,
+                hideWelcomeMessageRecordings:hideWelcomeMessageRecordings
             )
         )
     }

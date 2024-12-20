@@ -18,6 +18,7 @@
 
 import eRpStyleKit
 import SwiftUI
+import SwiftUIIntrospect
 
 /// sourcery: StringAssetInitialized
 struct SecureFieldWithReveal: View {
@@ -49,6 +50,11 @@ struct SecureFieldWithReveal: View {
             // [REQ:BSI-eRp-ePA:O.Data_10#3] `SecureFields` are used for password input.
             SecureField(text: $text) {
                 Text(titleKey, bundle: .module)
+            }
+            // This suppresses the clearButton displayed in the SecureField (introduced in SceneDelegate)
+            // If shown, it's overlapping with the reveal button
+            .introspect(.secureField, on: .iOS(.v15, .v16, .v17, .v18)) { secureField in
+                secureField.clearButtonMode = .never
             }
             .onSubmit(onCommit)
             .font(Font.body)

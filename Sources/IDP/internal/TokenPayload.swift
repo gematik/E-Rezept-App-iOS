@@ -65,6 +65,8 @@ public struct TokenPayload: Codable {
         public let givenName: String?
         /// Family name of patient (e.g.: "Cördes")
         public let familyName: String?
+        /// Full name of patient (e.g.: "Heinz Hilbert Cördes")
+        public let displayName: String?
         /// Organization name
         public let organizationName: String?
         /// Profession ID of the user (e.g.: "1.2.276.0.76.4.49")
@@ -93,6 +95,7 @@ public struct TokenPayload: Codable {
             case nonce
             case givenName = "given_name"
             case familyName = "family_name"
+            case displayName = "display_name"
             case organizationName
             case professionOID
             case idNummer
@@ -158,7 +161,8 @@ public struct KeyVerifier: Codable {
     let verifierCode: VerifierCode
 
     init(with key: SymmetricKey, codeVerifier: String) throws {
-        guard let keyDataString = key.withUnsafeBytes({ Data(Array($0)) }).encodeBase64UrlSafe()?.utf8string else {
+        guard let encoded = key.withUnsafeBytes({ Data(Array($0)) }).encodeBase64UrlSafe(),
+              let keyDataString = String(bytes: encoded, encoding: .utf8) else {
             throw Error.stringConversion
         }
         tokenKey = keyDataString

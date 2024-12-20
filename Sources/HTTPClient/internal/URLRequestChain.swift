@@ -40,6 +40,34 @@ class URLRequestChain: Chain {
         let nextChain = URLRequestChain(request: newRequest, session: session, with: Array(interceptors.dropFirst()))
         return interceptor.intercept(chain: nextChain)
     }
+
+    func proceedAsync(request newRequest: URLRequest) async throws -> HTTPResponse {
+        request = newRequest
+        if let interceptor = interceptors.first {
+            let nextChain = URLRequestChain(
+                request: newRequest,
+                session: session,
+                with: Array(interceptors.dropFirst())
+            )
+            return try await interceptor.interceptAsync(chain: nextChain)
+        } else {
+            // interceptors is empty
+            let data: Data
+            let urlResponse: URLResponse
+            do {
+                (data, urlResponse) = try await session.data(for: newRequest, delegate: nil)
+            } catch {
+                throw error.asHTTPClientError()
+            }
+            guard let httpResponse = urlResponse as? HTTPURLResponse else {
+                throw HTTPClientError.internalError("URLResponse is not a HTTPURLResponse")
+            }
+            guard let statusCode = HTTPStatusCode(rawValue: httpResponse.statusCode) else {
+                throw HTTPClientError.internalError("Unsupported http status code [\(httpResponse.statusCode)]")
+            }
+            return (data: data, response: httpResponse, status: statusCode)
+        }
+    }
 }
 
 extension Publisher where Output == (data: Data, response: URLResponse), Failure == URLError {

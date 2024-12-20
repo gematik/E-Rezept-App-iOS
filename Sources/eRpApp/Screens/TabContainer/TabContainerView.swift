@@ -58,9 +58,9 @@ struct TabContainerView: View {
 
                         OrdersView(store: store.scope(state: \.orders, action: \.orders))
                             .tabItem {
-                                Label(L10n.tabTxtMessages, image: Asset.TabIcon.bag.name)
+                                Label(L10n.tabTxtMessages, image: Asset.TabIcon.message.name)
                             }
-                            .badge(store.unreadOrderMessageCount)
+                            .badge(store.unreadMessageCount)
                             .tag(AppDomain.Destinations.State.orders)
 
                         SettingsView(
@@ -71,23 +71,11 @@ struct TabContainerView: View {
                         }
                         .tag(AppDomain.Destinations.State.settings)
                     }
-                    .backport.tabContainerToolBarBackground()
+                    .toolbarBackground(.visible, for: .tabBar)
+                    .toolbarBackground(Colors.tabViewToolBarBackground, for: .tabBar)
                 }
                 .task {
                     await store.send(.task).finish()
-                }
-                // Fix tabbar background becomming 100% transparent for dynamic views, in our case using quick filters
-                // within pharmacy search
-                // Source: https://www.hackingwithswift.com/forums/ios/tab-bar-transparent/10549
-                .onAppear {
-                    if #available(iOS 16.0, *) {
-                        // see `.backport.tabContainerToolBarBackground()` implementation
-                    } else if #available(iOS 15.0, *) {
-                        // correct the transparency bug for Tab bars
-                        let tabBarAppearance = UITabBarAppearance()
-                        tabBarAppearance.configureWithOpaqueBackground()
-                        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
-                    }
                 }
                 .tint(Colors.primary600)
                 .zIndex(0)

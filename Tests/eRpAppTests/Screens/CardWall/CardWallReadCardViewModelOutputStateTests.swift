@@ -40,21 +40,7 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleNext))
 
-        sut = CardWallReadCardDomain.State.Output.retrievingChallenge(.loading)
-        expect(sut.nextButtonEnabled).to(beFalse())
-        expect(sut.buttonTitle).to(equal(titleLoading))
-        let challenge = try! IDPChallengeSession(
-            challenge: IDPChallenge(
-                challenge: try! JWT(header: JWT.Header(), payload: IDPChallenge.Claim())
-            ),
-            verifierCode: "verifier",
-            state: "123456789",
-            nonce: "1234567890"
-        )
-        sut = CardWallReadCardDomain.State.Output.challengeLoaded(challenge)
-        expect(sut.nextButtonEnabled).to(beTrue())
-        expect(sut.buttonTitle).to(equal(titleNext))
-        sut = CardWallReadCardDomain.State.Output.retrievingChallenge(.error(.idpError(
+        sut = CardWallReadCardDomain.State.Output.signingChallenge(.error(.idpError(
             IDPError.network(error: HTTPClientError.networkError("timeout"))
         )))
         expect(sut.nextButtonEnabled).to(beTrue())

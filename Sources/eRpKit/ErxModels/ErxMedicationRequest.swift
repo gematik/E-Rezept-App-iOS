@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct ErxMedicationRequest: Hashable, Codable {
+public struct ErxMedicationRequest: Hashable, Codable, Sendable {
     public init(
         authoredOn: String? = nil,
         dosageInstructions: String? = nil,

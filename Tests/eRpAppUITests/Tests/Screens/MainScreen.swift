@@ -23,29 +23,30 @@ import XCTest
 struct MainScreen: Screen {
     let app: XCUIApplication
 
-    func prescriptionCellByName(_ name: String, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+    func prescriptionCellByName(_ name: String, fileID _: String = #fileID, file: String = #filePath,
+                                line: UInt = #line) -> XCUIElement {
         let cell = app.buttons.containing(.staticText, identifier: name).element
         expect(file: file, line: line, cell).to(exist(name))
         return cell
     }
 
-    func tapDetailsForPrescriptionNamed(_ name: String, file: StaticString = #file,
+    func tapDetailsForPrescriptionNamed(_ name: String, fileID: String = #fileID, file: String = #filePath,
                                         line: UInt = #line) -> PrescriptionDetailsScreen<MainScreen> {
-        staticText(by: name, file: file, line: line).tap()
+        staticText(by: name, fileID: fileID, file: file, line: line).tap()
 
         // assert label exists that contains the prescription name as a label
-        let title = staticText(by: A11y.prescriptionDetails.prscDtlTxtTitle, file: file, line: line)
+        let title = staticText(by: A11y.prescriptionDetails.prscDtlTxtTitle, fileID: fileID, file: file, line: line)
         expect(file: file, line: line, title.label).to(equal(name))
 
         return PrescriptionDetailsScreen(app: app, previous: self)
     }
 
-    func tapDetailsForScannedPrescription(_ name: String, file: StaticString = #file,
+    func tapDetailsForScannedPrescription(_ name: String, fileID: String = #fileID, file: String = #filePath,
                                           line: UInt = #line) -> PrescriptionDetailsScreen<MainScreen> {
-        staticText(by: name, file: file, line: line).tap()
+        staticText(by: name, fileID: fileID, file: file, line: line).tap()
 
         // assert label exists that contains the prescription name as a label
-        let title = textField(by: A11y.prescriptionDetails.prscDtlTxtTitleInput, file: file, line: line)
+        let title = textField(by: A11y.prescriptionDetails.prscDtlTxtTitleInput, fileID: fileID, file: file, line: line)
         if let titleValue = title.value as? String {
             expect(file: file, line: line, titleValue).to(equal(name))
         } else {
@@ -55,22 +56,23 @@ struct MainScreen: Screen {
         return PrescriptionDetailsScreen(app: app, previous: self)
     }
 
-    func tapRedeem(file: StaticString = #file, line: UInt = #line) -> RedeemSelectionScreen {
-        button(by: A11y.mainScreen.erxBtnRedeemPrescriptions, file: file, line: line).tap()
+    func tapRedeem(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> RedeemSelectionScreen {
+        button(by: A11y.mainScreen.erxBtnRedeemPrescriptions, fileID: fileID, file: file, line: line).tap()
 
         return RedeemSelectionScreen(app: app)
     }
 
-    func tapOpenCardwall(file: StaticString = #file, line: UInt = #line) -> CardWallIntroductionScreen {
-        button(by: A11y.mainScreen.erxBtnLogin, file: file, line: line).tap()
+    func tapOpenCardwall(fileID: String = #fileID, file: String = #filePath,
+                         line: UInt = #line) -> CardWallIntroductionScreen {
+        button(by: A11y.mainScreen.erxBtnLogin, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
-    func tapArchive(file: StaticString = #file, line: UInt = #line) -> ArchiveScreen {
+    func tapArchive(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> ArchiveScreen {
         app.scrollViews.firstMatch.swipeUp(velocity: 2000.0)
 
-        button(by: A11y.mainScreen.erxBtnArcPrescription, file: file, line: line).tap()
+        button(by: A11y.mainScreen.erxBtnArcPrescription, fileID: fileID, file: file, line: line).tap()
 
         return ArchiveScreen(app: app)
     }
@@ -79,19 +81,24 @@ struct MainScreen: Screen {
     struct ArchiveScreen: Screen {
         var app: XCUIApplication
 
-        func prescriptionCellByName(_ name: String, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+        func prescriptionCellByName(
+            _ name: String,
+            fileID: String = #fileID,
+            file: String = #filePath,
+            line: UInt = #line
+        ) -> XCUIElement {
             let cell = app.buttons.containing(.staticText, identifier: name).element
-            expect(file: file, line: line, cell).to(exist(name))
+            expect(fileID: fileID, file: file, line: line, cell).to(exist(name))
             return cell
         }
 
-        func detailsForPrescriptionNamed(_ name: String, file: StaticString = #file,
+        func detailsForPrescriptionNamed(_ name: String, fileID: String = #fileID, file: String = #filePath,
                                          line: UInt = #line) -> PrescriptionDetailsScreen<ArchiveScreen> {
-            staticText(by: name, file: file, line: line).tap()
+            staticText(by: name, fileID: fileID, file: file, line: line).tap()
 
             // assert label exists that contains the prescription name as a label
-            let title = staticText(by: A11y.prescriptionDetails.prscDtlTxtTitle, file: file, line: line)
-            expect(file: file, line: line, title.label).to(equal(name))
+            let title = staticText(by: A11y.prescriptionDetails.prscDtlTxtTitle, fileID: fileID, file: file, line: line)
+            expect(fileID: fileID, file: file, line: line, title.label).to(equal(name))
 
             return PrescriptionDetailsScreen(app: app, previous: self)
         }

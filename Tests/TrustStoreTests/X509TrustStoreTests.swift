@@ -16,7 +16,6 @@
 //
 //
 
-import DataKit
 import Foundation
 import Nimble
 import OpenSSL
@@ -435,7 +434,7 @@ enum CertificateResourceFileReader {
 let rootCa3TestOnlyTrustAnchor: TrustAnchor = {
     let file = "GEM.RCA3-TEST-ONLY"
     let pem = try! CertificateResourceFileReader.readFromCertificatesBundle(file: file)
-    return try! TrustAnchor(withPEM: pem.utf8string!)
+    return try! TrustAnchor(withPEM: String(data: pem, encoding: .utf8)!)
 }()
 
 // swiftlint:enable line_length identifier_name

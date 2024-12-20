@@ -23,16 +23,17 @@ import XCTest
 struct AppSecuritySelectionScreen: Screen {
     let app: XCUIApplication
 
-    func passwordToggle(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        switches(by: A18n.settings.security.stgTglSecurityPassword, file: file, line: line)
+    func passwordToggle(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        switches(by: A18n.settings.security.stgTglSecurityPassword, fileID: fileID, file: file, line: line)
     }
 
-    func changePasswordEntry(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A18n.settings.security.stgBtnSecurityChangePassword, file: file, line: line)
+    func changePasswordEntry(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A18n.settings.security.stgBtnSecurityChangePassword, fileID: fileID, file: file, line: line)
     }
 
-    func tapChangePassword(file: StaticString = #file, line: UInt = #line) -> ChangePasswordScreen {
-        button(by: A18n.settings.security.stgBtnSecurityChangePassword, file: file, line: line).tap()
+    func tapChangePassword(fileID: String = #fileID, file: String = #filePath,
+                           line: UInt = #line) -> ChangePasswordScreen {
+        button(by: A18n.settings.security.stgBtnSecurityChangePassword, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }

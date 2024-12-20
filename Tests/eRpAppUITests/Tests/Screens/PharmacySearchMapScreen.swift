@@ -30,21 +30,22 @@ struct PharmacySearchMapScreen<Previous>: Screen where Previous: Screen {
     }
 
     @discardableResult
-    func tapCloseMap(file: StaticString = #file, line: UInt = #line) -> Previous {
-        button(by: A11y.pharmacySearchMap.phaSearchMapBtnClose, file: file, line: line).tap()
+    func tapCloseMap(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> Previous {
+        button(by: A11y.pharmacySearchMap.phaSearchMapBtnClose, fileID: fileID, file: file, line: line).tap()
         return previous
     }
 
-    func tapSearchHere(file: StaticString = #file, line: UInt = #line) {
-        button(by: A11y.pharmacySearchMap.phaSearchMapBtnSearchHere, file: file, line: line).tap()
+    func tapSearchHere(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        button(by: A11y.pharmacySearchMap.phaSearchMapBtnSearchHere, fileID: fileID, file: file, line: line).tap()
     }
 
-    func tapGoToUser(file: StaticString = #file, line: UInt = #line) {
-        button(by: A11y.pharmacySearchMap.phaSearchMapBtnGoToUser, file: file, line: line).tap()
+    func tapGoToUser(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        button(by: A11y.pharmacySearchMap.phaSearchMapBtnGoToUser, fileID: fileID, file: file, line: line).tap()
     }
 
-    func tapFilter(file: StaticString = #file, line: UInt = #line) -> PharmacyFilterScreen<Self> {
-        button(by: A11y.pharmacySearchMap.phaSearchMapBtnFilter, file: file, line: line).tap()
+    func tapFilter(fileID: String = #fileID, file: String = #filePath,
+                   line: UInt = #line) -> PharmacyFilterScreen<Self> {
+        button(by: A11y.pharmacySearchMap.phaSearchMapBtnFilter, fileID: fileID, file: file, line: line).tap()
         return PharmacyFilterScreen(app: app, previous: self)
     }
 

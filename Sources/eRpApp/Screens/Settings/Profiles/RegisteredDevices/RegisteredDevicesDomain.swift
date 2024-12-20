@@ -19,7 +19,6 @@
 import CasePaths
 import Combine
 import ComposableArchitecture
-import DataKit
 import eRpKit
 import Foundation
 import IDP
@@ -36,6 +35,7 @@ struct RegisteredDevicesDomain {
 
         var content: Content = .notLoaded
 
+        @CasePathable
         enum Content: Equatable {
             case loaded([Entry])
             case loading([Entry])
@@ -117,7 +117,7 @@ struct RegisteredDevicesDomain {
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
-            let currentState = (/State.Content.loaded).extract(from: state.content) ?? []
+            let currentState = state.content[case: \State.Content.Cases.loaded] ?? []
             state.content = .loading(currentState)
             return .merge(
                 getRegisteredDevicesWithSurpressedError(profileId: state.profileId),
@@ -138,7 +138,7 @@ struct RegisteredDevicesDomain {
             return .none
 
         case .loadDevices:
-            let currentState = (/State.Content.loaded).extract(from: state.content) ?? []
+            let currentState = state.content[case: \State.Content.Cases.loaded] ?? []
             state.content = .loading(currentState)
             return .merge(
                 getRegisteredDevices(profileId: state.profileId),

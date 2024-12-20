@@ -162,7 +162,7 @@ class RealIDPClient: IDPClient {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
 
-        guard let signedChallengeJWEString = signedChallenge.encoded().utf8string else {
+        guard let signedChallengeJWEString = String(data: signedChallenge.encoded(), encoding: .utf8) else {
             return Fail(error: IDPError.internal(error: .signedChallengeEncoded))
                 .eraseToAnyPublisher()
         }
@@ -249,7 +249,7 @@ class RealIDPClient: IDPClient {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.setFormUrlEncodedHeader()
 
-        guard let keyVerifierJWEString: String = encryptedKeyVerifier.encoded().utf8string else {
+        guard let keyVerifierJWEString = String(data: encryptedKeyVerifier.encoded(), encoding: .utf8) else {
             return Fail(error: IDPError.internal(error: .encryptedKeyVerifierEncoding)).eraseToAnyPublisher()
         }
 
@@ -290,7 +290,7 @@ class RealIDPClient: IDPClient {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
 
-        guard let encryptedRegistrationData = encryptedRegistration.encoded().utf8string else {
+        guard let encryptedRegistrationData = String(data: encryptedRegistration.encoded(), encoding: .utf8) else {
             return Fail(error: IDPError.internal(error: .registeredDeviceEncoding)).eraseToAnyPublisher()
         }
 
@@ -363,7 +363,8 @@ class RealIDPClient: IDPClient {
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
 
-        guard let encryptedSignedChallengeData = encryptedSignedChallenge.encoded().utf8string else {
+        guard let encryptedSignedChallengeData = String(data: encryptedSignedChallenge.encoded(), encoding: .utf8)
+        else {
             return Fail(error: IDPError.internal(error: .encryptedSignedChallengeEncoding))
                 .eraseToAnyPublisher()
         }

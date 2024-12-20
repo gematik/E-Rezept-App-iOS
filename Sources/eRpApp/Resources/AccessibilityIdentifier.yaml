@@ -6,8 +6,6 @@ controls:
     - ctl_txt_search_bar_field
     - ctl_btn_search_bar_delete_text
     - ctl_btn_search_bar_cancel
-  textfieldwithdelete:
-    - ctl_btn_textfield_delete
   tooltips:
     - ctl_tooltip_container
   demoMode:
@@ -277,12 +275,18 @@ settings:
     - stg_lno_link_contact
     - stg_lno_mail_contact
     - stg_lno_phone_contact
+  explore:
+    - stg_con_header_explore
+    - stg_con_btn_organ_donor
+    - stg_con_btn_gemmunity
+    - stg_con_btn_gesundbundde
   contact:
     - stg_con_header_contact
     - stg_con_hotline_contact
     - stg_con_txt_footnote
     - stg_con_txt_mail
     - stg_con_txt_survey
+    - stg_con_btn_organ_donor
   dataPrivacy:
     - stg_dpr_txt_data_privacy
     - stg_ww_data_privacy
@@ -320,6 +324,8 @@ orderDetail:
     - ord_detail_title
     - ord_detail_txt_msg_list
     - ord_detail_txt_med_list
+    - ord_detail_btn_link
+    - ord_detail_btn_dmc
     - ord_detail_btn_contact
     - ord_detail_btn_contact_map
     - ord_detail_btn_contact_phone
@@ -328,6 +334,7 @@ orderDetail:
     - puc_txt_title
     - puc_txt_subtitle
     - puc_txt_hrCode
+    - puc_btn_close
   message:
     - msg_txt_title
 mainScreen:

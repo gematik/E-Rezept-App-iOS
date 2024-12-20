@@ -80,7 +80,7 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
                 .async()
             let registrationData = try await registerDataProvider
                 .signPairingSession(pairingSession, with: signer, certificate: cert)
-                .async(/NFCSignatureProviderError.secureEnclaveError)
+                .async(\NFCSignatureProviderError.Cases.secureEnclaveError)
             return .success((signedChallenge, registrationData))
         } catch {
             return .failure(error.asNFCSignatureError())

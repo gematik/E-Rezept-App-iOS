@@ -405,6 +405,7 @@
 "erx_txt_authored" = "מוצג";
 "erx_txt_claimed_at_%@" = "הניח %@";
 "erx_txt_current" = "נוֹכְחִי";
+"erx_txt_dispensed_at_%@" = "מסופק %@";
 "erx_txt_expired_on_%@" = "פג תוקף ב %@";
 "erx_txt_forced_update_alert_description" = "בצע אופטימיזציה של חוויית האפליקציה שלך על ידי עדכון האפליקציה.";
 "erx_txt_forced_update_alert_ignore" = "אולי אחר כך";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "הודעות חדשות";
 "idp_err_not_available_in_demo_mode_recovery" = "צא ממצב הדגמה כדי להשתמש בתכונה.";
 "idp_err_not_available_in_demo_mode_text" = "לא זמין במצב הדגמה";
+"intern_msg_change_log_chip_%@" = "מה חדש בגרסת האפליקציה %@";
+"intern_msg_error_empty_onboarding_date" = "אם שגיאה זו חוזרת, אנא התקן מחדש את היישום";
+"intern_msg_error_invalid_url" = "קובץ JSON לא נמצא";
+"intern_msg_error_unknown_error" = "אירעה שגיאה";
+"intern_msg_welcome" = "ברוכים הבאים לאפליקציית המרשם האלקטרוני! באמצעות אפליקציה זו תוכלו לקבל באופן דיגיטלי מרשמים אלקטרוניים ולשלוח אותם לבית מרקחת לבחירתכם. האם ברצונך לשריין שם את המרשם לאיסוף או לקבל אותו עד הבית תלוי בך. כמובן, אתה יכול גם לנהל את המתכונים של המשפחה שלך. על מנת לקבל מרשמים בצורה דיגיטלית נדרשת הרשמה.\n\nשמח שאתה כאן!\nצוות אפליקציית המרשם האלקטרוני שלך";
+"intern_msg_welcome_chip" = "🎉 ברוכים הבאים!";
 "kbv_code_dosage_form_aeo" = "שמן נדיף";
 "kbv_code_dosage_form_amp" = "אמפולות";
 "kbv_code_dosage_form_apa" = "זוגות של אמפולות";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "נמחק";
 "prsc_status_completed" = "נפדה";
 "prsc_status_direct_assigned" = "יגאל עבורך";
+"prsc_status_dispensed" = "מסופק";
 "prsc_status_error" = "מתכון לא נכון";
 "prsc_status_expired" = "לא בתוקף";
-"prsc_status_in_progress" = "בגאולה";
+"prsc_status_in_progress" = "נמצא בעיבוד";
 "prsc_status_multiple_prsc" = "ניתן למימוש מאוחר יותר";
 "prsc_status_ready" = "פָּדִי";
 "prsc_status_sent" = "פורסם";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "לסקירה כללית של קבלות העלויות";
 "stg_btn_charge_item_share" = "שלח";
 "stg_btn_device_security" = "אבטחת אפליקציה";
+"stg_btn_donor_register_alert_open" = "לִפְתוֹחַ";
 "stg_btn_edit_picture" = "לַעֲרוֹך";
 "stg_btn_edit_profile_action_camera" = "לצלם תמונה";
 "stg_btn_edit_profile_action_library" = "לבחור תמונה";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "להציל";
 "stg_btn_reg_devices_load" = "הירשם";
 "stg_con_btn_gemmunity" = "פורום מרשם אלקטרוני";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "מרשם תרומת איברים";
+"stg_con_btn_organ_donor_alert_cancel" = "לְבַטֵל";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "משוב מאפליקציית המרשם האלקטרוני";
 "stg_con_hotline_ava" = "ללא תשלום עבור המתקשר. זמני השירות: שני - שישי 8:00 בבוקר - 20:00 למעט בחגים לאומיים";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "חזור על PIN";
 "stg_edt_card_reset_puk_input" = "הזן PUK";
 "stg_edt_card_reset_puk_input_label" = "עם ה-PIN שלך קיבלת מחברת הביטוח שלך קוד PUK בן 8 ספרות.";
+"stg_exp_txt_title" = "לַחקוֹר";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "פתח אתר";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\n Friedrichstr. 136\n 10117 ברלין";
 "stg_lno_txt_text_note" = "אנו שואפים להשתמש בשפה שוויונית בין המינים. אם אתה מבחין בשגיאות, נשמח לשמוע ממך באימייל.";
 "stg_lno_txt_text_responsible" = "דר. פלוריאן פיהרמן, ברניה אדג'י, ד\"ר. פלוריאן הארטג'";
-"stg_lno_txt_text_taxAndMore" = "מנכ\"ל: ד\"ר. פלוריאן פיהרמן, ברניה אדג'י, ד\"ר. פלוריאן הארטג'\n בית משפט לרישום: בית המשפט המחוזי ברלין-שרלוטנבורג\n מספר רישום מסחרי: HRB 96351\n מספר זיהוי מע\"מ: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "הנהלה: דר. פלוריאן פיהרמן, ברניה אדג'י, ד\"ר. Florian Hartge\nבית משפט לרישום: בית המשפט המחוזי של ברלין-שרלוטנבורג\nמספר רישום מסחרי: HRB 96351\nמספר זיהוי מע\"מ: DE241843684";
 "stg_lno_txt_title_contact" = "איש קשר";
 "stg_lno_txt_title_issuer" = "עוֹרֵך";
 "stg_lno_txt_title_note" = "הודעה";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "נפדה על";
 "stg_txt_charge_item_sum" = "מחיר סופי";
 "stg_txt_demo_mode" = "במצב הדגמה";
+"stg_txt_donor_register_alert_message" = "אתה תופנה למרשם תורמי האיברים. על מנת לצפות ולשנות את נתוני תרומת האיברים שלך, עליך להתחבר לשם.";
+"stg_txt_donor_register_alert_title" = "פנקס תרומת איברים פתוח?";
 "stg_txt_edit_profile_background_section_title" = "צבע רקע";
 "stg_txt_edit_profile_charge_item_list_section_title" = "קבלות עלויות";
 "stg_txt_edit_profile_default_name" = "שם פרופיל";

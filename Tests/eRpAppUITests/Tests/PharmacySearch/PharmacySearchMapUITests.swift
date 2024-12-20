@@ -248,7 +248,7 @@ final class PharmacySearchMapUITests: XCTestCase {
     @MainActor
     func testGoToUser() throws {
         if #available(iOS 16.4, *) {
-            XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 52.52291, longitude: 13.38757))
+            XCUIDevice.shared.location = XCUILocation(location: .init(latitude: 52.52291, longitude: 13.39057))
         } else {
             throw XCTSkip("location cannot be set on old iOS simulator versions")
         }
@@ -277,7 +277,8 @@ final class PharmacySearchMapUITests: XCTestCase {
         mapScreen.tapGoToUser()
 
         // animation might take a short time
-        expect(currentLocationAnnotation.isHittable).toEventually(beTrue())
+        expect(currentLocationAnnotation.waitForExistence(timeout: 5)).to(beTrue())
+        expect(currentLocationAnnotation.isHittable).to(beTrue())
     }
 
     @MainActor
@@ -318,7 +319,12 @@ final class PharmacySearchMapUITests: XCTestCase {
         }
     }
 
-    private func forceTriggerInterruptMonitors(file: StaticString = #file, line: UInt = #line) {
+    @MainActor
+    private func forceTriggerInterruptMonitors(
+        fileID _: String = #fileID,
+        file: String = #filePath,
+        line: UInt = #line
+    ) {
         // sometimes the interrupt monitor is very fast and already true
         guard !locationDialogInterruptAnswered else { return }
 

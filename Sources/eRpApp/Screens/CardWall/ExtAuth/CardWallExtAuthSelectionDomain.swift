@@ -141,12 +141,6 @@ struct CardWallExtAuthSelectionDomain {
     }
 }
 
-extension KKAppDirectory.Entry: Identifiable {
-    public var id: String {
-        identifier
-    }
-}
-
 extension CardWallExtAuthSelectionDomain {
     enum Dummies {
         static let state = State()

@@ -23,18 +23,23 @@ import XCTest
 struct SuccessScreen: Screen {
     let app: XCUIApplication
 
-    init(app: XCUIApplication, file: StaticString = #file, line: UInt = #line) {
+    init(app: XCUIApplication, fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
         self.app = app
 
         if !app.navigationBars["Geschafft! 🎉"].exists {
-            expect(file: file, line: line, app.navigationBars["Geschafft! 🎉"].waitForExistence(timeout: 5))
-                .to(beTrue())
+            expect(
+                fileID: fileID,
+                file: file,
+                line: line,
+                app.navigationBars["Geschafft! 🎉"].waitForExistence(timeout: 5)
+            )
+            .to(beTrue())
         }
     }
 
     @MainActor
-    func tapClose(file: StaticString = #file, line: UInt = #line) async throws {
-        button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, file: file, line: line).tap()
+    func tapClose(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) async throws {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, fileID: fileID, file: file, line: line).tap()
 
         // closing the redeem screen takes some time to finish animations
         try await Task.sleep(nanoseconds: NSEC_PER_SEC * 1)

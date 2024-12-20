@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Visualizzato";
 "erx_txt_claimed_at_%@" = "Presunto %@";
 "erx_txt_current" = "Attuale";
+"erx_txt_dispensed_at_%@" = "Fornito %@";
 "erx_txt_expired_on_%@" = "Scaduto il %@";
 "erx_txt_forced_update_alert_description" = "Ottimizza la tua esperienza con l'app aggiornandola.";
 "erx_txt_forced_update_alert_ignore" = "Forse più tardi";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "Nuovo messaggio";
 "idp_err_not_available_in_demo_mode_recovery" = "Uscire dalla modalità demo per utilizzare la funzione.";
 "idp_err_not_available_in_demo_mode_text" = "Non disponibile in modalità demo";
+"intern_msg_change_log_chip_%@" = "Novità nella versione dell'app %@";
+"intern_msg_error_empty_onboarding_date" = "Se l'errore si ripresenta, reinstallare l'applicazione";
+"intern_msg_error_invalid_url" = "Impossibile trovare il file JSON";
+"intern_msg_error_unknown_error" = "Si è verificato un errore";
+"intern_msg_welcome" = "Benvenuti nell'app di prescrizione elettronica! Con questa app puoi ricevere digitalmente le prescrizioni elettroniche e inviarle alla farmacia di tua scelta. Sta a te decidere se prenotare la prescrizione lì per il ritiro o fartela consegnare a casa. Naturalmente puoi anche gestire le ricette della tua famiglia. Per ricevere le prescrizioni in formato digitale è necessaria la registrazione.\n\nSono contento che tu sia qui!\nIl tuo team dell'app di prescrizione elettronica";
+"intern_msg_welcome_chip" = "🎉Benvenuti!";
 "kbv_code_dosage_form_aeo" = "Olio volatile";
 "kbv_code_dosage_form_amp" = "Fiale";
 "kbv_code_dosage_form_apa" = "Coppie di ampolle";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Eliminato";
 "prsc_status_completed" = "Redento";
 "prsc_status_direct_assigned" = "Sarà riscattato per te";
+"prsc_status_dispensed" = "Fornito";
 "prsc_status_error" = "Ricetta errata";
 "prsc_status_expired" = "Scaduto";
-"prsc_status_in_progress" = "Nella redenzione";
+"prsc_status_in_progress" = "È in fase di elaborazione";
 "prsc_status_multiple_prsc" = "Riscattabile più tardi";
 "prsc_status_ready" = "Riscattabile";
 "prsc_status_sent" = "Pubblicato";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "Per una panoramica delle ricevute dei costi";
 "stg_btn_charge_item_share" = "Invia";
 "stg_btn_device_security" = "Sicurezza dell'app";
+"stg_btn_donor_register_alert_open" = "Aprire";
 "stg_btn_edit_picture" = "Modificare";
 "stg_btn_edit_profile_action_camera" = "Fai una foto";
 "stg_btn_edit_profile_action_library" = "scegli l'immagine";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Salva";
 "stg_btn_reg_devices_load" = "Registrati";
 "stg_con_btn_gemmunity" = "Forum sulla prescrizione elettronica";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "Registro delle donazioni di organi";
+"stg_con_btn_organ_donor_alert_cancel" = "Cancellare";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback dall'app di prescrizione elettronica";
 "stg_con_hotline_ava" = "Gratuito per il chiamante. Orari di servizio: lun - ven 8:00 - 20:00 esclusi festivi nazionali";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "Ripeti PIN";
 "stg_edt_card_reset_puk_input" = "Inserisci PUK";
 "stg_edt_card_reset_puk_input_label" = "Insieme al PIN avete ricevuto dalla vostra compagnia assicurativa un PUK di 8 cifre.";
+"stg_exp_txt_title" = "Esplorare";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Apri il sito web";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\n Friedrichstr. 136\n 10117 Berlino";
 "stg_lno_txt_text_note" = "Ci sforziamo di utilizzare un linguaggio equo rispetto al genere. Se noti errori, saremo lieti di risponderti via e-mail.";
 "stg_lno_txt_text_responsible" = "Dott. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge";
-"stg_lno_txt_text_taxAndMore" = "Amministratore Delegato: Dott. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\n Tribunale di registrazione: tribunale distrettuale di Berlino-Charlottenburg\n Numero del registro delle imprese: HRB 96351\n Partita IVA: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Direzione: Dott. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\nTribunale di registrazione: tribunale distrettuale di Berlino-Charlottenburg\nNumero del registro delle imprese: HRB 96351\nPartita IVA: DE241843684";
 "stg_lno_txt_title_contact" = "Contatto";
 "stg_lno_txt_title_issuer" = "editore";
 "stg_lno_txt_title_note" = "Avviso";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Riscattato il";
 "stg_txt_charge_item_sum" = "prezzo totale";
 "stg_txt_demo_mode" = "Modalità demo";
+"stg_txt_donor_register_alert_message" = "Verrai reindirizzato al registro dei donatori di organi. Per visualizzare e modificare i dati sulla donazione degli organi, è necessario effettuare il login lì.";
+"stg_txt_donor_register_alert_title" = "Aprire il registro delle donazioni di organi?";
 "stg_txt_edit_profile_background_section_title" = "colore di sfondo";
 "stg_txt_edit_profile_charge_item_list_section_title" = "ricevute di spesa";
 "stg_txt_edit_profile_default_name" = "Nome del profilo";

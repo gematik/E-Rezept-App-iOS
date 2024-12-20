@@ -147,8 +147,8 @@ struct PharmacyRedeemView: View {
             }
             .navigationBarBackButtonHidden(true)
             .navigationBarTitleDisplayMode(.inline)
-            // Because of issues with Introspect only change the color when iOS 16 is available
-            .backport.navigationBarToolBarBackground(color: Colors.gifBackground)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Colors.gifBackground, for: .navigationBar)
         }
     }
 

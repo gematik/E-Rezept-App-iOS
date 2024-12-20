@@ -16,6 +16,7 @@
 //
 //
 
+import Dependencies
 @testable import eRpFeatures
 import eRpKit
 import Nimble
@@ -26,7 +27,8 @@ final class PrescriptionViewStatusTests: XCTestCase {
                       flowType: ErxTask.FlowType? = nil,
                       expiresOn: String? = DemoDate.createDemoDate(.tomorrow),
                       acceptedUntil: String? = DemoDate.createDemoDate(.twentyEightDaysAhead),
-                      multiplePrescription: MultiplePrescription? = nil) -> ErxTask {
+                      multiplePrescription: MultiplePrescription? = nil,
+                      medicationDispenses: [ErxMedicationDispense] = []) -> ErxTask {
         ErxTask(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: status,
@@ -36,6 +38,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
             authoredOn: DemoDate.createDemoDate(.today),
             expiresOn: expiresOn,
             acceptedUntil: acceptedUntil,
+            lastMedicationDispense: DemoDate.createDemoDate(.tomorrow),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication,
             medicationRequest: .init(
@@ -43,7 +46,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
                 hasEmergencyServiceFee: true,
                 multiplePrescription: multiplePrescription
             ),
-            medicationDispenses: status == .completed ? [medicationDispense] : []
+            medicationDispenses: medicationDispenses
         )
     }
 
@@ -57,25 +60,27 @@ final class PrescriptionViewStatusTests: XCTestCase {
         )
     }()
 
-    let medicationDispense: ErxMedicationDispense = .init(
-        identifier: "some-unique-id",
-        taskId: "2390f983-1e67-11b2-8555-63bf44e44fb8",
-        insuranceId: "A123456789",
-        dosageInstruction: nil,
-        telematikId: "11b2-8555",
-        whenHandedOver: DemoDate.createDemoDate(.today) ?? "",
-        medication: .init(
-            name: "Vita-Tee",
-            pzn: "06876519",
-            amount: .init(numerator: .init(value: "4")),
-            dosageForm: "INS",
-            normSizeCode: "NB",
-            batch: .init(
-                lotNumber: "Charge number 1001",
-                expiresOn: "2323-01-26T15:23:21+00:00"
+    func medicationDispense(with date: String?) -> ErxMedicationDispense {
+        ErxMedicationDispense(
+            identifier: "some-unique-id",
+            taskId: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            insuranceId: "A123456789",
+            dosageInstruction: nil,
+            telematikId: "11b2-8555",
+            whenHandedOver: date ?? "",
+            medication: .init(
+                name: "Vita-Tee",
+                pzn: "06876519",
+                amount: .init(numerator: .init(value: "4")),
+                dosageForm: "INS",
+                normSizeCode: "NB",
+                batch: .init(
+                    lotNumber: "Charge number 1001",
+                    expiresOn: "2323-01-26T15:23:21+00:00"
+                )
             )
         )
-    )
+    }
 
     func testTaskIsReady() { // CREATE, ACTIVATE
         // given
@@ -84,6 +89,43 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Noch 27 Tage einlösbar")))
+    }
+
+    func testTaskIsDispensed() {
+        withDependencies {
+            $0.date = DateGenerator { Date() }
+        } operation: {
+            // given
+            let task0 = self.generateTask(
+                status: .computed(status: .dispensed),
+                medicationDispenses: [self.medicationDispense(with: DemoDate.createDemoDate(.dayAfterTomorrow))]
+            )
+            // when
+            let sut0 = Prescription(erxTask: task0, dateFormatter: .testValue)
+            // then
+            expect(sut0.viewStatus).to(equal(.open(until: "Bereitgestellt übermorgen")))
+
+            // given
+            let task = self.generateTask(
+                status: .computed(status: .dispensed),
+                medicationDispenses: [self.medicationDispense(with: DemoDate.createDemoDate(.yesterday))]
+            )
+            // when
+            let sut = Prescription(erxTask: task, dateFormatter: .testValue)
+            // then
+            expect(sut.viewStatus).to(equal(.open(until: "Bereitgestellt gestern")))
+
+            // given
+            let task2 = self.generateTask(
+                status: .computed(status: .dispensed),
+                medicationDispenses: [self.medicationDispense(with: FHIRDateFormatter.liveValue
+                        .stringWithLongUTCTimeZone(from: Date(timeIntervalSince1970: 1_706_612_400)))]
+            )
+            // when
+            let sut2 = Prescription(erxTask: task2, dateFormatter: .testValue)
+            // then
+            expect(sut2.viewStatus).to(equal(.open(until: "Bereitgestellt 30.01.2024")))
+        }
     }
 
     func testTaskIsInProgress() { // ACCEPT
@@ -98,11 +140,17 @@ final class PrescriptionViewStatusTests: XCTestCase {
 
     func testTaskIsClosed() { // CLOSE
         // given
-        let task = generateTask(status: .completed)
+        let task = generateTask(
+            status: .completed,
+            medicationDispenses: [
+                medicationDispense(with: FHIRDateFormatter.liveValue
+                    .stringWithLongUTCTimeZone(from: Date(timeIntervalSince1970: 1_706_612_400))),
+            ]
+        )
         // when
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
-        expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Heute")))
+        expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: 30.01.2024")))
     }
 
     func testTaskIsReadyAndNotAcceptedAnymore() {

@@ -22,6 +22,7 @@ import SwiftUI
 
 extension CardWallReadCardDomain.State {
     // sourcery: CodedError = "010"
+    @CasePathable
     enum Error: Swift.Error, Equatable {
         // sourcery: errorCode = "01"
         /// `IDPError` thrown within the `CardWallReadCardDomain`
@@ -71,8 +72,6 @@ extension CardWallReadCardDomain.State {
 
     enum Output: Equatable {
         case idle
-        case retrievingChallenge(StepState)
-        case challengeLoaded(IDPChallengeSession)
         case signingChallenge(StepState)
         case verifying(StepState)
         case loggedIn(IDPToken)
@@ -96,10 +95,7 @@ extension CardWallReadCardDomain.State {
                 default: break
                 }
             }
-            if case let .challengeLoaded(challenge) = self {
-                return .signChallenge(challenge)
-            }
-            return .getChallenge
+            return .signChallenge
         }
 
         var buttonTitle: LocalizedStringKey {
@@ -114,9 +110,9 @@ extension CardWallReadCardDomain.State {
             case .signingChallenge(.error(.inputError(.missingPIN))),
                  .signingChallenge(.error(.signChallengeError(.verifyCardError(.wrongSecretWarning)))):
                 return L10n.cdwBtnRcCorrectPin.key
-            case .retrievingChallenge(.error), .signingChallenge(.error), .verifying(.error):
+            case .signingChallenge(.error), .verifying(.error):
                 return L10n.cdwBtnRcRetry.key
-            case .retrievingChallenge(.loading), .signingChallenge(.loading), .verifying(.loading):
+            case .signingChallenge(.loading), .verifying(.loading):
                 return L10n.cdwBtnRcLoading.key
             default:
                 return L10n.cdwBtnRcNext.key
@@ -125,8 +121,7 @@ extension CardWallReadCardDomain.State {
 
         var nextButtonEnabled: Bool {
             switch self {
-            case .idle, // Continue with process
-                 .challengeLoaded:
+            case .idle: // Continue with process
                 return true
             case .signingChallenge(.error(.inputError(.missingCAN))),
                  .signingChallenge(.error(.inputError(.missingPIN))),
@@ -134,14 +129,12 @@ extension CardWallReadCardDomain.State {
                  .signingChallenge(.error(.signChallengeError(.verifyCardError(.wrongSecretWarning)))),
                  .signingChallenge(.error(.signChallengeError(.verifyCardError(.passwordBlocked)))):
                 return true
-            case .retrievingChallenge(.error), // enable button for retry
-                 .verifying(.error),
-                 .signingChallenge(.error):
+            case .signingChallenge(.error), // enable button for retry
+                 .verifying(.error):
                 return true
             case .loggedIn:
                 return true // close button
-            case .retrievingChallenge(.loading),
-                 .signingChallenge(.loading),
+            case .signingChallenge(.loading),
                  .verifying(.loading):
                 return false
             }

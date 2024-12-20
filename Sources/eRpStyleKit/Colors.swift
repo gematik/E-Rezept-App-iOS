@@ -45,50 +45,50 @@ public enum Colors {
 }
 
 extension Colors {
-    public static let gifBackground: Color = Asset.Colors.gifBackground.swiftUIColor
+    public static let gifBackground = Color(.gifBackground)
     public static let tabViewToolBarBackground: Color = Asset.Colors.tabViewToolBarBackground.swiftUIColor
     // disabled
     public static let disabled: Color = Asset.Colors.disabled.swiftUIColor
     // primary == blue
-    public static let primary900: Color = Asset.Colors.primary900.swiftUIColor
-    public static let primary800: Color = Asset.Colors.primary800.swiftUIColor
-    public static let primary700: Color = Asset.Colors.primary700.swiftUIColor
-    public static let primary600: Color = Asset.Colors.primary600.swiftUIColor
-    public static let primary500: Color = Asset.Colors.primary500.swiftUIColor
-    public static let primary400: Color = Asset.Colors.primary400.swiftUIColor
-    public static let primary300: Color = Asset.Colors.primary300.swiftUIColor
-    public static let primary200: Color = Asset.Colors.primary200.swiftUIColor
-    public static let primary100: Color = Asset.Colors.primary100.swiftUIColor
+    public static let primary900 = Color(.primary900)
+    public static let primary800 = Color(.primary800)
+    public static let primary700 = Color(.primary700)
+    public static let primary600 = Color(.primary600)
+    public static let primary500 = Color(.primary500)
+    public static let primary400 = Color(.primary400)
+    public static let primary300 = Color(.primary300)
+    public static let primary200 = Color(.primary200)
+    public static let primary100 = Color(.primary100)
     // secondary == green
-    public static let secondary900: Color = Asset.Colors.secondary900.swiftUIColor
-    public static let secondary800: Color = Asset.Colors.secondary800.swiftUIColor
-    public static let secondary700: Color = Asset.Colors.secondary700.swiftUIColor
-    public static let secondary600: Color = Asset.Colors.secondary600.swiftUIColor
-    public static let secondary500: Color = Asset.Colors.secondary500.swiftUIColor
-    public static let secondary400: Color = Asset.Colors.secondary400.swiftUIColor
-    public static let secondary300: Color = Asset.Colors.secondary300.swiftUIColor
-    public static let secondary200: Color = Asset.Colors.secondary200.swiftUIColor
-    public static let secondary100: Color = Asset.Colors.secondary100.swiftUIColor
+    public static let secondary900 = Color(.secondary900)
+    public static let secondary800 = Color(.secondary800)
+    public static let secondary700 = Color(.secondary700)
+    public static let secondary600 = Color(.secondary600)
+    public static let secondary500 = Color(.secondary500)
+    public static let secondary400 = Color(.secondary400)
+    public static let secondary300 = Color(.secondary300)
+    public static let secondary200 = Color(.secondary200)
+    public static let secondary100 = Color(.secondary100)
     // red
-    public static let red900: Color = Asset.Colors.red900.swiftUIColor
-    public static let red800: Color = Asset.Colors.red800.swiftUIColor
-    public static let red700: Color = Asset.Colors.red700.swiftUIColor
-    public static let red600: Color = Asset.Colors.red600.swiftUIColor
-    public static let red500: Color = Asset.Colors.red500.swiftUIColor
-    public static let red400: Color = Asset.Colors.red400.swiftUIColor
-    public static let red300: Color = Asset.Colors.red300.swiftUIColor
-    public static let red200: Color = Asset.Colors.red200.swiftUIColor
-    public static let red100: Color = Asset.Colors.red100.swiftUIColor
+    public static let red900 = Color(.red900)
+    public static let red800 = Color(.red800)
+    public static let red700 = Color(.red700)
+    public static let red600 = Color(.red600)
+    public static let red500 = Color(.red500)
+    public static let red400 = Color(.red400)
+    public static let red300 = Color(.red300)
+    public static let red200 = Color(.red200)
+    public static let red100 = Color(.red100)
     // yellow
-    public static let yellow900: Color = Asset.Colors.yellow900.swiftUIColor
-    public static let yellow800: Color = Asset.Colors.yellow800.swiftUIColor
-    public static let yellow700: Color = Asset.Colors.yellow700.swiftUIColor
-    public static let yellow600: Color = Asset.Colors.yellow600.swiftUIColor
-    public static let yellow500: Color = Asset.Colors.yellow500.swiftUIColor
-    public static let yellow400: Color = Asset.Colors.yellow400.swiftUIColor
-    public static let yellow300: Color = Asset.Colors.yellow300.swiftUIColor
-    public static let yellow200: Color = Asset.Colors.yellow200.swiftUIColor
-    public static let yellow100: Color = Asset.Colors.yellow100.swiftUIColor
+    public static let yellow900 = Color(.yellow900)
+    public static let yellow800 = Color(.yellow800)
+    public static let yellow700 = Color(.yellow700)
+    public static let yellow600 = Color(.yellow600)
+    public static let yellow500 = Color(.yellow500)
+    public static let yellow400 = Color(.yellow400)
+    public static let yellow300 = Color(.yellow300)
+    public static let yellow200 = Color(.yellow200)
+    public static let yellow100 = Color(.yellow100)
 }
 
 extension Colors {

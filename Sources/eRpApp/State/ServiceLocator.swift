@@ -49,7 +49,7 @@ extension ServiceLocator: DependencyKey {
     static let liveValue = ServiceLocator()
 
     static let previewValue = ServiceLocator()
-    static let testValue: ServiceLocator = unimplemented("ServiceLocator")
+    static let testValue: ServiceLocator = unimplemented("ServiceLocator", placeholder: ServiceLocator())
 }
 
 extension DependencyValues {

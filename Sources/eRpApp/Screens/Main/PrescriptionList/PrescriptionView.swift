@@ -42,7 +42,7 @@ struct PrescriptionView: View {
                         .multilineTextAlignment(.leading)
                         .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionName)
                         .padding(.bottom, 4)
-                        if prescription.flowType != .directAssignment {
+                        if !(prescription.type == .directAssignment && !prescription.isArchived) {
                             Text(prescription.statusMessage)
                                 .font(Font.subheadline.weight(.regular))
                                 .foregroundColor(Color(.secondaryLabel))

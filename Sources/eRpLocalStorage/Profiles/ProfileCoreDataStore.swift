@@ -84,12 +84,18 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
         return result > 0
     }
 
-    public func createProfile(with name: String) throws -> Profile {
+    public func createProfile(
+        name: String,
+        shouldAutoUpdateNameAtNextLogin: Bool = false
+    ) throws -> Profile {
         let coreData = try coreDataControllerFactory.loadCoreDataController()
         let moc = coreData.container.newBackgroundContext()
 
         var saveError: Error?
-        let newProfile = Profile(name: name)
+        let newProfile = Profile(
+            name: name,
+            shouldAutoUpdateNameAtNextLogin: shouldAutoUpdateNameAtNextLogin
+        )
         moc.performAndWait {
             _ = ProfileEntity(profile: newProfile, in: moc)
             do {
@@ -137,10 +143,14 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                     profileEntity.insurance = profile.insurance
                     profileEntity.givenName = profile.givenName
                     profileEntity.familyName = profile.familyName
+                    profileEntity.displayName = profile.displayName
                     profileEntity.color = profile.color.rawValue
                     profileEntity.image = profile.image.rawValue
                     profileEntity.userImageData = profile.userImageData
                     profileEntity.lastAuthenticated = profile.lastAuthenticated
+                    profileEntity.hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
+                    profileEntity.shouldAutoUpdateNameAtNextLogin = profile.shouldAutoUpdateNameAtNextLogin
+                    profileEntity.gIdEntry = try? ProfileCoreDataStore.encoder.encode(profile.gIdEntry)
                     return profileEntity
                 } else {
                     return ProfileEntity.from(profile: profile, in: moc)
@@ -170,11 +180,13 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                 profileEntity.insurance = profile.insurance
                 profileEntity.givenName = profile.givenName
                 profileEntity.familyName = profile.familyName
+                profileEntity.displayName = profile.displayName
                 profileEntity.color = profile.color.rawValue
                 profileEntity.image = profile.image.rawValue
                 profileEntity.userImageData = profile.userImageData
                 profileEntity.lastAuthenticated = profile.lastAuthenticated
                 profileEntity.hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
+                profileEntity.shouldAutoUpdateNameAtNextLogin = profile.shouldAutoUpdateNameAtNextLogin
                 profileEntity.gIdEntry = try? ProfileCoreDataStore.encoder.encode(profile.gIdEntry)
             } else {
                 throw Error.noMatchingEntity

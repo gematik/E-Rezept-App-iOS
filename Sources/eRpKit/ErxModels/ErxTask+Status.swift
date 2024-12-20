@@ -20,7 +20,7 @@ import Foundation
 
 extension ErxTask {
     /// All defined states of a task (see `gemSysL_eRp` chapter 2.4.6 "Konzept Status E-Rezept")
-    public enum Status: Equatable, RawRepresentable, Codable {
+    public enum Status: Equatable, RawRepresentable, Codable, Sendable {
         /// The task has been initialized but  is not yet ready to be acted upon.
         case draft
         /// The task is ready (open) to be performed, but no action has yet been taken.
@@ -40,11 +40,13 @@ extension ErxTask {
         /// Extra error status (not FHIR)
         case error(Error)
 
-        public enum ComputedStatus: String {
+        public enum ComputedStatus: String, Sendable {
             /// Status is `sent` when an ErxTask has been sent to an AVS service without using the fachdienst
             case sent
             /// Status is `waiting` for 10 minutes after redeeming an ErxTask via fachdienst
             case waiting
+            /// Status is `dispensed` when the prescription has been handed over and a medication dispense is available
+            case dispensed
         }
 
         /// The associated `RawValue` type
@@ -62,6 +64,7 @@ extension ErxTask {
             case "completed": self = .completed
             case "sent": self = .computed(status: .sent)
             case "waiting": self = .computed(status: .waiting)
+            case "dispensed": self = .computed(status: .dispensed)
             /// The task is ready to be acted upon and action is sought.
             case "requested", "undefined: requested": self = .undefined(status: "requested")
             /// A potential performer has claimed ownership of the task and is evaluating whether to perform it.

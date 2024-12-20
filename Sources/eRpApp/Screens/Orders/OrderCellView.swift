@@ -67,7 +67,7 @@ struct OrderCellView: View {
 
                     if isNew {
                         StatusView(title: L10n.ordListStatusNew, backgroundColor: Colors.primary100)
-                    } else {
+                    } else if prescriptionCount != 0 {
                         StatusView(
                             title: L10n.ordListStatusCount(prescriptionCount),
                             foregroundColor: Colors.systemLabelSecondary

@@ -61,8 +61,9 @@ final class AVSMessageFromOrderTests: XCTestCase {
         let sut = try jsonDecoder.encode(avsMessage)
 
         // then
-        expect(sut.utf8string).to(contain(#""transactionID" : "A37E7651-427C-4899-9508-5660677F103C""#))
-        expect(sut.utf8string).to(contain(#""supplyOptionsType" : "onPremise""#))
+        expect(String(data: sut, encoding: .utf8))
+            .to(contain(#""transactionID" : "A37E7651-427C-4899-9508-5660677F103C""#))
+        expect(String(data: sut, encoding: .utf8)).to(contain(#""supplyOptionsType" : "onPremise""#))
     }
 
     func testIsValidName() throws {

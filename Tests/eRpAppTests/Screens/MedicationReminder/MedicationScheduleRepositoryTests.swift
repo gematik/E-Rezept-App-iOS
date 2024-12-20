@@ -34,17 +34,17 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
 
     func testCreate() async throws {
         // given
-        let notificationSchedulerCancelAllPendingRequestsCallsCount = ActorIsolated(0)
-        let notificationSchedulerScheduleCallsCount = ActorIsolated(0)
-        let notificationSchedulerScheduleInvocation = ActorIsolated([MedicationSchedule]())
+        let notificationSchedulerCancelAllPendingRequestsCallsCount = LockIsolated(0)
+        let notificationSchedulerScheduleCallsCount = LockIsolated(0)
+        let notificationSchedulerScheduleInvocation = LockIsolated([MedicationSchedule]())
         let sut = withDependencies {
             $0.medicationScheduleStore = mockMedicationScheduleStore
             $0.notificationScheduler.cancelAllPendingRequests = {
-                await notificationSchedulerCancelAllPendingRequestsCallsCount.withValue { $0 += 1 }
+                notificationSchedulerCancelAllPendingRequestsCallsCount.withValue { $0 += 1 }
             }
             $0.notificationScheduler.schedule = { schedules in
-                await notificationSchedulerScheduleInvocation.setValue(schedules)
-                await notificationSchedulerScheduleCallsCount.withValue { $0 += 1 }
+                notificationSchedulerScheduleInvocation.setValue(schedules)
+                notificationSchedulerScheduleCallsCount.withValue { $0 += 1 }
             }
 
         } operation: {
@@ -64,13 +64,13 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
         expect(self.mockMedicationScheduleStore.fetchAllCalled).to(beTrue())
         expect(self.mockMedicationScheduleStore.fetchAllCallsCount) == 1
 
-        await notificationSchedulerCancelAllPendingRequestsCallsCount.withValue {
+        notificationSchedulerCancelAllPendingRequestsCallsCount.withValue {
             XCTAssertEqual($0, 1)
         }
-        await notificationSchedulerScheduleCallsCount.withValue {
+        notificationSchedulerScheduleCallsCount.withValue {
             XCTAssertEqual($0, 1)
         }
-        await notificationSchedulerScheduleInvocation.withValue {
+        notificationSchedulerScheduleInvocation.withValue {
             XCTAssertEqual($0, [schedule1])
         }
 
@@ -130,7 +130,7 @@ final class MedicationScheduleRepositoryTests: XCTestCase {
                 cancelAllPendingRequests: { await actor.didCallAPI(name: "cancelAllPendingRequests") },
                 removeDeliveredNotification: unimplemented("removeDeliveredNotification"),
                 requestAuthorization: unimplemented("requestAuthorization"),
-                isAuthorized: unimplemented("isAuthorized")
+                isAuthorized: unimplemented("isAuthorized", placeholder: false)
             )
         } operation: {
             MedicationScheduleRepository.liveValue

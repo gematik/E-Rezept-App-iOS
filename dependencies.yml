@@ -5,8 +5,6 @@ purpose:
   specific:
     openssl-swift: >
       OpenSSL is used for all cryptographics that cannot be achieved with iOS standard crypto libraries (e.g. Brainpool ECC, PKCS#7).
-    datakit: >
-      This library contains convenience functions for handling data and encoding e.g. from and to Base64 representation.
     asn1kit: >
       This library contains convenience functions for handling asn1 data structures.
     ref-openhealthcardkit: >

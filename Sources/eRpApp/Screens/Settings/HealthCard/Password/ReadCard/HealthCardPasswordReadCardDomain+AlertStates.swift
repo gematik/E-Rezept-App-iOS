@@ -24,10 +24,9 @@ extension HealthCardPasswordReadCardDomain {
         static let cardUnlocked: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertCardUnlockedTitle,
             actions: {
-                .default(
-                    .init(L10n.stgBtnCardResetRcAlertOk),
-                    action: .send(.settings)
-                )
+                ButtonState(action: .send(.settings)) {
+                    TextState(L10n.stgBtnCardResetRcAlertOk)
+                }
             },
             message: L10n.stgTxtCardResetRcAlertCardUnlockedMessage
         )
@@ -192,10 +191,9 @@ extension HealthCardPasswordReadCardDomain {
         static let unknownError: ErpAlertState<Destination.Alert> = .init(
             title: L10n.stgTxtCardResetRcAlertUnknownErrorTitle,
             actions: {
-                .default(
-                    .init(L10n.stgBtnCardResetRcAlertOk),
-                    action: .send(.settings)
-                )
+                ButtonState(action: .send(.settings)) {
+                    TextState(L10n.stgBtnCardResetRcAlertOk)
+                }
             },
             message: L10n.stgTxtCardResetRcAlertUnknownErrorMessage
         )

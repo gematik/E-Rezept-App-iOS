@@ -29,32 +29,38 @@ struct MedicationReminderRepetitionDetailsScreen<Previous>: Screen where Previou
         self.previous = previous
     }
 
-    func infiniteCell(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.medicationReminder.medReminderBtnRepetitionInfinite, file: file, line: line)
+    func infiniteCell(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.medicationReminder.medReminderBtnRepetitionInfinite, fileID: fileID, file: file, line: line)
     }
 
-    func finiteCell(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.medicationReminder.medReminderBtnRepetitionFinite, file: file, line: line)
+    func finiteCell(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.medicationReminder.medReminderBtnRepetitionFinite, fileID: fileID, file: file, line: line)
     }
 
-    func startDatePicker(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        datePicker(by: A11y.medicationReminder.medReminderBtnRepetitionDateStart, file: file, line: line)
+    func startDatePicker(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        datePicker(
+            by: A11y.medicationReminder.medReminderBtnRepetitionDateStart,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
     }
 
-    func endDatePicker(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        datePicker(by: A11y.medicationReminder.medReminderBtnRepetitionDateEnd, file: file, line: line)
+    func endDatePicker(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        datePicker(by: A11y.medicationReminder.medReminderBtnRepetitionDateEnd, fileID: fileID, file: file, line: line)
     }
 
     func setStartDate(
         _ date: Date,
         additionalValidation: ((DatePickerScreen) -> Void)? = nil,
-        file: StaticString = #file,
+        fileID: String = #fileID, file: String = #filePath,
         line: UInt = #line
     ) {
         setDate(
             date,
             for: startDatePicker(file: file, line: line),
             additionalValidation: additionalValidation,
+            fileID: fileID,
             file: file,
             line: line
         )
@@ -63,13 +69,14 @@ struct MedicationReminderRepetitionDetailsScreen<Previous>: Screen where Previou
     func setEndDate(
         _ date: Date,
         additionalValidation: ((DatePickerScreen) -> Void)? = nil,
-        file: StaticString = #file,
+        fileID: String = #fileID, file: String = #filePath,
         line: UInt = #line
     ) {
         setDate(
             date,
             for: endDatePicker(file: file, line: line),
             additionalValidation: additionalValidation,
+            fileID: fileID,
             file: file,
             line: line
         )
@@ -79,7 +86,7 @@ struct MedicationReminderRepetitionDetailsScreen<Previous>: Screen where Previou
         _ date: Date,
         for element: XCUIElement,
         additionalValidation: ((DatePickerScreen) -> Void)? = nil,
-        file: StaticString,
+        fileID _: String, file: String,
         line: UInt
     ) {
         // open date picker dialog
@@ -104,7 +111,7 @@ struct MedicationReminderRepetitionDetailsScreen<Previous>: Screen where Previou
     }
 
     @discardableResult
-    func tapBackButton(file _: StaticString = #file, line _: UInt = #line) -> Previous {
+    func tapBackButton(fileID _: String = #fileID, file _: String = #filePath, line _: UInt = #line) -> Previous {
         let button = app.navigationBars.buttons.firstMatch
 
         expect(button).to(exist("Back Button"))
@@ -113,11 +120,13 @@ struct MedicationReminderRepetitionDetailsScreen<Previous>: Screen where Previou
         return previous
     }
 
+    @MainActor
     struct DatePickerScreen: Screen {
         var app: XCUIApplication
         var root: XCUIElement
 
-        func cell(for date: Date, file _: StaticString = #file, line _: UInt = #line) -> XCUIElement {
+        func cell(for date: Date, fileID _: String = #fileID, file _: String = #filePath,
+                  line _: UInt = #line) -> XCUIElement {
             let monthSelection = app.buttons["Jahresauswahl einblenden"]
 
             if monthSelection.value as? String != date.datePickerDialogMonthLabelFormatted() {
@@ -145,7 +154,7 @@ struct MedicationReminderRepetitionDetailsScreen<Previous>: Screen where Previou
 }
 
 extension XCUIElement {
-    func setDate(_ date: Date, file _: StaticString = #file, line _: UInt = #line) {
+    func setDate(_ date: Date, fileID _: String = #fileID, file _: String = #filePath, line _: UInt = #line) {
         let dateString = date.formatted(Date.FormatStyle().year(.defaultDigits).month(.twoDigits).day(.twoDigits))
         tap()
         typeText(dateString)

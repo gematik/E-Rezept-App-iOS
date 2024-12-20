@@ -100,7 +100,7 @@ struct UIDateFormatter {
 
     func relativeDateAndTime(_ string: String?) -> String? {
         if let dateTimeString = string,
-           let dateTime = fhirDateFormatter.date(from: dateTimeString, format: .yearMonthDayTimeMilliSeconds) {
+           let dateTime = fhirDateFormatter.date(from: dateTimeString) {
             return relativeDateAndTime(from: dateTime)
         }
         return string
@@ -110,16 +110,23 @@ struct UIDateFormatter {
         relativeDateAndTimeFormatter.string(from: date)
     }
 
-    func relativeDate(_ string: String?) -> String? {
+    func relativeDate(
+        _ string: String?,
+        formattingContext: RelativeDateTimeFormatter.Context = .beginningOfSentence
+    ) -> String? {
         if let dateAsString = string,
            let date = fhirDateFormatter.date(from: dateAsString, format: .yearMonthDay) {
-            return relativeDate(from: date)
+            return relativeDate(from: date, formattingContext: formattingContext)
         }
         return string
     }
 
-    func relativeDate(from date: Date) -> String {
-        relativeDateFormatter.string(from: date)
+    func relativeDate(
+        from date: Date,
+        formattingContext: RelativeDateTimeFormatter.Context = .beginningOfSentence
+    ) -> String {
+        relativeDateFormatter.formattingContext = formattingContext
+        return relativeDateFormatter.string(from: date)
     }
 
     func relativeTime(from date: Date,

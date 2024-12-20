@@ -1,0 +1,35 @@
+{
+    "hideWelcomeDrawerRecordings":
+    {
+        "type": "repeated",
+        "payload": true
+    },
+    "hideOnboardingRecordings":
+    {
+        "type": "repeated",
+        "payload": true
+    },
+
+    "isOnboardingHiddenRecordings":
+    {
+        "type": "repeated",
+        "payload": true
+    },
+    "appSecurityOptionRecordings":
+    {
+        "type": "repeated",
+        "payload": [
+        	3
+        ]
+    },
+    "onboardingVersionRecordings":
+    {
+        "type": "repeated",
+        "payload": "2.0.0"
+    },
+    "onboardingDateRecordings":
+    {
+        "type":"repeated",
+        "payload":751208353.973094
+    }
+}

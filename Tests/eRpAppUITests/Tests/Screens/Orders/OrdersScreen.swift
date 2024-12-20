@@ -23,9 +23,20 @@ import XCTest
 struct OrdersScreen: Screen {
     let app: XCUIApplication
 
-    func tapOrderDetailsForPharmacyNamed(_ name: String, file: StaticString = #file,
+    func tapOrderDetailsForPharmacyNamed(_ name: String, fileID: String = #fileID, file: String = #filePath,
                                          line: UInt = #line) -> OrderDetailsScreen {
-        staticText(by: name, file: file, line: line).tap()
+        staticText(by: name, fileID: fileID, file: file, line: line).tap()
         return OrderDetailsScreen(app: app)
+    }
+
+    func navigationTitle(fileID: String = #fileID, file: String = #file, line: UInt = #line) -> XCUIElement {
+        staticText(
+            within: app.navigationBars,
+            by: "Nachrichten",
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
     }
 }

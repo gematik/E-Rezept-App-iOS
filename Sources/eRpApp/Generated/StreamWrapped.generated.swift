@@ -1005,6 +1005,12 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.eraseToAnyPublisher()
 	}
 	var isOnboardingHidden: Bool { current.isOnboardingHidden }
+	var onboardingDate: AnyPublisher<Date?, Never> {
+		return stream
+			.map { $0.onboardingDate }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
 	var onboardingVersion: AnyPublisher<String?, Never> {
 		return stream
 			.map { $0.onboardingVersion }
@@ -1060,6 +1066,18 @@ class StreamWrappedUserDataStore: UserDataStore {
 		set { current.hideWelcomeDrawer = newValue }
 		get { current.hideWelcomeDrawer }
 	}
+	var readInternalCommunications: AnyPublisher<[String], Never> {
+		return stream
+			.map { $0.readInternalCommunications }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
+	var hideWelcomeMessage: AnyPublisher<Bool, Never> {
+		return stream
+			.map { $0.hideWelcomeMessage }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
 	var configuration: AnyPublisher<AppConfiguration, Never> {
 		return stream
 			.map { $0.configuration }
@@ -1067,6 +1085,12 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.eraseToAnyPublisher()
 	}
 	var appConfiguration: AppConfiguration { current.appConfiguration }
+
+	func set(onboardingDate: Date?) -> Void {
+        current.set(
+				onboardingDate: onboardingDate
+            )
+	}
 
 	func set(hideOnboarding: Bool) -> Void {
         current.set(
@@ -1118,6 +1142,18 @@ class StreamWrappedUserDataStore: UserDataStore {
 
 	func wipeAll() -> Void {
         current.wipeAll(
+            )
+	}
+
+	func markInternalCommunicationAsRead(messageId: String) -> Void {
+        current.markInternalCommunicationAsRead(
+				messageId: messageId
+            )
+	}
+
+	func set(hideWelcomeMessage: Bool) -> Void {
+        current.set(
+				hideWelcomeMessage: hideWelcomeMessage
             )
 	}
 

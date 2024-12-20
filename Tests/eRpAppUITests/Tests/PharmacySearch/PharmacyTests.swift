@@ -70,7 +70,7 @@ final class PharmacyTests: XCTestCase {
         for serviceType in Service.allCases {
             XCTAssertEqual(
                 services.contains(serviceType),
-                app.buttons[serviceType.buttonId].waitForExistence(timeout: 1),
+                app.buttons[serviceType.buttonId].exists,
                 "expected '.\(serviceType.rawValue)' to \(services.contains(serviceType) ? "not " : "")be" +
                     " present within '\(pharmacyName)'",
                 file: file,

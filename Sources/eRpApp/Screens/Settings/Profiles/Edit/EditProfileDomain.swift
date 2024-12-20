@@ -226,6 +226,7 @@ struct EditProfileDomain {
             return .publisher(
                 updateProfile(with: state.profileId) { profile in
                     profile.name = name
+                    profile.shouldAutoUpdateNameAtNextLogin = false
                 }
                 .map(Action.Response.updateProfileReceived)
                 .map(Action.response)
@@ -427,7 +428,8 @@ extension EditProfileDomain {
             .flatMap { pairingToken, keyIdentifier -> AnyPublisher<Action, Never> in
                 guard let keyIdentifier = keyIdentifier,
                       let pairingToken = pairingToken,
-                      let deviceIdentifier = keyIdentifier.encodeBase64UrlSafe()?.utf8string else {
+                      let base64KeyIdentifier = keyIdentifier.encodeBase64UrlSafe(),
+                      let deviceIdentifier = String(data: base64KeyIdentifier, encoding: .utf8) else {
                     return Just(Action.relogin).eraseToAnyPublisher()
                 }
 
@@ -458,7 +460,8 @@ extension Publisher where Failure == LocalStoreError, Output == Bool {
                                           insuranceId: nil,
                                           color: .blue,
                                           lastAuthenticated: nil,
-                                          erxTasks: [])
+                                          erxTasks: [],
+                                          shouldAutoUpdateNameAtNextLogin: true)
                     return profileDataStore.save(profiles: [profile])
                 }
                 return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()

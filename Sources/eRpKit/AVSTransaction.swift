@@ -19,7 +19,7 @@
 import Foundation
 
 /// Represents the information of a transaction with the AVS
-public struct AVSTransaction: Identifiable, Hashable, Equatable, Codable {
+public struct AVSTransaction: Identifiable, Hashable, Equatable, Codable, Sendable {
     public var id: UUID {
         transactionID
     }

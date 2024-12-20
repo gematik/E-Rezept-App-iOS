@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Zobrazeno";
 "erx_txt_claimed_at_%@" = "Předpokládaný %@";
 "erx_txt_current" = "Aktuální";
+"erx_txt_dispensed_at_%@" = "Poskytováno %@";
 "erx_txt_expired_on_%@" = "Platnost vypršela %@";
 "erx_txt_forced_update_alert_description" = "Aktualizací aplikace optimalizujte své prostředí.";
 "erx_txt_forced_update_alert_ignore" = "Možná později";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "Nové zprávy";
 "idp_err_not_available_in_demo_mode_recovery" = "Chcete-li funkci použít, ukončete demo režim.";
 "idp_err_not_available_in_demo_mode_text" = "Není k dispozici v demo režimu";
+"intern_msg_change_log_chip_%@" = "Co je nového ve verzi aplikace %@";
+"intern_msg_error_empty_onboarding_date" = "Pokud se tato chyba objeví znovu, znovu nainstalujte aplikaci";
+"intern_msg_error_invalid_url" = "Soubor JSON nebyl nalezen";
+"intern_msg_error_unknown_error" = "Došlo k chybě";
+"intern_msg_welcome" = "Vítejte v aplikaci elektronického receptu! Pomocí této aplikace můžete digitálně přijímat elektronické recepty a odesílat je do lékárny dle vašeho výběru. Zda si tam chcete recept zarezervovat k vyzvednutí nebo si jej nechat doručit domů, je čistě na vás. Spravovat můžete samozřejmě i rodinné recepty. Aby bylo možné přijímat recepty digitálně, je nutná registrace.\n\nJsem rád, že jste tady!\nVáš tým aplikace pro elektronické recepty";
+"intern_msg_welcome_chip" = "🎉 Vítejte!";
 "kbv_code_dosage_form_aeo" = "Těkavý olej";
 "kbv_code_dosage_form_amp" = "Ampulky";
 "kbv_code_dosage_form_apa" = "Páry ampulí";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Smazáno";
 "prsc_status_completed" = "Vykoupeno";
 "prsc_status_direct_assigned" = "Bude pro vás vykoupeno";
+"prsc_status_dispensed" = "Pokud";
 "prsc_status_error" = "Nesprávný recept";
 "prsc_status_expired" = "Platnost vypršela";
-"prsc_status_in_progress" = "Ve vykoupení";
+"prsc_status_in_progress" = "Zpracovává se";
 "prsc_status_multiple_prsc" = "Splatný později";
 "prsc_status_ready" = "Splatný";
 "prsc_status_sent" = "Vyslán";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "Pro přehled účtenek";
 "stg_btn_charge_item_share" = "Předložit";
 "stg_btn_device_security" = "Zabezpečení aplikace";
+"stg_btn_donor_register_alert_open" = "OTEVŘENO";
 "stg_btn_edit_picture" = "Upravit";
 "stg_btn_edit_profile_action_camera" = "vyfotit";
 "stg_btn_edit_profile_action_library" = "vybrat obrázek";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Uložit";
 "stg_btn_reg_devices_load" = "Registrovat";
 "stg_con_btn_gemmunity" = "Fórum e-receptů";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "Registr darování orgánů";
+"stg_con_btn_organ_donor_alert_cancel" = "Zrušit";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Zpětná vazba z aplikace e-recept";
 "stg_con_hotline_ava" = "Zdarma pro volajícího. Servisní časy: Po - Pá 8:00 - 20:00 kromě státních svátků";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "Opakujte PIN";
 "stg_edt_card_reset_puk_input" = "Zadejte PUK";
 "stg_edt_card_reset_puk_input_label" = "Spolu s PINem jste od své pojišťovny obdrželi 8místný PUK.";
+"stg_exp_txt_title" = "Prozkoumat";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Otevřete webovou stránku";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\n Friedrichstr. 136\n 10117 Berlín";
 "stg_lno_txt_text_note" = "Snažíme se používat genderově spravedlivý jazyk. Pokud si všimnete nějaké chyby, budeme rádi, když se ozvete e-mailem.";
 "stg_lno_txt_text_responsible" = "Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge";
-"stg_lno_txt_text_taxAndMore" = "Jednatel: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\n Rejstříkový soud: Okresní soud Berlin-Charlottenburg\n Číslo obchodního rejstříku: HRB 96351\n DIČ: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Vedení: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\nRejstříkový soud: Okresní soud Berlin-Charlottenburg\nČíslo obchodního rejstříku: HRB 96351 \nDIČ: DE241843684";
 "stg_lno_txt_title_contact" = "Kontakt";
 "stg_lno_txt_title_issuer" = "editor";
 "stg_lno_txt_title_note" = "Oznámení";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Uplatněno dne";
 "stg_txt_charge_item_sum" = "Celková cena";
 "stg_txt_demo_mode" = "Demo režim";
+"stg_txt_donor_register_alert_message" = "Budete přesměrováni do registru dárců orgánů. Chcete-li zobrazit a změnit údaje o dárcovství orgánů, musíte se tam přihlásit.";
+"stg_txt_donor_register_alert_title" = "Otevřít registr dárcovství orgánů?";
 "stg_txt_edit_profile_background_section_title" = "barva pozadí";
 "stg_txt_edit_profile_charge_item_list_section_title" = "výdajové doklady";
 "stg_txt_edit_profile_default_name" = "Jméno profilu";

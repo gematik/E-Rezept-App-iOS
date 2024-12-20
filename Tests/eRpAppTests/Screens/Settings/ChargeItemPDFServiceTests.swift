@@ -56,9 +56,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
         let result = try sut.generatePDF(for: ErxChargeItem.Fixtures.chargeItemWithFHIRData)
         try result.write(to: outputURL)
 
-        print(outputURL)
-
-        guard let resultString = String(data: result, encoding: .ascii) else {
+        guard let resultString = String(data: result, encoding: .isoLatin1) else {
             fatalError("invalid result string")
         }
 

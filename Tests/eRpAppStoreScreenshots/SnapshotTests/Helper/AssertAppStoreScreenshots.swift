@@ -36,6 +36,7 @@ let appStoreViewConfigs: [String: ViewImageConfig] = [
     "iPhone_6_5": .iPhoneXsMax,
 ]
 
+@MainActor
 func assertAppStoreSnapshots<SnapshotContent: View>(
     for view: SnapshotContent,
     backgroundColor: Color,

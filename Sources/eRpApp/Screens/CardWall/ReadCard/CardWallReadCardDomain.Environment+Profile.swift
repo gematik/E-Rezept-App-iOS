@@ -44,9 +44,17 @@ extension CardWallReadCardDomain.Environment {
                 }
                 if let givenName = givenName {
                     profile.givenName = givenName
+                    profile.displayName = givenName + " "
                 }
                 if let familyName = familyName {
                     profile.familyName = familyName
+                    profile.displayName = ((profile.displayName ?? "") + familyName).trimmed()
+                }
+
+                if profile.shouldAutoUpdateNameAtNextLogin,
+                   let displayName = profile.displayName {
+                    profile.name = displayName
+                    profile.shouldAutoUpdateNameAtNextLogin = false
                 }
             }
             .map { _ in
@@ -61,39 +69,29 @@ extension CardWallReadCardDomain.Environment {
     }
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
-    func idpChallengePublisher(for profileID: UUID) -> AsyncStream<CardWallReadCardDomain.Action> {
-        AsyncStream { continuation in
-            let cancellation = sessionProvider
-                .idpSession(for: profileID)
-                .requestChallenge()
-                .map { CardWallReadCardDomain.State.Output.challengeLoaded($0) }
-                .catch { Just(CardWallReadCardDomain.State.Output.retrievingChallenge(.error(.idpError($0)))) }
-                .onSubscribe { _ in
-                    continuation.yield(.response(.state(.retrievingChallenge(.loading))))
-                }
-                .receive(on: self.schedulers.main)
-                .sink(receiveCompletion: { _ in
-                    continuation.finish()
-                }, receiveValue: { value in
-                    continuation.yield(.response(.state(value)))
-                })
-
-            continuation.onTermination = { _ in
-                cancellation.cancel()
-            }
-        }
-    }
-
-    // [REQ:gemSpec_eRp_FdV:A_20172]
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
     func signChallengeWithNFCCard(
         can: String,
         pin: String,
         profileID: UUID,
-        challenge: IDPChallengeSession,
         send: Send<CardWallReadCardDomain.Action>
     ) async {
         await send(.response(.state(.signingChallenge(.loading))))
+
+        let idpSession = sessionProvider.idpSession(for: profileID)
+        let challenge: IDPChallengeSession
+        do {
+            challenge = try await idpSession.requestChallenge()
+                .async(\CardWallReadCardDomain.State.Error.Cases.idpError)
+        } catch let error as CardWallReadCardDomain.State.Error {
+            await send(.response(.state(.signingChallenge(.error(error)))))
+            return
+        } catch {
+            // cannot be called since requestChallenge() returns an IDPError
+            await send(.response(.state(.signingChallenge(.error(.idpError(.unspecified(error: error)))))))
+            return
+        }
+
         let signedChallengeResult = await nfcSessionProvider.sign(
             can: can,
             pin: pin,
@@ -127,7 +125,7 @@ extension CardWallReadCardDomain.Environment {
             idTokenValidator = try await sessionProvider.idTokenValidator(
                 for: profileID
             ) //  IDTokenValidatorError
-            .async(/CardWallReadCardDomain.State.Error.profileValidation)
+            .async(\CardWallReadCardDomain.State.Error.Cases.profileValidation)
         } catch let error as CardWallReadCardDomain.State.Error {
             return .response(.state(.verifying(.error(error))))
         } catch {

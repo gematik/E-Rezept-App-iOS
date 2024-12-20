@@ -222,6 +222,10 @@ struct QueryInterceptor: Interceptor {
         request.url = url
         return chain.proceed(request: request)
     }
+
+    func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
+        throw HTTPClientError.internalError("notImplemented")
+    }
 }
 
 struct PathInterceptor: Interceptor {
@@ -245,5 +249,9 @@ struct PathInterceptor: Interceptor {
         url?.appendPathComponent(path)
         request.url = url
         return chain.proceed(request: request)
+    }
+
+    func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
+        throw HTTPClientError.internalError("notImplemented")
     }
 }

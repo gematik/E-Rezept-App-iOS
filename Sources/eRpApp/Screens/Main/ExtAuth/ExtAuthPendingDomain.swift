@@ -124,17 +124,6 @@ struct ExtAuthPendingDomain {
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
     @Dependency(\.extAuthRequestStorage) var extAuthRequestStorage: ExtAuthRequestStorage
 
-    private var environment: Environment {
-        .init(
-            idpSession: idpSession,
-            schedulers: schedulers,
-            profileDataStore: profileDataStore,
-            extAuthRequestStorage: extAuthRequestStorage,
-            currentProfile: userSession.profile(),
-            idTokenValidator: userSession.idTokenValidator()
-        )
-    }
-
     var body: some Reducer<State, Action> {
         Reduce(self.core)
             .ifLet(\.$destination, action: \.destination)
@@ -145,7 +134,7 @@ struct ExtAuthPendingDomain {
         switch action {
         case .registerListener:
             return .publisher(
-                environment.extAuthRequestStorage.pendingExtAuthRequests
+                extAuthRequestStorage.pendingExtAuthRequests
                     .map { .response(.pendingExtAuthRequestsReceived($0)) }
                     .receive(on: schedulers.main.animation())
                     .eraseToAnyPublisher
@@ -169,18 +158,17 @@ struct ExtAuthPendingDomain {
         // [REQ:gemSpec_IDP_Frontend:A_22301-01#7] Actual handling of the universal link, user feedback via dialogs e.g.
         case let .externalLogin(url),
              let .destination(.presented(.extAuthAlert(.externalLogin(url)))):
-            let environment = environment
 
             if let entry = state.extAuthState.entry {
                 state.extAuthState = .extAuthReceived(entry)
             }
 
             return .publisher(
-                environment.idTokenValidator
+                userSession.idTokenValidator()
                     .mapError(Error.profileValidation)
                     .flatMap { idTokenValidator -> AnyPublisher<IDPToken, Error> in
                         // [REQ:gemSpec_IDP_Frontend:A_22301-01#8|5] Login part is handled by idpSesson
-                        environment.idpSession
+                        idpSession
                             .extAuthVerifyAndExchange(
                                 url,
                                 idTokenValidator: idTokenValidator.validate(idToken:)
@@ -197,7 +185,7 @@ struct ExtAuthPendingDomain {
                     }
                     .catchToPublisher()
                     .map { .response(.externalLoginReceived($0)) }
-                    .receive(on: environment.schedulers.main.animation())
+                    .receive(on: schedulers.main.animation())
                     .eraseToAnyPublisher
             )
             .cancellable(id: CancelID.login, cancelInFlight: true)
@@ -211,11 +199,10 @@ struct ExtAuthPendingDomain {
                     .run { _ in
                         try await schedulers.main.sleep(for: 1)
                     },
-                    environment.saveProfileWith(
+                    saveProfileWith(
                         insuranceId: payload?.idNummer,
                         insurance: payload?.organizationName,
-                        givenName: payload?.givenName,
-                        familyName: payload?.familyName,
+                        displayName: payload?.displayName,
                         overrideInsuranceTypeToPkv: overrideInsuranceTypeToPkv,
                         gIdEntry: entry
                     )
@@ -246,7 +233,7 @@ struct ExtAuthPendingDomain {
             return .none
         case .cancelAllPendingRequests,
              .destination(.presented(.extAuthAlert(.cancelAllPendingRequests))):
-            environment.extAuthRequestStorage.reset()
+            extAuthRequestStorage.reset()
             state.extAuthState = .empty
             return .cancel(id: CancelID.login)
         case .destination:
@@ -254,54 +241,49 @@ struct ExtAuthPendingDomain {
         }
     }
 
-    struct Environment {
-        let idpSession: IDPSession
-        let schedulers: Schedulers
-        let profileDataStore: ProfileDataStore
-        let extAuthRequestStorage: ExtAuthRequestStorage
-        let currentProfile: AnyPublisher<Profile, LocalStoreError>
-        let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
-
-        func saveProfileWith(
-            insuranceId: String?,
-            insurance: String?,
-            givenName: String?,
-            familyName: String?,
-            overrideInsuranceTypeToPkv: Bool = false,
-            gIdEntry: KKAppDirectory.Entry?
-        ) -> Effect<ExtAuthPendingDomain.Action> {
-            .publisher(
-                currentProfile
-                    .first()
-                    .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
-                        profileDataStore.update(profileId: profile.id) { profile in
-                            profile.insuranceId = insuranceId
-                            // This is needed to ensure proper pKV faking.
-                            // It can be removed when the debug option to fake pKV is removed.
-                            if profile.insuranceType == .unknown {
-                                profile.insuranceType = .gKV
-                            }
-                            // This is also temporary code until replaced by a proper implementation
-                            if overrideInsuranceTypeToPkv {
-                                profile.insuranceType = .pKV
-                            }
-                            profile.insurance = insurance
-                            profile.givenName = givenName
-                            profile.familyName = familyName
-                            profile.gIdEntry = gIdEntry
+    func saveProfileWith(
+        insuranceId: String?,
+        insurance: String?,
+        displayName: String?,
+        overrideInsuranceTypeToPkv: Bool = false,
+        gIdEntry: KKAppDirectory.Entry?
+    ) -> Effect<ExtAuthPendingDomain.Action> {
+        .publisher(
+            userSession.profile()
+                .first()
+                .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
+                    profileDataStore.update(profileId: profile.id) { profile in
+                        profile.insuranceId = insuranceId
+                        // This is needed to ensure proper pKV faking.
+                        // It can be removed when the debug option to fake pKV is removed.
+                        if profile.insuranceType == .unknown {
+                            profile.insuranceType = .gKV
                         }
-                        .eraseToAnyPublisher()
+                        // This is also temporary code until replaced by a proper implementation
+                        if overrideInsuranceTypeToPkv {
+                            profile.insuranceType = .pKV
+                        }
+                        profile.insurance = insurance
+                        profile.displayName = displayName
+                        profile.gIdEntry = gIdEntry
+
+                        if profile.shouldAutoUpdateNameAtNextLogin,
+                           let displayName = profile.displayName {
+                            profile.name = displayName
+                            profile.shouldAutoUpdateNameAtNextLogin = false
+                        }
                     }
-                    .map { _ in
-                        ExtAuthPendingDomain.Action.hide
-                    }
-                    .catch { error in
-                        Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
-                    }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
-            )
-        }
+                    .eraseToAnyPublisher()
+                }
+                .map { _ in
+                    ExtAuthPendingDomain.Action.hide
+                }
+                .catch { error in
+                    Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
+                }
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
+        )
     }
 
     enum Dummies {

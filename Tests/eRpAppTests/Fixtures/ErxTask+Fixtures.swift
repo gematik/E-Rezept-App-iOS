@@ -196,6 +196,17 @@ extension ErxTask {
             )
         )
 
+        static let medicationDispenseWeekBefore: ErxMedicationDispense = .init(
+            identifier: "dispense_id",
+            taskId: "6380f983-1e67-11b2-8555-63bf44e44fb8",
+            insuranceId: "A123456789",
+            dosageInstruction: nil,
+            telematikId: "11b2-8555",
+            whenHandedOver: FHIRDateFormatter.liveValue
+                .stringWithLongUTCTimeZone(from: Date(timeIntervalSince1970: 1_706_612_400)),
+            medication: medication7
+        )
+
         static let medicationDispense3: ErxMedicationDispense = .init(
             identifier: "taskId-2",
             taskId: "53210f983-1e67-22c5-8955-63bf44e44fb8",
@@ -525,12 +536,13 @@ extension ErxTask {
 
         static let erxTask7: ErxTask = .init(
             identifier: "6380f983-1e67-11b2-8555-63bf44e44fb8",
-            status: .ready,
+            status: .computed(status: .dispensed),
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
             expiresOn: DemoDate.createDemoDate(.twentyEightDaysAhead),
             acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            lastMedicationDispense: DemoDate.createDemoDate(.weekBefore),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication7,
             medicationRequest: .init(
@@ -538,7 +550,10 @@ extension ErxTask {
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization
+            organization: demoOrganization,
+            medicationDispenses: [
+                medicationDispenseWeekBefore,
+            ]
         )
 
         static let erxTask8: ErxTask = .init(

@@ -23,10 +23,15 @@ import XCTest
 struct PharmacyDetailsScreen: Screen {
     var app: XCUIApplication
 
-    func tapRedeem(file: StaticString = #file, line: UInt = #line) -> RedeemScreen {
+    func tapRedeem(fileID _: String = #fileID, file: String = #filePath, line: UInt = #line) -> RedeemScreen {
         buttonForService(.shipment, file: file, line: line).tap()
 
         return RedeemScreen(app: app)
+    }
+
+    func tapBackButton(fileID: String = #fileID, file: String = #filePath,
+                       line: UInt = #line) {
+        button(within: app.navigationBars, by: "Apothekensuche", fileID: fileID, file: file, line: line).tap()
     }
 
     func expandSheet(file _: StaticString = #file, line _: UInt = #line) {
@@ -34,18 +39,23 @@ struct PharmacyDetailsScreen: Screen {
     }
 
     @discardableResult
-    func tapClose(file: StaticString = #file, line: UInt = #line) -> OrderDetailsScreen {
-        button(by: A11y.pharmacyDetail.phaDetailBtnClose, file: file, line: line).tap()
+    func tapClose(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> OrderDetailsScreen {
+        button(by: A11y.pharmacyDetail.phaDetailBtnClose, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
     }
 
-    func contactSectionHeader(_ file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        staticText(by: A11y.pharmacyDetail.phaDetailContact, file: file, line: line)
+    func tapFavorite(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        button(by: "star", fileID: fileID, file: file, line: line).tap()
     }
 
-    func buttonForService(_ service: Service, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: service.buttonId, file: file, line: line)
+    func contactSectionHeader(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        staticText(by: A11y.pharmacyDetail.phaDetailContact, fileID: fileID, file: file, line: line)
+    }
+
+    func buttonForService(_ service: Service, fileID: String = #fileID, file: String = #filePath,
+                          line: UInt = #line) -> XCUIElement {
+        button(by: service.buttonId, fileID: fileID, file: file, line: line)
     }
 
     enum Service: String, CaseIterable {
@@ -74,8 +84,9 @@ struct PharmacyDetailsScreen: Screen {
         }
     }
 
-    func buttonForContact(_ contact: Contact, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: contact.buttonId, file: file, line: line)
+    func buttonForContact(_ contact: Contact, fileID: String = #fileID, file: String = #filePath,
+                          line: UInt = #line) -> XCUIElement {
+        button(by: contact.buttonId, fileID: fileID, file: file, line: line)
     }
 
     enum Contact: String, CaseIterable {

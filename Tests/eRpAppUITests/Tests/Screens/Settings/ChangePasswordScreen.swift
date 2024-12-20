@@ -25,8 +25,13 @@ import XCTest
 struct ChangePasswordScreen: Screen {
     let app: XCUIApplication
 
-    func enterOldPassword(_ password: String, file: StaticString = #file, line: UInt = #line) {
-        let textField = secureTextField(by: A18n.settings.createPassword.cpwInpCurrentPassword, file: file, line: line)
+    func enterOldPassword(_ password: String, fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        let textField = secureTextField(
+            by: A18n.settings.createPassword.cpwInpCurrentPassword,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
         textField.tap()
         textField.typeText(password)
     }
@@ -35,14 +40,29 @@ struct ChangePasswordScreen: Screen {
         app.staticTexts[A18n.settings.createPassword.cpwTxtCurrentPasswordWrong]
     }
 
-    func enterNewPassword(_ password: String, file: StaticString = #file, line: UInt = #line) {
-        let textField = secureTextField(by: A11y.settings.createPassword.cpwInpPasswordA, file: file, line: line)
+    func enterNewPassword(_ password: String, fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        let textField = secureTextField(
+            by: A11y.settings.createPassword.cpwInpPasswordA,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
         textField.tap()
         textField.typeText(password)
     }
 
-    func enterNewPasswordAgain(_ password: String, file: StaticString = #file, line: UInt = #line) {
-        let textField = secureTextField(by: A18n.settings.createPassword.cpwInpPasswordB, file: file, line: line)
+    func enterNewPasswordAgain(
+        _ password: String,
+        fileID: String = #fileID,
+        file: String = #filePath,
+        line: UInt = #line
+    ) {
+        let textField = secureTextField(
+            by: A18n.settings.createPassword.cpwInpPasswordB,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
         textField.tap()
         textField.typeText(password)
     }
@@ -55,11 +75,11 @@ struct ChangePasswordScreen: Screen {
         app.staticTexts[A18n.settings.createPassword.cpwTxtPasswordStrengthErrorFooter]
     }
 
-    func tapUpdate(file: StaticString = #file, line: UInt = #line) {
-        button(by: A18n.settings.createPassword.cpwBtnUpdate, file: file, line: line).tap()
+    func tapUpdate(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        button(by: A18n.settings.createPassword.cpwBtnUpdate, fileID: fileID, file: file, line: line).tap()
     }
 
-    func tapSave(file: StaticString = #file, line: UInt = #line) {
-        button(by: A18n.settings.createPassword.cpwBtnSave, file: file, line: line).tap()
+    func tapSave(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        button(by: A18n.settings.createPassword.cpwBtnSave, fileID: fileID, file: file, line: line).tap()
     }
 }

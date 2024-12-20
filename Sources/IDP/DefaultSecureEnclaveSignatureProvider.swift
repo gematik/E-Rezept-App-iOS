@@ -64,7 +64,8 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595,A_21595] Store pairing data
         certificateStorage.set(certificate: certificate)
         certificateStorage.set(keyIdentifier: pairingSession.tempKeyIdentifier)
-        guard let identifier = pairingSession.tempKeyIdentifier.encodeBase64UrlSafe()?.utf8string else {
+        guard let base64KeyIdentifier = pairingSession.tempKeyIdentifier.encodeBase64UrlSafe(),
+              let identifier = String(data: base64KeyIdentifier, encoding: .utf8) else {
             return Fail(error: SecureEnclaveSignatureProviderError.fetchingPrivateKey(nil))
                 .eraseToAnyPublisher()
         }
@@ -84,7 +85,8 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
         certificateStorage.set(keyIdentifier: nil)
         // [REQ:gemSpec_IDP_Frontend:A_21595] case deletion
         certificateStorage.set(certificate: nil)
-        guard let keyIdentifier = pairingSession.tempKeyIdentifier.encodeBase64UrlSafe()?.utf8string else {
+        guard let base64KeyIdentifier = pairingSession.tempKeyIdentifier.encodeBase64UrlSafe(),
+              let keyIdentifier = String(data: base64KeyIdentifier, encoding: .utf8) else {
             return
         }
         _ = try PrivateKeyContainer.deleteExistingKey(for: keyIdentifier)
@@ -113,7 +115,8 @@ extension DefaultSecureEnclaveSignatureProvider {
             .flatMap { identifier -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> in
                 // [REQ:gemSpec_IDP_Frontend:A_21588] usage as base64 encoded string
                 guard let someIdentifier = identifier,
-                      let identifier = someIdentifier.encodeBase64UrlSafe()?.utf8string else {
+                      let base64SomeIdentifier = someIdentifier.encodeBase64UrlSafe(),
+                      let identifier = String(data: base64SomeIdentifier, encoding: .utf8) else {
                     return Fail(error: SecureEnclaveSignatureProviderError.internal("keyMissing", nil))
                         .eraseToAnyPublisher()
                 }
@@ -127,7 +130,8 @@ extension DefaultSecureEnclaveSignatureProvider {
 
                 guard let expiresInterval = try? certificate.notAfter().timeIntervalSince1970,
                       let authCertRaw = certificate.derBytes,
-                      let authCert = authCertRaw.encodeBase64UrlSafe()?.utf8string else {
+                      let base64authCertRaw = authCertRaw.encodeBase64UrlSafe(),
+                      let authCert = String(data: base64authCertRaw, encoding: .utf8) else {
                     return Fail(error: SecureEnclaveSignatureProviderError.packagingAuthCertificate)
                         .eraseToAnyPublisher()
                 }

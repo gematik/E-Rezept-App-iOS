@@ -60,6 +60,13 @@ extension SceneDelegate {
 
         if ProcessInfo.processInfo.environment["UITEST.DISABLE_ANIMATIONS"] != nil {
             mainWindow?.layer.speed = 1000
+
+            // Disable hardware keyboards.
+            let setHardwareLayout = NSSelectorFromString("setHardwareLayout:")
+            UITextInputMode.activeInputModes
+                // Filter `UIKeyboardInputMode`s.
+                .filter { $0.responds(to: setHardwareLayout) }
+                .forEach { $0.perform(setHardwareLayout, with: nil) }
         }
         @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
 
@@ -126,18 +133,32 @@ extension Reducer {
             if scenario?.idpSession != nil {
                 dependencies.idpSession = SmartMocks.shared.smartMockIDPSession(scenario, isRecording)
             }
-            dependencies
-                .loginHandlerServiceFactory = LoginHandlerServiceFactory { idpSession, signatureProvider in
-                    SmartMocks.shared.smartMockLoginHandler(
-                        idpSession: idpSession,
-                        signatureProvider: signatureProvider,
-                        scenario,
-                        isRecording
-                    )
-                }
+            @Dependency(\.userSession) var userSession
 
-            dependencies.avsRedeemService = { SmartMocks.shared.smartMockRedeemService(scenario, isRecording) }
+            let loginHandler = UITestLoginHandler()
+
+            dependencies.loginHandlerServiceFactory = LoginHandlerServiceFactory { _, _ in
+                loginHandler
+            }
+
+            dependencies.avsRedeemService = {
+                SmartMocks.shared.smartMockRedeemService(scenario, isRecording, loginHandler)
+            }
         }
+    }
+}
+
+import Combine
+
+struct UITestLoginHandler: LoginHandler {
+    @Dependency(\.smartMockState) var smartMockState
+
+    func isAuthenticated() -> AnyPublisher<LoginResult, Never> {
+        Just(.success(smartMockState.loginStatus)).eraseToAnyPublisher()
+    }
+
+    func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never> {
+        Just(.success(smartMockState.loginStatus)).eraseToAnyPublisher()
     }
 }
 
@@ -227,31 +248,23 @@ struct SmartMocks {
         return mock
     }
 
-    private var smartMockLoginHandler: SmartMockLoginHandler?
-    mutating func smartMockLoginHandler(idpSession: IDPSession, signatureProvider: SecureEnclaveSignatureProvider,
-                                        _ scenario: Scenario?, _ isRecording: Bool) -> LoginHandler {
-        if let existingMock = smartMockLoginHandler {
-            return existingMock
-        }
-        let loginHandler = DefaultLoginHandler(idpSession: idpSession, signatureProvider: signatureProvider)
-        let mock = SmartMockLoginHandler(
-            wrapped: loginHandler,
-            mocks: scenario?.loginHandler,
-            isRecording: isRecording
-        )
-        smartMockRegister.register(mock)
-        smartMockLoginHandler = mock
-        return mock
-    }
-
     private var smartMockRedeemService: SmartMockRedeemService?
-    mutating func smartMockRedeemService(_ scenario: Scenario?, _ isRecording: Bool) -> RedeemService {
+    mutating func smartMockRedeemService(_ scenario: Scenario?, _ isRecording: Bool,
+                                         _ loginHandler: LoginHandler) -> RedeemService {
         if let existingMock = smartMockRedeemService {
             return existingMock
         }
         @Dependency(\.redeemService) var redeemService: RedeemService
+
+        @Dependency(\.userSession) var userSession
+
+        let erxTaskRepositoryRedeemService = ErxTaskRepositoryRedeemService(
+            erxTaskRepository: userSession.erxTaskRepository,
+            loginHandler: loginHandler
+        )
+
         let mock = SmartMockRedeemService(
-            wrapped: redeemService,
+            wrapped: erxTaskRepositoryRedeemService,
             mocks: scenario?.redeemService,
             isRecording: isRecording
         )
@@ -282,7 +295,6 @@ struct Scenario {
     var pharmacyRemoteDataStore: SmartMockPharmacyRemoteDataStore.Mocks?
     var erxTaskCoreDataStore: SmartMockErxTaskCoreDataStore.Mocks?
     var erxRemoteDataStore: SmartMockErxRemoteDataStore.Mocks?
-    var loginHandler: SmartMockLoginHandler.Mocks?
     var redeemService: SmartMockRedeemService.Mocks?
     var idpSession: SmartMockIDPSession.Mocks?
 }
@@ -318,10 +330,6 @@ struct ScenarioLoader {
             scenarioUrl: scenarioPath,
             with: "ErxRemoteDataStore"
         )
-        let loginHandler: SmartMockLoginHandler.Mocks? = loadMockData(
-            scenarioUrl: scenarioPath,
-            with: "LoginHandler"
-        )
         let redeemService: SmartMockRedeemService.Mocks? = loadMockData(
             scenarioUrl: scenarioPath,
             with: "RedeemService"
@@ -336,7 +344,6 @@ struct ScenarioLoader {
             pharmacyRemoteDataStore: pharmacyMock,
             erxTaskCoreDataStore: erxTaskCoreDataStore,
             erxRemoteDataStore: erxRemoteDataStore,
-            loginHandler: loginHandler,
             redeemService: redeemService,
             idpSession: idpSession
         )
@@ -345,7 +352,7 @@ struct ScenarioLoader {
     private func loadMockData<T>(scenarioUrl: URL, with name: String) -> T? where T: Codable {
         let filePath = scenarioUrl.appendingPathComponent("\(name).json", isDirectory: false)
         guard FileManager.default.fileExists(atPath: filePath.path),
-              let jsonData = try? Data(contentsOf: filePath).applyDynamicReplacements() else {
+              let jsonData = try? Data(contentsOf: filePath).applyingDynamicReplacements(scenarioUrl) else {
             return nil
         }
         do {
@@ -368,12 +375,18 @@ struct ScenarioLoader {
 }
 
 extension Data {
-    func applyDynamicReplacements() -> Data {
-        // replace placeholders
-        guard let jsonDataAsString = String(data: self, encoding: .utf8) else {
+    // This method loads a JSON file and expands all template variables and file references.
+    func applyingDynamicReplacements(_ baseUrl: URL) -> Data {
+        // Expand file references
+        let expandedFileReferences = expandFileReferences(baseUrl)
+        guard let jsonDataAsString = String(data: expandedFileReferences, encoding: .utf8) else {
             fatalError("Something went wrong while converting JSON Data to String")
         }
-        guard let result = jsonDataAsString.applyDateReplacements().data(using: .utf8) else {
+        guard let result = jsonDataAsString
+            // replace placeholders
+            .applyingDateReplacements()
+            .applyingUUIDReplacements()
+            .data(using: .utf8) else {
             fatalError("Something went wrong while converting JSON String back to Data")
         }
 
@@ -381,7 +394,161 @@ extension Data {
     }
 }
 
+// Load the corresponding json file into a json object and return the element the given keypath.
+func jsonFile(from filePath: URL, at keyPath: String) -> [String: Any] {
+    guard FileManager.default.fileExists(atPath: filePath.path),
+          let jsonData = try? Data(contentsOf: filePath) else {
+        return [:]
+    }
+
+    guard let replacement = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else {
+        fatalError("Could not parse file into JSON object '\(filePath.path)'.")
+    }
+
+    let keys = keyPath.split(separator: ".").map { String($0) }
+    var result = replacement
+    for key in keys {
+        guard let dictionary = result[key] as? [String: Any] else {
+            fatalError("Could not find key '\(key)' in JSON file.")
+        }
+        result = dictionary
+    }
+    return result
+}
+
+extension Dictionary where Self.Key == String, Self.Value == Any {
+    mutating func expandFileReferences(_ baseUrl: URL) {
+        traverse { dictionary in
+            dictionary.performFileReplacements(baseUrl)
+        }
+    }
+
+    mutating func performFileReplacements(_ baseUrl: URL) {
+        if let value = self["_FILE"] as? String {
+            let values = value.split(separator: "#")
+            guard values.count == 2,
+                  let filename = values.first,
+                  let path = values.last else {
+                fatalError("Expected _FILE to have the format: '<filename>#<keypath>'")
+            }
+
+            let copy = self
+            self = jsonFile(
+                from: baseUrl.appendingPathComponent(String(filename), isDirectory: false),
+                at: String(path)
+            )
+            if let value = copy["_REPLACE"] as? [String: String] {
+                for (find, replace) in value {
+                    traverse { dictionary in
+                        for (key, value) in dictionary {
+                            if let string = value as? String {
+                                dictionary[key] = string.replacingOccurrences(of: find, with: replace)
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (key, value) in copy {
+                if key == "_FILE" || key == "_REPLACE" {
+                    continue
+                }
+                self[key] = value
+            }
+        }
+    }
+
+    mutating func traverse(_ alterDictionary: (inout [String: Any]) -> Void) {
+        for (key, value) in self {
+            if let dictionary = value as? [String: Any] {
+                var dictionary = dictionary
+                dictionary.traverse(alterDictionary)
+                self[key] = dictionary
+            } else if var array = value as? [Any] {
+                array.traverse(alterDictionary)
+                self[key] = array
+            }
+        }
+        alterDictionary(&self)
+    }
+}
+
+extension Array where Element == Any {
+    mutating func traverse(_ alterDictionary: (inout [String: Any]) -> Void) {
+        for index in 0 ..< count {
+            if let dictionary = self[index] as? [String: Any] {
+                var dictionary = dictionary
+                dictionary.traverse(alterDictionary)
+                self[index] = dictionary
+            } else if var array = self[index] as? [Any] {
+                array.traverse(alterDictionary)
+                self[index] = array
+            }
+        }
+    }
+}
+
+extension Data {
+    // This extension method expands file references in the JSON data. It replaces all objects with occurrences of the
+    // `_FILE` key with the corresponding file content. The value of the `_FILE` key must be a string with the format
+    // `<filename>#<keypath>`. The `<filename>` is the name of the file to load and the `<keypath>` is the path to the
+    // object within the JSON file. The method returns the expanded JSON data.
+    // Another key named `_REPLACE` can be used to replace placeholders in the JSON file. The value of the `_REPLACE`
+    // key is a dictionary with the format `<find>: <replace>`. The method replaces all occurrences of `<find>` with
+    // `<replace>` in the JSON file.
+    func expandFileReferences(_ baseUrl: URL) -> Data {
+        guard var json = try? JSONSerialization.jsonObject(with: self, options: []) else {
+            return self
+        }
+
+        if var json2 = json as? [String: Any] {
+            json2.expandFileReferences(baseUrl)
+            json = json2
+        }
+        if var json2 = json as? [String: Any] {
+            json2.traverse { dictionary in
+                dictionary.expandFileReferences(baseUrl)
+            }
+            json = json2
+        }
+
+        guard let data = try? JSONSerialization.data(withJSONObject: json as Any, options: []) else {
+            return self
+        }
+
+        return data
+    }
+}
+
 extension String {
+    // This extension method applies UUID replacements to the string using a specific pattern. The pattern is defined as
+    // "{{UUID}}". It replaces each occurrenc of the pattern with a new UUID string.
+    func applyingUUIDReplacements() -> String {
+        let pattern = #"\{\{UUID\}\}"#
+
+        // Create a regular expression using the pattern.
+        let uuidRegex: NSRegularExpression
+        do {
+            uuidRegex = try NSRegularExpression(pattern: pattern)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+
+        var result = self
+
+        // Find all matches of the UUID pattern in the string.
+        let matches = uuidRegex.matches(in: self, options: [], range: NSRange(location: 0, length: count))
+
+        // Iterate through the matches in reverse order to ensure correct ranges.
+        for match in matches.reversed() {
+            guard let range = Range(match.range, in: result) else { continue }
+            result.replaceSubrange(range, with: UUID().uuidString)
+        }
+
+        // Return the final result with applied UUID replacements.
+        return result
+    }
+
     // This extension method applies date replacements to the string using a specific pattern.
     // The pattern is defined as "{{<type>:<offset>#<format>}".
     // - The "<type>" specifies the type of date replacement. The following types are supported:
@@ -394,7 +561,7 @@ extension String {
     //   the offset. If no offset is specified, the current date and time will be used.
     // - The "<format>" specifies the format of the resulting date string.
     // swiftlint:disable:next cyclomatic_complexity function_body_length
-    func applyDateReplacements() -> String {
+    func applyingDateReplacements() -> String {
         let pattern = #"\{\{(?<type>DATE|TIME|DATETIME)(:(?<offset>[+-]\d+)(?<unit>[YMDhms])?)?(#(?<format>.+))?\}\}"#
 
         // Create a regular expression using the pattern.
@@ -508,7 +675,6 @@ extension UserDataStore {}
 extension PharmacyRemoteDataStore {}
 extension ErxTaskCoreDataStore {}
 extension ErxRemoteDataStore {}
-extension LoginHandler {}
 extension RedeemService {}
 extension IDPSession {}
 // sourcery:end

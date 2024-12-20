@@ -20,7 +20,7 @@ import Foundation
 
 extension ErxTask {
     /// Acts as the intermediate data model from a communication resource response and the local store representation
-    public struct Communication: Equatable, Identifiable, Codable {
+    public struct Communication: Equatable, Identifiable, Codable, Sendable {
         /// Identifier for this communication resource (e.g.:  "16d2cfc8-2023-11b2-81e1-783a425d8e87")
         public let identifier: String
         /// Profile of the communication resource (e.g.: "ErxCommunicationReply")
@@ -80,7 +80,7 @@ extension ErxTask {
             payload = try? Payload.from(string: payloadJSON)
         }
 
-        public struct Payload: Codable, Equatable {
+        public struct Payload: Codable, Equatable, Sendable {
             public init(
                 supplyOptionsType: RedeemOption,
                 infoText: String? = nil,
@@ -151,7 +151,7 @@ extension ErxTask {
             }
         }
 
-        public enum Profile: String, Codable {
+        public enum Profile: String, Codable, Sendable {
             case reply
             case dispReq
             case infoReq

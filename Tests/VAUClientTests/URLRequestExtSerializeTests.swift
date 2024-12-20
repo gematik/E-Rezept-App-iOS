@@ -80,7 +80,7 @@ final class URLRequestExtSerializeTests: XCTestCase {
 
         // then
         expect(httpResponse.data.isEmpty).to(beFalse())
-        expect(httpResponse.data.utf8string).to(contain("Bundle"))
+        expect(String(data: httpResponse.data, encoding: .utf8)).to(contain("Bundle"))
         expect(httpResponse.response.statusCode) == 200
         expect(httpResponse.status) == .ok
     }
@@ -113,7 +113,7 @@ final class URLRequestExtSerializeTests: XCTestCase {
 
         // then
         expect(httpResponse.data.isEmpty).to(beFalse())
-        expect(httpResponse.data.utf8string?.starts(with: "Die Katzen")).to(beTrue())
+        expect(String(data: httpResponse.data, encoding: .utf8)?.starts(with: "Die Katzen")).to(beTrue())
         expect(httpResponse.response.statusCode) == 200
         expect(httpResponse.response.allHeaderFields["Date"] as? String) == "Fri, 13 Jan 2006 15:12:48 GMT"
         expect(httpResponse.response.allHeaderFields["Content-Language"] as? String) == "de"
@@ -131,7 +131,8 @@ final class URLRequestExtSerializeTests: XCTestCase {
 
         // then
         expect(httpResponse.data.isEmpty).to(beFalse())
-        expect(httpResponse.data.utf8string).to(contain(["resourceType", "Bundle", "type", "searchset", "total", "0"]))
+        expect(String(data: httpResponse.data, encoding: .utf8))
+            .to(contain(["resourceType", "Bundle", "type", "searchset", "total", "0"]))
         expect(httpResponse.response.statusCode) == 200
         expect(httpResponse.status) == .ok
     }

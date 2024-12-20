@@ -69,14 +69,15 @@ extension ChargeItemConsentService {
 
                 switch isAuthenticatedResult {
                 case .success(true):
-                    let profile = try await userSession.profile().async(/ChargeItemConsentService.Error.localStore)
+                    let profile = try await userSession.profile()
+                        .async(\ChargeItemConsentService.Error.Cases.localStore)
                     guard let insuranceId = profile.insuranceId
                     else {
                         // At this point, we expect the profile to be associated with an insuranceId
                         throw Error.unexpected
                     }
                     let receivedErxConsents = try await erxTaskRepository.fetchConsents()
-                        .async(/ChargeItemConsentService.Error.erxRepository)
+                        .async(\ChargeItemConsentService.Error.Cases.erxRepository)
                     let isValidChargeItemsConsentResult = Self.checkForValidChargeItemsConsent(
                         receivedErxConsents,
                         for: insuranceId
@@ -104,7 +105,8 @@ extension ChargeItemConsentService {
 
                 switch isAuthenticatedResult {
                 case .success(true):
-                    let profile = try await userSession.profile().async(/ChargeItemConsentService.Error.localStore)
+                    let profile = try await userSession.profile()
+                        .async(\ChargeItemConsentService.Error.Cases.localStore)
                     guard let insuranceId = profile.insuranceId
                     else {
                         // At this point, we expect the profile to be associated with an insuranceId

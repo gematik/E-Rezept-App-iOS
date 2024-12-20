@@ -111,6 +111,7 @@ struct RedeemMethodsView: View {
                     item: $store.scope(state: \.destination?.pharmacySearch, action: \.destination.pharmacySearch)
                 ) { store in
                     PharmacySearchView(store: store)
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
             .accentColor(Colors.primary600)

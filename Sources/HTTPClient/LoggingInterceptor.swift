@@ -94,4 +94,17 @@ public class LoggingInterceptor: Interceptor {
         return chain.proceed(request: chain.request)
         #endif
     }
+
+    public func interceptAsync(chain: Chain) async throws -> HTTPResponse {
+        #if DEBUG
+        let request = chain.request
+        level.log(request: request)
+        let logger = self
+        let response = try await chain.proceedAsync(request: request)
+        logger.level.log(response: response)
+        return response
+        #else
+        return try await chain.proceedAsync(request: chain.request)
+        #endif
+    }
 }

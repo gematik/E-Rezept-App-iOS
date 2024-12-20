@@ -29,12 +29,26 @@ class RealTrustStoreClient {
         self.httpClient = httpClient
     }
 
+    // swiftlint:disable:next line_length
+    // refer to https://github.com/gematik/api-erp/blob/master/docs/authentisieren.adoc#verbindungsaufbau-zum-e-rezept-fachdienst
     var certListEndpoint: URL {
         serverURL.appendingPathComponent("CertList")
     }
 
     var ocspListEndpoint: URL {
         serverURL.appendingPathComponent("OCSPList")
+    }
+
+    var pkiCertEndpoint: URL {
+        serverURL.appendingPathComponent("PKICertificates")
+    }
+
+    var vauCertEndpoint: URL {
+        serverURL.appendingPathComponent("VAUCertificate")
+    }
+
+    var ocspResponseEndpoint: URL {
+        serverURL.appendingPathComponent("OCSPResponse")
     }
 }
 
@@ -51,6 +65,82 @@ extension RealTrustStoreClient: TrustStoreClient {
             .send(request: URLRequest(url: ocspListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
             .processOCSPListResponse()
             .eraseToAnyPublisher()
+    }
+
+    func loadPKICertificatesFromServer(rootSubjectCn: String) async throws -> PKICertificates {
+        let httpResponse: HTTPResponse
+
+        do {
+            let url = pkiCertEndpoint.appending(
+                queryItems: [
+                    URLQueryItem(name: "currentRoot", value: rootSubjectCn),
+                ]
+            )
+            let urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
+            httpResponse = try await httpClient.sendAsync(request: urlRequest)
+        } catch let error as HTTPClientError {
+            throw TrustStoreError.network(error: error)
+        } catch {
+            throw error.asTrustStoreError()
+        }
+
+        guard httpResponse.status == .ok else {
+            let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
+            throw HTTPClientError.httpError(urlError).asTrustStoreError()
+        }
+
+        // process the response
+        let pkiCertificates: PKICertificates
+        do {
+            pkiCertificates = try PKICertificates.from(data: httpResponse.data)
+        } catch {
+            throw error.asTrustStoreError()
+        }
+        return pkiCertificates
+    }
+
+    func loadVauCertificateFromServer() async throws -> Data {
+        let httpResponse: HTTPResponse
+        let urlRequest = URLRequest(url: vauCertEndpoint, cachePolicy: .reloadIgnoringLocalCacheData)
+
+        do {
+            httpResponse = try await httpClient.sendAsync(request: urlRequest)
+        } catch let error as HTTPClientError {
+            throw TrustStoreError.network(error: error)
+        } catch {
+            throw error.asTrustStoreError()
+        }
+
+        guard httpResponse.status == .ok else {
+            let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
+            throw HTTPClientError.httpError(urlError).asTrustStoreError()
+        }
+        return httpResponse.data
+    }
+
+    func loadOcspResponseFromServer(issuerCn: String, serialNr: String) async throws -> Data {
+        let httpResponse: HTTPResponse
+
+        do {
+            let url = ocspResponseEndpoint.appending(
+                queryItems: [
+                    URLQueryItem(name: "issuer-cn", value: issuerCn),
+                    URLQueryItem(name: "serial-nr", value: serialNr),
+                ]
+            )
+            let urlRequest = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
+            httpResponse = try await httpClient.sendAsync(request: urlRequest)
+        } catch let error as HTTPClientError {
+            throw TrustStoreError.network(error: error)
+        } catch {
+            throw error.asTrustStoreError()
+        }
+
+        guard httpResponse.status == .ok else {
+            let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
+            throw HTTPClientError.httpError(urlError).asTrustStoreError()
+        }
+        return httpResponse.data
     }
 }
 

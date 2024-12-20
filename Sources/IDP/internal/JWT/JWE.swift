@@ -229,8 +229,10 @@ extension JWK {
         let rangeX: Range<Data.Index> = 1 ..< 33
         let rangeY: Range<Data.Index> = 33 ..< 65
 
-        guard let xCoordinate = try raw().subdata(in: rangeX).encodeBase64UrlSafe()?.utf8string,
-              let yCoordinate = try raw().subdata(in: rangeY).encodeBase64UrlSafe()?.utf8string else {
+        guard let base64x = try raw().subdata(in: rangeX).encodeBase64UrlSafe(),
+              let xCoordinate = String(data: base64x, encoding: .utf8),
+              let base64y = try raw().subdata(in: rangeY).encodeBase64UrlSafe(),
+              let yCoordinate = String(data: base64y, encoding: .utf8) else {
             throw JWE.Error.encodingError
         }
 

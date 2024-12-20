@@ -38,13 +38,13 @@ struct SettingsView: View {
 
                         ProfilesView(store: store.scope(state: \.profiles, action: \.profiles))
 
-                        DemoModeSectionView(store: store)
-
                         PersonalSettingsView(store: store)
 
                         HealthCardSectionView(store: store)
 
                         TrackerSectionView(store: store)
+
+                        SettingsExploreView(store: store)
 
                         SettingsContactInfoView()
 
@@ -110,30 +110,6 @@ struct SettingsView: View {
 }
 
 extension SettingsView {
-    private struct DemoModeSectionView: View {
-        @Perception.Bindable var store: StoreOf<SettingsDomain>
-
-        var body: some View {
-            WithPerceptionTracking {
-                SingleElementSectionContainer(
-                    header: {
-                        Label(title: { Text(L10n.stgTxtHeaderDemoMode) }, icon: {})
-                            .accessibilityIdentifier(A18n.settings.demo.stgTxtHeaderDemoMode)
-                    }, footer: {
-                        Label(title: { Text(L10n.stgTxtFootnoteDemoMode) }, icon: {})
-                            .accessibilityIdentifier(A18n.settings.demo.stgTxtFootnoteDemoMode)
-                    }, content: {
-                        Toggle(isOn: $store.isDemoMode.sending(\.toggleDemoModeSwitch).animation()) {
-                            EmptyView()
-                            Label(L10n.stgTxtDemoMode, systemImage: SFSymbolName.wandAndStars)
-                                .accessibilityIdentifier(A18n.settings.demo.stgTxtDemoMode)
-                        }
-                    }
-                )
-            }
-        }
-    }
-
     private struct TrackerSectionView: View {
         @Perception.Bindable var store: StoreOf<SettingsDomain>
 

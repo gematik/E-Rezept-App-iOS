@@ -145,16 +145,16 @@ final class DefaultOrdersRepositoryTests: XCTestCase {
 
         let expectedOrders = IdentifiedArrayOf(uniqueElements: [
             Order(
-                orderId: "order_id_2",
-                communications: IdentifiedArrayOf(uniqueElements: communicationsOrder2),
-                chargeItems: [chargeItem],
-                pharmacy: PharmacyLocation.Fixtures.pharmacyB
-            ),
-            Order(
                 orderId: "order_id_1",
                 communications: IdentifiedArrayOf(uniqueElements: communicationsOrder1),
                 chargeItems: [chargeItem],
                 pharmacy: PharmacyLocation.Fixtures.pharmacyA
+            ),
+            Order(
+                orderId: "order_id_2",
+                communications: IdentifiedArrayOf(uniqueElements: communicationsOrder2),
+                chargeItems: [chargeItem],
+                pharmacy: PharmacyLocation.Fixtures.pharmacyB
             ),
         ])
         for try await orders in sut.loadAllOrders() {

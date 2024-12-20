@@ -82,6 +82,29 @@ public class DefaultHTTPClient: HTTPClient {
             )
             .eraseToAnyPublisher()
     }
+
+    public func sendAsync(
+        request: URLRequest,
+        interceptors requestInterceptors: [Interceptor],
+        redirect handler: RedirectHandler?
+    ) async throws -> HTTPResponse {
+        let requestID = UUID().uuidString
+        let newRequest = request.add(requestID: requestID)
+
+        await delegate?.setRedirectHandler(handler, for: requestID)
+        defer {
+            Task {
+                await self.delegate?.setRedirectHandler(nil, for: requestID)
+            }
+        }
+
+        return try await URLRequestChain(
+            request: newRequest,
+            session: urlSession,
+            with: interceptors + requestInterceptors
+        )
+        .proceedAsync(request: newRequest)
+    }
 }
 
 extension URLRequest {

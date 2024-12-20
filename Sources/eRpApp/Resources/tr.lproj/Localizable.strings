@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Görüntülendi";
 "erx_txt_claimed_at_%@" = "Varsayılan %@";
 "erx_txt_current" = "Güncel";
+"erx_txt_dispensed_at_%@" = "Tedarik edilen %@";
 "erx_txt_expired_on_%@" = "%@ tarihinde süresi doldu";
 "erx_txt_forced_update_alert_description" = "Uygulamayı güncelleyerek uygulama deneyiminizi optimize edin.";
 "erx_txt_forced_update_alert_ignore" = "Belki sonra";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "Yeni mesajlar";
 "idp_err_not_available_in_demo_mode_recovery" = "Fonksiyonu kullanabilmek için demo modundan çıkın.";
 "idp_err_not_available_in_demo_mode_text" = "Demo modunda kullanılamaz";
+"intern_msg_change_log_chip_%@" = "%@ uygulama sürümündeki yenilikler";
+"intern_msg_error_empty_onboarding_date" = "Bu hata tekrarlanırsa lütfen uygulamayı yeniden yükleyin";
+"intern_msg_error_invalid_url" = "JSON dosyası bulunamadı";
+"intern_msg_error_unknown_error" = "Bir hata oluştu";
+"intern_msg_welcome" = "E-reçete uygulamasına hoş geldiniz! Bu uygulama ile e-reçeteleri dijital olarak alabilir ve istediğiniz eczaneye gönderebilirsiniz. Reçeteyi teslim almak için orada rezerve etmek mi yoksa evinize teslim edilmesini mi istediğiniz tamamen size kalmış. Elbette ailenizin tariflerini de yönetebilirsiniz. Reçetelerin dijital ortamda alınabilmesi için kayıt olunması gerekmektedir.\n\nBurada olmana sevindim!\nE-reçete uygulama ekibiniz";
+"intern_msg_welcome_chip" = "🎉 Hoş geldiniz!";
 "kbv_code_dosage_form_aeo" = "Uçucu yağ";
 "kbv_code_dosage_form_amp" = "Ampuller";
 "kbv_code_dosage_form_apa" = "Ampul çiftleri";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Silindi";
 "prsc_status_completed" = "Kullanıldı";
 "prsc_status_direct_assigned" = "Senin için kurtarılacak";
+"prsc_status_dispensed" = "Tedarik edilen";
 "prsc_status_error" = "Hatalı reçete";
 "prsc_status_expired" = "Süresi dolmuş";
-"prsc_status_in_progress" = "kurtuluşta";
+"prsc_status_in_progress" = "İşleniyor";
 "prsc_status_multiple_prsc" = "Daha sonra kullanılabilir";
 "prsc_status_ready" = "Kullanılabilir";
 "prsc_status_sent" = "Gönderildi";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "Maliyet girişlerine genel bakış için";
 "stg_btn_charge_item_share" = "Göndermek";
 "stg_btn_device_security" = "Uygulama güvenliği";
+"stg_btn_donor_register_alert_open" = "Açık";
 "stg_btn_edit_picture" = "Düzenlemek";
 "stg_btn_edit_profile_action_camera" = "bir fotoğraf çek";
 "stg_btn_edit_profile_action_library" = "resim seç";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Kaydet";
 "stg_btn_reg_devices_load" = "Kayıt olmak";
 "stg_con_btn_gemmunity" = "E-reçete forumu";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "Organ bağışı kaydı";
+"stg_con_btn_organ_donor_alert_cancel" = "İptal etmek";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "E-Rezept uygulamasından geri bildirim";
 "stg_con_hotline_ava" = "Arayan için ücretsizdir. Hizmet saatleri: Ulusal tatiller hariç Pazartesi - Cuma 08:00 - 20:00";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "PIN'i tekrarla";
 "stg_edt_card_reset_puk_input" = "PUK'u girin";
 "stg_edt_card_reset_puk_input_label" = "PIN'inizle birlikte sigorta şirketinizden 8 haneli bir PUK aldınız.";
+"stg_exp_txt_title" = "Keşfetmek";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Web sitesini aç";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\nFriedrichstr. 136\n10117 Berlin";
 "stg_lno_txt_text_note" = "Cinsiyet eşitliğine uygun bir dil kullanmaya çalışıyoruz. Herhangi bir hata fark ederseniz, sizden e-posta ile haber almaktan memnuniyet duyarız.";
 "stg_lno_txt_text_responsible" = "Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge";
-"stg_lno_txt_text_taxAndMore" = "Genel Müdür: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\n Kayıt mahkemesi: Berlin-Charlottenburg Bölge Mahkemesi\n Ticari sicil numarası: HRB 96351\n KDV kimlik numarası: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Yönetim: Doç. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\nKayıt mahkemesi: Berlin-Charlottenburg Bölge Mahkemesi\nTicaret sicil numarası: HRB 96351\nKDV kimlik numarası: DE241843684";
 "stg_lno_txt_title_contact" = "İletişim";
 "stg_lno_txt_title_issuer" = "Editör";
 "stg_lno_txt_title_note" = "Not";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Kullanıldığı tarih";
 "stg_txt_charge_item_sum" = "toplam fiyat";
 "stg_txt_demo_mode" = "Demo modu";
+"stg_txt_donor_register_alert_message" = "Organ bağışçısı kayıt sayfasına yönlendirileceksiniz. Organ bağışı verilerinizi görüntülemek ve değiştirmek için buraya giriş yapmalısınız.";
+"stg_txt_donor_register_alert_title" = "Organ bağışı kaydı açılsın mı?";
 "stg_txt_edit_profile_background_section_title" = "Arka plan rengi";
 "stg_txt_edit_profile_charge_item_list_section_title" = "gider makbuzları";
 "stg_txt_edit_profile_default_name" = "Profil adı";

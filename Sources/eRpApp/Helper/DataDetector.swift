@@ -45,10 +45,8 @@ extension DataDetector: DependencyKey {
             return detectionResult
         }
     }
-}
 
-extension DataDetector: TestDependencyKey {
-    static let testValue = Self.liveValue
+    static var testValue = Self.liveValue
 }
 
 extension DependencyValues {

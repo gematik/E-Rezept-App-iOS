@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Weergegeven";
 "erx_txt_claimed_at_%@" = "Uitgegaan van %@";
 "erx_txt_current" = "Huidig";
+"erx_txt_dispensed_at_%@" = "Mits %@";
 "erx_txt_expired_on_%@" = "Over de datum op %@";
 "erx_txt_forced_update_alert_description" = "Optimaliseer uw app-ervaring door de app te updaten.";
 "erx_txt_forced_update_alert_ignore" = "Misschien later";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "Nieuwe berichten";
 "idp_err_not_available_in_demo_mode_recovery" = "Verlaat de demomodus om de functie te gebruiken.";
 "idp_err_not_available_in_demo_mode_text" = "Niet beschikbaar in demomodus";
+"intern_msg_change_log_chip_%@" = "Wat is er nieuw in de app-versie %@";
+"intern_msg_error_empty_onboarding_date" = "Als deze fout zich opnieuw voordoet, installeer dan de applicatie opnieuw";
+"intern_msg_error_invalid_url" = "JSON-bestand kan niet worden gevonden";
+"intern_msg_error_unknown_error" = "Er is een fout opgetreden";
+"intern_msg_welcome" = "Welkom bij de e-receptenapp! Met deze app kunt u digitaal e-recepten ontvangen en deze naar een apotheek naar keuze sturen. Of u het recept daar wilt reserveren om af te halen of bij u thuis wilt laten bezorgen, is geheel aan u. Natuurlijk kunt u ook de recepten van uw gezin beheren. Om recepten digitaal te ontvangen is registratie vereist.\n\nLeuk dat je er bent!\nUw app-team voor e-recepten";
+"intern_msg_welcome_chip" = "🎉Welkom!";
 "kbv_code_dosage_form_aeo" = "Vluchtige olie";
 "kbv_code_dosage_form_amp" = "Ampullen";
 "kbv_code_dosage_form_apa" = "Paren ampullen";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Verwijderd";
 "prsc_status_completed" = "Ingewisseld";
 "prsc_status_direct_assigned" = "Wordt voor u ingewisseld";
+"prsc_status_dispensed" = "Mits";
 "prsc_status_error" = "Verkeerd recept";
 "prsc_status_expired" = "Verlopen";
-"prsc_status_in_progress" = "In verlossing";
+"prsc_status_in_progress" = "Wordt verwerkt";
 "prsc_status_multiple_prsc" = "Later inwisselbaar";
 "prsc_status_ready" = "Inwisselbaar";
 "prsc_status_sent" = "Geplaatst";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "Voor een overzicht van de kostenontvangsten";
 "stg_btn_charge_item_share" = "Indienen";
 "stg_btn_device_security" = "App-beveiliging";
+"stg_btn_donor_register_alert_open" = "Open";
 "stg_btn_edit_picture" = "Bewerking";
 "stg_btn_edit_profile_action_camera" = "maak een foto";
 "stg_btn_edit_profile_action_library" = "kies afbeelding";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Redden";
 "stg_btn_reg_devices_load" = "Register";
 "stg_con_btn_gemmunity" = "E-receptforum";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "Register voor orgaandonatie";
+"stg_con_btn_organ_donor_alert_cancel" = "Annuleren";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback van de e-receptenapp";
 "stg_con_hotline_ava" = "Gratis voor de beller. Servicetijden: ma t/m vr 8.00 - 20.00 uur behalve op nationale feestdagen";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "Herhaal pincode";
 "stg_edt_card_reset_puk_input" = "Voer PUK in";
 "stg_edt_card_reset_puk_input_label" = "Met uw pincode heeft u van uw verzekeringsmaatschappij een 8-cijferige PUK-code ontvangen.";
+"stg_exp_txt_title" = "Ontdekken";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Website openen";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\n Friedrichstr. 136\n 10117 Berlijn";
 "stg_lno_txt_text_note" = "We streven ernaar om gendergelijke taal te gebruiken. Mocht u fouten tegenkomen, dan horen wij dat graag per e-mail.";
 "stg_lno_txt_text_responsible" = "dr. Florian Fuhrmann, Brenya Adjei, dr. Florian Hartge";
-"stg_lno_txt_text_taxAndMore" = "Directeur: dr. Florian Fuhrmann, Brenya Adjei, dr. Florian Hartge\n Registratierechtbank: arrondissementsrechtbank Berlijn-Charlottenburg\n KvK-nummer: HRB 96351\n Btw-identificatienummer: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Beheer: dr. Florian Fuhrmann, Brenya Adjei, dr. Florian Hartge\nRegistratierechtbank: arrondissementsrechtbank Berlijn-Charlottenburg\nKvK-nummer: HRB 96351\nBtw-identificatienummer: DE241843684";
 "stg_lno_txt_title_contact" = "Contact";
 "stg_lno_txt_title_issuer" = "editor";
 "stg_lno_txt_title_note" = "Kennisgeving";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Verzilverd op";
 "stg_txt_charge_item_sum" = "totale prijs";
 "stg_txt_demo_mode" = "Demonstratie modus";
+"stg_txt_donor_register_alert_message" = "U wordt doorgestuurd naar het orgaandonorregister. Om uw orgaandonatiegegevens te bekijken en te wijzigen, moet u daar inloggen.";
+"stg_txt_donor_register_alert_title" = "Register orgaandonatie openen?";
 "stg_txt_edit_profile_background_section_title" = "Achtergrond kleur";
 "stg_txt_edit_profile_charge_item_list_section_title" = "onkostenbewijzen";
 "stg_txt_edit_profile_default_name" = "Profielnaam";

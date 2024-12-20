@@ -57,4 +57,66 @@ final class MockTrustStoreClient: TrustStoreClient {
         loadOCSPListFromServerCallsCount += 1
         return loadOCSPListFromServerClosure.map({ $0() }) ?? loadOCSPListFromServerReturnValue
     }
+    
+   // MARK: - loadPKICertificatesFromServer
+
+    var loadPKICertificatesFromServerRootSubjectCnThrowableError: Error?
+    var loadPKICertificatesFromServerRootSubjectCnCallsCount = 0
+    var loadPKICertificatesFromServerRootSubjectCnCalled: Bool {
+        loadPKICertificatesFromServerRootSubjectCnCallsCount > 0
+    }
+    var loadPKICertificatesFromServerRootSubjectCnReceivedRootSubjectCn: String?
+    var loadPKICertificatesFromServerRootSubjectCnReceivedInvocations: [String] = []
+    var loadPKICertificatesFromServerRootSubjectCnReturnValue: PKICertificates!
+    var loadPKICertificatesFromServerRootSubjectCnClosure: ((String) throws -> PKICertificates)?
+
+    func loadPKICertificatesFromServer(rootSubjectCn: String) throws -> PKICertificates {
+        if let error = loadPKICertificatesFromServerRootSubjectCnThrowableError {
+            throw error
+        }
+        loadPKICertificatesFromServerRootSubjectCnCallsCount += 1
+        loadPKICertificatesFromServerRootSubjectCnReceivedRootSubjectCn = rootSubjectCn
+        loadPKICertificatesFromServerRootSubjectCnReceivedInvocations.append(rootSubjectCn)
+        return try loadPKICertificatesFromServerRootSubjectCnClosure.map({ try $0(rootSubjectCn) }) ?? loadPKICertificatesFromServerRootSubjectCnReturnValue
+    }
+    
+   // MARK: - loadVauCertificateFromServer
+
+    var loadVauCertificateFromServerThrowableError: Error?
+    var loadVauCertificateFromServerCallsCount = 0
+    var loadVauCertificateFromServerCalled: Bool {
+        loadVauCertificateFromServerCallsCount > 0
+    }
+    var loadVauCertificateFromServerReturnValue: Data!
+    var loadVauCertificateFromServerClosure: (() throws -> Data)?
+
+    func loadVauCertificateFromServer() throws -> Data {
+        if let error = loadVauCertificateFromServerThrowableError {
+            throw error
+        }
+        loadVauCertificateFromServerCallsCount += 1
+        return try loadVauCertificateFromServerClosure.map({ try $0() }) ?? loadVauCertificateFromServerReturnValue
+    }
+    
+   // MARK: - loadOcspResponseFromServer
+
+    var loadOcspResponseFromServerIssuerCnSerialNrThrowableError: Error?
+    var loadOcspResponseFromServerIssuerCnSerialNrCallsCount = 0
+    var loadOcspResponseFromServerIssuerCnSerialNrCalled: Bool {
+        loadOcspResponseFromServerIssuerCnSerialNrCallsCount > 0
+    }
+    var loadOcspResponseFromServerIssuerCnSerialNrReceivedArguments: (issuerCn: String, serialNr: String)?
+    var loadOcspResponseFromServerIssuerCnSerialNrReceivedInvocations: [(issuerCn: String, serialNr: String)] = []
+    var loadOcspResponseFromServerIssuerCnSerialNrReturnValue: Data!
+    var loadOcspResponseFromServerIssuerCnSerialNrClosure: ((String, String) throws -> Data)?
+
+    func loadOcspResponseFromServer(issuerCn: String, serialNr: String) throws -> Data {
+        if let error = loadOcspResponseFromServerIssuerCnSerialNrThrowableError {
+            throw error
+        }
+        loadOcspResponseFromServerIssuerCnSerialNrCallsCount += 1
+        loadOcspResponseFromServerIssuerCnSerialNrReceivedArguments = (issuerCn: issuerCn, serialNr: serialNr)
+        loadOcspResponseFromServerIssuerCnSerialNrReceivedInvocations.append((issuerCn: issuerCn, serialNr: serialNr))
+        return try loadOcspResponseFromServerIssuerCnSerialNrClosure.map({ try $0(issuerCn, serialNr) }) ?? loadOcspResponseFromServerIssuerCnSerialNrReturnValue
+    }
 }

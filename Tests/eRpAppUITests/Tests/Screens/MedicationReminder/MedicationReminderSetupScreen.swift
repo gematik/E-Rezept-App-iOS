@@ -29,12 +29,12 @@ struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
         self.previous = previous
     }
 
-    func saveButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.medicationReminder.medReminderBtnSaveSchedule, file: file, line: line)
+    func saveButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.medicationReminder.medReminderBtnSaveSchedule, fileID: fileID, file: file, line: line)
     }
 
-    func tapSave(file: StaticString = #file, line: UInt = #line) -> Previous {
-        saveButton(file: file, line: line).tap()
+    func tapSave(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> Previous {
+        saveButton(fileID: fileID, file: file, line: line).tap()
 
         // Tap might trigger notification alert
         // Interact somehow with the app, to trigger the registered `addUIInterruptionMonitor`
@@ -44,23 +44,24 @@ struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
         return previous
     }
 
-    func medicationNameLabel(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        staticText(by: A11y.medicationReminder.medReminderTxtScheduleHeader, file: file, line: line)
+    func medicationNameLabel(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        staticText(by: A11y.medicationReminder.medReminderTxtScheduleHeader, fileID: fileID, file: file, line: line)
     }
 
-    func enabledSwitch(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        switches(by: A11y.medicationReminder.medReminderBtnActivationToggle, file: file, line: line).switches.firstMatch
+    func enabledSwitch(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        switches(by: A11y.medicationReminder.medReminderBtnActivationToggle, fileID: fileID, file: file, line: line)
+            .switches.firstMatch
     }
 
-    func toggleActive(file: StaticString = #file, line: UInt = #line) {
-        enabledSwitch(file: file, line: line).tap()
+    func toggleActive(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        enabledSwitch(fileID: fileID, file: file, line: line).tap()
     }
 
-    func repetitionDetailsCell(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.medicationReminder.medReminderBtnRepetitionDetails, file: file, line: line)
+    func repetitionDetailsCell(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.medicationReminder.medReminderBtnRepetitionDetails, fileID: fileID, file: file, line: line)
     }
 
-    func tapRepetitionDetailsCell(file: StaticString = #file,
+    func tapRepetitionDetailsCell(fileID _: String = #fileID, file: String = #filePath,
                                   line: UInt = #line) -> MedicationReminderRepetitionDetailsScreen<Self> {
         repetitionDetailsCell(file: file, line: line).tap()
 
@@ -68,17 +69,20 @@ struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
         return .init(app: app, previous: self)
     }
 
-    func numberOfSetupTimes(file: StaticString = #file, line: UInt = #line) -> Int {
+    func numberOfSetupTimes(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> Int {
         elementsByIndex(
             for: A11y.medicationReminder.medReminderBtnScheduleTimeList,
+            fileID: fileID,
             file: file,
             line: line
         ).count
     }
 
-    func timeSetupAtPosition(_ position: Int, file: StaticString = #file, line: UInt = #line) -> XCUIElement {
+    func timeSetupAtPosition(_ position: Int, fileID: String = #fileID, file: String = #filePath,
+                             line: UInt = #line) -> XCUIElement {
         let elements = elementsByIndex(
             for: A11y.medicationReminder.medReminderBtnScheduleTimeList,
+            fileID: fileID,
             file: file,
             line: line
         )
@@ -89,7 +93,7 @@ struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
         return elements[position]
     }
 
-    func deleteAtPosition(_ position: Int, file: StaticString = #file, line: UInt = #line) {
+    func deleteAtPosition(_ position: Int, fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
         let elements = elementsByIndex(
             for: A11y.medicationReminder.medReminderBtnScheduleTimeList,
             file: file,
@@ -100,23 +104,30 @@ struct MedicationReminderSetupScreen<Previous>: Screen where Previous: Screen {
             fatalError("Element list to short, expected \(position + 1) elements, found \(elements.count)")
         }
         elements[position].coordinate(withNormalizedOffset: .zero).withOffset(.init(dx: -30, dy: 10)).tap()
-        staticText(by: "Löschen", file: file, line: line).coordinate(withNormalizedOffset: .zero).tap()
+        staticText(by: "Löschen", fileID: fileID, file: file, line: line)
+            .coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5))
+            .tap()
     }
 
-    func addTimeButton(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        button(by: A11y.medicationReminder.medReminderBtnScheduleTimeAddEntry, file: file, line: line)
+    func addTimeButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.medicationReminder.medReminderBtnScheduleTimeAddEntry, fileID: fileID, file: file, line: line)
     }
 
     func tapAddTimeButton(file _: StaticString = #file, line _: UInt = #line) {
         addTimeButton().tap()
     }
 
-    func toggleDosageDialog(file: StaticString = #file, line: UInt = #line) {
-        button(by: A11y.medicationReminder.medReminderBtnDosageInstruction, file: file, line: line)
+    func toggleDosageDialog(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
+        button(by: A11y.medicationReminder.medReminderBtnDosageInstruction, fileID: fileID, file: file, line: line)
             .tap()
     }
 
-    func dosageDialog(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        container(by: A11y.medicationReminder.medReminderDrawerDosageInstructionInfo, file: file, line: line)
+    func dosageDialog(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        container(
+            by: A11y.medicationReminder.medReminderDrawerDosageInstructionInfo,
+            fileID: fileID,
+            file: file,
+            line: line
+        )
     }
 }

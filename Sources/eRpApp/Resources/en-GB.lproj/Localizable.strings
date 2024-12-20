@@ -405,6 +405,7 @@
 "erx_txt_authored" = "Displayed";
 "erx_txt_claimed_at_%@" = "Assumed %@";
 "erx_txt_current" = "Current";
+"erx_txt_dispensed_at_%@" = "Provided %@";
 "erx_txt_expired_on_%@" = "Expired on %@";
 "erx_txt_forced_update_alert_description" = "Optimize your app experience by updating the app.";
 "erx_txt_forced_update_alert_ignore" = "Maybe later";
@@ -437,6 +438,12 @@
 "hint_txt_unread_messages_title" = "New messages";
 "idp_err_not_available_in_demo_mode_recovery" = "Exit demo mode to be able to use the function.";
 "idp_err_not_available_in_demo_mode_text" = "Not available in demo mode";
+"intern_msg_change_log_chip_%@" = "New features in the app version %@";
+"intern_msg_error_empty_onboarding_date" = "If this error reoccurs, please reinstall the application";
+"intern_msg_error_invalid_url" = "JSON file could not be found";
+"intern_msg_error_unknown_error" = "An error has occurred";
+"intern_msg_welcome" = "Welcome to the e-prescription app! With this app you can receive e-prescriptions digitally and send them to a pharmacy of your choice. It is up to you whether you want to reserve the prescription there for collection or have it delivered to your home. Of course you can also manage your family's prescriptions. To receive prescriptions digitally you must register.\n\nNice to have you here!\nYour e-prescription app team";
+"intern_msg_welcome_chip" = "🎉 Welcome!";
 "kbv_code_dosage_form_aeo" = "Essential oil";
 "kbv_code_dosage_form_amp" = "Ampoules";
 "kbv_code_dosage_form_apa" = "Pairs of ampoules";
@@ -1188,9 +1195,10 @@
 "prsc_status_canceled" = "Deleted";
 "prsc_status_completed" = "Redeemed";
 "prsc_status_direct_assigned" = "Will be redeemed for you";
+"prsc_status_dispensed" = "Provided";
 "prsc_status_error" = "Defective prescription";
 "prsc_status_expired" = "Expired";
-"prsc_status_in_progress" = "In redemption";
+"prsc_status_in_progress" = "Is being processed";
 "prsc_status_multiple_prsc" = "Redeemable later";
 "prsc_status_ready" = "Redeemable";
 "prsc_status_sent" = "Posted";
@@ -1322,6 +1330,7 @@
 "stg_btn_charge_item_route_to_list" = "For an overview of the cost receipts";
 "stg_btn_charge_item_share" = "Submit";
 "stg_btn_device_security" = "App security";
+"stg_btn_donor_register_alert_open" = "Open";
 "stg_btn_edit_picture" = "Edit";
 "stg_btn_edit_profile_action_camera" = "take a picture";
 "stg_btn_edit_profile_action_library" = "choose picture";
@@ -1337,6 +1346,9 @@
 "stg_btn_new_profile_create" = "Save";
 "stg_btn_reg_devices_load" = "Register";
 "stg_con_btn_gemmunity" = "E-prescription forum";
+"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_organ_donor" = "organ donation register";
+"stg_con_btn_organ_donor_alert_cancel" = "Cancel";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback from the e-prescription app";
 "stg_con_hotline_ava" = "Free of charge for the caller. Service times: Mon - Fri 8:00 a.m. - 8:00 p.m. except on national holidays";
@@ -1352,6 +1364,7 @@
 "stg_edt_card_reset_pin_input_pin2" = "Repeat PIN";
 "stg_edt_card_reset_puk_input" = "Enter PUK";
 "stg_edt_card_reset_puk_input_label" = "With your PIN you have received an 8-digit PUK from your insurance company.";
+"stg_exp_txt_title" = "Explore";
 "stg_lno_link_contact" = "https://www.das-e-rezept-fuer-deutschland.de/";
 "stg_lno_link_text_contact" = "Open website";
 "stg_lno_mail_contact" = "app-feedback@gematik.de";
@@ -1362,7 +1375,7 @@
 "stg_lno_txt_text_issuer" = "gematik GmbH\nFriedrichstr. 136\n10117 Berlin, Germany";
 "stg_lno_txt_text_note" = "We strive to use gender-sensitive language. If you notice any errors, we would be pleased to hear from you by email.";
 "stg_lno_txt_text_responsible" = "Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge";
-"stg_lno_txt_text_taxAndMore" = "Managing Directors: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\n Register court: District Court of Berlin-Charlottenburg\n Commercial register number: HRB 96351\n VAT identification number: DE241843684";
+"stg_lno_txt_text_taxAndMore" = "Management: Dr. Florian Fuhrmann, Brenya Adjei, Dr. Florian Hartge\nRegister court: District Court of Berlin-Charlottenburg\nCommercial Register No.: HRB 96351\nVAT identification number: DE241843684";
 "stg_lno_txt_title_contact" = "Contact";
 "stg_lno_txt_title_issuer" = "Publisher";
 "stg_lno_txt_title_note" = "Note";
@@ -1477,6 +1490,8 @@
 "stg_txt_charge_item_redeemed_on" = "Redeemed on";
 "stg_txt_charge_item_sum" = "total price";
 "stg_txt_demo_mode" = "Demo mode";
+"stg_txt_donor_register_alert_message" = "You will be redirected to the organ donation register. In order to view and change your organ donation data, you must log in there.";
+"stg_txt_donor_register_alert_title" = "Open organ donation register?";
 "stg_txt_edit_profile_background_section_title" = "Background colour";
 "stg_txt_edit_profile_charge_item_list_section_title" = "cost receipts";
 "stg_txt_edit_profile_default_name" = "Profile name";

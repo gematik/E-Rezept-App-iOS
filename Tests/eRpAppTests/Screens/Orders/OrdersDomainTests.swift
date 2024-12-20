@@ -32,12 +32,14 @@ final class OrdersDomainTests: XCTestCase {
     let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
     var mockOrdersRepository: MockOrdersRepository!
     var mockApplication: MockResourceHandler!
+    var mockInternalCommunicationProtocol: MockInternalCommunicationProtocol!
 
     override func setUp() {
         super.setUp()
 
         mockOrdersRepository = MockOrdersRepository()
         mockApplication = MockResourceHandler()
+        mockInternalCommunicationProtocol = MockInternalCommunicationProtocol()
     }
 
     private func testStore(for state: OrdersDomain.State) -> TestStore {
@@ -47,13 +49,14 @@ final class OrdersDomainTests: XCTestCase {
             dependencies.schedulers = schedulers
             dependencies.ordersRepository = mockOrdersRepository
             dependencies.resourceHandler = mockApplication
+            dependencies.internalCommunicationProtocol = mockInternalCommunicationProtocol
         }
     }
 
     private func testStore(
-        for orders: IdentifiedArrayOf<Order>
+        for communicationMessage: IdentifiedArrayOf<CommunicationMessage>
     ) -> TestStore {
-        testStore(for: .init(orders: orders))
+        testStore(for: .init(communicationMessage: communicationMessage))
     }
 
     private func erxTaskRepository(with communications: [ErxTask.Communication]) -> MockErxTaskRepository {
@@ -81,17 +84,26 @@ final class OrdersDomainTests: XCTestCase {
     }
 
     func testOrdersDomainSubscriptionWithoutMessages() async {
-        let store = testStore(for: OrdersDomain.State(orders: []))
+        let store = testStore(for: OrdersDomain.State(communicationMessage: []))
 
         mockOrdersRepository
             .loadAllOrdersReturnValue = AsyncThrowingStream<IdentifiedArray<String, Order>, Error> { $0.yield([]) }
 
+        mockInternalCommunicationProtocol.loadReturnValue = IdentifiedArray(uniqueElements: [])
+
         let task = await store.send(.task) {
             $0.isLoading = true
         }
-        await store.receive(.response(.ordersReceived(.success([])))) {
+
+        await store.receive(.loadOrders)
+        await store.receive(.loadMessages)
+
+        await store.receive(.response(.internalCommunicationReceived(.success([])))) {
             $0.isLoading = false
         }
+
+        await store.receive(.response(.ordersReceived(.success([]))))
+
         expect(self.mockOrdersRepository.loadAllOrdersCallsCount) == 1
 
         await task.cancel()
@@ -99,25 +111,49 @@ final class OrdersDomainTests: XCTestCase {
 
     func testOrdersDomainSubscriptionWithMessages() async {
         let orderId = "orderId"
-        let expected = IdentifiedArray(
-            uniqueElements: [Order(
-                orderId: orderId,
-                communications: [communicationShipment, communicationOnPremise],
-                chargeItems: []
-            )]
+        let order = Order(
+            orderId: orderId,
+            communications: [communicationShipment, communicationOnPremise],
+            chargeItems: []
         )
+        let expected = IdentifiedArray(uniqueElements: [order])
 
         mockOrdersRepository
             .loadAllOrdersReturnValue = AsyncThrowingStream<IdentifiedArray<String, Order>, Error> { $0.yield(expected)
             }
-        let store = testStore(for: OrdersDomain.State(orders: []))
+
+        let internalCommunication = InternalCommunication(messages: [.init(id: "1",
+                                                                           timestamp: Date(),
+
+                                                                           text: "Test Text",
+                                                                           version: "",
+                                                                           isRead: false)])
+
+        let expectedInternalCommunication = IdentifiedArray(uniqueElements: [internalCommunication])
+
+        mockInternalCommunicationProtocol.loadReturnValue = IdentifiedArray(uniqueElements: [internalCommunication])
+
+        let store = testStore(for: OrdersDomain.State(communicationMessage: []))
 
         let task = await store.send(.task) {
             $0.isLoading = true
         }
+
+        await store.receive(.loadOrders)
+        await store.receive(.loadMessages)
+
+        await store
+            .receive(.response(.internalCommunicationReceived(.success(expectedInternalCommunication)))) { state in
+                state.isLoading = false
+                state.communicationMessage
+                    .append(contentsOf: IdentifiedArray(uniqueElements: [CommunicationMessage
+                            .internalCommunication(internalCommunication)]))
+                expect(self.mockInternalCommunicationProtocol.loadCallsCount) == 1
+            }
+
         await store.receive(.response(.ordersReceived(.success(expected)))) { state in
-            state.isLoading = false
-            state.orders = expected
+            state.communicationMessage
+                .append(contentsOf: IdentifiedArray(uniqueElements: [CommunicationMessage.order(order)]))
             expect(self.mockOrdersRepository.loadAllOrdersCallsCount) == 1
         }
 
@@ -132,16 +168,52 @@ final class OrdersDomainTests: XCTestCase {
                 $0.finish(throwing: expected)
             }
 
-        let store = testStore(for: OrdersDomain.State(orders: []))
+        mockInternalCommunicationProtocol.loadReturnValue = IdentifiedArray(uniqueElements: [])
+
+        let store = testStore(for: OrdersDomain.State(communicationMessage: []))
 
         let task = await store.send(.task) {
             $0.isLoading = true
         }
-        await store.receive(.response(.ordersReceived(.failure(expected)))) { state in
+
+        await store.receive(.loadOrders)
+        await store.receive(.loadMessages)
+
+        await store.receive(.response(.internalCommunicationReceived(.success([])))) { state in
             state.isLoading = false
+        }
+
+        await store.receive(.response(.ordersReceived(.failure(expected)))) { state in
             state.destination = .alert(.init(for: expected))
             expect(self.mockOrdersRepository.loadAllOrdersCallsCount) == 1
         }
+
+        await task.cancel()
+    }
+
+    func testLoadOrdersWithDecodingError() async {
+        let expected = InternalCommunicationError.invalidURL
+
+        mockOrdersRepository
+            .loadAllOrdersReturnValue = AsyncThrowingStream<IdentifiedArray<String, Order>, Error> { $0.yield([]) }
+
+        mockInternalCommunicationProtocol.loadThrowableError = expected
+
+        let store = testStore(for: OrdersDomain.State(communicationMessage: []))
+
+        let task = await store.send(.task) {
+            $0.isLoading = true
+        }
+
+        await store.receive(.loadOrders)
+        await store.receive(.loadMessages)
+
+        await store.receive(.response(.internalCommunicationReceived(.failure(expected)))) { state in
+            state.isLoading = false
+            state.destination = .alert(.init(for: expected))
+        }
+
+        await store.receive(.response(.ordersReceived(.success([]))))
 
         await task.cancel()
     }
@@ -153,10 +225,10 @@ final class OrdersDomainTests: XCTestCase {
             communications: [communicationOnPremise, communicationShipment],
             chargeItems: []
         )
-        let store = testStore(for: IdentifiedArray(uniqueElements: [expected]))
+        let store = testStore(for: IdentifiedArray(uniqueElements: [.order(expected)]))
 
         await store.send(.didSelect(communicationOnPremise.orderId!)) { state in
-            state.destination = .orderDetail(.init(order: expected))
+            state.destination = .orderDetail(.init(communicationMessage: .order(expected)))
         }
     }
 

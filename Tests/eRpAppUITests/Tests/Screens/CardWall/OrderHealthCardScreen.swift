@@ -25,10 +25,10 @@ struct OrderHealthCardScreen: Screen {
 
     func selectInsuranceCompany(
         _ name: String,
-        file: StaticString = #file,
+        fileID: String = #fileID, file: String = #filePath,
         line: UInt = #line
     ) -> OrderHealthCardInsuranceCompanyScreen {
-        button(by: name, file: file, line: line).tap()
+        button(by: name, fileID: fileID, file: file, line: line).tap()
 
         return OrderHealthCardInsuranceCompanyScreen(app: app)
     }

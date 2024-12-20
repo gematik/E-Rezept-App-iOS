@@ -130,6 +130,7 @@ struct OnboardingDomain {
     @Dependency(\.userDataStore) var localUserStore: UserDataStore
     @Dependency(\.tracker) var tracker: Tracker
     @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.date) var date
 
     var body: some Reducer<State, Action> {
         Scope(state: \.registerAuthenticationState, action: \.registerAuthentication) {
@@ -189,6 +190,7 @@ struct OnboardingDomain {
         case .dismissOnboarding:
             localUserStore.set(hideOnboarding: true)
             localUserStore.set(onboardingVersion: appVersion.productVersion)
+            localUserStore.set(onboardingDate: date())
             return .none
         case .registerAuthentication(action: .continueBiometry),
              .registerAuthentication(action: .nextPage):

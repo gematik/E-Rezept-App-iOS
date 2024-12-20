@@ -45,7 +45,7 @@ extension CardWallReadCardDomain.Environment {
             let signatureProvider = sessionProvider.signatureProvider(for: profileID)
             let signedAuthenticationData = try await signatureProvider
                 .authenticationData(for: challenge) // IDP SecureEnclaveSignatureProviderError
-                .async(/IDPError.pairing)
+                .async()
             let exchangeToken = try await idpSession.altVerify(signedAuthenticationData) // IDPError
                 .async()
             idpToken = try await idpSession.exchange(
@@ -54,6 +54,8 @@ extension CardWallReadCardDomain.Environment {
                 idTokenValidator: idTokenValidator.validate(idToken:)
             ) // IDPError
             .async()
+        } catch let error as SecureEnclaveSignatureProviderError {
+            return .failure(.idpError(IDPError.pairing(error)))
         } catch let error as IDPError {
             return .failure(.idpError(error))
         } catch {
@@ -74,7 +76,7 @@ extension CardWallReadCardDomain.Environment {
             // [REQ:BSI-eRp-ePA:O.Source_5#4] Creation of the pairing session
             pairingSession = try sessionProvider.signatureProvider(for: profileID).createPairingSession()
         } catch {
-            await send(.response(.state(.retrievingChallenge(.error(.biometrieError(error))))))
+            await send(.response(.state(.signingChallenge(.error(.biometrieError(error))))))
             return
         }
         await send(.response(.state(.signingChallenge(.loading))))
@@ -83,7 +85,7 @@ extension CardWallReadCardDomain.Environment {
         let idpChallengeSession: IDPChallengeSession
         do {
             idpChallengeSession = try await biometrieIdpSession.requestChallenge()
-                .async(/CardWallReadCardDomain.State.Error.idpError) // IDPError
+                .async(\CardWallReadCardDomain.State.Error.Cases.idpError) // IDPError
         } catch let error as CardWallReadCardDomain.State.Error {
             // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
             // [REQ:BSI-eRp-ePA:O.Source_5#5] Failure will delete paring data

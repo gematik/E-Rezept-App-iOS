@@ -47,7 +47,7 @@ enum DemoDate: CaseIterable {
         case .sixteenDaysBefore:
             aDate = Date(timeIntervalSinceNow: -60 * 60 * 24 * 16)
         case .weekBefore:
-            aDate = Date(timeIntervalSinceNow: -60 * 60 * 24 * 7)
+            aDate = Date(timeIntervalSinceNow: -60 * 60 * (24 * 7 + 2)) // Extra 2h to account for summer-/wintertime
         case .dayBeforeYesterday:
             aDate = Date(timeIntervalSinceNow: -60 * 60 * 24 * 2)
         case .yesterday:

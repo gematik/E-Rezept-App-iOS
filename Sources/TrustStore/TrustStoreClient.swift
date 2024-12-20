@@ -30,4 +30,28 @@ public protocol TrustStoreClient {
     ///
     /// - Returns: A stream that emits either a OCSPList or a TrustStoreError.
     func loadOCSPListFromServer() -> AnyPublisher<OCSPList, TrustStoreError>
+
+    /// Load the PKI certificates from remote
+    /// https://github.com/gematik/api-erp/blob/master/docs/certificate_check.adoc
+    ///
+    /// - Parameter rootSubjectCn: Common name (CN) of the currently installed root certificate
+    /// - Note: Thrown errors are of type `TrustStoreError`
+    /// - Returns: PKI certificates in form of `PKICertificates`
+    func loadPKICertificatesFromServer(rootSubjectCn: String) async throws -> PKICertificates
+
+    /// Load the VAU encryption certificate from remote
+    /// https://github.com/gematik/api-erp/blob/master/docs/authentisieren.adoc
+    ///
+    /// - Note: Thrown errors are of type `TrustStoreError`
+    /// - Returns: Data of the VAU certificate
+    func loadVauCertificateFromServer() async throws -> Data
+
+    /// Load a OCSP Response from remote
+    ///  https://github.com/gematik/api-erp/blob/master/docs/certificate_check.adoc
+    ///
+    /// - Parameter issuerCn: Common name (CN) of the issuer of the certificate the OCSP response is requested for
+    /// - Parameter serialNr: Serial number of the certificate the OCSP response is requested for in hexadecimal format
+    /// - Note: Thrown errors are of type `TrustStoreError`
+    /// - Returns: Data of the OCSP Response
+    func loadOcspResponseFromServer(issuerCn: String, serialNr: String) async throws -> Data
 }

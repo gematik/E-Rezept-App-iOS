@@ -49,7 +49,8 @@ struct PickupCodeView: View {
                         TitleView(store: store)
                     }
                 }
-                .navigationBarItems(trailing: CloseButton { store.send(.delegate(.close)) })
+                .navigationBarItems(trailing: CloseButton { store.send(.delegate(.close)) }
+                    .accessibilityIdentifier(A11y.orderDetail.pickupCode.pucBtnClose))
                 .navigationBarTitleDisplayMode(.inline)
                 .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
                     let navigationBar = navigationController.navigationBar

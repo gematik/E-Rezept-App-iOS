@@ -23,37 +23,46 @@ import XCTest
 struct RedeemScreen: Screen {
     let app: XCUIApplication
 
-    init(app: XCUIApplication, file: StaticString = #file, line: UInt = #line) {
+    init(app: XCUIApplication, fileID: String = #fileID, file: String = #filePath, line: UInt = #line) {
         self.app = app
 
         if !app.staticTexts["Meine Bestellung"].exists {
-            expect(file: file, line: line, app.staticTexts["Meine Bestellung"].waitForExistence(timeout: 5))
-                .to(beTrue())
+            expect(
+                fileID: fileID,
+                file: file,
+                line: line,
+                app.staticTexts["Meine Bestellung"].waitForExistence(timeout: 5)
+            )
+            .to(beTrue())
         }
     }
 
-    func tapRedeem(file: StaticString = #file, line: UInt = #line) -> SuccessScreen {
-        let button = button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, file: file, line: line)
+    func redeemButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, fileID: fileID, file: file, line: line)
+    }
 
-        print(button.isHittable)
+    func tapRedeem(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> SuccessScreen {
+        let button = button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, fileID: fileID, file: file, line: line)
+
         button.tap()
 
         return SuccessScreen(app: app, file: file, line: line)
     }
 
-    func tapEditAddress(file: StaticString = #file, line: UInt = #line) -> RedeemEditAddress {
-        button(by: A11y.pharmacyRedeem.phaRedeemBtnEditAddress, file: file, line: line).tap()
+    func tapEditAddress(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> RedeemEditAddress {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnEditAddress, fileID: fileID, file: file, line: line).tap()
 
         return RedeemEditAddress(app: app)
     }
 
-    func tapEditPrescriptions(file: StaticString = #file, line: UInt = #line) -> RedeemEditPrescriptionListScreen {
-        button(by: A11y.pharmacyRedeem.phaRedeemBtnEditPrescription, file: file, line: line).tap()
+    func tapEditPrescriptions(fileID: String = #fileID, file: String = #filePath,
+                              line: UInt = #line) -> RedeemEditPrescriptionListScreen {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnEditPrescription, fileID: fileID, file: file, line: line).tap()
 
         return RedeemEditPrescriptionListScreen(app: app)
     }
 
-    func selfPayerWarning(file: StaticString = #file, line: UInt = #line) -> XCUIElement {
-        staticText(by: A11y.selfPayerWarning.selfPayerWarningTxtMessage, file: file, line: line)
+    func selfPayerWarning(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        staticText(by: A11y.selfPayerWarning.selfPayerWarningTxtMessage, fileID: fileID, file: file, line: line)
     }
 }

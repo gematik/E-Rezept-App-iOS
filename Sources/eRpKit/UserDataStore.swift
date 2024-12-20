@@ -30,6 +30,14 @@ public protocol UserDataStore: AnyObject {
     /// Indicates if the onboarding screens should be displayed (alternative to publisher)
     var isOnboardingHidden: Bool { get }
 
+    /// Publisher that returns the date when the onboarding was completed
+    var onboardingDate: AnyPublisher<Date?, Never> { get }
+
+    /// Set the onboardingDate
+    /// The new value is published through `onboardingDate`
+    /// - Parameter onboardingDate: the current date when the function is called
+    func set(onboardingDate: Date?)
+
     /// Set the hideOnboarding
     /// The new value is published through `hideOnboarding`
     /// - Parameter hideOnboarding: `true`if it should be hidden, otherwise `false`
@@ -107,4 +115,22 @@ public protocol UserDataStore: AnyObject {
 
     ///
     var hideWelcomeDrawer: Bool { get set }
+
+    // MARK: - Messages
+
+    /// Publisher that returns all the ids from internal messages that already got displayed
+    var readInternalCommunications: AnyPublisher<[String], Never> { get }
+
+    /// Set the readInternalCommunications
+    /// The new value is published through `readInternalCommunications`
+    /// - Parameter messageId: id of an internal message that got displayed
+    func markInternalCommunicationAsRead(messageId: String)
+
+    /// Indicates if the internal communication welcome message should be displayed
+    var hideWelcomeMessage: AnyPublisher<Bool, Never> { get }
+
+    /// Set the hideWelcomeMessage
+    /// The new value is published through `hideWelcomeMessage`
+    /// - Parameter hideWelcomeMessage: `true`if it should be hidden, otherwise `false`
+    func set(hideWelcomeMessage: Bool)
 }

@@ -70,6 +70,7 @@ struct AppMigrationDomain {
     @Dependency(\.migrationManager) var migrationManager: ModelMigrating
     @Dependency(\.coreDataControllerFactory) var factory: CoreDataControllerFactory
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
+    @Dependency(\.date) var date
 
     var fileManager: FileManager = .default
     var finishedMigration: () -> Void
@@ -89,12 +90,15 @@ struct AppMigrationDomain {
         case let .startMigration(from: currentVersion):
             state.migration = .inProgress
             return .publisher(
-                migrationManager.startModelMigration(from: currentVersion)
-                    .first()
-                    .catchToPublisher()
-                    .map(Action.startMigrationReceived)
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
+                migrationManager.startModelMigration(
+                    from: currentVersion,
+                    defaultProfileName: L10n.onbProfileName.text
+                )
+                .first()
+                .catchToPublisher()
+                .map(Action.startMigrationReceived)
+                .receive(on: schedulers.main)
+                .eraseToAnyPublisher
             )
         case let .startMigrationReceived(.success(newVersion)):
             state.migration = .finished

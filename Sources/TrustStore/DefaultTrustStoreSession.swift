@@ -83,6 +83,9 @@ extension DefaultTrustStoreSession: TrustStoreSession {
     public func reset() {
         trustStoreStorage.set(certList: nil)
         trustStoreStorage.set(ocspList: nil)
+        trustStoreStorage.set(pkiCertificates: nil)
+        trustStoreStorage.set(vauCertificate: nil)
+        trustStoreStorage.set(vauCertificateOcspResponse: nil)
     }
 
     // [REQ:gemSpec_Krypt:A_21222#5|5] Loading of the whole trust store, filtering for vau certificate

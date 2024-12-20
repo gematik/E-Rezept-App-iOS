@@ -90,4 +90,8 @@ public class IDPInterceptor: Interceptor {
                 .eraseToAnyPublisher()
         }
     }
+
+    public func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
+        throw HTTPClientError.internalError("notImplemented")
+    }
 }

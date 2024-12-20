@@ -66,6 +66,7 @@ let integrationTestsEnvironmentDummy = IntegrationTestsConfiguration(
         idp: AppConfiguration.Server(url: "http://dummy.idp.server", header: [:]),
         erp: AppConfiguration.Server(url: "http://dummy.erp.server", header: [:]),
         apoVzd: AppConfiguration.Server(url: "http://dummy.apo-vzd.server", header: [:]),
+        organDonationUrl: nil,
         clientId: "dummyClientId"
     )!,
     brainpool256r1Signer: nil,

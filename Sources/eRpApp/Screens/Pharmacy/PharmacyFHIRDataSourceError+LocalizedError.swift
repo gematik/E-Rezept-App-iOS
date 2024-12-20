@@ -20,7 +20,8 @@
 import Foundation
 import Pharmacy
 
-extension PharmacyFHIRDataSource.Error: LocalizedError {
+extension PharmacyFHIRDataSource.Error: @retroactive
+LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .fhirClient(error):
@@ -40,7 +41,7 @@ extension PharmacyFHIRDataSource.Error: LocalizedError {
     }
 }
 
-extension PharmacyRepositoryError: LocalizedError {
+extension PharmacyRepositoryError: @retroactive LocalizedError {
     public var errorDescription: String? {
         switch self {
         case let .local(localError):

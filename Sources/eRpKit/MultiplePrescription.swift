@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct MultiplePrescription: Hashable, Codable {
+public struct MultiplePrescription: Hashable, Codable, Sendable {
     public init(mark: Bool = false,
                 numbering: Decimal? = nil,
                 totalNumber: Decimal? = nil,
