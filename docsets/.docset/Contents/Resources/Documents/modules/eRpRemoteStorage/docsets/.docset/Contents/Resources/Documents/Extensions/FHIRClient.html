@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -177,9 +177,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAllTaskIDs5after7Combine12AnyPublisherVy01eB3Kit12PagedContentVySaySSGGAB5ErrorOGSSSg_tF"></a>
-                    <a name="//apple_ref/swift/Method/fetchAllTaskIDs(after:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAllTaskIDs5after7Combine12AnyPublisherVy01eB3Kit12PagedContentVySaySSGGAB5ErrorOGSSSg_tF">fetchAllTaskIDs(after:<wbr>)</a>
+                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE13fetchAllTasks5after7Combine12AnyPublisherVy01eB3Kit12PagedContentVySayAI7ErxTaskVGGAB5ErrorOGSSSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/fetchAllTasks(after:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE13fetchAllTasks5after7Combine12AnyPublisherVy01eB3Kit12PagedContentVySayAI7ErxTaskVGGAB5ErrorOGSSSg_tF">fetchAllTasks(after:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -187,7 +187,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Convenience function for requesting all task ids</p>
+                        <p>Convenience function for requesting all tasks</p>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
     <p>the simplifier (and the gematik specification) documentation is not clear as how to handle multiple
@@ -200,8 +200,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAllTaskIDs</span><span class="p">(</span><span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PagedContent</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">String</span><span class="p">]</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAllTasks</span><span class="p">(</span><span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PagedContent</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="p">]</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -226,7 +226,7 @@
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits the ids for the found  tasks</p>
+                        <p><code>AnyPublisher</code> that emits all sparse tasks</p>
                       </div>
                     </section>
                   </div>
@@ -234,9 +234,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE18fetchTasksNextPage2of7Combine12AnyPublisherVy01eB3Kit12PagedContentVySaySSGGAB5ErrorOGAKySayAI7ErxTaskVGG_tF"></a>
-                    <a name="//apple_ref/swift/Method/fetchTasksNextPage(of:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE18fetchTasksNextPage2of7Combine12AnyPublisherVy01eB3Kit12PagedContentVySaySSGGAB5ErrorOGAKySayAI7ErxTaskVGG_tF">fetchTasksNextPage(of:<wbr>)</a>
+                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE18fetchTasksNextPage3for7Combine12AnyPublisherVy01eB3Kit12PagedContentVySayAI7ErxTaskVGGAB5ErrorOG10Foundation3URLVSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/fetchTasksNextPage(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE18fetchTasksNextPage3for7Combine12AnyPublisherVy01eB3Kit12PagedContentVySayAI7ErxTaskVGGAB5ErrorOG10Foundation3URLVSg_tF">fetchTasksNextPage(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -244,15 +244,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Convenience function for requesting all task ids of a next page from a previous page.</p>
+                        <p>Convenience function for requesting all  tasks of a next page from a previous page.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchTasksNextPage</span><span class="p">(</span><span class="n">of</span> <span class="nv">previousPage</span><span class="p">:</span> <span class="kt">PagedContent</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="p">]</span><span class="o">&gt;</span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PagedContent</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">String</span><span class="p">]</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchTasksNextPage</span><span class="p">(</span><span class="k">for</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?)</span>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PagedContent</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="p">]</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -996,7 +996,7 @@ Uses the request headers  ACCESS_TOKEN with the containing insurance id</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

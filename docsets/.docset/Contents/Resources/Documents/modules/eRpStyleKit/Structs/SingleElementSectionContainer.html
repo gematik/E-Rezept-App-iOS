@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -82,6 +82,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/LabelStyle.html">LabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/LabeledContentStyle.html">LabeledContentStyle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/ToggleStyle.html">ToggleStyle</a>
@@ -172,7 +175,7 @@
                 <a class="nav-group-task-link" href="../Structs/PictureButtonStyle.html">PictureButtonStyle</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/PictureButtonStyle/Width.html">– Width</a>
+                <a class="nav-group-task-link" href="../Structs/PictureButtonStyle/Size.html">– Size</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PictureLabelStyle.html">PictureLabelStyle</a>
@@ -224,6 +227,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/SectionContainerLabelStyle.html">SectionContainerLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerLabeledContentStyle.html">SectionContainerLabeledContentStyle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/SectionContainerSubTitleStyle.html">SectionContainerSubTitleStyle</a>
@@ -279,6 +285,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/TrailingIconLabelStyle.html">TrailingIconLabelStyle</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/VerticalLabeledContentStyle.html">VerticalLabeledContentStyle</a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -291,7 +300,8 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SingleElementSectionContainer</span><span class="o">&lt;</span><span class="kt">Header</span><span class="p">,</span> <span class="kt">Content</span><span class="p">,</span> <span class="kt">Footer</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">Header</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Content</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Footer</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SingleElementSectionContainer</span><span class="o">&lt;</span><span class="kt">Header</span><span class="p">,</span> <span class="kt">Content</span><span class="p">,</span> <span class="kt">Footer</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">Header</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Content</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Footer</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                 </div>
               </div>
@@ -324,7 +334,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">SingleElementContent</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span><span class="kd">@ViewBuilder</span> <span class="nv">header</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Header</span><span class="p">?</span> <span class="o">=</span> <span class="p">{</span> <span class="kc">nil</span> <span class="p">},</span>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">SingleElementContent</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span><span class="kd">@ViewBuilder</span> <span class="nv">header</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Header</span><span class="p">?</span> <span class="o">=</span> <span class="p">{</span> <span class="kc">nil</span> <span class="p">},</span>
                                         <span class="kd">@ViewBuilder</span> <span class="nv">footer</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Footer</span><span class="p">?</span> <span class="o">=</span> <span class="p">{</span> <span class="kc">nil</span> <span class="p">},</span>
                                         <span class="kd">@ViewBuilder</span> <span class="nv">content</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">SingleElementContent</span><span class="p">)</span>
     <span class="k">where</span> <span class="kt">Content</span> <span class="o">==</span> <span class="kt">ModifiedContent</span><span class="o">&lt;</span><span class="kt">SingleElementContent</span><span class="p">,</span> <span class="kt"><a href="../Structs/SectionContainerCellModifier.html">SectionContainerCellModifier</a></span><span class="o">&gt;</span></code></pre>
@@ -353,7 +364,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">body</span><span class="p">:</span> <span class="n">some</span> <span class="kt">View</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">body</span><span class="p">:</span> <span class="n">some</span> <span class="kt">View</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -381,7 +393,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">SingleElement</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">SingleElement</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="kd">@ViewBuilder</span> <span class="nv">footer</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Footer</span><span class="p">,</span>
     <span class="kd">@ViewBuilder</span> <span class="nv">content</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">SingleElement</span>
 <span class="p">)</span>
@@ -413,7 +426,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">SingleElement</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">SingleElement</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="kd">@ViewBuilder</span> <span class="nv">header</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Header</span><span class="p">,</span>
     <span class="kd">@ViewBuilder</span> <span class="nv">content</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">SingleElement</span>
 <span class="p">)</span>
@@ -445,7 +459,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">SingleElement</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">init</span><span class="o">&lt;</span><span class="kt">SingleElement</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="kd">@ViewBuilder</span> <span class="nv">content</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">SingleElement</span>
 <span class="p">)</span>
     <span class="k">where</span> <span class="kt">Content</span> <span class="o">==</span> <span class="kt">ModifiedContent</span><span class="o">&lt;</span><span class="kt">SingleElement</span><span class="p">,</span> <span class="kt"><a href="../Structs/SectionContainerCellModifier.html">SectionContainerCellModifier</a></span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">Header</span> <span class="o">==</span> <span class="kt">EmptyView</span><span class="p">,</span>
@@ -464,7 +479,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

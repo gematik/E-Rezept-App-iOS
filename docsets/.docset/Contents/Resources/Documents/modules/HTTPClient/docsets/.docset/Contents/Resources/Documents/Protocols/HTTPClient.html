@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -149,9 +149,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10HTTPClientAAP4send7request12interceptors8redirect7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAJ10URLRequestV_SayAA11Interceptor_pGAXSgAO_AXtYacSgtF"></a>
-                    <a name="//apple_ref/swift/Method/send(request:interceptors:redirect:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10HTTPClientAAP4send7request12interceptors8redirect7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAJ10URLRequestV_SayAA11Interceptor_pGAXSgAO_AXtYacSgtF">send(request:<wbr>interceptors:<wbr>redirect:<wbr>)</a>
+                    <a name="/s:10HTTPClientAAP13sendPublisher7request12interceptors8redirect7Combine03AnyC0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAJ10URLRequestV_SayAA11Interceptor_pGAXSgAO_AXtYacSgtF"></a>
+                    <a name="//apple_ref/swift/Method/sendPublisher(request:interceptors:redirect:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClientAAP13sendPublisher7request12interceptors8redirect7Combine03AnyC0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAJ10URLRequestV_SayAA11Interceptor_pGAXSgAO_AXtYacSgtF">sendPublisher(request:<wbr>interceptors:<wbr>redirect:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -166,7 +166,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">],</span> <span class="n">redirect</span> <span class="nv">handler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient15RedirectHandlera">RedirectHandler</a></span><span class="p">?)</span>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Use async version instead")</span>
+<span class="kd">func</span> <span class="nf">sendPublisher</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">],</span> <span class="n">redirect</span> <span class="nv">handler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient15RedirectHandlera">RedirectHandler</a></span><span class="p">?)</span>
     <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -224,6 +225,92 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10HTTPClientAAP9sendAsync7request12interceptors8redirect10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAG10URLRequestV_SayAA11Interceptor_pGARSgAL_ARtYacSgtYaKF"></a>
+                    <a name="//apple_ref/swift/Method/sendAsync(request:interceptors:redirect:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClientAAP9sendAsync7request12interceptors8redirect10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAG10URLRequestV_SayAA11Interceptor_pGARSgAL_ARtYacSgtYaKF">sendAsync(request:<wbr>interceptors:<wbr>redirect:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send the given request. The request will be processed by the list of <code>Interceptors</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Only <code><a href="../Enums/HTTPClientError.html">HTTPClientError</a></code>s are supposed to be thrown.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">sendAsync</span><span class="p">(</span>
+    <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span>
+    <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">],</span>
+    <span class="n">redirect</span> <span class="nv">handler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient15RedirectHandlera">RedirectHandler</a></span><span class="p">?</span>
+<span class="p">)</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The request to be (modified and) sent.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptors</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>per request interceptors.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>handler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>handler that should be called in case of redirect.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The response as <code><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10HTTPClientAAP12interceptorsSayAA11Interceptor_pGvp"></a>
                     <a name="//apple_ref/swift/Property/interceptors" class="dashAnchor"></a>
                     <a class="token" href="#/s:10HTTPClientAAP12interceptorsSayAA11Interceptor_pGvp">interceptors</a>
@@ -251,9 +338,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10HTTPClientAAPAAE4send7request12interceptors7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_SayAA11Interceptor_pGtF"></a>
-                    <a name="//apple_ref/swift/Method/send(request:interceptors:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10HTTPClientAAPAAE4send7request12interceptors7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_SayAA11Interceptor_pGtF">send(request:<wbr>interceptors:<wbr>)</a>
+                    <a name="/s:10HTTPClientAAPAAE13sendPublisher7request12interceptors7Combine03AnyC0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_SayAA11Interceptor_pGtF"></a>
+                    <a name="//apple_ref/swift/Method/sendPublisher(request:interceptors:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClientAAPAAE13sendPublisher7request12interceptors7Combine03AnyC0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_SayAA11Interceptor_pGtF">sendPublisher(request:<wbr>interceptors:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Extension method
@@ -271,7 +358,9 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Use async version instead")</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendPublisher</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span>
+                          <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -316,9 +405,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10HTTPClientAAPAAE4send7request7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAH10URLRequestV_tF"></a>
-                    <a name="//apple_ref/swift/Method/send(request:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10HTTPClientAAPAAE4send7request7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAH10URLRequestV_tF">send(request:<wbr>)</a>
+                    <a name="/s:10HTTPClientAAPAAE13sendPublisher7request7Combine03AnyC0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAH10URLRequestV_tF"></a>
+                    <a name="//apple_ref/swift/Method/sendPublisher(request:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClientAAPAAE13sendPublisher7request7Combine03AnyC0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAH10URLRequestV_tF">sendPublisher(request:<wbr>)</a>
                     </code>
                       <span class="declaration-note">
                         Extension method
@@ -336,7 +425,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Use async version instead")</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendPublisher</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -366,6 +456,134 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10HTTPClientAAPAAE9sendAsync7request12interceptors10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAF10URLRequestV_SayAA11Interceptor_pGtYaKF"></a>
+                    <a name="//apple_ref/swift/Method/sendAsync(request:interceptors:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClientAAPAAE9sendAsync7request12interceptors10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAF10URLRequestV_SayAA11Interceptor_pGtYaKF">sendAsync(request:<wbr>interceptors:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method, asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send the given request. The request will be processed by the list of <code>Interceptors</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Only <code><a href="../Enums/HTTPClientError.html">HTTPClientError</a></code>s are supposed to be thrown.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendAsync</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="nv">interceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">])</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The request to be (modified and) sent.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptors</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>per request interceptors.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The response as <code><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10HTTPClientAAPAAE9sendAsync7request10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAE10URLRequestV_tYaKF"></a>
+                    <a name="//apple_ref/swift/Method/sendAsync(request:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClientAAPAAE9sendAsync7request10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAE10URLRequestV_tYaKF">sendAsync(request:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method, asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send the given request. The request will be processed by the list of <code>Interceptors</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Only <code><a href="../Enums/HTTPClientError.html">HTTPClientError</a></code>s are supposed to be thrown.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendAsync</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The request to be (modified and) sent.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The response as <code><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -374,7 +592,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -82,6 +82,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/LabelStyle.html">LabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/LabeledContentStyle.html">LabeledContentStyle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/ToggleStyle.html">ToggleStyle</a>
@@ -172,7 +175,7 @@
                 <a class="nav-group-task-link" href="Structs/PictureButtonStyle.html">PictureButtonStyle</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Structs/PictureButtonStyle/Width.html">– Width</a>
+                <a class="nav-group-task-link" href="Structs/PictureButtonStyle/Size.html">– Size</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/PictureLabelStyle.html">PictureLabelStyle</a>
@@ -224,6 +227,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/SectionContainerLabelStyle.html">SectionContainerLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/SectionContainerLabeledContentStyle.html">SectionContainerLabeledContentStyle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/SectionContainerSubTitleStyle.html">SectionContainerSubTitleStyle</a>
@@ -279,6 +285,9 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/TrailingIconLabelStyle.html">TrailingIconLabelStyle</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/VerticalLabeledContentStyle.html">VerticalLabeledContentStyle</a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -320,7 +329,8 @@ work with these.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DetailNavigationButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DetailNavigationButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -347,7 +357,8 @@ work with these.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DetailNavigationLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DetailNavigationLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -374,7 +385,8 @@ work with these.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">BottomDividerStyle</span> <span class="p">:</span> <span class="kt">ViewModifier</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">BottomDividerStyle</span> <span class="p">:</span> <span class="kt">ViewModifier</span></code></pre>
 
                         </div>
                       </div>
@@ -401,7 +413,8 @@ work with these.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TopDividerStyle</span> <span class="p">:</span> <span class="kt">ViewModifier</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TopDividerStyle</span> <span class="p">:</span> <span class="kt">ViewModifier</span></code></pre>
 
                         </div>
                       </div>
@@ -433,7 +446,8 @@ the <code>View.buttonStyle(.footer)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FooterButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FooterButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -464,7 +478,8 @@ the <code>View.buttonStyle(.picture)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PictureButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PictureButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -491,7 +506,8 @@ the <code>View.buttonStyle(.picture)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PictureLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PictureLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -522,7 +538,8 @@ the <code>View.buttonStyle(.primary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PrimaryButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PrimaryButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -553,7 +570,8 @@ the <code>View.buttonStyle(.Quartary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">QuartaryButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">QuartaryButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -584,7 +602,8 @@ the <code>View.buttonStyle(.report)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ReportButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ReportButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -615,7 +634,8 @@ the <code>View.buttonStyle(.secondary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SecondaryButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SecondaryButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -646,7 +666,8 @@ the <code>View.buttonStyle(.secondary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SecondaryAltButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SecondaryAltButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -675,7 +696,8 @@ within a <code><a href="Structs/SectionContainer.html">SectionContainer</a></cod
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -706,7 +728,8 @@ the <code>View.buttonStyle(.Tertiary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TertiaryButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TertiaryButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -737,7 +760,8 @@ the <code>View.buttonStyle(.tertiaryFilled)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TertiaryFilledButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TertiaryFilledButtonStyle</span> <span class="p">:</span> <span class="kt">ButtonStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -766,7 +790,8 @@ page highlighted.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PageControl</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PageControl</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -794,7 +819,65 @@ page highlighted.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FlagLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FlagLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit022VerticalLabeledContentB0V"></a>
+                    <a name="//apple_ref/swift/Struct/VerticalLabeledContentStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit022VerticalLabeledContentB0V">VerticalLabeledContentStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>VerticalLabeledContentStyle</code> defines a label style where the label is below the content</p>
+
+                        <a href="Structs/VerticalLabeledContentStyle.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">VerticalLabeledContentStyle</span> <span class="p">:</span> <span class="kt">LabeledContentStyle</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:11eRpStyleKit030SectionContainerLabeledContentB0V"></a>
+                    <a name="//apple_ref/swift/Struct/SectionContainerLabeledContentStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:11eRpStyleKit030SectionContainerLabeledContentB0V">SectionContainerLabeledContentStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="Structs/SectionContainerLabeledContentStyle.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerLabeledContentStyle</span> <span class="p">:</span> <span class="kt">LabeledContentStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -822,7 +905,8 @@ page highlighted.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerButtonLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerButtonLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -850,7 +934,8 @@ page highlighted.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerColoredIconLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerColoredIconLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -879,7 +964,8 @@ automatically within <code><a href="Structs/SectionContainer.html">SectionContai
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -908,7 +994,8 @@ automatically within <code><a href="Structs/SectionContainer.html">SectionContai
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TrailingIconCellLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TrailingIconCellLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -936,7 +1023,8 @@ automatically within <code><a href="Structs/SectionContainer.html">SectionContai
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TrailingIconLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TrailingIconLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -964,7 +1052,8 @@ automatically within <code><a href="Structs/SectionContainer.html">SectionContai
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormTextField</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormTextField</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -996,7 +1085,8 @@ the <code>View.buttonStyle(.radio)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormRadioToggleStyle</span> <span class="p">:</span> <span class="kt">ToggleStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormRadioToggleStyle</span> <span class="p">:</span> <span class="kt">ToggleStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -1023,7 +1113,8 @@ the <code>View.buttonStyle(.radio)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">RadioLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">RadioLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -1055,7 +1146,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormToggleStyle</span> <span class="p">:</span> <span class="kt">ToggleStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">FormToggleStyle</span> <span class="p">:</span> <span class="kt">ToggleStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -1082,7 +1174,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ToggleLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ToggleLabelStyle</span> <span class="p">:</span> <span class="kt">LabelStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -1137,7 +1230,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ToastContainerView</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ToastContainerView</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -1192,7 +1286,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainer</span><span class="o">&lt;</span><span class="kt">Header</span><span class="p">,</span> <span class="kt">Content</span><span class="p">,</span> <span class="kt">Footer</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">Header</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Content</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Footer</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainer</span><span class="o">&lt;</span><span class="kt">Header</span><span class="p">,</span> <span class="kt">Content</span><span class="p">,</span> <span class="kt">Footer</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">Header</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Content</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Footer</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -1219,7 +1314,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerCellModifier</span> <span class="p">:</span> <span class="kt">ViewModifier</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerCellModifier</span> <span class="p">:</span> <span class="kt">ViewModifier</span></code></pre>
 
                         </div>
                       </div>
@@ -1301,7 +1397,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerViewModifier</span> <span class="p">:</span> <span class="kt">ViewModifier</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SectionContainerViewModifier</span> <span class="p">:</span> <span class="kt">ViewModifier</span></code></pre>
 
                         </div>
                       </div>
@@ -1330,7 +1427,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SingleElementSectionContainer</span><span class="o">&lt;</span><span class="kt">Header</span><span class="p">,</span> <span class="kt">Content</span><span class="p">,</span> <span class="kt">Footer</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">Header</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Content</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Footer</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SingleElementSectionContainer</span><span class="o">&lt;</span><span class="kt">Header</span><span class="p">,</span> <span class="kt">Content</span><span class="p">,</span> <span class="kt">Footer</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">Header</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Content</span> <span class="p">:</span> <span class="kt">View</span><span class="p">,</span> <span class="kt">Footer</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -1357,7 +1455,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">InitialsImage</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">InitialsImage</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -1385,7 +1484,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">KeyValuePair</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">KeyValuePair</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -1522,7 +1622,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SubTitle</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SubTitle</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -1712,7 +1813,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SubTitleViewModifier</span><span class="o">&lt;</span><span class="kt">Style</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">ViewModifier</span> <span class="k">where</span> <span class="kt">Style</span> <span class="p">:</span> <span class="kt"><a href="Protocols/SubTitleStyle.html">SubTitleStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SubTitleViewModifier</span><span class="o">&lt;</span><span class="kt">Style</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">ViewModifier</span> <span class="k">where</span> <span class="kt">Style</span> <span class="p">:</span> <span class="kt"><a href="Protocols/SubTitleStyle.html">SubTitleStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1740,7 +1842,8 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SubTitleTop</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SubTitleTop</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -1755,7 +1858,7 @@ the <code>View.buttonStyle(.form)</code> modifier.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

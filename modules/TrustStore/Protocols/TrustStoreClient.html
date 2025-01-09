@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -213,6 +213,176 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10TrustStore0aB6ClientP29loadPKICertificatesFromServer13rootSubjectCnAA0E0VSS_tYaKF"></a>
+                    <a name="//apple_ref/swift/Method/loadPKICertificatesFromServer(rootSubjectCn:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10TrustStore0aB6ClientP29loadPKICertificatesFromServer13rootSubjectCnAA0E0VSS_tYaKF">loadPKICertificatesFromServer(rootSubjectCn:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Load the PKI certificates from remote
+<a href="https://github.com/gematik/api-erp/blob/master/docs/certificate_check.adoc">https://github.com/gematik/api-erp/blob/master/docs/certificate_check.adoc</a></p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Thrown errors are of type <code><a href="../Enums/TrustStoreError.html">TrustStoreError</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadPKICertificatesFromServer</span><span class="p">(</span><span class="nv">rootSubjectCn</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">PKICertificates</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>rootSubjectCn</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Common name (CN) of the currently installed root certificate</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>PKI certificates in form of <code>PKICertificates</code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10TrustStore0aB6ClientP28loadVauCertificateFromServer10Foundation4DataVyYaKF"></a>
+                    <a name="//apple_ref/swift/Method/loadVauCertificateFromServer()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10TrustStore0aB6ClientP28loadVauCertificateFromServer10Foundation4DataVyYaKF">loadVauCertificateFromServer()</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Load the VAU encryption certificate from remote
+<a href="https://github.com/gematik/api-erp/blob/master/docs/authentisieren.adoc">https://github.com/gematik/api-erp/blob/master/docs/authentisieren.adoc</a></p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Thrown errors are of type <code><a href="../Enums/TrustStoreError.html">TrustStoreError</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadVauCertificateFromServer</span><span class="p">()</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Data</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Data of the VAU certificate</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10TrustStore0aB6ClientP26loadOcspResponseFromServer8issuerCn8serialNr10Foundation4DataVSS_SStYaKF"></a>
+                    <a name="//apple_ref/swift/Method/loadOcspResponseFromServer(issuerCn:serialNr:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10TrustStore0aB6ClientP26loadOcspResponseFromServer8issuerCn8serialNr10Foundation4DataVSS_SStYaKF">loadOcspResponseFromServer(issuerCn:<wbr>serialNr:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Load a OCSP Response from remote
+ <a href="https://github.com/gematik/api-erp/blob/master/docs/certificate_check.adoc">https://github.com/gematik/api-erp/blob/master/docs/certificate_check.adoc</a></p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Thrown errors are of type <code><a href="../Enums/TrustStoreError.html">TrustStoreError</a></code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadOcspResponseFromServer</span><span class="p">(</span><span class="nv">issuerCn</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">serialNr</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Data</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>issuerCn</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Common name (CN) of the issuer of the certificate the OCSP response is requested for</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>serialNr</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Serial number of the certificate the OCSP response is requested for in hexadecimal format</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Data of the OCSP Response</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -221,7 +391,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

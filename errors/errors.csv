@@ -8,6 +8,8 @@ i-54101,"AVSError.InternalError.cmsContentCreation","",
 i-00901,"ZXingMatrixCodeGenerator.Error.cgImageConversion","",
 i-02701,"PrescriptionRepositoryError.loginHandler","",LoginHandlerError
 i-02702,"PrescriptionRepositoryError.erxRepository","",ErxRepositoryError
+i-,"AsyncError.finishedWithoutValue","",
+i-,"AsyncError.error","",
 i-00301,"AuthenticationChallengeProviderError.cannotEvaluatePolicy","",
 i-00302,"AuthenticationChallengeProviderError.failedEvaluatingPolicy","",
 i-00201,"AVScannerViewController.Error.initalizationError","",
@@ -68,6 +70,10 @@ i-01601,"PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed",
 i-02301,"MatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-03601,"MedicationReminderListDomain.Error.generic","",
 i-03601,"MedicationReminderSetupDomain.Error.generic","",
+i-03801,"InternalCommunicationError.decodingError","",
+i-03802,"InternalCommunicationError.invalidURL","",
+i-03803,"InternalCommunicationError.emptyOnboardingDate","",
+i-03804,"InternalCommunicationError.unknownError","",
 i-03701,"DefaultOrdersRepository.Error.erxRepository","",ErxRepositoryError
 i-03702,"DefaultOrdersRepository.Error.pharmacyRepository","",PharmacyRepositoryError
 i-03703,"DefaultOrdersRepository.Error.unspecified","",
@@ -77,6 +83,7 @@ i-02403,"RedeemServiceError.internalError","When an internal error occurs which 
 i-02404,"RedeemServiceError.unspecified","When error conversion into `RedeemServiceError` fails",
 i-02405,"RedeemServiceError.noTokenAvailable","When the user has no valid token available while trying to redeem via Fachdienst",
 i-02406,"RedeemServiceError.loginHandler","When receiving an error while doing a login",LoginHandlerError
+i-02407,"RedeemServiceError.prescriptionAlreadyRedeemed","When the prescription has already been redeemed",
 i-02501,"RedeemServiceError.InternalError.missingAVSEndpoint","When the AVS endpoint for the selected redeem option is missing",
 i-02502,"RedeemServiceError.InternalError.missingAVSCertificate","When the required AVS certificates for redeeming via AVS are missing",
 i-02503,"RedeemServiceError.InternalError.missingTelematikId","When the Telematik-ID of the pharmacy to redeem in is missing",
@@ -92,6 +99,9 @@ i-02604,"NFCHealthCardPasswordControllerError.wrongCan","",
 i-02605,"NFCHealthCardPasswordControllerError.changeReferenceData","",
 i-02606,"NFCHealthCardPasswordControllerError.couldNotInitializeSession","",
 i-02607,"NFCHealthCardPasswordControllerError.nfcHealthCardSession","Any error regarding the communication with the NFC health card itself\nor sending/receiving data (operation execution)",
+i-04001,"OrganDonorJumpServiceError.fetchingProfile","",
+i-04002,"OrganDonorJumpServiceError.generatingGenericUrl","",
+i-04003,"OrganDonorJumpServiceError.openingSpecificUrl","",
 i-03601,"ChargeItemConsentService.Error.localStore","",LocalStoreError
 i-03602,"ChargeItemConsentService.Error.loginHandler","",LoginHandlerError
 i-03603,"ChargeItemConsentService.Error.erxRepository","",ErxRepositoryError
@@ -136,6 +146,8 @@ i-01801,"RegisteredDevicesServiceError.missingAuthentication","",
 i-01802,"RegisteredDevicesServiceError.missingToken","",
 i-01803,"RegisteredDevicesServiceError.loginHandlerError","",LoginHandlerError
 i-01804,"RegisteredDevicesServiceError.idpError","",IDPError
+i-03901,"SettingsDomainError.organDonorJumpError","",OrganDonorJumpServiceError
+i-03902,"SettingsDomainError.organDonorUnknownError","",
 i-01901,"DemoError.demo","",
 i-00601,"AppSecurityManagerError.savePasswordFailed","",
 i-00602,"AppSecurityManagerError.retrievePasswordFailed","",
@@ -151,7 +163,10 @@ i-02103,"IDTokenValidatorError.profileWithInsuranceIdExists","",
 i-02104,"IDTokenValidatorError.other","",
 i-02201,"UserProfileServiceError.localStoreError","",LocalStoreError
 i-00801,"UserSessionError.idpError","",IDPError
+i-03801,"ShareSheetDomain.Error.shareFailure","",
 i-,"MockAnswer.Error.decodingError","",
+i-,"MockAnswer.Error.unkownType","",
+i-,"MockAnswer.Error.unkownType","",
 i-20201,"DefaultDataMatrixStringEncoderError.stringEncoding","Generic error while encoding the string.",
 i-20202,"DefaultDataMatrixStringEncoderError.missingAccessCode","Access code is missing",
 i-20601,"ErxConsent.Error.unableToConstructConsentRequest","Unable to construct consent request",

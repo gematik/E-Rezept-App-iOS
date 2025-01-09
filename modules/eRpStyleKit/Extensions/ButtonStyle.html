@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -82,6 +82,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/LabelStyle.html">LabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/LabeledContentStyle.html">LabeledContentStyle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/ToggleStyle.html">ToggleStyle</a>
@@ -172,7 +175,7 @@
                 <a class="nav-group-task-link" href="../Structs/PictureButtonStyle.html">PictureButtonStyle</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/PictureButtonStyle/Width.html">– Width</a>
+                <a class="nav-group-task-link" href="../Structs/PictureButtonStyle/Size.html">– Size</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PictureLabelStyle.html">PictureLabelStyle</a>
@@ -224,6 +227,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/SectionContainerLabelStyle.html">SectionContainerLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SectionContainerLabeledContentStyle.html">SectionContainerLabeledContentStyle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/SectionContainerSubTitleStyle.html">SectionContainerSubTitleStyle</a>
@@ -278,6 +284,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/TrailingIconLabelStyle.html">TrailingIconLabelStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/VerticalLabeledContentStyle.html">VerticalLabeledContentStyle</a>
               </li>
             </ul>
           </li>
@@ -345,7 +354,8 @@ the <code>View/buttonStyle(_:)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">navigation</span><span class="p">:</span> <span class="kt"><a href="../Structs/DetailNavigationButtonStyle.html">DetailNavigationButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">navigation</span><span class="p">:</span> <span class="kt"><a href="../Structs/DetailNavigationButtonStyle.html">DetailNavigationButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -375,7 +385,8 @@ the <code>View/buttonStyle(.navigation(showSeparator:))</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">navigation</span><span class="p">(</span><span class="nv">showSeparator</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">navigation</span><span class="p">(</span><span class="nv">showSeparator</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
                               <span class="nv">minChevronSpacing</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/DetailNavigationButtonStyle.html">DetailNavigationButtonStyle</a></span></code></pre>
 
                         </div>
@@ -419,7 +430,8 @@ the <code>View.buttonStyle(.footer)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">footer</span><span class="p">:</span> <span class="kt"><a href="../Structs/FooterButtonStyle.html">FooterButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">footer</span><span class="p">:</span> <span class="kt"><a href="../Structs/FooterButtonStyle.html">FooterButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -462,7 +474,8 @@ the <code>View.buttonStyle(.primary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">picture</span><span class="p">:</span> <span class="kt"><a href="../Structs/PictureButtonStyle.html">PictureButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">picture</span><span class="p">:</span> <span class="kt"><a href="../Structs/PictureButtonStyle.html">PictureButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -472,9 +485,9 @@ the <code>View.buttonStyle(.primary)</code> modifier.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7SwiftUI11ButtonStyleP03eRpD3KitAD07PicturecD0VRszrlE7picture5style8isActiveAfD0g5LabelD0V0D0O_SbtFZ"></a>
-                    <a name="//apple_ref/swift/Method/picture(style:isActive:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7SwiftUI11ButtonStyleP03eRpD3KitAD07PicturecD0VRszrlE7picture5style8isActiveAfD0g5LabelD0V0D0O_SbtFZ">picture(style:<wbr>isActive:<wbr>)</a>
+                    <a name="/s:7SwiftUI11ButtonStyleP03eRpD3KitAD07PicturecD0VRszrlE7picture5style8isActive5width6heightAfD0g5LabelD0V0D0O_SbAF4SizeOAQtFZ"></a>
+                    <a name="//apple_ref/swift/Method/picture(style:isActive:width:height:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI11ButtonStyleP03eRpD3KitAD07PicturecD0VRszrlE7picture5style8isActive5width6heightAfD0g5LabelD0V0D0O_SbAF4SizeOAQtFZ">picture(style:<wbr>isActive:<wbr>width:<wbr>height:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -492,7 +505,13 @@ the <code>View.buttonStyle(.primary(isEnabled:,isDestructive: false))</code> mod
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">picture</span><span class="p">(</span><span class="nv">style</span><span class="p">:</span> <span class="k">Self</span><span class="o">.</span><span class="kt">Style</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span> <span class="nv">isActive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/PictureButtonStyle.html">PictureButtonStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">picture</span><span class="p">(</span>
+    <span class="nv">style</span><span class="p">:</span> <span class="k">Self</span><span class="o">.</span><span class="kt">Style</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
+    <span class="nv">isActive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nv">width</span><span class="p">:</span> <span class="k">Self</span><span class="o">.</span><span class="kt">Size</span> <span class="o">=</span> <span class="o">.</span><span class="n">infinite</span><span class="p">,</span>
+    <span class="nv">height</span><span class="p">:</span> <span class="k">Self</span><span class="o">.</span><span class="kt">Size</span> <span class="o">=</span> <span class="o">.</span><span class="n">infinite</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/PictureButtonStyle.html">PictureButtonStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -535,7 +554,8 @@ the <code>View.buttonStyle(.primary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">primary</span><span class="p">:</span> <span class="kt"><a href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">primary</span><span class="p">:</span> <span class="kt"><a href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -565,7 +585,8 @@ the <code>View.buttonStyle(.primary(isEnabled:,isDestructive: false))</code> mod
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">primary</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">primary</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -595,7 +616,8 @@ the <code>View.buttonStyle(.primaryHugging)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">primaryHugging</span><span class="p">:</span> <span class="kt"><a href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">primaryHugging</span><span class="p">:</span> <span class="kt"><a href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -625,7 +647,8 @@ the <code>View.buttonStyle(.primaryHuggingNarrowly)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">primaryHuggingNarrowly</span><span class="p">:</span> <span class="kt"><a href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">primaryHuggingNarrowly</span><span class="p">:</span> <span class="kt"><a href="../Structs/PrimaryButtonStyle.html">PrimaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -668,7 +691,8 @@ the <code>View.buttonStyle(.quartary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">quartary</span><span class="p">:</span> <span class="kt"><a href="../Structs/QuartaryButtonStyle.html">QuartaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">quartary</span><span class="p">:</span> <span class="kt"><a href="../Structs/QuartaryButtonStyle.html">QuartaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -698,7 +722,8 @@ the <code>View.buttonStyle(.quartary(isEnabled:))</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">quartary</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/QuartaryButtonStyle.html">QuartaryButtonStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">quartary</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/QuartaryButtonStyle.html">QuartaryButtonStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -741,7 +766,8 @@ the <code>View.buttonStyle(.Tertiary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">report</span><span class="p">:</span> <span class="kt"><a href="../Structs/ReportButtonStyle.html">ReportButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">report</span><span class="p">:</span> <span class="kt"><a href="../Structs/ReportButtonStyle.html">ReportButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -784,7 +810,8 @@ the <code>View.buttonStyle(.secondary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">secondary</span><span class="p">:</span> <span class="kt"><a href="../Structs/SecondaryButtonStyle.html">SecondaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">secondary</span><span class="p">:</span> <span class="kt"><a href="../Structs/SecondaryButtonStyle.html">SecondaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -814,7 +841,8 @@ the <code>View.buttonStyle(.secondary(isEnabled:,isDestructive: false))</code> m
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">secondary</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/SecondaryButtonStyle.html">SecondaryButtonStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">secondary</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/SecondaryButtonStyle.html">SecondaryButtonStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -857,7 +885,8 @@ the <code>View.buttonStyle(.secondary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">secondaryAlt</span><span class="p">:</span> <span class="kt"><a href="../Structs/SecondaryAltButtonStyle.html">SecondaryAltButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">secondaryAlt</span><span class="p">:</span> <span class="kt"><a href="../Structs/SecondaryAltButtonStyle.html">SecondaryAltButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -887,7 +916,8 @@ the <code>View.buttonStyle(.secondaryAlt(isEnabled:,isDestructive: false))</code
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">secondaryAlt</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/SecondaryAltButtonStyle.html">SecondaryAltButtonStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">secondaryAlt</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/SecondaryAltButtonStyle.html">SecondaryAltButtonStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -930,7 +960,8 @@ the <code>View/buttonStyle(_:)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">simple</span><span class="p">:</span> <span class="kt"><a href="../Structs/SectionContainerButtonStyle.html">SectionContainerButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">simple</span><span class="p">:</span> <span class="kt"><a href="../Structs/SectionContainerButtonStyle.html">SectionContainerButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -960,7 +991,8 @@ the <code>View/buttonStyle(.plain(showSeparator:))</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">simple</span><span class="p">(</span><span class="nv">showSeparator</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/SectionContainerButtonStyle.html">SectionContainerButtonStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">simple</span><span class="p">(</span><span class="nv">showSeparator</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/SectionContainerButtonStyle.html">SectionContainerButtonStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1003,7 +1035,8 @@ the <code>View.buttonStyle(.Tertiary)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">tertiary</span><span class="p">:</span> <span class="kt"><a href="../Structs/TertiaryButtonStyle.html">TertiaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">tertiary</span><span class="p">:</span> <span class="kt"><a href="../Structs/TertiaryButtonStyle.html">TertiaryButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1033,7 +1066,8 @@ the <code>View.buttonStyle(.tertiary(isEnabled:,isDestructive: false))</code> mo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">tertiary</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/TertiaryButtonStyle.html">TertiaryButtonStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">tertiary</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/TertiaryButtonStyle.html">TertiaryButtonStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1076,7 +1110,8 @@ the <code>View.buttonStyle(.tertiaryFilled)</code> modifier.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">tertiaryFilled</span><span class="p">:</span> <span class="kt"><a href="../Structs/TertiaryFilledButtonStyle.html">TertiaryFilledButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">tertiaryFilled</span><span class="p">:</span> <span class="kt"><a href="../Structs/TertiaryFilledButtonStyle.html">TertiaryFilledButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1106,7 +1141,8 @@ the <code>View.buttonStyle(.tertiary(isEnabled:,isDestructive: false))</code> mo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">tertiaryFilled</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">tertiaryFilled</span><span class="p">(</span><span class="nv">isEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
                                   <span class="nv">isDestructive</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/TertiaryFilledButtonStyle.html">TertiaryFilledButtonStyle</a></span></code></pre>
 
                         </div>
@@ -1122,7 +1158,7 @@ the <code>View.buttonStyle(.tertiary(isEnabled:,isDestructive: false))</code> mo
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
