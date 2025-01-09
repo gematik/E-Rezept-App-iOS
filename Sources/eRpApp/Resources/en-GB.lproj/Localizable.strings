@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Close";
 "cdw_btn_extauth_confirm_cancel" = "Cancel";
 "cdw_btn_extauth_confirm_contact" = "Contact telephone support";
-"cdw_btn_extauth_confirm_send" = "Send";
+"cdw_btn_extauth_confirm_send" = "Register";
 "cdw_btn_extauth_fallback_order_egk" = "Order medical card";
 "cdw_btn_extauth_selection_cancel" = "Cancel";
 "cdw_btn_extauth_selection_continue" = "Next";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "Email";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "Phone";
 "cdw_txt_extauth_confirm_contactsheet_title" = "Contact support";
-"cdw_txt_extauth_confirm_description" = "We will now request authentication from your health insurance company.";
+"cdw_txt_extauth_confirm_description" = "You will be redirected to your insurance company.";
 "cdw_txt_extauth_confirm_error_description" = "Please mention this error to our support to help find a solution.";
-"cdw_txt_extauth_confirm_headline" = "Requesting authentication";
+"cdw_txt_extauth_confirm_headline" = "Register with HealthID";
 "cdw_txt_extauth_confirm_own_appname" = "E-prescription";
-"cdw_txt_extauth_confirm_title" = "Log in with app";
+"cdw_txt_extauth_confirm_title" = "Health ID";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Error opening health insurance app.";
 "cdw_txt_extauth_fallback_description1" = "The health insurance companies are currently preparing for this function.";
 "cdw_txt_extauth_fallback_description2" = "You don't want to wait? Registration with a medical card is already supported by every health insurance company.";
 "cdw_txt_extauth_fallback_headline" = "Select insurance company";
-"cdw_txt_extauth_fallback_title" = "Log in with app";
+"cdw_txt_extauth_fallback_title" = "Health ID";
 "cdw_txt_extauth_help_caption" = "Tips for registering with the insurance app";
 "cdw_txt_extauth_help_description" = "Your insurance company is responsible for the health ID. Please contact them if you have any questions about registration. Here are some tried and tested tips:";
 "cdw_txt_extauth_help_info_1" = "Please note that depending on your insurance, a separate app is required. Please ask your insurance company which one this is.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Not yet available";
 "cdw_txt_extauth_selection_error_fallback" = " Please try again later.";
 "cdw_txt_extauth_selection_headline" = "Select insurance company";
-"cdw_txt_extauth_selection_title" = "Log in with app";
+"cdw_txt_extauth_selection_title" = "Health ID";
 "cdw_txt_intro_alert_kkNotFound_title" = "Health insurance company could not be found";
 "cdw_txt_intro_description" = "To be able to use all functions of the app, log in with your medical card. You will receive this card and the required login details from your health insurance company.";
 "cdw_txt_intro_description_new" = "Receive prescriptions online and forward them to a pharmacy.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "What a pity ...";
 "cdw_txt_nfu_title" = "Login";
 "cdw_txt_pin_demo_mode_info" = "You can enter any digits.";
-"cdw_txt_pin_description" = "You received the PIN for your health card from your health insurance company using a secure procedure such as Postident.";
+"cdw_txt_pin_description" = "You had to actively order your health card PIN from your health insurance company and then received it via a secure procedure such as Postident.";
 "cdw_txt_pin_hint" = "Your PIN can have between 6 and 8 digits.";
 "cdw_txt_pin_input_label" = "Please enter your PIN. Your PIN has been sent to you by post. The PIN has 6 to 8 digits.";
 "cdw_txt_pin_subtitle" = "PIN";
@@ -871,7 +871,7 @@
 "ord_detail_txt_mail_body2" = "You are sending us this information for purposes of troubleshooting. Please note that your email address and any name you include will also be transferred. If you do not wish to transfer this information either in full or in part, please remove it from this email. \n\nAll data will only be stored or processed by gematik GmbH or its appointed companies in order to deal with this error message. Deletion takes place automatically a maximum of 180 days after the ticket has been processed. We will use your email address exclusively to contact you regarding this error message. If you have any questions, or require an earlier deletion, you can contact the data protection representative responsible for the e-prescription system. You can find further information in the menu below the entry for data protection in the e-prescription app.";
 "ord_detail_txt_mail_error" = "Error 40 42 67336";
 "ord_detail_txt_mail_subject" = "Error message from the e-prescription app";
-"ord_detail_txt_messages" = "News";
+"ord_detail_txt_messages" = "Messages";
 "ord_detail_txt_open_mail_error" = "The email app could not be opened. Please use the hotline";
 "ord_detail_txt_open_mail_error_title" = "Error";
 "ord_detail_txt_orders" = "Order";
@@ -979,7 +979,7 @@
 "pha_redeem_txt_select_prescription" = "Which prescriptions would you like to redeem?";
 "pha_redeem_txt_selected_prescription_save" = "Save";
 "pha_redeem_txt_subtitle_%@" = "Commit to redeeming the following prescriptions at the %@?";
-"pha_redeem_txt_title_delivery" = "courier service";
+"pha_redeem_txt_title_delivery" = "Courier service";
 "pha_redeem_txt_title_mail" = "Mail order";
 "pha_redeem_txt_title_reservation" = "Reservation";
 "pha_search_btn_error_no_server_response" = "Try again";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Deleted";
 "prsc_status_completed" = "Redeemed";
 "prsc_status_direct_assigned" = "Will be redeemed for you";
-"prsc_status_dispensed" = "Provided";
+"prsc_status_dispensed" = "Goods are ready";
 "prsc_status_error" = "Defective prescription";
 "prsc_status_expired" = "Expired";
 "prsc_status_in_progress" = "Is being processed";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "You already receive cost receipts digitally.";
 "service_txt_consent_toast_route_to_list_message" = "To the cost receipts";
 "service_txt_consent_toast_successfully_granted_message" = "You will now receive cost receipts digitally 🥳";
+"service_txt_missing_charge_item_pdf_name" = "Medication";
 "session_error_card_connected_with_other_profile_%@" = "Your medical card is already linked to another profile. Switch to profile %@.";
 "session_error_card_profile_mismatch_%@" = "The current profile is already linked to another medical card (policyholder number: %@).";
 "session_error_no_profile" = "No selected profile could be found. Please select a profile.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Save";
 "stg_btn_reg_devices_load" = "Register";
 "stg_con_btn_gemmunity" = "E-prescription forum";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "organ donation register";
 "stg_con_btn_organ_donor_alert_cancel" = "Cancel";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

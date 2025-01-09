@@ -111,6 +111,24 @@ extension ModelsR4.Patient {
     var singleLineAddress: String? {
         guard let address = address?.first else { return nil }
 
+        var addressLine: String?
+
+        let streetNameExt = address.line?.first?
+            .extensions(for: "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName")
+        let houseNumberExt = address.line?.first?
+            .extensions(for: "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber")
+
+        // unwrap valueX of string and check if isEmpty
+        if let valueX = streetNameExt?.first?.value, case let Extension.ValueX.string(string) = valueX,
+           let streetName = string.value?.string, !streetName.isEmpty,
+           let valueX = houseNumberExt?.first?.value, case let Extension.ValueX.string(string) = valueX,
+           let houseNumber = string.value?.string, !houseNumber.isEmpty {
+            addressLine = streetName + " " + houseNumber
+        } else {
+            // fallback line?.first value
+            addressLine = address.line?.first?.value?.string
+        }
+
         let postalCodeAndCity = [
             address.postalCode?.value?.string,
             address.city?.value?.string,
@@ -119,7 +137,7 @@ extension ModelsR4.Patient {
         .joined(separator: " ")
 
         return [
-            address.line?.first?.value?.string,
+            addressLine,
             postalCodeAndCity,
         ]
         .compactMap { $0 }

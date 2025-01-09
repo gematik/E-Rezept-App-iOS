@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Schließen";
 "cdw_btn_extauth_confirm_cancel" = "Abbrechen";
 "cdw_btn_extauth_confirm_contact" = "Telefonischen Support kontaktieren";
-"cdw_btn_extauth_confirm_send" = "Senden";
+"cdw_btn_extauth_confirm_send" = "Anmelden";
 "cdw_btn_extauth_fallback_order_egk" = "Gesundheitskarte bestellen";
 "cdw_btn_extauth_selection_cancel" = "Abbrechen";
 "cdw_btn_extauth_selection_continue" = "Weiter";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "Mail";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "Telefon";
 "cdw_txt_extauth_confirm_contactsheet_title" = "Support kontaktieren";
-"cdw_txt_extauth_confirm_description" = "Wir fragen nun die Authentisierung bei Ihrer Krankenversicherung an.";
+"cdw_txt_extauth_confirm_description" = "Sie werden zu Ihrer Versicherung weitergeleitet.";
 "cdw_txt_extauth_confirm_error_description" = "Bitte erwähnen Sie diesen Fehler gegenüber unserem Support, um die Suche nach einer Lösung zu erleichtern.";
-"cdw_txt_extauth_confirm_headline" = "Authentisierung wird angefragt";
+"cdw_txt_extauth_confirm_headline" = "Mit GesundheitsID anmelden";
 "cdw_txt_extauth_confirm_own_appname" = "E-Rezept";
-"cdw_txt_extauth_confirm_title" = "Mit App anmelden";
+"cdw_txt_extauth_confirm_title" = "GesundheitsID";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Fehler beim Öffnen der Krankenversicherungs-App.";
 "cdw_txt_extauth_fallback_description1" = "Derzeit bereiten sich die Krankenversicherungen auf diese Funktion vor.";
 "cdw_txt_extauth_fallback_description2" = "Sie wollen nicht warten? Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenversicherung unterstützt.";
 "cdw_txt_extauth_fallback_headline" = "Versicherung wählen";
-"cdw_txt_extauth_fallback_title" = "Mit App anmelden";
+"cdw_txt_extauth_fallback_title" = "GesundheitsID";
 "cdw_txt_extauth_help_caption" = "Tipps zur Anmeldung mit der Versicherungsapp";
 "cdw_txt_extauth_help_description" = "Für die GesundheitsID ist Ihre Versicherung zuständig. Kontaktieren Sie diese bitte bei Fragen zur Anmeldung. Hier einige bewährte Tipps:";
 "cdw_txt_extauth_help_info_1" = "Bitte beachten Sie, dass je nach Versicherung eine separate App benötigt wird. Bitte erkundigen Sie sich bei Ihrer Versicherung welche dies ist.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Noch nicht verfügbar";
 "cdw_txt_extauth_selection_error_fallback" = "Bitte probieren Sie es zu einem späteren Zeitpunkt erneut.";
 "cdw_txt_extauth_selection_headline" = "Versicherung wählen";
-"cdw_txt_extauth_selection_title" = "Mit App Anmelden";
+"cdw_txt_extauth_selection_title" = "GesundheitsID";
 "cdw_txt_intro_alert_kkNotFound_title" = "Krankenkasse konnte nicht gefunden werden";
 "cdw_txt_intro_description" = "Um alle Funktionen der App nutzen zu können, melden Sie sich mit Ihrer Gesundheitskarte an. Diese Karte sowie die benötigen Zugangsdaten erhalten Sie von Ihrer Krankenversicherung.";
 "cdw_txt_intro_description_new" = "Rezepte online empfangen und an eine Apotheke weiterleiten.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "Wie schade …";
 "cdw_txt_nfu_title" = "Anmeldung";
 "cdw_txt_pin_demo_mode_info" = "Sie können beliebige Ziffern eingeben.";
-"cdw_txt_pin_description" = "Die PIN für Ihre Gesundheitskarte haben Sie durch ein sicheres Verfahren, wie dem Postident, von Ihrer Krankenversicherung erhalten.";
+"cdw_txt_pin_description" = "Ihre PIN zur Gesundheitskarte mussten Sie aktiv bei Ihrer Krankenversicherung bestellen und erhielten sie dann über ein sicheres Verfahren wie Postident.";
 "cdw_txt_pin_hint" = "Ihre PIN kann 6 bis 8 Stellen haben.";
 "cdw_txt_pin_input_label" = "Geben Sie bitte Ihre PIN ein. Ihre PIN wurde Ihnen per Post zugestellt. Die PIN ist 6 bis 8 stellig.";
 "cdw_txt_pin_subtitle" = "PIN";
@@ -439,7 +439,7 @@
 "idp_err_not_available_in_demo_mode_recovery" = "Beenden Sie den Demo-Modus, um die Funktion nutzen zu können.";
 "idp_err_not_available_in_demo_mode_text" = "Nicht verfügbar im Demo-Modus";
 "intern_msg_change_log_chip_%@" = "Neuerungen in der App Version %@";
-"intern_msg_error_empty_onboarding_date" = "If this Error reoccurs, please reinstall the application";
+"intern_msg_error_empty_onboarding_date" = "Falls dieser Fehler wiederholt auftritt, bitte die App löschen und neu installieren.";
 "intern_msg_error_invalid_url" = "JSON file could not be found";
 "intern_msg_error_unknown_error" = "An error has occurred";
 "intern_msg_welcome" = "Herzlich Willkommen in der E-Rezept App! Mit dieser App können Sie digital E-Rezepte empfangen und an eine Apotheke Ihrer Wahl senden. Ob Sie das Rezept dort zur Abholung reservieren oder nach Hause liefern lassen möchten, liegt ganz bei Ihnen. Selbstverständlich können Sie auch die Rezepte Ihrer Familie verwalten. Um Rezepte digital zu erhalten, ist eine Anmeldung erforderlich.\n\nSchön, dass Sie da sind!\nIhr E-Rezept App Team";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Gelöscht";
 "prsc_status_completed" = "Eingelöst";
 "prsc_status_direct_assigned" = "Wird für Sie eingelöst";
-"prsc_status_dispensed" = "Bereitgestellt";
+"prsc_status_dispensed" = "Ware steht bereit";
 "prsc_status_error" = "Fehlerhaftes Rezept";
 "prsc_status_expired" = "Abgelaufen";
 "prsc_status_in_progress" = "Wird bearbeitet";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "Sie empfangen Kostenbeläge bereits digital.";
 "service_txt_consent_toast_route_to_list_message" = "Zu den Kostenbelegen";
 "service_txt_consent_toast_successfully_granted_message" = "Sie erhalten Kostenbelege jetzt digital 🥳";
+"service_txt_missing_charge_item_pdf_name" = "Medikation";
 "session_error_card_connected_with_other_profile_%@" = "Ihre Gesundheitskarte ist bereits mit einem anderen Profil verbunden. Wechseln Sie zu Profil %@.";
 "session_error_card_profile_mismatch_%@" = "Das aktuelle Profil ist bereits mit einer anderen Gesundheitskarte (Krankenversichertennummer: %@) verbunden.";
 "session_error_no_profile" = "Es konnte kein ausgewähltes Profil gefunden werden. Bitte wählen Sie ein Profil aus.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Speichern";
 "stg_btn_reg_devices_load" = "Anmelden";
 "stg_con_btn_gemmunity" = "Forum zum E-Rezept";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "Organspenderegister";
 "stg_con_btn_organ_donor_alert_cancel" = "Abbrechen";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

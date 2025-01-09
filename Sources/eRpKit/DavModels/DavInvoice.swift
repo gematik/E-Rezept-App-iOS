@@ -55,7 +55,8 @@ extension DavInvoice {
             description: String? = nil,
             pzn: String? = nil,
             ta1: String? = nil,
-            hmrn: String? = nil
+            hmrn: String? = nil,
+            zusatzattribut: Zusatzattribut? = nil
         ) {
             self.factor = factor
             self.price = price
@@ -63,6 +64,7 @@ extension DavInvoice {
             self.pzn = pzn
             self.ta1 = ta1
             self.hmrn = hmrn
+            self.zusatzattribut = zusatzattribut
         }
 
         /// The factor that has been applied on the base price for calculating this component
@@ -77,6 +79,19 @@ extension DavInvoice {
         public let ta1: String?
         /// Hilfsmittelpositionsnummer bei Applikationshilfen ohne PZN
         public let hmrn: String?
+        /// Zusätzliche Angaben aufgrund AMPreisV, etc.
+        public let zusatzattribut: Zusatzattribut?
+
+        public enum Zusatzattribut: Hashable, Codable {
+            // Datum und Uhrzeit der Abgabe
+            case notdienst(String)
+            // Freitextfeld
+            case zusätzlicheAbgabeangaben(String)
+            // Spender-PZN
+            case teilmengenabgabe(String)
+            // 1= Patientenwunsch, 2= Nicht-Verfügbarkeit, 3= dringender Fall, 4= sonstige Bedenken + ggf. Freitext
+            case autidem(String)
+        }
     }
 
     public struct Production: Hashable, Codable {

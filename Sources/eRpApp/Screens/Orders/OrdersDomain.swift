@@ -97,26 +97,35 @@ struct OrdersDomain {
                 }
             }
         case let .response(.ordersReceived(result)):
-            state.isLoading = false
             switch result {
             case let .success(orders):
                 for order in orders {
                     state.communicationMessage.updateOrAppend(CommunicationMessage.order(order))
                 }
+                let sortedMessages: [CommunicationMessage] = state.communicationMessage.elements.sorted {
+                    $0.lastUpdated > $1.lastUpdated
+                }
+                state.communicationMessage = IdentifiedArray(uniqueElements: sortedMessages)
             case let .failure(error):
                 state.destination = .alert(.init(for: error))
+                return .none
             }
+            state.isLoading = false
             return .none
         case let .response(.internalCommunicationReceived(result)):
-            state.isLoading = false
             switch result {
             case let .success(messages):
                 for message in messages {
                     state.communicationMessage.updateOrAppend(CommunicationMessage.internalCommunication(message))
                 }
+                let sortedMessages: [CommunicationMessage] = state.communicationMessage.elements.sorted {
+                    $0.lastUpdated > $1.lastUpdated
+                }
+                state.communicationMessage = IdentifiedArray(uniqueElements: sortedMessages)
             case let .failure(error):
                 state.destination = .alert(.init(for: error))
             }
+            state.isLoading = false
             return .none
         case let .didSelect(messageId):
             if let message = state.communicationMessage[id: messageId] {
@@ -129,6 +138,19 @@ struct OrdersDomain {
             return .none
         case .destination:
             return .none
+        }
+    }
+}
+
+extension OrdersDomain {
+    func getInsertIndexForCommunicationMessage(newMessage: CommunicationMessage,
+                                               array: IdentifiedArrayOf<CommunicationMessage>) -> Int {
+        if let existingIndex = array.firstIndex(where: { $0.id == newMessage.id }) {
+            return existingIndex
+        } else {
+            return array.firstIndex {
+                $0.lastUpdated < newMessage.lastUpdated
+            } ?? array.count
         }
     }
 }

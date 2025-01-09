@@ -1,0 +1,149 @@
+{
+  "resourceType": "Bundle",
+  "id": "KomplexMedicationDispenseBundle",
+  "type": "searchset",
+  "entry": [
+    {
+      "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/MedicationDispense/160.000.000.000.000.03",
+      "resource": {
+        "resourceType": "MedicationDispense",
+        "id": "160.000.000.000.000.03",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense|1.4"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+            "value": "160.000.000.000.000.03"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "http://fhir.de/sid/gkv/kvid-10",
+            "value": "X123456789"
+          }
+        },
+        "performer": [
+          {
+            "actor": {
+              "identifier": {
+                "system": "https://gematik.de/fhir/sid/telematik-id",
+                "value": "3-SMC-B-Testkarte-883110000095957"
+              }
+            }
+          }
+        ],
+        "whenHandedOver": "2025-09-06",
+        "medicationReference": {
+          "reference": "urn:uuid:627e0f0c-1e11-4985-901a-033bffd9ac67"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:627e0f0c-1e11-4985-901a-033bffd9ac67",
+      "resource": {
+        "resourceType": "Medication",
+        "id": "627e0f0c-1e11-4985-901a-033bffd9ac67",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Medication|1.4"
+          ]
+        },
+        "extension": [
+          {
+            "url": "https://gematik.de/fhir/epa-medication/StructureDefinition/epa-medication-type-extension",
+            "valueCoding": {
+              "code": "1208954007",
+              "system": "http://snomed.info/sct",
+              "display": "Extemporaneous preparation (product)",
+              "version": "http://snomed.info/sct/900000000000207008/version/20240201"
+            }
+          }
+        ],
+        "contained": [
+          {
+            "resourceType": "Medication",
+            "id": "44509630-ea44-4fe6-a66c-9fe0dded85e1",
+            "meta": {
+              "profile": [
+                "https://gematik.de/fhir/epa-medication/StructureDefinition/epa-medication-pzn-ingredient"
+              ]
+            },
+            "extension": [
+              {
+                "url": "https://gematik.de/fhir/epa-medication/StructureDefinition/epa-medication-type-extension",
+                "valueCoding": {
+                  "code": "781405001",
+                  "system": "http://snomed.info/sct",
+                  "display": "Medicinal product package (product)",
+                  "version": "http://snomed.info/sct/900000000000207008/version/20240201"
+                }
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                  "code": "03424249",
+                  "display": "Hydrocortison 1% Creme"
+                }
+              ],
+              "text": "Hydrocortison 1% Creme"
+            }
+          },
+          {
+            "resourceType": "Medication",
+            "id": "5c731ef9-fcce-46f8-80e2-d316a37057fe",
+            "meta": {
+              "profile": [
+                "https://gematik.de/fhir/epa-medication/StructureDefinition/epa-medication-pzn-ingredient"
+              ]
+            },
+            "extension": [
+              {
+                "url": "https://gematik.de/fhir/epa-medication/StructureDefinition/epa-medication-type-extension",
+                "valueCoding": {
+                  "code": "781405001",
+                  "system": "http://snomed.info/sct",
+                  "display": "Medicinal product package (product)",
+                  "version": "http://snomed.info/sct/900000000000207008/version/20240201"
+                }
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                  "code": "16667195",
+                  "display": "Dexpanthenol 5% Creme"
+                }
+              ],
+              "text": "Dexpanthenol 5% Creme"
+            }
+          }
+        ],
+        "ingredient": [
+          {
+            "itemReference": {
+              "reference": "#44509630-ea44-4fe6-a66c-9fe0dded85e1"
+            }
+          },
+          {
+            "itemReference": {
+              "reference": "#5c731ef9-fcce-46f8-80e2-d316a37057fe"
+            }
+          }
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    }
+  ]
+}

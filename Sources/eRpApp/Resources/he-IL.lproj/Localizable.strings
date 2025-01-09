@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "סגור";
 "cdw_btn_extauth_confirm_cancel" = "לְבַטֵל";
 "cdw_btn_extauth_confirm_contact" = "צור קשר עם התמיכה הטלפונית";
-"cdw_btn_extauth_confirm_send" = "לִשְׁלוֹחַ";
+"cdw_btn_extauth_confirm_send" = "לִרְשׁוֹם";
 "cdw_btn_extauth_fallback_order_egk" = "הזמינו כרטיס בריאות";
 "cdw_btn_extauth_selection_cancel" = "לְבַטֵל";
 "cdw_btn_extauth_selection_continue" = "נוסף";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "דוֹאַר";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "טלפון";
 "cdw_txt_extauth_confirm_contactsheet_title" = "צור קשר עם תמיכה";
-"cdw_txt_extauth_confirm_description" = "כעת נבקש אימות מחברת ביטוח הבריאות שלך.";
+"cdw_txt_extauth_confirm_description" = "אתה תופנה לחברת הביטוח שלך.";
 "cdw_txt_extauth_confirm_error_description" = "אנא ציינו שגיאה זו לתמיכה שלנו כדי לעזור למצוא פתרון.";
-"cdw_txt_extauth_confirm_headline" = "מתבקש אימות";
+"cdw_txt_extauth_confirm_headline" = "הרשמה עם תעודת בריאות";
 "cdw_txt_extauth_confirm_own_appname" = "מרשם אלקטרוני";
-"cdw_txt_extauth_confirm_title" = "הרשמה באפליקציה";
+"cdw_txt_extauth_confirm_title" = "HealthID";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "שגיאה בפתיחת אפליקציית ביטוח בריאות.";
 "cdw_txt_extauth_fallback_description1" = "קופות החולים נערכים כעת לתפקיד זה.";
 "cdw_txt_extauth_fallback_description2" = "לא רוצה לחכות? הרישום בכרטיס בריאות כבר נתמך על ידי כל קופת חולים.";
 "cdw_txt_extauth_fallback_headline" = "בחר ביטוח";
-"cdw_txt_extauth_fallback_title" = "הרשמה באפליקציה";
+"cdw_txt_extauth_fallback_title" = "HealthID";
 "cdw_txt_extauth_help_caption" = "טיפים להרשמה באפליקציית הביטוח";
 "cdw_txt_extauth_help_description" = "חברת הביטוח שלך אחראית לתעודת הבריאות. אנא צור איתם קשר אם יש לך שאלות לגבי ההרשמה. הנה כמה טיפים בדוקים:";
 "cdw_txt_extauth_help_info_1" = "שימו לב כי בהתאם לביטוח שלכם, ייתכן שתידרש אפליקציה נפרדת. אנא בדוק עם חברת הביטוח שלך כדי לברר במה מדובר.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "עדיין לא זמין";
 "cdw_txt_extauth_selection_error_fallback" = "בבקשה נסה שוב מאוחר יותר.";
 "cdw_txt_extauth_selection_headline" = "בחר ביטוח";
-"cdw_txt_extauth_selection_title" = "היכנס באמצעות האפליקציה";
+"cdw_txt_extauth_selection_title" = "HealthID";
 "cdw_txt_intro_alert_kkNotFound_title" = "ביטוח בריאות לא נמצא";
 "cdw_txt_intro_description" = "כדי להשתמש בכל הפונקציות של האפליקציה, היכנס עם כרטיס הבריאות שלך. תקבל כרטיס זה ואת נתוני הגישה הנדרשים מחברת ביטוח הבריאות שלך.";
 "cdw_txt_intro_description_new" = "קבל מרשמים באינטרנט והעביר אותם לבית מרקחת.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "חבל …";
 "cdw_txt_nfu_title" = "הַרשָׁמָה";
 "cdw_txt_pin_demo_mode_info" = "אתה יכול להזין כל מספר.";
-"cdw_txt_pin_description" = "קיבלת את ה-PIN עבור כרטיס הבריאות שלך מחברת ביטוח הבריאות שלך באמצעות הליך מאובטח כגון Postident.";
+"cdw_txt_pin_description" = "היה עליך להזמין באופן פעיל את ה-PIN של כרטיס הבריאות שלך מחברת ביטוח הבריאות שלך ולאחר מכן לקבל אותו בתהליך מאובטח כגון Postident.";
 "cdw_txt_pin_hint" = "ה-PIN שלך יכול להיות בן 6 עד 8 ספרות.";
 "cdw_txt_pin_input_label" = "אנא הזן את ה-PIN שלך. ה-PIN שלך נשלח אליך בדואר. ה-PIN כולל 6 עד 8 ספרות.";
 "cdw_txt_pin_subtitle" = "קוד סודי";
@@ -871,7 +871,7 @@
 "ord_detail_txt_mail_body2" = "אתה שולח לנו מידע זה למטרות פתרון בעיות. שים לב שכתובת הדוא\"ל שלך, ואם רלוונטי, שמך הכלול בה יועברו גם כן. אם אינך מעוניין לספק מידע זה במלואו או בחלקו, אנא מחק אותו ממייל זה. \n\n כל הנתונים מאוחסנים ומעובדים על ידי gematik GmbH או החברות המוזמנות שלה רק כדי לעבד הודעת שגיאה זו. המחיקה מתבצעת באופן אוטומטי, לא יאוחר מ-180 יום לאחר עיבוד הכרטיס. אנו נשתמש רק בכתובת הדוא\"ל שלך כדי ליצור איתך קשר בנוגע להודעת שגיאה זו. בכל שאלה או צורך במחיקה מוקדמת, ניתן לפנות בכל עת לקצין הגנת המידע של מערכת המרשם האלקטרוני. תוכל למצוא מידע נוסף באפליקציית המרשם האלקטרוני בתפריט מתחת לערך הגנת מידע.";
 "ord_detail_txt_mail_error" = "שגיאה 40 42 67336";
 "ord_detail_txt_mail_subject" = "הודעת שגיאה מאפליקציית המרשם האלקטרוני";
-"ord_detail_txt_messages" = "חֲדָשׁוֹת";
+"ord_detail_txt_messages" = "הודעות";
 "ord_detail_txt_open_mail_error" = "לא ניתן היה לפתוח את אפליקציית הדואר. נא להיעזר במוקד";
 "ord_detail_txt_open_mail_error_title" = "טעות";
 "ord_detail_txt_orders" = "להזמין";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "נמחק";
 "prsc_status_completed" = "נפדה";
 "prsc_status_direct_assigned" = "יגאל עבורך";
-"prsc_status_dispensed" = "מסופק";
+"prsc_status_dispensed" = "הסחורה מוכנה";
 "prsc_status_error" = "מתכון לא נכון";
 "prsc_status_expired" = "לא בתוקף";
 "prsc_status_in_progress" = "נמצא בעיבוד";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "אתה כבר מקבל קבלות עלות באופן דיגיטלי.";
 "service_txt_consent_toast_route_to_list_message" = "אל קבלות העלות";
 "service_txt_consent_toast_successfully_granted_message" = "כעת תקבלו קבלות עלות באופן דיגיטלי 🥳";
+"service_txt_missing_charge_item_pdf_name" = "תרופות";
 "session_error_card_connected_with_other_profile_%@" = "כרטיס הבריאות שלך כבר מקושר לפרופיל אחר. עבור לפרופיל %@ .";
 "session_error_card_profile_mismatch_%@" = "הפרופיל הנוכחי כבר מקושר לכרטיס בריאות אחר (מספר קופת חולים: %@ ).";
 "session_error_no_profile" = "לא נמצא פרופיל נבחר. אנא בחר פרופיל.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "להציל";
 "stg_btn_reg_devices_load" = "הירשם";
 "stg_con_btn_gemmunity" = "פורום מרשם אלקטרוני";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "מרשם תרומת איברים";
 "stg_con_btn_organ_donor_alert_cancel" = "לְבַטֵל";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

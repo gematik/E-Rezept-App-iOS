@@ -189,7 +189,7 @@ import SwiftUI
     internal static let cdwBtnExtauthConfirmCancel = StringAsset("cdw_btn_extauth_confirm_cancel")
     /// Contact telephone support
     internal static let cdwBtnExtauthConfirmContact = StringAsset("cdw_btn_extauth_confirm_contact")
-    /// Send
+    /// Register
     internal static let cdwBtnExtauthConfirmSend = StringAsset("cdw_btn_extauth_confirm_send")
     /// Order medical card
     internal static let cdwBtnExtauthFallbackOrderEgk = StringAsset("cdw_btn_extauth_fallback_order_egk")
@@ -380,15 +380,15 @@ import SwiftUI
     internal static let cdwTxtExtauthConfirmContactsheetTelephone = StringAsset("cdw_txt_extauth_confirm_contactsheet_telephone")
     /// Contact support
     internal static let cdwTxtExtauthConfirmContactsheetTitle = StringAsset("cdw_txt_extauth_confirm_contactsheet_title")
-    /// We will now request authentication from your health insurance company.
+    /// You will be redirected to your insurance company.
     internal static let cdwTxtExtauthConfirmDescription = StringAsset("cdw_txt_extauth_confirm_description")
     /// Please mention this error to our support to help find a solution.
     internal static let cdwTxtExtauthConfirmErrorDescription = StringAsset("cdw_txt_extauth_confirm_error_description")
-    /// Requesting authentication
+    /// Register with HealthID
     internal static let cdwTxtExtauthConfirmHeadline = StringAsset("cdw_txt_extauth_confirm_headline")
     /// E-prescription
     internal static let cdwTxtExtauthConfirmOwnAppname = StringAsset("cdw_txt_extauth_confirm_own_appname")
-    /// Log in with app
+    /// Health ID
     internal static let cdwTxtExtauthConfirmTitle = StringAsset("cdw_txt_extauth_confirm_title")
     /// Error opening health insurance app.
     internal static let cdwTxtExtauthConfirmUniversalLinkFailedError = StringAsset("cdw_txt_extauth_confirm_universal_link_failed_error")
@@ -398,7 +398,7 @@ import SwiftUI
     internal static let cdwTxtExtauthFallbackDescription2 = StringAsset("cdw_txt_extauth_fallback_description2")
     /// Select insurance company
     internal static let cdwTxtExtauthFallbackHeadline = StringAsset("cdw_txt_extauth_fallback_headline")
-    /// Log in with app
+    /// Health ID
     internal static let cdwTxtExtauthFallbackTitle = StringAsset("cdw_txt_extauth_fallback_title")
     /// Tips for registering with the insurance app
     internal static let cdwTxtExtauthHelpCaption = StringAsset("cdw_txt_extauth_help_caption")
@@ -432,7 +432,7 @@ import SwiftUI
     internal static let cdwTxtExtauthSelectionErrorFallback = StringAsset("cdw_txt_extauth_selection_error_fallback")
     /// Select insurance company
     internal static let cdwTxtExtauthSelectionHeadline = StringAsset("cdw_txt_extauth_selection_headline")
-    /// Log in with app
+    /// Health ID
     internal static let cdwTxtExtauthSelectionTitle = StringAsset("cdw_txt_extauth_selection_title")
     /// Health insurance company could not be found
     internal static let cdwTxtIntroAlertKkNotFoundTitle = StringAsset("cdw_txt_intro_alert_kkNotFound_title")
@@ -474,7 +474,7 @@ import SwiftUI
     internal static let cdwTxtNfuTitle = StringAsset("cdw_txt_nfu_title")
     /// You can enter any digits.
     internal static let cdwTxtPinDemoModeInfo = StringAsset("cdw_txt_pin_demo_mode_info")
-    /// You received the PIN for your health card from your health insurance company using a secure procedure such as Postident.
+    /// You had to actively order your health card PIN from your health insurance company and then received it via a secure procedure such as Postident.
     internal static let cdwTxtPinDescription = StringAsset("cdw_txt_pin_description")
     /// Your PIN can have between 6 and 8 digits.
     internal static let cdwTxtPinHint = StringAsset("cdw_txt_pin_hint")
@@ -1843,7 +1843,7 @@ import SwiftUI
     internal static let ordDetailTxtMailError = StringAsset("ord_detail_txt_mail_error")
     /// Error message from the e-prescription app
     internal static let ordDetailTxtMailSubject = StringAsset("ord_detail_txt_mail_subject")
-    /// News
+    /// Messages
     internal static let ordDetailTxtMessages = StringAsset("ord_detail_txt_messages")
     /// The email app could not be opened. Please use the hotline
     internal static let ordDetailTxtOpenMailError = StringAsset("ord_detail_txt_open_mail_error")
@@ -2081,7 +2081,7 @@ import SwiftUI
     internal static func phaRedeemTxtSubtitle(_ element1: String) -> StringAsset {
         StringAsset("pha_redeem_txt_subtitle_%@", arguments: [element1])
     }
-    /// courier service
+    /// Courier service
     internal static let phaRedeemTxtTitleDelivery = StringAsset("pha_redeem_txt_title_delivery")
     /// Mail order
     internal static let phaRedeemTxtTitleMail = StringAsset("pha_redeem_txt_title_mail")
@@ -2529,7 +2529,7 @@ import SwiftUI
     internal static let prscStatusCompleted = StringAsset("prsc_status_completed")
     /// Will be redeemed for you
     internal static let prscStatusDirectAssigned = StringAsset("prsc_status_direct_assigned")
-    /// Provided
+    /// Goods are ready
     internal static let prscStatusDispensed = StringAsset("prsc_status_dispensed")
     /// Defective prescription
     internal static let prscStatusError = StringAsset("prsc_status_error")
@@ -2773,6 +2773,8 @@ import SwiftUI
     internal static let serviceTxtConsentToastRouteToListMessage = StringAsset("service_txt_consent_toast_route_to_list_message")
     /// You will now receive cost receipts digitally 🥳
     internal static let serviceTxtConsentToastSuccessfullyGrantedMessage = StringAsset("service_txt_consent_toast_successfully_granted_message")
+    /// Medication
+    internal static let serviceTxtMissingChargeItemPdfName = StringAsset("service_txt_missing_charge_item_pdf_name")
     /// Your medical card is already linked to another profile. Switch to profile %@.
     internal static func sessionErrorCardConnectedWithOtherProfile(_ element1: String) -> StringAsset {
         StringAsset("session_error_card_connected_with_other_profile_%@", arguments: [element1])
@@ -2871,7 +2873,7 @@ import SwiftUI
     internal static let stgBtnRegDevicesLoad = StringAsset("stg_btn_reg_devices_load")
     /// E-prescription forum
     internal static let stgConBtnGemmunity = StringAsset("stg_con_btn_gemmunity")
-    /// gesundbund.de
+    /// gesund.bund.de
     internal static let stgConBtnGesundBundDe = StringAsset("stg_con_btn_gesund_bund_de")
     /// organ donation register
     internal static let stgConBtnOrganDonor = StringAsset("stg_con_btn_organ_donor")

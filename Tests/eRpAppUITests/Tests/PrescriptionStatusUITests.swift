@@ -68,7 +68,7 @@ class PrescriptionStatusUITests: XCTestCase {
             .init(name: "Ibuprofen 06", status: "Warte auf Antwort"),
             .init(name: "Ibuprofen 08", status: "Wird bearbeitet"),
             .init(name: "Ibuprofen 10", status: "Wird bearbeitet"),
-            .init(name: "Ibuprofen 11", status: "Bereitgestellt"),
+            .init(name: "Ibuprofen 11", status: "Ware steht bereit"),
         ]
 
         let archiveMedicationStatusMapping: [MedicationNameAndStatus] = [

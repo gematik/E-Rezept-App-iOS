@@ -289,8 +289,7 @@ extension FHIRClient {
                 }
             }
 
-        return execute(operation: ErxTaskFHIROperation
-            .medicationDispenses(id: id, handler: handler))
+        return execute(operation: ErxTaskFHIROperation.medicationDispenses(id: id, handler: handler))
     }
 
     /// Convenience function for requesting a certain charge item by ID

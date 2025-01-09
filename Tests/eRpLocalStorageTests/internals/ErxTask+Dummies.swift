@@ -231,7 +231,8 @@ extension ErxMedicationDispense {
                 whenHandedOver: "2021-07-20T10:55:04+02:00",
                 quantity: .init(value: "17", unit: "St."),
                 noteText: "take good care",
-                medication: ErxMedication.Dummies.medication1
+                medication: ErxMedication.Dummies.medication1,
+                epaMedication: nil
             )
         }
     }

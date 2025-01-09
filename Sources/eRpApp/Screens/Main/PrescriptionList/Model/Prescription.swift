@@ -21,6 +21,7 @@ import eRpStyleKit
 import Foundation
 import SwiftUI
 
+// swiftlint:disable file_length
 /// `Prescription` acts as a view model for an `ErxTask` to better fit the presentation logic
 @dynamicMemberLookup
 struct Prescription: Equatable, Identifiable {
@@ -102,6 +103,12 @@ struct Prescription: Equatable, Identifiable {
     ) -> Status {
         switch erxTask.status {
         case .inProgress:
+            if let expiresDate = erxTask.expiresOn?.date,
+               let remainingDays = date.days(until: expiresDate),
+               remainingDays <= 0 {
+                let formattedDate = ((erxTask.expiresOn as String?).map { uiDateFormatter.date($0) ?? "?" }) ?? "?"
+                return .archived(message: L10n.erxTxtExpiredOn(formattedDate).text)
+            }
             if let date = erxTask.lastModified?.date {
                 let localizedString = uiDateFormatter.relativeTime(from: date, formattingContext: .middleOfSentence)
                 return .open(until: L10n.erxTxtClaimedAt(localizedString).text)
@@ -111,7 +118,6 @@ struct Prescription: Equatable, Identifiable {
         case .computed(status: .waiting):
             // swiftlint:disable:next todo
             // TODO: `.computed(status: .sent)` is excluded because we do not store sent messages via AVS yet.
-
             if let recentCommunication = erxTask.communications.filter({ $0.profile == .dispReq })
                 .compactMap(\.timestamp.date)
                 .max() {
@@ -124,6 +130,12 @@ struct Prescription: Equatable, Identifiable {
                 return .open(until: L10n.erxTxtSentAt("").text)
             }
         case .computed(status: .dispensed):
+            if let expiresDate = erxTask.expiresOn?.date,
+               let remainingDays = date.days(until: expiresDate),
+               remainingDays <= 0 {
+                let formattedDate = ((erxTask.expiresOn as String?).map { uiDateFormatter.date($0) ?? "?" }) ?? "?"
+                return .archived(message: L10n.erxTxtExpiredOn(formattedDate).text)
+            }
             let redeemedOnDate = uiDateFormatter
                 .relativeDate(whenHandedOver, formattingContext: .middleOfSentence) ?? L10n.prscFdTxtNa.text
             return .open(until: L10n.erxTxtDispensedAt(redeemedOnDate).text)
@@ -240,7 +252,6 @@ struct Prescription: Equatable, Identifiable {
                 }
             }
         }
-
         switch (erxTask.status, viewStatus) {
         case (_, .archived),
              (_, .redeem): return false
@@ -275,7 +286,7 @@ struct Prescription: Equatable, Identifiable {
         }
 
         // [REQ:gemSpec_FD_eRp:A_19145] prevent deletion while task is in progress
-        return erxTask.status != .inProgress
+        return erxTask.status != .inProgress && erxTask.status != .computed(status: .dispensed)
     }
 
     var errorString: String {
@@ -351,15 +362,16 @@ extension Prescription {
         }
 
         switch (erxTask.status, viewStatus) {
+        case (.completed, _): return L10n.prscStatusCompleted.text
         case (.ready, .redeem): return L10n.prscStatusMultiplePrsc.text
         case (.ready, .archived): return L10n.erxTxtInvalid.text
         case (.ready, _): return L10n.prscStatusReady.text
         case (.inProgress, .archived): return L10n.erxTxtInvalid.text
         case (.inProgress, _): return L10n.prscStatusInProgress.text
-        case (.completed, _): return L10n.prscStatusCompleted.text
         case (.cancelled, _): return L10n.prscStatusCanceled.text
         case (.computed(.sent), _): return L10n.prscStatusSent.text
         case (.computed(.waiting), _): return L10n.prscStatusWaiting.text
+        case (.computed(.dispensed), .archived): return L10n.erxTxtInvalid.text
         case (.computed(.dispensed), _): return L10n.prscStatusDispensed.text
         case (.draft, _),
              (.undefined, _): return L10n.prscStatusUndefined.text
@@ -378,6 +390,7 @@ extension Prescription {
         }
 
         switch (erxTask.status, viewStatus) {
+        case (.completed, _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.ready, .redeem): return Image(systemName: SFSymbolName.calendarClock)
         case (.ready, .archived): return Image(systemName: SFSymbolName.clockWarning)
         case (.ready, _): return nil
@@ -385,8 +398,8 @@ extension Prescription {
         case (.inProgress, _): return nil
         case (.computed(.sent), _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.computed(.waiting), _): return nil
+        case (.computed(.dispensed), .archived): return Image(systemName: SFSymbolName.clockWarning)
         case (.computed(.dispensed), _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
-        case (.completed, _): return Image(asset: Asset.Prescriptions.checkmarkDouble)
         case (.cancelled, _): return Image(systemName: SFSymbolName.trash)
         case (.draft, _),
              (.undefined, _): return Image(systemName: SFSymbolName.calendarWarning)
@@ -411,6 +424,7 @@ extension Prescription {
              (.completed, _),
              (.computed(.sent), _),
              (.computed(.waiting), _),
+             (.computed(.dispensed), .archived),
              (.inProgress, .archived),
              (.ready, .archived),
              (.cancelled, _): return Colors.systemGray
@@ -432,6 +446,7 @@ extension Prescription {
              (.completed, _),
              (.computed(.waiting), _),
              (.computed(.sent), _),
+             (.computed(.dispensed), .archived),
              (.inProgress, .archived),
              (.ready, .archived),
              (.cancelled, _): return Colors.systemGray2
@@ -452,6 +467,7 @@ extension Prescription {
              (.completed, _),
              (.computed(.sent), _),
              (.computed(.waiting), _),
+             (.computed(.dispensed), .archived),
              (.inProgress, .archived),
              (.ready, .archived),
              (.cancelled, _): return Colors.secondary
@@ -493,3 +509,5 @@ extension Prescription {
                                                         dateFormatter: UIDateFormatter.previewValue)
     }
 }
+
+// swiftlint:enable file_length

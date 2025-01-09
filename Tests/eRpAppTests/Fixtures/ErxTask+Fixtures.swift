@@ -172,7 +172,8 @@ extension ErxTask {
                     lotNumber: "Charge number 1001",
                     expiresOn: "2323-01-26T15:23:21+00:00"
                 )
-            )
+            ),
+            epaMedication: nil
         )
 
         static let medicationDispense2: ErxMedicationDispense = .init(
@@ -193,7 +194,8 @@ extension ErxTask {
                     lotNumber: "Charge number 1001",
                     expiresOn: "2323-01-26T15:23:21+00:00"
                 )
-            )
+            ),
+            epaMedication: nil
         )
 
         static let medicationDispenseWeekBefore: ErxMedicationDispense = .init(
@@ -204,7 +206,8 @@ extension ErxTask {
             telematikId: "11b2-8555",
             whenHandedOver: FHIRDateFormatter.liveValue
                 .stringWithLongUTCTimeZone(from: Date(timeIntervalSince1970: 1_706_612_400)),
-            medication: medication7
+            medication: medication7,
+            epaMedication: nil
         )
 
         static let medicationDispense3: ErxMedicationDispense = .init(
@@ -223,7 +226,8 @@ extension ErxTask {
                     lotNumber: "Charge number 1001",
                     expiresOn: "2323-01-26T15:23:21+00:00"
                 )
-            )
+            ),
+            epaMedication: nil
         )
 
         static let erxTaskReady = erxTask1

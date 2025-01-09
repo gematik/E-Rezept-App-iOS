@@ -129,7 +129,10 @@ enum TimelineEntry: Equatable, Identifiable {
         case .chargeItem:
             return AttributedString(text)
         case .internalCommunication:
-            if let attributedString = try? AttributedString(markdown: text), id != "1" {
+            if let attributedString = try? AttributedString(
+                markdown: text,
+                options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            ), id != "1" {
                 let paragraphStyle = NSMutableParagraphStyle()
                 let text = NSMutableAttributedString(attributedString)
                 text.enumerateAttributes(in: NSRange(location: 0, length: text.length),

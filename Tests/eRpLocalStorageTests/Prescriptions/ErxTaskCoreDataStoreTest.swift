@@ -133,7 +133,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
             })
 
         // then
-        expect(receivedFetchResult).toEventually(equal(taskToFetch))
+        expect(receivedFetchResult).toEventually(nodiff(taskToFetch))
 
         cancellable.cancel()
         _ = try awaitPublisher(store.delete(tasks: [taskToFetch]))
@@ -867,7 +867,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
                                     form: "updated form",
                                     strength: nil,
                                     strengthFreeText: nil)]
-            )
+            ),
+            epaMedication: nil
         )
 
         // when updating the same medication dispense (when taskId is equal)

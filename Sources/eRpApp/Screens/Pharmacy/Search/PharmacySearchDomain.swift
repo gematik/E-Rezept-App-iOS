@@ -734,6 +734,10 @@ extension PharmacySearchDomain {
         }
         .filter { $0.distanceInM != nil }
 
+        guard !filteredAndSorted.isEmpty else {
+            return MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        }
+
         let seventhOrLast = min(filteredAndSorted.count, 7)
         if let seventhLocation = filteredAndSorted[seventhOrLast - 1].position?.coordinate {
             /// Now calculating lat/long - delta by subtracting the seventhLocation from the currentLocation

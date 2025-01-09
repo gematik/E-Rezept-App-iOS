@@ -452,6 +452,33 @@ extension EmptyDomain.Action {
         }
     }
 }
+extension EpaMedicationCodableIngredientDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension EpaMedicationDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .destination(.presented(action)):
+                action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
+extension EpaMedicationDomain.Destination.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .codableIngredient(action):
+                action.analytics(tracker: tracker)
+            case let .medicationIngredient(action):
+                action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
 extension ExtAuthPendingDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
@@ -703,6 +730,8 @@ extension MedicationOverviewDomain.Destination.Action {
     func analytics(tracker: Tracker) {
         switch self {
             case let .medication(action):
+                action.analytics(tracker: tracker)
+            case let .epaMedication(action):
                 action.analytics(tracker: tracker)
             default: break
         }

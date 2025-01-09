@@ -34,7 +34,8 @@ public struct ErxMedicationDispense: Hashable, Codable, Sendable {
         whenHandedOver: String?,
         quantity: ErxMedication.Quantity? = nil,
         noteText: String? = nil,
-        medication: ErxMedication?
+        medication: ErxMedication?,
+        epaMedication: ErxEpaMedication?
     ) {
         self.identifier = identifier
         self.taskId = taskId
@@ -45,6 +46,7 @@ public struct ErxMedicationDispense: Hashable, Codable, Sendable {
         self.quantity = quantity
         self.noteText = noteText
         self.medication = medication
+        self.epaMedication = epaMedication
     }
 
     /// unique identifier in each `ErxTask`
@@ -67,4 +69,7 @@ public struct ErxMedicationDispense: Hashable, Codable, Sendable {
     /// The contained medication ( most of the time based on the four KBV Medication-Profiles)
     /// - Note: Can contain medications that are not defined by the KBV medication profiles!
     public let medication: ErxMedication?
+    /// Beginning with GemWorkflow 1.4 the MedicationDispense's Medication is derived from the profile
+    /// `GEM_ERP_PR_Medication` hence it replaces the now outdated `ErxMedication`
+    public let epaMedication: ErxEpaMedication?
 }

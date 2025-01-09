@@ -29,6 +29,8 @@ screens:
     name: "prescriptionDetail"
   prescriptionDetail_medication:
     name: "prescriptionDetail:medication"
+  prescriptionDetail_epaMedication:
+    name: "prescriptionDetail:epaMedication"
   prescriptionDetail_patient:
     name: "prescriptionDetail:patient"
   prescriptionDetail_practitioner:
@@ -61,6 +63,10 @@ screens:
     name: "prescriptionDetail:medicationOverview"
   prescriptionDetail_medication_ingredients:
     name: "prescriptionDetail:medication_ingredients"
+  prescriptionDetail_epa_medication_codable_ingredient:
+    name: "prescriptionDetail:epa_medication_codable_ingredient"
+  prescriptionDetail_epa_medication_ingredient:
+    name: "prescriptionDetail:epa_medication_ingredient"        
   prescriptionDetail_selfPayerPrescriptionBottomSheet:
     name: "prescriptionDetail:selfPayerPrescriptionBottomSheet"
   prescriptionDetail_toast:

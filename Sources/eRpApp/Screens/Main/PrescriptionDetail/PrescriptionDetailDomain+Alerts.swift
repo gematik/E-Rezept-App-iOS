@@ -83,7 +83,7 @@ extension PrescriptionDetailDomain {
             var title = L10n.prscDtlAlertTitleDeleteNotAllowed
             if prescription.type == .directAssignment {
                 title = L10n.prscDeleteNoteDirectAssignment
-            } else if prescription.erxTask.status == .inProgress {
+            } else if !prescription.isDeletable {
                 title = L10n.dtlBtnDeleteDisabledNote
             } else {
                 assertionFailure("check prescription.isDeletable state for more reasons")

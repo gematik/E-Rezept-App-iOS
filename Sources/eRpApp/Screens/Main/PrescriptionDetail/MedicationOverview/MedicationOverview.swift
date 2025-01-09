@@ -66,61 +66,97 @@ struct MedicationOverview: View {
             ) { store in
                 MedicationView(store: store)
             }
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.epaMedication, action: \.destination.epaMedication)
+            ) { store in
+                EpaMedicationView(store: store)
+            }
         }
     }
 }
 
 extension ErxMedicationDispense {
     var displayName: String {
-        medication?.displayName ?? L10n.prscTxtFallbackName.text
+        if let epaMedication = epaMedication {
+            return epaMedication.displayName ?? L10n.prscTxtFallbackName.text
+        } else {
+            return medication?.displayName ?? L10n.prscTxtFallbackName.text
+        }
     }
 }
 
-struct MedicationOverview_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // PZN
-            NavigationStack {
-                MedicationOverview(
-                    store: .init(
-                        initialState: .init(
-                            subscribed: ErxTask.Demo.pznMedication,
-                            dispensed: [ErxMedicationDispense.Demo.demoMedicationDispense,
-                                        ErxMedicationDispense.Demo.demoMedicationDispense]
-                        )
-                    ) {
-                        EmptyReducer()
-                    }
+#Preview("EpaMedication Rezeptur (FHIR>=1.4)") {
+    NavigationStack {
+        MedicationOverview(
+            store: .init(
+                initialState: .init(
+                    subscribed: ErxTask.Demo.pznMedication,
+                    dispensed: [ErxMedicationDispense.Dummies.epaMedicationDispenseRezeptur]
                 )
+            ) {
+                MedicationOverviewDomain()
             }
-
-            // With one medication dispense
-            NavigationStack {
-                MedicationOverview(
-                    store: .init(
-                        initialState: .init(
-                            subscribed: ErxTask.Demo.freeTextMedication,
-                            dispensed: [ErxMedicationDispense.Demo.demoMedicationDispense]
-                        )
-                    ) {
-                        EmptyReducer()
-                    }
-                )
-            }
-
-            // With two medication dispenses
-            NavigationStack {
-                MedicationOverview(
-                    store: .init(
-                        initialState: .init(
-                            subscribed: ErxTask.Demo.compoundingMedication,
-                            dispensed: [ErxMedicationDispense]()
-                        )
-                    ) {
-                        EmptyReducer()
-                    }
-                )
-            }.preferredColorScheme(.dark)
-        }
+        )
     }
+}
+
+#Preview("EpaMedication Kombipackung (FHIR>=1.4)") {
+    NavigationStack {
+        MedicationOverview(
+            store: .init(
+                initialState: .init(
+                    subscribed: ErxTask.Demo.pznMedication,
+                    dispensed: [ErxMedicationDispense.Dummies.epaMedicationDispenseKombipackung]
+                )
+            ) {
+                MedicationOverviewDomain()
+            }
+        )
+    }
+}
+
+#Preview("PZN") {
+    NavigationStack {
+        MedicationOverview(
+            store: .init(
+                initialState: .init(
+                    subscribed: ErxTask.Demo.pznMedication,
+                    dispensed: [ErxMedicationDispense.Demo.demoMedicationDispense,
+                                ErxMedicationDispense.Demo.demoMedicationDispense]
+                )
+            ) {
+                EmptyReducer()
+            }
+        )
+    }
+}
+
+#Preview("one medication dispense") {
+    NavigationStack {
+        MedicationOverview(
+            store: .init(
+                initialState: .init(
+                    subscribed: ErxTask.Demo.freeTextMedication,
+                    dispensed: [ErxMedicationDispense.Demo.demoMedicationDispense]
+                )
+            ) {
+                EmptyReducer()
+            }
+        )
+    }
+}
+
+#Preview("two medication dispenses") {
+    NavigationStack {
+        MedicationOverview(
+            store: .init(
+                initialState: .init(
+                    subscribed: ErxTask.Demo.compoundingMedication,
+                    dispensed: [ErxMedicationDispense]()
+                )
+            ) {
+                EmptyReducer()
+            }
+        )
+    }.preferredColorScheme(.dark)
 }

@@ -232,6 +232,62 @@ final class OrdersDomainTests: XCTestCase {
         }
     }
 
+    func testCommunicationArrayIsSorted() async {
+        let order = Order(
+            orderId: "orderId",
+            communications: [communicationShipment, communicationOnPremise],
+            chargeItems: []
+        )
+        let expected = IdentifiedArray(uniqueElements: [order])
+
+        mockOrdersRepository
+            .loadAllOrdersReturnValue = AsyncThrowingStream<IdentifiedArray<String, Order>, Error> {
+                $0.yield(expected)
+            }
+
+        let internalCommunication = InternalCommunication(messages: [.init(id: "1",
+                                                                           timestamp: Date.distantPast,
+                                                                           text: "Test Text",
+                                                                           version: "",
+                                                                           isRead: false)])
+
+        let expectedInternalCommunication = IdentifiedArray(uniqueElements: [internalCommunication])
+
+        mockInternalCommunicationProtocol.loadReturnValue = expectedInternalCommunication
+
+        let sortedMessages: IdentifiedArrayOf<CommunicationMessage> = [.order(order),
+                                                                       .internalCommunication(internalCommunication)]
+
+        let store = testStore(for: OrdersDomain.State(communicationMessage: []))
+
+        let task = await store.send(.task) {
+            $0.isLoading = true
+        }
+
+        await store.receive(.loadOrders)
+        await store.receive(.loadMessages)
+
+        await store
+            .receive(.response(.internalCommunicationReceived(.success(expectedInternalCommunication)))) { state in
+                state
+                    .communicationMessage =
+                    IdentifiedArray(uniqueElements: [CommunicationMessage.internalCommunication(internalCommunication)])
+                expect(self.mockInternalCommunicationProtocol.loadCallsCount) == 1
+                state.isLoading = false
+            }
+
+        await store.receive(.response(.ordersReceived(.success(expected)))) { state in
+            state.communicationMessage = sortedMessages
+            expect(self.mockOrdersRepository.loadAllOrdersCallsCount) == 1
+            state.isLoading = false
+        }
+
+        // This should always be the last element if sorted correctly
+        expect(store.state.communicationMessage.last) == .internalCommunication(internalCommunication)
+
+        await task.cancel()
+    }
+
     let pharmacy = PharmacyLocation(
         id: "123",
         status: .some(.active),

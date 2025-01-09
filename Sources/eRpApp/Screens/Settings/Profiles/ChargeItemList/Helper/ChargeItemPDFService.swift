@@ -63,6 +63,7 @@ extension DependencyValues {
     }
 }
 
+// swiftlint:disable:next type_body_length
 struct DefaultChargeItemPDFService: ChargeItemPDFService {
     let uiDateFormatter = UIDateFormatter(fhirDateFormatter: .shared)
 
@@ -73,14 +74,14 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
             appropriateFor: nil,
             create: false
         )
-        .appendingPathComponent("output")
+        .appendingPathComponent(generateChargeItemPDFName(for: chargeItem))
         .appendingPathExtension("pdf") else {
             throw ChargeItemPDFServiceError.couldNotCreateDestinationURL
         }
 
         var result = try generatePDF(for: chargeItem)
 
-        guard let resultString = String(data: result, encoding: .ascii) else {
+        guard let resultString = String(data: result, encoding: .isoLatin1) else {
             throw ChargeItemPDFServiceError.couldNotCreatePDFStringForParsing
         }
 
@@ -161,6 +162,7 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
             "06460688",
             "09999637",
             "06461110",
+            "17717446",
         ]
 
         let feesAndArticles = invoice.chargeableItems
@@ -178,8 +180,12 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
                 guard let ta1 = item.ta1 else { return true }
                 return !specials.contains(ta1)
             }
-            .map { article in
-                article.toEntry(for: chargeItem.medication)
+            .flatMap { article in
+                var articles = [article.toEntry(for: chargeItem.medication)]
+                if case let .teilmengenabgabe(pzn) = article.zusatzattribut {
+                    articles.append(.init(name: "Teilmenge aus", pzn: pzn, count: "", price: ""))
+                }
+                return articles
             }
 
         let compounding = feesAndArticles
@@ -350,6 +356,15 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
 
         return pdfData as Data
     }
+
+    func generateChargeItemPDFName(for chargeItem: ErxChargeItem) -> String {
+        let date = uiDateFormatter.fhirDateFormatter.date(from: chargeItem.enteredDate ?? "") ?? Date()
+        let dateFormatted = uiDateFormatter.fhirDateFormatter.string(from: date, format: .yearMonthDay)
+        let medicationNameFormatted = (chargeItem.medication?.name ?? L10n.serviceTxtMissingChargeItemPdfName.text)
+            .trimmed()
+            .replacingOccurrences(of: " ", with: "")
+        return medicationNameFormatted + "_" + dateFormatted
+    }
 }
 
 extension DavInvoice.ChargeableItem {
@@ -360,6 +375,7 @@ extension DavInvoice.ChargeableItem {
             "06460688": "T-Rezept Gebühr",
             "09999637": "Beschaffungskosten",
             "06461110": "Botendienst",
+            "17717446": "Lieferengpass-Pauschale",
         ]
 
         let name: String
@@ -368,10 +384,16 @@ extension DavInvoice.ChargeableItem {
         } else {
             name = hmrn ?? pzn ?? ta1 ?? ""
         }
+        let pzn: String
+        if let specialPZN = specials.first(where: { $0.value == name })?.key {
+            pzn = specialPZN
+        } else {
+            pzn = ""
+        }
 
         return ChargeItemHTMLTemplate.Entry(
             name: name,
-            pzn: "",
+            pzn: pzn,
             count: "",
             price: price?.formatted(.number.precision(.fractionLength(2 ... 2))) ?? ""
         )

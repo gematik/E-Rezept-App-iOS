@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Vicino";
 "cdw_btn_extauth_confirm_cancel" = "Annulla";
 "cdw_btn_extauth_confirm_contact" = "Contattare l'assistenza telefonica";
-"cdw_btn_extauth_confirm_send" = "Inviare";
+"cdw_btn_extauth_confirm_send" = "Registro";
 "cdw_btn_extauth_fallback_order_egk" = "Ordinare la tessera sanitaria";
 "cdw_btn_extauth_selection_cancel" = "Annulla";
 "cdw_btn_extauth_selection_continue" = "Ulteriore";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "Posta";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "telefono";
 "cdw_txt_extauth_confirm_contactsheet_title" = "Contatta il supporto";
-"cdw_txt_extauth_confirm_description" = "Ora richiederemo l'autenticazione alla tua compagnia di assicurazione sanitaria.";
+"cdw_txt_extauth_confirm_description" = "Verrai reindirizzato alla tua compagnia assicurativa.";
 "cdw_txt_extauth_confirm_error_description" = "Si prega di segnalare questo errore al nostro supporto per trovare una soluzione.";
-"cdw_txt_extauth_confirm_headline" = "È richiesta l'autenticazione";
+"cdw_txt_extauth_confirm_headline" = "Registrati con ID sanitario";
 "cdw_txt_extauth_confirm_own_appname" = "Prescrizione elettronica";
-"cdw_txt_extauth_confirm_title" = "Registrati con l'app";
+"cdw_txt_extauth_confirm_title" = "IDsalute";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Errore durante l'apertura dell'app dell'assicurazione sanitaria.";
 "cdw_txt_extauth_fallback_description1" = "Le compagnie di assicurazione sanitaria si stanno attualmente preparando per questa funzione.";
 "cdw_txt_extauth_fallback_description2" = "Non vuoi aspettare? La registrazione con la tessera sanitaria è già supportata da ogni cassa malati.";
 "cdw_txt_extauth_fallback_headline" = "Scegli l'assicurazione";
-"cdw_txt_extauth_fallback_title" = "Registrati con l'app";
+"cdw_txt_extauth_fallback_title" = "IDsalute";
 "cdw_txt_extauth_help_caption" = "Consigli per la registrazione all'app Assicurazioni";
 "cdw_txt_extauth_help_description" = "La vostra compagnia assicurativa è responsabile della tessera sanitaria. Si prega di contattarli se avete domande sulla registrazione. Ecco alcuni suggerimenti provati e testati:";
 "cdw_txt_extauth_help_info_1" = "Tieni presente che, a seconda della tua assicurazione, potrebbe essere necessaria un'app separata. Ti invitiamo a verificare con la tua compagnia assicurativa per scoprire di cosa si tratta.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Non ancora disponibile";
 "cdw_txt_extauth_selection_error_fallback" = "Per favore riprova più tardi.";
 "cdw_txt_extauth_selection_headline" = "Scegli l'assicurazione";
-"cdw_txt_extauth_selection_title" = "Accedi con l'app";
+"cdw_txt_extauth_selection_title" = "IDsalute";
 "cdw_txt_intro_alert_kkNotFound_title" = "Non è stato possibile trovare l'assicurazione sanitaria";
 "cdw_txt_intro_description" = "Per utilizzare tutte le funzionalità dell'app accedi con la tua tessera sanitaria. Riceverete questa tessera e i dati d'accesso necessari dalla vostra cassa malati.";
 "cdw_txt_intro_description_new" = "Ricevi prescrizioni online e inoltrale a una farmacia.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "Che peccato …";
 "cdw_txt_nfu_title" = "Registrazione";
 "cdw_txt_pin_demo_mode_info" = "Puoi inserire qualsiasi numero.";
-"cdw_txt_pin_description" = "Hai ricevuto il PIN della tua tessera sanitaria dalla tua cassa malati tramite una procedura sicura come Postident.";
+"cdw_txt_pin_description" = "Dovevi ordinare attivamente il PIN della tua tessera sanitaria presso la tua cassa malati e poi riceverlo tramite un processo sicuro come Postident.";
 "cdw_txt_pin_hint" = "Il tuo PIN può contenere da 6 a 8 cifre.";
 "cdw_txt_pin_input_label" = "Inserisci il tuo PIN. Il tuo PIN ti è stato inviato per posta. Il PIN ha da 6 a 8 cifre.";
 "cdw_txt_pin_subtitle" = "Codice PIN";
@@ -871,7 +871,7 @@
 "ord_detail_txt_mail_body2" = "Ci invii queste informazioni a scopo di risoluzione dei problemi. Tieni presente che verranno trasferiti anche il tuo indirizzo e-mail e, se applicabile, il tuo nome in esso contenuto. Se non desideri fornire queste informazioni in tutto o in parte, ti preghiamo di cancellarle da questa email. \n\n Tutti i dati vengono memorizzati ed elaborati da gematik GmbH o dalle sue società incaricate solo per elaborare questo messaggio di errore. La cancellazione avviene automaticamente, entro e non oltre 180 giorni dall'elaborazione del ticket. Utilizzeremo il tuo indirizzo email solo per contattarti in merito a questo messaggio di errore. In caso di domande o se desiderate una cancellazione anticipata potete rivolgervi in ​​qualsiasi momento al responsabile della protezione dei dati del sistema di prescrizione elettronica. Ulteriori informazioni sono disponibili nell'app Prescrizione elettronica nel menu alla voce Protezione dei dati.";
 "ord_detail_txt_mail_error" = "Errore 40 42 67336";
 "ord_detail_txt_mail_subject" = "Messaggio di errore dall'app di prescrizione elettronica";
-"ord_detail_txt_messages" = "Notizia";
+"ord_detail_txt_messages" = "Messaggi";
 "ord_detail_txt_open_mail_error" = "Impossibile aprire l'app Mail. Si prega di utilizzare la hotline";
 "ord_detail_txt_open_mail_error_title" = "Errore";
 "ord_detail_txt_orders" = "Ordine";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Eliminato";
 "prsc_status_completed" = "Redento";
 "prsc_status_direct_assigned" = "Sarà riscattato per te";
-"prsc_status_dispensed" = "Fornito";
+"prsc_status_dispensed" = "Le merci sono pronte";
 "prsc_status_error" = "Ricetta errata";
 "prsc_status_expired" = "Scaduto";
 "prsc_status_in_progress" = "È in fase di elaborazione";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "Ricevete già le ricevute dei costi in formato digitale.";
 "service_txt_consent_toast_route_to_list_message" = "Alle ricevute di spesa";
 "service_txt_consent_toast_successfully_granted_message" = "Ora riceverai le ricevute dei costi in formato digitale 🥳";
+"service_txt_missing_charge_item_pdf_name" = "Farmaco";
 "session_error_card_connected_with_other_profile_%@" = "La tua tessera sanitaria è già collegata ad un altro profilo. Vai al profilo %@ .";
 "session_error_card_profile_mismatch_%@" = "Il profilo attuale è già collegato ad un'altra tessera sanitaria (numero cassa malati: %@ ).";
 "session_error_no_profile" = "Impossibile trovare il profilo selezionato. Seleziona un profilo.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Salva";
 "stg_btn_reg_devices_load" = "Registrati";
 "stg_con_btn_gemmunity" = "Forum sulla prescrizione elettronica";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "Registro delle donazioni di organi";
 "stg_con_btn_organ_donor_alert_cancel" = "Cancellare";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

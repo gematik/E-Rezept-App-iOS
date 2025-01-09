@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="23H124" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="23H222" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AuthEntry" representedClassName="AuthEntry" syncable="YES" codeGenerationType="class">
         <attribute name="gID" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="insuranceID" optional="YES" attributeType="String"/>
@@ -37,6 +37,21 @@
                 <constraint value="identifier"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="ErxEpaMedicationEntity" representedClassName="ErxEpaMedicationEntity" syncable="YES">
+        <attribute name="amount" optional="YES" attributeType="Binary"/>
+        <attribute name="batch" optional="YES" attributeType="Binary"/>
+        <attribute name="code" optional="YES" attributeType="Binary"/>
+        <attribute name="drugCategory" optional="YES" attributeType="Binary"/>
+        <attribute name="epaMedicationType" optional="YES" attributeType="Binary"/>
+        <attribute name="form" optional="YES" attributeType="Binary"/>
+        <attribute name="ingredients" attributeType="Binary"/>
+        <attribute name="manufacturingInstructions" optional="YES" attributeType="String"/>
+        <attribute name="normSizeCode" optional="YES" attributeType="String"/>
+        <attribute name="packaging" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="Binary"/>
+        <attribute name="vaccine" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <relationship name="medicationDispense" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationDispenseEntity" inverseName="epaMedication" inverseEntity="ErxTaskMedicationDispenseEntity"/>
     </entity>
     <entity name="ErxTaskAccidentInfoEntity" representedClassName="ErxTaskAccidentInfoEntity" syncable="YES">
         <attribute name="date" optional="YES" attributeType="String"/>
@@ -123,6 +138,7 @@
         <attribute name="taskId" optional="YES" attributeType="String"/>
         <attribute name="telematikId" optional="YES" attributeType="String"/>
         <attribute name="whenHandedOver" optional="YES" attributeType="String"/>
+        <relationship name="epaMedication" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxEpaMedicationEntity" inverseName="medicationDispense" inverseEntity="ErxEpaMedicationEntity"/>
         <relationship name="medication" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskMedicationEntity" inverseName="medicationDispense" inverseEntity="ErxTaskMedicationEntity"/>
         <relationship name="quantity" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="quantityMedicationDispense" inverseEntity="ErxTaskQuantityEntity"/>
         <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="medicationDispenses" inverseEntity="ErxTaskEntity"/>

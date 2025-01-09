@@ -336,6 +336,26 @@ extension EmptyDomain.State {
     }
 }
 
+extension EpaMedicationCodableIngredientDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
+extension EpaMedicationDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case let .codableIngredient(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .medicationIngredient(state: state):
+                return state.routeName() ?? destination.analyticsName
+        }
+    }
+}
+
 extension ExtAuthPendingDomain.State {
     func routeName() -> String? {
         guard let destination = destination else {
@@ -517,6 +537,8 @@ extension MedicationOverviewDomain.State {
         }
         switch destination {
             case let .medication(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .epaMedication(state: state):
                 return state.routeName() ?? destination.analyticsName
         }
     }
@@ -1195,6 +1217,16 @@ extension EditProfilePictureDomain.Destination.State {
         }
     }
 }
+extension EpaMedicationDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .codableIngredient: 
+                return Analytics.Screens.prescriptionDetail_epa_medication_codable_ingredient.name
+            case .medicationIngredient: 
+                return Analytics.Screens.prescriptionDetail_epa_medication_ingredient.name
+        }
+    }
+}
 extension ExtAuthPendingDomain.Destination.State {
     var analyticsName: String {
         switch self {
@@ -1316,6 +1348,8 @@ extension MedicationOverviewDomain.Destination.State {
         switch self {
             case .medication: 
                 return Analytics.Screens.prescriptionDetail_medication.name
+            case .epaMedication: 
+                return Analytics.Screens.prescriptionDetail_epaMedication.name
         }
     }
 }

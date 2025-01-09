@@ -105,12 +105,29 @@ extension ModelsR4.Practitioner {
             postalCodeAndCity = "\n" + city
         }
 
-        if let line = address.line?.first?.value?.string {
-            if let postalCodeAndCity = postalCodeAndCity {
-                return line + postalCodeAndCity
-            }
+        var addressLine: String?
+
+        let streetNameExt = address.line?.first?
+            .extensions(for: "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName")
+        let houseNumberExt = address.line?.first?
+            .extensions(for: "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber")
+
+        // unwrap valueX of string and check if isEmpty
+        if let valueX = streetNameExt?.first?.value, case let Extension.ValueX.string(string) = valueX,
+           let streetName = string.value?.string, !streetName.isEmpty,
+           let valueX = houseNumberExt?.first?.value, case let Extension.ValueX.string(string) = valueX,
+           let houseNumber = string.value?.string, !houseNumber.isEmpty {
+            addressLine = streetName + " " + houseNumber
+        } else {
+            // fallback line?.first value
+            addressLine = address.line?.first?.value?.string
         }
 
-        return postalCodeAndCity
+        return [
+            addressLine,
+            postalCodeAndCity,
+        ]
+        .compactMap { $0 }
+        .joined()
     }
 }

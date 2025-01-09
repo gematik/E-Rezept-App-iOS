@@ -78,7 +78,8 @@ final class PrescriptionViewStatusTests: XCTestCase {
                     lotNumber: "Charge number 1001",
                     expiresOn: "2323-01-26T15:23:21+00:00"
                 )
-            )
+            ),
+            epaMedication: nil
         )
     }
 
@@ -89,6 +90,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Noch 27 Tage einlösbar")))
+        expect(sut.isDeletable).to(beTrue())
     }
 
     func testTaskIsDispensed() {
@@ -104,6 +106,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
             let sut0 = Prescription(erxTask: task0, dateFormatter: .testValue)
             // then
             expect(sut0.viewStatus).to(equal(.open(until: "Bereitgestellt übermorgen")))
+            expect(sut0.isDeletable).to(beFalse())
 
             // given
             let task = self.generateTask(
@@ -136,6 +139,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Angenommen ")))
         expect(sut.type).to(equal(.regular))
+        expect(sut.isDeletable).to(beFalse())
     }
 
     func testTaskIsClosed() { // CLOSE
@@ -151,6 +155,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: 30.01.2024")))
+        expect(sut.isDeletable).to(beTrue())
     }
 
     func testTaskIsReadyAndNotAcceptedAnymore() {
@@ -160,6 +165,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Nur noch heute als Selbstzahlender einlösbar")))
+        expect(sut.isDeletable).to(beTrue())
     }
 
     func testTaskIsReadyWithoutExpireAndAcceptedDate() {
@@ -170,6 +176,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Keine Angabe")))
+        expect(sut.isDeletable).to(beTrue())
     }
 
     func testTaskAlreadyExpired() {
@@ -180,6 +187,35 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Abgelaufen am 01.01.2024")))
+        expect(sut.isDeletable).to(beTrue())
+    }
+
+    func testTaskInProgressAndExpired() {
+        // given
+        let task = generateTask(
+            status: .inProgress,
+            expiresOn: "2024-01-01T08:23:19+00:00",
+            acceptedUntil: "2023-12-01T08:23:19+00:00"
+        )
+        // when
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
+        // then
+        expect(sut.viewStatus).to(equal(.archived(message: "Abgelaufen am 01.01.2024")))
+        expect(sut.isDeletable).to(beTrue())
+    }
+
+    func testTaskDispensedAndExpired() {
+        // given
+        let task = generateTask(
+            status: .computed(status: .dispensed),
+            expiresOn: "2024-01-01T08:23:19+00:00",
+            acceptedUntil: "2023-12-01T08:23:19+00:00"
+        )
+        // when
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
+        // then
+        expect(sut.viewStatus).to(equal(.archived(message: "Abgelaufen am 01.01.2024")))
+        expect(sut.isDeletable).to(beTrue())
     }
 
     func testScannedTaskIsClosed() {
@@ -196,6 +232,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Gestern")))
         expect(sut.type).to(equal(.scanned))
+        expect(sut.isDeletable).to(beTrue())
     }
 
     func testTaskIsUndefined() {
@@ -205,6 +242,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.undefined))
+        expect(sut.isDeletable).to(beTrue())
     }
 
     func testDirectAssignment() {
@@ -215,6 +253,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Noch 27 Tage einlösbar")))
         expect(sut.type).to(equal(.directAssignment))
+        expect(sut.isDeletable).to(beFalse())
     }
 
     func testDirectAssignmentForPKV() {
@@ -225,6 +264,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Noch 27 Tage einlösbar")))
         expect(sut.type).to(equal(.directAssignment))
+        expect(sut.isDeletable).to(beFalse())
     }
 
     func testTaskIsMultiplePrescriptionForLaterDate() {
@@ -243,6 +283,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // then
         expect(sut.viewStatus).to(equal(.redeem(at: "Einlösbar ab 26.01.2323")))
         expect(sut.type).to(equal(.multiplePrescription))
+        expect(sut.isDeletable).to(beTrue())
     }
 
     func testXDaysLeftForAssignment() {

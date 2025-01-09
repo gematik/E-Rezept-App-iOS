@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Tæt";
 "cdw_btn_extauth_confirm_cancel" = "Afbestille";
 "cdw_btn_extauth_confirm_contact" = "Kontakt telefonsupport";
-"cdw_btn_extauth_confirm_send" = "Sende";
+"cdw_btn_extauth_confirm_send" = "Register";
 "cdw_btn_extauth_fallback_order_egk" = "Bestil et sundhedskort";
 "cdw_btn_extauth_selection_cancel" = "Afbestille";
 "cdw_btn_extauth_selection_continue" = "Yderligere";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "Post";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "telefon";
 "cdw_txt_extauth_confirm_contactsheet_title" = "Kontakt support";
-"cdw_txt_extauth_confirm_description" = "Vi vil nu anmode om autentificering fra dit sygeforsikringsselskab.";
+"cdw_txt_extauth_confirm_description" = "Du vil blive omdirigeret til dit forsikringsselskab.";
 "cdw_txt_extauth_confirm_error_description" = "Nævn denne fejl til vores support for at hjælpe med at finde en løsning.";
-"cdw_txt_extauth_confirm_headline" = "Der anmodes om godkendelse";
+"cdw_txt_extauth_confirm_headline" = "Tilmeld dig med sundheds-id";
 "cdw_txt_extauth_confirm_own_appname" = "E-recept";
-"cdw_txt_extauth_confirm_title" = "Tilmeld dig med app";
+"cdw_txt_extauth_confirm_title" = "Sundheds-ID";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Fejl ved åbning af sygesikringsapp.";
 "cdw_txt_extauth_fallback_description1" = "Sygeforsikringsselskaber er i øjeblikket ved at forberede denne funktion.";
 "cdw_txt_extauth_fallback_description2" = "Vil du ikke vente? Registrering med et sundhedskort understøttes allerede af alle sygeforsikringsselskaber.";
 "cdw_txt_extauth_fallback_headline" = "Vælg forsikring";
-"cdw_txt_extauth_fallback_title" = "Tilmeld dig med app";
+"cdw_txt_extauth_fallback_title" = "Sundheds-ID";
 "cdw_txt_extauth_help_caption" = "Tips til tilmelding til forsikringsappen";
 "cdw_txt_extauth_help_description" = "Dit forsikringsselskab er ansvarlig for Sundheds-ID. Kontakt dem, hvis du har spørgsmål til tilmelding. Her er nogle afprøvede tips:";
 "cdw_txt_extauth_help_info_1" = "Bemærk venligst, at afhængigt af din forsikring kan det være nødvendigt med en separat app. Kontakt dit forsikringsselskab for at finde ud af, hvad det er.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Ikke tilgængelig endnu";
 "cdw_txt_extauth_selection_error_fallback" = "Prøv igen senere.";
 "cdw_txt_extauth_selection_headline" = "Vælg forsikring";
-"cdw_txt_extauth_selection_title" = "Log ind med appen";
+"cdw_txt_extauth_selection_title" = "Sundheds-ID";
 "cdw_txt_intro_alert_kkNotFound_title" = "Sygesikring kunne ikke findes";
 "cdw_txt_intro_description" = "For at bruge alle appens funktioner skal du logge ind med dit sundhedskort. Du modtager dette kort og de nødvendige adgangsdata fra dit sygeforsikringsselskab.";
 "cdw_txt_intro_description_new" = "Modtag recepter online og send dem til et apotek.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "Hvor er det synd…";
 "cdw_txt_nfu_title" = "Registrering";
 "cdw_txt_pin_demo_mode_info" = "Du kan indtaste et hvilket som helst tal.";
-"cdw_txt_pin_description" = "Du har modtaget PIN-koden til dit sundhedskort fra dit sygesikringsselskab ved hjælp af en sikker procedure som Postident.";
+"cdw_txt_pin_description" = "Du skulle aktivt bestille din sundhedskort-pinkode hos dit sygesikringsselskab og derefter modtage den via en sikker proces som Postident.";
 "cdw_txt_pin_hint" = "Din pinkode kan have 6 til 8 cifre.";
 "cdw_txt_pin_input_label" = "Indtast venligst din PIN-kode. Din pinkode er blevet sendt til dig med posten. PIN-koden har 6 til 8 cifre.";
 "cdw_txt_pin_subtitle" = "pinkode";
@@ -871,7 +871,7 @@
 "ord_detail_txt_mail_body2" = "Du sender os disse oplysninger til fejlfindingsformål. Bemærk venligst, at din e-mailadresse og, hvis det er relevant, dit navn deri også vil blive overført. Hvis du ikke ønsker at give disse oplysninger helt eller delvist, bedes du slette dem fra denne e-mail. \n\n Alle data opbevares og behandles af gematik GmbH eller dets bestilte virksomheder kun for at behandle denne fejlmeddelelse. Sletningen sker automatisk, senest 180 dage efter, at billetten er behandlet. Vi vil kun bruge din e-mailadresse til at kontakte dig angående denne fejlmeddelelse. Hvis du har spørgsmål eller ønsker tidlig sletning, kan du til enhver tid kontakte den databeskyttelsesansvarlige for e-receptsystemet. Du kan finde yderligere information i e-recept-appen i menuen under databeskyttelsesposten.";
 "ord_detail_txt_mail_error" = "Fejl 40 42 67336";
 "ord_detail_txt_mail_subject" = "Fejlmeddelelse fra e-recept-appen";
-"ord_detail_txt_messages" = "Nyheder";
+"ord_detail_txt_messages" = "Beskeder";
 "ord_detail_txt_open_mail_error" = "Mail-appen kunne ikke åbnes. Brug venligst hotline";
 "ord_detail_txt_open_mail_error_title" = "Fejl";
 "ord_detail_txt_orders" = "Bestille";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Slettet";
 "prsc_status_completed" = "Forløst";
 "prsc_status_direct_assigned" = "Vil blive indløst for dig";
-"prsc_status_dispensed" = "Forudsat";
+"prsc_status_dispensed" = "Varerne er klar";
 "prsc_status_error" = "Forkert opskrift";
 "prsc_status_expired" = "Udløbet";
 "prsc_status_in_progress" = "Er under behandling";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "Du modtager allerede omkostningskvitteringer digitalt.";
 "service_txt_consent_toast_route_to_list_message" = "Til omkostningskvitteringerne";
 "service_txt_consent_toast_successfully_granted_message" = "Du modtager nu omkostningskvitteringer digitalt 🥳";
+"service_txt_missing_charge_item_pdf_name" = "Medicin";
 "session_error_card_connected_with_other_profile_%@" = "Dit sundhedskort er allerede knyttet til en anden profil. Gå til profil %@ .";
 "session_error_card_profile_mismatch_%@" = "Den aktuelle profil er allerede knyttet til et andet sundhedskort (sygesikringsnummer: %@ ).";
 "session_error_no_profile" = "Der blev ikke fundet nogen valgt profil. Vælg venligst en profil.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Gemme";
 "stg_btn_reg_devices_load" = "Tilmeld";
 "stg_con_btn_gemmunity" = "E-receptforum";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "Organdonationsregister";
 "stg_con_btn_organ_donor_alert_cancel" = "Ophæve";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
