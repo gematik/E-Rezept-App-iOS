@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Închide";
 "cdw_btn_extauth_confirm_cancel" = "Anulare";
 "cdw_btn_extauth_confirm_contact" = "Contactați asistența telefonică";
-"cdw_btn_extauth_confirm_send" = "Trimite";
+"cdw_btn_extauth_confirm_send" = "Registru";
 "cdw_btn_extauth_fallback_order_egk" = "Comandați un card de sănătate";
 "cdw_btn_extauth_selection_cancel" = "Anulare";
 "cdw_btn_extauth_selection_continue" = "Mai departe";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "Poștă";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "telefon";
 "cdw_txt_extauth_confirm_contactsheet_title" = "Contactați asistența";
-"cdw_txt_extauth_confirm_description" = "Vom solicita acum autentificarea de la compania dumneavoastră de asigurări de sănătate.";
+"cdw_txt_extauth_confirm_description" = "Veți fi redirecționat către compania dvs. de asigurări.";
 "cdw_txt_extauth_confirm_error_description" = "Vă rugăm să menționați această eroare asistenței noastre pentru a ajuta la găsirea unei soluții.";
-"cdw_txt_extauth_confirm_headline" = "Se cere autentificare";
+"cdw_txt_extauth_confirm_headline" = "Înregistrați-vă cu ID de sănătate";
 "cdw_txt_extauth_confirm_own_appname" = "E-rețetă";
-"cdw_txt_extauth_confirm_title" = "Înregistrați-vă cu aplicația";
+"cdw_txt_extauth_confirm_title" = "HealthID";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Eroare la deschiderea aplicației de asigurări de sănătate.";
 "cdw_txt_extauth_fallback_description1" = "Companiile de asigurări de sănătate se pregătesc în prezent pentru această funcție.";
 "cdw_txt_extauth_fallback_description2" = "Nu vrei să aștepți? Înregistrarea cu cardul de sănătate este deja acceptată de fiecare companie de asigurări de sănătate.";
 "cdw_txt_extauth_fallback_headline" = "Alegeți asigurarea";
-"cdw_txt_extauth_fallback_title" = "Înregistrați-vă cu aplicația";
+"cdw_txt_extauth_fallback_title" = "HealthID";
 "cdw_txt_extauth_help_caption" = "Sfaturi pentru înregistrarea cu aplicația de asigurări";
 "cdw_txt_extauth_help_description" = "Compania dvs. de asigurări este responsabilă pentru ID-ul de sănătate. Vă rugăm să-i contactați dacă aveți întrebări despre înregistrare. Iată câteva sfaturi încercate și testate:";
 "cdw_txt_extauth_help_info_1" = "Vă rugăm să rețineți că, în funcție de asigurarea dvs., poate fi necesară o aplicație separată. Vă rugăm să verificați cu compania dvs. de asigurări pentru a afla despre ce este vorba.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Nu este încă disponibil";
 "cdw_txt_extauth_selection_error_fallback" = "Vă rugăm să încercați din nou mai târziu.";
 "cdw_txt_extauth_selection_headline" = "Alegeți asigurarea";
-"cdw_txt_extauth_selection_title" = "Conectați-vă cu aplicația";
+"cdw_txt_extauth_selection_title" = "HealthID";
 "cdw_txt_intro_alert_kkNotFound_title" = "Asigurarea de sănătate nu a putut fi găsită";
 "cdw_txt_intro_description" = "Pentru a utiliza toate funcțiile aplicației, conectați-vă cu cardul de sănătate. Veți primi acest card și datele de acces necesare de la compania dumneavoastră de asigurări de sănătate.";
 "cdw_txt_intro_description_new" = "Primiți rețete online și trimiteți-le la o farmacie.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "Ce păcat …";
 "cdw_txt_nfu_title" = "Înregistrare";
 "cdw_txt_pin_demo_mode_info" = "Puteți introduce orice număr.";
-"cdw_txt_pin_description" = "Ați primit PIN-ul cardului de sănătate de la compania dumneavoastră de asigurări de sănătate utilizând o procedură securizată, cum ar fi Postident.";
+"cdw_txt_pin_description" = "A trebuit să comandați în mod activ PIN-ul cardului de sănătate de la compania de asigurări de sănătate și apoi să îl primiți printr-un proces securizat, cum ar fi Postident.";
 "cdw_txt_pin_hint" = "PIN-ul dvs. poate avea 6 până la 8 cifre.";
 "cdw_txt_pin_input_label" = "Vă rugăm să introduceți codul PIN. PIN-ul dvs. v-a fost trimis prin poștă. PIN-ul are 6 până la 8 cifre.";
 "cdw_txt_pin_subtitle" = "cod PIN";
@@ -871,7 +871,7 @@
 "ord_detail_txt_mail_body2" = "Ne trimiteți aceste informații în scopuri de depanare. Vă rugăm să rețineți că adresa dvs. de e-mail și, dacă este cazul, numele dvs. conținut în aceasta vor fi, de asemenea, transferate. Dacă nu doriți să furnizați aceste informații în totalitate sau în parte, vă rugăm să le ștergeți din acest e-mail. \n\n Toate datele sunt stocate și procesate de gematik GmbH sau de companiile sale autorizate numai pentru a procesa acest mesaj de eroare. Ștergerea are loc automat, nu mai târziu de 180 de zile de la procesarea biletului. Vom folosi adresa dvs. de e-mail doar pentru a vă contacta în legătură cu acest mesaj de eroare. Dacă aveți întrebări sau aveți nevoie de ștergere anticipată, puteți contacta în orice moment responsabilul cu protecția datelor al sistemului de prescriere electronică. Puteți găsi informații suplimentare în aplicația e-prescription în meniul de sub intrarea privind protecția datelor.";
 "ord_detail_txt_mail_error" = "Eroare 40 42 67336";
 "ord_detail_txt_mail_subject" = "Mesaj de eroare din aplicația e-rețetă";
-"ord_detail_txt_messages" = "Ştiri";
+"ord_detail_txt_messages" = "Mesaje";
 "ord_detail_txt_open_mail_error" = "Aplicația Mail nu a putut fi deschisă. Vă rugăm să utilizați linia fierbinte";
 "ord_detail_txt_open_mail_error_title" = "Greşeală";
 "ord_detail_txt_orders" = "Ordin";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Șters";
 "prsc_status_completed" = "Răscumpărat";
 "prsc_status_direct_assigned" = "Va fi răscumpărat pentru tine";
-"prsc_status_dispensed" = "Prevăzut";
+"prsc_status_dispensed" = "Marfa este gata";
 "prsc_status_error" = "Rețetă incorectă";
 "prsc_status_expired" = "Expirat";
 "prsc_status_in_progress" = "Este în curs de procesare";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "Primiți deja chitanțe de cost în format digital.";
 "service_txt_consent_toast_route_to_list_message" = "La chitanțele de cost";
 "service_txt_consent_toast_successfully_granted_message" = "Acum veți primi chitanțe de cost în format digital 🥳";
+"service_txt_missing_charge_item_pdf_name" = "Medicament";
 "session_error_card_connected_with_other_profile_%@" = "Cardul dvs. de sănătate este deja legat la alt profil. Accesați profilul %@ .";
 "session_error_card_profile_mismatch_%@" = "Profilul actual este deja legat de un alt card de sănătate (număr de asigurări de sănătate: %@ ).";
 "session_error_no_profile" = "Nu a putut fi găsit niciun profil selectat. Vă rugăm să selectați un profil.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Salvați";
 "stg_btn_reg_devices_load" = "Inregistreaza-te";
 "stg_con_btn_gemmunity" = "Forumul de prescriptie electronica";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "Registrul donărilor de organe";
 "stg_con_btn_organ_donor_alert_cancel" = "Anula";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

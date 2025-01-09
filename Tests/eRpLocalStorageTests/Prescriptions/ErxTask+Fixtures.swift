@@ -87,7 +87,10 @@ extension ErxTask {
                 practitioner: practitioner,
                 organization: organization,
                 communications: [communication],
-                medicationDispenses: [medicationDispense]
+                medicationDispenses: [
+                    medicationDispense,
+                    medicationDispenseWithEpaMedication,
+                ]
             )
 
         static let practitioner: ErxPractitioner = .init(
@@ -128,7 +131,21 @@ extension ErxTask {
             whenHandedOver: "2021-07-20T10:55:04+02:00",
             quantity: .init(value: "1", unit: "Packung"),
             noteText: "Take good care",
-            medication: compoundingMedication
+            medication: compoundingMedication,
+            epaMedication: nil
+        )
+
+        static let medicationDispenseWithEpaMedication: ErxMedicationDispense = .init(
+            identifier: "task_id_17_epa",
+            taskId: "task_id_17",
+            insuranceId: "A123456789",
+            dosageInstruction: "1-1-1",
+            telematikId: "11b2-8555",
+            whenHandedOver: "2021-07-20T10:55:04+02:00",
+            quantity: .init(value: "1", unit: "Packung"),
+            noteText: "Take good care",
+            medication: nil,
+            epaMedication: epaMedicationMedicinalProductPackage
         )
 
         static let medicationDispenseWithPZN: ErxMedicationDispense = .init(
@@ -140,7 +157,8 @@ extension ErxTask {
             whenHandedOver: "2021-07-23T10:55:04+02:00",
             quantity: .init(value: "1", unit: "Packung"),
             noteText: "read everything",
-            medication: pznMedication
+            medication: pznMedication,
+            epaMedication: nil
         )
 
         static let compoundingMedication: ErxMedication = .init(
@@ -177,6 +195,125 @@ extension ErxTask {
             packaging: "Small package",
             manufacturingInstructions: "no instructions",
             ingredients: []
+        )
+
+        static let epaMedicationMedicinalProductPackage: ErxEpaMedication = .init(
+            epaMedicationType: .medicinalProductPackage,
+            drugCategory: .avm,
+            code: nil,
+            status: .active,
+            isVaccine: false,
+            amount: nil,
+            form: .init(
+                codings: [.init(system: .kbvDarreichungsform, code: "KPG", display: nil)],
+                text: nil
+            ),
+            normSizeCode: nil,
+            batch: nil,
+            packaging: nil,
+            manufacturingInstructions: nil,
+            ingredients: [
+                EpaMedicationIngredient(
+                    item: EpaMedicationIngredient.Item.epaMedication(
+                        ErxEpaMedication(
+                            epaMedicationType: .pharmaceuticalBiologicProduct,
+                            drugCategory: nil,
+                            code: EpaMedicationCodableConcept(
+                                codings: [
+                                    EpaMedicationCoding<CodeCodingSystem>(
+                                        system: .productKey,
+                                        code: "01746517-2",
+                                        display: "Nasenspray, Lösung"
+                                    ),
+                                ],
+                                text: nil
+                            ),
+                            isVaccine: nil,
+                            amount: nil,
+                            form: nil,
+                            normSizeCode: nil,
+                            batch: nil,
+                            packaging: nil,
+                            manufacturingInstructions: nil,
+                            ingredients: [
+                                EpaMedicationIngredient(
+                                    item: .codableConcept(
+                                        EpaMedicationCodableConcept(
+                                            codings: [
+                                                EpaMedicationCoding<CodeCodingSystem>(
+                                                    system: .atcDe,
+                                                    code: "R01AC01",
+                                                    display: "Natriumcromoglicat"
+                                                ),
+                                            ],
+                                            text: nil
+                                        )
+                                    ),
+                                    isActive: nil,
+                                    strength: .init(
+                                        ratio: .init(
+                                            numerator: .init(value: "2.8", unit: "mg"),
+                                            denominator: .init(value: "1", unit: "Sprühstoß")
+                                        ),
+                                        amountText: nil
+                                    ),
+                                    darreichungsForm: nil
+                                ),
+                            ]
+                        )
+                    )
+                ),
+                EpaMedicationIngredient(
+                    item: EpaMedicationIngredient.Item.epaMedication(
+                        ErxEpaMedication(
+                            epaMedicationType: .pharmaceuticalBiologicProduct,
+                            drugCategory: nil,
+                            code: EpaMedicationCodableConcept(
+                                codings: [
+                                    EpaMedicationCoding<CodeCodingSystem>(
+                                        system: .productKey,
+                                        code: "01746517-1",
+                                        display: "Augentropfen"
+                                    ),
+                                ],
+                                text: nil
+                            ),
+                            isVaccine: nil,
+                            amount: nil,
+                            form: nil,
+                            normSizeCode: nil,
+                            batch: nil,
+                            packaging: nil,
+                            manufacturingInstructions: nil,
+                            ingredients: [
+                                EpaMedicationIngredient(
+                                    item: .codableConcept(
+                                        EpaMedicationCodableConcept(
+                                            codings: [
+                                                EpaMedicationCoding<CodeCodingSystem>(
+                                                    system: .atcDe,
+                                                    code: "R01AC01",
+                                                    display: "Natriumcromoglicat"
+                                                ),
+                                            ],
+                                            text: nil
+                                        )
+                                    ),
+                                    isActive: nil,
+                                    strength: .init(
+                                        ratio: .init(
+                                            numerator: .init(value: "20", unit: "mg"),
+                                            denominator: .init(value: "1", unit: "ml")
+                                        ),
+                                        amountText: nil
+                                    ),
+                                    darreichungsForm: nil
+                                ),
+                            ]
+                        )
+                    )
+                ),
+            ]
         )
 
         static let yuccaIngredient = ErxMedication.Ingredient(

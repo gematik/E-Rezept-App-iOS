@@ -34,8 +34,17 @@ protocol PrescriptionRepository {
 }
 
 struct DummyPrescriptionRepository: PrescriptionRepository {
+    var prescriptions: [Prescription] = [
+        ErxTask.Demo.expiredErxTask(with: .ready),
+        ErxTask.Demo.expiredErxTask(with: .inProgress),
+        ErxTask.Demo.expiredErxTask(with: .computed(status: .dispensed)),
+        ErxTask.Demo.expiredErxTask(with: .completed),
+    ].map {
+        Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue)
+    }
+
     func loadLocal() -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
-        Just([]).setFailureType(to: PrescriptionRepositoryError.self).eraseToAnyPublisher()
+        Just(prescriptions).setFailureType(to: PrescriptionRepositoryError.self).eraseToAnyPublisher()
     }
 
     func forcedLoadRemote(for _: String?)

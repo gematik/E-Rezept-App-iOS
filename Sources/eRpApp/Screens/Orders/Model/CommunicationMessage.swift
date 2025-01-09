@@ -68,12 +68,15 @@ enum CommunicationMessage: Identifiable, Equatable {
         }
     }
 
-    var latestMessage: String {
+    var latestMessage: AttributedString {
         switch self {
         case let .order(order):
-            return order.latestMessage
+            return AttributedString(order.latestMessage)
         case let .internalCommunication(message):
-            return message.latestMessage
+            if let attributedText = try? AttributedString(markdown: message.latestMessage) {
+                return attributedText
+            }
+            return AttributedString(message.latestMessage)
         }
     }
 

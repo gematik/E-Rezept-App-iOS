@@ -25,4 +25,5 @@ enum FHIRBundleDirectories: String, Equatable {
     case gem_wf_v1_1_with_kbv_v1_0_2 = "FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2"
     case gem_wf_v1_2_with_kbv_v1_1_0 = "FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0"
     case gem_wf_v1_3 = "FHIR_GEM_Workflow_v1_3"
+    case gem_wf_v1_4 = "FHIR_GEM_Workflow_v1_4"
 }

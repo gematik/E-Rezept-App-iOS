@@ -102,7 +102,12 @@ extension ModelsR4.Bundle {
             throw RemoteStorageBundleParsingError.parseError("Could not parse organization address country.")
         }
 
-        let fhirPackage = ABDAERezeptAbgabedaten.v1_2_0
+        guard let version = dispenseBundle.meta?.profile?.first?.value?.version?.description,
+              let fhirPackage = ABDAERezeptAbgabedaten(from: version)
+        else {
+            throw RemoteStorageBundleParsingError.parseError("Could not parse version number.")
+        }
+
         let fhirAbgabedatenComposition = fhirPackage.dAV_PKV_PR_ERP_AbgabedatenComposition
         let fhirAbrechnungszeilen = fhirPackage.dAV_EX_ERP_Abrechnungszeilen
         let fhirZusatzdatenHerstellung = fhirPackage.dAV_EX_ERP_ZusatzdatenHerstellung
@@ -364,6 +369,8 @@ extension ModelsR4.Invoice {
                 throw RemoteStorageBundleParsingError.parseError("Could not parse invoice priceComponent amount value.")
             }
 
+            let zusatzAttribute = try parseZusatzAttribute(lineItem: $0)
+
             if separation {
                 return DavInvoice.ChargeableItem(
                     factor: factor / 1000,
@@ -371,7 +378,8 @@ extension ModelsR4.Invoice {
                     description: $0.chargeItem.chargeItemCodeableConcept?.text?.value?.string,
                     pzn: $0.pzn,
                     ta1: $0.ta1,
-                    hmrn: $0.hmrn
+                    hmrn: $0.hmrn,
+                    zusatzattribut: zusatzAttribute
                 )
             }
             return DavInvoice.ChargeableItem(
@@ -380,9 +388,64 @@ extension ModelsR4.Invoice {
                 description: $0.chargeItem.chargeItemCodeableConcept?.text?.value?.string,
                 pzn: $0.pzn,
                 ta1: $0.ta1,
-                hmrn: $0.hmrn
+                hmrn: $0.hmrn,
+                zusatzattribut: zusatzAttribute
             )
         } ?? []
+    }
+
+    // swiftlint:disable:next cyclomatic_complexity
+    func parseZusatzAttribute(lineItem: InvoiceLineItem) throws -> DavInvoice.ChargeableItem.Zusatzattribut? {
+        guard let zusatzAttributeExtension = lineItem
+            .extensions(
+                for: "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Zusatzattribute"
+            )
+            .first?.extension?.first?.extension else { return nil }
+
+        // get DAV-CS-ERP-ZusatzattributGruppe value to identify the type
+        let groupValueX = zusatzAttributeExtension.first {
+            $0.url.value?.url.absoluteString == "Gruppe"
+        }?.value
+
+        guard let valueX = groupValueX, case let Extension.ValueX.codeableConcept(string) = valueX,
+              let group = string.coding?.first?.code?.value?.string else { return nil }
+
+        // unwrap the value and assign it accordingly to ZusatzattributGruppe
+        switch group {
+        case "11":
+            let dateValueX = zusatzAttributeExtension
+                .first(where: { $0.url.value?.url.absoluteString == "DatumUhrzeit" })?.value
+            if let valueX = dateValueX, case let Extension.ValueX.dateTime(date) = valueX,
+               let date = date.value?.description {
+                return .notdienst(date)
+            }
+        case "12":
+            let stringValueX = zusatzAttributeExtension
+                .first(where: { $0.url.value?.url.absoluteString == "DokumentationFreitext" })?
+                .value
+            if let valueX = stringValueX, case let Extension.ValueX.string(string) = valueX,
+               let string = string.value?.description {
+                return .zusätzlicheAbgabeangaben(string)
+            }
+        case "16":
+            let stringValueX = zusatzAttributeExtension
+                .first(where: { $0.url.value?.url.absoluteString == "Spender-PZN" })?.value
+            if let valueX = stringValueX, case let Extension.ValueX.codeableConcept(string) = valueX,
+               let string = string.coding?.first?.code?.value?.string {
+                return .teilmengenabgabe(string)
+            }
+        case "101":
+            let stringValueX = zusatzAttributeExtension
+                .first(where: { $0.url.value?.url.absoluteString == "Schluessel" })?.value
+            if let valueX = stringValueX, case let Extension.ValueX.codeableConcept(string) = valueX,
+               let string = string.coding?.first?.code?.value?.string {
+                return .autidem(string)
+            }
+        default:
+            return nil
+        }
+
+        return nil
     }
 }
 

@@ -28,6 +28,8 @@ struct MedicationOverviewDomain {
     enum Destination {
         // sourcery: AnalyticsScreen = prescriptionDetail_medication
         case medication(MedicationDomain)
+        // sourcery: AnalyticsScreen = prescriptionDetail_epaMedication
+        case epaMedication(EpaMedicationDomain)
     }
 
     @ObservableState
@@ -54,11 +56,23 @@ struct MedicationOverviewDomain {
                 state.destination = .medication(medicationState)
                 return .none
             case let .showDispensedMedication(medicationDispense):
-                let medicationState = MedicationDomain.State(
-                    dispensed: medicationDispense,
-                    dateFormatter: uiDateFormatter
-                )
-                state.destination = .medication(medicationState)
+                if medicationDispense.medication != nil {
+                    // `MedicationDispenses` of gem Workflows of FHIR versions < 1.4
+                    //  use the KBV profiled `Medication` resources
+                    let medicationState = MedicationDomain.State(
+                        dispensed: medicationDispense,
+                        dateFormatter: uiDateFormatter
+                    )
+                    state.destination = .medication(medicationState)
+                } else {
+                    // `MedicationDispenses` of gem Workflows of FHIR versions >= 1.4
+                    //  use the gematik profiled (EPA)-`Medication` resources
+                    let epaMedicationState = EpaMedicationDomain.State(
+                        dispensed: medicationDispense,
+                        dateFormatter: uiDateFormatter
+                    )
+                    state.destination = .epaMedication(epaMedicationState)
+                }
                 return .none
             case .resetNavigation:
                 state.destination = nil
@@ -68,5 +82,35 @@ struct MedicationOverviewDomain {
             }
         }
         .ifLet(\.$destination, action: \.destination)
+    }
+}
+
+extension ErxMedicationDispense {
+    enum Dummies {
+        static let epaMedicationDispenseRezeptur = ErxMedicationDispense(
+            identifier: "unique id",
+            taskId: "task_id",
+            insuranceId: "patient_kvnr_id",
+            dosageInstruction: "Nach dem Essen einnehmen!",
+            telematikId: "telematik_id",
+            whenHandedOver: "2021-07-23T10:55:04+02:00",
+            quantity: .init(value: "10", unit: "TL"),
+            noteText: "Nicht mit anderen Medikamenten mischen",
+            medication: nil,
+            epaMedication: ErxEpaMedication.Dummies.medicinalProductPackage
+        )
+
+        static let epaMedicationDispenseKombipackung = ErxMedicationDispense(
+            identifier: "unique id",
+            taskId: "task_id",
+            insuranceId: "patient_kvnr_id",
+            dosageInstruction: "Nach dem Essen einnehmen!",
+            telematikId: "telematik_id",
+            whenHandedOver: "2021-07-23T10:55:04+02:00",
+            quantity: .init(value: "10", unit: "TL"),
+            noteText: "Nicht mit anderen Medikamenten mischen",
+            medication: nil,
+            epaMedication: ErxEpaMedication.Dummies.extemporaneousPreparation
+        )
     }
 }

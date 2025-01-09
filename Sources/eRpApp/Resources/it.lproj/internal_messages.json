@@ -4,5 +4,11 @@
         "text": "D'ora in poi registrate con l'app e-prescription la vostra decisione di donare gli organi nel **registro digitale delle donazioni di organi** – in modo semplice e sicuro.\n\nAttualmente in Germania ci sono 9.192 persone in attesa urgente di un organo: ogni decisione conta e può salvare vite umane.\n\nPrendi la tua decisione oggi e dai un contributo importante al futuro di tante persone! ❤️‍🩹\n\nIl registro delle donazioni di organi si trova nella scheda \"Impostazioni\" di questa app.",
         "timestamp": "2024-11-29T08:00:00.000Z",
         "version": "1.27.0"
+    },
+    {
+        "id": "3",
+        "text": "**Compatibilità ePA** \n 🤝 Le tue prescrizioni ora sono completamente compatibili con la cartella clinica elettronica. \n \n **Migliorato** \n ✨ Le ricette scadute ora scompaiono nell'archivio.",
+        "timestamp": "2024-12-20T08:00:00.000Z",
+        "version": "1.28.0"
     }
 ]

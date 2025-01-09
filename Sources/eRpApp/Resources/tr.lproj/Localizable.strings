@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Kapat";
 "cdw_btn_extauth_confirm_cancel" = "İptal et";
 "cdw_btn_extauth_confirm_contact" = "Telefon desteğiyle iletişim kurun";
-"cdw_btn_extauth_confirm_send" = "Gönder";
+"cdw_btn_extauth_confirm_send" = "Kayıt olmak";
 "cdw_btn_extauth_fallback_order_egk" = "Sağlık kartı sipariş edin";
 "cdw_btn_extauth_selection_cancel" = "İptal et";
 "cdw_btn_extauth_selection_continue" = "İleri";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "E-posta";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "Telefon";
 "cdw_txt_extauth_confirm_contactsheet_title" = "İletişim desteği";
-"cdw_txt_extauth_confirm_description" = "Şimdi sağlık sigorta şirketinizden kimlik doğrulaması talep ediyoruz.";
+"cdw_txt_extauth_confirm_description" = "Sigorta şirketinize yönlendirileceksiniz.";
 "cdw_txt_extauth_confirm_error_description" = "Çözüm bulmamıza yardımcı olması için lütfen bu hatayı destek ekibimize bildirin.";
-"cdw_txt_extauth_confirm_headline" = "Kimlik doğrulama isteniyor";
+"cdw_txt_extauth_confirm_headline" = "Sağlık Kimliği ile kaydolun";
 "cdw_txt_extauth_confirm_own_appname" = "E-Rezept";
-"cdw_txt_extauth_confirm_title" = "Uygulamayla oturum açın";
+"cdw_txt_extauth_confirm_title" = "Sağlık Kimliği";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Sağlık sigortası uygulaması açılırken hata oluştu.";
 "cdw_txt_extauth_fallback_description1" = "Sağlık sigortası şirketleri şu anda bu fonksiyona hazırlanıyor.";
 "cdw_txt_extauth_fallback_description2" = "Beklemek istemiyor musun? Sağlık kartıyla kayıt zaten her sağlık sigortası şirketi tarafından desteklenmektedir.";
 "cdw_txt_extauth_fallback_headline" = "Sigorta seçin";
-"cdw_txt_extauth_fallback_title" = "Uygulamayla oturum açın";
+"cdw_txt_extauth_fallback_title" = "Sağlık Kimliği";
 "cdw_txt_extauth_help_caption" = "Sigorta uygulamasına kaydolmaya yönelik ipuçları";
 "cdw_txt_extauth_help_description" = "Sigorta şirketiniz Sağlık Kimliğinizden sorumludur. Kayıtla ilgili herhangi bir sorunuz varsa lütfen onlarla iletişime geçin. İşte denenmiş ve test edilmiş bazı ipuçları:";
 "cdw_txt_extauth_help_info_1" = "Sigortanıza bağlı olarak ayrı bir uygulamanın gerekli olabileceğini lütfen unutmayın. Bunun ne olduğunu öğrenmek için lütfen sigorta şirketinize danışın.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Henüz mevcut değil";
 "cdw_txt_extauth_selection_error_fallback" = "Lütfen daha sonra yeniden deneyin.";
 "cdw_txt_extauth_selection_headline" = "Sigorta seçin";
-"cdw_txt_extauth_selection_title" = "Uygulama ile oturum açın";
+"cdw_txt_extauth_selection_title" = "Sağlık Kimliği";
 "cdw_txt_intro_alert_kkNotFound_title" = "Sağlık sigortası bulunamadı";
 "cdw_txt_intro_description" = "Uygulamanın tüm fonksiyonlarını kullanabilmek için sağlık kartınız ile giriş yapınız. Bu kartı ve gerekli erişim verilerini sağlık sigortanızdan alacaksınız.";
 "cdw_txt_intro_description_new" = "Reçeteleri çevrim içi alın ve bir eczaneye iletin.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "Üzgünüz …";
 "cdw_txt_nfu_title" = "Oturum açma";
 "cdw_txt_pin_demo_mode_info" = "İstediğiniz rakamı girebilirsiniz.";
-"cdw_txt_pin_description" = "Sağlık kartınızın PIN kodunu sağlık sigorta şirketinizden Postident gibi güvenli bir prosedür kullanarak aldınız.";
+"cdw_txt_pin_description" = "Sağlık kartı PIN kodunuzu aktif olarak sağlık sigorta şirketinizden sipariş etmeniz ve ardından Postident gibi güvenli bir süreç aracılığıyla almanız gerekiyordu.";
 "cdw_txt_pin_hint" = "PIN'iniz 6 ila 8 basamaklı olabilir.";
 "cdw_txt_pin_input_label" = "Lütfen PIN'inizi girin. PIN'iniz size posta yoluyla gönderildi. PIN 6 ila 8 basamaklıdır.";
 "cdw_txt_pin_subtitle" = "PIN";
@@ -871,7 +871,7 @@
 "ord_detail_txt_mail_body2" = "Bu bilgileri sorun giderme amacıyla bize gönderiyorsunuz. Lütfen e-posta adresinizin ve varsa burada yer alan adınızın da aktarılacağını unutmayın. Bu bilgilerin tamamını veya bir kısmını iletmek istemiyorsanız, lütfen bu mailden siliniz. \n\ngematik GmbH veya anlaşmalı olduğu şirket, tüm verileri yalnızca bu hata mesajını işlemek için depolar ve işler. Silme işlemi, biletin işlenmesinden en geç 180 gün sonra otomatik olarak yapılır. E-posta adresinizi yalnızca bu hata mesajıyla ilgili olarak sizinle iletişim kurmak için kullanıyoruz. Sorularınız veya erken silme için E-Rezept sisteminin veri koruma görevlisi ile dilediğiniz zaman iletişime geçebilirsiniz. Daha fazla bilgiyi E-Rezept uygulamasında veri koruma girişinin altındaki menüde bulabilirsiniz.";
 "ord_detail_txt_mail_error" = "Fehler 40 42 67336";
 "ord_detail_txt_mail_subject" = "E-Rezept uygulamasından hata mesajı";
-"ord_detail_txt_messages" = "Haberler";
+"ord_detail_txt_messages" = "Mesajlar";
 "ord_detail_txt_open_mail_error" = "E-Posta uygulaması açılamadı. Lütfen destek hattını kullanın";
 "ord_detail_txt_open_mail_error_title" = "Hata";
 "ord_detail_txt_orders" = "Emir";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Silindi";
 "prsc_status_completed" = "Kullanıldı";
 "prsc_status_direct_assigned" = "Senin için kurtarılacak";
-"prsc_status_dispensed" = "Tedarik edilen";
+"prsc_status_dispensed" = "Mallar hazır";
 "prsc_status_error" = "Hatalı reçete";
 "prsc_status_expired" = "Süresi dolmuş";
 "prsc_status_in_progress" = "İşleniyor";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "Maliyet makbuzlarını zaten dijital olarak alıyorsunuz.";
 "service_txt_consent_toast_route_to_list_message" = "Maliyet makbuzlarına";
 "service_txt_consent_toast_successfully_granted_message" = "Artık maliyet makbuzlarını dijital olarak alacaksınız 🥳";
+"service_txt_missing_charge_item_pdf_name" = "ilaç tedavisi";
 "session_error_card_connected_with_other_profile_%@" = "Sağlık kartınız halihazırda başka bir profile bağlı. %@ profiline geçin.";
 "session_error_card_profile_mismatch_%@" = "Güncel profil halihazırda bir başka sağlık kartı (sağlık sigorta numarası: %@) ile bağlantılı.";
 "session_error_no_profile" = "Seçilen profil bulunamadı. Lütfen bir profil seçin.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Kaydet";
 "stg_btn_reg_devices_load" = "Kayıt olmak";
 "stg_con_btn_gemmunity" = "E-reçete forumu";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "Organ bağışı kaydı";
 "stg_con_btn_organ_donor_alert_cancel" = "İptal etmek";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

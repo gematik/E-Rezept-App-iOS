@@ -586,7 +586,8 @@ extension DefaultErxTaskRepositoryTests {
                 packaging: nil,
                 manufacturingInstructions: nil,
                 ingredients: []
-            )
+            ),
+            epaMedication: nil
         )
 
         static let erxTask1 = ErxTask(identifier: "task1", status: .ready)

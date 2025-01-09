@@ -130,7 +130,7 @@ extension DefaultInternalCommunicationProtocolTests {
 
         static let internalCommunicationMessage02 = InternalCommunication.Message(
             id: "2",
-            timestamp: Self.dateFormatter.date(from: "12.12.2024 08:00")!,
+            timestamp: Date(timeIntervalSinceNow: 60 * 60 * 24 * 7),
             // swiftlint:disable:next line_length
             text: "Wir haben folgende Verbesserungen mitgebracht:\n\n1. Sie können sich auch bei gescannten Rezepten an die Einnahme erinnern lassen\n2. Bei Anmeldung mit der KassenApp wird nun die ausgewählte Kasse für Folgeanmeldungen gespeichert \n3. Eine wichtige Warnung für PKV-Versicherte, damit nicht versehentlich Abrechnungsbelege gelöscht werden\n4. Verbesserte Apothekensuche per Kartenansicht",
             version: "1.27.0"

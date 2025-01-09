@@ -275,6 +275,18 @@ typealias AnalyticsEvent = String
     struct PrescriptionDetail_emergencyServiceFeeInfo: AnalyticsScreen {
       let name = "prescriptionDetail:emergencyServiceFeeInfo"
     }
+    static let prescriptionDetail_epaMedication = PrescriptionDetail_epaMedication()
+    struct PrescriptionDetail_epaMedication: AnalyticsScreen {
+      let name = "prescriptionDetail:epaMedication"
+    }
+    static let prescriptionDetail_epa_medication_codable_ingredient = PrescriptionDetail_epa_medication_codable_ingredient()
+    struct PrescriptionDetail_epa_medication_codable_ingredient: AnalyticsScreen {
+      let name = "prescriptionDetail:epa_medication_codable_ingredient"
+    }
+    static let prescriptionDetail_epa_medication_ingredient = PrescriptionDetail_epa_medication_ingredient()
+    struct PrescriptionDetail_epa_medication_ingredient: AnalyticsScreen {
+      let name = "prescriptionDetail:epa_medication_ingredient"
+    }
     static let prescriptionDetail_errorInfo = PrescriptionDetail_errorInfo()
     struct PrescriptionDetail_errorInfo: AnalyticsScreen {
       let name = "prescriptionDetail:errorInfo"

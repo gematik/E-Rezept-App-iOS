@@ -29,6 +29,28 @@ import TestUtils
 import XCTest
 
 final class ChargeItemPDFServiceTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        guard let folderURL = try? FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        )
+        .appendingPathComponent("1.2")
+        else {
+            fatalError("Destination URL not created")
+        }
+
+        if !FileManager.default.fileExists(atPath: folderURL.path) {
+            do {
+                try FileManager.default.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            } catch {
+                fatalError("Could not create directory at \(folderURL): \(error)")
+            }
+        }
+    }
+
     func testGeneratePDF() throws {
         guard let outputURL = try? FileManager.default.url(
             for: .documentDirectory,
@@ -73,24 +95,34 @@ final class ChargeItemPDFServiceTests: XCTestCase {
         try actualResult.write(to: outputURL2)
     }
 
+    func testGenerateChargeItemPDFName() throws {
+        let sut = DefaultChargeItemPDFService()
+
+        let result = sut.generateChargeItemPDFName(for: ErxChargeItem.Fixtures.chargeItemWithFHIRData)
+        expect(result).to(nodiff("Schmerzmittel_2023-02-17"))
+    }
+
     func testMultiplePDFs() throws {
         let files: [(String, String)] = [
-            ("./Freitext-Verordnung.json", "200.334.138.469.717.92"),
-            ("./PZN-Verordnung_Nr_1.json", "200.424.187.927.272.20"),
-            ("./PZN-Verordnung_Nr_2.json", "200.457.180.497.994.96"),
-            ("./PZN-Verordnung_Nr_3.json", "200.279.187.481.423.80"),
-            ("./PZN-Verordnung_Nr_5.json", "200.625.688.123.368.48"),
-            ("./PZN-Verordnung_Nr_6.json", "200.280.604.133.110.12"),
-            // ("./PZN-Verordnung_Nr_7.json", null),
-            ("./PZN-Verordnung_Nr_8.json", "200.108.757.032.088.60"),
-            ("./PZN_Mehrfachverordnung_PZN_MV_1.json", "200.918.824.824.539.12"),
-            ("./PZN_Mehrfachverordnung_PZN_MV_2.json", "200.497.827.696.678.76"),
-            ("./PZN_Mehrfachverordnung_PZN_MV_3.json", "200.529.639.126.950.56"),
-            ("./PZN_Mehrfachverordnung_PZN_MV_4.json", "200.020.918.309.115.84"),
-            ("./Rezeptur-parenterale_Zytostatika_Rezeptur-parenterale_Zytostatika_1.json", "209.100.612.180.208.16"),
-            ("./Rezeptur-Verordnung_Nr_1.json", "200.858.310.624.061.76"),
-            ("./Rezeptur-Verordnung_Nr_2.json", "200.800.419.351.304.52"),
-            // ("./Wirkstoff-Verordnung.json", null)
+            ("Freitext-Verordnung.json", "200.334.138.469.717.92"),
+            ("PZN-Verordnung_Nr_1.json", "200.424.187.927.272.20"),
+            ("PZN-Verordnung_Nr_2.json", "200.457.180.497.994.96"),
+            ("PZN-Verordnung_Nr_3.json", "200.279.187.481.423.80"),
+            ("PZN-Verordnung_Nr_5.json", "200.625.688.123.368.48"),
+            ("PZN-Verordnung_Nr_6.json", "200.280.604.133.110.12"),
+//            ("PZN-Verordnung_Nr_7.json", "200.339.908.107.779.64"),
+            ("PZN-Verordnung_Nr_8.json", "200.108.757.032.088.60"),
+            ("PZN_Mehrfachverordnung_PZN_MV_1.json", "200.918.824.824.539.12"),
+            ("PZN_Mehrfachverordnung_PZN_MV_2.json", "200.497.827.696.678.76"),
+            ("PZN_Mehrfachverordnung_PZN_MV_3.json", "200.529.639.126.950.56"),
+            ("PZN_Mehrfachverordnung_PZN_MV_4.json", "200.020.918.309.115.84"),
+            (
+                "Rezeptur-parenterale_Zytostatika_Rezeptur-parenterale_Zytostatika_1.json",
+                "209.100.612.180.208.16"
+            ),
+            ("Rezeptur-Verordnung_Nr_1.json", "200.858.310.624.061.76"),
+            ("Rezeptur-Verordnung_Nr_2.json", "200.800.419.351.304.52"),
+//            ("Wirkstoff-Verordnung.json", "200.643.100.572.979.08"),
         ]
 
         for (file, identifier) in files {
@@ -105,7 +137,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
                 appropriateFor: nil,
                 create: false
             )
-            .appendingPathComponent(file)
+            .appendingPathComponent("./1.2/\(file)")
             .appendingPathExtension("pdf") else {
                 fatalError("Destination URL not created")
             }
@@ -119,7 +151,10 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     func testFreitextVerordnung() throws {
-        guard let chargeItem = try chargeItemFromFile("Freitext-Verordnung.json", identifier: "200.334.138.469.717.92")
+        guard let chargeItem = try chargeItemFromFile(
+            "Freitext-Verordnung.json",
+            identifier: "200.334.138.469.717.92"
+        )
         else {
             fatalError("File not parseable")
         }
@@ -162,7 +197,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
                 ],
                 production: nil,
                 fees: [
-                    .init(name: "Beschaffungskosten", pzn: "", count: "", price: "8,57"),
+                    .init(name: "Beschaffungskosten", pzn: "09999637", count: "", price: "8,57"),
                 ],
                 sum: "36,15",
                 currency: "EUR"
@@ -172,7 +207,10 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     func testPZN1() throws {
-        guard let chargeItem = try chargeItemFromFile("PZN-Verordnung_Nr_1.json", identifier: "200.424.187.927.272.20")
+        guard let chargeItem = try chargeItemFromFile(
+            "PZN-Verordnung_Nr_1.json",
+            identifier: "200.424.187.927.272.20"
+        )
         else {
             fatalError("File not parseable")
         }
@@ -224,7 +262,10 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     func testPZN2() throws {
-        guard let chargeItem = try chargeItemFromFile("PZN-Verordnung_Nr_2.json", identifier: "200.457.180.497.994.96")
+        guard let chargeItem = try chargeItemFromFile(
+            "PZN-Verordnung_Nr_2.json",
+            identifier: "200.457.180.497.994.96"
+        )
         else {
             fatalError("File not parseable")
         }
@@ -276,7 +317,10 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     func testPZN3() throws {
-        guard let chargeItem = try chargeItemFromFile("PZN-Verordnung_Nr_3.json", identifier: "200.279.187.481.423.80")
+        guard let chargeItem = try chargeItemFromFile(
+            "PZN-Verordnung_Nr_3.json",
+            identifier: "200.279.187.481.423.80"
+        )
         else {
             fatalError("File not parseable")
         }
@@ -321,7 +365,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
                 fees: [
                     .init(
                         name: "Notdienstgebühr",
-                        pzn: "",
+                        pzn: "02567018",
                         count: "",
                         price: "2,50"
                     ),
@@ -334,7 +378,10 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     func testPZN5() throws {
-        guard let chargeItem = try chargeItemFromFile("PZN-Verordnung_Nr_5.json", identifier: "200.625.688.123.368.48")
+        guard let chargeItem = try chargeItemFromFile(
+            "PZN-Verordnung_Nr_5.json",
+            identifier: "200.625.688.123.368.48"
+        )
         else {
             fatalError("File not parseable")
         }
@@ -386,7 +433,10 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     func testPZN6() throws {
-        guard let chargeItem = try chargeItemFromFile("PZN-Verordnung_Nr_6.json", identifier: "200.280.604.133.110.12")
+        guard let chargeItem = try chargeItemFromFile(
+            "PZN-Verordnung_Nr_6.json",
+            identifier: "200.280.604.133.110.12"
+        )
         else {
             fatalError("File not parseable")
         }
@@ -438,7 +488,10 @@ final class ChargeItemPDFServiceTests: XCTestCase {
     }
 
     func testPZN8() throws {
-        guard let chargeItem = try chargeItemFromFile("PZN-Verordnung_Nr_8.json", identifier: "200.108.757.032.088.60")
+        guard let chargeItem = try chargeItemFromFile(
+            "PZN-Verordnung_Nr_8.json",
+            identifier: "200.108.757.032.088.60"
+        )
         else {
             fatalError("File not parseable")
         }
@@ -881,7 +934,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
 
     private func chargeItemFromFile(_ file: String, identifier: String) throws -> ErxChargeItem? {
         let data = try Bundle.module
-            .testResourceFilePath(in: "PDF", for: file)
+            .testResourceFilePath(in: "PDF", for: "./1.2/\(file)")
             .readFileContents()
         return try JSONDecoder()
             .decode(ModelsR4.Bundle.self, from: data)

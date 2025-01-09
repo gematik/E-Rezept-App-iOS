@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Dichtbij";
 "cdw_btn_extauth_confirm_cancel" = "Annuleren";
 "cdw_btn_extauth_confirm_contact" = "Neem contact op met telefonische ondersteuning";
-"cdw_btn_extauth_confirm_send" = "Versturen";
+"cdw_btn_extauth_confirm_send" = "Register";
 "cdw_btn_extauth_fallback_order_egk" = "Bestel een gezondheidskaart";
 "cdw_btn_extauth_selection_cancel" = "Annuleren";
 "cdw_btn_extauth_selection_continue" = "Verder";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "Mail";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "telefoon";
 "cdw_txt_extauth_confirm_contactsheet_title" = "Contact opnemen met ondersteuning";
-"cdw_txt_extauth_confirm_description" = "Wij vragen nu authenticatie aan bij uw zorgverzekeraar.";
+"cdw_txt_extauth_confirm_description" = "U wordt doorverwezen naar uw verzekeringsmaatschappij.";
 "cdw_txt_extauth_confirm_error_description" = "Geef deze fout door aan onze ondersteuning om een ​​oplossing te helpen vinden.";
-"cdw_txt_extauth_confirm_headline" = "Er wordt om authenticatie gevraagd";
+"cdw_txt_extauth_confirm_headline" = "Registreren met Gezondheids-ID";
 "cdw_txt_extauth_confirm_own_appname" = "E-recept";
-"cdw_txt_extauth_confirm_title" = "Registreren met app";
+"cdw_txt_extauth_confirm_title" = "GezondheidID";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Fout bij openen zorgverzekeringsapp.";
 "cdw_txt_extauth_fallback_description1" = "Zorgverzekeraars bereiden zich momenteel voor op deze functie.";
 "cdw_txt_extauth_fallback_description2" = "Wil je niet wachten? Registratie met een zorgkaart wordt al door elke zorgverzekeraar ondersteund.";
 "cdw_txt_extauth_fallback_headline" = "Kies een verzekering";
-"cdw_txt_extauth_fallback_title" = "Registreren met app";
+"cdw_txt_extauth_fallback_title" = "GezondheidID";
 "cdw_txt_extauth_help_caption" = "Tips voor het aanmelden bij de verzekeringenapp";
 "cdw_txt_extauth_help_description" = "Uw verzekeringsmaatschappij is verantwoordelijk voor de Health ID. Als u vragen heeft over de registratie, kunt u contact met hen opnemen. Hier zijn enkele beproefde tips:";
 "cdw_txt_extauth_help_info_1" = "Houd er rekening mee dat, afhankelijk van uw verzekering, een aparte app nodig kan zijn. Vraag bij uw verzekeraar na wat dit is.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Nog niet beschikbaar";
 "cdw_txt_extauth_selection_error_fallback" = "Probeer het later opnieuw.";
 "cdw_txt_extauth_selection_headline" = "Kies een verzekering";
-"cdw_txt_extauth_selection_title" = "Log in met de app";
+"cdw_txt_extauth_selection_title" = "GezondheidID";
 "cdw_txt_intro_alert_kkNotFound_title" = "Ziektekostenverzekering kon niet worden gevonden";
 "cdw_txt_intro_description" = "Om alle functies van de app te gebruiken, logt u in met uw zorgkaart. Deze kaart en de benodigde toegangsgegevens ontvangt u van uw zorgverzekeraar.";
 "cdw_txt_intro_description_new" = "Recepten online ontvangen en doorsturen naar een apotheek.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "Wat jammer …";
 "cdw_txt_nfu_title" = "Registratie";
 "cdw_txt_pin_demo_mode_info" = "U kunt elk nummer invoeren.";
-"cdw_txt_pin_description" = "De pincode voor uw zorgpas heeft u van uw zorgverzekeraar ontvangen via een beveiligde procedure zoals Postident.";
+"cdw_txt_pin_description" = "U moest de pincode van uw zorgkaart actief bij uw zorgverzekeraar aanvragen en deze vervolgens via een beveiligd proces zoals Postident ontvangen.";
 "cdw_txt_pin_hint" = "Uw pincode kan uit 6 tot 8 cijfers bestaan.";
 "cdw_txt_pin_input_label" = "Voer uw pincode in. Uw pincode is per post naar u verzonden. De pincode bestaat uit 6 tot 8 cijfers.";
 "cdw_txt_pin_subtitle" = "pincode";
@@ -871,7 +871,7 @@
 "ord_detail_txt_mail_body2" = "U stuurt ons deze informatie voor probleemoplossingsdoeleinden. Houd er rekening mee dat uw e-mailadres en, indien van toepassing, uw daarin vermelde naam, ook worden overgedragen. Als u deze informatie geheel of gedeeltelijk niet wenst te verstrekken, verwijder deze dan uit deze e-mail. \n\n Alle gegevens worden door gematik GmbH of haar opdrachtbedrijven alleen opgeslagen en verwerkt om deze foutmelding te verwerken. De verwijdering vindt automatisch plaats, uiterlijk 180 dagen nadat het ticket is verwerkt. Wij zullen uw e-mailadres alleen gebruiken om contact met u op te nemen over deze foutmelding. Als u vragen heeft of vroegtijdige verwijdering wenst, kunt u op elk gewenst moment contact opnemen met de functionaris voor gegevensbescherming van het e-receptsysteem. Meer informatie vindt u in de e-receptenapp in het menu onder het item gegevensbescherming.";
 "ord_detail_txt_mail_error" = "Fout 40 42 67336";
 "ord_detail_txt_mail_subject" = "Foutmelding van de e-receptenapp";
-"ord_detail_txt_messages" = "Nieuws";
+"ord_detail_txt_messages" = "Berichten";
 "ord_detail_txt_open_mail_error" = "De Mail-app kan niet worden geopend. Maak dan gebruik van de hotline";
 "ord_detail_txt_open_mail_error_title" = "Fout";
 "ord_detail_txt_orders" = "Volgorde";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Verwijderd";
 "prsc_status_completed" = "Ingewisseld";
 "prsc_status_direct_assigned" = "Wordt voor u ingewisseld";
-"prsc_status_dispensed" = "Mits";
+"prsc_status_dispensed" = "Goederen zijn klaar";
 "prsc_status_error" = "Verkeerd recept";
 "prsc_status_expired" = "Verlopen";
 "prsc_status_in_progress" = "Wordt verwerkt";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "U ontvangt al digitaal de kostenberekeningen.";
 "service_txt_consent_toast_route_to_list_message" = "Naar de kostenbewijzen";
 "service_txt_consent_toast_successfully_granted_message" = "Je ontvangt nu de kostenberekeningen digitaal 🥳";
+"service_txt_missing_charge_item_pdf_name" = "Medicatie";
 "session_error_card_connected_with_other_profile_%@" = "Uw zorgkaart is al gekoppeld aan een ander profiel. Ga naar profiel %@ .";
 "session_error_card_profile_mismatch_%@" = "Het huidige profiel is al gekoppeld aan een andere zorgpas (zorgverzekeringsnummer: %@ ).";
 "session_error_no_profile" = "Er kon geen geselecteerd profiel worden gevonden. Selecteer een profiel.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Redden";
 "stg_btn_reg_devices_load" = "Register";
 "stg_con_btn_gemmunity" = "E-receptforum";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "Register voor orgaandonatie";
 "stg_con_btn_organ_donor_alert_cancel" = "Annuleren";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

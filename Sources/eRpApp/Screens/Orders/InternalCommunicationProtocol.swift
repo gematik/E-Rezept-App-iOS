@@ -91,9 +91,13 @@ final class DefaultInternalCommunication: InternalCommunicationProtocol {
 
         let readMessages = try await userDataStore.readInternalCommunications.async()
         let onboardingDate = try await userDataStore.onboardingDate.async()
+        #if DEBUG
         guard let onboardingTimestamp = onboardingDate else {
             throw InternalCommunicationError.emptyOnboardingDate
         }
+        #else
+        let onboardingTimestamp = onboardingDate ?? Date.distantPast
+        #endif
 
         var messages = internalCommunications.compactMap { (internalCommunication: InternalCommunication.Message) in
             if onboardingTimestamp < internalCommunication.timestamp {

@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Zavřít";
 "cdw_btn_extauth_confirm_cancel" = "zrušení";
 "cdw_btn_extauth_confirm_contact" = "Kontaktujte telefonickou podporu";
-"cdw_btn_extauth_confirm_send" = "Poslat";
+"cdw_btn_extauth_confirm_send" = "Rejstřík";
 "cdw_btn_extauth_fallback_order_egk" = "Objednejte si zdravotní kartu";
 "cdw_btn_extauth_selection_cancel" = "zrušení";
 "cdw_btn_extauth_selection_continue" = "Dále";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "Pošta";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "telefon";
 "cdw_txt_extauth_confirm_contactsheet_title" = "Kontaktujte podporu";
-"cdw_txt_extauth_confirm_description" = "Nyní si vyžádáme ověření od vaší zdravotní pojišťovny.";
+"cdw_txt_extauth_confirm_description" = "Budete přesměrováni na vaši pojišťovnu.";
 "cdw_txt_extauth_confirm_error_description" = "Uveďte prosím tuto chybu naší podpoře, abychom vám pomohli najít řešení.";
-"cdw_txt_extauth_confirm_headline" = "Je požadováno ověření";
+"cdw_txt_extauth_confirm_headline" = "Zaregistrujte se pomocí Health ID";
 "cdw_txt_extauth_confirm_own_appname" = "E-recept";
-"cdw_txt_extauth_confirm_title" = "Zaregistrujte se pomocí aplikace";
+"cdw_txt_extauth_confirm_title" = "HealthID";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Chyba při otevírání aplikace zdravotního pojištění.";
 "cdw_txt_extauth_fallback_description1" = "Zdravotní pojišťovny se na tuto funkci v současné době připravují.";
 "cdw_txt_extauth_fallback_description2" = "Nechce se vám čekat? Registraci se zdravotním průkazem již podporuje každá zdravotní pojišťovna.";
 "cdw_txt_extauth_fallback_headline" = "Vyberte pojištění";
-"cdw_txt_extauth_fallback_title" = "Zaregistrujte se pomocí aplikace";
+"cdw_txt_extauth_fallback_title" = "HealthID";
 "cdw_txt_extauth_help_caption" = "Tipy pro registraci v aplikaci pojištění";
 "cdw_txt_extauth_help_description" = "Za zdravotní průkaz odpovídá vaše pojišťovna. Pokud máte nějaké dotazy ohledně registrace, kontaktujte je. Zde je několik osvědčených tipů:";
 "cdw_txt_extauth_help_info_1" = "Upozorňujeme, že v závislosti na vašem pojištění může být vyžadována samostatná aplikace. Obraťte se prosím u své pojišťovny, co to je.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Ještě není dostupný";
 "cdw_txt_extauth_selection_error_fallback" = "Prosím zkuste to znovu později.";
 "cdw_txt_extauth_selection_headline" = "Vyberte pojištění";
-"cdw_txt_extauth_selection_title" = "Přihlaste se pomocí aplikace";
+"cdw_txt_extauth_selection_title" = "HealthID";
 "cdw_txt_intro_alert_kkNotFound_title" = "Zdravotní pojištění se nepodařilo najít";
 "cdw_txt_intro_description" = "Chcete-li využívat všechny funkce aplikace, přihlaste se pomocí své zdravotní karty. Tento průkaz a požadované přístupové údaje obdržíte od své zdravotní pojišťovny.";
 "cdw_txt_intro_description_new" = "Získejte recepty online a přepošlete je do lékárny.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "Jaká škoda …";
 "cdw_txt_nfu_title" = "Registrace";
 "cdw_txt_pin_demo_mode_info" = "Můžete zadat libovolné číslo.";
-"cdw_txt_pin_description" = "PIN ke zdravotní kartě jste obdrželi od své zdravotní pojišťovny bezpečným postupem, jako je Postident.";
+"cdw_txt_pin_description" = "PIN ke zdravotní kartě jste si museli aktivně objednat u své zdravotní pojišťovny a poté jej obdržet bezpečným procesem, jako je Postident.";
 "cdw_txt_pin_hint" = "Váš PIN může mít 6 až 8 číslic.";
 "cdw_txt_pin_input_label" = "Zadejte prosím svůj PIN. Váš PIN vám byl zaslán poštou. PIN má 6 až 8 číslic.";
 "cdw_txt_pin_subtitle" = "PIN kód";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Smazáno";
 "prsc_status_completed" = "Vykoupeno";
 "prsc_status_direct_assigned" = "Bude pro vás vykoupeno";
-"prsc_status_dispensed" = "Pokud";
+"prsc_status_dispensed" = "Zboží je připraveno";
 "prsc_status_error" = "Nesprávný recept";
 "prsc_status_expired" = "Platnost vypršela";
 "prsc_status_in_progress" = "Zpracovává se";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "Potvrzení o nákladech již dostáváte digitálně.";
 "service_txt_consent_toast_route_to_list_message" = "K účtenkám";
 "service_txt_consent_toast_successfully_granted_message" = "Nyní budete dostávat účtenky o nákladech digitálně 🥳";
+"service_txt_missing_charge_item_pdf_name" = "léky";
 "session_error_card_connected_with_other_profile_%@" = "Vaše zdravotní karta je již propojena s jiným profilem. Přejít na profil %@ .";
 "session_error_card_profile_mismatch_%@" = "Aktuální profil je již propojen s jinou zdravotní kartou (číslo zdravotního pojištění: %@ ).";
 "session_error_no_profile" = "Nebyl nalezen žádný vybraný profil. Vyberte prosím profil.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Uložit";
 "stg_btn_reg_devices_load" = "Registrovat";
 "stg_con_btn_gemmunity" = "Fórum e-receptů";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "Registr darování orgánů";
 "stg_con_btn_organ_donor_alert_cancel" = "Zrušit";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

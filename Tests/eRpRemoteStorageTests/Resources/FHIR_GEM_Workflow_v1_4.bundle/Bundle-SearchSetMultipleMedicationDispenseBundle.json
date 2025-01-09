@@ -1,0 +1,375 @@
+{
+  "resourceType": "Bundle",
+  "id": "SearchSetMultipleMedicationDispenseBundle",
+  "type": "searchset",
+  "entry": [
+    {
+      "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/MedicationDispense/160.000.000.000.000.01",
+      "resource": {
+        "resourceType": "MedicationDispense",
+        "id": "160.000.000.000.000.01",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense|1.4"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+            "value": "160.000.000.000.000.01"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "http://fhir.de/sid/gkv/kvid-10",
+            "value": "X123456789"
+          }
+        },
+        "performer": [
+          {
+            "actor": {
+              "identifier": {
+                "system": "https://gematik.de/fhir/sid/telematik-id",
+                "value": "3-SMC-B-Testkarte-883110000095957"
+              }
+            }
+          }
+        ],
+        "whenHandedOver": "2025-09-06",
+        "medicationReference": {
+          "reference": "urn:uuid:86ce7563-9819-4dfa-9944-d307f7cfec9b"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:86ce7563-9819-4dfa-9944-d307f7cfec9b",
+      "resource": {
+        "resourceType": "Medication",
+        "id": "86ce7563-9819-4dfa-9944-d307f7cfec9b",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Medication|1.4"
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/ifa/pzn",
+              "code": "06313728"
+            }
+          ]
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/MedicationDispense/160.000.000.000.000.02",
+      "resource": {
+        "resourceType": "MedicationDispense",
+        "id": "160.000.000.000.000.02",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense|1.4"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+            "value": "160.000.000.000.000.02"
+          }
+        ],
+        "status": "completed",
+        "subject": {
+          "identifier": {
+            "system": "http://fhir.de/sid/gkv/kvid-10",
+            "value": "X123456789"
+          }
+        },
+        "performer": [
+          {
+            "actor": {
+              "identifier": {
+                "system": "https://gematik.de/fhir/sid/telematik-id",
+                "value": "3-SMC-B-Testkarte-883110000095957"
+              }
+            }
+          }
+        ],
+        "whenHandedOver": "2025-09-06",
+        "medicationReference": {
+          "reference": "urn:uuid:56c61db7-0a94-4b7b-832a-b8ac3752035d"
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:56c61db7-0a94-4b7b-832a-b8ac3752035d",
+      "resource": {
+        "resourceType": "Medication",
+        "id": "56c61db7-0a94-4b7b-832a-b8ac3752035d",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Medication|1.4"
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://fhir.de/CodeSystem/ifa/pzn",
+              "code": "06313728"
+            }
+          ]
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/MedicationDispense/160.000.000.000.000.04",
+      "resource": {
+        "resourceType": "MedicationDispense",
+        "id": "160.000.000.000.000.04",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense|1.2"
+          ]
+        },
+        "medicationReference": {
+          "reference": "#65b6d139-93a6-459f-8b3c-5ae1d1f809a2"
+        },
+        "contained": [
+          {
+            "resourceType": "Medication",
+            "id": "65b6d139-93a6-459f-8b3c-5ae1d1f809a2",
+            "meta": {
+              "profile": [
+                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0"
+              ]
+            },
+            "code": {
+              "text": "Sumatriptan Dura 100mg",
+              "coding": [
+                {
+                  "code": "04866280",
+                  "system": "http://fhir.de/CodeSystem/ifa/pzn"
+                }
+              ]
+            },
+            "extension": [
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                "valueCoding": {
+                  "code": "00",
+                  "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category"
+                }
+              },
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "code": "763158003",
+                      "system": "http://snomed.info/sct",
+                      "display": "Medicinal product (product)",
+                      "version": "http://snomed.info/sct/900000000000207008/version/20220331"
+                    }
+                  ]
+                }
+              },
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                "valueBoolean": false
+              },
+              {
+                "url": "http://fhir.de/StructureDefinition/normgroesse",
+                "valueCode": "N3"
+              }
+            ],
+            "form": {
+              "coding": [
+                {
+                  "code": "FTA",
+                  "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM"
+                }
+              ]
+            },
+            "amount": {
+              "denominator": {
+                "value": 1
+              },
+              "numerator": {
+                "extension": [
+                  {
+                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
+                    "valueString": "12"
+                  }
+                ],
+                "unit": "St"
+              }
+            }
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "1-0-1-0"
+          }
+        ],
+        "subject": {
+          "identifier": {
+            "value": "Z828875733",
+            "system": "http://fhir.de/sid/gkv/kvid-10"
+          }
+        },
+        "status": "completed",
+        "performer": [
+          {
+            "actor": {
+              "identifier": {
+                "value": "3-abc-1234567890",
+                "system": "https://gematik.de/fhir/sid/telematik-id"
+              }
+            }
+          }
+        ],
+        "whenHandedOver": "2024-07-02",
+        "identifier": [
+          {
+            "value": "160.000.000.000.000.04",
+            "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/MedicationDispense/160.000.000.000.000.05",
+      "resource": {
+        "resourceType": "MedicationDispense",
+        "id": "160.000.000.000.000.05",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense|1.3"
+          ]
+        },
+        "medicationReference": {
+          "reference": "#7ebb8f0c-06a7-4b71-b6b2-81000eabbf8d"
+        },
+        "contained": [
+          {
+            "resourceType": "Medication",
+            "id": "7ebb8f0c-06a7-4b71-b6b2-81000eabbf8d",
+            "meta": {
+              "profile": [
+                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0"
+              ]
+            },
+            "code": {
+              "text": "Sumatriptan Dura 100mg",
+              "coding": [
+                {
+                  "code": "04866280",
+                  "system": "http://fhir.de/CodeSystem/ifa/pzn"
+                }
+              ]
+            },
+            "extension": [
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                "valueCoding": {
+                  "code": "00",
+                  "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category"
+                }
+              },
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+                "valueCodeableConcept": {
+                  "coding": [
+                    {
+                      "code": "763158003",
+                      "system": "http://snomed.info/sct",
+                      "display": "Medicinal product (product)",
+                      "version": "http://snomed.info/sct/900000000000207008/version/20220331"
+                    }
+                  ]
+                }
+              },
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                "valueBoolean": false
+              },
+              {
+                "url": "http://fhir.de/StructureDefinition/normgroesse",
+                "valueCode": "N3"
+              }
+            ],
+            "form": {
+              "coding": [
+                {
+                  "code": "FTA",
+                  "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM"
+                }
+              ]
+            },
+            "amount": {
+              "denominator": {
+                "value": 1
+              },
+              "numerator": {
+                "extension": [
+                  {
+                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
+                    "valueString": "12"
+                  }
+                ],
+                "unit": "St"
+              }
+            }
+          }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "1-0-1-0"
+          }
+        ],
+        "subject": {
+          "identifier": {
+            "value": "Z828875733",
+            "system": "http://fhir.de/sid/gkv/kvid-10"
+          }
+        },
+        "status": "completed",
+        "performer": [
+          {
+            "actor": {
+              "identifier": {
+                "value": "3-abc-1234567890",
+                "system": "https://gematik.de/fhir/sid/telematik-id"
+              }
+            }
+          }
+        ],
+        "whenHandedOver": "2024-07-02",
+        "identifier": [
+          {
+            "value": "160.000.000.000.000.05",
+            "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    }
+  ]
+}

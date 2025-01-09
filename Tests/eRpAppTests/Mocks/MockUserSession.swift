@@ -722,7 +722,8 @@ class FakeErxTaskRepository: ErxTaskRepository {
                         name: "Brausepulver 3",
                         amount: .init(numerator: .init(value: "11")),
                         dosageForm: "TAB"
-                    )
+                    ),
+                    epaMedication: nil
                 )]
             ),
             "14": ErxTask(
@@ -753,7 +754,8 @@ class FakeErxTaskRepository: ErxTaskRepository {
                             name: "Brausepulver 3",
                             amount: .init(numerator: .init(value: "6")),
                             dosageForm: "TAB"
-                        )
+                        ),
+                        epaMedication: nil
                     ),
                     ErxMedicationDispense(
                         identifier: "098767825647892-2",
@@ -766,7 +768,8 @@ class FakeErxTaskRepository: ErxTaskRepository {
                             name: "Brausepulver 3",
                             amount: .init(numerator: .init(value: "5")),
                             dosageForm: "TAB"
-                        )
+                        ),
+                        epaMedication: nil
                     ),
                 ]
             ),

@@ -78,7 +78,7 @@
 "cdw_btn_extauth_alert_save_profile" = "Zamknij";
 "cdw_btn_extauth_confirm_cancel" = "Anuluj";
 "cdw_btn_extauth_confirm_contact" = "Skontaktuj się z obsługą telefoniczną";
-"cdw_btn_extauth_confirm_send" = "Wyślij";
+"cdw_btn_extauth_confirm_send" = "Rejestr";
 "cdw_btn_extauth_fallback_order_egk" = "Zamów kartę zdrowia";
 "cdw_btn_extauth_selection_cancel" = "Anuluj";
 "cdw_btn_extauth_selection_continue" = "Dalej";
@@ -170,16 +170,16 @@
 "cdw_txt_extauth_confirm_contactsheet_mail" = "E-mail";
 "cdw_txt_extauth_confirm_contactsheet_telephone" = "Telefon";
 "cdw_txt_extauth_confirm_contactsheet_title" = "Skontaktuj się z pomocą techniczną";
-"cdw_txt_extauth_confirm_description" = "Teraz zwrócimy się do Twojej instytucji ubezpieczenia zdrowotnego o dokonanie uwierzytelnienia.";
+"cdw_txt_extauth_confirm_description" = "Zostaniesz przekierowany do swojej firmy ubezpieczeniowej.";
 "cdw_txt_extauth_confirm_error_description" = "Wspomnij o tym błędzie naszemu wsparciu, aby pomóc w znalezieniu rozwiązania.";
-"cdw_txt_extauth_confirm_headline" = "Wymagane jest uwierzytelnienie";
+"cdw_txt_extauth_confirm_headline" = "Zarejestruj się za pomocą identyfikatora zdrowotnego";
 "cdw_txt_extauth_confirm_own_appname" = "E-recepta";
-"cdw_txt_extauth_confirm_title" = "Zaloguj się za pomocą aplikacji";
+"cdw_txt_extauth_confirm_title" = "Identyfikator zdrowia";
 "cdw_txt_extauth_confirm_universal_link_failed_error" = "Błąd podczas otwierania aplikacji ubezpieczenia zdrowotnego.";
 "cdw_txt_extauth_fallback_description1" = "Do tej funkcji przygotowują się obecnie zakłady ubezpieczeń zdrowotnych.";
 "cdw_txt_extauth_fallback_description2" = "Nie chcesz czekać? Rejestrację z kartą zdrowia obsługuje już każda kasa chorych.";
 "cdw_txt_extauth_fallback_headline" = "Wybierz ubezpieczenie";
-"cdw_txt_extauth_fallback_title" = "Zaloguj się za pomocą aplikacji";
+"cdw_txt_extauth_fallback_title" = "Identyfikator zdrowia";
 "cdw_txt_extauth_help_caption" = "Wskazówki dotyczące rejestracji w aplikacji ubezpieczeniowej";
 "cdw_txt_extauth_help_description" = "Za identyfikator medyczny odpowiedzialna jest Twoja firma ubezpieczeniowa. Skontaktuj się z nimi, jeśli masz jakiekolwiek pytania dotyczące rejestracji. Oto kilka wypróbowanych i przetestowanych wskazówek:";
 "cdw_txt_extauth_help_info_1" = "Należy pamiętać, że w zależności od ubezpieczenia może być wymagana osobna aplikacja. Aby dowiedzieć się, co to jest, skontaktuj się ze swoją firmą ubezpieczeniową.";
@@ -196,7 +196,7 @@
 "cdw_txt_extauth_selection_empty_list_headline" = "Funkcja niedostępna";
 "cdw_txt_extauth_selection_error_fallback" = "Spróbuj ponownie później.";
 "cdw_txt_extauth_selection_headline" = "Wybierz ubezpieczenie";
-"cdw_txt_extauth_selection_title" = "Zaloguj się za pomocą aplikacji";
+"cdw_txt_extauth_selection_title" = "Identyfikator zdrowia";
 "cdw_txt_intro_alert_kkNotFound_title" = "Nie udało się znaleźć ubezpieczenia zdrowotnego";
 "cdw_txt_intro_description" = "Aby móc korzystać ze wszystkich funkcji aplikacji, zaloguj się za pomocą swojej karty zdrowia. Kartę tę oraz wymagane dane dostępowe otrzymasz od swojej instytucji ubezpieczenia zdrowotnego.";
 "cdw_txt_intro_description_new" = "Odbieraj recepty online i przesyłaj je do apteki.";
@@ -217,7 +217,7 @@
 "cdw_txt_nfu_subtitle" = "Szkoda...";
 "cdw_txt_nfu_title" = "Logowanie";
 "cdw_txt_pin_demo_mode_info" = "Możesz podać dowolne cyfry.";
-"cdw_txt_pin_description" = "Otrzymałeś PIN do swojej karty zdrowia od swojego towarzystwa ubezpieczeniowego, korzystając z bezpiecznej procedury, takiej jak Postident.";
+"cdw_txt_pin_description" = "Musiałeś aktywnie zamówić PIN do karty zdrowia w swoim ubezpieczycielu, a następnie otrzymać go za pośrednictwem bezpiecznego procesu, takiego jak Postident.";
 "cdw_txt_pin_hint" = "Twój PIN może mieć od 6 do 8 znaków.";
 "cdw_txt_pin_input_label" = "Proszę wprowadzić swój PIN. Twój kod PIN został przesłany do Ciebie pocztą. PIN ma od 6 do 8 cyfr.";
 "cdw_txt_pin_subtitle" = "PIN";
@@ -871,7 +871,7 @@
 "ord_detail_txt_mail_body2" = "Wysyłasz nam te informacje w celu analizy błędów. Informujemy, że przekazywany jest także Twój adres e-mail oraz ew. zawarta w nim nazwa. Jeżeli nie chcesz przekazywać tych informacji w całości ani w części, usuń je z tej wiadomości e-mail.\n\nWszystkie dane są zapisywane i przetwarzane przez firmę gematik GmbH lub przedsiębiorstwa działające na jej zlecenie wyłącznie w celu obsługi tego komunikatu o błędzie. Dane są usuwane automatycznie, najpóźniej po 180 dniach od obsługi zgłoszenia. Twój adres e-mail wykorzystujemy wyłącznie w celu nawiązania z Tobą kontaktu w związku z komunikatem o błędzie. W razie pytań lub przedwczesnego usunięcia danych możesz w każdej chwili skontaktować się z pełnomocnikiem ds. ochrony danych systemu E-recepta. Więcej informacji podano w aplikacji E-recepta w menu dotyczącym ochrony danych.";
 "ord_detail_txt_mail_error" = "Błąd 40 42 67336";
 "ord_detail_txt_mail_subject" = "Komunikat o błędzie z aplikacji E-recepta";
-"ord_detail_txt_messages" = "Aktualności";
+"ord_detail_txt_messages" = "Wiadomości";
 "ord_detail_txt_open_mail_error" = "Nie można otworzyć aplikacji mailowej. Skorzystaj z infolinii";
 "ord_detail_txt_open_mail_error_title" = "Błąd";
 "ord_detail_txt_orders" = "Zamówienie";
@@ -1195,7 +1195,7 @@
 "prsc_status_canceled" = "Usunięto";
 "prsc_status_completed" = "Zrealizowane";
 "prsc_status_direct_assigned" = "Zostanie dla ciebie odkupiony";
-"prsc_status_dispensed" = "Pod warunkiem, że";
+"prsc_status_dispensed" = "Towar jest gotowy";
 "prsc_status_error" = "Błędna recepta";
 "prsc_status_expired" = "Upłynął termin";
 "prsc_status_in_progress" = "Jest przetwarzane";
@@ -1300,6 +1300,7 @@
 "service_txt_consent_toast_conflict_message" = "Otrzymujesz już rachunki w formie cyfrowej.";
 "service_txt_consent_toast_route_to_list_message" = "Do rachunków kosztów";
 "service_txt_consent_toast_successfully_granted_message" = "Otrzymasz teraz rachunki w formie cyfrowej 🥳";
+"service_txt_missing_charge_item_pdf_name" = "Lek";
 "session_error_card_connected_with_other_profile_%@" = "Twoja karta zdrowia jest już powiązana z innym profilem. Zmień na profil %@.";
 "session_error_card_profile_mismatch_%@" = "Aktualnie wybrany profil jest już powiązany z inną kartą zdrowia (numer podmiotu objętego ubezpieczeniem zdrowotnym %@).";
 "session_error_no_profile" = "Nie znaleziono wybranego profilu. Wybierz profil.";
@@ -1346,7 +1347,7 @@
 "stg_btn_new_profile_create" = "Zapisz";
 "stg_btn_reg_devices_load" = "Rejestr";
 "stg_con_btn_gemmunity" = "Forum e-recept";
-"stg_con_btn_gesund_bund_de" = "gesundbund.de";
+"stg_con_btn_gesund_bund_de" = "gesund.bund.de";
 "stg_con_btn_organ_donor" = "Rejestr dawstwa narządów";
 "stg_con_btn_organ_donor_alert_cancel" = "Anulować";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";

@@ -30,7 +30,8 @@ extension ErxMedicationDispense {
             whenHandedOver: "2021-07-23T10:55:04+02:00",
             quantity: .init(value: "10", unit: "TL"),
             noteText: "Nicht mit anderen Medikamenten mischen",
-            medication: ErxTask.Demo.medication1
+            medication: ErxTask.Demo.medication1,
+            epaMedication: nil
         )
     }
 }

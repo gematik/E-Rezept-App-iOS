@@ -101,12 +101,23 @@ struct PrescriptionArchiveDomain {
 
 extension PrescriptionArchiveDomain {
     enum Dummies {
-        static let state = State(prescriptions: Prescription.Dummies.prescriptions)
+        static let prescriptions: [Prescription] = [
+            ErxTask.Demo.expiredErxTask(with: .ready),
+            ErxTask.Demo.expiredErxTask(with: .inProgress),
+            ErxTask.Demo.expiredErxTask(with: .computed(status: .dispensed)),
+            ErxTask.Demo.expiredErxTask(with: .completed),
+            ErxTask.Demo.erxTask10,
+        ].map {
+            Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue)
+        }
+
+        static let state = State(prescriptions: prescriptions)
 
         static let store = Store(
             initialState: state
         ) {
             PrescriptionArchiveDomain()
+                .dependency(\.prescriptionRepository, DummyPrescriptionRepository())
         }
     }
 }

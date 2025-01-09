@@ -30,17 +30,36 @@ extension ModelsR4.Bundle {
             guard let medicationDispense = $0.resource?.get(if: ModelsR4.MedicationDispense.self) else {
                 return nil
             }
-            return try Self.parse(medicationDispense)
+            return try parse(medicationDispense)
         } ?? []
     }
 
-    static func parse(_ medicationDispense: ModelsR4.MedicationDispense) throws -> ErxMedicationDispense {
+    func parse(_ medicationDispense: ModelsR4.MedicationDispense) throws -> ErxMedicationDispense {
         guard let identifier = medicationDispense.id?.value?.string else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse identifier from medication dispense.")
         }
 
         guard let taskId = medicationDispense.taskId else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse task id from medication dispense.")
+        }
+
+        // Beginning with GemWorkflow 1.4 the MedicationDispense's Medication is part of the Bundle
+        // (formerly it was contained in the MedicationDispense itself)
+        let erxMedication: ErxMedication?
+        if
+            let medicationDispenseMedication = medicationDispense.erxTaskMedication {
+            erxMedication = medicationDispenseMedication
+        } else {
+            erxMedication = nil
+        }
+
+        let erxEpaMedication: ErxEpaMedication?
+        if
+            let reference = medicationDispense.medicationReference,
+            let medication = findMedicationResource(with: reference) {
+            erxEpaMedication = ErxEpaMedication(medication: medication)
+        } else {
+            erxEpaMedication = nil
         }
 
         return .init(
@@ -52,8 +71,26 @@ extension ModelsR4.Bundle {
             whenHandedOver: medicationDispense.handOverDate,
             quantity: medicationDispense.erxTaskQuantity,
             noteText: medicationDispense.noteText,
-            medication: medicationDispense.erxTaskMedication
+            medication: erxMedication,
+            epaMedication: erxEpaMedication
         )
+    }
+
+    func findMedicationResource(with: Reference) -> Medication? {
+        guard let reference = with.reference?.value?.string else { return nil }
+        // try finding it by identifier
+        if
+            let medications = entry?.compactMap({ $0.resource?.get(if: Medication.self) }),
+            let resource = medications.first(where: { medication in
+
+                guard let medicationId = medication.id?.value?.string else { return false }
+                return reference.contains(medicationId)
+
+            }) {
+            return resource
+        }
+
+        return nil
     }
 }
 
@@ -77,11 +114,6 @@ extension ModelsR4.MedicationDispense {
         dosageInstruction?.first?.text?.value?.string
     }
 
-    var medicationAmount: ErxMedication.Ratio? {
-        guard let version = medication?.version else { return nil }
-        return medication?.amountRatio(for: version)
-    }
-
     var firstPerformerID: String? {
         performer?.first?.actor.identifier?.value?.value?.string
     }
@@ -100,7 +132,7 @@ extension ModelsR4.MedicationDispense {
 
     // MARK: contained Medication
 
-    var medication: ModelsR4.Medication? {
+    var containedMedication: ModelsR4.Medication? {
         contained?.first { resourceProxy in
             if case ModelsR4.ResourceProxy.medication = resourceProxy {
                 return true
@@ -111,9 +143,25 @@ extension ModelsR4.MedicationDispense {
     }
 
     var erxTaskMedication: ErxMedication? {
-        guard let medication = medication else { return nil }
+        guard let medication = containedMedication else { return nil }
 
-        return .init(
+        return .init(medication: medication)
+    }
+
+    // MARK: referenced Medication
+
+    var medicationReference: Reference? {
+        switch medication {
+        case .codeableConcept: return nil
+        case let .reference(reference):
+            return reference
+        }
+    }
+}
+
+extension ErxMedication {
+    init(medication: ModelsR4.Medication) {
+        self.init(
             name: medication.medicationText,
             profile: medication.profileType,
             drugCategory: medication.drugCategory,

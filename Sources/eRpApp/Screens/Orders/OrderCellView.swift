@@ -21,7 +21,7 @@ import SwiftUI
 
 struct OrderCellView: View {
     let title: String
-    let message: String
+    let message: AttributedString
     let subtitle: String
 
     var isNew: Bool
@@ -30,7 +30,7 @@ struct OrderCellView: View {
     let action: () -> Void
 
     init(title: String,
-         message: String,
+         message: AttributedString,
          subtitle: String,
          isNew: Bool = false,
          prescriptionCount: Int = 0,

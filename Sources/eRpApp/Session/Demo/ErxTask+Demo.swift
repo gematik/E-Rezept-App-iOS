@@ -582,6 +582,29 @@ extension ErxTask {
             source: .scanner
         )
 
+        static func expiredErxTask(with status: ErxTask.Status) -> ErxTask {
+            .init(
+                identifier: "34235f983-1e67-22c5-8955-63bf44e44fb8",
+                status: status,
+                flowType: .pharmacyOnly,
+                accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+                fullUrl: nil,
+                authoredOn: DemoDate.createDemoDate(.ninetyTwoDaysBefore),
+                expiresOn: DemoDate.createDemoDate(.weekBefore),
+                acceptedUntil: DemoDate.createDemoDate(.thirtyDaysBefore),
+                redeemedOn: nil,
+                author: "Dr. Dr. med. Carsten van Storchhausen",
+                medication: medication8,
+                medicationRequest: .init(
+                    accidentInfo: demoAccidentInfo,
+                    quantity: .init(value: "2", unit: "Packungen")
+                ),
+                patient: demoPatient,
+                practitioner: demoPractitioner,
+                organization: demoOrganization
+            )
+        }
+
         static let erxTasks: [ErxTask] =
             [
                 erxTask1,
