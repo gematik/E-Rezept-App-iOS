@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -249,9 +249,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10HTTPClient07DefaultA0C4send7request12interceptors8redirect7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAK10URLRequestV_SayAA11Interceptor_pGAYSgAP_AYtYacSgtF"></a>
-                    <a name="//apple_ref/swift/Method/send(request:interceptors:redirect:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10HTTPClient07DefaultA0C4send7request12interceptors8redirect7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAK10URLRequestV_SayAA11Interceptor_pGAYSgAP_AYtYacSgtF">send(request:<wbr>interceptors:<wbr>redirect:<wbr>)</a>
+                    <a name="/s:10HTTPClient07DefaultA0C13sendPublisher7request12interceptors8redirect7Combine03AnyD0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAK10URLRequestV_SayAA11Interceptor_pGAYSgAP_AYtYacSgtF"></a>
+                    <a name="//apple_ref/swift/Method/sendPublisher(request:interceptors:redirect:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClient07DefaultA0C13sendPublisher7request12interceptors8redirect7Combine03AnyD0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAK10URLRequestV_SayAA11Interceptor_pGAYSgAP_AYtYacSgtF">sendPublisher(request:<wbr>interceptors:<wbr>redirect:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -266,7 +266,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendPublisher</span><span class="p">(</span>
     <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span>
     <span class="n"><a href="../Classes/DefaultHTTPClient.html#/s:10HTTPClientAAP12interceptorsSayAA11Interceptor_pGvp">interceptors</a></span> <span class="nv">requestInterceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">],</span>
     <span class="n">redirect</span> <span class="nv">handler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient15RedirectHandlera">RedirectHandler</a></span><span class="p">?</span>
@@ -300,6 +300,39 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10HTTPClientAAP9sendAsync7request12interceptors8redirect10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAG10URLRequestV_SayAA11Interceptor_pGARSgAL_ARtYacSgtYaKF"></a>
+                    <a name="//apple_ref/swift/Method/sendAsync(request:interceptors:redirect:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClientAAP9sendAsync7request12interceptors8redirect10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAG10URLRequestV_SayAA11Interceptor_pGARSgAL_ARtYacSgtYaKF">sendAsync(request:<wbr>interceptors:<wbr>redirect:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendAsync</span><span class="p">(</span>
+    <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span>
+    <span class="n"><a href="../Classes/DefaultHTTPClient.html#/s:10HTTPClientAAP12interceptorsSayAA11Interceptor_pGvp">interceptors</a></span> <span class="nv">requestInterceptors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/Interceptor.html">Interceptor</a></span><span class="p">],</span>
+    <span class="n">redirect</span> <span class="nv">handler</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient15RedirectHandlera">RedirectHandler</a></span><span class="p">?</span>
+<span class="p">)</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -308,7 +341,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -143,10 +143,13 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3AVS10AVSSessionP6redeem7message8endpoint10recipients7Combine12AnyPublisherVyAA0B8ResponseVAA8AVSErrorOGAA10AVSMessageV_AA11AVSEndpointVSay7OpenSSL4X509CGtF"></a>
+                    <a name="/s:3AVS10AVSSessionP6redeem7message8endpoint10recipientsAA0B8ResponseVAA10AVSMessageV_AA11AVSEndpointVSay7OpenSSL4X509CGtYaKF"></a>
                     <a name="//apple_ref/swift/Method/redeem(message:endpoint:recipients:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3AVS10AVSSessionP6redeem7message8endpoint10recipients7Combine12AnyPublisherVyAA0B8ResponseVAA8AVSErrorOGAA10AVSMessageV_AA11AVSEndpointVSay7OpenSSL4X509CGtF">redeem(message:<wbr>endpoint:<wbr>recipients:<wbr>)</a>
+                    <a class="token" href="#/s:3AVS10AVSSessionP6redeem7message8endpoint10recipientsAA0B8ResponseVAA10AVSMessageV_AA11AVSEndpointVSay7OpenSSL4X509CGtYaKF">redeem(message:<wbr>endpoint:<wbr>recipients:<wbr>)</a>
                     </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
                   </div>
                   <div class="height-container">
                     <div class="pointer-container"></div>
@@ -155,14 +158,18 @@
                       <div class="abstract">
                         <p>Redeem a prescription encoded into a <code><a href="../Structs/AVSMessage.html">AVSMessage</a></code> by (encrypting it for (multiple) recipients and)
 sending it to a given endpoint.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Only <code><a href="../Enums/AVSError.html">AVSError</a></code>s are supposed to be thrown
+
+</div>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">redeem</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/AVSMessage.html">AVSMessage</a></span><span class="p">,</span> <span class="nv">endpoint</span><span class="p">:</span> <span class="kt"><a href="../Structs/AVSEndpoint.html">AVSEndpoint</a></span><span class="p">,</span> <span class="nv">recipients</span><span class="p">:</span> <span class="p">[</span><span class="kt">X509</span><span class="p">])</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/AVSSessionResponse.html">AVSSessionResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/AVSError.html">AVSError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">redeem</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/AVSMessage.html">AVSMessage</a></span><span class="p">,</span> <span class="nv">endpoint</span><span class="p">:</span> <span class="kt"><a href="../Structs/AVSEndpoint.html">AVSEndpoint</a></span><span class="p">,</span> <span class="nv">recipients</span><span class="p">:</span> <span class="p">[</span><span class="kt">X509</span><span class="p">])</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/AVSSessionResponse.html">AVSSessionResponse</a></span></code></pre>
 
                         </div>
                       </div>
@@ -211,7 +218,7 @@ sending it to a given endpoint.</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits the sent <code><a href="../Structs/AVSMessage.html">AVSMessage</a></code> if successful, else <code><a href="../Enums/AVSError.html">AVSError</a></code></p>
+                        <p>The sent <code><a href="../Structs/AVSMessage.html">AVSMessage</a></code> if successful, else <code><a href="../Enums/AVSError.html">AVSError</a></code></p>
                       </div>
                     </section>
                   </div>
@@ -224,7 +231,7 @@ sending it to a given endpoint.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

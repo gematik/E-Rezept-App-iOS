@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.24.0
+           1.28.0
  Docs
         </a>
          (100% documented)
@@ -176,9 +176,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10HTTPClient5ChainP7proceed7request7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_tF"></a>
-                    <a name="//apple_ref/swift/Method/proceed(request:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10HTTPClient5ChainP7proceed7request7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_tF">proceed(request:<wbr>)</a>
+                    <a name="/s:10HTTPClient5ChainP16proceedPublisher7request7Combine03AnyD0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_tF"></a>
+                    <a name="//apple_ref/swift/Method/proceedPublisher(request:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClient5ChainP16proceedPublisher7request7Combine03AnyD0Vy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_tF">proceedPublisher(request:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -193,7 +193,120 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">proceed</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Use async version instead")</span>
+<span class="kd">func</span> <span class="nf">proceedPublisher</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the <code>URLRequest</code> to proceed</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>AnyPublisher</code> that emits a response as <code>HTTPClient.Response</code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10HTTPClient5ChainP12proceedAsync7request10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAF10URLRequestV_tYaKF"></a>
+                    <a name="//apple_ref/swift/Method/proceedAsync(request:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClient5ChainP12proceedAsync7request10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAF10URLRequestV_tYaKF">proceedAsync(request:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Asynchronous
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Launch the chain processing of the given input.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Only <code><a href="../Enums/HTTPClientError.html">HTTPClientError</a></code>s are supposed to be thrown.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">proceedAsync</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="n">async</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the <code>URLRequest</code> to proceed</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Response emitted as <code>HTTPClient.Response</code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10HTTPClient5ChainPAAE7proceed7request7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_tF"></a>
+                    <a name="//apple_ref/swift/Method/proceed(request:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10HTTPClient5ChainPAAE7proceed7request7Combine12AnyPublisherVy10Foundation4DataV4data_So17NSHTTPURLResponseC8responseAA14HTTPStatusCodeO6statustAA0A5ErrorOGAI10URLRequestV_tF">proceed(request:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Launch the chain processing of the given input.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, renamed: "proceedPublisher(request:﹚", message: "Use async version instead")</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">proceed</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:10HTTPClient12HTTPResponsea">HTTPResponse</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/HTTPClientError.html">HTTPClientError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -231,7 +344,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2024 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2024-07-24)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
