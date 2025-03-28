@@ -66,7 +66,7 @@ struct OnboardingContainer: View, KeyboardReadable {
                                     .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
                             }
                     }
-                    .accentColor(Colors.primary600)
+                    .tint(Colors.primary700)
                     .navigationViewStyle(StackNavigationViewStyle())
                 }
                 // [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
@@ -80,7 +80,7 @@ struct OnboardingContainer: View, KeyboardReadable {
                                         .termsOfUse.stgBtnTermsOfUseClose)
                             }
                     }
-                    .accentColor(Colors.primary600)
+                    .tint(Colors.primary700)
                     .navigationViewStyle(StackNavigationViewStyle())
                 }
                 .tabViewStyle(

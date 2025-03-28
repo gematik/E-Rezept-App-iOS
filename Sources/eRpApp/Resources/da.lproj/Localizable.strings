@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Indløst på";
 "stg_txt_charge_item_sum" = "total pris";
 "stg_txt_demo_mode" = "Demo-tilstand";
-"stg_txt_donor_register_alert_message" = "Du vil blive omdirigeret til organdonationsregistret. For at se og ændre dine organdonationsdata skal du logge ind der.";
+"stg_txt_donor_register_alert_message" = "Du vil blive omdirigeret til webstedet for organdonationsregistret. For at se og ændre dine organdonationsdata skal du logge ind der.";
 "stg_txt_donor_register_alert_title" = "Åbent organdonationsregister?";
 "stg_txt_edit_profile_background_section_title" = "baggrundsfarve";
 "stg_txt_edit_profile_charge_item_list_section_title" = "udgiftskvitteringer";

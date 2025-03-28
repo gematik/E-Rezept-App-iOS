@@ -150,7 +150,7 @@ struct PharmacySearchMapView: View {
                 action: \.destination.filter
             )) { store in
                 PharmacySearchFilterView(store: store)
-                    .accentColor(Colors.primary600)
+                    .tint(Colors.primary700)
             }
             .sheet(item: $store.scope(
                 state: \.destination?.pharmacy,

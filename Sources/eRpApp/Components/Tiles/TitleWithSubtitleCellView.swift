@@ -42,7 +42,7 @@ struct TitleWithSubtitleCellView: View {
                 if isSelected {
                     Image(systemName: selectedImageName)
                         .font(Font.title3)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                 } else {
                     Image(systemName: imageName)
                         .font(Font.title3)

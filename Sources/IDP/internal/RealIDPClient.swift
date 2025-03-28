@@ -58,7 +58,7 @@ class RealIDPClient: IDPClient {
 
     func loadDiscoveryDocument() -> AnyPublisher<DiscoveryDocument, IDPError> {
         // load discovery dokument jwt
-        httpClient.send(request: URLRequest(url: clientConfig.discoveryURL))
+        httpClient.sendPublisher(request: URLRequest(url: clientConfig.discoveryURL))
             .mapError {
                 $0 as Error
             }
@@ -67,12 +67,13 @@ class RealIDPClient: IDPClient {
                 let payload = try jwt.decodePayload(type: DiscoveryDocumentPayload.self)
                 return self.httpClient
                     // load public encryption key
-                    .send(request: URLRequest(url: payload.pukIdpEnc.correct(), cachePolicy: .reloadIgnoringCacheData))
+                    .sendPublisher(request: URLRequest(url: payload.pukIdpEnc.correct(),
+                                                       cachePolicy: .reloadIgnoringCacheData))
                     .zip(
                         // load public signature key
                         self.httpClient
-                            .send(request: URLRequest(url: payload.pukIdpSig.correct(),
-                                                      cachePolicy: .reloadIgnoringCacheData))
+                            .sendPublisher(request: URLRequest(url: payload.pukIdpSig.correct(),
+                                                               cachePolicy: .reloadIgnoringCacheData))
                     ) { pukIdpEncResponse, pukIdpSigResponse in
                         (pukIdpEncResponse, pukIdpSigResponse)
                     }
@@ -133,7 +134,7 @@ class RealIDPClient: IDPClient {
         }
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        return httpClient.send(request: request, interceptors: []) { _, _ in
+        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
             nil // Don't follow the redirect, but handle it
         }
         .tryMap { body, _, status -> IDPChallenge in
@@ -172,7 +173,7 @@ class RealIDPClient: IDPClient {
 
         let redirect = clientConfig.redirectURI.absoluteString
 
-        return httpClient.send(request: request, interceptors: []) { _, _ in
+        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
             nil // Don't follow the redirect, but handle it
         }
         .tryMap { body, httpResponse, status -> IDPExchangeToken in
@@ -218,7 +219,7 @@ class RealIDPClient: IDPClient {
             "ssotoken": ssotoken,
         ])
 
-        return httpClient.send(request: request, interceptors: []) { _, _ in
+        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
             nil // Don't follow the redirect, but handle it
         }
         .tryMap { data, httpResponse, status -> IDPExchangeToken in
@@ -267,7 +268,7 @@ class RealIDPClient: IDPClient {
         request.setFormUrlEncodedBody(parameters: parameters)
 
         // [REQ:gemSpec_IDP_Frontend:A_20529-01#5] Sending the Request with the default HTTPClient via TLS.
-        return httpClient.send(request: request)
+        return httpClient.sendPublisher(request: request)
             .tryMap { body, _, status -> TokenPayload in
                 // [REQ:gemSpec_IDP_Frontend:A_19938-01#2|3] 2xx HTTPCodes are treated as tokens
                 if status.isSuccessful {
@@ -297,7 +298,7 @@ class RealIDPClient: IDPClient {
         request.setFormUrlEncodedHeader()
         request.setFormUrlEncodedBody(parameters: ["encrypted_registration_data": encryptedRegistrationData])
 
-        return httpClient.send(request: request)
+        return httpClient.sendPublisher(request: request)
             .tryMap { body, _, status -> PairingEntry in
                 if status.isSuccessful {
                     return try JSONDecoder().decode(PairingEntry.self, from: body)
@@ -319,7 +320,7 @@ class RealIDPClient: IDPClient {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
 
-        return httpClient.send(request: request)
+        return httpClient.sendPublisher(request: request)
             .tryMap { body, _, status -> Bool in
                 if status.isSuccessful {
                     return true
@@ -340,7 +341,7 @@ class RealIDPClient: IDPClient {
         request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Accept")
         request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
 
-        return httpClient.send(request: request)
+        return httpClient.sendPublisher(request: request)
             .tryMap { body, _, status -> PairingEntries in
                 if status.isSuccessful {
                     let decoder = JSONDecoder()
@@ -373,7 +374,7 @@ class RealIDPClient: IDPClient {
         request
             .setFormUrlEncodedBody(parameters: ["encrypted_signed_authentication_data": encryptedSignedChallengeData])
 
-        return httpClient.send(request: request, interceptors: []) { _, _ in
+        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
             nil // Don't follow the redirect, but handle it
         }
         .tryMap { [redirect = clientConfig.redirectURI.absoluteString] data, httpResponse, status -> IDPExchangeToken in
@@ -404,7 +405,7 @@ class RealIDPClient: IDPClient {
         // load complete kk_apps directory
         let request = URLRequest(url: url)
 
-        return httpClient.send(request: request)
+        return httpClient.sendPublisher(request: request)
             .mapError {
                 $0 as Error
             }
@@ -451,7 +452,7 @@ class RealIDPClient: IDPClient {
         }
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
 
-        return httpClient.send(request: request, interceptors: []) { _, _ in
+        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
             nil // Don't follow the redirect, but handle it
         }
         .tryMap { data, httpResponse, status -> URL in
@@ -489,7 +490,7 @@ class RealIDPClient: IDPClient {
         request.setFormUrlEncodedHeader()
         request.setFormUrlEncodedBody(parameters: formUrlParameters)
 
-        return httpClient.send(request: request, interceptors: []) { _, _ in
+        return httpClient.sendPublisher(request: request, interceptors: []) { _, _ in
             nil // Don't follow the redirect, but handle it
         }
         .tryMap { [redirect = clientConfig.extAuthRedirectURI.absoluteString] body, httpResponse, status

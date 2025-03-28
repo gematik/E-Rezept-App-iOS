@@ -43,7 +43,7 @@ extension UpdateCheckerFactory: DependencyKey {
             }
 
             let request = URLRequest(url: certListEndpoint)
-            guard let (_, _, status) = try? await httpClient.send(request: request).async() else {
+            guard let (_, _, status) = try? await httpClient.sendPublisher(request: request).async() else {
                 return false
             }
 

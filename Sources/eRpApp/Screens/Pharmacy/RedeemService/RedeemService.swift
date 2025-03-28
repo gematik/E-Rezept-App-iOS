@@ -77,36 +77,43 @@ struct AVSRedeemService: RedeemService {
 
         let redeemMessagePublishers: [AnyPublisher<OrderResponse, Never>] =
             orderAndMessages.map { order, message -> AnyPublisher<OrderResponse, Never> in
-                avsSession.redeem(message: message, endpoint: endpoint.asEndpoint(), recipients: recipients)
-                    .mapError { RedeemServiceError.from($0) }
-                    .flatMap { avsSessionResponse -> AnyPublisher<OrderResponse, RedeemServiceError> in
-                        let httpStatusCode = avsSessionResponse.httpStatusCode
-                        guard 200 ..< 300 ~= httpStatusCode else {
-                            return Fail(error: .from(RedeemServiceError.InternalError.unexpectedHTTPStatusCode))
-                                .eraseToAnyPublisher()
-                        }
-                        let orderResponse = OrderResponse(requested: order, result: .success(true))
-                        return avsTransactionDataStore.save(
-                            avsTransaction: .init(
-                                transactionID: order.transactionID,
-                                httpStatusCode: Int32(httpStatusCode),
-                                groupedRedeemTime: groupedRedeemTime,
-                                groupedRedeemID: order.orderID,
-                                telematikID: order.telematikId,
-                                taskId: order.taskID
-                            )
-                        )
-                        .map { _ in orderResponse }
-                        .mapError { .from(RedeemServiceError.InternalError.localStoreError($0)) }
-                        .eraseToAnyPublisher()
+
+                Future {
+                    try await avsSession.redeem(
+                        message: message,
+                        endpoint: endpoint.asEndpoint(),
+                        recipients: recipients
+                    )
+                }
+                .mapError { RedeemServiceError.from($0) }
+                .flatMap { avsSessionResponse -> AnyPublisher<OrderResponse, RedeemServiceError> in
+                    let httpStatusCode = avsSessionResponse.httpStatusCode
+                    guard 200 ..< 300 ~= httpStatusCode else {
+                        return Fail(error: .from(RedeemServiceError.InternalError.unexpectedHTTPStatusCode))
+                            .eraseToAnyPublisher()
                     }
-                    .catch { error -> AnyPublisher<OrderResponse, Never> in // erase the RedeemServiceError to Never
-                        Just(
-                            OrderResponse(requested: order, result: .failure(error))
+                    let orderResponse = OrderResponse(requested: order, result: .success(true))
+                    return avsTransactionDataStore.save(
+                        avsTransaction: .init(
+                            transactionID: order.transactionID,
+                            httpStatusCode: Int32(httpStatusCode),
+                            groupedRedeemTime: groupedRedeemTime,
+                            groupedRedeemID: order.orderID,
+                            telematikID: order.telematikId,
+                            taskId: order.taskID
                         )
-                        .eraseToAnyPublisher()
-                    }
+                    )
+                    .map { _ in orderResponse }
+                    .mapError { .from(RedeemServiceError.InternalError.localStoreError($0)) }
                     .eraseToAnyPublisher()
+                }
+                .catch { error -> AnyPublisher<OrderResponse, Never> in // erase the RedeemServiceError to Never
+                    Just(
+                        OrderResponse(requested: order, result: .failure(error))
+                    )
+                    .eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher()
             }
 
         return Publishers.MergeMany(redeemMessagePublishers)

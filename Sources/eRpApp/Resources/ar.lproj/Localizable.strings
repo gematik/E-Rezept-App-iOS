@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "تم الاسترداد على";
 "stg_txt_charge_item_sum" = "السعر الكلي";
 "stg_txt_demo_mode" = "الوضع التجريبي";
-"stg_txt_donor_register_alert_message" = "ستتم إعادة توجيهك إلى سجل المتبرعين بالأعضاء. لكي تتمكن من عرض وتغيير بيانات التبرع بالأعضاء، يجب عليك تسجيل الدخول هناك.";
+"stg_txt_donor_register_alert_message" = "ستتم إعادة توجيهك إلى موقع تسجيل التبرع بالأعضاء. لكي تتمكن من عرض وتغيير بيانات التبرع بالأعضاء، يجب عليك تسجيل الدخول هناك.";
 "stg_txt_donor_register_alert_title" = "فتح سجل التبرع بالأعضاء؟";
 "stg_txt_edit_profile_background_section_title" = "لون الخلفية";
 "stg_txt_edit_profile_charge_item_list_section_title" = "إيصالات النفقات";

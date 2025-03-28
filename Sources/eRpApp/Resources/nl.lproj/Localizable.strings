@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Verzilverd op";
 "stg_txt_charge_item_sum" = "totale prijs";
 "stg_txt_demo_mode" = "Demonstratie modus";
-"stg_txt_donor_register_alert_message" = "U wordt doorgestuurd naar het orgaandonorregister. Om uw orgaandonatiegegevens te bekijken en te wijzigen, moet u daar inloggen.";
+"stg_txt_donor_register_alert_message" = "U wordt doorgestuurd naar de website van het orgaandonatieregister. Om uw orgaandonatiegegevens te bekijken en te wijzigen, moet u daar inloggen.";
 "stg_txt_donor_register_alert_title" = "Register orgaandonatie openen?";
 "stg_txt_edit_profile_background_section_title" = "Achtergrond kleur";
 "stg_txt_edit_profile_charge_item_list_section_title" = "onkostenbewijzen";

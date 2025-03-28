@@ -10,5 +10,11 @@
         "text": "**ePA Uyumluluğu** \n 🤝 Reçeteleriniz artık elektronik sağlık kaydıyla tamamen uyumlu. \n \n **Geliştirildi** \n ✨ Süresi dolan tarifler artık arşivde kayboluyor.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Daha iyi okunabilirlik** \n Renk kontrastını artırmak ve böylece okunabilirliği artırmak için markamızın rengini biraz daha koyu yaptık. \n \n **Optimize edilmiş giriş alanı** \n Erişim numarasının giriş alanındaki imleç kaldırıldı.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

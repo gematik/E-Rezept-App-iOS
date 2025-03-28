@@ -54,10 +54,10 @@ public class IDPInterceptor: Interceptor {
     ///
     /// - Parameter chain: the request chain to proceed authenticated hereafter
     /// - Returns: Publisher that continues the chain authenticated
-    public func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    public func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         var request = chain.request
         if let delegate = self.delegate, delegate.shouldAuthorize(request: request) == false {
-            return chain.proceed(request: request)
+            return chain.proceedPublisher(request: request)
         } else {
             return session
                 .autoRefreshedToken
@@ -77,7 +77,7 @@ public class IDPInterceptor: Interceptor {
                 .flatMap { request -> AnyPublisher<HTTPResponse, HTTPClientError> in
                     chain
                         // swiftlint:disable:previous trailing_closure
-                        .proceed(request: request)
+                        .proceedPublisher(request: request)
                         .handleEvents(receiveOutput: { httpResponse in
                             if httpResponse.status == HTTPStatusCode.unauthorized {
                                 // [REQ:gemSpec_eRp_FdV:A_20167-02#5] invalidate/delete unauthorized token

@@ -92,7 +92,7 @@ struct CardWallReadCardView: View {
                                 NavigationStack {
                                     ReadCardHelpView(store: store)
                                 }
-                                .accentColor(Colors.primary700)
+                                .tint(Colors.primary700)
                                 .navigationViewStyle(StackNavigationViewStyle())
                         }
                 }

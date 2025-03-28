@@ -21,7 +21,7 @@ import SwiftUI
 
 public enum Colors {
     // accent colors
-    public static let primary: Color = primary600
+    public static let primary: Color = primary700
     public static let secondary = Color(.systemGray6)
     public static let tertiary: Color = primary100
 

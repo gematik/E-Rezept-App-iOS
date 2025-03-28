@@ -46,7 +46,7 @@ struct OnboardingLegalInfoView: View {
                                         .fixedSize(horizontal: false, vertical: true)
                                         .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
                                         .padding()
-                                        .foregroundColor(Colors.primary600)
+                                        .foregroundColor(Colors.primary700)
                                 }
                             )
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -65,7 +65,7 @@ struct OnboardingLegalInfoView: View {
                                         .fixedSize(horizontal: false, vertical: true)
                                         .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
                                         .padding()
-                                        .foregroundColor(Colors.primary600)
+                                        .foregroundColor(Colors.primary700)
                                 }
                             )
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -110,7 +110,7 @@ struct OnboardingLegalInfoView: View {
             .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnConfirm)
             .font(Font.body.weight(.semibold))
             .foregroundColor(!isAllAccepted ? Colors.systemGray : Colors.systemColorWhite)
-            .background(!isAllAccepted ? Colors.systemGray5 : Colors.primary600)
+            .background(!isAllAccepted ? Colors.systemGray5 : Colors.primary700)
             .cornerRadius(16)
         }
         .padding()
@@ -158,7 +158,7 @@ extension OnboardingLegalInfoView {
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
                             .padding()
-                            .foregroundColor(Colors.primary600)
+                            .foregroundColor(Colors.primary700)
                     }
                 )
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -184,7 +184,7 @@ extension OnboardingLegalInfoView {
                             .fixedSize(horizontal: false, vertical: true)
                             .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
                             .padding()
-                            .foregroundColor(Colors.primary600)
+                            .foregroundColor(Colors.primary700)
                     }
                 )
                 .frame(maxWidth: .infinity, alignment: .center)

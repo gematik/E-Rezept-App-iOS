@@ -29,6 +29,12 @@ import Pharmacy
 import TrustStore
 import VAUClient
 
+// NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
+
+// sourcery:begin: AutoMockable
+extension SearchHistory {}
+// sourcery:end
+
 // sourcery:begin: ProtocolMock
 extension ActivityIndicating {}
 extension AuthenticationChallengeProvider {}
@@ -54,7 +60,6 @@ extension ProfileSecureDataWiper {}
 extension RedeemService {}
 extension RegisteredDevicesService {}
 extension Routing {}
-extension SearchHistory {}
 extension SecureEnclaveSignatureProvider {}
 extension SecureUserDataStore {}
 extension ShipmentInfoDataStore {}

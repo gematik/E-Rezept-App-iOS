@@ -194,7 +194,7 @@ struct CardWallIntroductionView: View {
                                     NavigationStack {
                                         OrderHealthCardListView(store: store)
                                     }
-                                    .accentColor(Colors.primary700)
+                                    .tint(Colors.primary700)
                                     .navigationViewStyle(StackNavigationViewStyle())
                                 }
                             )
@@ -213,7 +213,7 @@ struct CardWallIntroductionView: View {
             }
             .confirmationDialog($store.scope(state: \.destination?.contactSheet, action: \.destination.contactSheet))
             .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            .accentColor(Colors.primary700)
+            .tint(Colors.primary700)
             .navigationViewStyle(StackNavigationViewStyle())
         }
     }

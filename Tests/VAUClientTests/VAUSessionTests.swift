@@ -74,7 +74,7 @@ final class VAUSessionTests: XCTestCase {
             headerFields: userPseudonymHeaders1
         )!
         chain.response = response1
-        interceptor.intercept(chain: chain)
+        interceptor.interceptPublisher(chain: chain)
             .test(expectations: { _ in
                 expect(currentVauEndpoints.count) == 2
                 expect(currentVauEndpoints[1]?.absoluteString) == "\(url)/VAU/pseudo1"
@@ -89,7 +89,7 @@ final class VAUSessionTests: XCTestCase {
             headerFields: userPseudonymHeaders2
         )!
         chain.response = response2
-        interceptor.intercept(chain: chain)
+        interceptor.interceptPublisher(chain: chain)
             .test(expectations: { _ in
                 expect(currentVauEndpoints.count) == 3
                 expect(currentVauEndpoints[2]?.absoluteString) == "\(url)/VAU/pseudo2"

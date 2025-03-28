@@ -117,7 +117,7 @@ public class FHIRClient {
         if let bodyData = operation.httpBody {
             request.httpBody = bodyData
         }
-        return httpClient.send(request: request)
+        return httpClient.sendPublisher(request: request)
             .receive(on: receiveQueue)
             .tryMap { data, urlResponse, status in
                 let response = FHIRClient.Response.from(response: urlResponse, status: status, data: data)

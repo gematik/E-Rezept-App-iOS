@@ -72,7 +72,7 @@ struct PickupCodeView: View {
                     }
                 }
             }
-            .accentColor(Colors.primary600)
+            .tint(Colors.primary700)
             .navigationViewStyle(StackNavigationViewStyle())
         }
     }

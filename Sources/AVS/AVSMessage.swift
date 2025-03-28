@@ -66,3 +66,5 @@ public struct AVSMessage: Encodable, Equatable {
         self.accessCode = accessCode
     }
 }
+
+extension AVSMessage: Sendable {}

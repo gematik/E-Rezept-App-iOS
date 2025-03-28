@@ -10,5 +10,11 @@
         "text": "**ePA compatibility** \n 🤝 Your prescriptions are now fully compatible with the electronic patient file. \n \n **Improved** \n ✨ Expired prescriptions are now archived.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Better readability** \n We have made our brand color a little darker to increase the color contrast and thereby improve readability. \n \n **Optimized input field** \n The cursor in the input field for the access number has been removed.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

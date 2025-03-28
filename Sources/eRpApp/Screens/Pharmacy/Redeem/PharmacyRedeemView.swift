@@ -126,10 +126,10 @@ struct PharmacyRedeemView: View {
                             Image(systemName: SFSymbolName.back)
                                 .font(.body.bold())
                                 .padding(0)
-                                .foregroundColor(Colors.primary600)
+                                .foregroundColor(Colors.primary700)
                             Text(L10n.cdwBtnRcHelpBack)
                                 .font(.body)
-                                .foregroundColor(Colors.primary600)
+                                .foregroundColor(Colors.primary700)
                                 .padding(0)
                         }
                     })

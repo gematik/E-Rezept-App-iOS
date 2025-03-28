@@ -58,8 +58,8 @@ struct Hint<Action: Equatable>: Equatable, Identifiable { // swiftlint:disable:t
         var actionColor: Color {
             switch self {
             case .important: return Colors.red900
-            case .awareness: return Colors.primary600
-            case .neutral: return Colors.primary600
+            case .awareness: return Colors.primary700
+            case .neutral: return Colors.primary700
             }
         }
 

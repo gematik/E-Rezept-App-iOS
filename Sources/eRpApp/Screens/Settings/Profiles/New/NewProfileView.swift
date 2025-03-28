@@ -93,7 +93,7 @@ struct NewProfileView: View {
                 }
                 .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             }
-            .accentColor(Colors.primary600)
+            .tint(Colors.primary700)
         }
     }
 }

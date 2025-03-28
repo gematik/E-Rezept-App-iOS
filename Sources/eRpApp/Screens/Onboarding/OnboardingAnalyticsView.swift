@@ -40,7 +40,7 @@ struct OnboardingAnalyticsView: View {
                                 Text(L10n.onbAnaTxtUsability)
                             }, icon: {
                                 Image(systemName: SFSymbolName.sparkles)
-                                    .foregroundColor(Colors.primary600)
+                                    .foregroundColor(Colors.primary700)
                                     .font(.title3)
                             })
 
@@ -48,7 +48,7 @@ struct OnboardingAnalyticsView: View {
                                 Text(L10n.onbAnaTxtCrash)
                             }, icon: {
                                 Image(systemName: SFSymbolName.boltFill)
-                                    .foregroundColor(Colors.primary600)
+                                    .foregroundColor(Colors.primary700)
                                     .font(.title2)
                             })
 
@@ -56,7 +56,7 @@ struct OnboardingAnalyticsView: View {
                                 Text(L10n.onbAnaTxtAnonymouse)
                             }, icon: {
                                 Image(systemName: SFSymbolName.person)
-                                    .foregroundColor(Colors.primary600)
+                                    .foregroundColor(Colors.primary700)
                                     .font(.title2)
                             })
                         }
@@ -83,7 +83,7 @@ struct OnboardingAnalyticsView: View {
             .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnContinue)
             .font(Font.body.weight(.semibold))
             .foregroundColor(Colors.systemColorWhite)
-            .background(Colors.primary600)
+            .background(Colors.primary700)
             .cornerRadius(16)
         }
     }

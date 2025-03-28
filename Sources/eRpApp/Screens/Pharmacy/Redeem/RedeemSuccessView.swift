@@ -115,20 +115,20 @@ struct RedeemSuccessView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     HStack(alignment: .top, spacing: 16) {
                         Image(systemName: SFSymbolName.numbers1circleFill)
-                            .foregroundColor(Colors.primary600)
+                            .foregroundColor(Colors.primary700)
                             .font(Font.title3.bold())
                         Text(L10n.rdmSccTxtShipmentContent1)
                     }
                     HStack(alignment: .top, spacing: 16) {
                         Image(systemName: SFSymbolName.numbers2circleFill)
-                            .foregroundColor(Colors.primary600)
+                            .foregroundColor(Colors.primary700)
                             .font(Font.title3.bold())
 
                         Text(L10n.rdmSccTxtShipmentContent2)
                     }
                     HStack(alignment: .top, spacing: 16) {
                         Image(systemName: SFSymbolName.numbers3circleFill)
-                            .foregroundColor(Colors.primary600)
+                            .foregroundColor(Colors.primary700)
                             .font(Font.title3.bold())
                         Text(L10n.rdmSccTxtShipmentContent3)
                     }

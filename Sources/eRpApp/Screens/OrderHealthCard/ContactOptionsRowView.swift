@@ -73,7 +73,7 @@ struct ContactOptionsRowView: View {
                         .fontWeight(.semibold)
                         .font(.body)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                         .padding()
                         .fixedSize(horizontal: false, vertical: true)
                 }

@@ -169,7 +169,7 @@ struct HealthCardPasswordCanView: View {
                                 store.send(.resetNavigation)
                             }
                         }
-                        .accentColor(Colors.primary700)
+                        .tint(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())
                     })
                 }

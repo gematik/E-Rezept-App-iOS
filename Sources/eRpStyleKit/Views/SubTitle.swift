@@ -225,7 +225,7 @@ public struct InfoNavigationSubTitleStyle: SubTitleStyle {
             Spacer(minLength: minChevronSpacing)
 
             Image(systemName: SFSymbolName.info)
-                .foregroundColor(Colors.primary600)
+                .foregroundColor(Colors.primary700)
                 .font(.subheadline.weight(.semibold))
         }
         .bottomDivider(showSeparator: showSeparator)

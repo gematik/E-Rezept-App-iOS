@@ -59,7 +59,7 @@ struct GrantChargeItemConsentDrawerView: View {
                     store.send(.grantChargeItemsConsentDismiss, animation: .easeInOut)
                 } label: {
                     Text(L10n.mainBtnConsentDrawerCancel)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                         .fontWeight(.semibold)
                 }
                 .frame(minHeight: 52, alignment: .center) // quaternary button minHeight

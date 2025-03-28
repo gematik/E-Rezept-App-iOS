@@ -154,7 +154,7 @@ struct PharmacyDetailView: View {
                         } icon: {
                             Image(systemName: SFSymbolName.mapPinEllipse)
                                 .font(.title2)
-                                .foregroundColor(Colors.primary600)
+                                .foregroundColor(Colors.primary700)
                         }
                     }
                     .buttonStyle(.picture(isActive: true))
@@ -168,7 +168,7 @@ struct PharmacyDetailView: View {
                         } icon: {
                             Image(systemName: SFSymbolName.phone)
                                 .font(.title2)
-                                .foregroundColor(Colors.primary600)
+                                .foregroundColor(Colors.primary700)
                         }
                     }
                     .buttonStyle(.picture(isActive: true))
@@ -182,7 +182,7 @@ struct PharmacyDetailView: View {
                         } icon: {
                             Image(systemName: SFSymbolName.envelope)
                                 .font(.title2)
-                                .foregroundColor(Colors.primary600)
+                                .foregroundColor(Colors.primary700)
                         }
                     }
                     .buttonStyle(.picture(isActive: true))

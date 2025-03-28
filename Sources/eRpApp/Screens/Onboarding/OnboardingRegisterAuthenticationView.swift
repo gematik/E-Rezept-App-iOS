@@ -290,7 +290,7 @@ extension OnboardingRegisterAuthenticationView {
                         .accessibility(identifier: A18n.onboarding.authentication.onbAuthBtnPassword)
                         .font(Font.body.weight(.semibold))
                         .foregroundColor(!store.hasValidSelection ? Colors.systemGray : Colors.systemColorWhite)
-                        .background(!store.hasValidSelection ? Colors.systemGray5 : Colors.primary600)
+                        .background(!store.hasValidSelection ? Colors.systemGray5 : Colors.primary700)
                         .cornerRadius(16)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .fixedSize(horizontal: false, vertical: true)

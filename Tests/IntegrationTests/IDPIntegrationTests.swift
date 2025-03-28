@@ -529,7 +529,7 @@ final class IDPIntegrationTests: XCTestCase {
 
         var urlStep7RedirectVal: URL?
         httpClient
-            .send(
+            .sendPublisher(
                 request: request,
                 interceptors: [
                     LoggingInterceptor(log: .url),

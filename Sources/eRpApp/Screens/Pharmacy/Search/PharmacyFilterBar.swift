@@ -73,7 +73,7 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
             scrollView.alwaysBounceHorizontal = false
         }
         .accessibility(identifier: A11y.pharmacySearch.phaFilterBar)
-        .accentColor(Colors.primary)
+        .tint(Colors.primary)
     }
 
     struct FilterElement: View {

@@ -33,12 +33,13 @@ final class RealAVSClientTests: XCTestCase {
 
     let avsURLString = "https://beispielurlversand.de/"
 
-    func testSend() {
+    func testSend() async throws {
         // given
         var counter = 0
         let endPoint = AVSEndpoint(url: URL(string: avsURLString)!)
         stub(
-            condition: isAbsoluteURLString(avsURLString)
+            condition:
+            isAbsoluteURLString(avsURLString)
                 && isMethodPOST()
                 && hasHeaderNamed("Content-Type", value: "application/pkcs7-mime")
         ) { _ in
@@ -50,21 +51,21 @@ final class RealAVSClientTests: XCTestCase {
         let sut = RealAVSClient()
 
         // then
-        sut.send(data: Data(), to: endPoint)
-            .test(
-                expectations: { httpResponse in
-                    expect(httpResponse.status) == .ok
-                }
-            )
+        let httpResponse = try await sut.send(data: Data(), to: endPoint)
+        expect(httpResponse.status) == .ok
         expect(counter) == 1
     }
 
-    func testSend_returnBadAccess() {
+    func testSend_returnBadAccess() async throws {
         // given
         var counter = 0
         let status = 400
         let endPoint = AVSEndpoint(url: URL(string: avsURLString)!)
-        stub(condition: isAbsoluteURLString(avsURLString) && isMethodPOST()) { _ in
+        stub(
+            condition:
+            isAbsoluteURLString(avsURLString)
+                && isMethodPOST()
+        ) { _ in
             counter += 1
             return fixture(filePath: "", status: Int32(status), headers: nil)
         }
@@ -73,14 +74,8 @@ final class RealAVSClientTests: XCTestCase {
         let sut = RealAVSClient()
 
         // then
-        sut.send(data: Data(), to: endPoint)
-            .test(
-                failure: { error in
-                    expect(error) == .network(error: HTTPClientError.httpError(URLError(.init(rawValue: status))))
-                },
-                expectations: { _ in
-                }
-            )
+        let httpResponse = try await sut.send(data: Data(), to: endPoint)
+        expect(httpResponse.status) == .badRequest
         expect(counter) == 1
     }
 }

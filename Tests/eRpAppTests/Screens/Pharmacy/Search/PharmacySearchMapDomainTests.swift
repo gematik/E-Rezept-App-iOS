@@ -32,7 +32,7 @@ class PharmacySearchMapDomainTests: XCTestCase {
     typealias TestStore = TestStoreOf<PharmacySearchMapDomain>
 
     var resourceHandlerMock: MockResourceHandler!
-    var searchHistoryMock: MockSearchHistory!
+    var searchHistoryMock: SearchHistoryMock!
     var mockUserSession: MockUserSession!
     var mockPrescriptionRepository: MockPrescriptionRepository!
 
@@ -40,7 +40,7 @@ class PharmacySearchMapDomainTests: XCTestCase {
         super.setUp()
 
         resourceHandlerMock = MockResourceHandler()
-        searchHistoryMock = MockSearchHistory()
+        searchHistoryMock = SearchHistoryMock()
         mockUserSession = MockUserSession()
         mockPrescriptionRepository = MockPrescriptionRepository()
     }

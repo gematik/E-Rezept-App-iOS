@@ -33,14 +33,14 @@ struct MedicationRedeemView: View {
                 .fontWeight(.semibold)
                 .font(.body)
                 .multilineTextAlignment(.center)
-                .foregroundColor(isEnabled ? Colors.primary600 : Colors.systemColorWhite)
+                .foregroundColor(isEnabled ? Colors.primary700 : Colors.systemColorWhite)
                 .padding()
             Spacer()
         }
-        .background(isEnabled ? Colors.systemGray6 : Colors.primary600)
+        .background(isEnabled ? Colors.systemGray6 : Colors.primary700)
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(
-                isEnabled ? Colors.systemGray6 : Colors.primary600,
+                isEnabled ? Colors.systemGray6 : Colors.primary700,
                 lineWidth: 1
             )
         )

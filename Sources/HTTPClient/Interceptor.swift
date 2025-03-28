@@ -27,7 +27,8 @@ public protocol Interceptor {
     /// - Parameter chain: request chain to be intercepted
     /// - Note: A call to `chain.proceed(request:)` is critical when implementing this protocol function.
     /// - Returns: `AnyPublisher` that emits the response as `HTTPClient.Response`
-    func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError>
+    @available(*, deprecated, message: "Use async version instead")
+    func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError>
 
     /// Intercept the chain (e.g. modify it's request)
     ///
@@ -36,4 +37,21 @@ public protocol Interceptor {
     /// - Note: Only `HTTPClientError` are supposed to be thrown.
     /// - Returns: Response emitted as `HTTPClient.Response`
     func interceptAsync(chain: Chain) async throws -> HTTPResponse
+}
+
+extension Interceptor {
+    /// Intercept the chain (e.g. modify it's request)
+    ///
+    /// - Parameter chain: request chain to be intercepted
+    /// - Note: A call to `chain.proceed(request:)` is critical when implementing this protocol function.
+    /// - Returns: `AnyPublisher` that emits the response as `HTTPClient.Response`
+    @available(
+        *,
+        deprecated,
+        renamed: "interceptPublisher(chain:)",
+        message: "Use async version instead"
+    )
+    public func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+        interceptPublisher(chain: chain)
+    }
 }

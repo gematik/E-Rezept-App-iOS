@@ -52,7 +52,7 @@ public struct FlagLabelStyle: LabelStyle {
     var iconColor: Color {
         switch flagType {
         case .blue:
-            return Colors.primary600
+            return Colors.primary700
         case .red:
             return Colors.red600
         }

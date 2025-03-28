@@ -1,3 +1,34 @@
+# Release 1.29.0
+
+### internal (2 changes)
+
+- Updated ComposableCoreLocation
+- Soft deprecate HTTPClient's Combine.Publisher API in favor of async await
+
+### fixed (1 change)
+
+- Remove visible text field cursor from CardWallCANInputView
+
+### added (1 change)
+
+- New primary color for improved accessibility
+
+# Release 1.28.0
+
+### fixed (1 change)
+
+- Fix messages not displaying when onboarding date is not set in rare cases
+
+### added (2 changes)
+
+- Implement GemWorkflow 1.4 FHIR
+- Implement Abgabedaten Profile 1.3
+
+### changed (2 changes)
+
+- tasks which are inProgress to be archived as soon as they hit the expiry date
+- default name of the generated chargeItem pdf to unique name
+
 # Release 1.27.0
 
 ### changed (1 change)

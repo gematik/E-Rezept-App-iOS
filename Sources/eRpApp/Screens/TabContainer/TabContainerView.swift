@@ -77,7 +77,7 @@ struct TabContainerView: View {
                 .task {
                     await store.send(.task).finish()
                 }
-                .tint(Colors.primary600)
+                .tint(Colors.primary700)
                 .zIndex(0)
             }
         }

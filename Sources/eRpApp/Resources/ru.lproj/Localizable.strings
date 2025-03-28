@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Погашено";
 "stg_txt_charge_item_sum" = "Итоговая цена";
 "stg_txt_demo_mode" = "Демонстрационный режим";
-"stg_txt_donor_register_alert_message" = "Вы будете перенаправлены в реестр доноров органов. Чтобы просмотреть и изменить данные о донорстве органов, вам необходимо войти туда.";
+"stg_txt_donor_register_alert_message" = "Вы будете перенаправлены на сайт реестра донорства органов. Чтобы просмотреть и изменить данные о донорстве органов, вам необходимо войти туда.";
 "stg_txt_donor_register_alert_title" = "Открыть реестр доноров органов?";
 "stg_txt_edit_profile_background_section_title" = "Фоновый цвет";
 "stg_txt_edit_profile_charge_item_list_section_title" = "расходные квитанции";

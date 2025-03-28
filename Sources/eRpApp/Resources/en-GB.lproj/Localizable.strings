@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Redeemed on";
 "stg_txt_charge_item_sum" = "total price";
 "stg_txt_demo_mode" = "Demo mode";
-"stg_txt_donor_register_alert_message" = "You will be redirected to the organ donation register. In order to view and change your organ donation data, you must log in there.";
+"stg_txt_donor_register_alert_message" = "You will be redirected to the organ donation register website. In order to view and change your organ donation data, you must log in there.";
 "stg_txt_donor_register_alert_title" = "Open organ donation register?";
 "stg_txt_edit_profile_background_section_title" = "Background colour";
 "stg_txt_edit_profile_charge_item_list_section_title" = "cost receipts";

@@ -107,12 +107,12 @@ class DebugLiveLogger {
     #endif
 
     class LogInterceptor: Interceptor {
-        func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+        func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
             #if ENABLE_DEBUG_VIEW
             let request = chain.request
             let sentAt = Date()
 
-            return chain.proceed(request: request)
+            return chain.proceedPublisher(request: request)
                 .handleEvents(receiveOutput: { data, response, status in
                                   DebugLiveLogger.shared.log(
                                       request: request,

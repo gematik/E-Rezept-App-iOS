@@ -21,7 +21,9 @@ import Foundation
 import HTTPClient
 
 protocol AVSClient {
-    func send(data: Data, to endpoint: AVSEndpoint) -> AnyPublisher<HTTPResponse, AVSError>
+    /// Send data to the given endpoint
+    /// Note: Only `AVSError`s are supposed to be thrown
+    func send(data: Data, to endpoint: AVSEndpoint) async throws -> HTTPResponse
 }
 
 class RealAVSClient {
@@ -33,7 +35,7 @@ class RealAVSClient {
 }
 
 extension RealAVSClient: AVSClient {
-    func send(data: Data, to endpoint: AVSEndpoint) -> AnyPublisher<HTTPResponse, AVSError> {
+    func send(data: Data, to endpoint: AVSEndpoint) async throws -> HTTPResponse {
         var request = URLRequest(url: endpoint.url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData)
         request.httpMethod = "POST"
         request.addValue("application/pkcs7-mime", forHTTPHeaderField: "Content-Type")
@@ -41,11 +43,10 @@ extension RealAVSClient: AVSClient {
             request.addValue(value, forHTTPHeaderField: key)
         }
         request.httpBody = data
-        return httpClient
-            .send(request: request)
-            .mapError {
-                $0.asAVSError()
-            }
-            .eraseToAnyPublisher()
+        do {
+            return try await httpClient.sendAsync(request: request)
+        } catch {
+            throw error.asAVSError()
+        }
     }
 }

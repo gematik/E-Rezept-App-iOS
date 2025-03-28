@@ -35,7 +35,7 @@ class PharmacySearchDomainTests: XCTestCase {
     // For tests we can lower the delay for search start
     var delaySearchStart: DispatchQueue.SchedulerTimeType.Stride = 0.1
     var resourceHandlerMock: MockResourceHandler!
-    var searchHistoryMock: MockSearchHistory!
+    var searchHistoryMock: SearchHistoryMock!
     var mockUserSession: MockUserSession!
     var mockPrescriptionRepository: MockPrescriptionRepository!
 
@@ -44,7 +44,7 @@ class PharmacySearchDomainTests: XCTestCase {
 
         mockUserSession = MockUserSession()
         resourceHandlerMock = MockResourceHandler()
-        searchHistoryMock = MockSearchHistory()
+        searchHistoryMock = SearchHistoryMock()
         mockPrescriptionRepository = MockPrescriptionRepository()
     }
 
@@ -89,7 +89,7 @@ class PharmacySearchDomainTests: XCTestCase {
             )
         })
 
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
 
         // when search text changes to valid search term...
         await sut.send(.binding(.set(\.searchText, testSearchText))) { state in
@@ -121,7 +121,7 @@ class PharmacySearchDomainTests: XCTestCase {
         let testSearchText = "Apodfdfd"
         let expected: Result<[PharmacyLocationViewModel], PharmacyRepositoryError> = .success([])
 
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
 
         // when search text changes to valid search term...
         await sut.send(.binding(.set(\.searchText, testSearchText))) { state in
@@ -135,7 +135,7 @@ class PharmacySearchDomainTests: XCTestCase {
             state.lastSearchCriteria = .init(searchTerm: testSearchText, filter: [])
         }
         await testScheduler.advance()
-        expect(self.searchHistoryMock.addHistoryItemReceivedItem).to(equal(testSearchText))
+        expect(self.searchHistoryMock.addHistoryItemItemStringVoidReceivedItem).to(equal(testSearchText))
         // when search request is done...
         await sut.receive(.response(.pharmaciesReceived(expected))) { state in
             // expect it to be empty...
@@ -160,7 +160,7 @@ class PharmacySearchDomainTests: XCTestCase {
         }
         let expectedResult: Result<[PharmacyLocationViewModel], PharmacyRepositoryError> = .success(expectedPharmacy)
 
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
 
         // when user hits Location button start search...
         await sut.send(.performSearch) { state in
@@ -191,7 +191,7 @@ class PharmacySearchDomainTests: XCTestCase {
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
         let locationManagerSubject = AsyncStream<LocationManager.Action> { _ in
         }
         sut.dependencies.locationManager.authorizationStatus = { .denied }
@@ -219,7 +219,7 @@ class PharmacySearchDomainTests: XCTestCase {
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
 
         await sut.send(.loadAndNavigateToPharmacy(selectedPharmacy)) {
             $0.searchState = .startView(loading: true)
@@ -253,7 +253,7 @@ class PharmacySearchDomainTests: XCTestCase {
         let mockPharmacyRepo = MockPharmacyRepository()
         mockPharmacyRepo.updateFromRemoteByReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
 
         await sut.send(.loadAndNavigateToPharmacy(selectedPharmacy)) {
             $0.searchState = .startView(loading: true)
@@ -293,7 +293,7 @@ class PharmacySearchDomainTests: XCTestCase {
             .eraseToAnyPublisher()
 
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
 
         await sut.send(.loadAndNavigateToPharmacy(selectedPharmacy.pharmacyLocation)) {
             $0.searchState = .startView(loading: true)
@@ -735,7 +735,7 @@ class PharmacySearchDomainTests: XCTestCase {
         let state = TestData.stateWithStartView
         let mockPharmacyRepo = MockPharmacyRepository()
         let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .authorizedWhenInUse }
         sut.dependencies.locationManager.delegate = {
@@ -783,7 +783,7 @@ class PharmacySearchDomainTests: XCTestCase {
                 )
             }
         )
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
         let locationManagerSubject = PassthroughSubject<LocationManager.Action, Never>()
         sut.dependencies.locationManager.authorizationStatus = { .denied }
         sut.dependencies.locationManager.requestWhenInUseAuthorization = {}
@@ -1043,7 +1043,7 @@ class PharmacySearchDomainTests: XCTestCase {
         sut.dependencies.locationManager.requestLocation = {}
         sut.dependencies.locationManager.stopUpdatingLocation = {}
         sut.dependencies.locationManager.location = { TestData.testLocation }
-        searchHistoryMock.historyItemsReturnValue = []
+        searchHistoryMock.historyItemsStringReturnValue = []
 
         let expectedPharmacyLocation = TestData.pharmaciesWithLocations.map { pharmacies in
             PharmacyLocationViewModel(

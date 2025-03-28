@@ -71,11 +71,11 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
     func disabled_testLoadVauCertificateFromServer() throws {
         // given
         let serverURL = URL(string: "http://some-service.com/path")!
-        let trustStoreClient = MockTrustStoreClient()
-        trustStoreClient.loadCertListFromServerReturnValue = Just(certList)
+        let trustStoreClient = TrustStoreClientMock()
+        trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorReturnValue = Just(certList)
             .setFailureType(to: TrustStoreError.self)
             .eraseToAnyPublisher()
-        trustStoreClient.loadOCSPListFromServerReturnValue = Just(ocspList)
+        trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorReturnValue = Just(ocspList)
             .setFailureType(to: TrustStoreError.self)
             .eraseToAnyPublisher()
         let storage = MemStorage()
@@ -99,18 +99,18 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         var success = false
 
         // then
-        expect(trustStoreClient.loadCertListFromServerCalled) == false
-        expect(trustStoreClient.loadCertListFromServerCalled) == false
+        expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled) == false
+        expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled) == false
 
         sut.loadVauCertificate()
             .test(
                 expectations: { _ in
-                    expect(trustStoreClient.loadCertListFromServerCalled) == true
-                    expect(trustStoreClient.loadCertListFromServerCallsCount) == 1
+                    expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled) == true
+                    expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount) == 1
                     expect(storage.certListState) == self.certList
 
-                    expect(trustStoreClient.loadOCSPListFromServerCalled) == true
-                    expect(trustStoreClient.loadOCSPListFromServerCallsCount) == 1
+                    expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled) == true
+                    expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount) == 1
                     expect(storage.ocspListState) == self.ocspList
                     success = true
                 }
@@ -121,8 +121,8 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         // When saved in storage, the object will not be requested from the server again
         sut.loadVauCertificate()
             .test(expectations: { _ in
-                expect(trustStoreClient.loadCertListFromServerCallsCount) == 1
-                expect(trustStoreClient.loadOCSPListFromServerCallsCount) == 1
+                expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount) == 1
+                expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount) == 1
                 success = true
             })
 
@@ -135,8 +135,8 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         currentDate = currentDate.advanced(by: TimeInterval(expirationInterval))
         sut.loadVauCertificate()
             .test(failure: { error in
-                expect(trustStoreClient.loadCertListFromServerCallsCount) == 1
-                expect(trustStoreClient.loadOCSPListFromServerCallsCount) == 2
+                expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount) == 1
+                expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount) == 2
 
                 expect(error) == TrustStoreError.invalidOCSPResponse
                 success = true
@@ -150,13 +150,15 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
     func testLoadVauCertificateFromServer_failWhenOCSPResponsesCannotBeVerified() throws {
         // given
         let serverURL = URL(string: "http://some-service.com/path")!
-        let trustStoreClient = MockTrustStoreClient()
-        trustStoreClient.loadCertListFromServerReturnValue = Just(certList)
+        let trustStoreClient = TrustStoreClientMock()
+        trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorReturnValue = Just(certList)
             .setFailureType(to: TrustStoreError.self)
             .eraseToAnyPublisher()
-        trustStoreClient.loadOCSPListFromServerReturnValue = Just(ocspList_NotVerifiableByTrustStore)
-            .setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
+        trustStoreClient
+            .loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorReturnValue =
+            Just(ocspList_NotVerifiableByTrustStore)
+                .setFailureType(to: TrustStoreError.self)
+                .eraseToAnyPublisher()
         let storage = MemStorage()
         storage.set(certList: nil)
         storage.set(ocspList: nil)
@@ -175,17 +177,17 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         )
 
         // then
-        expect(trustStoreClient.loadCertListFromServerCalled) == false
-        expect(trustStoreClient.loadOCSPListFromServerCalled) == false
+        expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled) == false
+        expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled) == false
 
         sut.loadVauCertificate()
             .test(failure: { error in
-                expect(trustStoreClient.loadCertListFromServerCalled) == true
-                expect(trustStoreClient.loadCertListFromServerCallsCount) == 1
+                expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCalled) == true
+                expect(trustStoreClient.loadCertListFromServerAnyPublisherCertListTrustStoreErrorCallsCount) == 1
                 expect(storage.certListState).to(beNil())
 
-                expect(trustStoreClient.loadOCSPListFromServerCalled) == true
-                expect(trustStoreClient.loadOCSPListFromServerCallsCount) == 1
+                expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCalled) == true
+                expect(trustStoreClient.loadOCSPListFromServerAnyPublisherOCSPListTrustStoreErrorCallsCount) == 1
                 expect(storage.ocspListState) == self.ocspList_NotVerifiableByTrustStore
 
                 expect(error) == .eeCertificateOCSPStatusVerification

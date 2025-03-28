@@ -438,7 +438,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             self.order = order
         }
 
-        func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+        func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
             if chain.request.url!.absoluteString.contains("Communication"),
                let body = chain.request.httpBody,
                let bodyString = String(data: body, encoding: .utf8) {
@@ -450,7 +450,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                     .rawValue)\\",\\"version\\":1}"}],"recipient":[{"identifier":{"system":"https:\\/\\/gematik.de\\/fhir\\/sid\\/telematik-id","value":"3-SMC-B-Testkarte-883110000094055"}}],"resourceType":"Communication","status":"unknown"}
                 """
             }
-            return chain.proceed(request: chain.request)
+            return chain.proceedPublisher(request: chain.request)
                 .map { response in
                     if response.response.url!.absoluteString.contains("Communication"),
                        response.status.rawValue == 201,

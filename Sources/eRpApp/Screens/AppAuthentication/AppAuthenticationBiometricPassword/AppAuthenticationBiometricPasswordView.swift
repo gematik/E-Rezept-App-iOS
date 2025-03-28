@@ -91,7 +91,7 @@ struct AppAuthenticationBiometricPasswordView: View {
 
                     Button(L10n.authBtnBapChange) {
                         store.send(.switchToPassword(true), animation: .default)
-                    }.foregroundColor(Colors.primary600)
+                    }.foregroundColor(Colors.primary700)
                         .font(.body.weight(.semibold))
                         .accessibility(identifier: A11y.auth.authBtnBapChange)
                 }
@@ -152,7 +152,7 @@ struct PasswordView: View {
                 }, label: {
                     Text(store
                         .biometryType == .faceID ? L10n.authBtnBapBackFaceID : L10n.authBtnBapBackTouchID)
-                }).foregroundColor(Colors.primary600)
+                }).foregroundColor(Colors.primary700)
                     .font(.body.weight(.regular))
                     .accessibility(identifier: A11y.auth.authBtnBapChange)
                     .fixedSize(horizontal: false, vertical: true)
