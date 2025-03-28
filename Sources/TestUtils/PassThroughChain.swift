@@ -34,7 +34,7 @@ public class PassThroughChain: Chain {
     /// if set this response is used in favor of individual properties
     public var httpResponse: HTTPResponse?
 
-    public func proceed(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    public func proceedPublisher(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         incomingProceedRequests.append(request)
         let fallback = HTTPResponse(data: responseData, response: response, status: statusCode)
         return Just(httpResponse ?? fallback)

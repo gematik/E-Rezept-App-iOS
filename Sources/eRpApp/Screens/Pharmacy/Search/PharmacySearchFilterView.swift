@@ -112,7 +112,7 @@ struct PharmacySearchFilterView: View {
                 Text(filter.localizedStringKey, bundle: .module)
                 Spacer()
                 Image(systemName: isActive ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
-                    .foregroundColor(isActive ? Colors.primary600 : Colors.systemGray)
+                    .foregroundColor(isActive ? Colors.primary700 : Colors.systemGray)
             }.padding([.top, .bottom], 8)
         }
     }

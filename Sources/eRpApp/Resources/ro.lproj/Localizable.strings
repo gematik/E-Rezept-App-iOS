@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Răscumpărat pe";
 "stg_txt_charge_item_sum" = "pretul total";
 "stg_txt_demo_mode" = "Modul demonstrativ";
-"stg_txt_donor_register_alert_message" = "Veți fi redirecționat către registrul donatorilor de organe. Pentru a vizualiza și modifica datele despre donarea de organe, trebuie să vă conectați acolo.";
+"stg_txt_donor_register_alert_message" = "Veți fi redirecționat către site-ul web al registrului donării de organe. Pentru a vizualiza și modifica datele despre donarea de organe, trebuie să vă conectați acolo.";
 "stg_txt_donor_register_alert_title" = "Deschideți registrul donării de organe?";
 "stg_txt_edit_profile_background_section_title" = "culoare de fundal";
 "stg_txt_edit_profile_charge_item_list_section_title" = "chitanțe de cheltuieli";

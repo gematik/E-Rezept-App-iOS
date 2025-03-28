@@ -30,7 +30,7 @@ struct OnboardingLegalInfoCheckmarkView: View {
             .aspectRatio(contentMode: .fit)
             .frame(height: iconSize > maxIconSize ? maxIconSize : iconSize)
             .font(Font.title3.weight(.bold))
-            .foregroundColor(isAccepted ? Colors.primary600 : Colors.systemLabelTertiary)
+            .foregroundColor(isAccepted ? Colors.primary700 : Colors.systemLabelTertiary)
             .padding([.leading, .trailing], 8)
     }
 }

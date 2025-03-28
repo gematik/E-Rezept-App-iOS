@@ -10,5 +10,11 @@
         "text": "**Compatibilità ePA** \n 🤝 Le tue prescrizioni ora sono completamente compatibili con la cartella clinica elettronica. \n \n **Migliorato** \n ✨ Le ricette scadute ora scompaiono nell'archivio.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Migliore leggibilità** \n Abbiamo reso il colore del nostro marchio leggermente più scuro per aumentare il contrasto cromatico e quindi migliorare la leggibilità. \n \n **Campo di immissione ottimizzato** \n Il cursore nel campo di immissione del numero di accesso è stato rimosso.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

@@ -41,7 +41,7 @@ class VAUInterceptor: Interceptor {
         self.vauEndpointHandler = vauEndpointHandler
     }
 
-    func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         let request = chain.request
         guard let originalUrl = request.url else {
             return Fail(error: HTTPClientError
@@ -60,7 +60,7 @@ class VAUInterceptor: Interceptor {
             // [REQ:gemSpec_Krypt:A_20161-01#3] Encapsulate "real" HTTPRequest into VAU envelop
             .processToVauRequest(urlRequest: request, vauCryptoProvider: vauCryptoProvider)
             .flatMap { vauCrypto, vauRequest -> AnyPublisher<HTTPResponse, HTTPClientError> in
-                chain.proceed(request: vauRequest)
+                chain.proceedPublisher(request: vauRequest)
                     // Process VAU server response (validate and extract+decrypt inner FHIR service response)
                     // [REQ:gemSpec_Krypt:A_20174#12] 2: Handle userpseudonym
                     .handleUserPseudonym(vauEndpointHandler: self.vauEndpointHandler)

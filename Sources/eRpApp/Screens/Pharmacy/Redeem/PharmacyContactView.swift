@@ -101,7 +101,7 @@ struct PharmacyContactView: View {
                         })
                     }
                 }
-                .accentColor(Colors.primary600)
+                .tint(Colors.primary700)
                 .background(Color(.secondarySystemBackground).ignoresSafeArea())
                 .navigationBarTitle(L10n.phaContactTitleContact, displayMode: .inline)
                 .navigationBarItems(

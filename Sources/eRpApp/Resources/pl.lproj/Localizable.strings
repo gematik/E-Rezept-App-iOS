@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Odkupiony";
 "stg_txt_charge_item_sum" = "cena całkowita";
 "stg_txt_demo_mode" = "Tryb demonstracyjny";
-"stg_txt_donor_register_alert_message" = "Zostaniesz przekierowany do rejestru dawców narządów. Aby przeglądać i zmieniać dane dotyczące dawstwa narządów, musisz się tam zalogować.";
+"stg_txt_donor_register_alert_message" = "Zostaniesz przekierowany na stronę internetową rejestru dawców narządów. Aby przeglądać i zmieniać dane dotyczące dawstwa narządów, musisz się tam zalogować.";
 "stg_txt_donor_register_alert_title" = "Otwarty rejestr dawstwa narządów?";
 "stg_txt_edit_profile_background_section_title" = "Kolor tła";
 "stg_txt_edit_profile_charge_item_list_section_title" = "wpływy z wydatków";

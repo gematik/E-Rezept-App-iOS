@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Kullanıldığı tarih";
 "stg_txt_charge_item_sum" = "toplam fiyat";
 "stg_txt_demo_mode" = "Demo modu";
-"stg_txt_donor_register_alert_message" = "Organ bağışçısı kayıt sayfasına yönlendirileceksiniz. Organ bağışı verilerinizi görüntülemek ve değiştirmek için buraya giriş yapmalısınız.";
+"stg_txt_donor_register_alert_message" = "Organ bağışçısı kayıt web sitesine yönlendirileceksiniz. Organ bağışı verilerinizi görüntülemek ve değiştirmek için buraya giriş yapmalısınız.";
 "stg_txt_donor_register_alert_title" = "Organ bağışı kaydı açılsın mı?";
 "stg_txt_edit_profile_background_section_title" = "Arka plan rengi";
 "stg_txt_edit_profile_charge_item_list_section_title" = "gider makbuzları";

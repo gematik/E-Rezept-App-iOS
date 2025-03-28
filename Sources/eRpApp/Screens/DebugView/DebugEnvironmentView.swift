@@ -74,7 +74,7 @@ struct DebugEnvironmentView: View {
                     Text("v-eGK")
                         .font(.footnote)
                         .offset(x: 40, y: 8)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                 }
             }
             Spacer()

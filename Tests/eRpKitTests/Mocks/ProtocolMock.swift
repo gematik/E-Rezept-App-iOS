@@ -19,6 +19,11 @@
 
 import eRpKit
 
+// NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
+
+// sourcery:begin: AutoMockable
+// sourcery:end
+
 // sourcery:begin: ProtocolMock
 extension ErxLocalDataStore {}
 extension ErxRemoteDataStore {}

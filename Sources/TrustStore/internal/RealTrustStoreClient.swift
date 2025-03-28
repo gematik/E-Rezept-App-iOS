@@ -55,14 +55,14 @@ class RealTrustStoreClient {
 extension RealTrustStoreClient: TrustStoreClient {
     func loadCertListFromServer() -> AnyPublisher<CertList, TrustStoreError> {
         httpClient
-            .send(request: URLRequest(url: certListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
+            .sendPublisher(request: URLRequest(url: certListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
             .processCertListResponse()
             .eraseToAnyPublisher()
     }
 
     func loadOCSPListFromServer() -> AnyPublisher<OCSPList, TrustStoreError> {
         httpClient
-            .send(request: URLRequest(url: ocspListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
+            .sendPublisher(request: URLRequest(url: ocspListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
             .processOCSPListResponse()
             .eraseToAnyPublisher()
     }

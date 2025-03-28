@@ -30,7 +30,7 @@ class URLRequestChain: Chain {
         self.interceptors = interceptors
     }
 
-    func proceed(request newRequest: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    func proceedPublisher(request newRequest: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         guard let interceptor = interceptors.first else {
             // interceptors is empty
             request = newRequest
@@ -38,7 +38,7 @@ class URLRequestChain: Chain {
         }
         request = newRequest
         let nextChain = URLRequestChain(request: newRequest, session: session, with: Array(interceptors.dropFirst()))
-        return interceptor.intercept(chain: nextChain)
+        return interceptor.interceptPublisher(chain: nextChain)
     }
 
     func proceedAsync(request newRequest: URLRequest) async throws -> HTTPResponse {

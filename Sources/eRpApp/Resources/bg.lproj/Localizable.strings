@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Изкупено на";
 "stg_txt_charge_item_sum" = "обща цена";
 "stg_txt_demo_mode" = "Демо режим";
-"stg_txt_donor_register_alert_message" = "Ще бъдете пренасочени към регистъра на донорите на органи. За да видите и промените вашите данни за даряване на органи, трябва да влезете там.";
+"stg_txt_donor_register_alert_message" = "Ще бъдете пренасочени към уебсайта на регистъра на донорите на органи. За да видите и промените вашите данни за даряване на органи, трябва да влезете там.";
 "stg_txt_donor_register_alert_title" = "Отваряне на регистъра за даряване на органи?";
 "stg_txt_edit_profile_background_section_title" = "Цвят на фона";
 "stg_txt_edit_profile_charge_item_list_section_title" = "разходни бележки";

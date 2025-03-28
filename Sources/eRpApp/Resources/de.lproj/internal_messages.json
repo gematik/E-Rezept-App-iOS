@@ -10,5 +10,11 @@
         "text": "**ePA-Kompatibilität**\n🤝 Ihre Rezepte sind jetzt vollständig mit der elektronischen Patientenakte kompatibel.\n\n**Verbessert**\n✨ Abgelaufene Rezepte verschwinden jetzt ins Archiv.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Bessere Lesbarkeit**\nWir haben unsere Markenfarbe etwas dunkler gestaltet, um die Farbkontraste zu verstärken und dadurch die Lesbarkeit zu verbessern.\n\n**Optimiertes Eingabefeld**\nDer Cursor im Eingabefeld für die Zugangsnummer wurde entfernt.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

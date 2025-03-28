@@ -10,5 +10,11 @@
         "text": "**Zgodność z ePA** \n 🤝 Twoje recepty są teraz w pełni kompatybilne z elektroniczną kartą zdrowia. \n \n **Ulepszono** \n ✨ Wygasłe przepisy znikają teraz w archiwum.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Lepsza czytelność** \n Przyciemniliśmy nieco kolor naszej marki, aby zwiększyć kontrast kolorów i tym samym poprawić czytelność. \n \n **Zoptymalizowane pole wprowadzania** \n Usunięto kursor w polu wprowadzania numeru dostępowego.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

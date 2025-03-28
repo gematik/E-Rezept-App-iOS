@@ -54,7 +54,7 @@ public class DefaultHTTPClient: HTTPClient {
     ///
     /// - Parameter request: The request to be (modified and) sent.
     /// - Returns: `AnyPublisher` that emits a response as `URLSessionResponse`
-    public func send(
+    public func sendPublisher(
         request: URLRequest,
         interceptors requestInterceptors: [Interceptor],
         redirect handler: RedirectHandler?
@@ -62,7 +62,7 @@ public class DefaultHTTPClient: HTTPClient {
         let requestID = UUID().uuidString
         let newRequest = request.add(requestID: requestID)
         return URLRequestChain(request: newRequest, session: urlSession, with: interceptors + requestInterceptors)
-            .proceed(request: newRequest)
+            .proceedPublisher(request: newRequest)
             .handleEvents(
                 receiveSubscription: { _ in
                     Task {

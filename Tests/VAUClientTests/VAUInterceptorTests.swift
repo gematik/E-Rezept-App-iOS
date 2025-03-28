@@ -54,7 +54,7 @@ final class VAUInterceptorTests: XCTestCase {
         let sut = session.provideInterceptor()
 
         // expectations
-        sut.intercept(chain: chain)
+        sut.interceptPublisher(chain: chain)
             .test(expectations: { _ in
                 expect(chain.incomingProceedRequests.count) == 1
             })

@@ -40,7 +40,7 @@ final class AVSIntegrationTests: XCTestCase {
         }
     }
 
-    func testGematikDevCompleteFlow_200() throws {
+    func testGematikDevCompleteFlow_200() async throws {
         guard let gemDevAvsConfiguration = environment.gemDevAvsConfiguration
         else {
             throw XCTSkip("Skip test because no gemDevAvsConfiguration available")
@@ -74,19 +74,8 @@ final class AVSIntegrationTests: XCTestCase {
 
         // then
         var success = false
-        sut.redeem(message: message, endpoint: endPoint, recipients: [x509])
-            .test(
-                timeout: 120,
-                failure: { error in
-                    fail("Failed with error: \(error)")
-                },
-                expectations: { uuid in
-                    success = true
-                    Swift.print("UUID:", uuid)
-                },
-                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
-            )
-        expect(success) == true
+        let avsSessionResponse = try await sut.redeem(message: message, endpoint: endPoint, recipients: [x509])
+        Swift.print(avsSessionResponse)
     }
 }
 

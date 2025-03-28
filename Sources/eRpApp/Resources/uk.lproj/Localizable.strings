@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Викуплено на";
 "stg_txt_charge_item_sum" = "Загальна сума";
 "stg_txt_demo_mode" = "Демо-режим";
-"stg_txt_donor_register_alert_message" = "Ви будете перенаправлені до реєстру донорів органів. Щоб переглядати та змінювати дані про пожертвування органів, ви повинні увійти в систему.";
+"stg_txt_donor_register_alert_message" = "Ви будете перенаправлені на сайт реєстру донорів органів. Щоб переглядати та змінювати дані про пожертвування органів, ви повинні увійти в систему.";
 "stg_txt_donor_register_alert_title" = "Відкрити реєстр донорства органів?";
 "stg_txt_edit_profile_background_section_title" = "Колір фону";
 "stg_txt_edit_profile_charge_item_list_section_title" = "видаткові квитанції";

@@ -31,36 +31,19 @@ import TestUtils
 import XCTest
 
 final class AVSRedeemServiceTests: XCTestCase {
-    var mockAVSService: MockAVSSession!
-    var mockAVSTransactionDataStore: MockAVSTransactionDataStore!
-
-    override func setUp() {
-        super.setUp()
-
-        mockAVSService = {
-            let mockAVSService = MockAVSSession()
-            mockAVSService.redeemMessageEndpointRecipientsClosure = { message, _, _ in
-                Just(.init(message: message, httpStatusCode: 200))
-                    .setFailureType(to: AVSError.self)
-                    .eraseToAnyPublisher()
+    @MainActor
+    func testRedeemViaAVSResponses_Success() async throws {
+        // given
+        let mockAVSService = AVSSessionCustomMock()
+        mockAVSService
+            .redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure = { message, _, _ in
+                AVSSessionResponse(message: message, httpStatusCode: 200)
             }
-            return mockAVSService
-        }()
+        let mockAVSTransactionDataStore = AVSTransactionDataStoreCustomMock()
+        mockAVSTransactionDataStore.saveAvsTransactionsReturnValue = Just([AVSTransaction.Fixtures.transaction1])
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
 
-        mockAVSTransactionDataStore = {
-            let mockAVSTransactionDataStore = MockAVSTransactionDataStore()
-            mockAVSTransactionDataStore.saveAvsTransactionsClosure = { _ in
-                Just([
-                    AVSTransaction.Fixtures.transaction1,
-                ])
-                    .setFailureType(to: LocalStoreError.self)
-                    .eraseToAnyPublisher()
-            }
-            return mockAVSTransactionDataStore
-        }()
-    }
-
-    func testRedeemViaAVSResponses_Success() throws {
         let sut = AVSRedeemService(
             avsSession: mockAVSService,
             avsTransactionDataStore: mockAVSTransactionDataStore
@@ -71,15 +54,22 @@ final class AVSRedeemServiceTests: XCTestCase {
         let order3: OrderRequest = .Fixtures.order3
 
         var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
-        sut.redeem([order1, order2, order3])
-            .test(failure: { error in
-                print(error)
-                fail("no error expected")
-            }, expectations: { orderResponses in
+        let cancellable = sut.redeem([order1, order2, order3])
+            .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
+            .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
+                    print(error)
+                    fail("no error expected")
+                }
+            } receiveValue: { orderResponses in
                 receivedResponses.append(orderResponses)
-            })
+            }
 
-        expect(receivedResponses.count).toEventually(equal(3))
+        await expect(receivedResponses).toEventually(haveCount(3))
         let firstResponse = receivedResponses[0]
 
         expect(firstResponse.count) == 3
@@ -88,12 +78,12 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(firstResponse.areSuccessful).to(beFalse())
         expect(firstResponse.arePartiallySuccessful).to(beFalse())
         expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-        expect(firstResponse[0].isSuccess).to(beTrue())
         expect(firstResponse[0].requested).to(equal(order1))
-        expect(firstResponse[1].inProgress).to(beTrue())
         expect(firstResponse[1].requested).to(equal(order2))
-        expect(firstResponse[2].inProgress).to(beTrue())
         expect(firstResponse[2].requested).to(equal(order3))
+
+        expect(firstResponse.filter(\.isSuccess)).to(haveCount(1))
+        expect(firstResponse.filter(\.inProgress)).to(haveCount(2))
 
         let secondResponse = receivedResponses[1]
         expect(secondResponse.count) == 3
@@ -102,12 +92,12 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(secondResponse.areSuccessful).to(beFalse())
         expect(secondResponse.arePartiallySuccessful).to(beFalse())
         expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-        expect(secondResponse[0].isSuccess).to(beTrue())
         expect(secondResponse[0].requested).to(equal(order1))
-        expect(secondResponse[1].isSuccess).to(beTrue())
         expect(secondResponse[1].requested).to(equal(order2))
-        expect(secondResponse[2].inProgress).to(beTrue())
         expect(secondResponse[2].requested).to(equal(order3))
+
+        expect(secondResponse.filter(\.isSuccess)).to(haveCount(2))
+        expect(secondResponse.filter(\.inProgress)).to(haveCount(1))
 
         let thirdResponse = receivedResponses[2]
         expect(thirdResponse.inProgress).to(beFalse())
@@ -116,50 +106,62 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(thirdResponse.arePartiallySuccessful).to(beFalse())
         expect(thirdResponse.progress).to(equal(1.0))
         expect(thirdResponse.count) == 3
-        expect(thirdResponse[0].isSuccess).to(beTrue())
         expect(thirdResponse[0].requested).to(equal(order1))
-        expect(thirdResponse[1].isSuccess).to(beTrue())
         expect(thirdResponse[1].requested).to(equal(order2))
-        expect(thirdResponse[2].isSuccess).to(beTrue())
         expect(thirdResponse[2].requested).to(equal(order3))
 
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 3
+        expect(thirdResponse.filter(\.isSuccess)).to(haveCount(3))
+        expect(thirdResponse.filter(\.inProgress)).to(haveCount(0))
+
+        await expect(mockAVSTransactionDataStore.saveAvsTransactionsCalled).toEventually(beTrue())
+        await expect(mockAVSTransactionDataStore.saveAvsTransactionsCallsCount).toEventually(equal(3))
     }
 
-    func testRedeemViaAVSResponses_PartialSuccess() throws {
+    @MainActor
+    func testRedeemViaAVSResponses_PartialSuccess() async throws {
+        let mockAVSService = AVSSessionCustomMock()
+        // given
+        mockAVSService
+            .redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure = { message, _, _ in
+                let avsMessage = try AVSMessage(.Fixtures.order1)
+                if avsMessage == message {
+                    throw AVSError.internal(error: AVSError.InternalError.cmsContentCreation)
+                } else {
+                    return AVSSessionResponse(message: message, httpStatusCode: 200)
+                }
+            }
+        let mockAVSTransactionDataStore = AVSTransactionDataStoreCustomMock()
+        mockAVSTransactionDataStore.saveAvsTransactionsReturnValue = Just([AVSTransaction.Fixtures.transaction1])
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        // when
         let sut = AVSRedeemService(
             avsSession: mockAVSService,
             avsTransactionDataStore: mockAVSTransactionDataStore
         )
-
-        var callsCount = 0
-        mockAVSService.redeemMessageEndpointRecipientsClosure = { message, _, _ in
-            callsCount += 1
-            if callsCount == 1 {
-                return Fail(error: AVSError.internal(error: AVSError.InternalError.cmsContentCreation))
-                    .eraseToAnyPublisher()
-            } else {
-                return Just(.init(message: message, httpStatusCode: 200))
-                    .setFailureType(to: AVSError.self)
-                    .eraseToAnyPublisher()
-            }
-        }
 
         let order1: OrderRequest = .Fixtures.order1
         let order2: OrderRequest = .Fixtures.order2
         let order3: OrderRequest = .Fixtures.order3
 
         var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
-        sut.redeem([order1, order2, order3])
-            .test(failure: { error in
-                print(error)
-                fail("no error expected")
-            }, expectations: { orderResponses in
+        let cancellable = sut.redeem([order1, order2, order3])
+            .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
+            .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
+                    print(error)
+                    fail("no error expected")
+                }
+            } receiveValue: { orderResponses in
                 receivedResponses.append(orderResponses)
-            })
+            }
 
-        expect(receivedResponses.count).toEventually(equal(3))
+        await expect(receivedResponses).toEventually(haveCount(3))
         let firstResponse = receivedResponses[0]
 
         expect(firstResponse.count) == 3
@@ -168,12 +170,11 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(firstResponse.areSuccessful).to(beFalse())
         expect(firstResponse.arePartiallySuccessful).to(beFalse())
         expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-        expect(firstResponse[0].isFailure).to(beTrue())
         expect(firstResponse[0].requested).to(equal(order1))
-        expect(firstResponse[1].inProgress).to(beTrue())
         expect(firstResponse[1].requested).to(equal(order2))
-        expect(firstResponse[2].inProgress).to(beTrue())
         expect(firstResponse[2].requested).to(equal(order3))
+
+        expect(firstResponse.filter(\.inProgress)).to(haveCount(2))
 
         let secondResponse = receivedResponses[1]
         expect(secondResponse.count) == 3
@@ -182,12 +183,11 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(secondResponse.areSuccessful).to(beFalse())
         expect(secondResponse.arePartiallySuccessful).to(beFalse())
         expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-        expect(secondResponse[0].isFailure).to(beTrue())
         expect(secondResponse[0].requested).to(equal(order1))
-        expect(secondResponse[1].isSuccess).to(beTrue())
         expect(secondResponse[1].requested).to(equal(order2))
-        expect(secondResponse[2].inProgress).to(beTrue())
         expect(secondResponse[2].requested).to(equal(order3))
+
+        expect(secondResponse.filter(\.inProgress)).to(haveCount(1))
 
         let thirdResponse = receivedResponses[2]
         expect(thirdResponse.inProgress).to(beFalse())
@@ -196,20 +196,24 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(thirdResponse.arePartiallySuccessful).to(beTrue())
         expect(thirdResponse.progress).to(equal(1.0))
         expect(thirdResponse.count) == 3
-        expect(thirdResponse[0].isFailure).to(beTrue())
         expect(thirdResponse[0].requested).to(equal(order1))
-        expect(thirdResponse[1].isSuccess).to(beTrue())
         expect(thirdResponse[1].requested).to(equal(order2))
-        expect(thirdResponse[2].isSuccess).to(beTrue())
         expect(thirdResponse[2].requested).to(equal(order3))
 
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 2
+        expect(thirdResponse.filter(\.inProgress)).to(haveCount(0))
+        expect(thirdResponse.filter(\.isFailure)).to(haveCount(1))
+        expect(thirdResponse.filter(\.isSuccess)).to(haveCount(2))
+
+        expect(mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
+        expect(mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 2
     }
 
-    func testRedeemViaAVSResponses_All_Fail() throws {
+    @MainActor
+    func testRedeemViaAVSResponses_All_Fail() async throws {
         let userDefaults = UserDefaultsStore(userDefaults: .standard)
-        withDependencies {
+        let mockAVSService = AVSSessionCustomMock()
+        let mockAVSTransactionDataStore = AVSTransactionDataStoreCustomMock()
+        await withDependencies {
             $0.appAuthenticationProvider = DefaultAuthenticationProvider(userDataStore: userDefaults)
             $0.appSecurityManager = DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
             $0.authenticationChallengeProvider = BiometricsAuthenticationChallengeProvider()
@@ -221,25 +225,35 @@ final class AVSRedeemServiceTests: XCTestCase {
                 avsTransactionDataStore: mockAVSTransactionDataStore
             )
 
-            mockAVSService.redeemMessageEndpointRecipientsClosure = { _, _, _ in
-                Fail(error: AVSError.internal(error: AVSError.InternalError.cmsContentCreation))
-                    .eraseToAnyPublisher()
-            }
+            mockAVSService
+                .redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure = { _, _, _ in
+                    throw AVSError.internal(error: AVSError.InternalError.cmsContentCreation)
+                }
+            mockAVSTransactionDataStore.saveAvsTransactionsReturnValue = Just([AVSTransaction.Fixtures.transaction1])
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
 
             let order1: OrderRequest = .Fixtures.order1
             let order2: OrderRequest = .Fixtures.order2
             let order3: OrderRequest = .Fixtures.order3
 
             var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
-            sut.redeem([order1, order2, order3])
-                .test(failure: { error in
-                    print(error)
-                    fail("no error expected")
-                }, expectations: { orderResponses in
+            let cancellable = sut.redeem([order1, order2, order3])
+                .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
+                .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case let .failure(error):
+                        print(error)
+                        fail("no error expected")
+                    }
+                } receiveValue: { orderResponses in
                     receivedResponses.append(orderResponses)
-                })
+                }
 
-            expect(receivedResponses.count).toEventually(equal(3))
+            await expect(receivedResponses).toEventually(haveCount(3))
             let firstResponse = receivedResponses[0]
 
             expect(firstResponse.count) == 3
@@ -248,12 +262,12 @@ final class AVSRedeemServiceTests: XCTestCase {
             expect(firstResponse.areSuccessful).to(beFalse())
             expect(firstResponse.arePartiallySuccessful).to(beFalse())
             expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-            expect(firstResponse[0].isFailure).to(beTrue())
             expect(firstResponse[0].requested).to(equal(order1))
-            expect(firstResponse[1].inProgress).to(beTrue())
             expect(firstResponse[1].requested).to(equal(order2))
-            expect(firstResponse[2].inProgress).to(beTrue())
             expect(firstResponse[2].requested).to(equal(order3))
+
+            expect(firstResponse.filter(\.inProgress)).to(haveCount(2))
+            expect(firstResponse.filter(\.isFailure)).to(haveCount(1))
 
             let secondResponse = receivedResponses[1]
             expect(secondResponse.count) == 3
@@ -262,12 +276,12 @@ final class AVSRedeemServiceTests: XCTestCase {
             expect(secondResponse.areSuccessful).to(beFalse())
             expect(secondResponse.arePartiallySuccessful).to(beFalse())
             expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-            expect(secondResponse[0].isFailure).to(beTrue())
             expect(secondResponse[0].requested).to(equal(order1))
-            expect(secondResponse[1].isFailure).to(beTrue())
             expect(secondResponse[1].requested).to(equal(order2))
-            expect(secondResponse[2].inProgress).to(beTrue())
             expect(secondResponse[2].requested).to(equal(order3))
+
+            expect(secondResponse.filter(\.inProgress)).to(haveCount(1))
+            expect(secondResponse.filter(\.isFailure)).to(haveCount(2))
 
             let thirdResponse = receivedResponses[2]
             expect(thirdResponse.inProgress).to(beFalse())
@@ -276,18 +290,25 @@ final class AVSRedeemServiceTests: XCTestCase {
             expect(thirdResponse.arePartiallySuccessful).to(beFalse())
             expect(thirdResponse.progress).to(equal(1.0))
             expect(thirdResponse.count) == 3
-            expect(thirdResponse[0].isFailure).to(beTrue())
             expect(thirdResponse[0].requested).to(equal(order1))
-            expect(thirdResponse[1].isFailure).to(beTrue())
             expect(thirdResponse[1].requested).to(equal(order2))
-            expect(thirdResponse[2].isFailure).to(beTrue())
             expect(thirdResponse[2].requested).to(equal(order3))
 
-            expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == false
+            expect(thirdResponse.filter(\.isFailure)).to(haveCount(3))
+            expect(thirdResponse.filter(\.inProgress)).to(haveCount(0))
+
+            expect(mockAVSTransactionDataStore.saveAvsTransactionsCalled) == false
         }
     }
 
-    func testRedeemViaAVSResponses_SetupFailure() throws {
+    @MainActor
+    func testRedeemViaAVSResponses_SetupFailure() async throws {
+        let mockAVSService = AVSSessionCustomMock()
+        let mockAVSTransactionDataStore = AVSTransactionDataStoreCustomMock()
+        mockAVSTransactionDataStore.saveAvsTransactionsReturnValue = Just([AVSTransaction.Fixtures.transaction1])
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
         let sut = AVSRedeemService(
             avsSession: mockAVSService,
             avsTransactionDataStore: mockAVSTransactionDataStore
@@ -295,17 +316,36 @@ final class AVSRedeemServiceTests: XCTestCase {
 
         let order: OrderRequest = .Fixtures.orderNoEndpoint
 
-        sut.redeem([order])
-            .test(failure: { error in
-                expect(error).to(equal(RedeemServiceError.internalError(.missingAVSEndpoint)))
-            }, expectations: { _ in
+        let cancellable = sut.redeem([order])
+            .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
+            .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
+            .sink { completion in
+                switch completion {
+                case let .failure(error):
+                    expect(error).to(equal(RedeemServiceError.internalError(.missingAVSEndpoint)))
+                case .finished:
+                    fail("no completion expected")
+                }
+            } receiveValue: { _ in
                 fail("no order response expected")
-            })
+            }
 
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == false
+        await expect(mockAVSTransactionDataStore.saveAvsTransactionsCalled).toEventually(beFalse())
     }
 
-    func testGroupedOrdersHaveSameRedeemDateAndGroudRedemptionID() throws {
+    @MainActor
+    func testGroupedOrdersHaveSameRedeemDateAndGroupRedemptionID() async throws {
+        // given
+        let mockAVSService = AVSSessionCustomMock()
+        mockAVSService
+            .redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure = { message, _, _ in
+                AVSSessionResponse(message: message, httpStatusCode: 200)
+            }
+        let mockAVSTransactionDataStore = AVSTransactionDataStoreCustomMock()
+        mockAVSTransactionDataStore.saveAvsTransactionsReturnValue = Just([AVSTransaction.Fixtures.transaction1])
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
         let sut = AVSRedeemService(
             avsSession: mockAVSService,
             avsTransactionDataStore: mockAVSTransactionDataStore
@@ -315,27 +355,178 @@ final class AVSRedeemServiceTests: XCTestCase {
         let orders: [OrderRequest] = OrderRequest.Fixtures.orders(with: orderId)
 
         // redeem once
-        sut.redeem(orders)
-            .test(
-                failure: { error in
+        let cancellable = sut.redeem(orders)
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case let .failure(error):
                     print(error)
                     fail("no error expected")
-                },
-                expectations: { _ in }
-            )
+                }
+            } receiveValue: { _ in
+            }
 
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 3
+        await expect(mockAVSTransactionDataStore.saveAvsTransactionsCalled).toEventually(beTrue())
+        await expect(mockAVSTransactionDataStore.saveAvsTransactionsCallsCount).toEventually(equal(3))
 
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.count) == 3
+        await expect(mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations).toEventually(haveCount(3))
         let firstRedeemDateTime = mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[0][0]
             .groupedRedeemTime
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.allSatisfy {
+        expect(mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.allSatisfy {
             $0[0].groupedRedeemTime == firstRedeemDateTime
         }) == true
 
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.allSatisfy {
+        expect(mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.allSatisfy {
             $0[0].groupedRedeemID == orderId
         }) == true
     }
 }
+
+// swiftlint:disable lower_acl_than_parent large_tuple line_length discouraged_optional_collection
+private class AVSSessionCustomMock: AVSSession {
+    public init() {}
+
+    // MARK: - redeem
+
+    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseThrowableError: (
+        any Error
+    )?
+    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCallsCount = 0
+    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCalled: Bool {
+        redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCallsCount > 0
+    }
+
+    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReceivedArguments: (
+        message: AVSMessage,
+        endpoint: AVSEndpoint,
+        recipients: [X509]
+    )?
+    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReceivedInvocations: [
+        (message: AVSMessage,
+         endpoint: AVSEndpoint, recipients: [X509])
+    ] = []
+    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReturnValue: AVSSessionResponse!
+    @MainActor public var redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure: ((
+        AVSMessage,
+        AVSEndpoint,
+        [X509]
+    ) async throws -> AVSSessionResponse)?
+
+    public func redeem(message: AVSMessage, endpoint: AVSEndpoint,
+                       recipients: [X509]) async throws -> AVSSessionResponse {
+        await MainActor.run {
+            redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseCallsCount += 1
+        }
+        await MainActor.run {
+            redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReceivedArguments = (
+                message: message,
+                endpoint: endpoint,
+                recipients: recipients
+            )
+        }
+        await MainActor
+            .run {
+                redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReceivedInvocations
+                    .append((message: message, endpoint: endpoint, recipients: recipients))
+            }
+        try await MainActor.run {
+            if let error = redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseThrowableError {
+                throw error
+            }
+        }
+        if let redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure =
+            await redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure {
+            return try await redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseClosure(
+                message,
+                endpoint,
+                recipients
+            )
+        } else {
+            return await redeemMessageAVSMessageEndpointAVSEndpointRecipientsX509AVSSessionResponseReturnValue
+        }
+    }
+}
+
+private final class AVSTransactionDataStoreCustomMock: AVSTransactionDataStore {
+    // MARK: - fetchAVSTransaction
+
+    var fetchAVSTransactionByCallsCount = 0
+    var fetchAVSTransactionByCalled: Bool {
+        fetchAVSTransactionByCallsCount > 0
+    }
+
+    var fetchAVSTransactionByReceivedIdentifier: UUID?
+    var fetchAVSTransactionByReceivedInvocations: [UUID] = []
+    var fetchAVSTransactionByReturnValue: AnyPublisher<AVSTransaction?, LocalStoreError>!
+    var fetchAVSTransactionByClosure: ((UUID) -> AnyPublisher<AVSTransaction?, LocalStoreError>)?
+
+    func fetchAVSTransaction(by identifier: UUID) -> AnyPublisher<AVSTransaction?, LocalStoreError> {
+        fetchAVSTransactionByCallsCount += 1
+        fetchAVSTransactionByReceivedIdentifier = identifier
+        fetchAVSTransactionByReceivedInvocations.append(identifier)
+        return fetchAVSTransactionByClosure.map { $0(identifier) } ?? fetchAVSTransactionByReturnValue
+    }
+
+    // MARK: - listAllAVSTransactions
+
+    var listAllAVSTransactionsCallsCount = 0
+    var listAllAVSTransactionsCalled: Bool {
+        listAllAVSTransactionsCallsCount > 0
+    }
+
+    var listAllAVSTransactionsReturnValue: AnyPublisher<[AVSTransaction], LocalStoreError>!
+    var listAllAVSTransactionsClosure: (() -> AnyPublisher<[AVSTransaction], LocalStoreError>)?
+
+    func listAllAVSTransactions() -> AnyPublisher<[AVSTransaction], LocalStoreError> {
+        listAllAVSTransactionsCallsCount += 1
+        return listAllAVSTransactionsClosure.map { $0() } ?? listAllAVSTransactionsReturnValue
+    }
+
+    // MARK: - save
+
+    @MainActor var saveAvsTransactionsCallsCount = 0
+    @MainActor var saveAvsTransactionsCalled: Bool {
+        saveAvsTransactionsCallsCount > 0
+    }
+
+    @MainActor var saveAvsTransactionsReceivedAvsTransactions: [AVSTransaction]?
+    @MainActor var saveAvsTransactionsReceivedInvocations: [[AVSTransaction]] = []
+    @MainActor var saveAvsTransactionsReturnValue: AnyPublisher<[AVSTransaction], LocalStoreError>!
+    @MainActor var saveAvsTransactionsClosure: (([AVSTransaction]) -> AnyPublisher<[AVSTransaction], LocalStoreError>)?
+
+    @MainActor
+    func save(avsTransactions: [AVSTransaction]) -> AnyPublisher<[AVSTransaction], LocalStoreError> {
+        Task { @MainActor in
+            saveAvsTransactionsCallsCount += 1
+        }
+        Task { @MainActor in
+            saveAvsTransactionsReceivedAvsTransactions = avsTransactions
+        }
+        Task { @MainActor in
+            saveAvsTransactionsReceivedInvocations.append(avsTransactions)
+        }
+        return saveAvsTransactionsClosure.map { $0(avsTransactions) } ?? saveAvsTransactionsReturnValue
+    }
+
+    // MARK: - delete
+
+    var deleteAvsTransactionsCallsCount = 0
+    var deleteAvsTransactionsCalled: Bool {
+        deleteAvsTransactionsCallsCount > 0
+    }
+
+    var deleteAvsTransactionsReceivedAvsTransactions: [AVSTransaction]?
+    var deleteAvsTransactionsReceivedInvocations: [[AVSTransaction]] = []
+    var deleteAvsTransactionsReturnValue: AnyPublisher<[AVSTransaction], LocalStoreError>!
+    var deleteAvsTransactionsClosure: (([AVSTransaction]) -> AnyPublisher<[AVSTransaction], LocalStoreError>)?
+
+    func delete(avsTransactions: [AVSTransaction]) -> AnyPublisher<[AVSTransaction], LocalStoreError> {
+        deleteAvsTransactionsCallsCount += 1
+        deleteAvsTransactionsReceivedAvsTransactions = avsTransactions
+        deleteAvsTransactionsReceivedInvocations.append(avsTransactions)
+        return deleteAvsTransactionsClosure.map { $0(avsTransactions) } ?? deleteAvsTransactionsReturnValue
+    }
+}
+
+// swiftlint:enable lower_acl_than_parent large_tuple line_length discouraged_optional_collection

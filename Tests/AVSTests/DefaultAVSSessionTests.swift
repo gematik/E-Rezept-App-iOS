@@ -25,26 +25,20 @@ import OpenSSL
 import XCTest
 
 final class DefaultAVSSessionTests: XCTestCase {
-    func testRedeem() {
+    func testRedeem() async throws {
         // given
         let message = AVSMessage.Fixtures.completeExample
         let url = URL(string: "https://beispielurlversand.de/")!
         let endpoint = AVSEndpoint(url: url)
-        let mockAvsMessageConverter = MockAVSMessageConverter()
-        mockAvsMessageConverter.convertRecipientsReturnValue = Data([0x00])
+        let mockAvsMessageConverter = AVSMessageConverterMock()
+        mockAvsMessageConverter.convertMessageAVSMessageRecipientsX509DataReturnValue = Data([0x00])
 
-        let mockAvsClient = MockAVSClient()
-        mockAvsClient.sendDataToClosure = { _, _ in
-            Just(
-                (
-                    data: Data(),
-                    response: HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!,
-                    status: .ok
-                )
-            )
-            .setFailureType(to: AVSError.self)
-            .eraseToAnyPublisher()
-        }
+        let mockAvsClient = AVSClientMock()
+        mockAvsClient.sendDataDataToEndpointAVSEndpoint_DataHTTPURLResponseHTTPStatusCodeReturnValue = (
+            data: Data(),
+            response: HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!,
+            status: .ok
+        )
 
         let sut = DefaultAVSSession(
             avsMessageConverter: mockAvsMessageConverter,
@@ -53,15 +47,11 @@ final class DefaultAVSSessionTests: XCTestCase {
         )
 
         // then
-        sut.redeem(message: message, endpoint: endpoint, recipients: [])
-            .test(
-                expectations: { avsSessionResponse in
-                    expect(avsSessionResponse.httpStatusCode) == 200
-                    expect(mockAvsMessageConverter.convertRecipientsCalled) == true
-                    expect(mockAvsMessageConverter.convertRecipientsCallsCount) == 1
-                    expect(mockAvsClient.sendDataToCalled) == true
-                    expect(mockAvsClient.sendDataToCallsCount) == 1
-                }
-            )
+        let avsSessionResponse = try await sut.redeem(message: message, endpoint: endpoint, recipients: [])
+        expect(avsSessionResponse.httpStatusCode) == 200
+        expect(mockAvsMessageConverter.convertMessageAVSMessageRecipientsX509DataCalled) == true
+        expect(mockAvsMessageConverter.convertMessageAVSMessageRecipientsX509DataCallsCount) == 1
+        expect(mockAvsClient.sendDataDataToEndpointAVSEndpoint_DataHTTPURLResponseHTTPStatusCodeCalled) == true
+        expect(mockAvsClient.sendDataDataToEndpointAVSEndpoint_DataHTTPURLResponseHTTPStatusCodeCallsCount) == 1
     }
 }

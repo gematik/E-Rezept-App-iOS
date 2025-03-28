@@ -26,7 +26,7 @@ import TestUtils
 import XCTest
 
 final class DefaultHTTPClientTests: XCTestCase {
-    func testSendRequest() {
+    func testSendRequest() async throws {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
         guard let url = Bundle.module
@@ -44,16 +44,14 @@ final class DefaultHTTPClientTests: XCTestCase {
             return fixture(filePath: url, headers: ["Content-Type": "html/text"])
         }
 
-        DefaultHTTPClient(urlSessionConfiguration: .default)
-            .send(request: request)
-            .test(expectations: { _, response, _ in
-                expect(response.url) == request.url
-                expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
-            })
+        let (_, response, _) = try await DefaultHTTPClient(urlSessionConfiguration: .default)
+            .sendAsync(request: request)
+        expect(response.url) == request.url
+        expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
         expect(counter) == 1
     }
 
-    func testSendRequestWithInterceptor() {
+    func testSendRequestWithInterceptor() async throws {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
         let alternatePath = "/path/to/alternate-resource.html"
@@ -72,16 +70,17 @@ final class DefaultHTTPClientTests: XCTestCase {
             return fixture(filePath: url, headers: ["Content-Type": "html/text"])
         }
 
-        DefaultHTTPClient(urlSessionConfiguration: .default, interceptors: [PathInterceptor(path: alternatePath)])
-            .send(request: request)
-            .test(expectations: { _, response, _ in
-                expect(response.url?.path) == alternatePath
-                expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
-            })
+        let (_, response, _) = try await DefaultHTTPClient(
+            urlSessionConfiguration: .default,
+            interceptors: [PathInterceptor(path: alternatePath)]
+        )
+        .sendAsync(request: request)
+        expect(response.url?.path) == alternatePath
+        expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
         expect(counter) == 1
     }
 
-    func testSendRequestWithLocalRequestInterceptor() {
+    func testSendRequestWithLocalRequestInterceptor() async throws {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
         let alternatePath = "/path/to/alternate-resource.html"
@@ -100,17 +99,18 @@ final class DefaultHTTPClientTests: XCTestCase {
             return fixture(filePath: url, headers: ["Content-Type": "html/text"])
         }
 
-        DefaultHTTPClient(urlSessionConfiguration: .default, interceptors: [PathInterceptor(path: alternatePath)])
-            .send(request: request, interceptors: [QueryInterceptor(name: "query", value: "value")])
-            .test(expectations: { _, response, _ in
-                expect(response.url?.path) == alternatePath
-                expect(response.url?.query) == "query=value"
-                expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
-            })
+        let (_, response, _) = try await DefaultHTTPClient(
+            urlSessionConfiguration: .default,
+            interceptors: [PathInterceptor(path: alternatePath)]
+        )
+        .sendAsync(request: request, interceptors: [QueryInterceptor(name: "query", value: "value")])
+        expect(response.url?.path) == alternatePath
+        expect(response.url?.query) == "query=value"
+        expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
         expect(counter) == 1
     }
 
-    func testSendRequestAndFollowRedirect() {
+    func testSendRequestAndFollowRedirect() async throws {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
         guard let url = Bundle.module
@@ -141,17 +141,15 @@ final class DefaultHTTPClientTests: XCTestCase {
             return fixture(filePath: url, headers: ["Content-Type": "html/text"])
         }
 
-        DefaultHTTPClient(urlSessionConfiguration: .default)
-            .send(request: request)
-            .test(expectations: { body, response, _ in
-                expect(response.url?.absoluteString) == redirectURL
-                expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
-                expect(try! url.readFileContents()) == body
-            })
+        let (body, response, _) = try await DefaultHTTPClient(urlSessionConfiguration: .default)
+            .sendAsync(request: request)
+        expect(response.url?.absoluteString) == redirectURL
+        expect(response.value(forHTTPHeaderField: "Content-Type")) == "html/text"
+        expect(try! url.readFileContents()) == body
         expect(counter) == 2
     }
 
-    func testSendRequestAndHandleRedirect() async {
+    func testSendRequestAndHandleRedirect() async throws {
         let host = "some-url.com"
         let path = "/path/to/resource.html"
         guard let url = Bundle.module
@@ -186,12 +184,10 @@ final class DefaultHTTPClientTests: XCTestCase {
             nil
         }
 
-        DefaultHTTPClient(urlSessionConfiguration: .default)
-            .send(request: request, interceptors: [], redirect: redirectHandler)
-            .test(expectations: { _, response, _ in
-                expect(response.statusCode) == 302
-                expect(response.value(forHTTPHeaderField: "Location")) == redirectURL
-            })
+        let (_, response, _) = try await DefaultHTTPClient(urlSessionConfiguration: .default)
+            .sendAsync(request: request, interceptors: [], redirect: redirectHandler)
+        expect(response.statusCode) == 302
+        expect(response.value(forHTTPHeaderField: "Location")) == redirectURL
         expect(counter) == 1
     }
 
@@ -205,7 +201,7 @@ struct QueryInterceptor: Interceptor {
     let name: String
     let value: String
 
-    func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         var request = chain.request
         var components = URLComponents(
             url: request.url!,
@@ -220,11 +216,24 @@ struct QueryInterceptor: Interceptor {
                 .eraseToAnyPublisher()
         }
         request.url = url
-        return chain.proceed(request: request)
+        return chain.proceedPublisher(request: request)
     }
 
-    func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
-        throw HTTPClientError.internalError("notImplemented")
+    func interceptAsync(chain: Chain) async throws -> HTTPResponse {
+        var request = chain.request
+        var components = URLComponents(
+            url: request.url!,
+            resolvingAgainstBaseURL: false
+        )
+        let queryItems = [
+            URLQueryItem(name: name, value: value.urlPercentEscapedString()),
+        ]
+        components?.percentEncodedQueryItems = queryItems
+        guard let url = components?.url else {
+            throw HTTPClientError.internalError("Could not assemble url from components")
+        }
+        request.url = url
+        return try await chain.proceedAsync(request: request)
     }
 }
 
@@ -239,7 +248,7 @@ struct PathInterceptor: Interceptor {
         }
     }
 
-    func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    func interceptPublisher(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         var request = chain.request
         var url = request.url
         let components = url?.pathComponents.count ?? 0
@@ -248,10 +257,18 @@ struct PathInterceptor: Interceptor {
         }
         url?.appendPathComponent(path)
         request.url = url
-        return chain.proceed(request: request)
+        return chain.proceedPublisher(request: request)
     }
 
-    func interceptAsync(chain _: Chain) async throws -> HTTPResponse {
-        throw HTTPClientError.internalError("notImplemented")
+    func interceptAsync(chain: Chain) async throws -> HTTPResponse {
+        var request = chain.request
+        var url = request.url
+        let components = url?.pathComponents.count ?? 0
+        for _ in 1 ..< components {
+            url?.deleteLastPathComponent()
+        }
+        url?.appendPathComponent(path)
+        request.url = url
+        return try await chain.proceedAsync(request: request)
     }
 }

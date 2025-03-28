@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Riscattato il";
 "stg_txt_charge_item_sum" = "prezzo totale";
 "stg_txt_demo_mode" = "Modalità demo";
-"stg_txt_donor_register_alert_message" = "Verrai reindirizzato al registro dei donatori di organi. Per visualizzare e modificare i dati sulla donazione degli organi, è necessario effettuare il login lì.";
+"stg_txt_donor_register_alert_message" = "Verrai reindirizzato al sito web del registro delle donazioni di organi. Per visualizzare e modificare i dati sulla donazione degli organi, è necessario effettuare il login lì.";
 "stg_txt_donor_register_alert_title" = "Aprire il registro delle donazioni di organi?";
 "stg_txt_edit_profile_background_section_title" = "colore di sfondo";
 "stg_txt_edit_profile_charge_item_list_section_title" = "ricevute di spesa";

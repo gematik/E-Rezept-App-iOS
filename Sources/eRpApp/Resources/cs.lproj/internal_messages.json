@@ -10,5 +10,11 @@
         "text": "**Kompatibilita ePA** \n 🤝 Vaše recepty jsou nyní plně kompatibilní s elektronickým zdravotním záznamem. \n \n **Vylepšené** \n ✨ Recepty s prošlou platností nyní zmizí v archivu.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Lepší čitelnost** \n Barvu naší značky jsme mírně ztmavili, abychom zvýšili barevný kontrast a zlepšili tak čitelnost. \n \n **Optimalizované vstupní pole** \n Kurzor ve vstupním poli pro přístupové číslo byl odstraněn.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

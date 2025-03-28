@@ -253,7 +253,7 @@ extension View {
             action: \.destination.pharmacyFilter
         )) { store in
             PharmacySearchFilterView(store: store)
-                .accentColor(Colors.primary600)
+                .tint(Colors.primary700)
         }
         .alert(store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
     }
@@ -415,7 +415,7 @@ struct PharmacySearchView_Previews: PreviewProvider {
         NavigationStack {
             PharmacySearchView(store: PharmacySearchDomain.Dummies.store)
         }
-        .accentColor(Colors.primary700)
+        .tint(Colors.primary700)
 
         NavigationStack {
             PharmacySearchView(

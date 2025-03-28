@@ -122,7 +122,7 @@ struct CardWallCANView: View {
                                 .scope(state: \.destination?.egk, action: \.destination.egk)) { store in
                                     NavigationStack {
                                         OrderHealthCardListView(store: store)
-                                            .accentColor(Colors.primary700)
+                                            .tint(Colors.primary700)
                                             .navigationViewStyle(StackNavigationViewStyle())
                                     }
                             }
@@ -161,7 +161,7 @@ struct CardWallCANView: View {
                                 store.send(.resetNavigation)
                             }
                         }
-                        .accentColor(Colors.primary700)
+                        .tint(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())
                     })
                 }

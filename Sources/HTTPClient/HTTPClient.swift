@@ -42,7 +42,8 @@ public protocol HTTPClient {
     /// - Parameter interceptors: per request interceptors.
     /// - Parameter handler: handler that should be called in case of redirect.
     /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    func send(request: URLRequest, interceptors: [Interceptor], redirect handler: RedirectHandler?)
+    @available(*, deprecated, message: "Use async version instead")
+    func sendPublisher(request: URLRequest, interceptors: [Interceptor], redirect handler: RedirectHandler?)
         -> AnyPublisher<HTTPResponse, HTTPClientError>
 
     /// Send the given request. The request will be processed by the list of `Interceptors`.
@@ -67,8 +68,29 @@ extension HTTPClient {
     ///
     /// - Parameter request: The request to be (modified and) sent.
     /// - Parameter interceptors: per request interceptors.
+    /// - Parameter handler: handler that should be called in case of redirect.
     /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    public func send(request: URLRequest, interceptors: [Interceptor]) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+    @available(
+        *,
+        deprecated,
+        renamed: "sendPublisher(request:interceptors:redirect:)",
+        message: "Use async version instead"
+    )
+    func send(request: URLRequest, interceptors: [Interceptor], redirect handler: RedirectHandler?)
+        -> AnyPublisher<HTTPResponse, HTTPClientError> {
+        sendPublisher(request: request, interceptors: interceptors, redirect: handler)
+    }
+}
+
+extension HTTPClient {
+    /// Send the given request. The request will be processed by the list of `Interceptors`.
+    ///
+    /// - Parameter request: The request to be (modified and) sent.
+    /// - Parameter interceptors: per request interceptors.
+    /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
+    @available(*, deprecated, message: "Use async version instead")
+    public func sendPublisher(request: URLRequest,
+                              interceptors: [Interceptor]) -> AnyPublisher<HTTPResponse, HTTPClientError> {
         send(request: request, interceptors: interceptors, redirect: nil)
     }
 
@@ -76,8 +98,9 @@ extension HTTPClient {
     ///
     /// - Parameter request: The request to be (modified and) sent.
     /// - Returns: `AnyPublisher` that emits a response as `HTTPResponse`
-    public func send(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
-        send(request: request, interceptors: [])
+    @available(*, deprecated, message: "Use async version instead")
+    public func sendPublisher(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPClientError> {
+        sendPublisher(request: request, interceptors: [])
     }
 
     /// Send the given request. The request will be processed by the list of `Interceptors`.

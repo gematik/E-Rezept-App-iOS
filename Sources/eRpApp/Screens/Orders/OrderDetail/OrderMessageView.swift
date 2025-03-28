@@ -97,7 +97,7 @@ struct OrderMessageView: View {
                             }
                             .padding(.top)
                             .padding(.horizontal)
-                            .foregroundColor(Colors.primary600)
+                            .foregroundColor(Colors.primary700)
                         }
                         .accessibilityIdentifier(timelineEntry.accessibilityIdentifier)
                     }

@@ -10,5 +10,11 @@
         "text": "**ePA-compatibiliteit** \n 🤝 Uw recepten zijn nu volledig compatibel met het elektronische patiëntendossier. \n \n **Verbeterd** \n ✨ Verlopen recepten verdwijnen nu in het archief.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Betere leesbaarheid** \n We hebben onze merkkleur iets donkerder gemaakt om het kleurcontrast te vergroten en daardoor de leesbaarheid te verbeteren. \n \n **Geoptimaliseerd invoerveld** \n De cursor in het invoerveld voor het toegangsnummer is verwijderd.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

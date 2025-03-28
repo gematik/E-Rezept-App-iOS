@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "נפדה על";
 "stg_txt_charge_item_sum" = "מחיר סופי";
 "stg_txt_demo_mode" = "במצב הדגמה";
-"stg_txt_donor_register_alert_message" = "אתה תופנה למרשם תורמי האיברים. על מנת לצפות ולשנות את נתוני תרומת האיברים שלך, עליך להתחבר לשם.";
+"stg_txt_donor_register_alert_message" = "אתה תופנה לאתר מרשם תרומת האיברים. על מנת לצפות ולשנות את נתוני תרומת האיברים שלך, עליך להתחבר לשם.";
 "stg_txt_donor_register_alert_title" = "פנקס תרומת איברים פתוח?";
 "stg_txt_edit_profile_background_section_title" = "צבע רקע";
 "stg_txt_edit_profile_charge_item_list_section_title" = "קבלות עלויות";

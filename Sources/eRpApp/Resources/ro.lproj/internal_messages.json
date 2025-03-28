@@ -10,5 +10,11 @@
         "text": "**Compatibilitate ePA** \n 🤝 Rețetele dumneavoastră sunt acum pe deplin compatibile cu dosarul electronic de sănătate. \n \n **Îmbunătățit** \n ✨ Rețetele expirate dispar acum în arhivă.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Lizibilitate mai bună** \n Am făcut culoarea mărcii noastre puțin mai închisă pentru a crește contrastul culorilor și, prin urmare, a îmbunătăți lizibilitatea. \n \n **Câmp de introducere optimizat** \n Cursorul din câmpul de introducere pentru numărul de acces a fost eliminat.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

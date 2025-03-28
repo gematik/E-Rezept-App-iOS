@@ -38,7 +38,7 @@ struct OnboardingNextButton: View {
                 .padding(.trailing, 24)
         }
         .disabled(!isEnabled)
-        .accentColor(isEnabled ? Colors.primary : Color(.systemGray))
+        .tint(isEnabled ? Colors.primary : Color(.systemGray))
     }
 }
 

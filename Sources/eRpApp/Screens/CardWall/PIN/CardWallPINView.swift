@@ -113,7 +113,7 @@ struct CardWallPINView: View {
                             NavigationStack {
                                 OrderHealthCardListView(store: store)
                             }
-                            .accentColor(Colors.primary700)
+                            .tint(Colors.primary700)
                             .navigationViewStyle(StackNavigationViewStyle())
                     }
                     .padding([.bottom, .top], 6)

@@ -77,7 +77,7 @@ struct DeviceSecurityRootedDeviceView: View {
 
                                     Text(L10n.secBtnSystemRootDetectionMore)
                                         .font(.footnote)
-                                        .foregroundColor(Colors.primary600)
+                                        .foregroundColor(Colors.primary700)
                                         .accessibility(identifier: A11y.security.secBtnSystemRootDetectionFootnoteMore)
                                 }
                             }

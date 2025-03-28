@@ -114,7 +114,7 @@ struct MainView: View {
                 }
                 .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             }
-            .accentColor(Colors.primary600)
+            .tint(Colors.primary700)
             .navigationViewStyle(StackNavigationViewStyle())
             .tooltipContainer(enabled: store.showTooltips)
         }

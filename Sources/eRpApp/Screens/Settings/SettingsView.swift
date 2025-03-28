@@ -72,7 +72,7 @@ struct SettingsView: View {
                             action: \.destination.newProfile
                         )) { store in
                             NewProfileView(store: store)
-                                .accentColor(Colors.primary600)
+                                .tint(Colors.primary700)
                         }
                         .accessibility(hidden: true)
                 }
@@ -96,7 +96,7 @@ struct SettingsView: View {
                 ) { store in
                     MedicationReminderListView(store: store)
                 }
-                .accentColor(Colors.primary600)
+                .tint(Colors.primary700)
                 .background(Color(.secondarySystemBackground).ignoresSafeArea())
                 .navigationTitle(L10n.stgTxtTitle)
                 .demoBanner(isPresented: store.isDemoMode)
@@ -255,7 +255,7 @@ extension SettingsView {
                         navigationBar.standardAppearance = navigationBarAppearance
                     }
                 }
-                .accentColor(Colors.primary600)
+                .tint(Colors.primary700)
                 .navigationViewStyle(StackNavigationViewStyle())
             }
         }

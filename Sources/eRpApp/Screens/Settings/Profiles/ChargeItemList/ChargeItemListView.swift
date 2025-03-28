@@ -217,7 +217,7 @@ extension ChargeItemListView {
 //                                } label: {
 //                                    Label("Eingelöst", systemImage: SFSymbolName.checkmark)
 //                                }
-//                                .tint(Colors.primary600)
+//                                .tint(Colors.primary700)
 //                            })
 //                            .swipeActions {
 //                                Button(role: .destructive) {
@@ -227,7 +227,7 @@ extension ChargeItemListView {
 //                                .tint(Colors.red600)
 //                                Button("Check") {
 //                                }
-//                                .tint(Colors.primary600)
+//                                .tint(Colors.primary700)
 //                            }
                     }
                     // TODO: placeholder for deletion story swiftlint:disable:this todo

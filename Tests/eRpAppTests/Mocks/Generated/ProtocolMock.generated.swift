@@ -43,20 +43,24 @@ final class MockAVSSession: AVSSession {
     
    // MARK: - redeem
 
+    var redeemMessageEndpointRecipientsThrowableError: Error?
     var redeemMessageEndpointRecipientsCallsCount = 0
     var redeemMessageEndpointRecipientsCalled: Bool {
         redeemMessageEndpointRecipientsCallsCount > 0
     }
     var redeemMessageEndpointRecipientsReceivedArguments: (message: AVSMessage, endpoint: AVSEndpoint, recipients: [X509])?
     var redeemMessageEndpointRecipientsReceivedInvocations: [(message: AVSMessage, endpoint: AVSEndpoint, recipients: [X509])] = []
-    var redeemMessageEndpointRecipientsReturnValue: AnyPublisher<AVSSessionResponse, AVSError>!
-    var redeemMessageEndpointRecipientsClosure: ((AVSMessage, AVSEndpoint, [X509]) -> AnyPublisher<AVSSessionResponse, AVSError>)?
+    var redeemMessageEndpointRecipientsReturnValue: AVSSessionResponse!
+    var redeemMessageEndpointRecipientsClosure: ((AVSMessage, AVSEndpoint, [X509]) throws -> AVSSessionResponse)?
 
-    func redeem(message: AVSMessage, endpoint: AVSEndpoint, recipients: [X509]) -> AnyPublisher<AVSSessionResponse, AVSError> {
+    func redeem(message: AVSMessage, endpoint: AVSEndpoint, recipients: [X509]) throws -> AVSSessionResponse {
+        if let error = redeemMessageEndpointRecipientsThrowableError {
+            throw error
+        }
         redeemMessageEndpointRecipientsCallsCount += 1
         redeemMessageEndpointRecipientsReceivedArguments = (message: message, endpoint: endpoint, recipients: recipients)
         redeemMessageEndpointRecipientsReceivedInvocations.append((message: message, endpoint: endpoint, recipients: recipients))
-        return redeemMessageEndpointRecipientsClosure.map({ $0(message, endpoint, recipients) }) ?? redeemMessageEndpointRecipientsReturnValue
+        return try redeemMessageEndpointRecipientsClosure.map({ try $0(message, endpoint, recipients) }) ?? redeemMessageEndpointRecipientsReturnValue
     }
 }
 
@@ -1817,43 +1821,6 @@ final class MockRouting: Routing {
         routeToReceivedEndpoint = endpoint
         routeToReceivedInvocations.append(endpoint)
         routeToClosure?(endpoint)
-    }
-}
-
-
-// MARK: - MockSearchHistory -
-
-final class MockSearchHistory: SearchHistory {
-    
-   // MARK: - addHistoryItem
-
-    var addHistoryItemCallsCount = 0
-    var addHistoryItemCalled: Bool {
-        addHistoryItemCallsCount > 0
-    }
-    var addHistoryItemReceivedItem: String?
-    var addHistoryItemReceivedInvocations: [String] = []
-    var addHistoryItemClosure: ((String) -> Void)?
-
-    func addHistoryItem(_ item: String) {
-        addHistoryItemCallsCount += 1
-        addHistoryItemReceivedItem = item
-        addHistoryItemReceivedInvocations.append(item)
-        addHistoryItemClosure?(item)
-    }
-    
-   // MARK: - historyItems
-
-    var historyItemsCallsCount = 0
-    var historyItemsCalled: Bool {
-        historyItemsCallsCount > 0
-    }
-    var historyItemsReturnValue: [String]!
-    var historyItemsClosure: (() -> [String])?
-
-    func historyItems() -> [String] {
-        historyItemsCallsCount += 1
-        return historyItemsClosure.map({ $0() }) ?? historyItemsReturnValue
     }
 }
 

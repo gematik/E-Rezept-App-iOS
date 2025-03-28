@@ -255,7 +255,7 @@ struct OrderDetailView: View {
                     }
                     .navigationBarItems(trailing: CloseButton { store.send(.showOpenUrlSheet(url: nil)) })
                 }
-                .accentColor(Colors.primary600)
+                .tint(Colors.primary700)
                 .navigationViewStyle(StackNavigationViewStyle())
             }
         }

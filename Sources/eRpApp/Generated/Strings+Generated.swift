@@ -3176,7 +3176,7 @@ import SwiftUI
     internal static let stgTxtChargeItemSum = StringAsset("stg_txt_charge_item_sum")
     /// Demo mode
     internal static let stgTxtDemoMode = StringAsset("stg_txt_demo_mode")
-    /// You will be redirected to the organ donation register. In order to view and change your organ donation data, you must log in there.
+    /// You will be redirected to the organ donation register website. In order to view and change your organ donation data, you must log in there.
     internal static let stgTxtDonorRegisterAlertMessage = StringAsset("stg_txt_donor_register_alert_message")
     /// Open organ donation register?
     internal static let stgTxtDonorRegisterAlertTitle = StringAsset("stg_txt_donor_register_alert_title")

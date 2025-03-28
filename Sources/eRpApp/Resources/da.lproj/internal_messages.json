@@ -10,5 +10,11 @@
         "text": "**ePA-kompatibilitet** \n 🤝 Dine recepter er nu fuldt ud kompatible med den elektroniske patientjournal. \n \n **Forbedret** \n ✨ Udløbne opskrifter forsvinder nu ind i arkivet.",
         "timestamp": "2024-12-20T08:00:00.000Z",
         "version": "1.28.0"
+    },
+    {
+        "id": "4",
+        "text": "**Bedre læsbarhed** \n Vi har gjort vores mærkefarve lidt mørkere for at øge farvekontrasten og derved forbedre læsbarheden. \n \n **Optimeret indtastningsfelt** \n Markøren i indtastningsfeltet for adgangsnummeret er blevet fjernet.",
+        "timestamp": "2025-01-28T08:00:00.000Z",
+        "version": "1.29.0"
     }
 ]

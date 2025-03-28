@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Eingelöst am";
 "stg_txt_charge_item_sum" = "Gesamtpreis";
 "stg_txt_demo_mode" = "Demo-Modus";
-"stg_txt_donor_register_alert_message" = "Sie werden zum Organspenderegister weitergeleitet. Um Ihre Daten zur Organspende einsehen und ändern zu können, müssen Sie sich dort anmelden.";
+"stg_txt_donor_register_alert_message" = "Sie werden zur Webseite des Organspenderegisters weitergeleitet. Um Ihre Daten zur Organspende einsehen und ändern zu können, müssen Sie sich dort anmelden.";
 "stg_txt_donor_register_alert_title" = "Organspenderegister öffnen?";
 "stg_txt_edit_profile_background_section_title" = "Hintergrundfarbe";
 "stg_txt_edit_profile_charge_item_list_section_title" = "Kostenbelege";

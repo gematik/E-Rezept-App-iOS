@@ -41,7 +41,7 @@ struct OnboardingStartView: View {
                     Image(decorative: Asset.Onboarding.appLogo)
                         .foregroundColor(Colors.primary900)
                         .accessibility(sortPriority: 1.0)
-                        .padding(.bottom, -30)
+                        .padding(.vertical, 8)
                     Text(L10n.onbStrTxtTitle)
                         .foregroundColor(Colors.systemLabel)
                         .font(Font.largeTitle.weight(.bold))
@@ -77,6 +77,7 @@ struct OnboardingStartView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             OnboardingStartView()
+                .environment(\.locale, .init(identifier: "de"))
             OnboardingStartView()
                 .preferredColorScheme(.dark)
             OnboardingStartView()

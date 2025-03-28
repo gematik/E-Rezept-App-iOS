@@ -92,9 +92,9 @@ extension LegalNoticeView {
                 HStack {
                     Image(systemName: SFSymbolName.network)
                         .frame(width: iconSize)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                     Link(L10n.stgLnoLinkTextContact, destination: webLink)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoLinkContact)
                 }
                 .padding(.top, 1)
@@ -103,9 +103,9 @@ extension LegalNoticeView {
                 HStack {
                     Image(systemName: SFSymbolName.mail)
                         .frame(width: iconSize)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                     Link(L10n.stgLnoMailTextContact, destination: emailLink)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoMailContact)
                 }
                 .padding(.top, 1)
@@ -114,9 +114,9 @@ extension LegalNoticeView {
                 HStack {
                     Image(systemName: SFSymbolName.phone)
                         .frame(width: iconSize)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                     Link(L10n.stgLnoPhoneTextContact, destination: phoneLink)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                         .accessibility(identifier: A18n.settings.legalNotice.stgLnoPhoneContact)
                 }
                 .padding(.top, 1)

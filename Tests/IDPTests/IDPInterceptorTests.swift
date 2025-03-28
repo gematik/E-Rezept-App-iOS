@@ -49,7 +49,7 @@ final class IDPInterceptorTests: XCTestCase {
         let chain = PassThroughChain(request: request)
 
         let sut = session.httpInterceptor(delegate: nil)
-        sut.intercept(chain: chain)
+        sut.interceptPublisher(chain: chain)
             .test(expectations: { _, _, _ in
                 expect(chain.incomingProceedRequests.count) == 1
                 expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
@@ -69,7 +69,7 @@ final class IDPInterceptorTests: XCTestCase {
         let chain = PassThroughChain(request: request)
 
         let sut = session.httpInterceptor(delegate: nil)
-        sut.intercept(chain: chain)
+        sut.interceptPublisher(chain: chain)
             .test(failure: { error in
                 expect(error.isIDPTokenUnavailable) == true // Wrong error type when false
             }) { _, _, _ in
@@ -92,7 +92,7 @@ final class IDPInterceptorTests: XCTestCase {
         delegate.shouldAuthorize = true
 
         let sut = session.httpInterceptor(delegate: delegate)
-        sut.intercept(chain: chain)
+        sut.interceptPublisher(chain: chain)
             .test(expectations: { _, _, _ in
                 expect(chain.incomingProceedRequests.count) == 1
                 expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
@@ -116,7 +116,7 @@ final class IDPInterceptorTests: XCTestCase {
         delegate.shouldAuthorize = true
 
         let sut = session.httpInterceptor(delegate: delegate)
-        sut.intercept(chain: chain)
+        sut.interceptPublisher(chain: chain)
             .test(failure: { error in
                 // assert error
                 expect(error.isIDPTokenUnavailable) == true // Wrong error type when false
@@ -142,7 +142,7 @@ final class IDPInterceptorTests: XCTestCase {
         delegate.shouldAuthorize = false
 
         let sut = session.httpInterceptor(delegate: delegate)
-        sut.intercept(chain: chain)
+        sut.interceptPublisher(chain: chain)
             .test(expectations: { _, _, _ in
                 expect(chain.incomingProceedRequests.count) == 1
                 expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]).to(beNil())
@@ -166,7 +166,7 @@ final class IDPInterceptorTests: XCTestCase {
         delegate.shouldAuthorize = false
 
         let sut = session.httpInterceptor(delegate: delegate)
-        sut.intercept(chain: chain)
+        sut.interceptPublisher(chain: chain)
             .test(expectations: { _, _, _ in
                 expect(chain.incomingProceedRequests.count) == 1
                 expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]).to(beNil())
@@ -202,7 +202,7 @@ final class IDPInterceptorTests: XCTestCase {
             status: HTTPStatusCode.unauthorized
         )
 
-        sut.intercept(chain: chain)
+        sut.interceptPublisher(chain: chain)
             .test(expectations: { _, _, _ in
                 expect(chain.incomingProceedRequests.count) == 1
                 expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"

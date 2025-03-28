@@ -32,7 +32,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rcasula/composable-core-location",
       "state" : {
-        "revision" : "40a98e18d0350fd1a1efa83c24aca3044b9b7bd2"
+        "revision" : "0f3651bdaf95fcc44acef7de7d9aab0395cc2678"
       }
     },
     {

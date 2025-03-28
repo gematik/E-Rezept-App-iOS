@@ -57,7 +57,7 @@ struct WelcomeDrawerView: View {
                     store.send(.setNavigation(tag: .none), animation: .easeInOut)
                 }, label: {
                     Text(L10n.wlcdBtnDecline)
-                        .foregroundColor(Colors.primary600)
+                        .foregroundColor(Colors.primary700)
                         .fontWeight(.semibold)
                 })
                     .frame(minHeight: 52, alignment: .center) // quaternary button minHeight

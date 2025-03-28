@@ -50,7 +50,7 @@ struct CardWallCANInputView: View {
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(Colors.primary600,
+                                .stroke(Colors.primary700,
                                         lineWidth: index == self.can.count ? 0.5 : 0)
                         )
                 }
@@ -60,7 +60,7 @@ struct CardWallCANInputView: View {
                 .textContentType(.oneTimeCode)
                 .keyboardType(.numberPad)
                 .foregroundColor(.clear)
-                .accentColor(.clear)
+                .tint(.clear)
                 .accessibilityHint(Text(L10n.cdwTxtCanTitleHint))
                 .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInput)
         }

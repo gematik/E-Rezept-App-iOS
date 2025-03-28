@@ -135,7 +135,7 @@ extension PrescriptionDetailView {
 
                                     if store.showStatusMessageAsButton {
                                         Image(systemName: SFSymbolName.info)
-                                            .foregroundColor(Colors.primary600)
+                                            .foregroundColor(Colors.primary700)
                                             .font(.subheadline.weight(.semibold))
                                     }
                                 }
@@ -318,7 +318,7 @@ extension PrescriptionDetailView {
                         Text(fromDate ?? L10n.prscFdTxtNa.text)
                         Image(systemName: SFSymbolName.arrowRight)
                             .font(.subheadline.weight(.semibold))
-                            .foregroundColor(Colors.primary600)
+                            .foregroundColor(Colors.primary700)
                         Text(toDate ?? L10n.prscFdTxtNa.text)
                     }
                 }

@@ -75,7 +75,7 @@ struct MedicationReminderOneDaySummaryView: View {
                     Text(L10n.medReminderBtnOneDaySummaryGoToRemindersOverviewButton)
                         .fontWeight(.semibold)
                 }
-                .foregroundColor(Colors.primary600)
+                .foregroundColor(Colors.primary700)
                 .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnOneDaySummaryGoToRemindersOverviewButton)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -216,7 +216,7 @@ struct MedicationReminderOneDaySummaryView: View {
                 Image(SFSymbolName
                     .alarm)
                                     .font(.largeTitle)
-                                    .foregroundColor(Colors.primary600)
+                                    .foregroundColor(Colors.primary700)
                                     .padding([.top, .bottom, .leading])
 
                 VStack(alignment: .leading) {

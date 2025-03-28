@@ -1491,7 +1491,7 @@
 "stg_txt_charge_item_redeemed_on" = "Uplatněno dne";
 "stg_txt_charge_item_sum" = "Celková cena";
 "stg_txt_demo_mode" = "Demo režim";
-"stg_txt_donor_register_alert_message" = "Budete přesměrováni do registru dárců orgánů. Chcete-li zobrazit a změnit údaje o dárcovství orgánů, musíte se tam přihlásit.";
+"stg_txt_donor_register_alert_message" = "Budete přesměrováni na webovou stránku registru dárců orgánů. Chcete-li zobrazit a změnit údaje o dárcovství orgánů, musíte se tam přihlásit.";
 "stg_txt_donor_register_alert_title" = "Otevřít registr dárcovství orgánů?";
 "stg_txt_edit_profile_background_section_title" = "barva pozadí";
 "stg_txt_edit_profile_charge_item_list_section_title" = "výdajové doklady";
