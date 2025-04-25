@@ -39,15 +39,15 @@ i-01304,"LoginHandlerError.ssoExpired","",
 i-01305,"LoginHandlerError.idpError","",IDPError
 i-01306,"LoginHandlerError.network","",
 i-,"LoginHandlerError.LoadingError.message","",
-i-00401,"NFCSignatureProviderError.cardError","Error while establishing a connection to the card",NFCTagReaderSession.Error
-i-00403,"NFCSignatureProviderError.wrongCAN","Error while verifying the CAN",
-i-00404,"NFCSignatureProviderError.cardConnectionError","Error while establishing Secure channel or card connection",
-i-00405,"NFCSignatureProviderError.verifyCardError","Any error related to PIN verification",NFCSignatureProviderError.VerifyPINError
-i-00406,"NFCSignatureProviderError.signingFailure","ESIGN Failed",NFCSignatureProviderError.SigningError
-i-00408,"NFCSignatureProviderError.genericError","Generic error while trying to sign the challenge",
-i-00409,"NFCSignatureProviderError.cardReadingError","Generic error while reading something from the card",
-i-00410,"NFCSignatureProviderError.secureEnclaveError","Generic error while reading something from the card",SecureEnclaveSignatureProviderError
-i-00411,"NFCSignatureProviderError.nfcHealthCardSession","Any error regarding the communication with the NFC health card itself\nor sending/receiving data (operation execution)",
+i-00401,"NFCSignatureProviderError.cardError","",NFCTagReaderSession.Error
+i-00403,"NFCSignatureProviderError.wrongCAN","",
+i-00404,"NFCSignatureProviderError.cardConnectionError","",
+i-00405,"NFCSignatureProviderError.verifyCardError","",NFCSignatureProviderError.VerifyPINError
+i-00406,"NFCSignatureProviderError.signingFailure","",NFCSignatureProviderError.SigningError
+i-00408,"NFCSignatureProviderError.genericError","",
+i-00409,"NFCSignatureProviderError.cardReadingError","",
+i-00410,"NFCSignatureProviderError.secureEnclaveError","",SecureEnclaveSignatureProviderError
+i-00411,"NFCSignatureProviderError.nfcHealthCardSession","",
 i-00501,"NFCSignatureProviderError.SigningError.unsupportedAlgorithm","",
 i-00502,"NFCSignatureProviderError.SigningError.responseStatus","",
 i-00503,"NFCSignatureProviderError.SigningError.certificate","",
@@ -68,7 +68,7 @@ i-01503,"MainDomain.Error.importDuplicate","Import of shared Task failed due to 
 i-01504,"MainDomain.Error.repositoryError","Saving or retrieving data failed",ErxRepositoryError
 i-01601,"PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02301,"MatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
-i-03601,"MedicationReminderListDomain.Error.generic","",
+i-04201,"MedicationReminderListDomain.Error.generic","",
 i-03601,"MedicationReminderSetupDomain.Error.generic","",
 i-03801,"InternalCommunicationError.decodingError","",
 i-03802,"InternalCommunicationError.invalidURL","",
@@ -77,6 +77,9 @@ i-03804,"InternalCommunicationError.unknownError","",
 i-03701,"DefaultOrdersRepository.Error.erxRepository","",ErxRepositoryError
 i-03702,"DefaultOrdersRepository.Error.pharmacyRepository","",PharmacyRepositoryError
 i-03703,"DefaultOrdersRepository.Error.unspecified","",
+i-03901,"RedeemOrderServiceError.localStore","",LocalStoreError
+i-03902,"RedeemOrderServiceError.pharmacy","",PharmacyRepositoryError
+i-03903,"RedeemOrderServiceError.redeem","",RedeemServiceError
 i-02401,"RedeemServiceError.eRxRepository","When redeeming a task via Fachdienst",ErxRepositoryError
 i-02402,"RedeemServiceError.avs","When redeeming a task via AVS",AVSError
 i-02403,"RedeemServiceError.internalError","When an internal error occurs which most likely is a programming error",RedeemServiceError.InternalError
@@ -102,12 +105,12 @@ i-02607,"NFCHealthCardPasswordControllerError.nfcHealthCardSession","Any error r
 i-04001,"OrganDonorJumpServiceError.fetchingProfile","",
 i-04002,"OrganDonorJumpServiceError.generatingGenericUrl","",
 i-04003,"OrganDonorJumpServiceError.openingSpecificUrl","",
-i-03601,"ChargeItemConsentService.Error.localStore","",LocalStoreError
-i-03602,"ChargeItemConsentService.Error.loginHandler","",LoginHandlerError
-i-03603,"ChargeItemConsentService.Error.erxRepository","",ErxRepositoryError
-i-03604,"ChargeItemConsentService.Error.unexpectedGrantConsentResponse","",
-i-03605,"ChargeItemConsentService.Error.unexpected","",
-i-03606,"ChargeItemConsentService.Error.unexpectedRevokeConsentResponse","",
+i-04101,"ChargeItemConsentService.Error.localStore","",LocalStoreError
+i-04102,"ChargeItemConsentService.Error.loginHandler","",LoginHandlerError
+i-04103,"ChargeItemConsentService.Error.erxRepository","",ErxRepositoryError
+i-04104,"ChargeItemConsentService.Error.unexpectedGrantConsentResponse","",
+i-04105,"ChargeItemConsentService.Error.unexpected","",
+i-04106,"ChargeItemConsentService.Error.unexpectedRevokeConsentResponse","",
 i-03101,"ChargeItemDomainServiceAuthenticateResult.Error.loginHandler","",LoginHandlerError
 i-03102,"ChargeItemDomainServiceAuthenticateResult.Error.unexpected","",
 i-03401,"ChargeItemDomainServiceDeleteResult.Error.localStore","",LocalStoreError
@@ -149,10 +152,10 @@ i-01804,"RegisteredDevicesServiceError.idpError","",IDPError
 i-03901,"SettingsDomainError.organDonorJumpError","",OrganDonorJumpServiceError
 i-03902,"SettingsDomainError.organDonorUnknownError","",
 i-01901,"DemoError.demo","",
-i-00601,"AppSecurityManagerError.savePasswordFailed","",
-i-00602,"AppSecurityManagerError.retrievePasswordFailed","",
-i-00603,"AppSecurityManagerError.localAuthenticationContext","",
-i-00604,"AppSecurityManagerError.migrationFailed","",
+i-04401,"AppSecurityManagerError.savePasswordFailed","",
+i-04402,"AppSecurityManagerError.retrievePasswordFailed","",
+i-04403,"AppSecurityManagerError.localAuthenticationContext","",
+i-04404,"AppSecurityManagerError.migrationFailed","",
 i-02001,"KeychainAccessHelperError.illegalArgument","",
 i-02002,"KeychainAccessHelperError.keyChainError","",
 i-02002,"KeychainAccessHelperError.keyChainError","",
@@ -163,7 +166,7 @@ i-02103,"IDTokenValidatorError.profileWithInsuranceIdExists","",
 i-02104,"IDTokenValidatorError.other","",
 i-02201,"UserProfileServiceError.localStoreError","",LocalStoreError
 i-00801,"UserSessionError.idpError","",IDPError
-i-03801,"ShareSheetDomain.Error.shareFailure","",
+i-04301,"ShareSheetDomain.Error.shareFailure","",
 i-,"MockAnswer.Error.decodingError","",
 i-,"MockAnswer.Error.unkownType","",
 i-,"MockAnswer.Error.unkownType","",
@@ -177,8 +180,8 @@ i-20103,"ErxTask.Status.Error.missingStatus","",
 i-20104,"ErxTask.Status.Error.missingPatientReceiptReference","",
 i-20105,"ErxTask.Status.Error.missingPatientReceiptIdentifier","",
 i-20106,"ErxTask.Status.Error.missingPatientReceiptBundle","",
-i-20601,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","Unable to construct communication request",
-i-20602,"ErxTaskOrder.Error.invalidErxTaskOrderInput","Invalid ErxTaskOrder though previous validation checks have been passed",
+i-20801,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","",
+i-20802,"ErxTaskOrder.Error.invalidErxTaskOrderInput","",
 i-20001,"ErxRepositoryError.local","",LocalStoreError
 i-20002,"ErxRepositoryError.remote","",RemoteStoreError
 i-20301,"LocalStoreError.notImplemented","",
@@ -218,6 +221,12 @@ i-52004,"FHIRClient.Error.inconsistentResponse","When the server returned a succ
 i-52005,"FHIRClient.Error.decoding","",
 i-52006,"FHIRClient.Error.unknown","",
 i-52007,"FHIRClient.Error.http","",
+i-30001,"FHIRVZDError.network","In case of HTTP/Connection error",HTTPClientError
+i-30002,"FHIRVZDError.tokenUnavailable","When a token is being requested, but none can be found",
+i-30003,"FHIRVZDError.decoding","Message failed to decode/parse",
+i-30004,"FHIRVZDError.unspecified","Other error cases",
+i-,"FHIRVZDError.LoadingError.message","",
+i-61001,"HealthcareServiceBundleParsingError.parseError","",
 i-53001,"HTTPClientError.internalError","Internal error in the request/chain handling",
 i-53002,"HTTPClientError.httpError","The server responded with an error",
 i-53003,"HTTPClientError.networkError","The connection to the server has gone bad",
@@ -330,13 +339,18 @@ i-56003,"TrustStoreError.invalidOCSPResponse","When one (or more) OCSP response(
 i-56004,"TrustStoreError.eeCertificateOCSPStatusVerification","When one (or more) end entity certificate cannot be status verified by given OCSP responses",
 i-56005,"TrustStoreError.unspecified","Other error cases",
 i-56006,"TrustStoreError.`internal`","Internal error",TrustStoreError.InternalError
-i-5611,"TrustStoreError.InternalError.loadOCSPCheckedTrustStoreUnexpectedNil","",
-i-5612,"TrustStoreError.InternalError.loadCertListFromServerUnexpectedNil","",
-i-5613,"TrustStoreError.InternalError.loadOCSPListFromServerUnexpectedNil","",
-i-5614,"TrustStoreError.InternalError.trustStoreCertListUnexpectedNil","",
-i-5615,"TrustStoreError.InternalError.loadOCSPResponsesUnexpectedNil","",
-i-5616,"TrustStoreError.InternalError.missingSignerForEECertificate","",
-i-5617,"TrustStoreError.InternalError.notImplemented","",
+i-56007,"TrustStoreError.noValidVauCertificateAvailable","When no valid VAU certificate can be provided by the system at the moment",
+i-56008,"TrustStoreError.malformedCertificate","When a certificate is of unexpected (e.g. not parsable) format",
+i-56101,"TrustStoreError.InternalError.loadOCSPCheckedTrustStoreUnexpectedNil","",
+i-56102,"TrustStoreError.InternalError.loadCertListFromServerUnexpectedNil","",
+i-56103,"TrustStoreError.InternalError.loadOCSPListFromServerUnexpectedNil","",
+i-56104,"TrustStoreError.InternalError.trustStoreCertListUnexpectedNil","",
+i-56105,"TrustStoreError.InternalError.loadOCSPResponsesUnexpectedNil","",
+i-56106,"TrustStoreError.InternalError.missingSignerForEECertificate","",
+i-56107,"TrustStoreError.InternalError.notImplemented","",
+i-56108,"TrustStoreError.InternalError.trustAnchorUnexpectedFormat","",
+i-56109,"TrustStoreError.InternalError.vauCertificateUnexpectedFormat","",
+i-56110,"TrustStoreError.InternalError.trustStoreCreationFailed","",
 i-55001,"VAUError.network","In case of HTTP/Connection error",HTTPClientError
 i-55002,"VAUError.certificateDecoding","When failed to extract a X.509 VAU certificate information",
 i-55003,"VAUError.internalCryptoError","When internal cryptographic operations fail",

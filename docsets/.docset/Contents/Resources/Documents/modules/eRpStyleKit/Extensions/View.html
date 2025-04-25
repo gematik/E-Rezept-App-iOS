@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.28.0
+           1.30.0
  Docs
         </a>
          (100% documented)
@@ -334,7 +334,7 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@ViewBuilder</span>
 <span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">toast</span><span class="p">(</span><span class="nv">isPresented</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">toast</span><span class="p">:</span> <span class="kt"><a href="../Structs/Toast.html">Toast</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">toast</span><span class="p">(</span><span class="nv">isPresented</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">toast</span><span class="p">:</span> <span class="kt"><a href="../Structs/Toast.html">Toast</a></span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -399,7 +399,7 @@ the toast to dismiss the toast.</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@ViewBuilder</span>
 <span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">toast</span><span class="p">(</span><span class="nv">toast</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/Toast.html">Toast</a></span><span class="p">?</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">toast</span><span class="p">(</span><span class="nv">toast</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/Toast.html">Toast</a></span><span class="p">?</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -464,7 +464,7 @@ the toast to dismiss the toast.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">tooltip</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/TooltipId.html">TooltipId</a></span><span class="p">,</span> <span class="kd">@ViewBuilder</span> <span class="nv">content</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">tooltip</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="n">any</span> <span class="kt"><a href="../Protocols/TooltipId.html">TooltipId</a></span><span class="p">,</span> <span class="kd">@ViewBuilder</span> <span class="nv">content</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -524,7 +524,7 @@ case represents a single tooltip.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">tooltipContainer</span><span class="p">(</span><span class="nv">enabled</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">tooltipContainer</span><span class="p">(</span><span class="nv">enabled</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -558,7 +558,7 @@ dynamically updated. If you use view component without intrinsic content size (s
     <span class="nv">isPresented</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="nv">onDismiss</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Void</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="kd">@ViewBuilder</span> <span class="nv">content</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Content</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span></code></pre>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -591,7 +591,7 @@ dynamically updated. If you use view component without intrinsic content size (s
 <span class="kd">public</span> <span class="kd">func</span> <span class="n">smallSheet</span><span class="o">&lt;</span><span class="kt">Item</span><span class="p">,</span> <span class="kt">Content</span><span class="p">:</span> <span class="kt">View</span><span class="o">&gt;</span><span class="p">(</span>
     <span class="n">_</span> <span class="nv">item</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Item</span><span class="p">?</span><span class="o">&gt;</span><span class="p">,</span>
     <span class="kd">@ViewBuilder</span> <span class="nv">content</span><span class="p">:</span> <span class="p">(</span><span class="kt">Item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Content</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span></code></pre>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -620,7 +620,7 @@ This will remove the separator from the last element in the section.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">sectionContainerIsLastElement</span><span class="p">(</span><span class="n">_</span> <span class="nv">sectionContainerIsLastElement</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">sectionContainerIsLastElement</span><span class="p">(</span><span class="n">_</span> <span class="nv">sectionContainerIsLastElement</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -648,7 +648,7 @@ This will remove the separator from the last element in the section.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="nf">sectionContainerStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Protocols/SectionContainerStyle.html">SectionContainerStyle</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">sectionContainerStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Protocols/SectionContainerStyle.html">SectionContainerStyle</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -676,7 +676,7 @@ This will remove the separator from the last element in the section.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@MainActor</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="n">subTitleStyle</span><span class="o">&lt;</span><span class="kt">Style</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt">Style</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">some</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">Style</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/SubTitleStyle.html">SubTitleStyle</a></span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="n">subTitleStyle</span><span class="o">&lt;</span><span class="kt">Style</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt">Style</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">Style</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/SubTitleStyle.html">SubTitleStyle</a></span></code></pre>
 
                         </div>
                       </div>
@@ -691,7 +691,7 @@ This will remove the separator from the last element in the section.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-04-25)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
