@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.28.0 Docs
+           1.30.0 Docs
         </a>
          (0% documented)
       </p>
@@ -318,7 +318,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>Apple already implements this with a signed binary delivered to customers. An altered application can only run on a jailbroken device. If a user is using a jailbroken device, may it be known or unknown, we display a security alert so a user can make an informed decision to use or not use the application.</p>
-<h4 id='code-sources-erpapp-screens-main-mainview-swift-109-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:109</code></h4>
+<h4 id='code-sources-erpapp-screens-main-mainview-swift-105-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:105</code></h4>
 
 <p>trigger device security check</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
@@ -526,14 +526,14 @@ Button {
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>Implemented via APIKey usage against APOVZD and FD. All requests against the backends may respond with an 403 status code. The App stays usable, but only without any server connection. The user is informed, that an update is required.</p>
-<h4 id='code-sources-erpapp-screens-main-mainview-swift-105-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:105</code></h4>
+<h4 id='code-sources-erpapp-screens-main-mainview-swift-101-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:101</code></h4>
 
 <p>Trigger for the update check</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_10#2] Trigger for the update check
 await store.send(.checkForForcedUpdates).finish()
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-maindomain-swift-243-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainDomain.swift:243</code></h4>
+<h4 id='code-sources-erpapp-screens-main-maindomain-swift-260-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainDomain.swift:260</code></h4>
 
 <p>The actual business logic for the update check</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_10#3] The actual business logic for the update check
@@ -1642,18 +1642,18 @@ let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
 
 <p>Signature creation with eGK with dedicated C.CH.AUT</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Cryp_4#7|12] Signature creation with eGK with dedicated C.CH.AUT
-func sign(message: Data) -&gt; AnyPublisher&lt;Data, Swift.Error&gt; {
+func sign(message: Data) async throws -&gt; Data {
     // [REQ:gemSpec_IDP_Frontend:A_20700-07] perform signature with OpenHealthCardKit
-    card.sign(data: message)
-        .tryMap { response in
-            if response.responseStatus == ResponseStatus.success, let signature = response.data {
-                return signature
-            } else {
-                throw NFCSignatureProviderError.signingFailure(.responseStatus(response.responseStatus))
-            }
-        }
-        .eraseToAnyPublisher()
+    let response = try await card.signAsync(data: message)
+    if response.responseStatus == ResponseStatus.success, let signature = response.data {
+        return signature
+    } else {
+        throw NFCSignatureProviderError.signingFailure(.responseStatus(response.responseStatus))
+    }
 }
+}
+
+extension PSOAlgorithm {
 </code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-bsi-erp-epa-latest-index-html-o-cryp_5-o-cryp_5-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/BSI-eRp-ePA/latest/index.html#O.Cryp_5">O.Cryp_5</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
@@ -2727,7 +2727,7 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>We do not pin TLS Certificates, instead we pin TI PKI Certificates for FD and IDP communication. Since we got an agreement with the BSI regarding the usage of pinning, (TI PKI Pinning is enough) we remove the TLS pinning itself, in favor of certificate transparency + our second layer of TI Certificate pinning. If accessing the APOVZD, we don’t have such pinning. However, the need for pinning is due to high protection demand of the medical data. But the APOVZD does not hold such data, thus we interpret that pinning is not necessary there at all. Furthermore, we don’t see attack vectors regarding the APOVZD. It only required an API Key, but no authentication. Redeeming prescriptions directly with pharmacies, we encrypt the payload with an encryption certificate, that again is checked to be within TI PKI.</p>
-<h4 id='code-sources-erpapp-appconfiguration-swift-136-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:136</code></h4>
+<h4 id='code-sources-erpapp-appconfiguration-swift-153-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:153</code></h4>
 
 <p>Gematik Root CA 3 as a trust anchor has to be set in the program code</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
@@ -3602,7 +3602,7 @@ do {
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>We test for device pincode at startup and show a dialog if no pin is set.</p>
-<h4 id='code-sources-erpapp-screens-main-mainview-swift-109-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:109</code></h4>
+<h4 id='code-sources-erpapp-screens-main-mainview-swift-105-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:105</code></h4>
 
 <p>trigger device security check</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
@@ -4890,7 +4890,7 @@ Weiterhin prüft er, ob die Anwendung angemessen auf das Erkennen reagiert. Dies
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>Jailbreak detection is done on startup of the application after the app authentication. If a jailbreak is detected, a information dialog is presented to the user.</p>
-<h4 id='code-sources-erpapp-screens-main-mainview-swift-109-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:109</code></h4>
+<h4 id='code-sources-erpapp-screens-main-mainview-swift-105-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainView.swift:105</code></h4>
 
 <p>trigger device security check</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] trigger device security check
@@ -5329,14 +5329,14 @@ erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
 func scene(_: UIScene, continue userActivity: NSUserActivity) {
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-appstartdomain-swift-245-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:245</code></h4>
+<h4 id='code-sources-erpapp-screens-appstartdomain-swift-247-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:247</code></h4>
 
 <p>External application calls via Universal Linking</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
 case let .universalLink(url):
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-maindomain-swift-273-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainDomain.swift:273</code></h4>
+<h4 id='code-sources-erpapp-screens-main-maindomain-swift-290-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainDomain.swift:290</code></h4>
 
 <p>redirect into correct domain</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_1#7] redirect into correct domain
@@ -6104,7 +6104,7 @@ Software, bzw. Funktionen aus Drittanbieter- Software DARF bei bekannten Schwach
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_fd_erp-latest-index-html-a_19145-a_19145-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_FD_eRp/latest/index.html#A_19145">A_19145</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19145" severity="MUSS" class="target-element">
+<div id="A_19145" severity="MUSS" lastupdate="2024-10-01" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-10-01" class="target-element">
 <p><b>A_19145 - E-Rezept-Fachdienst - Statusprüfung Apotheker löscht Rezept</b></p>
 <p>Der E-Rezept-Fachdienst MUSS das Löschen eines E-Rezepts über den mittels der &lt;id&gt; adressierten <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">/Task/&lt;id&gt;/$abort</span> verhindern und die Operation mit dem HTTP-Fehlercode 403 abweisen, wenn der Status des adressierten Tasks gleich &ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">in-progress</span>&rdquo; ist und die Rolle des aufrufenden Nutzers einer der folgenden Rollen entspricht:<br> 
 </p>
@@ -6119,7 +6119,7 @@ Software, bzw. Funktionen aus Drittanbieter- Software DARF bei bekannten Schwach
 </ul>damit Nutzer außerhalb der Apotheke keine Rezepte löschen, die sich aktuell in Belieferung befinden. <b>[&lt;=]</b>
 </div>
 <h4 id='implementation' class='heading'>Implementation</h4>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-289-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:289</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-312-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:312</code></h4>
 
 <p>prevent deletion while task is in progress</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_19145] prevent deletion while task is in progress
@@ -6139,7 +6139,7 @@ var type: PrescriptionType = .regular
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_fd_erp-latest-index-html-a_21360-a_21360-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_FD_eRp/latest/index.html#A_21360">A_21360</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 <h4 id='implementation' class='heading'>Implementation</h4>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-245-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:245</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-268-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:268</code></h4>
 
 <p>no redeem informations available for flowtype 169</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_21360] no redeem informations available for flowtype 169
@@ -6149,7 +6149,7 @@ guard type != .directAssignment
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_fd_erp-latest-index-html-a_22102-a_22102-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_FD_eRp/latest/index.html#A_22102">A_22102</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 <h4 id='implementation' class='heading'>Implementation</h4>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-281-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:281</code></h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-304-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:304</code></h4>
 
 <p>prevent deletion of tasks with flowtype 169 while not completed</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
@@ -6160,7 +6160,7 @@ guard type != .directAssignment
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_dienst-latest-index-html-a_21415-a_21415-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Dienst/latest/index.html#A_21415">A_21415</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21415" severity="MUSS" class="target-element">
+<div id="A_21415" severity="MUSS" lastupdate="2023-03-10" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2023-03-10" class="target-element">
 <p><b>A_21415 - Registrierungsfunktion des IdP-Dienstes: Datenformate und Syntax zur Kommunikation mit dem Authenticator-Modul</b></p>
 <p>Die Registrierungsfunktion des IdP-Dienstes MUSS die folgenden Datentypen zur Kommunikation mit dem Authenticator-Modul verwenden: <br> 
 </p>
@@ -6215,7 +6215,7 @@ public struct SignedPairingData {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_dienst-latest-index-html-a_21450-a_21450-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Dienst/latest/index.html#A_21450">A_21450</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21450" severity="MUSS" class="target-element">
+<div id="A_21450" severity="MUSS" lastupdate="2023-03-10" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2023-03-10" class="target-element">
 <p><b>A_21450 - Inspektions- und Deregistrierungsfunktion des IdP-Dienstes: Datenmodell und Syntax zur Kommunikation mit dem Authenticator-Modul</b></p>
 <p>Die Inspektions- und Deregistrierungsfunktion des IdP-Dienstes MUSS die folgenden Datentypen zur Kommunikation mit dem Authenticator-Modul verwenden: <br> 
 </p>
@@ -6235,7 +6235,7 @@ public struct PairingEntry: Equatable, Codable {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_19908-01-a_19908-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_19908-01">A_19908-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19908-01" severity="MUSS" class="target-element">
+<div id="A_19908-01" severity="MUSS" lastupdate="2022-06-13" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-06-13" class="target-element">
 <p><b>A_19908-01 - Authenticator-Modul: Prüfung der Signatur des &ldquo;CHALLENGE_TOKEN&rdquo;</b></p>
 <p>Das Authenticator-Modul MUSS die Signatur des <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CHALLENGE_TOKEN</span> gegen den aktuellen öffentlichen Schlüssel des Authorization-Endpunktes <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">PUK_AUTH</span> prüfen. Liegt dem Authenticator-Modul der öffentliche Schlüssel des Authorization-Endpunktes noch nicht vor, <span style="font-weight: normal;">MUSS</span> es diesen vom Authorization Server gemäß den Angaben der Adresse <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">PUK_URI_AUTH</span> im Discovery Document abrufen. <b>[&lt;=]</b></p>
 </div>
@@ -6252,7 +6252,7 @@ guard let verified = try? challenge.challenge.verify(with: document.authenticati
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_19937-a_19937-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_19937">A_19937</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19937" severity="MUSS" class="target-element">
+<div id="A_19937" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_19937 - Fehlermeldungen des Token-Endpunktes Anzeige</b></p>
 <p>Das Anwendungsfrontend <span style="font-weight: normal;">MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span></span> in der Lage sein, die vom Token-Endpunkt übertragenen Fehlermeldungen anzuzeigen. <b>[&lt;=]</b></p>
 </div>
@@ -6281,7 +6281,7 @@ public var description: String {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_19938-01-a_19938-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_19938-01">A_19938-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19938-01" severity="MUSS" class="target-element">
+<div id="A_19938-01" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_19938-01 - Annahme des ID_TOKEN</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> das vom Token-Endpunkt ausgegebene <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ID_TOKEN</span> als HTTP/1.1-Statusmeldung 200 verarbeiten und mittels &ldquo;Token-Key&rdquo; entschlüsseln. <br> Das Anwendungsfrontend MUSS das <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ID_TOKEN</span> ablehnen, wenn dieses außerhalb der mit dem Token-Endpunkt etablierten TLS-Verbindung übertragen wird oder nicht mit dem vorher übermittelten &ldquo;Token-Key&rdquo; verschlüsselt war. <br> <b>[&lt;=]</b></p>
 </div>
@@ -6314,7 +6314,7 @@ ssoToken: exchange.sso,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20068-01-a_20068-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20068-01">A_20068-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20068-01" severity="MUSS" class="target-element">
+<div id="A_20068-01" severity="MUSS" lastupdate="2021-05-19" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-05-19" class="target-element">
 <p><b>A_20068-01 - Authenticator-Modul: Prüfung Internet-Zertifikate</b></p>
 <p>Das Authenticator-Modul MUSS das Internet-seitige Zertifikat des IdP-Dienstes prüfen. Hierfür MUSS das Authenticator-Modul sowohl eine Signaturprüfung als auch eine Prüfung der zeitlichen Gültigkeit durchführen. Falls diese Prüfung negativ ausfällt, MUSS es das Zertifikat als &ldquo;ungültig&rdquo; bewerten. <br>Das Authenticator-Modul MUSS das Zertifikat anhand der Signaturprüfung auf ein CA-Zertifikat einer CA, die die &ldquo;CA/Browser Forum Baseline Requirements for the Issuance and Management of Publicly-Trusted Certificates&rdquo; (https://cabforum.org/baseline-requirements-documents/) erfüllt, zurückführen können. Ansonsten MUSS es das Zertifikat als &ldquo;ungültig&rdquo; bewerten. <b>[&lt;=]</b></p>
 </div>
@@ -6324,7 +6324,7 @@ ssoToken: exchange.sso,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20079-a_20079-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20079">A_20079</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20079" severity="MUSS" class="target-element">
+<div id="A_20079" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20079 - Ausfall der Fehlermeldung des Token-Endpunktes</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> im Falle eines Timeout selbständig eine Fehlermeldung generieren, wenn eine Fehlermeldung durch den Token-Endpunkt ausbleibt. <b>[&lt;=]</b></p>
 </div>
@@ -6339,7 +6339,7 @@ $0.asIDPError()
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20085-a_20085-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20085">A_20085</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20085" severity="MUSS" class="target-element">
+<div id="A_20085" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20085 - Fehlermeldungen des Anwendungsfrontends</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> leicht verständliche Fehlermeldungen ausgeben. Eine exakte Form der Fehlermeldung ist nicht vorgegeben [<a href="https://tools.ietf.org/html/rfc6749#section-1.7" target="_top" class="descriptionLink">RFC6749 # section-1.7</a>]. <b>[&lt;=]</b></p>
 </div>
@@ -6369,7 +6369,7 @@ case let .internal(error: error): return error.localizedDescription
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20283-01-a_20283-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20283-01">A_20283-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20283-01" severity="MUSS" class="target-element">
+<div id="A_20283-01" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20283-01 - Annahme des &ldquo;ACCESS_TOKEN&rdquo;</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> das vom Token-Endpunkt ausgegebene <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ACCESS_TOKEN </span>in der HTTP/1.1-Statusmeldung 200 verarbeiten und mittels &ldquo;Token-Key&rdquo; entschlüsseln. <br> Das Anwendungsfrontend MUSS das <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ACCESS_TOKEN </span>ablehnen, wenn dieses außerhalb der mit dem Token-Endpunkt etablierten TLS-Verbindung übertragen wird oder nicht mit dem vorher übermittelten &ldquo;Token-Key&rdquo; verschlüsselt war. <br> <b>[&lt;=]</b></p>
 </div>
@@ -6384,7 +6384,7 @@ expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20309-a_20309-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20309">A_20309</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20309" severity="MUSS" class="target-element">
+<div id="A_20309" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20309 - Bildung von &ldquo;CODE_VERIFIER&rdquo; und &ldquo;CODE_CHALLENGE&rdquo;</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> zur Laufzeit einen <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CODE_VERIFIER</span> (Zufallswert) gemäß [<a href="https://tools.ietf.org/html/rfc7636#section-4.1" target="_top" class="descriptionLink">RFC7636 # section-4.1</a>] bilden. Der <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CODE_VERIFIER</span> muss eine Entropie von mindestens 43 und maximal 128 Zeichen enthalten. Das Anwendungsfrontend MUSS über den <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CODE_VERIFIER</span> einen HASH-Wert, die sogenannte <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CODE_CHALLENGE,</span> gemäß [<a href="https://tools.ietf.org/html/rfc7636#section-4.2" target="_top" class="descriptionLink">RFC7636 # section-4.2</a>] bilden. <b>[&lt;=]</b></p>
 </div>
@@ -6407,24 +6407,6 @@ guard let encoded = try randomGenerator(verifierLength).encodeBase64UrlSafe() el
 </code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20483-a_20483-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20483">A_20483</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
-
-<div id="A_20483" severity="MUSS" class="target-element">
-<p><b>A_20483 - Formulierung und Inhalte der Anfrage zum &ldquo;AUTHORIZATION_CODE&rdquo; für einen &ldquo;ACCESS_TOKEN&rdquo;</b></p>
-<p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> über das Authenticator-Modul den Antrag zum<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;"> AUTHORIZATION_CODE</span> für einen <span style="font-size: 11pt;font-family: 'Courier New', Courier, monospace, HanWangKanTan;line-height: 1.5;">ACCESS_TOKEN</span> via Private-Use URI Scheme Redirection  [<a href="https://tools.ietf.org/html/rfc8252#section-7.1" target="_top" class="descriptionLink">RFC8252 # section-7.1</a>] beim Authorization-Endpunkt in Form eines HTTP/1.1 GET-Request stellen und dabei die folgenden Attribute anführen: <br> 
-</p>
-<div style="margin-left: 2em;"> 
-<ul> 
-<li><span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">response_type</span></li> 
-<li><span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">scope</span></li> 
-<li><span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">client_id</span></li> 
-<li><span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">redirect_uri</span></li> 
-<li>
-<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">code_challenge</span> (Hashwert des <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">code_verifier</span>) [<a href="https://tools.ietf.org/html/rfc7636#section-4.2" target="_top" class="descriptionLink">RFC7636 # section-4.2</a>]<br> </li> 
-<li>
-<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">code_challenge_method</span> HASH-Algorithmus (S256) [<a href="https://tools.ietf.org/html/rfc7636#section-4.3" target="_top" class="descriptionLink">RFC7636 # section-4.3</a>]</li> 
-</ul> 
-</div> <b>[&lt;=]</b>
-</div>
 <h4 id='implementation' class='heading'>Implementation</h4>
 <h4 id='code-sources-idp-defaultidpsession-swift-635-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:635</code></h4>
 
@@ -6485,7 +6467,7 @@ storage.wipe()
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20499-01-a_20499-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20499-01">A_20499-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20499-01" severity="MUSS" class="target-element">
+<div id="A_20499-01" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20499-01 - Authenticator-Modul: aktives Löschen von &ldquo;SSO_TOKEN&rdquo;</b></p>
 <p>Das Authenticator-Modul MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">SSO_TOKEN </span>löschen, wenn der Anwender einen aktiven Logout durchführt. Das Authenticator-Modul MUSS dazu dem Anwender eine auslösende Funktionalität anbieten. <br> <b>[&lt;=]</b></p>
 </div>
@@ -6521,7 +6503,7 @@ set(can: nil)
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20512-a_20512-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20512">A_20512</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20512" severity="MUSS" class="target-element">
+<div id="A_20512" severity="MUSS" lastupdate="2024-02-27" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-27" class="target-element">
 <p><b>A_20512 - Regelmäßiges Einlesen des Discovery Document</b></p>
 <p>Das <span id="polarion-comment:315"></span>Anwendungsfrontend <span style="font-weight: normal;">MUSS</span> das Discovery Document [<a class="descriptionLink" target="_top" href="https://tools.ietf.org/html/rfc8414">RFC8414</a>] löschen, wenn dieses 24 Stunden alt oder älter ist. Das Anwendungsfrontend MUSS das Discovery Document neu herunterladen, einlesen und auswerten und danach die darin aufgeführten URI zu den benötigten öffentlichen Schlüsseln (PUKs) und Diensten verwenden, wenn kein aktuelles Discovery Document vorliegt. <b>[&lt;=]</b></p>
 </div>
@@ -6600,7 +6582,7 @@ func testLoadDiscoveryDocumentFromRemoteOnInit() {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20525-a_20525-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20525">A_20525</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20525" severity="MUSS" class="target-element">
+<div id="A_20525" severity="MUSS" lastupdate="2022-07-13" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-13" class="target-element">
 <p><b>A_20525 - Authenticator-Modul: Anzeige des &ldquo;user_consent&rdquo; und PIN-Abfrage</b></p>
 <p>Das Authenticator-Modul MUSS im Zusammenhang mit der PIN-Abfrage für die Signatur des <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CHALLENGE_TOKEN</span> durch die Smartcard im selben Dialog die Consent-Freigabe des <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">user_consent</span> durch den Nutzer einfordern, damit dieser durch die PIN-Eingabe seine Willenserklärung abgibt und der Verwendung seiner Daten in diesen Claims zustimmt. <b>[&lt;=]</b></p>
 </div>
@@ -6612,7 +6594,7 @@ func testLoadDiscoveryDocumentFromRemoteOnInit() {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20526-01-a_20526-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20526-01">A_20526-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20526-01" severity="MUSS" class="target-element">
+<div id="A_20526-01" severity="MUSS" lastupdate="2022-07-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-15" class="target-element">
 <p><b>A_20526-01 - Authenticator-Modul: Response auf das &ldquo;CHALLENGE_TOKEN&rdquo; des Authorization-Endpunktes</b></p>
 <p>Das Authenticator-Modul MUSS das eingereichte <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CHALLENGE_TOKEN</span> mittels JWS (JSON Web Signature) mit der Smartcard signieren, und das Authentifizierungszertifikat der verwendeten Smartcard als x5c Parameter einbetten. Dieses Objekt mittels JWE (JSON Web Encryption) mit dem öffentlichen Schlüssel des Authorization-Endpunktes <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">PuK_IDP_ENC</span> verschlüsseln und in Form eines HTTP-POST-Requests an den Authorization-Endpunkt senden.<br> <b>[&lt;=]</b></p>
 </div>
@@ -6665,7 +6647,7 @@ func sign(
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20527-a_20527-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20527">A_20527</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20527" severity="MUSS" class="target-element">
+<div id="A_20527" severity="MUSS" lastupdate="2022-06-10" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-06-10" class="target-element">
 <p><b>A_20527 - Authenticator-Modul: Übertragung des &ldquo;AUTHORIZATION_CODE&rdquo; an das Anwendungsfrontend</b></p>
 <p>Das Authenticator-Modul MUSS den vom Authorization-Endpunkt empfangenen <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">AUTHORIZATION_CODE</span> an das Anwendungsfrontend übertragen. <b>[&lt;=]</b></p>
 </div>
@@ -6682,7 +6664,7 @@ return Just(exchangeToken).setFailureType(to: IDPError.self).eraseToAnyPublisher
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20529-01-a_20529-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20529-01">A_20529-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20529-01" severity="MUSS" class="target-element">
+<div id="A_20529-01" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20529-01 - Senden von &ldquo;AUTHORIZATION_CODE&rdquo; und &ldquo;KEY_VERIFIER&rdquo; an den Token-Endpunkt</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> den <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">KEY_VERIFIER</span> mittels JWE (<span style="font-size: 10pt;line-height: 1.5;">JSON Web Encryption (JWE) [<a href="https://tools.ietf.org/html/rfc7516#section-3" target="_top">RFC7516 # section-3</a>]) </span>und <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">PuK_IDP_ENC</span> verschlüsseln und zusammen mit dem <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">AUTHORIZATION_CODE</span> TLS-gesichert als HTTP/1.1 POST Request an den Token-Endpunkt senden.<br> <b>[&lt;=]</b></p>
 </div>
@@ -6738,7 +6720,7 @@ return httpClient.sendPublisher(request: request)
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20600-a_20600-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20600">A_20600</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20600" severity="MUSS" class="target-element">
+<div id="A_20600" severity="MUSS" lastupdate="2022-07-13" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-13" class="target-element">
 <p><b>A_20600 - Authenticator-Modul: Annahme des &ldquo;user_consent&rdquo; und des &ldquo;CHALLENGE_TOKEN&rdquo;</b></p>
 <p>Das Authenticator-Modul MUSS den <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">user_consent</span> und den <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CHALLENGE_TOKEN</span> vom Authorization-Endpunkt des IDP-Dienstes entgegennehmen. <b>[&lt;=]</b></p>
 </div>
@@ -6755,23 +6737,6 @@ return IDPExchangeToken(code: code,
 </code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20601-a_20601-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20601">A_20601</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
-
-<div id="A_20601" severity="MUSS" class="target-element">
-<p><b>A_20601 - Authenticator-Modul: Übergabe des Authorization-Request an den Authorization-Endpunkt</b></p>
-<p>Das Authenticator-Modul MUSS den Authorization-Request, welchen dieses vom Anwendungsfrontend erhalten hat, an den Authorization-Server des IdP-Dienstes schicken. Der Authorization-Request MUSS folgende Parameter enthalten: 
-</p>
-<ul>
-<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">response_type</span>&rdquo;</li>
-<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">scope</span>&rdquo;</li>
-<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">client_id</span>&rdquo;</li>
-<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">redirect_uri</span>&rdquo;</li>
-<li>
-<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">&ldquo;code_challenge&rdquo;</span> (Hashwert des <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">&ldquo;code_verifier&rdquo;</span>) [<a class="descriptionLink" target="_top" href="https://tools.ietf.org/html/rfc7636#section-4.2">RFC7636 # section-4.2</a>]<br>
-</li>
-<li>
-<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">&ldquo;code_challenge_method&rdquo;</span> HASH-Algorithmus (S256) [<a class="descriptionLink" target="_top" href="https://tools.ietf.org/html/rfc7636#section-4.3">RFC7636 # section-4.3</a>]</li>
-</ul> <b>[&lt;=]</b>
-</div>
 <h4 id='implementation' class='heading'>Implementation</h4>
 <h4 id='code-sources-idp-internal-realidpclient-swift-117-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:117</code></h4>
 
@@ -6782,6 +6747,24 @@ URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedSt
 </code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20601-01-a_20601-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20601-01">A_20601-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
+
+<div id="A_20601-01" severity="MUSS" lastupdate="2025-02-13" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2025-02-13" class="target-element">
+<p><b>A_20601-01 - Authenticator-Modul: Übergabe des Authorization-Request an den Authorization-Endpunkt</b></p>
+<p>Das Authenticator-Modul MUSS den Authorization-Request, welchen dieses vom Anwendungsfrontend erhalten hat, an den Authorization-Server des IDP-Dienstes schicken. Der Authorization-Request MUSS folgende Parameter enthalten: 
+</p>
+<ul>
+<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">response_type</span>&rdquo;</li>
+<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">scope</span>&rdquo;</li>
+<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">client_id</span>&rdquo;</li>
+<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">redirect_uri</span>&rdquo;</li>
+<li>
+<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">&ldquo;code_challenge&rdquo;</span> (Hashwert des <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">&ldquo;code_verifier&rdquo;</span>) [RFC7636]</li>
+<li>
+<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">&ldquo;code_challenge_method&rdquo;</span> HASH-Algorithmus (S256) [RFC7636]</li>
+<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">state</span>&rdquo; (State-Parameter)</li>
+<li>&ldquo;<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">nonce</span>&rdquo; (Nonce des ID_TOKEN gemäß [OpenID Connect Core] </li>
+</ul> <b>[&lt;=]</b>
+</div>
 <h4 id='implementation' class='heading'>Implementation</h4>
 <h4 id='code-sources-idp-internal-realidpclient-swift-117-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:117</code></h4>
 
@@ -6793,7 +6776,7 @@ URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedSt
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20602-a_20602-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20602">A_20602</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20602" severity="MUSS" class="target-element">
+<div id="A_20602" severity="MUSS" lastupdate="2022-07-18" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-18" class="target-element">
 <p><b>A_20602 - Einreichen des &ldquo;ACCESS_TOKEN&rdquo; beim Fachdienst</b></p>
 <p>Das Anwendungsfrontend MUSS das <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ACCESS_TOKEN</span> im Rahmen des entsprechenden fachlichen Aufrufs beim Fachdienst einreichen, um Zugang zu den angeforderten Daten zu erhalten. <b>[&lt;=]</b></p>
 </div>
@@ -6824,7 +6807,7 @@ URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedSt
 "client_id": clientConfig.clientId,
 
 </code></pre>
-<h4 id='code-sources-erpapp-appconfiguration-swift-96-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:96</code></h4>
+<h4 id='code-sources-erpapp-appconfiguration-swift-105-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:105</code></h4>
 
 <p>Actual ID</p>
 <pre class="highlight plaintext"><code>// clientId
@@ -6832,7 +6815,7 @@ URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedSt
 let clientId: String
 
 </code></pre>
-<h4 id='code-sources-erpapp-appconfiguration-swift-311-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:311</code></h4>
+<h4 id='code-sources-erpapp-appconfiguration-swift-377-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:377</code></h4>
 
 <p>Actual ID</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
@@ -6842,7 +6825,7 @@ clientId: AppConfiguration.Environment.ERP_CLIENT_ID_PU
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20605-a_20605-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20605">A_20605</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20605" severity="MUSS" class="target-element">
+<div id="A_20605" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20605 - Fehlermeldung des Token-Endpunktes Formatierung</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> den Inhalt der Fehlermeldungen sowie mögliche Hinweise zur Fehlervermeidung vom Token-Endpunkt übernehmen. <b>[&lt;=]</b></p>
 </div>
@@ -6871,7 +6854,7 @@ case let .internal(error: error): return error.localizedDescription
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20606-a_20606-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20606">A_20606</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20606" severity="MUSS" class="target-element">
+<div id="A_20606" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20606 - Anwendungsfrontend: Kommunikation über TLS-Verbindung</b></p>
 <p>Das Anwendungsfrontend MUSS mit dem IDP-Dienst über TLS kommunizieren. <b>[&lt;=]</b></p>
 </div>
@@ -6901,7 +6884,7 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20609-a_20609-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20609">A_20609</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20609" severity="MUSS" class="target-element">
+<div id="A_20609" severity="MUSS" lastupdate="2022-11-30" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-11-30" class="target-element">
 <p><b>A_20609 - Authenticator-Modul: Unzulässige TLS-Verbindungen ablehnen</b></p>
 <p>Das Authenticator-Modul MUSS bei jedem Verbindungsaufbau den IDP-Dienst anhand seines TLS-Zertifikats authentifizieren und MUSS die Verbindung ablehnen, falls die Authentifizierung fehlschlägt. <b>[&lt;=]</b></p>
 </div>
@@ -6913,7 +6896,7 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20614-a_20614-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20614">A_20614</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20614" severity="MUSS" class="target-element">
+<div id="A_20614" severity="MUSS" lastupdate="2022-07-18" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-18" class="target-element">
 <p><b>A_20614 - Authenticator-Modul: Prüfung der Signatur des Discovery Document</b></p>
 <p><span style="font-size: 10pt;line-height: 1.5;">Das Authenticator-Modul MUSS die Signatur des Discovery Document mathematisch prüfen und auf ein zeitlich gültiges C.FD.SIG-Zertifikat mit der Rollen-OID <span style="font-style: italic;">oid_idpd</span> zurückführen können, welches von einer ihm bekannten Komponenten-PKI ausgestellt wurde.</span> <b>[&lt;=]</b></p>
 </div>
@@ -6926,7 +6909,7 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20617-01-a_20617-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20617-01">A_20617-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20617-01" severity="MUSS" class="target-element">
+<div id="A_20617-01" severity="MUSS" lastupdate="2021-05-19" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-05-19" class="target-element">
 <p><b>A_20617-01 - Authenticator-Modul: Verpflichtende Zertifikatsprüfung</b></p>
 <p>Das Authenticator-Modul MUSS aktiv verwendete Zertifikate (bspw. für den TLS-Verbindungsaufbau), welche auf Root-Zertifikaten aus der TSL basieren, gemäß &ldquo;TUC_PKI_018&rdquo; auf Integrität und Authentizität prüfen. Das Authenticator-Modul MUSS die von dem Zertifikat und den darin enthaltenen Attributen (bspw. öffentliche Schlüssel) abhängenden Arbeitsabläufe ablehnen, wenn die Prüfung kein positives Ergebnis (&ldquo;gültig&rdquo;) liefert. Das Authenticator-Modul MUSS alle öffentlichen Schlüssel, die es verwenden will, auf eine positiv verlaufene Zertifikatsprüfung zurückführen können. <b>[&lt;=]</b></p>
 </div>
@@ -7012,7 +6995,7 @@ func testLoadDiscoveryDocumentFromStorageOnInit() {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20618-a_20618-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20618">A_20618</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20618" severity="MUSS" class="target-element">
+<div id="A_20618" severity="MUSS" lastupdate="2021-01-28" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-01-28" class="target-element">
 <p><b>A_20618 - Authenticator-Modul: Unzulässige TLS-Verbindungen ablehnen</b></p>
 <p>Das Authenticator-Modul MUSS bei jedem Verbindungsaufbau den IdP-Dienst anhand seines TLS-Zertifikats authentifizieren und MUSS die Verbindungen ablehnen, falls die Authentifizierung fehlschlägt. <b>[&lt;=]</b></p>
 </div>
@@ -7024,7 +7007,7 @@ func testLoadDiscoveryDocumentFromStorageOnInit() {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20623-a_20623-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20623">A_20623</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20623" severity="MUSS" class="target-element">
+<div id="A_20623" severity="MUSS" lastupdate="2024-02-27" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-27" class="target-element">
 <p><b>A_20623 - Anwendungsfrontend: Prüfung der Signatur des Discovery Document</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> die Signatur des Discovery Document mathematisch prüfen und auf ein zeitlich gültiges C.FD.SIG-Zertifikat mit der Rollen-OID <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">oid_idpd</span> zurückführen können, welches rückführbar ist auf ein CA-Zertifikat aus einer authentischen, integren und zeitlich gültigen TSL. <b>[&lt;=]</b></p>
 </div>
@@ -7088,14 +7071,14 @@ func validateOrNil(with trustStoreSession: TrustStoreSession,
 func validate(discoveryDocument: DiscoveryDocument) -&gt; AnyPublisher&lt;Bool, TrustStoreError&gt; {
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-182-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:182</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-215-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:215</code></h4>
 
 <p>oid check</p>
 <pre class="highlight plaintext"><code>} else if eeCert.contains(oidBytes: .oidIdpd) { // [REQ:gemSpec_IDP_Frontend:A_20623,A_20625#4] oid check
     return (vauCerts, idpCerts + [eeCert])
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-196-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:196</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-229-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:229</code></h4>
 
 <p>IDP oid</p>
 <pre class="highlight plaintext"><code>case oidErpVau // 1.2.276.0.76.4.258 == 0x06082A8214004C048202
@@ -7147,7 +7130,7 @@ func testLoadDiscoveryDocumentFromStorageOnInit() {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20625-a_20625-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20625">A_20625</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20625" severity="MUSS" class="target-element">
+<div id="A_20625" severity="MUSS" lastupdate="2024-02-27" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-27" class="target-element">
 <p><b>A_20625 - Anwendungsfrontend: Prüfung der Signatur des ID_TOKEN</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> die Signatur des <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ID_TOKEN </span>mathematisch prüfen und auf ein zeitlich gültiges C.FD.SIG-Zertifikat mit der Rollen-OID oid_idpd zurückführen können, welches rückführbar ist auf ein CA-Zertifikat aus einer authentischen, integren und zeitlich gültigen TSL. <b>[&lt;=]</b></p>
 </div>
@@ -7172,7 +7155,7 @@ guard let jwt = try? JWT(from: decrypted.idToken),
     isDiscKeyValid &amp;&amp; isSigningCertValid
 }
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-182-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:182</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-215-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:215</code></h4>
 
 <p>oid check</p>
 <pre class="highlight plaintext"><code>} else if eeCert.contains(oidBytes: .oidIdpd) { // [REQ:gemSpec_IDP_Frontend:A_20623,A_20625#4] oid check
@@ -7199,7 +7182,7 @@ let signedChallenge = try await idpChallengeSigner.sign(
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20700-07-a_20700-07-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20700-07">A_20700-07</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20700-07" severity="MUSS" class="target-element">
+<div id="A_20700-07" severity="MUSS" lastupdate="2022-07-13" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-13" class="target-element">
 <p><b>A_20700-07 - Authenticator-Modul: Signatur der &ldquo;CHALLENGE&rdquo;</b></p>
 <p><span style="font-size: 10pt;line-height: 1.5;">Das Authenticator-Modul MUSS die vom Authorization-Endpunkt empfangene <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CHALLENGE_TOKEN</span> mit dem Zertifikat C.CH.AUT aus der Smartcard des Nutzers signieren. Hierbei wird der über die <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CHALLENGE_TOKEN</span> gebildete HASH-Wert zur Signatur überreicht (siehe Abschnitt <span class="polarion-rte-link" data-type="polarion" id="fake" data-custom-label="9.3.7.3 Signiervorgang" data-url="/wiki/Spezifikation/gemSpec_IDP_Frontend?selection=ML-107239">9.3.7.3 Signiervorgang</span> in diesem Dokument).<br> </span> Im Fall der Authentisierung mit einem alternativen Authentisierungsmittel signiert das Authenticator-Modul die folgenden Daten mithilfe des PrK_SE_AUT: <br> 
 </p>
@@ -7269,13 +7252,13 @@ let signedChallenge = try await idpChallengeSigner.sign(
 
 <p>perform signature with OpenHealthCardKit</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] perform signature with OpenHealthCardKit
-card.sign(data: message)
+let response = try await card.signAsync(data: message)
 
 </code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20740-a_20740-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20740">A_20740</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20740" severity="MUSS" class="target-element">
+<div id="A_20740" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_20740 - Bekanntgabe der Redirect-URI des Anwendungsfrontend</b></p>
 <p>Das Anwendungsfrontend MUSS, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt, beim IdP-Dienst bei der Registrierung eine <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">redirect_uri</span> hinterlegen.  <b>[&lt;=]</b></p>
 </div>
@@ -7294,7 +7277,7 @@ name: "redirect_uri",
 "redirect_uri": redirectURI ?? clientConfig.redirectURI.absoluteString,
 
 </code></pre>
-<h4 id='code-sources-erpapp-appconfiguration-swift-98-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:98</code></h4>
+<h4 id='code-sources-erpapp-appconfiguration-swift-107-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:107</code></h4>
 
 <p>Actual redirect uri</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20740] Actual redirect uri
@@ -7305,7 +7288,7 @@ let extAuthRedirectUri = URL(
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_20741-a_20741-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_20741">A_20741</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20741" severity="MUSS" class="target-element">
+<div id="A_20741" severity="MUSS" lastupdate="2024-02-27" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-27" class="target-element">
 <p><b>A_20741 - Speicherung des Downloadpunktes des Discovery Document im Anwendungsfrontend</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> den vom <span style="font-size: 10pt;line-height: 1.5;">IdP-Dienst bei der Registrierung bekanntgegebenen Downloadpunkt des Discovery Document als konfigurierbaren Parameter speichern</span>. <b>[&lt;=]</b></p>
 </div>
@@ -7315,7 +7298,7 @@ let extAuthRedirectUri = URL(
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21322-a_21322-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21322">A_21322</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21322" severity="MUSS" class="target-element">
+<div id="A_21322" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21322 - Authenticator-Modul: Sichere Speicherung des &ldquo;SSO-TOKEN&rdquo;</b></p>
 <p>Das Authenticator-Modul MUSS empfangene SSO-Token gegen unberechtigten Zugriff schützen.<span id="polarion-comment:797"></span> <b>[&lt;=]</b></p>
 </div>
@@ -7335,7 +7318,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21323-a_21323-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21323">A_21323</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21323" severity="MUSS" class="target-element">
+<div id="A_21323" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_21323 - Erzeugung des &ldquo;Token-Key&rdquo;</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> vor dem Abrufen von <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ID_TOKEN</span> und <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ACCESS_TOKEN</span> einen zufälligen 256 Bit AES-Schlüssel (&ldquo;Token-Key“) erzeugen. <b>[&lt;=]</b></p>
 </div>
@@ -7373,7 +7356,7 @@ aesKey: SymmetricKey = SymmetricKey(size: SymmetricKeySize(bitCount: 256))
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21324-a_21324-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21324">A_21324</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21324" severity="MUSS" class="target-element">
+<div id="A_21324" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_21324 - Erzeugen des &quot;KEY_VERIFIER&rdquo;</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> dem <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">KEY_VERIFIER</span> bilden, indem &ldquo;Token-Key&rdquo; und <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">CODE_VERIFIER</span> in einem JSON-Objekt kodiert werden.<br> <b>[&lt;=]</b></p>
 </div>
@@ -7410,7 +7393,7 @@ guard let keyVerifierEncoded = try? KeyVerifier.jsonEncoder.encode(self) else {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21325-a_21325-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21325">A_21325</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21325" severity="MUSS" class="target-element">
+<div id="A_21325" severity="MUSS" lastupdate="2024-02-14" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-14" class="target-element">
 <p><b>A_21325 - Verschlüsselte Übertragung zum Fachdienst</b></p>
 <p>Das Anwendungsfrontend MUSS den entschlüsselten <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ACCESS_TOKEN</span>, zusätzlich zur Übertragung mittels TLS, auf Anwendungsebene verschlüsselt zum Fachdienst übertragen.  <b>[&lt;=]</b></p>
 </div>
@@ -7431,7 +7414,7 @@ request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: 
 func encrypt() throws -&gt; Data {
 
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-372-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:372</code></h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-392-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:392</code></h4>
 
 <p>Interceptor order defines what is encrypted via VAU</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21325#2] Interceptor order defines what is encrypted via VAU
@@ -7441,13 +7424,22 @@ let interceptors: [Interceptor] = [
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21326-a_21326-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21326">A_21326</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21326" severity="MUSS" class="target-element">
+<div id="A_21326" severity="MUSS" lastupdate="2024-02-06" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-06" class="target-element">
 <p><b>A_21326 - Löschung von &ldquo;ACCESS_TOKEN&rdquo;</b></p>
 <p>Das Anwendungsfrontend  MUSS <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ACCESS_TOKEN</span> beim Beenden sowie nach Ablauf ihrer Gültigkeit sicher löschen. <b>[&lt;=]</b></p>
 </div>
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>ACCESS_TOKEN information is managed by IDPToken structure. See <a href="#OPlat_12">O.Plat_12</a> regarding secure deletion.</p>
+<h4 id='code-sources-fhirvzd-models-fhirvzdtoken-swift-27-code' class='heading'><code>../Sources/FHIRVZD/Models/FHIRVZDToken.swift:27</code></h4>
+
+<p>Structure holding ACCESS_TOKEN and ID_TOKEN information</p>
+<pre class="highlight plaintext"><code>/// FHIRVZD access token
+///
+/// [REQ:gemSpec_IDP_Frontend:A_21326#2,A_21327#2] Structure holding ACCESS_TOKEN and ID_TOKEN information
+public struct FHIRVZDToken: Codable, Hashable, Equatable {
+
+</code></pre>
 <h4 id='code-sources-idp-models-idptoken-swift-26-code' class='heading'><code>../Sources/IDP/Models/IDPToken.swift:26</code></h4>
 
 <p>Structure holding ACCESS_TOKEN and ID_TOKEN information</p>
@@ -7482,13 +7474,22 @@ guard let session = session else {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21327-a_21327-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21327">A_21327</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21327" severity="MUSS" class="target-element">
+<div id="A_21327" severity="MUSS" lastupdate="2024-02-06" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-06" class="target-element">
 <p><b>A_21327 - Löschung von &ldquo;ID_TOKEN&rdquo;</b></p>
 <p>Das Anwendungsfrontend  MUSS <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ID_TOKEN</span> beim Beenden sowie nach Ablauf ihrer Gültigkeit sicher löschen. <b>[&lt;=]</b></p>
 </div>
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>ID_TOKEN information is managed by IDPToken structure. See <a href="#OPlat_12">O.Plat_12</a> regarding secure deletion.</p>
+<h4 id='code-sources-fhirvzd-models-fhirvzdtoken-swift-27-code' class='heading'><code>../Sources/FHIRVZD/Models/FHIRVZDToken.swift:27</code></h4>
+
+<p>Structure holding ACCESS_TOKEN and ID_TOKEN information</p>
+<pre class="highlight plaintext"><code>/// FHIRVZD access token
+///
+/// [REQ:gemSpec_IDP_Frontend:A_21326#2,A_21327#2] Structure holding ACCESS_TOKEN and ID_TOKEN information
+public struct FHIRVZDToken: Codable, Hashable, Equatable {
+
+</code></pre>
 <h4 id='code-sources-idp-models-idptoken-swift-26-code' class='heading'><code>../Sources/IDP/Models/IDPToken.swift:26</code></h4>
 
 <p>Structure holding ACCESS_TOKEN and ID_TOKEN information</p>
@@ -7523,14 +7524,14 @@ guard let session = session else {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21328-a_21328-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21328">A_21328</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21328" severity="MUSS" class="target-element">
+<div id="A_21328" severity="MUSS" lastupdate="2024-02-06" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-06" class="target-element">
 <p><b>A_21328 - Sichere Speicherung der Token</b></p>
 <p>Das Anwendungsfrontend  MUSS empfangene <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ID_TOKEN</span> und <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ACCESS_TOKEN</span> gegen unberechtigten Zugriff schützen. <b>[&lt;=]</b></p>
 </div>
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>Keychain storage encrypts session tokens.</p>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-104-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:104</code></h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-106-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:106</code></h4>
 
 <p>Keychain storage encrypts session tokens</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21328#2] Keychain storage encrypts session tokens
@@ -7549,7 +7550,7 @@ let success: Bool
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21414-a_21414-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21414">A_21414</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21414" severity="MUSS" class="target-element">
+<div id="A_21414" severity="MUSS" lastupdate="2022-07-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-15" class="target-element">
 <p><b>A_21414 - Authenticator-Modul: Umschlüsselung des &ldquo;ACCESS_TOKEN&rdquo; für Pairing-Endpunkt</b></p>
 <p>Das Authenticator-Modul MUSS das zur Autorisierung und Authentifizierung des Nutzers verwendete <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">ACCESS_TOKEN </span>mit dem öffentlichen Schlüssel <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">PuK_IDP_ENC</span> aus dem Discovery Document verschlüsseln.<br> Dazu muss es vorher unter Verwendung des &ldquo;Token-Key&rdquo;, der dem Token-Endpunkt übermittelt wurde, entschlüsselt werden.<br> <b>[&lt;=]</b></p>
 </div>
@@ -7564,7 +7565,7 @@ guard let tokenJWT = try? JWT(from: token.accessToken),
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21416-a_21416-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21416">A_21416</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21416" severity="MUSS" class="target-element">
+<div id="A_21416" severity="MUSS" lastupdate="2022-07-25" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-25" class="target-element">
 <p><b>A_21416 - Authenticator-Modul: Einleiten der Registrierung</b></p>
 <p>Das Authenticator-Modul MUSS Registrierungsdaten in Form eines &ldquo;Registration_Data&rdquo;-Objekts produzieren und diese mit dem <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">PuK_IDP_ENC</span> aus dem Discovery Document verschlüsseln. <b>[&lt;=]</b></p>
 </div>
@@ -7596,7 +7597,7 @@ func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21431-a_21431-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21431">A_21431</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21431" severity="MUSS" class="target-element">
+<div id="A_21431" severity="MUSS" lastupdate="2022-07-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-15" class="target-element">
 <p><b>A_21431 - Authenticator-Modul: Übermittelung von Authentifizierungsdaten zur Verwendung von alternativen Authentisierungsmitteln</b></p>
 <p>Das Authenticator-Modul MUSS die produzierte Signed_Authentication_Data-Struktur mit dem <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">PuK_IDP_ENC</span> aus dem Discovery Document verschlüsseln und an den Authorization-Endpunkt als Antwort auf die vom Authorization-Endpunkt empfangene Challenge übermitteln. Der Wert des Header-Claims <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">exp</span> der hierbei produzierten &ldquo;Encrypted_Authentication_Data&rdquo;-Struktur MUSS hierbei identisch mit dem gleichnamigen Claim aus den Body-Claims des empfangenen Challenge-Token belegt werden. <b>[&lt;=]</b></p>
 </div>
@@ -7618,7 +7619,7 @@ expiry: originalChallenge.challenge.exp,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21443-a_21443-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21443">A_21443</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21443" severity="MUSS" class="target-element">
+<div id="A_21443" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21443 - Inspektions- und Deregistrierungsfunktion des IdP-Dienstes: Verschlüsselung des ACCESS_TOKEN</b></p>
 <p>Das zur Authentifizierung des Nutzers und Autorisierung des Authenticator-Moduls verwendete ACCESS_TOKEN MUSS vom Authenticator-Modul mit dem öffentlichen Schlüssel PuK_IDP_Enc aus dem Discovery Document verschlüsselt werden.<br> <b>[&lt;=]</b></p>
 </div>
@@ -7640,7 +7641,7 @@ guard let tokenJWT = try? JWT(from: token.accessToken),
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21574-a_21574-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21574">A_21574</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21574" severity="MUSS" class="target-element">
+<div id="A_21574" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21574 - Warnhinweise an den Nutzer</b></p>
 <p>Das Authenticator-Modul MUSS dem Nutzer Warnhinweise geben, dass die Sicherheit des Verfahrens bei der Verwendung von Folgendem beeinträchtigt werden kann: 
 </p>
@@ -7671,7 +7672,7 @@ struct PrivacyWarningViewContainer: View {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21576-a_21576-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21576">A_21576</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21576" severity="MUSS" class="target-element">
+<div id="A_21576" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21576 - Löschung bestehender alternativer Authentisierungsmittel</b></p>
 <p>Sofern für das verwendete Gerät und Nutzer bereits ein alternatives Authentisierungsmittel registriert ist, MUSS das Authenticator-Modul den Nutzer zur Deregistrierung der Pairing-Daten auffordern. Der Nutzer MUSS jederzeit die Möglichkeit haben, ein von ihm registriertes alternatives Authentisierungsmittel zu erneuern. <b>[&lt;=]</b></p>
 </div>
@@ -7686,7 +7687,7 @@ public func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -&gt; Any
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21578-a_21578-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21578">A_21578</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21578" severity="MUSS" class="target-element">
+<div id="A_21578" severity="MUSS" lastupdate="2022-08-17" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-08-17" class="target-element">
 <p><b>A_21578 - Sicherstellung des Vorliegens einer geeigneten Umgebung zur Speicherung von biometrischen Referenzmerkmalen</b></p>
 <p>Das Authenticator-Modul SOLL prüfen, ob biometrische Referenzmerkmale oder wissensbasierte Faktoren auf dem Gerät in einer gesicherten Umgebung gespeichert werden. Hierzu MÜSSEN über Betriebssystem-APIs bereitgestellte Informationen ausgewertet werden. <b>[&lt;=]</b></p>
 </div>
@@ -7703,7 +7704,7 @@ kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21579-a_21579-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21579">A_21579</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21579" severity="MUSS" class="target-element">
+<div id="A_21579" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21579 - Sicherstellung des Vorliegens einer geeigneten Umgebung für Schlüsselerzeugung, Anwendung und Speicherung</b></p>
 <p>Das Authenticator-Modul MUSS sicherstellen, dass die Erzeugung des Schlüsselpaares PrK_SE_AUT/PuK_SE_AUT, dessen Speicherung, Anwendung und die Löschung des PrK_SE_AUT ausschließlich durch eine gesonderte, vertrauenswürdige Ausführungsumgebung erfolgt, die 
 </p>
@@ -7724,7 +7725,7 @@ kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21580-a_21580-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21580">A_21580</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21580" severity="MUSS" class="target-element">
+<div id="A_21580" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21580 - Ausschluss von Eigenimplementierungen zur Schlüsselverwaltung</b></p>
 <p>Das Authenticator-Modul MUSS für die Schlüsselerzeugung des Schlüsselpaars PuK_SE_AUT/PrK_SE_AUT Mechanismen des Geräts verwenden. Es DARF kryptographische Schlüssel NICHT selbst erzeugen, innerhalb des ihm zur Verfügung stehenden Speicherbereichs speichern oder auf Daten anwenden.  <b>[&lt;=]</b></p>
 </div>
@@ -7739,7 +7740,7 @@ kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21581-a_21581-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21581">A_21581</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21581" severity="MUSS" class="target-element">
+<div id="A_21581" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21581 - Verfügbarkeit von kryptographischen Algorithmen</b></p>
 <p>Das Authenticator-Modul MUSS sicherstellen, dass die in der folgenden Tabelle genannten Algorithmen zur Anwendung des PrK_SE_AUT zur Verfügung stehen:<br> </p>
 <p data-keep-next="true" class="polarion-rte-caption-paragraph" style="text-align: left;" id="polarion___2">Tabelle <span data-sequence="Tabelle" class="polarion-rte-caption">3</span>: Kryptographische Verfahren</p>
@@ -7769,7 +7770,7 @@ kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21582-a_21582-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21582">A_21582</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21582" severity="MUSS" class="target-element">
+<div id="A_21582" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21582 - Lokale Authentisierung des Nutzers vor Anwendung des PrK_SE_AUT zur Authentisierung</b></p>
 <p>Das Authenticator-Modul MUSS dem Nutzer die Wahl einer lokal verfügbaren Authentisierungsmethode überlassen, die zur autorisierten Anwendung des PrK_SE_AUT verwendet wird, das Authenticator-Modul  
 </p>
@@ -7852,7 +7853,7 @@ kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21583-a_21583-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21583">A_21583</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21583" severity="MUSS" class="target-element">
+<div id="A_21583" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21583 - Qualitative Anforderungen an lokale Authentisierungsmittel</b></p>
 <p>Das Authenticator-Modul MUSS sicherherstellen, dass die von Gerät und Hardware realisierten Mechanismen zur biometrischen Authentisierung bzw. Authentifizierung von ausreichender Qualität sind.  <b>[&lt;=]</b></p>
 </div>
@@ -7869,7 +7870,7 @@ kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21584-a_21584-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21584">A_21584</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21584" severity="MUSS" class="target-element">
+<div id="A_21584" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21584 - Verwendung von Geräte-eigenen Mechanismen zur Authentisierung des Nutzers</b></p>
 <p>Das Authenticator-Modul MUSS sich zur Implementierung der Authentifizierungsverfahren zur autorisierten Anwendung des PrK_SE_AUT auf diejenigen Mechanismen beschränken, die durch die Kombination von Betriebssystem und Hardware zur Verfügung gestellt werden. Das Authenticator-Modul DARF hierbei ausschließlich die vom Betriebssystem zur Verfügung gestellte Information über eine erfolgreiche oder nicht-erfolgreiche Authentifizierung und deren Art verarbeiten. <b>[&lt;=]</b></p>
 </div>
@@ -7886,7 +7887,7 @@ guard let signature = SecKeyCreateSignature(privateKey,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21585-a_21585-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21585">A_21585</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21585" severity="MUSS" class="target-element">
+<div id="A_21585" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_21585 - Beschränkung der Nutzung des PrK_SE_AUT auf das Authenticator-Modul</b></p>
 <p>Das Authenticator-Modul MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> die Parameter für die Erzeugung des Schlüsselpaars PrK_SE_AUT/PuK_SE_AUT so setzen, dass sichergestellt ist, dass der Schlüssel PrK_SE_AUT ausschließlich über das Authenticator-Modul auf Daten anwendbar ist. Eine App-übergreifende Nutzung MUSS ausgeschlossen werden. <b>[&lt;=]</b></p>
 </div>
@@ -7896,7 +7897,7 @@ guard let signature = SecKeyCreateSignature(privateKey,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21586-a_21586-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21586">A_21586</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21586" severity="MUSS" class="target-element">
+<div id="A_21586" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21586 - Löschung des PrK_SE_AUT als Reaktion auf Systemereignisse</b></p>
 <p>Das Authenticator-Modul MUSS bei der Übergabe des Kommandos zur Schlüsselerzeugung an das Betriebssystem in den Parametern festlegen, dass bei folgenden Systemereignissen der private Schlüssel PrK_SE_AUT nicht mehr verwendbar ist: 
 </p>
@@ -7930,7 +7931,7 @@ kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21587-a_21587-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21587">A_21587</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21587" severity="MUSS" class="target-element">
+<div id="A_21587" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21587 - Beschränkung des PrK_SE_AUT auf Signaturbildung</b></p>
 <p>Das Authenticator-Modul MUSS die Parameter für die Erzeugung des Schlüsselpaars PrK_SE_AUT/PuK_SE_AUT so setzen, dass sichergestellt ist, dass der Schlüssel PrK_SE_AUT ausschließlich zum Zweck der Signaturbildung auf Daten angewendet werden kann.  <b>[&lt;=]</b></p>
 </div>
@@ -7946,7 +7947,7 @@ kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21588-a_21588-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21588">A_21588</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21588" severity="MUSS" class="target-element">
+<div id="A_21588" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21588 - Erzeugung eines Key-Identifiers für das Schlüsselpaar PrK_SE_AUT/PuK_SE_AUT gegenüber dem IdP-Dienst</b></p>
 <p>Das Authenticator-Modul MUSS einen Key-Identifier zur Identifikation des Schlüsselpaars PrK_SE_AUT/PuK_SE_AUT gegenüber dem IdP-Dienst erzeugen. Der Key-Identifier MUSS so erzeugt werden, dass die Erzeugung ein und desselben Identifiers über verschiedene Geräte eines Nutzers mit hoher Wahrscheinlichkeit ausgeschlossen ist. Der Key-Identifier MUSS zufällig erzeugt werden. Er DARF NICHT aus Nutzer- oder Gerätedaten abgeleitet werden. Der zum IdP-Dienst übertragene Key-Identifier MUSS eine Länge von 32 Byte besitzen. Der Wert KANN zur Referenzierung des PrK_SE_AUT im lokalen Schlüsselspeicher verwendet werden. Der Key-Identifier selbst oder ein Datenobjekt, aus dem er abgeleitet werden kann, MUSS auf dem Endgerät gespeichert werden. Der Key-Identifier selbst oder das Datenobjekt MUSS gegen Löschung und anwendungsübergreifende Verwendung geschützt sein. <b>[&lt;=]</b></p>
 </div>
@@ -7975,7 +7976,7 @@ guard let someIdentifier = identifier,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21589-a_21589-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21589">A_21589</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21589" severity="MUSS" class="target-element">
+<div id="A_21589" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21589 - Erzeugung des Schlüsselpaars PrK_SE_AUT/PuK_SE_AUT</b></p>
 <p><span style="font-weight: normal;">Das Authenticator-Modul MUSS ein Schlüsselpaar PrK_SE_AUT/PuK_SE_AUT erzeugen. Das Schlüsselpaar MUSS für die Anwendung des Algorithmus ECDSA auf Basis der Kurve P-256 geeignet sein. Das Authenticator-Modul MUSS hierbei über die Betriebssystem-APIs die in Abschnitt [gemSpec_IDP_Frontend#Parameter für die Schlüsselerzeugung und Auswahl eines Schlüsselspeichers]<br> beschriebenen Parameter zur Durchsetzung der dort genannten Anforderungen und die Schlüssel innerhalb des dort identifizierten Schlüsselspeichers setzen.</span> <b>[&lt;=]</b></p>
 </div>
@@ -7997,7 +7998,7 @@ kSecAttrKeySizeInBits as String: 256,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21590-a_21590-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21590">A_21590</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21590" severity="MUSS" class="target-element">
+<div id="A_21590" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_21590 - Beschränkung der Nutzung des PrK_SE_AUT auf Authentisierung gegenüber dem IdP-Dienst</b></p>
 <p>Das Authenticator-Modul MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den Smartcard-IDP unterstützt,</span> den Schlüssel PrK_SE_AUT ausschließlich zum Zweck der Authentifizierung gegenüber dem IdP-Dienst verwenden. Es darf dem Nutzer keine andere Option anbieten oder den Schlüssel anderweitig verwenden. <b>[&lt;=]</b></p>
 </div>
@@ -8018,7 +8019,7 @@ public struct PrivateKeyContainer {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21591-a_21591-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21591">A_21591</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21591" severity="MUSS" class="target-element">
+<div id="A_21591" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21591 - Erhebung von Geräteinformationen</b></p>
 <p>Das Authenticator-Modul MUSS die folgenden Informationen über das verwendete Gerät über Betriebssystem-APIs erheben: 
 </p>
@@ -8050,7 +8051,7 @@ func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21595-a_21595-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21595">A_21595</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21595" severity="MUSS" class="target-element">
+<div id="A_21595" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21595 - Lokale Speicherung des C.CH.AUT</b></p>
 <p>Das Authenticator-Modul MUSS das Authentifizierungszertifikat C.CH.AUT nach erfolgreicher Registrierung für die Verwendung in weiteren Authentifizierungsvorgängen lokal auf dem Endgerät speichern. Die Speicherung MUSS so erfolgen, dass eine missbräuchliche Verwendung des Zertifikats durch andere Anwendungen in ausreichendem Maß verhindert wird. Das Authenticator-Modul DARF im Fall einer nicht erfolgreichen Registrierung das Authentifizierungszertifikat C.CH.AUT NICHT speichern. <b>[&lt;=]</b></p>
 </div>
@@ -8137,7 +8138,7 @@ certificateStorage.set(certificate: certificate)
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21598-a_21598-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21598">A_21598</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21598" severity="MUSS" class="target-element">
+<div id="A_21598" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21598 - Löschung von lokalen Daten bei Fehlschlag</b></p>
 <p>Das Authenticator-Modul MUSS bei fehlschlagender Registrierung alle lokal erzeugten Daten (einschließlich der erzeugten kryptographischen Schlüssel) über die Betriebssystem-APIs des Geräts löschen. <b>[&lt;=]</b></p>
 </div>
@@ -8184,7 +8185,7 @@ _ = try? sessionProvider.signatureProvider(for: profileID).abort(pairingSession:
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21600-a_21600-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21600">A_21600</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21600" severity="MUSS" class="target-element">
+<div id="A_21600" severity="MUSS" lastupdate="2021-06-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-06-15" class="target-element">
 <p><b>A_21600 - Einholen von aktuellen Geräteinformationen</b></p>
 <p>Das Authenticator-Modul MUSS aktuelle Geräteinformationen über die Betriebssystem-APIs einholen und dabei eine Device-Information-Struktur wie in [gemSpec_IDP_Dienst} Abschnitt C beschrieben konstruieren.  <b>[&lt;=]</b></p>
 </div>
@@ -8202,7 +8203,7 @@ func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_21603-a_21603-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_21603">A_21603</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_21603" severity="MUSS" class="target-element">
+<div id="A_21603" severity="MUSS" lastupdate="2022-07-25" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2022-07-25" class="target-element">
 <p><b>A_21603 - Ermöglichung der Löschung von alternativen Authentisierungsmitteln und lokal gespeicherten Daten</b></p>
 <p><span style="font-weight: normal;">Das Authenticator-Modul MUSS dem Nutzer die Möglichkeit geben, lokal gespeicherte Daten dauerhaft zu löschen und über Betriebssystem-APIs des Geräts eine Löschung des PrK_SE_AUT auszulösen. Die Löschung MUSS eventuell vorhandene <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">SSO_TOKEN</span> mit einbeziehen.</span> <b>[&lt;=]</b></p>
 </div>
@@ -8242,7 +8243,7 @@ _ = try? PrivateKeyContainer.deleteExistingKey(for: identifier)
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_22294-01-a_22294-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_22294-01">A_22294-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22294-01" severity="MUSS" class="target-element">
+<div id="A_22294-01" severity="MUSS" lastupdate="2025-01-21" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2025-01-21" class="target-element">
 <p><b>A_22294-01 - Ermöglichen der Nutzung von sektoralen Identity Providern zur Authentisierung</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="color: #000000;">, wenn es eine Authentifizierung über den sektoralen IDP unterstützt,</span> dem Nutzer die Option zur Verwendung von sektoralen Identity Providern zur Authentisierung ermöglichen. Hierzu müssen ihm die Namen &ldquo;idp_name&quot; der verfügbaren sektoralen Identity Provider, aus der zuvor heruntergeladenen Liste, in nachvollziehbarer Form auf der Benutzeroberfläche dargestellt und zur Auswahl angeboten werden.<span id="polarion-comment:883"></span> <b>[&lt;=]</b></p>
 </div>
@@ -8266,7 +8267,7 @@ state.selectedKK = entry
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_22295-01-a_22295-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_22295-01">A_22295-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22295-01" severity="MUSS" class="target-element">
+<div id="A_22295-01" severity="MUSS" lastupdate="2024-02-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-15" class="target-element">
 <p><b>A_22295-01 - Anfrage zur Authentisierung bei einem sektoralen Identity Provider beim IDP-Dienst</b></p>
 <p><span style="color: #000000;">Das Anwendungsfrontend MUSS, wenn es eine Authentifizierung über den sektoralen IDP unterstützt, bei der Auswahl eines sektoralen Identity Provider durch den Nutzer einen Authorization Request an den Third-Party Authorization Endpoint (<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">idp_sek_2=false</span>) oder den Federation Authorization Endpoint (<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">idp_sek_2=true</span>) des IDP-Dienstes senden. Der Authorization Request entspricht der in [gemSpec_IDP_Dienst#7.1] genannten Form, aber MUSS um einen weiteren Parameter <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">idp_iss</span> ergänzt werden, dessen Wert dem Identifikator entspricht, welcher zum vom Benutzer ausgewählten Namen (<span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">idp_name</span>) gehört. Das Frontend muss sich den Wert <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">idp_sek_2</span> zum Request speichern, um später die korrekte Zuordnung treffen zu können</span>.<span style="font-size: 10pt;line-height: 1.5;"><span id="polarion-comment:881"></span></span> <b>[&lt;=]</b></p>
 </div>
@@ -8289,7 +8290,7 @@ func testStartExtAuth() throws {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_22296-01-a_22296-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_22296-01">A_22296-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22296-01" severity="MUSS" class="target-element">
+<div id="A_22296-01" severity="MUSS" lastupdate="2024-02-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-15" class="target-element">
 <p><b>A_22296-01 - Einlesen und Prüfen der Liste der sektoralen Identity Provider</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="color: #000000;">, wenn es eine Authentifizierung über den sektoralen IDP unterstützt,</span> die Liste der bekannten alternativen Authentisierungsanwendungen unter der im Discovery Document des IDP-Dienstes unter &quot;kk_app_list_uri&rdquo; gefundenen Adresse beziehen und ihre Integrität prüfen.<br> <span title="Added">Das Anwendungsfrontend MUSS die Signatur des unter &ldquo;<span style="font-size: 10pt;line-height: 1.5;">fed_idp_list_uri&rdquo; heruntergeladenen JWS </span>mathematisch prüfen und auf ein zeitlich gültiges C.FD.SIG-Zertifikat mit der Rollen-OID <span style="font-style: italic;">&ldquo;</span><span style="font-style: normal;">oid_idpd</span><span style="font-style: italic;">&rdquo;</span> zurückführen, welches von einer dem Anwendungsfrontend bekannten CA der Komponenten-PKI ausgestellt wurde.<span id="polarion-comment:885"></span></span> <b>[&lt;=]</b></p>
 </div>
@@ -8322,7 +8323,7 @@ func testLoadDirectoryKKAppsInvalidSignature() throws {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_22299-01-a_22299-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_22299-01">A_22299-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22299-01" severity="MUSS" class="target-element">
+<div id="A_22299-01" severity="MUSS" lastupdate="2024-01-31" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-01-31" class="target-element">
 <p><b>A_22299-01 - Weiterleitung des Authorization Request an einen sektoralen Identity Provider</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den sektoralen IDP unterstützt, </span>den als Redirect erhaltenen Authorization Request des IDP-Dienstes an die in der target_url des redirect enthaltene URI weiterleiten und sich dabei den verwendeten <span style="font-family: 'Courier New', Courier, monospace, HanWangKanTan;">state</span> Parameter merken, um später erhaltene Antworten des sektoralen Identity Provider zuzuordnen.<span id="polarion-comment:880"></span> <b>[&lt;=]</b></p>
 </div>
@@ -8367,21 +8368,21 @@ self.routeTo(.universalLink(url))
 routeTo(.universalLink(url))
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-appstartdomain-swift-248-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:248</code></h4>
+<h4 id='code-sources-erpapp-screens-appstartdomain-swift-250-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:250</code></h4>
 
 <p>App2App gID will trigger this case</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_22301-01#4] App2App gID will trigger this case
 case "/extauth":
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-appstartdomain-swift-258-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:258</code></h4>
+<h4 id='code-sources-erpapp-screens-appstartdomain-swift-260-code' class='heading'><code>../Sources/eRpApp/Screens/AppStartDomain.swift:260</code></h4>
 
 <p>set actual destination in main tab</p>
 <pre class="highlight plaintext"><code>// // [REQ:gemSpec_IDP_Frontend:A_22301-01#5] set actual destination in main tab
 send(.destination(.app(.main(action: .externalLogin(url)))))
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-maindomain-swift-274-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainDomain.swift:274</code></h4>
+<h4 id='code-sources-erpapp-screens-main-maindomain-swift-291-code' class='heading'><code>../Sources/eRpApp/Screens/Main/MainDomain.swift:291</code></h4>
 
 <p>Redirect into ExtAuthPendingDomain</p>
 <pre class="highlight plaintext"><code>// [REQ:BSI-eRp-ePA:O.Source_1#7] redirect into correct domain
@@ -8451,7 +8452,7 @@ func testExtAuthVerifyAndExchangeFailesWithoutReferenceStateGID() throws {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_22302-01-a_22302-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_22302-01">A_22302-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22302-01" severity="MUSS" class="target-element">
+<div id="A_22302-01" severity="MUSS" lastupdate="2024-02-27" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-02-27" class="target-element">
 <p><b>A_22302-01 - Weiterleitung des Authorization Code an den IDP-Dienst</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-size: 10pt;line-height: 1.5;">, wenn es eine Authentifizierung über den sektoralen IDP unterstützt,</span> den empfangenen Authorization Code AUTHORIZATION_CODE_IDP abhängig vom für den ausgehenden Request gespeicherten Parameter verarbeiten:<br> 
 </p>
@@ -8474,7 +8475,7 @@ func extAuthVerify(_ verify: IDPExtAuthVerify,
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_22313-01-a_22313-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_22313-01">A_22313-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22313-01" severity="MUSS" class="target-element">
+<div id="A_22313-01" severity="MUSS" lastupdate="2025-01-21" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2025-01-21" class="target-element">
 <p><b>A_22313-01 - Absicherung des Aufrufs zu Authenticator-Modulen von sektoralen Identity Providern</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-weight: normal;font-style: normal;font-size: 10pt;color: #000000;background-color: #FFFFFF;line-height: 1.5;">, wenn es eine Authentifizierung über den sektoralen IDP unterstützt,</span> für Aufrufe zu Authenticator-Modulen sektoraler Identity Provider die Verifikationsmechanismen des Betriebssystems verwenden. Die folgenden Parameter müssen gesetzt sein: <br> Android: Keine weiteren.<br> iOS: .universalLinksOnly:false<span id="polarion-comment:879"></span> <b>[&lt;=]</b></p>
 </div>
@@ -8489,7 +8490,7 @@ environment.resourceHandler.open(url, options: [.universalLinksOnly: false]) { r
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_frontend-latest-index-html-a_23082-a_23082-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Frontend/latest/index.html#A_23082">A_23082</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_23082" severity="MUSS" class="target-element">
+<div id="A_23082" severity="MUSS" lastupdate="2025-01-21" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2025-01-21" class="target-element">
 <p><b>A_23082 - Abruf und Anzeige der IDP Liste</b></p>
 <p>Das Anwendungsfrontend MUSS, wenn es eine Authentifizierung über den sektoralen IDP unterstützt, sofern nicht anderweitig ein sektoraler Identity Provider zuvor gemerkt oder festgelegt wurde, die IDP-Liste vom Authorization-Server herunterladen, auf Integrität prüfen und (bei erfolgreicher Prüfung) dem Benutzer zur Auswahl anzeigen. <b>[&lt;=]</b></p>
 </div>
@@ -8541,7 +8542,7 @@ guard resourceHandler.canOpenURL(url) else {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_idp_sek-latest-index-html-a_22313-01-a_22313-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_IDP_Sek/latest/index.html#A_22313-01">A_22313-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22313-01" severity="MUSS" class="target-element">
+<div id="A_22313-01" severity="MUSS" lastupdate="2025-01-21" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2025-01-21" class="target-element">
 <p><b>A_22313-01 - Absicherung des Aufrufs zu Authenticator-Modulen von sektoralen Identity Providern</b></p>
 <p>Das Anwendungsfrontend MUSS<span style="font-weight: normal;font-style: normal;font-size: 10pt;color: #000000;background-color: #FFFFFF;line-height: 1.5;">, wenn es eine Authentifizierung über den sektoralen IDP unterstützt,</span> für Aufrufe zu Authenticator-Modulen sektoraler Identity Provider die Verifikationsmechanismen des Betriebssystems verwenden. Die folgenden Parameter müssen gesetzt sein: <br> Android: Keine weiteren.<br> iOS: .universalLinksOnly:false<span id="polarion-comment:879"></span> <b>[&lt;=]</b></p>
 </div>
@@ -8577,7 +8578,7 @@ resourceHandler.open(url, options: [:]) { result in
 <p>Alle Produkttypen, die (nicht-XML-)Signaturen von Daten auf Basis eines ECC-Schlüssels erzeugen oder prüfen, MÜSSEN dafür das Signaturverfahren ECDSA [BSI-TR-03111] auf Basis der Domainparameter brainpoolP256r1 verwenden (vgl. [RFC-5753] und [RFC-6090]). Als Hashfunktion (Messagedigest) MÜSSEN sie SHA-256 [FIPS-180-4] verwenden. <br> <b>[&lt;=]</b></p>
 </div>
 <h4 id='implementation' class='heading'>Implementation</h4>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-620-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:620</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-617-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:617</code></h4>
 
 <p>Assure only brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -8966,7 +8967,7 @@ public protocol VAUStorage {
 public class FileVAUStorage: VAUStorage {
     let userPseudonymFilePath: URL
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-168-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:168</code></h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-179-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:179</code></h4>
 
 <p>Initialization of the VAUStorage at a predefined location in the filesystem</p>
 <pre class="highlight plaintext"><code>// Local VAU storage configuration
@@ -9013,6 +9014,35 @@ public struct PKICertificates: Codable, Equatable {
 public struct VAUCertList: Codable, Equatable {
 
 </code></pre>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-336-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:336</code></h4>
+
+<p>Obtain OCSPResponse for VAU certificate from Fachdienst</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21216#1] Obtain OCSPResponse for VAU certificate from Fachdienst
+/// Load the OCSP Response for the VAU encryption certificate
+///
+/// - Parameters:
+///  - issuerCn: Common name (CN) of the issuer of the certificate the OCSP response is requested for
+///  - serialNr: Serial number (a positive integer) of the certificate the OCSP response is requested for
+/// - Note: Thrown errors are of type `TrustStoreError`
+/// - Returns: OCSPResponse
+func loadCurrentVauCertificateOcspResponse(
+
+</code></pre>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-347-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:347</code></h4>
+
+<p>OCSPResponse not older than OCSP-Graceperiod=12h else request a new one</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21216#2] OCSPResponse not older than OCSP-Graceperiod=12h else request a new one
+ocspResponse.notProducedBefore(date: time().addingTimeInterval(-Self.ocspResponseExpiration)) {
+
+</code></pre>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-373-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:373</code></h4>
+
+<p>OCSPResponse not older than OCSP-Graceperiod=12h else decline</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21216#3] OCSPResponse not older than OCSP-Graceperiod=12h else decline
+// [REQ:gemSpec_Krypt:A_25059] OCSPResponse not older than OCSP-Graceperiod=12h else decline
+ocspResponse.notProducedBefore(date: time().addingTimeInterval(-Self.ocspResponseExpiration))
+
+</code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_21217-a_21217-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_21217">A_21217</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
@@ -9056,26 +9086,26 @@ func testCheckEeCertificatesStatus_failWhenResponsesCannotBeVerifiedByTrustStore
 extension DefaultTrustStoreSession: TrustStoreSession {
 
 </code></pre>
-<h4 id='code-sources-truststore-defaulttruststoresession-swift-196-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:196</code></h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-201-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:201</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218]
 func loadOCSPResponses() -&gt; AnyPublisher&lt;[OCSPResponse], TrustStoreError&gt; {
 
 </code></pre>
-<h4 id='code-sources-truststore-defaulttruststoresession-swift-209-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:209</code></h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-214-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:214</code></h4>
 
 <p>If only OCSP responses &gt;12h available, we must request new ones</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] If only OCSP responses &gt;12h available, we must request new ones
 ocspResponses
 
 </code></pre>
-<h4 id='code-sources-truststore-defaulttruststoresession-swift-227-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:227</code></h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-232-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:232</code></h4>
 
 <p>If only OCSP responses &gt;12h available, …</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] If only OCSP responses &gt;12h available, ...
 ocspResponses
 
 </code></pre>
-<h4 id='code-sources-truststore-defaulttruststoresession-swift-251-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:251</code></h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-384-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:384</code></h4>
 
 <p>If only OCSP responses &gt;12h available, we must request new ones</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] If only OCSP responses &gt;12h available, we must request new ones
@@ -9089,14 +9119,15 @@ func allSatisfyNotProducedBefore(date: Date) -&gt; Bool {
 public protocol TrustStoreSession {
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-26-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:26</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-27-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:27</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218]
+// [REQ:gemSpec_Krypt:A_24470]
 // [REQ:gemSpec_eRp_FdV:A_20032-01]
 // Category A: Cross root certificates
 let rootCa: X509
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-105-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:105</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-128-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:128</code></h4>
 <pre class="highlight plaintext"><code>/// Match a collection of `OCSPResponse`s with the end entity certificates of this `X509TrustStore`.
 /// Checks response status, revocation status for each certificate and validates the signer certificates of
 ///   the responses itself.
@@ -9110,49 +9141,52 @@ let rootCa: X509
 func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -&gt; Bool {
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-103-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:103</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-127-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:127</code></h4>
 
-<p>OCSP responder certificates must be verifiable by the trust store</p>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the trust store
+<p>OCSP responder certificates must be verifiable by the TrustStore</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the TrustStore
+// [REQ:gemSpec_Krypt:A_25060#3] OCSP responder certificates must be verifiable by the TrustStore
 let verifiedOCSPResponses = basicVerifyFilter(ocspResponses: ocspResponses)
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-111-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:111</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-138-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:138</code></h4>
 
 <p>For every EE certificate there must be a matching OCSP response</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] For every EE certificate there must be a matching OCSP response
 let matchedResponses = try eeCertAndSignerTuple.map { eeCertificate, signer in
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-119-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:119</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-147-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:147</code></h4>
 
 <p>For every OCSP response there must be a matching EE certificate</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] For every OCSP response there must be a matching EE certificate
 let matchedEeCerts = try ocspResponses.map { response in
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-130-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:130</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-159-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:159</code></h4>
 
-<p>OCSP responder certificates must be verifiable by the trust store</p>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the trust store
+<p>OCSP responder certificates must be verifiable by the TrustStore</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the TrustStore
+// [REQ:gemSpec_Krypt:A_25060#4] OCSP responder certificates must be verifiable by the TrustStore
 private func basicVerifyFilter(ocspResponses: [OCSPResponse]) -&gt; [OCSPResponse] {
 
 </code></pre>
-<h4 id='3-code-sources-truststore-x509truststore-swift-151-code' class='heading'>(3) <code>../Sources/TrustStore/X509TrustStore.swift:151</code></h4>
+<h4 id='3-code-sources-truststore-x509truststore-swift-180-code' class='heading'>(3) <code>../Sources/TrustStore/X509TrustStore.swift:180</code></h4>
 
 <p>Check ca_certs against category A certificates</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218:(3)] Check ca_certs against category A certificates
 private static let caCertRegex =
 
 </code></pre>
-<h4 id='4-code-sources-truststore-x509truststore-swift-171-code' class='heading'>(4) <code>../Sources/TrustStore/X509TrustStore.swift:171</code></h4>
+<h4 id='4-code-sources-truststore-x509truststore-swift-201-code' class='heading'>(4) <code>../Sources/TrustStore/X509TrustStore.swift:201</code></h4>
 
 <p>Check ee_certs against category A+B certificates</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218:(4)] Check ee_certs against category A+B certificates
+// [REQ:gemSpec_Krypt:A_A_25061] Check ee_certs against category A+B certificates
 typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
 
 </code></pre>
-<h4 id='code-sources-erpapp-appconfiguration-swift-135-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:135</code></h4>
+<h4 id='code-sources-erpapp-appconfiguration-swift-152-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:152</code></h4>
 
 <p>Gematik Root CA 3 as a trust anchor has to be set in the program code</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
@@ -9284,6 +9318,106 @@ public func loadVauCertificate() -&gt; AnyPublisher&lt;X509, TrustStoreError&gt;
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>TLS is enforced by the platform for every HTTP connection. Certain domains can be excluded from this rule by listing them in a dedicated NSAppTransportSecurity exception list. This list is empty for our application, see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></p>
+<h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_24470-a_24470-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_24470">A_24470</a></h3>
+<h4 id='original-requirement' class='heading'>Original Requirement</h4>
+<h4 id='implementation' class='heading'>Implementation</h4>
+<h4 id='code-sources-truststore-x509truststore-swift-28-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:28</code></h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218]
+// [REQ:gemSpec_Krypt:A_24470]
+// [REQ:gemSpec_eRp_FdV:A_20032-01]
+// Category A: Cross root certificates
+let rootCa: X509
+
+</code></pre>
+<h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_25058-a_25058-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_25058">A_25058</a></h3>
+<h4 id='original-requirement' class='heading'>Original Requirement</h4>
+<h4 id='implementation' class='heading'>Implementation</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-288-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:288</code></h4>
+
+<p>Initial TrustStore creation</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_25058] Initial TrustStore creation
+// [REQ:gemSpec_Krypt:A_25063] Re-init TrustStore if certificate validation has failed, then validate it again
+// Reset all locally saved data
+reset()
+
+</code></pre>
+<h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_25059-a_25059-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_25059">A_25059</a></h3>
+<h4 id='original-requirement' class='heading'>Original Requirement</h4>
+<h4 id='implementation' class='heading'>Implementation</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-374-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:374</code></h4>
+
+<p>OCSPResponse not older than OCSP-Graceperiod=12h else decline</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21216#3] OCSPResponse not older than OCSP-Graceperiod=12h else decline
+// [REQ:gemSpec_Krypt:A_25059] OCSPResponse not older than OCSP-Graceperiod=12h else decline
+ocspResponse.notProducedBefore(date: time().addingTimeInterval(-Self.ocspResponseExpiration))
+
+</code></pre>
+<h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_25060-a_25060-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_25060">A_25060</a></h3>
+<h4 id='original-requirement' class='heading'>Original Requirement</h4>
+<h4 id='implementation' class='heading'>Implementation</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-275-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:275</code></h4>
+
+<p>OCSPResponse must be validated by current TrustStore (“Kategorie (B)”)</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_25060#1] OCSPResponse must be validated by current TrustStore ("Kategorie (B)")
+// [REQ:gemSpec_Krypt:A_25061] Check VAU Certificate ("Kategorie (C)") with OCSPResponse
+if let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: [vauCertOCSPResponse]),
+
+</code></pre>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-317-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:317</code></h4>
+
+<p>OCSPResponse must be validated by current TrustStore (“Kategorie (B)”)</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_25060#2] OCSPResponse must be validated by current TrustStore ("Kategorie (B)")
+// [REQ:gemSpec_Krypt:A_25061] Check VAU Certificate ("Kategorie (C)") with OCSPResponse
+guard let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: [vauCertOCSPResponse]),
+
+</code></pre>
+<h4 id='code-sources-truststore-x509truststore-swift-128-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:128</code></h4>
+
+<p>OCSP responder certificates must be verifiable by the TrustStore</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the TrustStore
+// [REQ:gemSpec_Krypt:A_25060#3] OCSP responder certificates must be verifiable by the TrustStore
+let verifiedOCSPResponses = basicVerifyFilter(ocspResponses: ocspResponses)
+
+</code></pre>
+<h4 id='code-sources-truststore-x509truststore-swift-160-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:160</code></h4>
+
+<p>OCSP responder certificates must be verifiable by the TrustStore</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the TrustStore
+// [REQ:gemSpec_Krypt:A_25060#4] OCSP responder certificates must be verifiable by the TrustStore
+private func basicVerifyFilter(ocspResponses: [OCSPResponse]) -&gt; [OCSPResponse] {
+
+</code></pre>
+<h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_25061-a_25061-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_25061">A_25061</a></h3>
+<h4 id='original-requirement' class='heading'>Original Requirement</h4>
+<h4 id='implementation' class='heading'>Implementation</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-276-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:276</code></h4>
+
+<p>Check VAU Certificate (“Kategorie &copy;”) with OCSPResponse</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_25060#1] OCSPResponse must be validated by current TrustStore ("Kategorie (B)")
+// [REQ:gemSpec_Krypt:A_25061] Check VAU Certificate ("Kategorie (C)") with OCSPResponse
+if let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: [vauCertOCSPResponse]),
+
+</code></pre>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-318-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:318</code></h4>
+
+<p>Check VAU Certificate (“Kategorie &copy;”) with OCSPResponse</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_25060#2] OCSPResponse must be validated by current TrustStore ("Kategorie (B)")
+// [REQ:gemSpec_Krypt:A_25061] Check VAU Certificate ("Kategorie (C)") with OCSPResponse
+guard let ocspValid = try? ocspUncheckedTrustStore.checkEeCertificatesStatus(with: [vauCertOCSPResponse]),
+
+</code></pre>
+<h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_25063-a_25063-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_25063">A_25063</a></h3>
+<h4 id='original-requirement' class='heading'>Original Requirement</h4>
+<h4 id='implementation' class='heading'>Implementation</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-289-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:289</code></h4>
+
+<p>Re-init TrustStore if certificate validation has failed, then validate it again</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_25058] Initial TrustStore creation
+// [REQ:gemSpec_Krypt:A_25063] Re-init TrustStore if certificate validation has failed, then validate it again
+// Reset all locally saved data
+reset()
+
+</code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_4389-a_4389-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_4389">A_4389</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 <h4 id='implementation' class='heading'>Implementation</h4>
@@ -9292,6 +9426,17 @@ public func loadVauCertificate() -&gt; AnyPublisher&lt;X509, TrustStoreError&gt;
 <p>IVs must not be reused, IVs bit length must be larger or equal to 96</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_4389:1] IVs must not be reused, IVs bit length must be larger or equal to 96
 let nonceGenerator = { try VAURandom.generateSecureRandom(length: self.eciesSpec.ivSize) }
+
+</code></pre>
+<h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-a_a_25061-a_a_25061-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#A_A_25061">A_A_25061</a></h3>
+<h4 id='original-requirement' class='heading'>Original Requirement</h4>
+<h4 id='implementation' class='heading'>Implementation</h4>
+<h4 id='code-sources-truststore-x509truststore-swift-202-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:202</code></h4>
+
+<p>Check ee_certs against category A+B certificates</p>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218:(4)] Check ee_certs against category A+B certificates
+// [REQ:gemSpec_Krypt:A_A_25061] Check ee_certs against category A+B certificates
+typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
 
 </code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_krypt-latest-index-html-gs-a_4357-gs-a_4357-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_Krypt/latest/index.html#GS-A_4357">GS-A_4357</a></h3>
@@ -9377,7 +9522,7 @@ let alg: JWT.Algorithm = .bp256r1
 guard let alg = autCertificateResponse.info.algorithm.alg
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-621-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:621</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-618-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:618</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -9443,7 +9588,7 @@ let alg: JWT.Algorithm = .bp256r1
 guard let alg = autCertificateResponse.info.algorithm.alg
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-621-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:621</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-618-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:618</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -9514,7 +9659,7 @@ let alg: JWT.Algorithm = .bp256r1
 guard let alg = autCertificateResponse.info.algorithm.alg
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-621-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:621</code></h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-618-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:618</code></h4>
 
 <p>Assure that brainpoolP256r1 is used</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
@@ -9755,7 +9900,7 @@ let cms = try CMSContentInfo.encryptPartial(data: data)
 <p>Das Clientsystem MUSS vom Nutzer vor der ersten Abfrage zu dessen aktueller Geoposition die Einwilligung zur Abfrage und Zustimmung zur Übermittlung an das Apothekenverzeichnis einholen. <b>[&lt;=]</b></p>
 </div>
 <h4 id='implementation' class='heading'>Implementation</h4>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-541-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:541</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-484-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:484</code></h4>
 
 <p>If user defined filters contain location element, ask for permission</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_APOVZD:A_21154] If user defined filters contain location element, ask for permission
@@ -9790,7 +9935,7 @@ case "MOBL":
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19086-a_19086-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19086">A_19086</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19086" severity="DARF NICHT" class="target-element">
+<div id="A_19086" severity="DARF NICHT" lastupdate="2021-05-04" title="Verbindlichkeit: DARF NICHT; Letzte Aktualisierung: 2021-05-04" class="target-element">
 <p><b>A_19086 - E-Rezept-FdV: Verbot von Werbe-Tracking</b></p>
 <p><span style="font-size: 10pt;line-height: 1.5;">Das E-Rezept-FdV DARF ein Werbe-Tracking NICHT verwenden. </span> <b>[&lt;=]</b></p>
 </div>
@@ -9825,7 +9970,7 @@ case .showTracking:
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19089-01-a_19089-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19089-01">A_19089-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19089-01" severity="MUSS" class="target-element">
+<div id="A_19089-01" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19089-01 - E-Rezept-FdV: Informationen zur Einwilligung</b></p>
 <p>Das E-Rezept-FdV MUSS, falls es Tracking-Funktionen implementiert, die Tracking-Daten mehrerer Nutzersessions verknüpfen, den Versicherten vor der Einwilligung in die Aktivierung dieser Tracking-Funktion in verständlicher und leicht zugänglicher Form sowie in einer klaren und einfachen Sprache folgende Einwilligungsinformationen anzeigen: 
 </p>
@@ -9882,7 +10027,7 @@ private func startIfPermitted() {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19090-01-a_19090-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19090-01">A_19090-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19090-01" severity="MUSS" class="target-element">
+<div id="A_19090-01" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19090-01 - E-Rezept-FdV: Aktivierung erst nach Lesebestätigung der Einwilligungsinformationen</b></p>
 <p>Das E-Rezept-FdV MUSS sicherstellen, falls es Tracking-Funktionen implementiert, die Tracking-Daten mehrerer Nutzersessions verknüpfen,  dass die Einwilligung des Nutzers in die Aktivierung dieser Tracking-Funktionen erst erfolgt, wenn der Nutzer bestätigt, die angezeigten Einwilligungsinformationen gelesen zu haben. <b>[&lt;=]</b></p>
 </div>
@@ -9922,7 +10067,7 @@ Contentsquare.start()
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19091-01-a_19091-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19091-01">A_19091-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19091-01" severity="MUSS" class="target-element">
+<div id="A_19091-01" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19091-01 - E-Rezept-FdV: Verbot von mehrmaligen Einwilligungsabfragen</b></p>
 <p><span style="font-size: 10pt;line-height: 1.5;">Das E-Rezept-FdV </span>MUSS, falls es Tracking-Funktionen implementiert, die Tracking-Daten mehrerer Nutzersessions verknüpfen, technisch sicherstellen, dass der Benutzer der App maximal einmal eine Abfrage zur Einwilligung in das Tracking angezeigt bekommt. <b>[&lt;=]</b></p>
 </div>
@@ -9965,7 +10110,7 @@ case .confirmedOptInTracking:
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19092-01-a_19092-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19092-01">A_19092-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19092-01" severity="DARF NICHT" class="target-element">
+<div id="A_19092-01" severity="DARF NICHT" lastupdate="2024-03-20" title="Verbindlichkeit: DARF NICHT; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19092-01 - E-Rezept-FdV: Kopplungsverbot</b></p>
 <p>Das E-Rezept-FdV DARF, falls es Tracking-Funktionen implementiert, die Tracking-Daten mehrerer Nutzersessions verknüpfen, die Nutzung des E-Rezept-FdV NICHT an die Aktivierung des Session-übergreifenden Tracking koppeln. <b>[&lt;=]</b></p>
 </div>
@@ -9993,7 +10138,7 @@ case .alert(.dismiss):
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19093-01-a_19093-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19093-01">A_19093-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19093-01" severity="MUSS" class="target-element">
+<div id="A_19093-01" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19093-01 - E-Rezept-FdV: Keine direkt identifizierenden personenbezogenen Daten</b></p>
 <p>Das E-Rezept-FdV MUSS sicherstellen, falls es Tracking-Funktionen implementiert, dass die Tracking-Informationen keine Daten enthalten, die natürliche Personen direkt identifizieren. <b>[&lt;=]</b></p>
 </div>
@@ -10011,7 +10156,7 @@ tracker.track(screen: newRoute)
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19094-01-a_19094-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19094-01">A_19094-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19094-01" severity="MUSS" class="target-element">
+<div id="A_19094-01" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19094-01 - E-Rezept-FdV: Keine Weitergabe von Sicherheitsmerkmalen</b></p>
 <p>Das E-Rezept-FdV MUSS sicherstellen, falls es Tracking-Funktionen implementiert, dass in den übermittelten Tracking-Informationen keine Sicherheitsmerkmale enthalten sind. <b>[&lt;=]</b></p>
 </div>
@@ -10031,7 +10176,7 @@ Contentsquare.optOut()
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19096-01-a_19096-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19096-01">A_19096-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19096-01" severity="MUSS" class="target-element">
+<div id="A_19096-01" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19096-01 - E-Rezept-FdV: Jederzeit neue Generierung der Pseudonyme</b></p>
 <p>Das E-Rezept-FdV MUSS, falls es Tracking-Funktionen implementiert, die Tracking-Daten mehrerer Nutzersessions verknüpfen, technisch sicherstellen, dass eine neue Generierung der pseudonymen Identifier jederzeit durch den Nutzer des FdVs veranlasst werden kann. <b>[&lt;=]</b></p>
 </div>
@@ -10049,7 +10194,7 @@ Contentsquare.start()
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19097-01-a_19097-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19097-01">A_19097-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19097-01" severity="MUSS" class="target-element">
+<div id="A_19097-01" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19097-01 - E-Rezept-FdV: Deaktivierung zu jeder Zeit</b></p>
 <p>Das E-Rezept-FdV MUSS technisch sicherstellen, falls es Tracking-Funktionen implementiert, die Tracking-Daten mehrerer Nutzersessions verknüpfen, dass aktivierte Tracking-Funktionen jederzeit durch den Nutzer des FdVs deaktiviert werden können. <b>[&lt;=]</b></p>
 </div>
@@ -10074,7 +10219,7 @@ Toggle(isOn: $store.trackerOptIn.sending(\.toggleTrackingTapped).animation()) {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19177-a_19177-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19177">A_19177</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19177" severity="MUSS" class="target-element">
+<div id="A_19177" severity="MUSS" lastupdate="2023-11-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2023-11-15" class="target-element">
 <p><b>A_19177 - E-Rezept-FdV – Anzeige von Protokolldaten</b></p>
 <p><span style="font-size: 10pt;line-height: 1.5;">Das E-Rezept-FdV MUSS es den Versicherten ermöglichen, die für die Fachanwendung für ihn erzeugten Protokolleinträge anzeigen zu können.</span> <b>[&lt;=]</b></p>
 </div>
@@ -10100,7 +10245,7 @@ Button {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19178-a_19178-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19178">A_19178</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19178" severity="MUSS" class="target-element">
+<div id="A_19178" severity="MUSS" lastupdate="2023-11-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2023-11-15" class="target-element">
 <p><b>A_19178 - E-Rezept-FdV – Schutzmaßnahmen gegen die OWASP-Mobile-Top-10-Risiken</b></p>
 <p>Das E-Rezept-FdV MUSS Maßnahmen zum Schutz vor den in der jeweils aktuellen Version genannten OWASP-Mobile-Top-10-Risiken [OWASPMobileTop10] umsetzen.  <b>[&lt;=]</b></p>
 </div>
@@ -10259,7 +10404,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19229-01-a_19229-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19229-01">A_19229-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19229-01" severity="MUSS" class="target-element">
+<div id="A_19229-01" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19229-01 - E-Rezept-FdV: E-Rezept lokal löschen - Löschen aller verknüpfter Daten</b></p>
 <p>Das E-Rezept-FdV MUSS, wenn es ein E-Rezept lokal im E-Rezept-FdV löscht, auch alle mit dem E-Rezept verknüpften Daten im E-Rezept-FdV löschen. <b>[&lt;=]</b></p>
 </div>
@@ -10304,7 +10449,7 @@ var token: AnyPublisher&lt;IDPToken?, Never&gt; { get }
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19739-a_19739-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19739">A_19739</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_19739" severity="MUSS" class="target-element">
+<div id="A_19739" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_19739 - E-Rezept FdV: verpflichtende Zertifikatsprüfung</b></p>
 <p>Das E-Rezept-FdV MUSS alle Zertifikate, die es aktiv verwendet (bspw. TLS-Verbindungsaufbau), auf Integrität und Authentizität prüfen. Falls die Prüfung kein positives Ergebnis (&ldquo;gültig&rdquo;) liefert, so MUSS es die von dem Zertifikat und den darin enthaltenen Attributen (bspw. öffentliche Schlüssel) abhängenden Arbeitsabläufe ablehnen.<br>Das E-Rezept-FdV MUSS alle öffentlichen Schlüssel, die es verwenden will, auf eine positiv verlaufene Zertifikatsprüfung zurückführen können. <b>[&lt;=]</b></p>
 </div>
@@ -10329,6 +10474,16 @@ func loadVauCertificate() -&gt; AnyPublisher&lt;X509, TrustStoreError&gt;
 /// - Parameter certificate: the certificate to be validated
 /// - Returns: A publisher that emits a Boolean stating whether or not the certificate could be validated.
 func validate(certificate: X509) -&gt; AnyPublisher&lt;Bool, TrustStoreError&gt;
+
+</code></pre>
+<h4 id='code-sources-truststore-truststoresession-swift-50-code' class='heading'><code>../Sources/TrustStore/TrustStoreSession.swift:50</code></h4>
+<pre class="highlight plaintext"><code>/// Request and validate the VAU certificate
+///
+/// [REQ:gemSpec_eRp_FdV:A_19739]
+///
+/// - Note: Thrown errors are of type `TrustStoreError`
+/// - Returns: A validated VAU certificate
+func vauCertificate() async throws -&gt; X509
 
 </code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19979-a_19979-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19979">A_19979</a></h3>
@@ -10400,7 +10555,7 @@ Toggle(isOn: $store.trackerOptIn.sending(\.toggleTrackingTapped).animation()) {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_19984-a_19984-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_19984">A_19984</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 <h4 id='implementation' class='heading'>Implementation</h4>
-<h4 id='code-sources-pharmacy-fhirclient-pharmacyoperation-swift-38-code' class='heading'><code>../Sources/Pharmacy/FHIRClient+PharmacyOperation.swift:38</code></h4>
+<h4 id='code-sources-fhirvzd-fhirclient-healthcareserviceoperation-swift-39-code' class='heading'><code>../Sources/FHIRVZD/FHIRClient+HealthcareServiceOperation.swift:39</code></h4>
 
 <p>validate pharmacy data format conforming to FHIR</p>
 <pre class="highlight plaintext"><code>/// Convenience function for searching for pharmacies
@@ -10411,7 +10566,23 @@ Toggle(isOn: $store.trackerOptIn.sending(\.toggleTrackingTapped).animation()) {
 ///   - searchTerm: Search term
 ///   - position: Pharmacy position (latitude and longitude)
 /// - Returns: `AnyPublisher` that emits a list of `PharmacyLocation`s or is empty when not found
-public func searchPharmacies(by searchTerm: String,
+public func searchPharmacies(
+
+</code></pre>
+<h4 id='code-sources-pharmacy-fhirclient-pharmacyoperation-swift-40-code' class='heading'><code>../Sources/Pharmacy/FHIRClient+PharmacyOperation.swift:40</code></h4>
+
+<p>validate pharmacy data format conforming to FHIR</p>
+<pre class="highlight plaintext"><code>/// Convenience function for searching for pharmacies
+///
+/// [REQ:gemSpec_eRp_FdV:A_19984] validate pharmacy data format conforming to FHIR
+///
+/// - Parameters:
+///   - searchTerm: String that send to the server for filtering the pharmacies response
+///   - position: Position (latitude and longitude) of pharmacy
+///   - filter: further filter parameters for pharmacies
+///   - accessToken: access token to interact with the service
+/// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
+public func searchPharmacies(
 
 </code></pre>
 <h4 id='code-sources-erpkit-scannederxtask-swift-62-code' class='heading'><code>../Sources/eRpKit/ScannedErxTask.swift:62</code></h4>
@@ -10429,7 +10600,7 @@ guard let taskId = taskString.match(pattern: Self.taskIdRegex) else {
 erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
 
 </code></pre>
-<h4 id='code-sources-erpremotestorage-fhirclient-erxtaskoperation-swift-262-code' class='heading'><code>../Sources/eRpRemoteStorage/FHIRClient+ErxTaskOperation.swift:262</code></h4>
+<h4 id='code-sources-erpremotestorage-fhirclient-erxtaskoperation-swift-264-code' class='heading'><code>../Sources/eRpRemoteStorage/FHIRClient+ErxTaskOperation.swift:264</code></h4>
 
 <p>validate pharmacy data format conforming to FHIR</p>
 <pre class="highlight plaintext"><code>/// Requests all communication Resources for the logged in user
@@ -10446,14 +10617,15 @@ public func communicationResources(
 <h4 id='implementation' class='heading'>Implementation</h4>
 
 <p>Note: grace period for OCSP responses is 12h</p>
-<h4 id='code-sources-truststore-x509truststore-swift-27-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:27</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-29-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:29</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218]
+// [REQ:gemSpec_Krypt:A_24470]
 // [REQ:gemSpec_eRp_FdV:A_20032-01]
 // Category A: Cross root certificates
 let rootCa: X509
 
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-106-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:106</code></h4>
+<h4 id='code-sources-truststore-x509truststore-swift-129-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:129</code></h4>
 <pre class="highlight plaintext"><code>/// Match a collection of `OCSPResponse`s with the end entity certificates of this `X509TrustStore`.
 /// Checks response status, revocation status for each certificate and validates the signer certificates of
 ///   the responses itself.
@@ -10470,7 +10642,7 @@ func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -&gt; 
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_20033-a_20033-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_20033">A_20033</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20033" severity="MUSS" class="target-element">
+<div id="A_20033" severity="MUSS" lastupdate="2021-05-04" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2021-05-04" class="target-element">
 <p><b>A_20033 - E-Rezept-FdV: Prüfung Internet-Zertifikate</b></p>
 <p>Das E-Rezept-FdV MUSS für die Prüfung des internetseitigen Zertifikats von Diensten der TI das Zertifikat auf ein CA-Zertifikat einer CA, die die &ldquo;CA/Browser Forum Baseline Requirements for the Issuance and Management of Publicly-Trusted Certificates&rdquo; (<a href="https://cabforum.org/baseline-requirements-documents/" target="_top" class="descriptionLink">https://cabforum.org/baseline-requirements-documents/</a>) erfüllt, kryptographisch (Signaturprüfung) zurückführen können. Ansonsten MUSS es das Zertifikat als &ldquo;ungültig&rdquo; bewerten.<br> Das E-Rezept-FdV MUSS die zeitliche Gültigkeit des Zertifikats prüfen. Falls diese Prüfung negativ ausfällt, muss es das Zertifikat als &ldquo;ungültig&rdquo; bewerten.  <b>[&lt;=]</b></p>
 </div>
@@ -10480,7 +10652,7 @@ func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -&gt; 
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_20167-02-a_20167-02-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_20167-02">A_20167-02</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20167-02" severity="MUSS" class="target-element">
+<div id="A_20167-02" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_20167-02 - E-Rezept-FdV: Authentisierung E-Rezept-Fachdienst - IDP-Dienst - Rolle Anwendungsfrontend und optional Authenticator-Modul</b></p>
 <p><span style="font-size: 10pt;line-height: 1.5;">Das E-Rezept-FdV MUSS, wenn es eine Authentifizierung des Nutzers über den IDP-Dienst, in seiner Rolle als Authorization-Server, unterstützt, entweder als anfragendes Anwendungsfrontend und Authenticator-Modul oder, wenn ein Authenticator-Modul in einer anderen für die TI zugelassene App genutzt wird, als anfragendes Anwendungsfrontend agieren.</span> <b>[&lt;=]</b></p>
 </div>
@@ -10492,7 +10664,7 @@ func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -&gt; 
 if Result.success(false) == isAuthenticated {
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-172-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:172</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-177-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:177</code></h4>
 
 <p>no token/not authorized, show authenticator module</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167-02#3,A_20172] no token/not authorized, show authenticator module
@@ -10536,7 +10708,7 @@ func signChallengeWithNFCCard(
 func verifyResultWithIDP(
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-172-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:172</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-177-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:177</code></h4>
 
 <p>no token/not authorized, show authenticator module</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167-02#3,A_20172] no token/not authorized, show authenticator module
@@ -10546,7 +10718,7 @@ if Result.success(false) == authenticated {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_20181-01-a_20181-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_20181-01">A_20181-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20181-01" severity="DARF NICHT" class="target-element">
+<div id="A_20181-01" severity="DARF NICHT" lastupdate="2024-03-20" title="Verbindlichkeit: DARF NICHT; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_20181-01 - E-Rezept-FdV: E-Rezept-Token als 2D-Code anzeigen - personenbezogene Daten</b></p>
 <p><span style="font-size: 10pt;line-height: 1.5;">Das E-Rezept-FdV DARF NICHT im Anwendungsfall &ldquo;E-Rezept-Token als 2D-Code anzeigen&rdquo; personenbezogene Daten zusammen mit der Anzeige des 2D-Codes anzeigen.</span> <b>[&lt;=]</b></p>
 </div>
@@ -10564,7 +10736,7 @@ struct MatrixCodeView: View {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_20182-a_20182-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_20182">A_20182</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20182" severity="DARF NICHT" class="target-element">
+<div id="A_20182" severity="DARF NICHT" lastupdate="2023-11-15" title="Verbindlichkeit: DARF NICHT; Letzte Aktualisierung: 2023-11-15" class="target-element">
 <p><b>A_20182 - E-Rezept-FdV - Makelverbot</b></p>
 <p><span style="font-size: 10pt;line-height: 1.5;">Das E-Rezept-FdV DARF NICHT zusätzliche Funktionalitäten enthalten, die die berufs- oder gewerbsmäßige Zuweisung und das Makeln von E-Rezepten unterstützen oder den Nutzer in seiner Entscheidung beeinflussen, welche elektronischen Verordnungen in welcher Apotheke eingelöst werden.</span> <b>[&lt;=]</b></p>
 </div>
@@ -10574,38 +10746,53 @@ struct MatrixCodeView: View {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_20183-a_20183-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_20183">A_20183</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 <h4 id='implementation' class='heading'>Implementation</h4>
-<h4 id='code-sources-pharmacy-pharmacyfhirdatasource-swift-45-code' class='heading'><code>../Sources/Pharmacy/PharmacyFHIRDataSource.swift:45</code></h4>
+<h4 id='code-sources-fhirvzd-healthcareservicefhirdatasource-swift-55-code' class='heading'><code>../Sources/FHIRVZD/HealthcareServiceFHIRDataSource.swift:55</code></h4>
 <pre class="highlight plaintext"><code>/// API for requesting pharmacies with the passed search term
 ///
 /// [REQ:gemSpec_eRp_FdV:A_20183]
 ///
-/// - Parameter searchTerm: String that send to the server for filtering the pharmacies response
-/// - Parameter position: Position (latitude and longitude) of pharmacy
-/// - Parameter filter: further filter parameters for pharmacies
+/// - Parameters:
+///   - searchTerm: String that send to the server for filtering the pharmacies response
+///   - position: Position (latitude and longitude) of pharmacy
+///   - filter: further filter parameters for pharmacies
 /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
-public func searchPharmacies(by searchTerm: String,
+public func searchPharmacies(
 
 </code></pre>
-<h4 id='code-sources-pharmacy-pharmacyremotedatastore-swift-36-code' class='heading'><code>../Sources/Pharmacy/PharmacyRemoteDataStore.swift:36</code></h4>
+<h4 id='code-sources-pharmacy-pharmacyfhirdatasource-swift-46-code' class='heading'><code>../Sources/Pharmacy/PharmacyFHIRDataSource.swift:46</code></h4>
 <pre class="highlight plaintext"><code>/// API for requesting pharmacies with the passed search term
 ///
 /// [REQ:gemSpec_eRp_FdV:A_20183]
 ///
-/// - Parameter searchTerm: String that send to the server for filtering the pharmacies response
-/// - Parameter position: Position (latitude and longitude) of pharmacy
-/// - Parameter filter: further filter parameters for pharmacies
+/// - Parameters:
+///   - searchTerm: String that send to the server for filtering the pharmacies response
+///   - position: Position (latitude and longitude) of pharmacy
+///   - filter: further filter parameters for pharmacies
 /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
-func searchPharmacies(by searchTerm: String,
+public func searchPharmacies(
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-399-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:399</code></h4>
+<h4 id='code-sources-pharmacy-pharmacyremotedatastore-swift-37-code' class='heading'><code>../Sources/Pharmacy/PharmacyRemoteDataStore.swift:37</code></h4>
+<pre class="highlight plaintext"><code>/// API for requesting pharmacies with the passed search term
+///
+/// [REQ:gemSpec_eRp_FdV:A_20183]
+///
+/// - Parameters:
+///   - searchTerm: String that send to the server for filtering the pharmacies response
+///   - position: Position (latitude and longitude) of pharmacy
+///   - filter: further filter parameters for pharmacies
+/// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
+func searchPharmacies(
+
+</code></pre>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-362-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:362</code></h4>
 
 <p>search results mirrored verbatim, no sorting, no highlighting</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
 state.searchState = .searchRunning
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-278-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:278</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-235-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:235</code></h4>
 
 <p>search results mirrored verbatim, no sorting, no highlighting</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
@@ -10621,7 +10808,7 @@ let center = state.mapLocation.region.center
 let success: Bool
 
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-105-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:105</code></h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-107-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:107</code></h4>
 
 <p>Keychain storage encrypts session/ssl tokens</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21328#2] Keychain storage encrypts session tokens
@@ -10629,7 +10816,7 @@ let success: Bool
 storage: secureUserStore,
 
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-123-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:123</code></h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-125-code' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:125</code></h4>
 
 <p>No persistent storage for idp pairing session</p>
 <pre class="highlight plaintext"><code>storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp pairing session
@@ -10708,28 +10895,34 @@ urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_20208-a_20208-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_20208">A_20208</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 <h4 id='implementation' class='heading'>Implementation</h4>
+<h4 id='code-sources-fhirvzd-healthcareservicefhiroperation-swift-31-code' class='heading'><code>../Sources/FHIRVZD/HealthcareServiceFHIROperation.swift:31</code></h4>
+<pre class="highlight plaintext"><code>/// Search for pharmacies by name
+/// [REQ:gemSpec_eRp_FdV:A_20208]
+case searchPharmacies(
+
+</code></pre>
 <h4 id='code-sources-pharmacy-pharmacyfhiroperation-swift-28-code' class='heading'><code>../Sources/Pharmacy/PharmacyFHIROperation.swift:28</code></h4>
 <pre class="highlight plaintext"><code>/// Search for pharmacies by name
 /// [REQ:gemSpec_eRp_FdV:A_20208]
-case searchPharmacies(searchTerm: String, position: Position?, filter: [String: String], handler: Handler)
+case searchPharmacies(
 
 </code></pre>
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_20285-a_20285-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_20285">A_20285</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_20285" severity="MUSS" class="target-element">
+<div id="A_20285" severity="MUSS" lastupdate="2023-11-15" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2023-11-15" class="target-element">
 <p><b>A_20285 - E-Rezept-FdV: Wettbewerbsneutralität für Darstellung Apotheken</b></p>
 <p>Das E-Rezept-FdV MUSS Apotheken wettbewerbsneutral darstellen (bspw. Sortierung nach Alphabet oder Entfernung vom aktuellen Standort des Nutzers). <b>[&lt;=]</b></p>
 </div>
 <h4 id='implementation' class='heading'>Implementation</h4>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-408-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:408</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-371-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:371</code></h4>
 
 <p>pharmacy order is resolved on server side</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20285] pharmacy order is resolved on server side
 state.pharmacies = pharmacies
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-288-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:288</code></h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchmapdomain-swift-245-code' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchMapDomain.swift:245</code></h4>
 
 <p>pharmacy order is resolved on server side</p>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20285] pharmacy order is resolved on server side
@@ -10758,7 +10951,7 @@ state.pharmacies = pharmacies.map {
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_22778-01-a_22778-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_22778-01">A_22778-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22778-01" severity="MUSS" class="target-element">
+<div id="A_22778-01" severity="MUSS" lastupdate="2024-08-29" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-08-29" class="target-element">
 <p><b>A_22778-01 - E-Rezept-FdV - Einlösen ohne Anmelden - Verschlüsselung mit C.HCI.ENC</b></p>
 <p>Das E-Rezept-FdV MUSS im Anwendungsfall &ldquo;Einlösen ohne Anmelden&rdquo; die Nachricht des Versicherten mit allen bereitgestellten C.HCI.ENC Zertifikaten (inkl. der verschiedenen kryptografischen Verfahren) der adressierten Apotheke (Verschlüsselungszertifikat der SMC-B C.HCI.ENC) verschlüsseln. <b>[&lt;=]</b></p>
 </div>
@@ -10787,7 +10980,7 @@ let cms = try CMSContentInfo.encryptPartial(data: data)
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_22779-01-a_22779-01-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_22779-01">A_22779-01</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_22779-01" severity="MUSS" class="target-element">
+<div id="A_22779-01" severity="MUSS" lastupdate="2024-08-29" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-08-29" class="target-element">
 <p><b>A_22779-01 - E-Rezept-FdV - Einlösen ohne Anmelden - Nachricht verschlüsseln</b></p>
 <p>Das E-Rezept-FdV MUSS im Anwendungsfall &ldquo;Einlösen ohne Anmelden&rdquo; die Daten ausschließlich als PKCS#7 verschlüsselten Datensatz (CMS) bereitstellen. <b>[&lt;=]</b></p>
 </div>
@@ -10817,7 +11010,7 @@ let cms = try CMSContentInfo.encryptPartial(data: data)
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_24525-a_24525-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_24525">A_24525</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_24525" severity="MUSS" class="target-element">
+<div id="A_24525" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_24525 - E-Rezept-FdV Tracking-Funktionen als Opt-in</b></p>
 <p>Das E-Rezept-FdV MUSS, falls es Tracking-Funktionen implementiert, die Tracking-Daten mehrerer Nutzersessions verknüpfen, technisch sicherstellen, dass diese Tracking-Funktionen bei der Installation des FdV standardmäßig deaktiviert sind und nur nach expliziter Einwilligung durch den Versicherten als Nutzer des FdV aktiviert werden (Opt-in). <b>[&lt;=]</b></p>
 </div>
@@ -10834,7 +11027,7 @@ userDefaults.appTrackingAllowed
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_24579-a_24579-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_24579">A_24579</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_24579" severity="MUSS" class="target-element">
+<div id="A_24579" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_24579 - E-Rezept-FdV: Apotheke suchen: neutrale Darstellung der Optionen</b></p>
 <p>Das E-Rezept-FdV MUSS im Anwendungsfall &ldquo;Apotheke suchen&rdquo; die Apothekensuche und die Suchergebnisse so darstellen, dass Belieferungsoptionen nicht hervorgehoben oder bevorzugt werden. <b>[&lt;=]</b></p>
 </div>
@@ -10844,7 +11037,7 @@ userDefaults.appTrackingAllowed
 <h3 id='a-href-https-gemspec-gematik-de-docs-gemspec-gemspec_erp_fdv-latest-index-html-a_24857-a_24857-a' class='heading'><a href="https://gemspec.gematik.de/docs/gemSpec/gemSpec_eRp_FdV/latest/index.html#A_24857">A_24857</a></h3>
 <h4 id='original-requirement' class='heading'>Original Requirement</h4>
 
-<div id="A_24857" severity="MUSS" class="target-element">
+<div id="A_24857" severity="MUSS" lastupdate="2024-03-20" title="Verbindlichkeit: MUSS; Letzte Aktualisierung: 2024-03-20" class="target-element">
 <p><b>A_24857 - E-Rezept-FdV: Authentifizierung des Nutzers am E-Rezept-FdV zum Start des E-Rezept-FdV</b></p>
 <p>Das E-Rezept-FdV MUSS den Nutzer beim Starten des E-Rezept-FdV am E-Rezept-FdV authentisieren. <b>[&lt;=]</b></p>
 </div>
@@ -10866,7 +11059,7 @@ DispatchQueue.main.async { [weak self] in
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-04-25)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

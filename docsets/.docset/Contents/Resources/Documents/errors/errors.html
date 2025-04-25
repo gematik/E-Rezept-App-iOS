@@ -34,6 +34,8 @@
 id="toc-avserror.internalerror"><code>AVSError.InternalError</code></a></li>
 <li><a href="#zxingmatrixcodegenerator.error"
 id="toc-zxingmatrixcodegenerator.error"><code>ZXingMatrixCodeGenerator.Error</code></a></li>
+<li><a href="#asyncerror"
+id="toc-asyncerror"><code>AsyncError</code></a></li>
 <li><a href="#authenticationchallengeprovidererror"
 id="toc-authenticationchallengeprovidererror"><code>AuthenticationChallengeProviderError</code></a></li>
 <li><a href="#avscannerviewcontroller.error"
@@ -72,6 +74,8 @@ id="toc-medicationreminderlistdomain.error"><code>MedicationReminderListDomain.E
 id="toc-medicationremindersetupdomain.error"><code>MedicationReminderSetupDomain.Error</code></a></li>
 <li><a href="#defaultordersrepository.error"
 id="toc-defaultordersrepository.error"><code>DefaultOrdersRepository.Error</code></a></li>
+<li><a href="#redeemorderserviceerror"
+id="toc-redeemorderserviceerror"><code>RedeemOrderServiceError</code></a></li>
 <li><a href="#redeemserviceerror"
 id="toc-redeemserviceerror"><code>RedeemServiceError</code></a></li>
 <li><a href="#redeemserviceerror.internalerror"
@@ -146,6 +150,12 @@ id="toc-shipmentinfocoredatastore.error"><code>ShipmentInfoCoreDataStore.Error</
 id="toc-remotestoragebundleparsingerror"><code>RemoteStorageBundleParsingError</code></a></li>
 <li><a href="#fhirclient.error"
 id="toc-fhirclient.error"><code>FHIRClient.Error</code></a></li>
+<li><a href="#fhirvzderror"
+id="toc-fhirvzderror"><code>FHIRVZDError</code></a></li>
+<li><a href="#fhirvzderror.loadingerror"
+id="toc-fhirvzderror.loadingerror"><code>FHIRVZDError.LoadingError</code></a></li>
+<li><a href="#healthcareservicebundleparsingerror"
+id="toc-healthcareservicebundleparsingerror"><code>HealthcareServiceBundleParsingError</code></a></li>
 <li><a href="#httpclienterror"
 id="toc-httpclienterror"><code>HTTPClientError</code></a></li>
 <li><a href="#biometricssha256signer.error"
@@ -186,7 +196,7 @@ id="toc-truststoreerror.internalerror"><code>TrustStoreError.InternalError</code
 <h1 id="errors">Errors</h1>
 <h2 id="avserror"><code>AVSError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/AVS/AVSError.swift">AVSError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/AVS/AVSError.swift">AVSError.swift</a></p>
 <ul>
 <li><code>network</code> (i-54001): [In case of HTTP/Connection error]
 <ul>
@@ -208,24 +218,34 @@ cast to <code>AVSError</code> but error type was different]
 </ul>
 <h2 id="avserror.internalerror"><code>AVSError.InternalError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/AVS/AVSError.swift">AVSError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/AVS/AVSError.swift">AVSError.swift</a></p>
 <ul>
 <li><code>cmsContentCreation</code> (i-54101):</li>
 </ul>
 <h2
 id="zxingmatrixcodegenerator.error"><code>ZXingMatrixCodeGenerator.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Common/DataMatrixCodeGenerator/ZXingMatrixCodeGenerator.swift">ZXingMatrixCodeGenerator.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Common/DataMatrixCodeGenerator/ZXingMatrixCodeGenerator.swift">ZXingMatrixCodeGenerator.swift</a></p>
 <ul>
 <li><code>cgImageConversion</code> (i-00901):
 <ul>
 <li><a href="#string">String</a></li>
 </ul></li>
 </ul>
+<h2 id="asyncerror"><code>AsyncError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Helper/Concurrent+Combine.swift">Concurrent+Combine.swift</a></p>
+<ul>
+<li><code>finishedWithoutValue</code> (i-):</li>
+<li><code>error</code> (i-):
+<ul>
+<li><a href="#swift.error">Swift.Error</a></li>
+</ul></li>
+</ul>
 <h2
 id="authenticationchallengeprovidererror"><code>AuthenticationChallengeProviderError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/AppAuthentication/AppAuthenticationBiometry/BiometricsAuthenticationChallengeProvider.swift">BiometricsAuthenticationChallengeProvider.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/AppAuthentication/AppAuthenticationBiometry/BiometricsAuthenticationChallengeProvider.swift">BiometricsAuthenticationChallengeProvider.swift</a></p>
 <ul>
 <li><code>cannotEvaluatePolicy</code> (i-00301):
 <ul>
@@ -239,7 +259,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="avscannerviewcontroller.error"><code>AVScannerViewController.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CameraView/AVScannerView.swift">AVScannerView.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CameraView/AVScannerView.swift">AVScannerView.swift</a></p>
 <ul>
 <li><code>initalizationError</code> (i-00201):</li>
 <li><code>other</code> (i-00202):
@@ -249,7 +269,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 </ul>
 <h2 id="scannerdomain.error"><code>ScannerDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CameraView/ScannerDomain+Helper.swift">ScannerDomain+Helper.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CameraView/ScannerDomain+Helper.swift">ScannerDomain+Helper.swift</a></p>
 <ul>
 <li><code>duplicate</code> (i-00101):</li>
 <li><code>empty</code> (i-00102):</li>
@@ -264,7 +284,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="cardwallextauthconfirmationdomain.error"><code>CardWallExtAuthConfirmationDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift">CardWallExtAuthConfirmationDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift">CardWallExtAuthConfirmationDomain.swift</a></p>
 <ul>
 <li><code>idpError</code> (i-01201):
 <ul>
@@ -275,7 +295,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="cardwallintroductiondomain.error"><code>CardWallIntroductionDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/Introduction/CardWallIntroductionDomain.swift">CardWallIntroductionDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/Introduction/CardWallIntroductionDomain.swift">CardWallIntroductionDomain.swift</a></p>
 <ul>
 <li><code>idpError</code> (i-02901):
 <ul>
@@ -287,7 +307,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="cardwallreadcarddomain.state.error"><code>CardWallReadCardDomain.State.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.State+Helper.swift">CardWallReadCardDomain.State+Helper.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.State+Helper.swift">CardWallReadCardDomain.State+Helper.swift</a></p>
 <ul>
 <li><code>idpError</code> (i-01001): [<code>IDPError</code> thrown
 within the <code>CardWallReadCardDomain</code>]
@@ -321,7 +341,7 @@ before saving the IDPToken]
 <h2
 id="cardwallreadcarddomain.state.error.inputerror"><code>CardWallReadCardDomain.State.Error.InputError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.State+Helper.swift">CardWallReadCardDomain.State+Helper.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.State+Helper.swift">CardWallReadCardDomain.State+Helper.swift</a></p>
 <ul>
 <li><code>missingPIN</code> (i-01101): [User input for PIN is
 incorrect]</li>
@@ -330,7 +350,7 @@ incorrect]</li>
 </ul>
 <h2 id="loginhandlererror"><code>LoginHandlerError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/ReadCard/LoginHandler.swift">LoginHandler.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/ReadCard/LoginHandler.swift">LoginHandler.swift</a></p>
 <ul>
 <li><code>biometrieFailed</code> (i-01301):</li>
 <li><code>biometrieFatal</code> (i-01302):</li>
@@ -348,7 +368,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="loginhandlererror.loadingerror"><code>LoginHandlerError.LoadingError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/ReadCard/LoginHandler.swift">LoginHandler.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/ReadCard/LoginHandler.swift">LoginHandler.swift</a></p>
 <ul>
 <li><code>message</code> (i-):
 <ul>
@@ -358,51 +378,43 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="nfcsignatureprovidererror"><code>NFCSignatureProviderError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift">NFCSignatureProvider.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift">NFCSignatureProvider.swift</a></p>
 <ul>
-<li><code>cardError</code> (i-00401): [Error while establishing a
-connection to the card]
+<li><code>cardError</code> (i-00401):
 <ul>
 <li><a
 href="#nfctagreadersession.error">NFCTagReaderSession.Error</a></li>
 </ul></li>
-<li><code>wrongCAN</code> (i-00403): [Error while verifying the CAN]
+<li><code>wrongCAN</code> (i-00403):
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
-<li><code>cardConnectionError</code> (i-00404): [Error while
-establishing Secure channel or card connection]
+<li><code>cardConnectionError</code> (i-00404):
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
-<li><code>verifyCardError</code> (i-00405): [Any error related to PIN
-verification]
+<li><code>verifyCardError</code> (i-00405):
 <ul>
 <li><a href="#verifypinerror">VerifyPINError</a></li>
 </ul></li>
-<li><code>signingFailure</code> (i-00406): [ESIGN Failed]
+<li><code>signingFailure</code> (i-00406):
 <ul>
 <li><a href="#signingerror">SigningError</a></li>
 </ul></li>
-<li><code>genericError</code> (i-00408): [Generic error while trying to
-sign the challenge]
+<li><code>genericError</code> (i-00408):
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
-<li><code>cardReadingError</code> (i-00409): [Generic error while
-reading something from the card]
+<li><code>cardReadingError</code> (i-00409):
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
-<li><code>secureEnclaveError</code> (i-00410): [Generic error while
-reading something from the card]
+<li><code>secureEnclaveError</code> (i-00410):
 <ul>
 <li><a
 href="#secureenclavesignatureprovidererror">SecureEnclaveSignatureProviderError</a></li>
 </ul></li>
-<li><code>nfcHealthCardSession</code> (i-00411): [Any error regarding
-the communication with the NFC health card itself, or sending/receiving
-data (operation execution)]
+<li><code>nfcHealthCardSession</code> (i-00411):
 <ul>
 <li><a
 href="#nfchealthcardsessionerror">NFCHealthCardSessionError</a></li>
@@ -411,7 +423,7 @@ href="#nfchealthcardsessionerror">NFCHealthCardSessionError</a></li>
 <h2
 id="nfcsignatureprovidererror.signingerror"><code>NFCSignatureProviderError.SigningError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift">NFCSignatureProvider.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift">NFCSignatureProvider.swift</a></p>
 <ul>
 <li><code>unsupportedAlgorithm</code> (i-00501):</li>
 <li><code>responseStatus</code> (i-00502):
@@ -427,7 +439,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="nfcsignatureprovidererror.verifypinerror"><code>NFCSignatureProviderError.VerifyPINError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift">NFCSignatureProvider.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift">NFCSignatureProvider.swift</a></p>
 <ul>
 <li><code>wrongSecretWarning</code> (i-00601):
 <ul>
@@ -443,7 +455,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="extauthpendingdomain.error"><code>ExtAuthPendingDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Main/ExtAuth/ExtAuthPendingDomain.swift">ExtAuthPendingDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Main/ExtAuth/ExtAuthPendingDomain.swift">ExtAuthPendingDomain.swift</a></p>
 <ul>
 <li><code>idpError</code> (i-01401): [Underlying <code>IDPError</code>
 for the external authentication agains <code>URL</code>]
@@ -461,7 +473,7 @@ before saving the IDPToken]
 </ul>
 <h2 id="maindomain.error"><code>MainDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Main/MainDomain.swift">MainDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Main/MainDomain.swift">MainDomain.swift</a></p>
 <ul>
 <li><code>localStoreError</code> (i-01501):
 <ul>
@@ -482,23 +494,23 @@ failed]
 <h2
 id="prescriptiondetaildomain.loadingimageerror"><code>PrescriptionDetailDomain.LoadingImageError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift">PrescriptionDetailDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift">PrescriptionDetailDomain.swift</a></p>
 <ul>
 <li><code>matrixCodeGenerationFailed</code> (i-01601):</li>
 </ul>
 <h2
 id="matrixcodedomain.loadingimageerror"><code>MatrixCodeDomain.LoadingImageError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/MatrixCode/MatrixCodeDomain.swift">MatrixCodeDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/MatrixCode/MatrixCodeDomain.swift">MatrixCodeDomain.swift</a></p>
 <ul>
 <li><code>matrixCodeGenerationFailed</code> (i-02301):</li>
 </ul>
 <h2
 id="medicationreminderlistdomain.error"><code>MedicationReminderListDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/MedicationReminder/MedicationReminderListDomain.swift">MedicationReminderListDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/MedicationReminder/MedicationReminderListDomain.swift">MedicationReminderListDomain.swift</a></p>
 <ul>
-<li><code>generic</code> (i-03601):
+<li><code>generic</code> (i-04201):
 <ul>
 <li><a href="#string">String</a></li>
 </ul></li>
@@ -506,7 +518,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="medicationremindersetupdomain.error"><code>MedicationReminderSetupDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/MedicationReminder/MedicationReminderSetupDomain.swift">MedicationReminderSetupDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/MedicationReminder/MedicationReminderSetupDomain.swift">MedicationReminderSetupDomain.swift</a></p>
 <ul>
 <li><code>generic</code> (i-03601):
 <ul>
@@ -516,7 +528,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="defaultordersrepository.error"><code>DefaultOrdersRepository.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Orders/OrdersRepository.swift">OrdersRepository.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Orders/OrdersRepository.swift">OrdersRepository.swift</a></p>
 <ul>
 <li><code>erxRepository</code> (i-03701):
 <ul>
@@ -531,9 +543,27 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
 </ul>
+<h2
+id="redeemorderserviceerror"><code>RedeemOrderServiceError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemOrderService.swift">RedeemOrderService.swift</a></p>
+<ul>
+<li><code>localStore</code> (i-03901):
+<ul>
+<li><a href="#localstoreerror">LocalStoreError</a></li>
+</ul></li>
+<li><code>pharmacy</code> (i-03902):
+<ul>
+<li><a href="#pharmacyrepositoryerror">PharmacyRepositoryError</a></li>
+</ul></li>
+<li><code>redeem</code> (i-03903):
+<ul>
+<li><a href="#redeemserviceerror">RedeemServiceError</a></li>
+</ul></li>
+</ul>
 <h2 id="redeemserviceerror"><code>RedeemServiceError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
 <ul>
 <li><code>eRxRepository</code> (i-02401): [When redeeming a task via
 Fachdienst]
@@ -570,7 +600,7 @@ prescription has already been redeemed]
 <h2
 id="redeemserviceerror.internalerror"><code>RedeemServiceError.InternalError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
 <ul>
 <li><code>missingAVSEndpoint</code> (i-02501): [When the AVS endpoint
 for the selected redeem option is missing]</li>
@@ -596,7 +626,7 @@ information from the store went wrong]
 <h2
 id="nfchealthcardpasswordcontrollererror"><code>NFCHealthCardPasswordControllerError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/HealthCard/Password/ReadCard/NFCHealthCardPasswordController.swift">NFCHealthCardPasswordController.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/HealthCard/Password/ReadCard/NFCHealthCardPasswordController.swift">NFCHealthCardPasswordController.swift</a></p>
 <ul>
 <li><code>cardError</code> (i-02601):
 <ul>
@@ -628,7 +658,7 @@ href="#nfchealthcardsessionerror">NFCHealthCardSessionError</a></li>
 <h2
 id="organdonorjumpserviceerror"><code>OrganDonorJumpServiceError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/OrganDonorJumpService.swift">OrganDonorJumpService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/OrganDonorJumpService.swift">OrganDonorJumpService.swift</a></p>
 <ul>
 <li><code>fetchingProfile</code> (i-04001):</li>
 <li><code>generatingGenericUrl</code> (i-04002):</li>
@@ -637,28 +667,28 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="chargeitemconsentservice.error"><code>ChargeItemConsentService.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemConsentService+Error.swift">ChargeItemConsentService+Error.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemConsentService+Error.swift">ChargeItemConsentService+Error.swift</a></p>
 <ul>
-<li><code>localStore</code> (i-03601):
+<li><code>localStore</code> (i-04101):
 <ul>
 <li><a href="#localstoreerror">LocalStoreError</a></li>
 </ul></li>
-<li><code>loginHandler</code> (i-03602):
+<li><code>loginHandler</code> (i-04102):
 <ul>
 <li><a href="#loginhandlererror">LoginHandlerError</a></li>
 </ul></li>
-<li><code>erxRepository</code> (i-03603):
+<li><code>erxRepository</code> (i-04103):
 <ul>
 <li><a href="#erxrepositoryerror">ErxRepositoryError</a></li>
 </ul></li>
-<li><code>unexpectedGrantConsentResponse</code> (i-03604):</li>
-<li><code>unexpected</code> (i-03605):</li>
-<li><code>unexpectedRevokeConsentResponse</code> (i-03606):</li>
+<li><code>unexpectedGrantConsentResponse</code> (i-04104):</li>
+<li><code>unexpected</code> (i-04105):</li>
+<li><code>unexpectedRevokeConsentResponse</code> (i-04106):</li>
 </ul>
 <h2
 id="chargeitemdomainserviceauthenticateresult.error"><code>ChargeItemDomainServiceAuthenticateResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>loginHandler</code> (i-03101):
 <ul>
@@ -669,7 +699,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="chargeitemdomainservicedeleteresult.error"><code>ChargeItemDomainServiceDeleteResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>localStore</code> (i-03401):
 <ul>
@@ -688,7 +718,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="chargeitemdomainservicefetchresult.error"><code>ChargeItemDomainServiceFetchResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>localStore</code> (i-03001):
 <ul>
@@ -712,7 +742,7 @@ href="#chargeitemconsentservice.error">ChargeItemConsentService.Error</a></li>
 <h2
 id="chargeitemlistdomainservicegrantresult.error"><code>ChargeItemListDomainServiceGrantResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>localStore</code> (i-03201):
 <ul>
@@ -737,7 +767,7 @@ href="#chargeitemconsentservice.error">ChargeItemConsentService.Error</a></li>
 <h2
 id="chargeitemlistdomainservicerevokeresult.error"><code>ChargeItemListDomainServiceRevokeResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>localStore</code> (i-03301):
 <ul>
@@ -761,7 +791,7 @@ href="#chargeitemconsentservice.error">ChargeItemConsentService.Error</a></li>
 <h2
 id="auditeventsserviceerror"><code>AuditEventsServiceError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsService.swift">AuditEventsService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsService.swift">AuditEventsService.swift</a></p>
 <ul>
 <li><code>missingAuthentication</code> (i-02801):</li>
 <li><code>loginHandlerError</code> (i-02802):
@@ -776,7 +806,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="registereddevicesdomain.error"><code>RegisteredDevicesDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/RegisteredDevices/RegisteredDevicesDomain.swift">RegisteredDevicesDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/RegisteredDevices/RegisteredDevicesDomain.swift">RegisteredDevicesDomain.swift</a></p>
 <ul>
 <li><code>generic</code> (i-01701):
 <ul>
@@ -786,7 +816,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="registereddevicesserviceerror"><code>RegisteredDevicesServiceError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/Profiles/RegisteredDevices/RegisteredDevicesService.swift">RegisteredDevicesService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/Profiles/RegisteredDevices/RegisteredDevicesService.swift">RegisteredDevicesService.swift</a></p>
 <ul>
 <li><code>missingAuthentication</code> (i-01801):</li>
 <li><code>missingToken</code> (i-01802):</li>
@@ -801,7 +831,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 </ul>
 <h2 id="settingsdomainerror"><code>SettingsDomainError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Screens/Settings/SettingsDomain.swift">SettingsDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Screens/Settings/SettingsDomain.swift">SettingsDomain.swift</a></p>
 <ul>
 <li><code>organDonorJumpError</code> (i-03901):
 <ul>
@@ -812,14 +842,14 @@ href="#organdonorjumpserviceerror">OrganDonorJumpServiceError</a></li>
 </ul>
 <h2 id="demoerror"><code>DemoError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Session/Demo/DemoError.swift">DemoError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Session/Demo/DemoError.swift">DemoError.swift</a></p>
 <ul>
 <li><code>demo</code> (i-01901):</li>
 </ul>
 <h2
 id="keychainaccesshelpererror"><code>KeychainAccessHelperError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Session/Helper/SystemKeychainAccessHelper.swift">SystemKeychainAccessHelper.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Session/Helper/SystemKeychainAccessHelper.swift">SystemKeychainAccessHelper.swift</a></p>
 <ul>
 <li><code>illegalArgument</code> (i-02001):</li>
 <li><code>keyChainError</code> (i-02002):
@@ -831,7 +861,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 </ul>
 <h2 id="idtokenvalidatorerror"><code>IDTokenValidatorError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Session/IDTokenValidator.swift">IDTokenValidator.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Session/IDTokenValidator.swift">IDTokenValidator.swift</a></p>
 <ul>
 <li><code>profileNotFound</code> (i-02101):</li>
 <li><code>profileNotMatchingInsuranceId</code> (i-02102):
@@ -850,7 +880,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 <h2
 id="userprofileserviceerror"><code>UserProfileServiceError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/Session/UserProfileService.swift">UserProfileService.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/Session/UserProfileService.swift">UserProfileService.swift</a></p>
 <ul>
 <li><code>localStoreError</code> (i-02201):
 <ul>
@@ -859,16 +889,16 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/S
 </ul>
 <h2 id="sharesheetdomain.error"><code>ShareSheetDomain.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/State/ShareSheetDomain.swift">ShareSheetDomain.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/State/ShareSheetDomain.swift">ShareSheetDomain.swift</a></p>
 <ul>
-<li><code>shareFailure</code> (i-03801):
+<li><code>shareFailure</code> (i-04301):
 <ul>
 <li><a href="#string">String</a></li>
 </ul></li>
 </ul>
 <h2 id="mockanswer.error"><code>MockAnswer.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/UITestScenarios/SmartMock.swift">SmartMock.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpApp/UITestScenarios/SmartMock.swift">SmartMock.swift</a></p>
 <ul>
 <li><code>decodingError</code> (i-):</li>
 <li><code>unkownType</code> (i-):
@@ -880,7 +910,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpApp/U
 <h2
 id="defaultdatamatrixstringencodererror"><code>DefaultDataMatrixStringEncoderError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/ErxMatrixCode/DataMatrixStringEncoder.swift">DataMatrixStringEncoder.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/ErxMatrixCode/DataMatrixStringEncoder.swift">DataMatrixStringEncoder.swift</a></p>
 <ul>
 <li><code>stringEncoding</code> (i-20201): [Generic error while encoding
 the string.]
@@ -892,7 +922,7 @@ missing]</li>
 </ul>
 <h2 id="erxconsent.error"><code>ErxConsent.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/ErxModels/ErxConsent.swift">ErxConsent.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/ErxModels/ErxConsent.swift">ErxConsent.swift</a></p>
 <ul>
 <li><code>unableToConstructConsentRequest</code> (i-20601): [Unable to
 construct consent request]</li>
@@ -904,7 +934,7 @@ input]
 </ul>
 <h2 id="erxtask.status.error"><code>ErxTask.Status.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/ErxModels/ErxTask+Status.swift">ErxTask+Status.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/ErxModels/ErxTask+Status.swift">ErxTask+Status.swift</a></p>
 <ul>
 <li><code>decoding</code> (i-20101):
 <ul>
@@ -921,19 +951,17 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/E
 </ul>
 <h2 id="erxtaskorder.error"><code>ErxTaskOrder.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/ErxModels/ErxTaskOrder.swift">ErxTaskOrder.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/ErxModels/ErxTaskOrder.swift">ErxTaskOrder.swift</a></p>
 <ul>
-<li><code>unableToConstructCommunicationRequest</code> (i-20601):
-[Unable to construct communication request]</li>
-<li><code>invalidErxTaskOrderInput</code> (i-20602): [Invalid
-ErxTaskOrder though previous validation checks have been passed]
+<li><code>unableToConstructCommunicationRequest</code> (i-20801):</li>
+<li><code>invalidErxTaskOrderInput</code> (i-20802):
 <ul>
 <li><a href="#string">String</a></li>
 </ul></li>
 </ul>
 <h2 id="erxrepositoryerror"><code>ErxRepositoryError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/ErxRepositoryError.swift">ErxRepositoryError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/ErxRepositoryError.swift">ErxRepositoryError.swift</a></p>
 <ul>
 <li><code>local</code> (i-20001):
 <ul>
@@ -946,7 +974,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/E
 </ul>
 <h2 id="localstoreerror"><code>LocalStoreError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/LocalStoreError.swift">LocalStoreError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/LocalStoreError.swift">LocalStoreError.swift</a></p>
 <ul>
 <li><code>notImplemented</code> (i-20301):</li>
 <li><code>initialization</code> (i-20302):
@@ -968,7 +996,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/L
 </ul>
 <h2 id="remotestoreerror"><code>RemoteStoreError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/RemoteStoreError.swift">RemoteStoreError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/RemoteStoreError.swift">RemoteStoreError.swift</a></p>
 <ul>
 <li><code>fhirClient</code> (i-20401):
 <ul>
@@ -978,7 +1006,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/R
 </ul>
 <h2 id="scannederxtask.error"><code>ScannedErxTask.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/ScannedErxTask.swift">ScannedErxTask.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/ScannedErxTask.swift">ScannedErxTask.swift</a></p>
 <ul>
 <li><code>format</code> (i-20501):</li>
 <li><code>invalidID</code> (i-20502):</li>
@@ -990,7 +1018,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/S
 </ul>
 <h2 id="sharedtask.error"><code>SharedTask.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/SharedTask.swift">SharedTask.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpKit/SharedTask.swift">SharedTask.swift</a></p>
 <ul>
 <li><code>missingSeparator</code> (i-20701):
 <ul>
@@ -1008,7 +1036,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpKit/S
 <h2
 id="avstransactioncoredatastore.error"><code>AVSTransactionCoreDataStore.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocalStorage/AVSTransaction/AVSTransactionCoreDataStore.swift">AVSTransactionCoreDataStore.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpLocalStorage/AVSTransaction/AVSTransactionCoreDataStore.swift">AVSTransactionCoreDataStore.swift</a></p>
 <ul>
 <li><code>noMatchingEntity</code> (i-5811):</li>
 <li><code>internalError</code> (i-5812):</li>
@@ -1016,7 +1044,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocal
 <h2
 id="coredatacontroller.error"><code>CoreDataController.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocalStorage/CoreDataController.swift">CoreDataController.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpLocalStorage/CoreDataController.swift">CoreDataController.swift</a></p>
 <ul>
 <li><code>initialization</code> (i-50001):
 <ul>
@@ -1025,7 +1053,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocal
 </ul>
 <h2 id="migrationerror"><code>MigrationError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocalStorage/MigrationManager.swift">MigrationManager.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpLocalStorage/MigrationManager.swift">MigrationManager.swift</a></p>
 <ul>
 <li><code>isLatestVersion</code> (i-50101):</li>
 <li><code>missingProfile</code> (i-50102):</li>
@@ -1053,14 +1081,14 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocal
 <h2
 id="pharmacycoredatastore.error"><code>PharmacyCoreDataStore.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocalStorage/Pharmacy/PharmacyCoreDataStore.swift">PharmacyCoreDataStore.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpLocalStorage/Pharmacy/PharmacyCoreDataStore.swift">PharmacyCoreDataStore.swift</a></p>
 <ul>
 <li><code>noMatchingEntity</code> (i-50501):</li>
 </ul>
 <h2
 id="profilecoredatastore.error"><code>ProfileCoreDataStore.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocalStorage/Profiles/ProfileCoreDataStore.swift">ProfileCoreDataStore.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpLocalStorage/Profiles/ProfileCoreDataStore.swift">ProfileCoreDataStore.swift</a></p>
 <ul>
 <li><code>noMatchingEntity</code> (i-50201):</li>
 <li><code>initialization</code> (i-50202):
@@ -1071,7 +1099,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocal
 <h2
 id="shipmentinfocoredatastore.error"><code>ShipmentInfoCoreDataStore.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocalStorage/ShipmentInfo/ShipmentInfoCoreDataStore.swift">ShipmentInfoCoreDataStore.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpLocalStorage/ShipmentInfo/ShipmentInfoCoreDataStore.swift">ShipmentInfoCoreDataStore.swift</a></p>
 <ul>
 <li><code>noMatchingEntity</code> (i-50401):</li>
 <li><code>internalError</code> (i-50402):</li>
@@ -1079,7 +1107,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpLocal
 <h2
 id="remotestoragebundleparsingerror"><code>RemoteStorageBundleParsingError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpRemoteStorage/ModelsR4.Bundle+ErxTask.swift">ModelsR4.Bundle+ErxTask.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/eRpRemoteStorage/ModelsR4.Bundle+ErxTask.swift">ModelsR4.Bundle+ErxTask.swift</a></p>
 <ul>
 <li><code>parseError</code> (i-58001):
 <ul>
@@ -1088,7 +1116,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/eRpRemot
 </ul>
 <h2 id="fhirclient.error"><code>FHIRClient.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/FHIRClient/FHIRClient.swift">FHIRClient.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/FHIRClient/FHIRClient.swift">FHIRClient.swift</a></p>
 <ul>
 <li><code>internalError</code> (i-52001):
 <ul>
@@ -1111,9 +1139,48 @@ a HTTP 404 instead.]</li>
 <li><a href="#fhirclienthttperror">FHIRClientHttpError</a></li>
 </ul></li>
 </ul>
+<h2 id="fhirvzderror"><code>FHIRVZDError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/FHIRVZD/Models/FHIRVZDError.swift">FHIRVZDError.swift</a></p>
+<ul>
+<li><code>network</code> (i-30001): [In case of HTTP/Connection error]
+<ul>
+<li><a href="#httpclienterror">HTTPClientError</a></li>
+</ul></li>
+<li><code>tokenUnavailable</code> (i-30002): [When a token is being
+requested, but none can be found]</li>
+<li><code>decoding</code> (i-30003): [Message failed to decode/parse]
+<ul>
+<li><a href="#swift.error">Swift.Error</a></li>
+</ul></li>
+<li><code>unspecified</code> (i-30004): [Other error cases]
+<ul>
+<li><a href="#swift.error">Swift.Error</a></li>
+</ul></li>
+</ul>
+<h2
+id="fhirvzderror.loadingerror"><code>FHIRVZDError.LoadingError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/FHIRVZD/Models/FHIRVZDError.swift">FHIRVZDError.swift</a></p>
+<ul>
+<li><code>message</code> (i-):
+<ul>
+<li><a href="#string?">String?</a></li>
+</ul></li>
+</ul>
+<h2
+id="healthcareservicebundleparsingerror"><code>HealthcareServiceBundleParsingError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/FHIRVZD/ModelsR4.Bundle+HealthcareService.swift">ModelsR4.Bundle+HealthcareService.swift</a></p>
+<ul>
+<li><code>parseError</code> (i-61001):
+<ul>
+<li><a href="#string">String</a></li>
+</ul></li>
+</ul>
 <h2 id="httpclienterror"><code>HTTPClientError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/HTTPClient/HTTPClient.swift">HTTPClient.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/HTTPClient/HTTPClient.swift">HTTPClient.swift</a></p>
 <ul>
 <li><code>internalError</code> (i-53001): [Internal error in the
 request/chain handling]
@@ -1146,21 +1213,21 @@ has gone bad]
 <h2
 id="biometricssha256signer.error"><code>BiometricsSHA256Signer.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/BiometricsSHA256Signer.swift">BiometricsSHA256Signer.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/BiometricsSHA256Signer.swift">BiometricsSHA256Signer.swift</a></p>
 <ul>
 <li><code>sessionClosed</code> (i-10201):</li>
 <li><code>signatureFailed</code> (i-10202):</li>
 </ul>
 <h2 id="jwe.error"><code>JWE.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/internal/JWT/JWE.swift">JWE.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/internal/JWT/JWE.swift">JWE.swift</a></p>
 <ul>
 <li><code>invalidJWE</code> (i-10301):</li>
 <li><code>encodingError</code> (i-10302):</li>
 </ul>
 <h2 id="jwt.error"><code>JWT.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/internal/JWT/JWT.swift">JWT.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/internal/JWT/JWT.swift">JWT.swift</a></p>
 <ul>
 <li><code>malformedJWT</code> (i-10401):</li>
 <li><code>noSignature</code> (i-10402):</li>
@@ -1170,13 +1237,13 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/inte
 </ul>
 <h2 id="keyverifier.error"><code>KeyVerifier.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/internal/TokenPayload.swift">TokenPayload.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/internal/TokenPayload.swift">TokenPayload.swift</a></p>
 <ul>
 <li><code>stringConversion</code> (i-10501):</li>
 </ul>
 <h2 id="tokenpayload.error"><code>TokenPayload.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/internal/TokenPayload.swift">TokenPayload.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/internal/TokenPayload.swift">TokenPayload.swift</a></p>
 <ul>
 <li><code>dataEncoding</code> (i-10601):</li>
 <li><code>stringConversion</code> (i-10602):</li>
@@ -1187,7 +1254,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/inte
 </ul>
 <h2 id="idperror"><code>IDPError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/Models/IDPError.swift">IDPError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/Models/IDPError.swift">IDPError.swift</a></p>
 <ul>
 <li><code>network</code> (i-10001): [In case of HTTP/Connection error]
 <ul>
@@ -1256,7 +1323,7 @@ the conforming instance is meant for demo purpose only]</li>
 </ul>
 <h2 id="idperror.internalerror"><code>IDPError.InternalError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/Models/IDPError.swift">IDPError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/Models/IDPError.swift">IDPError.swift</a></p>
 <ul>
 <li><code>loadDiscoveryDocumentUnexpectedNil</code> (i-10101):</li>
 <li><code>requestChallengeUnexpectedNil</code> (i-10102):</li>
@@ -1309,7 +1376,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/Mode
 </ul>
 <h2 id="idperror.loadingerror"><code>IDPError.LoadingError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/Models/IDPError.swift">IDPError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/Models/IDPError.swift">IDPError.swift</a></p>
 <ul>
 <li><code>message</code> (i-):
 <ul>
@@ -1318,7 +1385,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/Mode
 </ul>
 <h2 id="conversionerror"><code>ConversionError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/PrivateKeyContainer.swift">PrivateKeyContainer.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/PrivateKeyContainer.swift">PrivateKeyContainer.swift</a></p>
 <ul>
 <li><code>generic</code> (i-10701):
 <ul>
@@ -1328,7 +1395,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/Priv
 <h2
 id="privatekeycontainer.error"><code>PrivateKeyContainer.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/PrivateKeyContainer.swift">PrivateKeyContainer.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/PrivateKeyContainer.swift">PrivateKeyContainer.swift</a></p>
 <ul>
 <li><code>keyNotFound</code> (i-10801):
 <ul>
@@ -1360,7 +1427,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/Priv
 <h2
 id="secureenclavesignatureprovidererror"><code>SecureEnclaveSignatureProviderError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/SecureEnclaveSignatureProvider.swift">SecureEnclaveSignatureProvider.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/IDP/SecureEnclaveSignatureProvider.swift">SecureEnclaveSignatureProvider.swift</a></p>
 <ul>
 <li><code>fetchingPrivateKey</code> (i-10901):
 <ul>
@@ -1385,7 +1452,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/IDP/Secu
 <h2
 id="pharmacybundleparsingerror"><code>PharmacyBundleParsingError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/Pharmacy/ModelsR4.Bundle+Location.swift">ModelsR4.Bundle+Location.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/Pharmacy/ModelsR4.Bundle+Location.swift">ModelsR4.Bundle+Location.swift</a></p>
 <ul>
 <li><code>parseError</code> (i-51001):
 <ul>
@@ -1395,7 +1462,7 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/Pharmacy
 <h2
 id="pharmacyfhirdatasource.error"><code>PharmacyFHIRDataSource.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/Pharmacy/PharmacyFHIRDataSource.swift">PharmacyFHIRDataSource.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/Pharmacy/PharmacyFHIRDataSource.swift">PharmacyFHIRDataSource.swift</a></p>
 <ul>
 <li><code>fhirClient</code> (i-57001):
 <ul>
@@ -1405,13 +1472,13 @@ href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/Pharmacy
 </ul>
 <h2 id="trustanchor.error"><code>TrustAnchor.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/TrustStore/TrustAnchor.swift">TrustAnchor.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/TrustStore/TrustAnchor.swift">TrustAnchor.swift</a></p>
 <ul>
 <li><code>invalidPEM</code> (i-56201):</li>
 </ul>
 <h2 id="truststoreerror"><code>TrustStoreError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/TrustStore/TrustStoreError.swift">TrustStoreError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/TrustStore/TrustStoreError.swift">TrustStoreError.swift</a></p>
 <ul>
 <li><code>network</code> (i-56001): [In case of HTTP/Connection error]
 <ul>
@@ -1432,23 +1499,30 @@ OCSP responses]</li>
 <ul>
 <li><a href="#internalerror">InternalError</a></li>
 </ul></li>
+<li><code>noValidVauCertificateAvailable</code> (i-56007): [When no
+valid VAU certificate can be provided by the system at the moment]</li>
+<li><code>malformedCertificate</code> (i-56008): [When a certificate is
+of unexpected (e.g. not parsable) format]</li>
 </ul>
 <h2
 id="truststoreerror.internalerror"><code>TrustStoreError.InternalError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/TrustStore/TrustStoreError.swift">TrustStoreError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/TrustStore/TrustStoreError.swift">TrustStoreError.swift</a></p>
 <ul>
-<li><code>loadOCSPCheckedTrustStoreUnexpectedNil</code> (i-5611):</li>
-<li><code>loadCertListFromServerUnexpectedNil</code> (i-5612):</li>
-<li><code>loadOCSPListFromServerUnexpectedNil</code> (i-5613):</li>
-<li><code>trustStoreCertListUnexpectedNil</code> (i-5614):</li>
-<li><code>loadOCSPResponsesUnexpectedNil</code> (i-5615):</li>
-<li><code>missingSignerForEECertificate</code> (i-5616):</li>
-<li><code>notImplemented</code> (i-5617):</li>
+<li><code>loadOCSPCheckedTrustStoreUnexpectedNil</code> (i-56101):</li>
+<li><code>loadCertListFromServerUnexpectedNil</code> (i-56102):</li>
+<li><code>loadOCSPListFromServerUnexpectedNil</code> (i-56103):</li>
+<li><code>trustStoreCertListUnexpectedNil</code> (i-56104):</li>
+<li><code>loadOCSPResponsesUnexpectedNil</code> (i-56105):</li>
+<li><code>missingSignerForEECertificate</code> (i-56106):</li>
+<li><code>notImplemented</code> (i-56107):</li>
+<li><code>trustAnchorUnexpectedFormat</code> (i-56108):</li>
+<li><code>vauCertificateUnexpectedFormat</code> (i-56109):</li>
+<li><code>trustStoreCreationFailed</code> (i-56110):</li>
 </ul>
 <h2 id="vauerror"><code>VAUError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/geraldbartz/dev/secondaries/erp-app-ios-quaternary/Sources/VAUClient/VAUError.swift">VAUError.swift</a></p>
+href="/Users/geraldbartz/dev/secondaries/erp-app-ios-secondary/Sources/VAUClient/VAUError.swift">VAUError.swift</a></p>
 <ul>
 <li><code>network</code> (i-55001): [In case of HTTP/Connection error]
 <ul>

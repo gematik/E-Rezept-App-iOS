@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../../index.html">
-           1.28.0
+           1.30.0
  Docs
         </a>
          (100% documented)
@@ -137,6 +137,15 @@
                 <a class="nav-group-task-link" href="../../Enums/ErxRepositoryError.html">ErxRepositoryError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/FHIRDirectory.html">FHIRDirectory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/FHIRDirectory/Version.html">– Version</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/FHIRDirectory/Key.html">– Key</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Enums/FormCodingSystem.html">FormCodingSystem</a>
               </li>
               <li class="nav-group-task">
@@ -185,9 +194,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Extensions/Decimal.html">Decimal</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../../Extensions/KVNR.html">KVNR</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Extensions/Sequence.html">Sequence</a>
@@ -296,6 +302,15 @@
                 <a class="nav-group-task-link" href="../../Structs/DefaultDataMatrixStringEncoder.html">DefaultDataMatrixStringEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/DiGaDispense.html">DiGaDispense</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/DiGaInfo.html">DiGaInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/DiGaInfo/DiGaState.html">– DiGaState</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Structs/EpaMedicationBatch.html">EpaMedicationBatch</a>
               </li>
               <li class="nav-group-task">
@@ -339,6 +354,15 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Structs/ErxConsent/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/ErxDeviceRequest.html">ErxDeviceRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/ErxDeviceRequest/DeviceRequestStatus.html">– DeviceRequestStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/ErxDeviceRequest/DeviceRequestIntent.html">– DeviceRequestIntent</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Structs/ErxEpaMedication.html">ErxEpaMedication</a>
@@ -414,6 +438,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Structs/ErxTaskOrder/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/KVNR.html">KVNR</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Structs/MedicationSchedule.html">MedicationSchedule</a>
@@ -504,9 +531,6 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Typealiases.html#/s:6eRpKit41EpaMedicationIngredientItemCodableConcepta">EpaMedicationIngredientItemCodableConcept</a>
               </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../../Typealiases.html#/s:6eRpKit4KVNRa">KVNR</a>
-              </li>
             </ul>
           </li>
         </ul>
@@ -577,7 +601,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">RawValue</span> <span class="o">=</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">RawValue</span> <span class="o">=</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -849,7 +873,33 @@ AccessCode will not be available for theses Tasks</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">?(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="kt"><a href="../../Structs/ErxTask/FlowType.html#/s:SY8RawValueQa">RawValue</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="kt"><a href="../../Structs/ErxTask/FlowType.html#/s:SY8RawValueQa">RawValue</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit7ErxTaskV8FlowTypeO6taskIdAESS_tcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(taskId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV8FlowTypeO6taskIdAESS_tcfc">init(taskId:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">taskId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -875,7 +925,7 @@ AccessCode will not be available for theses Tasks</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">rawValue</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">rawValue</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -890,7 +940,7 @@ AccessCode will not be available for theses Tasks</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-04-25)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.28.0
+           1.30.0
  Docs
         </a>
          (100% documented)
@@ -86,9 +86,6 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Collection.html">Collection</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FHIRClient.html">FHIRClient</a>
               </li>
             </ul>
@@ -146,9 +143,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC8PharmacyE16searchPharmacies2by8position6filter7Combine12AnyPublisherVySay6eRpKit0B8LocationVGAB5ErrorOGSS_AC8PositionVSgSDyS2SGtF"></a>
-                    <a name="//apple_ref/swift/Method/searchPharmacies(by:position:filter:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC8PharmacyE16searchPharmacies2by8position6filter7Combine12AnyPublisherVySay6eRpKit0B8LocationVGAB5ErrorOGSS_AC8PositionVSgSDyS2SGtF">searchPharmacies(by:<wbr>position:<wbr>filter:<wbr>)</a>
+                    <a name="/s:10FHIRClientAAC8PharmacyE16searchPharmacies2by8position6filter11accessToken7Combine12AnyPublisherVySay6eRpKit0B8LocationVGAB5ErrorOGSS_AC8PositionVSgSDyS2SGSSSgtF"></a>
+                    <a name="//apple_ref/swift/Method/searchPharmacies(by:position:filter:accessToken:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10FHIRClientAAC8PharmacyE16searchPharmacies2by8position6filter11accessToken7Combine12AnyPublisherVySay6eRpKit0B8LocationVGAB5ErrorOGSS_AC8PositionVSgSDyS2SGSSSgtF">searchPharmacies(by:<wbr>position:<wbr>filter:<wbr>accessToken:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -165,10 +162,12 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">searchPharmacies</span><span class="p">(</span><span class="n">by</span> <span class="nv">searchTerm</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                             <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Structs/Position.html">Position</a></span><span class="p">?,</span>
-                             <span class="nv">filter</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">])</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">PharmacyLocation</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">searchPharmacies</span><span class="p">(</span>
+    <span class="n">by</span> <span class="nv">searchTerm</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Structs/Position.html">Position</a></span><span class="p">?,</span>
+    <span class="nv">filter</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">],</span>
+    <span class="nv">accessToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">PharmacyLocation</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -184,7 +183,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Search term</p>
+                                  <p>String that send to the server for filtering the pharmacies response</p>
                                 </div>
                               </td>
                             </tr>
@@ -196,7 +195,31 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Pharmacy position (latitude and longitude)</p>
+                                  <p>Position (latitude and longitude) of pharmacy</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>filter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>further filter parameters for pharmacies</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>accessToken</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>access token to interact with the service</p>
                                 </div>
                               </td>
                             </tr>
@@ -205,7 +228,7 @@
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits a list of <code>PharmacyLocation</code>s or is empty when not found</p>
+                        <p><code>AnyPublisher</code> that emits all <code>PharmacyLocation</code>s for the given <code>searchTerm</code></p>
                       </div>
                     </section>
                   </div>
@@ -213,9 +236,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC8PharmacyE05fetchB02by7Combine12AnyPublisherVy6eRpKit0B8LocationVSgAB5ErrorOGSS_tF"></a>
-                    <a name="//apple_ref/swift/Method/fetchPharmacy(by:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC8PharmacyE05fetchB02by7Combine12AnyPublisherVy6eRpKit0B8LocationVSgAB5ErrorOGSS_tF">fetchPharmacy(by:<wbr>)</a>
+                    <a name="/s:10FHIRClientAAC8PharmacyE05fetchB02by11accessToken7Combine12AnyPublisherVy6eRpKit0B8LocationVSgAB5ErrorOGSS_SSSgtF"></a>
+                    <a name="//apple_ref/swift/Method/fetchPharmacy(by:accessToken:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10FHIRClientAAC8PharmacyE05fetchB02by11accessToken7Combine12AnyPublisherVy6eRpKit0B8LocationVSgAB5ErrorOGSS_SSSgtF">fetchPharmacy(by:<wbr>accessToken:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -230,8 +253,10 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchPharmacy</span><span class="p">(</span><span class="n">by</span> <span class="nv">telematikId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PharmacyLocation</span><span class="p">?,</span> <span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchPharmacy</span><span class="p">(</span>
+    <span class="n">by</span> <span class="nv">telematikId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">accessToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PharmacyLocation</span><span class="p">?,</span> <span class="kt">Error</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -248,6 +273,18 @@
                               <td>
                                 <div>
                                   <p>The Telematik-ID of the pharmacy to be requested</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>accessToken</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>access token to interact with the service</p>
                                 </div>
                               </td>
                             </tr>
@@ -319,7 +356,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-01-08)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-04-25)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
