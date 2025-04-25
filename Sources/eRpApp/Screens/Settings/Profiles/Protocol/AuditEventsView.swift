@@ -130,6 +130,13 @@ struct AuditEventsView: View {
                                             .multilineTextAlignment(.leading)
                                             .accessibility(identifier: A11y.settings.auditEvents
                                                 .stgCtnAuditEventsEventDescription)
+                                            if let telematikIdInfo = entry.telematikIdInfo {
+                                                Text(telematikIdInfo)
+                                                    .font(.subheadline)
+                                                    .multilineTextAlignment(.leading)
+                                                    .accessibility(identifier: A11y.settings.auditEvents
+                                                        .stgCtnAuditEventsEventTelematikIdInfo)
+                                            }
                                             Text(entry.date, placeholder: L10n.stgTxtAuditEventsMissingDate)
                                                 .font(.subheadline)
                                                 .foregroundColor(Color(.secondaryLabel))

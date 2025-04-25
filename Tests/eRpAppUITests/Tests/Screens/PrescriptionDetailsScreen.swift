@@ -63,10 +63,10 @@ struct PrescriptionDetailsScreen<Previous>: Screen where Previous: Screen {
     }
 
     func tapRedeemPharmacyButton(fileID: String = #fileID, file: String = #filePath,
-                                 line: UInt = #line) -> PharmacySearchScreen {
+                                 line: UInt = #line) -> RedeemScreen {
         button(by: A11y.prescriptionDetails.prscDtlBtnRedeem, fileID: fileID, file: file, line: line).tap()
 
-        return PharmacySearchScreen(app: app)
+        return RedeemScreen(app: app)
     }
 
     func tapShowMatrixCodeButton(fileID: String = #fileID, file: String = #filePath,

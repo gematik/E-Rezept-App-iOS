@@ -65,10 +65,11 @@ struct AppStartDomain {
                             prescriptionListState: PrescriptionListDomain.State(),
                             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                         ),
-                        pharmacySearch: PharmacySearchDomain.State(
-                            selectedPrescriptions: Shared([]),
-                            inRedeemProcess: false,
-                            pharmacyRedeemState: Shared(nil)
+                        pharmacy: PharmacyContainerDomain.State(
+                            pharmacySearch: .init(
+                                selectedPrescriptions: Shared([]),
+                                inRedeemProcess: false
+                            )
                         ),
                         orders: OrdersDomain.State(),
                         settings: .init(
@@ -99,10 +100,11 @@ struct AppStartDomain {
                     AppDomain.State(
                         destination: .main,
                         main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
-                        pharmacySearch: PharmacySearchDomain.State(
-                            selectedPrescriptions: Shared([]),
-                            inRedeemProcess: false,
-                            pharmacyRedeemState: Shared(nil)
+                        pharmacy: PharmacyContainerDomain.State(
+                            pharmacySearch: .init(
+                                selectedPrescriptions: Shared([]),
+                                inRedeemProcess: false
+                            )
                         ),
                         orders: OrdersDomain.State(),
                         settings: .init(isDemoMode: userSession.isDemoMode),
@@ -261,12 +263,12 @@ struct AppStartDomain {
                  "/pharmacies":
                 return .run { send in
                     // reset destination of pharmacy tab
-                    send(.destination(.app(.pharmacySearch(action: .resetNavigation))))
+                    send(.destination(.app(.pharmacy(action: .pharmacySearch(.resetNavigation)))))
                     @Dependency(\.schedulers) var schedulers
                     try await schedulers.main.sleep(for: 0.5)
-                    send(.destination(.app(.setNavigation(.pharmacySearch))))
+                    send(.destination(.app(.setNavigation(.pharmacy))))
                     // set actual destination in pharmacy tab
-                    send(.destination(.app(.pharmacySearch(action: .universalLink(url)))))
+                    send(.destination(.app(.pharmacy(action: .pharmacySearch(.universalLink(url))))))
                 }
             case "/prescription":
                 return .run { send in

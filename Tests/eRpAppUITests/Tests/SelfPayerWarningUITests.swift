@@ -85,6 +85,7 @@ class SelfPayerWarningUITests: XCTestCase {
             .tapPrescriptionsTab()
             .tapRedeem()
             .tapRedeemRemote()
+            .tapAddPharmacy()
             .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
             .tapRedeem()
 

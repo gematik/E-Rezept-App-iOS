@@ -49,8 +49,8 @@ extension AppDomain.State {
         switch destination {
             case .main:
                 return main.routeName() ?? destination.tag.analyticsName
-            case .pharmacySearch:
-                return pharmacySearch.routeName() ?? destination.tag.analyticsName
+            case .pharmacy:
+                return pharmacy.routeName() ?? destination.tag.analyticsName
             case .orders:
                 return orders.routeName() ?? destination.tag.analyticsName
             case .settings:
@@ -422,6 +422,17 @@ extension IngredientDomain.State {
 
 extension MainDomain.State {
     func routeName() -> String? {
+        if let pathId = path.ids.last,
+            let path = path[id: pathId] {
+            switch path {
+            case let .redeemMethods(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .redeem(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .pharmacy(state: state):
+                return state.routeName() ?? path.analyticsName
+            }
+        }
         guard let destination else { return nil }
         switch destination {
             case let .createProfile(state: state):
@@ -439,8 +450,6 @@ extension MainDomain.State {
             case let .prescriptionArchive(state: state):
                 return state.routeName() ?? destination.analyticsName
             case let .prescriptionDetail(state: state):
-                return state.routeName() ?? destination.analyticsName
-            case let .redeemMethods(state: state):
                 return state.routeName() ?? destination.analyticsName
             case let .medicationReminder(state: state):
                 return state.routeName() ?? destination.analyticsName
@@ -614,14 +623,23 @@ extension PharmacyContactDomain.State {
     }
 }
 
+extension PharmacyContainerDomain.State {
+    func routeName() -> String? {
+        if let pathId = path.ids.last,
+            let path = path[id: pathId] {
+            switch path {
+            case let .redeem(state: state):
+                return state.routeName() ?? path.analyticsName
+            }
+        }
+        return nil
+    }
+}
+
 extension PharmacyDetailDomain.State {
     func routeName() -> String? {
         guard let destination else { return nil }
         switch destination {
-            case let .redeemViaAVS(state: state):
-                return state.routeName() ?? destination.analyticsName
-            case let .redeemViaErxTaskRepository(state: state):
-                return state.routeName() ?? destination.analyticsName
             case .alert:
                 return destination.analyticsName
             case .toast:
@@ -672,10 +690,6 @@ extension PharmacySearchDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case .alert:
                 return destination.analyticsName
-            case let .redeemViaAVS(state: state):
-                return state.routeName() ?? destination.analyticsName
-            case let .redeemViaErxTaskRepository(state: state):
-                return state.routeName() ?? destination.analyticsName
         }
     }
 }
@@ -696,10 +710,6 @@ extension PharmacySearchMapDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case .alert:
                 return destination.analyticsName
-            case let .redeemViaAVS(state: state):
-                return state.routeName() ?? destination.analyticsName
-            case let .redeemViaErxTaskRepository(state: state):
-                return state.routeName() ?? destination.analyticsName
             case let .clusterSheet(state: state):
                 return state.routeName() ?? destination.analyticsName
         }
@@ -825,8 +835,6 @@ extension RedeemMethodsDomain.State {
         switch destination {
             case let .matrixCode(state: state):
                 return state.routeName() ?? destination.analyticsName
-            case let .pharmacySearch(state: state):
-                return state.routeName() ?? destination.analyticsName
         }
     }
 }
@@ -868,6 +876,12 @@ extension ScannerDomain.State {
             case .sheet:
                 return destination.analyticsName
         }
+    }
+}
+
+extension ServiceOptionDomain.State {
+    func routeName() -> String? {
+        return nil
     }
 }
 
@@ -937,7 +951,7 @@ extension AppDomain.Destinations.State.Tag {
         switch self {
             case .main:
                 return Analytics.Screens.main.name
-            case .pharmacySearch:
+            case .pharmacy:
                 return Analytics.Screens.pharmacySearch.name
             case .orders:
                 return Analytics.Screens.orders.name
@@ -1222,8 +1236,6 @@ extension MainDomain.Destination.State {
                 return Analytics.Screens.main_prescriptionArchive.name
             case .prescriptionDetail:
                 return Analytics.Screens.prescriptionDetail.name
-            case .redeemMethods:
-                return Analytics.Screens.redeem_methodSelection.name
             case .medicationReminder:
                 return Analytics.Screens.main_medicationReminder.name
             case .welcomeDrawer:
@@ -1342,10 +1354,6 @@ extension OrdersDomain.Destination.State {
 extension PharmacyDetailDomain.Destination.State {
     var analyticsName: String {
         switch self {
-            case .redeemViaAVS:
-                return Analytics.Screens.redeem_viaAVS.name
-            case .redeemViaErxTaskRepository:
-                return Analytics.Screens.redeem_viaTI.name
             case .alert:
                 return Analytics.Screens.alert.name
             case .toast:
@@ -1380,10 +1388,6 @@ extension PharmacySearchDomain.Destination.State {
                 return Analytics.Screens.pharmacySearch_map.name
             case .alert:
                 return Analytics.Screens.alert.name
-            case .redeemViaAVS:
-                return Analytics.Screens.redeem_viaAVS.name
-            case .redeemViaErxTaskRepository:
-                return Analytics.Screens.redeem_viaTI.name
         }
     }
 }
@@ -1396,10 +1400,6 @@ extension PharmacySearchMapDomain.Destination.State {
                 return Analytics.Screens.pharmacySearch_filter.name
             case .alert:
                 return Analytics.Screens.alert.name
-            case .redeemViaAVS:
-                return Analytics.Screens.redeem_viaAVS.name
-            case .redeemViaErxTaskRepository:
-                return Analytics.Screens.redeem_viaTI.name
             case .clusterSheet:
                 return "clusterSheet"
         }
@@ -1482,8 +1482,6 @@ extension RedeemMethodsDomain.Destination.State {
         switch self {
             case .matrixCode:
                 return Analytics.Screens.redeem_matrixCode.name
-            case .pharmacySearch:
-                return Analytics.Screens.pharmacySearch.name
         }
     }
 }
@@ -1544,6 +1542,27 @@ extension SettingsDomain.Destination.State {
                 return Analytics.Screens.settings_newProfile.name
             case .medicationReminderList:
                 return Analytics.Screens.settings_medicationReminderList.name
+        }
+    }
+}
+
+extension MainDomain.Path.State {
+    var analyticsName: String {
+        switch self {
+            case .redeemMethods:
+                return Analytics.Screens.redeem_methodSelection.name
+            case .redeem:
+                return Analytics.Screens.redeem_overview.name
+            case .pharmacy:
+                return Analytics.Screens.pharmacySearch.name
+        }
+    }
+}
+extension PharmacyContainerDomain.Path.State {
+    var analyticsName: String {
+        switch self {
+            case .redeem:
+                return Analytics.Screens.pharmacySearch.name
         }
     }
 }

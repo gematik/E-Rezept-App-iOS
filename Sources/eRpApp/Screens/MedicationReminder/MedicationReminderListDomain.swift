@@ -33,7 +33,7 @@ struct MedicationReminderListDomain {
         case alert(ErpAlertState<Never>)
     }
 
-    // sourcery: CodedError = "036"
+    // sourcery: CodedError = "042"
     enum Error: Swift.Error, Equatable {
         // sourcery: errorCode = "01"
         case generic(String)

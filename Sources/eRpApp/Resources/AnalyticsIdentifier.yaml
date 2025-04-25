@@ -77,6 +77,8 @@ screens:
     name: "prescriptionDetail:matrixCode"
   redeem_methodSelection:
     name: "redeem:methodSelection"
+  redeem_overview:
+    name: "redeem:overview"
   redeem_prescriptionAllOrSelection:
     name: "redeem:prescriptionAllOrSelection"
   redeem_prescriptionChooseSubset:

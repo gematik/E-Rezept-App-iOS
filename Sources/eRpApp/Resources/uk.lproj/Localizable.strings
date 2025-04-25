@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "пароль";
 "auth_btn_bap_faceid" = "Face ID";
 "auth_btn_bap_touchid" = "Touch ID";
-"auth_btn_biometrics_faceid" = "Розблокувати за допомогою Face ID";
-"auth_btn_biometrics_touchid" = "Розблокувати за допомогою Touch ID";
+"auth_btn_biometrics_faceid" = "Face ID";
+"auth_btn_biometrics_touchid" = "Touch ID";
 "auth_btn_password_continue" = "Далі";
 "auth_txt_bap_password_message" = "Спробуйте ще раз або введіть свій пароль.";
 "auth_txt_biometrics_disclaimer" = "Майте на увазі, що особи, з якими ви, можливо, спільно користуєтеся цим пристроєм і чиї біометричні функції можуть зберігатися на цьому пристрої, також матимуть доступ до ваших рецептів.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Помилка входу в систему";
 "auth_txt_biometrics_failed_not_enrolled" = "На цьому пристрої не налаштовано біометричний захист.";
 "auth_txt_biometrics_failed_user_fallback" = "Альтернативний метод входу в систему не налаштований. Будь ласка, встановіть пароль.";
-"auth_txt_biometrics_footer" = "У вас є запитання чи проблеми з використанням програми? Ви можете зв’язатися з нашою телефонною службою підтримки за номером 0800 277 377 7. \n\n Ми вже відповіли на багато запитань на das-e-rezept-fuer-deutschland.de.";
+"auth_txt_biometrics_footer" = "Забули пароль? Видаліть програму, а потім перевстановіть її. Це необхідно, оскільки ми зберігаємо ваші дані доступу лише локально й не використовуємо адресу електронної пошти для підтвердження.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -37,11 +37,11 @@
 "auth_txt_biometrics_lockout" = "Ви використали надто багато невдалих спроб входу в систему. Перейдіть до налаштувань свого iPhone та повторно активуйте функцію FaceID або TouchID, ввівши PIN-код.";
 "auth_txt_biometrics_password_title" = "Захистити паролем";
 "auth_txt_biometrics_reason" = "%@ необхідний для захисту застосунку від несанкціонованого доступу.";
-"auth_txt_biometrics_title" = "Вітаємо!";
+"auth_txt_biometrics_title" = "Ласкаво просимо";
 "auth_txt_biometrics_touch_id_title" = "Захистити за допомогою Touch ID";
 "auth_txt_biometrics_touchid_description" = "Щоб створити резервну копію даних, ви вибрали Touch ID.";
-"auth_txt_biometrics_touchid_start" = "Розблокувати за допомогою Touch ID";
-"auth_txt_failed_login_hint_title" = "Невдалі спроби входу";
+"auth_txt_biometrics_touchid_start" = "Розблокуйте за допомогою Touch ID";
+"auth_txt_failed_login_hint_title" = "На жаль, це не спрацювало";
 "auth_txt_password_failure" = "Неправильний пароль. Спробуйте ще раз.";
 "auth_txt_password_label" = "Поле введення пароля";
 "auth_txt_password_placeholder" = "Введіть пароль";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Відкрити сканер рецептів";
 "erx_title" = "Рецепти";
 "erx_txt_authored" = "Відображається";
-"erx_txt_claimed_at_%@" = "Передбачається %@";
+"erx_txt_claimed_at_%@" = "Прийнято %@";
 "erx_txt_current" = "Актуальний";
 "erx_txt_dispensed_at_%@" = "Надано %@";
 "erx_txt_expired_on_%@" = "Термін дії закінчився %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Щоб оформити замовлення, перейдіть на сайт аптеки.";
 "ord_detail_txt_%@_send_to_%@" = "%@ відправлено %@ . Деякі аптеки ще не мають цифрової відповіді. Якщо до завтра не буде відповіді, зателефонуйте як запобіжний захід.";
 "ord_detail_txt_charge_item%@" = "Ви отримали квитанцію про вартість ваших ліків %@ .";
+"ord_detail_txt_chip_all" = "Всі рецепти замовлення";
 "ord_detail_txt_contact" = "Варіанти контактів";
 "ord_detail_txt_contact_email" = "Написати електронне повідомлення";
 "ord_detail_txt_contact_map" = "Показати маршрут";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "На Національному порталі охорони здоров’я можна знайти фахово перевірену інформацію про хвороби, коди МКХ та питання щодо профілактики та догляду.";
 "prsc_dtl_med_ingredient_name" = "Назва діючої речовини";
 "prsc_dtl_med_manufacturing_instructions" = "Інструкція з виготовлення";
-"prsc_dtl_med_ov_txt_dispensed_header" = "Отримати";
+"prsc_dtl_med_ov_txt_dispensed_header" = "Отримано";
 "prsc_dtl_med_ov_txt_subscribed_header" = "Прописаний";
 "prsc_dtl_med_txt_Note" = "Поради вашої аптеки";
 "prsc_dtl_med_txt_amount" = "потужність і єдність";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Демо-режим активний. Вам не потрібна картка здоров'я або підключення до Інтернету. Відображувані тестові рецепти не можна погасити в аптеці.";
 "stg_txt_alert_title_demo_mode" = "Бажаєте ознайомчий тур?";
 "stg_txt_alert_title_demo_mode_off" = "Демонстраційний режим вимкнено";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Номер страхування: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "Ідентифікатор телематики: %@";
 "stg_txt_audit_events_banner_connect" = "Підключити";
 "stg_txt_audit_events_banner_message" = "Щоб отримати журнали доступу, ви повинні бути підключені до сервера.";
 "stg_txt_audit_events_missing_date" = "Без позначки часу";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Створити новий профіль";
 "stg_txt_reg_devices_empty_list" = "До цієї картки здоров’я не підключений жоден пристрій.";
 "stg_txt_reg_devices_empty_list_title" = "Пристрої відсутні";
-"stg_txt_reg_devices_info" = "Для відображення пристроїв потрібна додаткова автентифікація.";
-"stg_txt_reg_devices_info_title" = "Потрібна автентифікація";
+"stg_txt_reg_devices_info" = "Увійдіть і збережіть дані для входу, щоб переглянути підключені пристрої.";
+"stg_txt_reg_devices_info_title" = "потрібна реєстрація";
 "stg_txt_reg_devices_registered_since_%@" = "Зареєстровано з %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Зареєстровано з %@ (цей пристрій)";
 "stg_txt_reg_devices_title" = "Підключені пристрої";

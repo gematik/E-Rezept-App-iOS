@@ -27,11 +27,15 @@ import XCTest
 final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacyRedeemViewMissingAddress() {
         let initialState = PharmacyRedeemDomain.State(
-            redeemOption: .onPremise,
             prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            pharmacy: PharmacyLocation.Dummies.pharmacy,
             selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
-            profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
+            serviceOptionState: .init(
+                prescriptions: Shared(Prescription.Fixtures.prescriptions),
+                selectedOption: .onPremise,
+                availableOptions: [.onPremise, .shipment]
+            )
         )
         let sut = NavigationStack {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
@@ -47,10 +51,9 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPharmacyRedeemViewFullAddress() {
         let initialState = PharmacyRedeemDomain.State(
-            redeemOption: .shipment,
             prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            pharmacy: PharmacyLocation.Dummies.pharmacy,
             selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Maria Vetter",
                 street: "Benzelrather Str. 29",
@@ -61,7 +64,12 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
                 mail: "anna.vetter@gematik.de",
                 deliveryInfo: "Please do not hesitate to ring the bell twice"
             ),
-            profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
+            serviceOptionState: .init(
+                prescriptions: Shared(Prescription.Fixtures.prescriptions),
+                selectedOption: .shipment,
+                availableOptions: [.onPremise, .delivery, .shipment]
+            )
         )
         let sut = NavigationStack {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
@@ -77,10 +85,9 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPharmacyRedeemViewTypeShipmentMissingPhone() {
         let initialState = PharmacyRedeemDomain.State(
-            redeemOption: .shipment,
             prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            pharmacy: PharmacyLocation.Dummies.pharmacy,
             selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Vetter",
                 street: "Benzelrather Str. 29",
@@ -88,7 +95,12 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
                 city: "Frechen",
                 mail: "anna.vetter@gematik.de"
             ),
-            profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
+            serviceOptionState: .init(
+                prescriptions: Shared(Prescription.Fixtures.prescriptions),
+                selectedOption: .shipment,
+                availableOptions: [.onPremise, .delivery]
+            )
         )
         let sut = NavigationStack {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(
@@ -104,11 +116,15 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPharmacyRedeemViewSelfPayerWarning() {
         let initialState = PharmacyRedeemDomain.State(
-            redeemOption: .onPremise,
             prescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
-            pharmacy: PharmacyLocation.Dummies.pharmacy,
             selectedPrescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
-            profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
+            serviceOptionState: .init(
+                prescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
+                selectedOption: .onPremise,
+                availableOptions: [.delivery]
+            )
         )
         let sut = NavigationStack {
             PharmacyRedeemView(store: StoreOf<PharmacyRedeemDomain>(

@@ -16,5 +16,11 @@
         "text": "**Lizibilitate mai bună** \n Am făcut culoarea mărcii noastre puțin mai închisă pentru a crește contrastul culorilor și, prin urmare, a îmbunătăți lizibilitatea. \n \n **Câmp de introducere optimizat** \n Cursorul din câmpul de introducere pentru numărul de acces a fost eliminat.",
         "timestamp": "2025-01-28T08:00:00.000Z",
         "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Flux de comandă îmbunătățit** \nProcesul de comandă este acum mai ușor și mai rapid. \n \n🌐 **Limbi noi** \nAplicația noastră este acum disponibilă și în spaniolă și irlandeză. \n \n📞 **Opțiuni extinse de contact** \nAm introdus noi opțiuni de contact pentru companiile de asigurări selectate. \n \n🔍 **Jurnalele de acces detaliate** \nAcum afișăm și ID-urile telematice în jurnalele de acces, astfel încât să fie mai ușor de identificat cine a avut acces.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
     }
 ]

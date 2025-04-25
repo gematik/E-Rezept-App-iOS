@@ -34,6 +34,7 @@ class PharmacySearchMapDomainTests: XCTestCase {
     var resourceHandlerMock: MockResourceHandler!
     var searchHistoryMock: SearchHistoryMock!
     var mockUserSession: MockUserSession!
+    var mockRedeemService: MockRedeemService!
     var mockPrescriptionRepository: MockPrescriptionRepository!
 
     override func setUp() {
@@ -42,6 +43,7 @@ class PharmacySearchMapDomainTests: XCTestCase {
         resourceHandlerMock = MockResourceHandler()
         searchHistoryMock = SearchHistoryMock()
         mockUserSession = MockUserSession()
+        mockRedeemService = MockRedeemService()
         mockPrescriptionRepository = MockPrescriptionRepository()
     }
 
@@ -64,6 +66,12 @@ class PharmacySearchMapDomainTests: XCTestCase {
             dependencies.userSession = mockUserSession
             dependencies.feedbackReceiver = MockFeedbackReceiver()
             dependencies.prescriptionRepository = mockPrescriptionRepository
+            dependencies.redeemOrderService.redeemViaAVS = { @Sendable [mockRedeemService] orders in
+                try await mockRedeemService?.redeem(orders).async() ?? []
+            }
+            dependencies.redeemOrderService.redeemViaErxTaskRepository = { @Sendable [mockRedeemService] orders in
+                try await mockRedeemService?.redeem(orders).async() ?? []
+            }
             dependencies.date = DateGenerator.constant(Date.now)
             dependencies.calendar = Calendar.autoupdatingCurrent
         }
@@ -381,16 +389,22 @@ class PharmacySearchMapDomainTests: XCTestCase {
             referenceDate: TestData.openHoursTestReferenceDate
         )
         let oldPharmacyRedeemState = PharmacyRedeemDomain.State(
-            redeemOption: .onPremise,
             prescriptions: Shared(inputTask.filter(\.isRedeemable)),
+            selectedPrescriptions: Shared([]),
             pharmacy: oldPharmacy.pharmacyLocation,
-            selectedPrescriptions: Shared([])
+            serviceOptionState: .init(
+                prescriptions: Shared(inputTask.filter(\.isRedeemable)),
+                selectedOption: .onPremise
+            )
         )
         let newPharmacyRedeemState = PharmacyRedeemDomain.State(
-            redeemOption: .onPremise,
             prescriptions: oldPharmacyRedeemState.$prescriptions,
+            selectedPrescriptions: oldPharmacyRedeemState.$selectedPrescriptions,
             pharmacy: newPharmacy.pharmacyLocation,
-            selectedPrescriptions: oldPharmacyRedeemState.$selectedPrescriptions
+            serviceOptionState: .init(
+                prescriptions: oldPharmacyRedeemState.$prescriptions,
+                selectedOption: .onPremise
+            )
         )
         let mockPharmacyRepo = MockPharmacyRepository()
 
@@ -411,14 +425,12 @@ class PharmacySearchMapDomainTests: XCTestCase {
         let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
 
         await sut.send(.showDetails(oldPharmacy)) {
-            $0.detailsPharmacy = oldPharmacy
             $0.destination = .pharmacy(PharmacyDetailDomain.State(
                 prescriptions: Shared([]),
                 selectedPrescriptions: Shared([]),
                 inRedeemProcess: false,
                 pharmacyViewModel: oldPharmacy,
-                onMapView: true,
-                pharmacyRedeemState: Shared(nil)
+                onMapView: true
             ))
         }
 
@@ -426,62 +438,67 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
         await testScheduler.run()
 
-        await sut.receive(.destination(.presented(.pharmacy(.response(.currentProfileReceived(profile)))))) {
-            $0.destination = .pharmacy(.init(prescriptions: Shared([]),
-                                             selectedPrescriptions: Shared([]),
-                                             inRedeemProcess: false,
-                                             pharmacyViewModel: oldPharmacy,
-                                             onMapView: true,
-                                             pharmacyRedeemState: Shared(nil),
-                                             reservationService: .erxTaskRepositoryAvailable,
-                                             shipmentService: .erxTaskRepositoryAvailable))
+        await sut.receive(.destination(.presented(.pharmacy(.response(.redeemOptionProviderReceived(
+            RedeemOptionProvider(wasAuthenticatedBefore: false, pharmacy: oldPharmacy.pharmacyLocation)
+        )))))) {
+            $0.destination = .pharmacy(.init(
+                prescriptions: Shared([]),
+                selectedPrescriptions: Shared([]),
+                inRedeemProcess: false,
+                pharmacyViewModel: oldPharmacy,
+                hasRedeemableTasks: false,
+                availableServiceOptions: [.onPremise, .shipment],
+                onMapView: true,
+                serviceOptionState: ServiceOptionDomain.State(
+                    prescriptions: Shared([]),
+                    selectedOption: .none,
+                    availableOptions: [.onPremise, .shipment],
+                    redeemOptionProvider: RedeemOptionProvider(
+                        wasAuthenticatedBefore: false,
+                        pharmacy: oldPharmacy.pharmacyLocation
+                    )
+                )
+            ))
         }
 
         await sut
             .receive(.destination(.presented(.pharmacy(.response(.loadLocalPrescriptionsReceived(expected)))))) {
-                $0.destination = .pharmacy(.init(prescriptions: Shared(inputTask.filter(\.isRedeemable)),
-                                                 selectedPrescriptions: Shared([]),
-                                                 inRedeemProcess: false,
-                                                 pharmacyViewModel: oldPharmacy,
-                                                 hasRedeemableTasks: true,
-                                                 onMapView: true,
-                                                 pharmacyRedeemState: Shared(nil),
-                                                 reservationService: .erxTaskRepositoryAvailable,
-                                                 shipmentService: .erxTaskRepositoryAvailable))
+                $0.destination = .pharmacy(.init(
+                    prescriptions: Shared(inputTask.filter(\.isRedeemable)),
+                    selectedPrescriptions: Shared([]),
+                    inRedeemProcess: false,
+                    pharmacyViewModel: oldPharmacy,
+                    hasRedeemableTasks: true,
+                    availableServiceOptions: [.onPremise, .shipment],
+                    onMapView: true,
+                    serviceOptionState: ServiceOptionDomain.State(
+                        prescriptions: Shared(inputTask.filter(\.isRedeemable)),
+                        selectedOption: .none,
+                        availableOptions: [.onPremise, .shipment],
+                        redeemOptionProvider: RedeemOptionProvider(
+                            wasAuthenticatedBefore: false,
+                            pharmacy: oldPharmacy.pharmacyLocation
+                        )
+                    )
+                ))
             }
 
-        await sut.send(.destination(.presented(.pharmacy(.tappedRedeemOption(.onPremise)))))
+        await sut.send(.destination(.presented(.pharmacy(.serviceOption(.redeemOptionTapped(.onPremise))))))
 
-        await sut
-            .receive(.destination(
-                .presented(.pharmacy(.delegate(.showPharmacyRedeemView(service: .erxTaskRepositoryAvailable,
-                                                                       option: .onPremise,
-                                                                       prescriptions: inputTask,
-                                                                       selectedPrescriptions: []))))
-            )) {
-                $0.destination = .redeemViaErxTaskRepository(oldPharmacyRedeemState)
-            }
-
-        await sut
-            .send(
-                .destination(
-                    .presented(.redeemViaErxTaskRepository(.delegate(.changePharmacy(oldPharmacyRedeemState))))
-                )
-            ) {
-                $0.destination = nil
-                $0.pharmacyRedeemState = oldPharmacyRedeemState
-            }
+        await sut.receive(.destination(.presented(.pharmacy(.delegate(.redeem(
+            prescriptions: inputTask.filter(\.isRedeemable),
+            selectedPrescriptions: [],
+            pharmacy: oldPharmacy.pharmacyLocation,
+            option: .onPremise
+        ))))))
 
         await sut.send(.showDetails(newPharmacy)) {
-            $0.detailsPharmacy = newPharmacy
-
             $0.destination = .pharmacy(PharmacyDetailDomain.State(
                 prescriptions: Shared([]),
                 selectedPrescriptions: Shared([]),
                 inRedeemProcess: false,
                 pharmacyViewModel: newPharmacy,
-                onMapView: true,
-                pharmacyRedeemState: Shared(nil)
+                onMapView: true
             ))
         }
 
@@ -489,51 +506,59 @@ class PharmacySearchMapDomainTests: XCTestCase {
 
         await testScheduler.run()
 
-        await sut.receive(.destination(.presented(.pharmacy(.response(.currentProfileReceived(profile)))))) {
+        await sut.receive(.destination(.presented(.pharmacy(.response(.redeemOptionProviderReceived(
+            RedeemOptionProvider(wasAuthenticatedBefore: false, pharmacy: newPharmacy.pharmacyLocation)
+        )))))) {
             $0.destination = .pharmacy(.init(
                 prescriptions: Shared([]),
                 selectedPrescriptions: Shared([]),
                 inRedeemProcess: false,
                 pharmacyViewModel: newPharmacy,
+                hasRedeemableTasks: false,
+                availableServiceOptions: [.onPremise],
                 onMapView: true,
-                pharmacyRedeemState: Shared(nil),
-                reservationService: .erxTaskRepositoryAvailable,
-                shipmentService: .noService
+                serviceOptionState: ServiceOptionDomain.State(
+                    prescriptions: Shared([]),
+                    selectedOption: .none,
+                    availableOptions: [.onPremise],
+                    redeemOptionProvider: RedeemOptionProvider(
+                        wasAuthenticatedBefore: false,
+                        pharmacy: newPharmacy.pharmacyLocation
+                    )
+                )
             ))
         }
 
         await sut
             .receive(.destination(.presented(.pharmacy(.response(.loadLocalPrescriptionsReceived(expected)))))) {
-                $0.destination = .pharmacy(.init(prescriptions: Shared(inputTask.filter(\.isRedeemable)),
-                                                 selectedPrescriptions: Shared([]),
-                                                 inRedeemProcess: false,
-                                                 pharmacyViewModel: newPharmacy,
-                                                 hasRedeemableTasks: true,
-                                                 onMapView: true,
-                                                 pharmacyRedeemState: Shared(nil),
-                                                 reservationService: .erxTaskRepositoryAvailable,
-                                                 shipmentService: .noService))
+                $0.destination = .pharmacy(.init(
+                    prescriptions: Shared(inputTask.filter(\.isRedeemable)),
+                    selectedPrescriptions: Shared([]),
+                    inRedeemProcess: false,
+                    pharmacyViewModel: newPharmacy,
+                    hasRedeemableTasks: true,
+                    availableServiceOptions: [.onPremise],
+                    onMapView: true,
+                    serviceOptionState: ServiceOptionDomain.State(
+                        prescriptions: Shared(inputTask.filter(\.isRedeemable)),
+                        selectedOption: .none,
+                        availableOptions: [.onPremise],
+                        redeemOptionProvider: RedeemOptionProvider(
+                            wasAuthenticatedBefore: false,
+                            pharmacy: newPharmacy.pharmacyLocation
+                        )
+                    )
+                ))
             }
 
-        await sut
-            .send(
-                .destination(
-                    .presented(.pharmacy(.tappedRedeemOption(.onPremise)))
-                )
-            )
+        await sut.send(.destination(.presented(.pharmacy(.serviceOption(.redeemOptionTapped(.onPremise))))))
 
-        await sut
-            .receive(
-                .destination(
-                    .presented(.pharmacy(.delegate(.showPharmacyRedeemView(service: .erxTaskRepositoryAvailable,
-                                                                           option: .onPremise,
-                                                                           prescriptions: inputTask,
-                                                                           selectedPrescriptions: []))))
-                )
-            ) {
-                $0.destination = .redeemViaErxTaskRepository(newPharmacyRedeemState)
-                $0.pharmacyRedeemState = nil
-            }
+        await sut.receive(.destination(.presented(.pharmacy(.delegate(.redeem(
+            prescriptions: inputTask.filter(\.isRedeemable),
+            selectedPrescriptions: [],
+            pharmacy: newPharmacy.pharmacyLocation,
+            option: .onPremise
+        ))))))
     }
 
     func testUpdatePharmacyFavoriteInSearch() async {
@@ -576,14 +601,13 @@ class PharmacySearchMapDomainTests: XCTestCase {
                             pharmacyRepository: mockPharmacyRepo)
 
         await sut.send(.showDetails(testPharmacy)) { state in
-            state.detailsPharmacy = testPharmacy
-
-            state.destination = .pharmacy(.init(prescriptions: Shared([]),
-                                                selectedPrescriptions: Shared([]),
-                                                inRedeemProcess: false,
-                                                pharmacyViewModel: testPharmacy,
-                                                onMapView: true,
-                                                pharmacyRedeemState: Shared(nil)))
+            state.destination = .pharmacy(.init(
+                prescriptions: Shared([]),
+                selectedPrescriptions: Shared([]),
+                inRedeemProcess: false,
+                pharmacyViewModel: testPharmacy,
+                onMapView: true
+            ))
         }
 
         await sut.send(.destination(.presented(.pharmacy(.toggleIsFavorite))))
@@ -600,12 +624,13 @@ class PharmacySearchMapDomainTests: XCTestCase {
                     referenceDate: TestData.openHoursTestReferenceDate
                 )
             }
-            state.destination = .pharmacy(.init(prescriptions: Shared([]),
-                                                selectedPrescriptions: Shared([]),
-                                                inRedeemProcess: false,
-                                                pharmacyViewModel: expectedPharmacy,
-                                                onMapView: true,
-                                                pharmacyRedeemState: Shared(nil)))
+            state.destination = .pharmacy(.init(
+                prescriptions: Shared([]),
+                selectedPrescriptions: Shared([]),
+                inRedeemProcess: false,
+                pharmacyViewModel: expectedPharmacy,
+                onMapView: true
+            ))
         }
 
         await sut.send(.destination(.dismiss)) { state in
@@ -615,14 +640,13 @@ class PharmacySearchMapDomainTests: XCTestCase {
         await testScheduler.run()
 
         await sut.send(.showDetails(expectedPharmacy)) { state in
-            state.detailsPharmacy = expectedPharmacy
-
-            state.destination = .pharmacy(.init(prescriptions: Shared([]),
-                                                selectedPrescriptions: Shared([]),
-                                                inRedeemProcess: false,
-                                                pharmacyViewModel: expectedPharmacy,
-                                                onMapView: true,
-                                                pharmacyRedeemState: Shared(nil)))
+            state.destination = .pharmacy(.init(
+                prescriptions: Shared([]),
+                selectedPrescriptions: Shared([]),
+                inRedeemProcess: false,
+                pharmacyViewModel: expectedPharmacy,
+                onMapView: true
+            ))
         }
     }
 
@@ -652,15 +676,13 @@ class PharmacySearchMapDomainTests: XCTestCase {
         ), pharmacyRepository: mockPharmacyRepo)
 
         await sut.send(.showDetails(pharmacy)) {
-            $0.detailsPharmacy = pharmacy
             $0.destination = .pharmacy(PharmacyDetailDomain.State(
                 prescriptions: Shared([]),
                 selectedPrescriptions: $0.$selectedPrescriptions,
                 inRedeemProcess: true,
                 pharmacyViewModel: pharmacy,
                 hasRedeemableTasks: true,
-                onMapView: true,
-                pharmacyRedeemState: Shared(nil)
+                onMapView: true
             ))
         }
     }

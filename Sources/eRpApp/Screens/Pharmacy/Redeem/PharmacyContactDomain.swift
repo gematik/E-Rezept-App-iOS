@@ -27,25 +27,28 @@ struct PharmacyContactDomain {
     struct State: Equatable {
         var contactInfo: ContactInfo
         @Presents var alertState: AlertState<Action.Alert>?
-        let service: RedeemServiceOption
 
         private let originalContactInfo: ContactInfo?
         var isNewContactInfo: Bool {
             contactInfo != originalContactInfo
         }
 
-        init(shipmentInfo: ShipmentInfo?, service: RedeemServiceOption) {
+        var serviceOption: RedeemServiceOption?
+
+        init(
+            shipmentInfo: ShipmentInfo?,
+            serviceOption: RedeemServiceOption? = nil
+        ) {
             let shipmentInfo = shipmentInfo ?? ShipmentInfo()
-            self.service = service
             contactInfo = .init(shipmentInfo)
             originalContactInfo = .init(shipmentInfo)
+            self.serviceOption = serviceOption
         }
     }
 
     enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
         case save
-        case closeButtonTapped
 
         case alert(PresentationAction<Alert>)
         case response(Response)
@@ -64,7 +67,7 @@ struct PharmacyContactDomain {
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.shipmentInfoDataStore) var shipmentInfoStore: ShipmentInfoDataStore
-    @Dependency(\.redeemInputValidator) var validator: RedeemInputValidator
+    @Dependency(\.redeemOrderInputValidator) var validator: RedeemOrderInputValidator
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -76,7 +79,7 @@ struct PharmacyContactDomain {
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .save:
-            if case let .invalid(errorMessage) = validator.validate(state.contactInfo) {
+            if case let .invalid(errorMessage) = validator.type(state.serviceOption)?.validate(state.contactInfo) {
                 state.alertState = Self.invalidInputAlert(with: errorMessage)
                 return .none
             }
@@ -104,32 +107,32 @@ struct PharmacyContactDomain {
                 message: { TextState(error.localizedDescriptionWithErrorList) }
             )
             return .none
-        case .closeButtonTapped:
-            return Effect.send(.delegate(.close))
         case .delegate:
             return .none
         case .binding(\.contactInfo.name):
-            if case let .invalid(error) = validator.isValid(name: state.contactInfo.name) {
+            if case let .invalid(error) = validator.type(state.serviceOption)?.isValid(name: state.contactInfo.name) {
                 state.alertState = Self.invalidInputAlert(with: error)
             }
             return .none
         case .binding(\.contactInfo.street):
-            if case let .invalid(error) = validator.isValid(street: state.contactInfo.street) {
+            if case let .invalid(error) = validator.type(state.serviceOption)?
+                .isValid(street: state.contactInfo.street) {
                 state.alertState = Self.invalidInputAlert(with: error)
             }
             return .none
         case .binding(\.contactInfo.zip):
-            if case let .invalid(error) = validator.isValid(zip: state.contactInfo.zip) {
+            if case let .invalid(error) = validator.type(state.serviceOption)?.isValid(zip: state.contactInfo.zip) {
                 state.alertState = Self.invalidInputAlert(with: error)
             }
             return .none
         case .binding(\.contactInfo.city):
-            if case let .invalid(error) = validator.isValid(city: state.contactInfo.city) {
+            if case let .invalid(error) = validator.type(state.serviceOption)?.isValid(city: state.contactInfo.city) {
                 state.alertState = Self.invalidInputAlert(with: error)
             }
             return .none
         case .binding(\.contactInfo.deliveryInfo):
-            if case let .invalid(error) = validator.isValid(hint: state.contactInfo.deliveryInfo) {
+            if case let .invalid(error) = validator.type(state.serviceOption)?
+                .isValid(hint: state.contactInfo.deliveryInfo) {
                 state.alertState = Self.invalidInputAlert(with: error)
             }
             return .none
@@ -229,14 +232,15 @@ extension RedeemInputValidator {
 extension PharmacyContactDomain {
     enum Dummies {
         static let state = State(
-            shipmentInfo: .init(name: "Anna Vetter",
-                                street: "Gartenstraße 5",
-                                addressDetail: "",
-                                zip: "102837",
-                                city: "Berlin",
-                                phone: "0987654321",
-                                deliveryInfo: "im Hinterhaus"),
-            service: DemoRedeemInputValidator().service
+            shipmentInfo: .init(
+                name: "Anna Vetter",
+                street: "Gartenstraße 5",
+                addressDetail: "",
+                zip: "102837",
+                city: "Berlin",
+                phone: "0987654321",
+                deliveryInfo: "im Hinterhaus"
+            )
         )
 
         static let store = Store(

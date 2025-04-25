@@ -374,7 +374,17 @@ struct PrescriptionDetailDomain {
             state.destination = .alert(Alerts.missingTokenAlertState())
             return .none
         case .redeemPressed:
-            return .send(.delegate(.redeem(state.prescription)))
+            return .run { [prescription = state.prescription] send in
+                // disable navigation stack pop transition
+                await UINavigationBar.setAnimationsEnabled(false)
+                await send(.delegate(.redeem(prescription)))
+
+                Task {
+                    try await schedulers.main.sleep(for: 0.01)
+                    // reenable navigation stack transition
+                    await UINavigationBar.setAnimationsEnabled(true)
+                }
+            }
         case let .setNavigation(tag: tag):
             switch tag {
             case .chargeItem:
@@ -528,7 +538,6 @@ struct PrescriptionDetailDomain {
         case .pencilButtonTapped:
             state.focus = .medicationName
             return .none
-
         case let .destination(.presented(.medicationReminder(action: .delegate(delegateAction)))):
             switch delegateAction {
             case let .saveButtonTapped(medicationSchedule):

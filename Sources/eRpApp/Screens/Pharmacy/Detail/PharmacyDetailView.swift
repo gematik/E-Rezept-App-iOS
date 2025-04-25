@@ -84,11 +84,14 @@ struct PharmacyDetailView: View {
                             ContactOptionsView(store: store)
                         }
 
-                        if !(store.serviceIsMissing.count == 3), !store.inOrdersMessage {
-                            ServiceOptionsView(store: store)
+                        if !store.serviceOptionState.availableOptions.isEmpty, !store.inOrdersMessage {
+                            ServiceOptionView(store: store.scope(
+                                state: \.serviceOptionState,
+                                action: \.serviceOption
+                            ))
                         }
 
-                        if !store.state.pharmacy.hoursOfOperation.isEmpty {
+                        if !store.pharmacy.hoursOfOperation.isEmpty {
                             OpeningHoursView(dailyOpenHours: store.pharmacyViewModel.openingHours)
                                 .padding(.bottom, 8)
                         }
@@ -97,28 +100,6 @@ struct PharmacyDetailView: View {
 
                         Footer()
                             .padding(.top, 4)
-
-                        if !store.onMapView {
-                            Rectangle()
-                                .frame(width: 0, height: 0, alignment: .center)
-                                .navigationDestination(
-                                    item: $store.scope(
-                                        state: \.destination?.redeemViaAVS,
-                                        action: \.destination.redeemViaAVS
-                                    )
-                                ) { store in
-                                    PharmacyRedeemView(store: store)
-                                }
-                                .navigationDestination(
-                                    item: $store.scope(
-                                        state: \.destination?.redeemViaErxTaskRepository,
-                                        action: \.destination.redeemViaErxTaskRepository
-                                    )
-                                ) { store in
-                                    PharmacyRedeemView(store: store)
-                                }
-                                .accessibility(hidden: true)
-                        }
                     }.padding()
                 }
             }
@@ -136,6 +117,7 @@ struct PharmacyDetailView: View {
                     }
                 }
             }
+            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
         }
     }
@@ -146,121 +128,56 @@ struct PharmacyDetailView: View {
         var body: some View {
             WithPerceptionTracking {
                 HStack {
-                    Button {
-                        store.send(.openMapApp)
-                    } label: {
-                        Label {
-                            Text(L10n.phaDetailBtnOpenMap)
-                        } icon: {
-                            Image(systemName: SFSymbolName.mapPinEllipse)
-                                .font(.title2)
-                                .foregroundColor(Colors.primary700)
+                    if store.pharmacy.position?.longitude?.doubleValue != nil,
+                       store.pharmacy.position?.latitude?.doubleValue != nil {
+                        Button {
+                            store.send(.openMapApp)
+                        } label: {
+                            Label {
+                                Text(L10n.phaDetailBtnOpenMap)
+                            } icon: {
+                                Image(systemName: SFSymbolName.mapPinEllipse)
+                                    .font(.title2)
+                                    .foregroundColor(Colors.primary700)
+                            }
                         }
+                        .buttonStyle(.picture(isActive: true))
+                        .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailBtnOpenMap)
                     }
-                    .buttonStyle(.picture(isActive: true))
-                    .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailBtnOpenMap)
 
-                    Button {
-                        store.send(.openPhoneApp)
-                    } label: {
-                        Label {
-                            Text(L10n.phaDetailBtnOpenPhone)
-                        } icon: {
-                            Image(systemName: SFSymbolName.phone)
-                                .font(.title2)
-                                .foregroundColor(Colors.primary700)
+                    if store.pharmacy.telecom?.phone != nil {
+                        Button {
+                            store.send(.openPhoneApp)
+                        } label: {
+                            Label {
+                                Text(L10n.phaDetailBtnOpenPhone)
+                            } icon: {
+                                Image(systemName: SFSymbolName.phone)
+                                    .font(.title2)
+                                    .foregroundColor(Colors.primary700)
+                            }
                         }
+                        .buttonStyle(.picture(isActive: true))
+                        .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailBtnOpenPhone)
                     }
-                    .buttonStyle(.picture(isActive: true))
-                    .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailBtnOpenPhone)
 
-                    Button {
-                        store.send(.openMailApp)
-                    } label: {
-                        Label {
-                            Text(L10n.phaDetailBtnOpenMail)
-                        } icon: {
-                            Image(systemName: SFSymbolName.envelope)
-                                .font(.title2)
-                                .foregroundColor(Colors.primary700)
+                    if store.pharmacy.telecom?.email != nil {
+                        Button {
+                            store.send(.openMailApp)
+                        } label: {
+                            Label {
+                                Text(L10n.phaDetailBtnOpenMail)
+                            } icon: {
+                                Image(systemName: SFSymbolName.envelope)
+                                    .font(.title2)
+                                    .foregroundColor(Colors.primary700)
+                            }
                         }
+                        .buttonStyle(.picture(isActive: true))
+                        .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailBtnOpenMail)
                     }
-                    .buttonStyle(.picture(isActive: true))
-                    .accessibilityIdentifier(A11y.pharmacyDetail.phaDetailBtnOpenMail)
                 }
                 .padding(.bottom, 24)
-            }
-        }
-    }
-
-    struct ServiceOptionsView: View {
-        @Perception.Bindable var store: StoreOf<PharmacyDetailDomain>
-
-        var body: some View {
-            WithPerceptionTracking {
-                HStack(alignment: .top, spacing: 16) {
-                    if store.reservationService.hasService {
-                        Button(
-                            action: { store.send(.tappedRedeemOption(.onPremise)) },
-                            label: {
-                                Label {
-                                    Text(L10n.phaDetailBtnPickup)
-                                } icon: {
-                                    Image(asset: Asset.Pharmacy.btnApoLarge)
-                                        .resizable()
-                                        .padding(4)
-                                }
-                            }
-                        ).buttonStyle(.picture(style: .supplyLarge, isActive: false))
-                            .opacity(store.hasRedeemableTasks ? 1 : 0.25)
-                            .accessibility(identifier: store.reservationService.hasServiceAfterLogin ? A11y
-                                .pharmacyDetail.phaDetailBtnPickupViaLogin : A11y.pharmacyDetail
-                                .phaDetailBtnPickup)
-                    }
-
-                    if store.deliveryService.hasService {
-                        Button(
-                            action: { store.send(.tappedRedeemOption(.delivery)) },
-                            label: {
-                                Label {
-                                    Text(L10n.phaDetailBtnDelivery)
-                                } icon: {
-                                    Image(asset: Asset.Pharmacy.btnCarLarge)
-                                        .resizable()
-                                        .padding(4)
-                                }
-                            }
-                        ).buttonStyle(.picture(style: .supplyLarge, isActive: false))
-                            .opacity(store.hasRedeemableTasks ? 1 : 0.25)
-                            .accessibility(identifier: store.deliveryService.hasServiceAfterLogin ? A11y
-                                .pharmacyDetail.phaDetailBtnDeliveryViaLogin : A11y.pharmacyDetail
-                                .phaDetailBtnDelivery)
-                    }
-
-                    if store.shipmentService.hasService {
-                        Button(
-                            action: { store.send(.tappedRedeemOption(.shipment)) },
-                            label: {
-                                Label {
-                                    Text(L10n.phaDetailBtnShipment)
-                                } icon: {
-                                    Image(asset: Asset.Pharmacy.btnLkwLarge)
-                                        .resizable()
-                                        .padding(4)
-                                }
-                            }
-                        ).buttonStyle(.picture(style: .supplyLarge, isActive: false))
-                            .opacity(store.hasRedeemableTasks ? 1 : 0.25)
-                            .accessibility(identifier: store.shipmentService.hasServiceAfterLogin ? A11y
-                                .pharmacyDetail.phaDetailBtnShipmentViaLogin : A11y.pharmacyDetail
-                                .phaDetailBtnShipment)
-                    }
-
-                    ForEach(Array(store.serviceIsMissing.enumerated()), id: \.offset) { _ in
-                        EmptyService()
-                    }
-
-                }.frame(maxWidth: .infinity, alignment: .center)
             }
         }
     }
@@ -441,8 +358,7 @@ struct PharmacyDetailView_Previews: PreviewProvider {
                         prescriptions: Shared(PharmacyDetailDomain.Dummies.prescriptions),
                         selectedPrescriptions: Shared([]),
                         inRedeemProcess: false,
-                        pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel,
-                        pharmacyRedeemState: Shared(nil)
+                        pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
                     )
                 ) {
                     PharmacyDetailDomain()
@@ -457,8 +373,7 @@ struct PharmacyDetailView_Previews: PreviewProvider {
                         prescriptions: Shared(PharmacyDetailDomain.Dummies.prescriptions),
                         selectedPrescriptions: Shared([]),
                         inRedeemProcess: false,
-                        pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel,
-                        pharmacyRedeemState: Shared(nil)
+                        pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
                     )
                 ) {
                     PharmacyDetailDomain()

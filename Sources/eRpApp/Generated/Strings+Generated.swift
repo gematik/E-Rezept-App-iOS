@@ -55,9 +55,9 @@ import SwiftUI
     internal static let authBtnBapFaceid = StringAsset("auth_btn_bap_faceid")
     /// Touch ID
     internal static let authBtnBapTouchid = StringAsset("auth_btn_bap_touchid")
-    /// Unlock with Face ID
+    /// Face ID
     internal static let authBtnBiometricsFaceid = StringAsset("auth_btn_biometrics_faceid")
-    /// Unlock with Touch ID
+    /// Touch ID
     internal static let authBtnBiometricsTouchid = StringAsset("auth_btn_biometrics_touchid")
     /// Next
     internal static let authBtnPasswordContinue = StringAsset("auth_btn_password_continue")
@@ -79,9 +79,7 @@ import SwiftUI
     internal static let authTxtBiometricsFailedNotEnrolled = StringAsset("auth_txt_biometrics_failed_not_enrolled")
     /// An alternative to biometric login is not configured. Please deposit a password.
     internal static let authTxtBiometricsFailedUserFallback = StringAsset("auth_txt_biometrics_failed_user_fallback")
-    /// Do you have any questions or problems using the app? You can reach our telephone support on 0800 277 377 7. 
-    /// 
-    ///  We have already answered many questions for you on das-e-rezept-fuer-deutschland.de.
+    /// Forgot your password? Please delete the app and then reinstall it. This is necessary because we only store your login details locally and do not use an email address for verification.
     internal static let authTxtBiometricsFooter = StringAsset("auth_txt_biometrics_footer")
     /// app-feedback@gematik.de
     internal static let authTxtBiometricsFooterEmailDisplay = StringAsset("auth_txt_biometrics_footer_email_display")
@@ -111,7 +109,7 @@ import SwiftUI
     internal static func authTxtFailedLoginHintMsg(_ element1: Int) -> StringAsset {
         StringAsset("auth_txt_failed_login_hint_msg", arguments: [element1])
     }
-    /// Unsuccessful login attempts
+    /// Unfortunately, that didn't work
     internal static let authTxtFailedLoginHintTitle = StringAsset("auth_txt_failed_login_hint_title")
     /// Incorrect password. Please try again.
     internal static let authTxtPasswordFailure = StringAsset("auth_txt_password_failure")
@@ -866,7 +864,7 @@ import SwiftUI
     }
     /// Displayed
     internal static let erxTxtAuthored = StringAsset("erx_txt_authored")
-    /// Assumed %@
+    /// Accepted %@
     internal static func erxTxtClaimedAt(_ element1: String) -> StringAsset {
         StringAsset("erx_txt_claimed_at_%@", arguments: [element1])
     }
@@ -1819,6 +1817,8 @@ import SwiftUI
     internal static func ordDetailTxtChargeItem(_ element1: String) -> StringAsset {
         StringAsset("ord_detail_txt_charge_item%@", arguments: [element1])
     }
+    /// All recipes of the order
+    internal static let ordDetailTxtChipAll = StringAsset("ord_detail_txt_chip_all")
     /// Contact options
     internal static let ordDetailTxtContact = StringAsset("ord_detail_txt_contact")
     /// Write email
@@ -2305,7 +2305,7 @@ import SwiftUI
     internal static let prscDtlMedIngredientName = StringAsset("prsc_dtl_med_ingredient_name")
     /// Manufacturing instructions
     internal static let prscDtlMedManufacturingInstructions = StringAsset("prsc_dtl_med_manufacturing_instructions")
-    /// Receive
+    /// Received
     internal static let prscDtlMedOvTxtDispensedHeader = StringAsset("prsc_dtl_med_ov_txt_dispensed_header")
     /// Prescribed
     internal static let prscDtlMedOvTxtSubscribedHeader = StringAsset("prsc_dtl_med_ov_txt_subscribed_header")
@@ -2875,7 +2875,7 @@ import SwiftUI
     internal static let stgConBtnGemmunity = StringAsset("stg_con_btn_gemmunity")
     /// gesund.bund.de
     internal static let stgConBtnGesundBundDe = StringAsset("stg_con_btn_gesund_bund_de")
-    /// organ donation register
+    /// Organ donation register
     internal static let stgConBtnOrganDonor = StringAsset("stg_con_btn_organ_donor")
     /// Cancel
     internal static let stgConBtnOrganDonorAlertCancel = StringAsset("stg_con_btn_organ_donor_alert_cancel")
@@ -2984,6 +2984,14 @@ import SwiftUI
     internal static let stgTxtAlertTitleDemoMode = StringAsset("stg_txt_alert_title_demo_mode")
     /// Demo mode disabled
     internal static let stgTxtAlertTitleDemoModeOff = StringAsset("stg_txt_alert_title_demo_mode_off")
+    /// Insurance number: %@
+    internal static func stgTxtAuditEventEventTelematikIdInfoKvnr(_ element1: String) -> StringAsset {
+        StringAsset("stg_txt_audit_event_event_telematik_id_info_kvnr_%@", arguments: [element1])
+    }
+    /// Telematics ID: %@
+    internal static func stgTxtAuditEventEventTelematikIdInfoTelematikId(_ element1: String) -> StringAsset {
+        StringAsset("stg_txt_audit_event_event_telematik_id_info_telematik_id_%@", arguments: [element1])
+    }
     /// Connect
     internal static let stgTxtAuditEventsBannerConnect = StringAsset("stg_txt_audit_events_banner_connect")
     /// To receive access logs, you must be connected to the server.
@@ -3284,9 +3292,9 @@ import SwiftUI
     internal static let stgTxtRegDevicesEmptyList = StringAsset("stg_txt_reg_devices_empty_list")
     /// No devices
     internal static let stgTxtRegDevicesEmptyListTitle = StringAsset("stg_txt_reg_devices_empty_list_title")
-    /// Additional authentication is required to display the devices.
+    /// Please log in and save your login details to view connected devices.
     internal static let stgTxtRegDevicesInfo = StringAsset("stg_txt_reg_devices_info")
-    /// Authentication required
+    /// registration required
     internal static let stgTxtRegDevicesInfoTitle = StringAsset("stg_txt_reg_devices_info_title")
     /// Registered since %@
     internal static func stgTxtRegDevicesRegisteredSince(_ element1: String) -> StringAsset {

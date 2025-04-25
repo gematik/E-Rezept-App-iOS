@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "wachtwoord";
 "auth_btn_bap_faceid" = "FaceID";
 "auth_btn_bap_touchid" = "Touch-ID";
-"auth_btn_biometrics_faceid" = "Ontgrendel met Face ID";
-"auth_btn_biometrics_touchid" = "Ontgrendel met Touch ID";
+"auth_btn_biometrics_faceid" = "Gezichts-ID";
+"auth_btn_biometrics_touchid" = "Aanraak-ID";
 "auth_btn_password_continue" = "Verder";
 "auth_txt_bap_password_message" = "Probeer het opnieuw of voer uw wachtwoord in.";
 "auth_txt_biometrics_disclaimer" = "Zorg ervoor dat mensen met wie u dit apparaat deelt en wier biometrische kenmerken mogelijk op dit apparaat zijn opgeslagen, ook toegang hebben tot uw recepten.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Aanmelden mislukt";
 "auth_txt_biometrics_failed_not_enrolled" = "Er is geen biometrische beveiliging ingesteld op dit apparaat.";
 "auth_txt_biometrics_failed_user_fallback" = "Er is geen alternatief voor biometrisch inloggen geconfigureerd. Voer een wachtwoord in alstublieft.";
-"auth_txt_biometrics_footer" = "Heeft u vragen of problemen bij het gebruik van de app? U kunt onze telefonische ondersteuning bereiken op 0800 277 377 7. \n\n Op das-e-rezept-fuer-deutschland.de hebben wij al veel vragen voor u beantwoord.";
+"auth_txt_biometrics_footer" = "Wachtwoord vergeten? Verwijder de app en installeer deze vervolgens opnieuw. Dit is noodzakelijk omdat wij uw toegangsgegevens uitsluitend lokaal opslaan en geen e-mailadres gebruiken ter verificatie.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -40,8 +40,8 @@
 "auth_txt_biometrics_title" = "Welkom";
 "auth_txt_biometrics_touch_id_title" = "Beveilig met TouchID";
 "auth_txt_biometrics_touchid_description" = "Om je gegevens te beveiligen, heb je gekozen voor Touch ID.";
-"auth_txt_biometrics_touchid_start" = "Ontgrendel met Touch ID";
-"auth_txt_failed_login_hint_title" = "Mislukte inlogpogingen";
+"auth_txt_biometrics_touchid_start" = "Ontgrendelen met Touch ID";
+"auth_txt_failed_login_hint_title" = "Helaas werkte dat niet";
 "auth_txt_password_failure" = "Verkeerd wachtwoord. Probeer het opnieuw.";
 "auth_txt_password_label" = "Wachtwoordinvoerveld";
 "auth_txt_password_placeholder" = "Voer wachtwoord in";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Receptenscanner openen";
 "erx_title" = "Recepten";
 "erx_txt_authored" = "Weergegeven";
-"erx_txt_claimed_at_%@" = "Uitgegaan van %@";
+"erx_txt_claimed_at_%@" = "Geaccepteerd %@";
 "erx_txt_current" = "Huidig";
 "erx_txt_dispensed_at_%@" = "Mits %@";
 "erx_txt_expired_on_%@" = "Over de datum op %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Ga naar de website van de apotheek om de bestelling af te ronden.";
 "ord_detail_txt_%@_send_to_%@" = "%@ verzonden naar %@ . Sommige apotheken beschikken nog niet over een digitale antwoordmogelijkheid. Indien er morgen geen reactie is, verzoeken wij u uit voorzorg te bellen.";
 "ord_detail_txt_charge_item%@" = "U heeft een betalingsbewijs ontvangen voor de kosten van uw medicatie %@ .";
+"ord_detail_txt_chip_all" = "Alle recepten van de bestelling";
 "ord_detail_txt_contact" = "Contactmogelijkheden";
 "ord_detail_txt_contact_email" = "Email schrijven";
 "ord_detail_txt_contact_map" = "Route weergeven";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Demomodus is actief. U heeft geen zorgpas of internetverbinding nodig. De getoonde testrecepten kunnen niet worden ingewisseld in een apotheek.";
 "stg_txt_alert_title_demo_mode" = "Wilt u verkennen?";
 "stg_txt_alert_title_demo_mode_off" = "Demomodus uitgeschakeld";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Verzekeringsnummer: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "Telematica-ID: %@";
 "stg_txt_audit_events_banner_connect" = "Aansluiten";
 "stg_txt_audit_events_banner_message" = "Om toegangslogboeken te ontvangen, moet u verbonden zijn met de server.";
 "stg_txt_audit_events_missing_date" = "Geen tijdstempel";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Maak een nieuw profiel aan";
 "stg_txt_reg_devices_empty_list" = "Er zijn geen apparaten aangesloten op deze zorgkaart.";
 "stg_txt_reg_devices_empty_list_title" = "Geen apparaten";
-"stg_txt_reg_devices_info" = "Om de apparaten te bekijken is aanvullende authenticatie vereist.";
-"stg_txt_reg_devices_info_title" = "Verificatie vereist";
+"stg_txt_reg_devices_info" = "Meld u aan en sla uw inloggegevens op om de aangesloten apparaten te bekijken.";
+"stg_txt_reg_devices_info_title" = "Registratie vereist";
 "stg_txt_reg_devices_registered_since_%@" = "Geregistreerd sinds %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Geregistreerd sinds %@ (dit apparaat)";
 "stg_txt_reg_devices_title" = "Verbonden apparaten";

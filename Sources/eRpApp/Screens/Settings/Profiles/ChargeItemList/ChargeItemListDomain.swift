@@ -15,7 +15,6 @@
 //  limitations under the Licence.
 //
 //
-// swiftlint:disable file_length
 
 import Combine
 import ComposableArchitecture
@@ -67,21 +66,15 @@ struct ChargeItemListDomain {
             switch (authenticationState, grantConsentState) {
             case (.authenticated, .granted):
                 entries = [
-                    .connect.disabled,
-                    .activate.disabled,
                     .deactivate,
                 ]
             case (.authenticated, _):
                 entries = [
-                    .connect.disabled,
                     .activate,
-                    .deactivate.disabled,
                 ]
             case (_, _):
                 entries = [
                     .connect,
-                    .activate.disabled,
-                    .deactivate.disabled,
                 ]
             }
             return .init(entries: entries)

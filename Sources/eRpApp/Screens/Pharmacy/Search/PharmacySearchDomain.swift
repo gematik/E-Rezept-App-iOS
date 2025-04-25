@@ -56,46 +56,10 @@ struct PharmacySearchDomain {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = alert
         case alert(ErpAlertState<Alert>)
-        // sourcery: AnalyticsScreen = redeem_viaAVS
-        case redeemViaAVS(PharmacyRedeemDomain)
-        // sourcery: AnalyticsScreen = redeem_viaTI
-        case redeemViaErxTaskRepository(PharmacyRedeemDomain)
 
         enum Alert {
             case removeFilterCurrentLocation
             case openAppSpecificSettings
-        }
-
-        static var body: some ReducerOf<Self> {
-            @Dependency(\.avsMessageValidator) var avsMessageValidator
-            @Dependency(\.avsRedeemService) var avsRedeemService
-
-            Scope(state: \.redeemViaAVS, action: \.redeemViaAVS) {
-                PharmacyRedeemDomain()
-                    .dependency(\.redeemInputValidator, avsMessageValidator)
-                    .dependency(\.redeemService, avsRedeemService())
-            }
-
-            @Dependency(\.erxTaskOrderValidator) var erxTaskOrderValidator
-            @Dependency(\.erxTaskRepositoryRedeemService) var erxTaskRepositoryRedeemService
-
-            Scope(state: \.redeemViaErxTaskRepository, action: \.redeemViaErxTaskRepository) {
-                PharmacyRedeemDomain()
-                    .dependency(\.redeemInputValidator, erxTaskOrderValidator)
-                    .dependency(\.redeemService, erxTaskRepositoryRedeemService())
-            }
-
-            Scope(state: \.pharmacyDetail, action: \.pharmacyDetail) {
-                PharmacyDetailDomain()
-            }
-
-            Scope(state: \.pharmacyFilter, action: \.pharmacyFilter) {
-                PharmacySearchFilterDomain()
-            }
-
-            Scope(state: \.pharmacyMapSearch, action: \.pharmacyMapSearch) {
-                PharmacySearchMapDomain()
-            }
         }
     }
 
@@ -121,7 +85,6 @@ struct PharmacySearchDomain {
             searchText.count > 2
         }
 
-        @Shared var pharmacyRedeemState: PharmacyRedeemDomain.State?
         var pharmacySearchMapState: PharmacySearchMapDomain.State?
 
         var isLoading: Bool {
@@ -443,8 +406,7 @@ struct PharmacySearchDomain {
                         selectedPrescriptions: state.$selectedPrescriptions,
                         inRedeemProcess: state.inRedeemProcess,
                         pharmacyViewModel: viewModel,
-                        hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                        pharmacyRedeemState: Shared(state.pharmacyRedeemState)
+                        hasRedeemableTasks: !state.selectedPrescriptions.isEmpty
                     )
                 )
             case let .failure(error):
@@ -472,12 +434,10 @@ struct PharmacySearchDomain {
                 selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
-                hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                pharmacyRedeemState: Shared(state.pharmacyRedeemState)
+                hasRedeemableTasks: !state.selectedPrescriptions.isEmpty
             ))
             return .none
-        case .destination(.presented(.redeemViaErxTaskRepository(.delegate(.closeRedeemView)))),
-             .destination(.presented(.redeemViaAVS(.delegate(.closeRedeemView)))):
+        case .destination(.presented(.pharmacyDetail(action: .delegate(.changePharmacy)))):
             guard let viewModel = state.detailsPharmacy else { return .none }
 
             state.destination = .pharmacyDetail(PharmacyDetailDomain.State(
@@ -485,35 +445,8 @@ struct PharmacySearchDomain {
                 selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
-                hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                pharmacyRedeemState: Shared<PharmacyRedeemDomain.State?>(nil)
+                hasRedeemableTasks: !state.selectedPrescriptions.isEmpty
             ))
-            return .none
-        case .destination(.presented(.redeemViaErxTaskRepository(.delegate(.close)))),
-             .destination(.presented(.redeemViaAVS(.delegate(.close)))):
-            state.destination = nil
-            return .run { send in
-                // swiftlint:disable:next todo
-                // TODO: this is workaround to avoid `onAppear` of the the child view getting called
-                try await schedulers.main.sleep(for: 0.1)
-                await send(.delegate(.close))
-            }
-        case let .destination(.presented(.redeemViaAVS(.delegate(.changePharmacy(saveState))))),
-             let .destination(.presented(.redeemViaErxTaskRepository(.delegate(.changePharmacy(saveState))))):
-            state.destination = nil
-            state.pharmacyRedeemState = saveState
-            return .none
-        case .destination(.presented(.pharmacyDetail(action: .delegate(.close)))):
-            state.destination = nil
-            return .run { send in
-                // swiftlint:disable:next todo
-                // TODO: this is workaround to avoid `onAppear` of the the child view getting called
-                try await schedulers.main.sleep(for: 0.1)
-                await send(.delegate(.close))
-            }
-        case let .destination(.presented(.pharmacyDetail(action: .delegate(.changePharmacy(saveState))))):
-            state.destination = nil
-            state.pharmacyRedeemState = saveState
             return .none
         case let .destination(
             .presented(.pharmacyDetail(action: .response(.toggleIsFavoriteReceived(.success(pharmacy)))))
@@ -547,6 +480,9 @@ struct PharmacySearchDomain {
             return .send(.performSearch)
                 .animation()
         case .destination(.presented(.pharmacyFilter(.delegate(.close)))):
+            state.destination = nil
+            return .none
+        case .destination(.presented(.pharmacyDetail(.delegate(.redeem)))):
             state.destination = nil
             return .none
         // Location
@@ -769,18 +705,6 @@ extension PharmacySearchDomain {
         let avgLongitude = totalLongitude / Double(pharmacies.count)
 
         return Location(rawValue: .init(latitude: avgLatitude, longitude: avgLongitude))
-    }
-
-    func destination(service: RedeemServiceOption, state: PharmacyRedeemDomain.State) -> PharmacySearchDomain
-        .Destination.State? {
-        switch service {
-        case .avs:
-            return .redeemViaAVS(state)
-        case .erxTaskRepository, .erxTaskRepositoryAvailable:
-            return .redeemViaErxTaskRepository(state)
-        case .noService:
-            return nil
-        }
     }
 }
 

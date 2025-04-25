@@ -187,6 +187,7 @@ extension ErxTask {
         static let erxTaskError: ErxTask = .init(
             identifier: "1790f983-1e67-11b2-8555-63bf44e44fb8",
             status: .error(.decoding(message: "error: decoding")),
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             authoredOn: DemoDate.createDemoDate(.yesterday)
         )
@@ -257,6 +258,7 @@ extension ErxTask {
         static let erxTask1: ErxTask = .init(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: .pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.today),
@@ -281,6 +283,7 @@ extension ErxTask {
         static let erxTask2: ErxTask = .init(
             identifier: "5390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.today),
@@ -302,6 +305,7 @@ extension ErxTask {
         static let erxTask3: ErxTask = .init(
             identifier: "0390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.yesterday),
@@ -325,6 +329,7 @@ extension ErxTask {
         static let erxTask4: ErxTask = .init(
             identifier: "169.000.000.000.021.02",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: nil, // A Direktzuweisung (169) does not have an access code
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.dayBeforeYesterday),
@@ -345,6 +350,7 @@ extension ErxTask {
         static let erxTask5: ErxTask = .init(
             identifier: "3390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
@@ -364,6 +370,7 @@ extension ErxTask {
         static let erxTask6: ErxTask = .init(
             identifier: "490f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
@@ -384,6 +391,7 @@ extension ErxTask {
         static let erxTask7: ErxTask = .init(
             identifier: "6390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
@@ -403,6 +411,7 @@ extension ErxTask {
         static let erxTask8: ErxTask = .init(
             identifier: "6380f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
@@ -424,6 +433,7 @@ extension ErxTask {
         static let erxTask9: ErxTask = .init(
             identifier: "6370f983-1e67-11b2-8555-63bf44e44fb8",
             status: .inProgress,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
@@ -443,6 +453,7 @@ extension ErxTask {
         static let erxTask10: ErxTask = .init(
             identifier: "7360f983-1e67-11b2-8555-63bf44e44fb8",
             status: .completed,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
@@ -463,6 +474,7 @@ extension ErxTask {
         static let erxTask11: ErxTask = .init(
             identifier: "7350f983-1e67-11b2-8955-63bf44e44fb8",
             status: .cancelled,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
@@ -483,6 +495,7 @@ extension ErxTask {
         static let erxTask12: ErxTask = .init(
             identifier: "7340f983-1e67-11b2-8955-63bf44e44fb8",
             status: .draft,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: nil,
@@ -503,6 +516,7 @@ extension ErxTask {
         static let erxTask13: ErxTask = .init(
             identifier: "6450f983-1e67-11b2-8955-63bf44e44fb8",
             status: .undefined(status: "on-hold"),
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
@@ -523,6 +537,7 @@ extension ErxTask {
         static let erxTask14: ErxTask = .init(
             identifier: "34235f983-1e67-22c5-8955-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.yesterday),
@@ -544,6 +559,7 @@ extension ErxTask {
         static let erxTaskSelfPayer: ErxTask = .init(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.today),
@@ -565,6 +581,7 @@ extension ErxTask {
         static let erxTaskScanned1: ErxTask = .init(
             identifier: "34235f983-1e67-331g-8955-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.yesterday),
@@ -575,6 +592,7 @@ extension ErxTask {
         static let erxTaskScanned2: ErxTask = .init(
             identifier: "34235f983-1e67-321g-8955-63bf44e44fb8",
             status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
             accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.yesterday),

@@ -742,7 +742,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try prepareStores(profiles: [testProfile], communications: [communication2, communication3])
 
         let store = loadErxCoreDataStore(for: testProfile.id)
-        let task = ErxTask(identifier: communication1.taskId, status: .ready)
+        let task = ErxTask(identifier: communication1.taskId, status: .ready, flowType: .pharmacyOnly)
         try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
         try store.add(communications: [communication1])
 
@@ -767,7 +767,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try prepareStores(profiles: [testProfile], communications: [])
 
         let store = loadErxCoreDataStore(for: testProfile.id)
-        let task = ErxTask(identifier: communication1.taskId, status: .ready)
+        let task = ErxTask(identifier: communication1.taskId, status: .ready, flowType: .pharmacyOnly)
         try store.add(tasks: [task])
         try store.add(communications: [communication0, communication1])
 
@@ -790,7 +790,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try prepareStores(profiles: [testProfile], communications: [])
 
         let store = loadErxCoreDataStore(for: testProfile.id)
-        let task = ErxTask(identifier: communication1.taskId, status: .ready)
+        let task = ErxTask(identifier: communication1.taskId, status: .ready, flowType: .pharmacyOnly)
         try store.add(tasks: [task])
         try store.add(communications: [communication0])
 
@@ -912,7 +912,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let medicationDispense = ErxTask.Fixtures.medicationDispense
 
         let store = loadErxCoreDataStore(for: testProfile.id)
-        let task = ErxTask(identifier: medicationDispense.taskId, status: .ready)
+        let task = ErxTask(identifier: medicationDispense.taskId, status: .ready, flowType: .pharmacyOnly)
         try store.add(medicationDispenses: [ErxTask.Fixtures.medicationDispense])
         try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
 
@@ -941,7 +941,11 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         // when accessing the store with a profile and saving a communication to that profile
         let store = loadErxCoreDataStore(for: testProfile.id)
 
-        let task = ErxTask(identifier: ErxTask.Fixtures.medicationDispenseWithPZN.taskId, status: .ready)
+        let task = ErxTask(
+            identifier: ErxTask.Fixtures.medicationDispenseWithPZN.taskId,
+            status: .ready,
+            flowType: .pharmacyOnly
+        )
         try store.add(medicationDispenses: [ErxTask.Fixtures.medicationDispenseWithPZN])
         try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
 

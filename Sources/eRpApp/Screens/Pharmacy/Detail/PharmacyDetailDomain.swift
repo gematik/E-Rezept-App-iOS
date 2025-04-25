@@ -15,7 +15,6 @@
 //  limitations under the Licence.
 //
 //
-// swiftlint:disable file_length
 
 import AVS
 import Combine
@@ -29,15 +28,10 @@ import OpenSSL
 import Pharmacy
 import SwiftUI
 
-// swiftlint:disable type_body_length
 @Reducer
 struct PharmacyDetailDomain {
     @Reducer(state: .equatable, action: .equatable)
     enum Destination {
-        // sourcery: AnalyticsScreen = redeem_viaAVS
-        case redeemViaAVS(PharmacyRedeemDomain)
-        // sourcery: AnalyticsScreen = redeem_viaTI
-        case redeemViaErxTaskRepository(PharmacyRedeemDomain)
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = alert
         case alert(ErpAlertState<PharmacyRedeemDomain.State>)
@@ -46,26 +40,6 @@ struct PharmacyDetailDomain {
         case toast(ToastState<Toast>)
 
         enum Toast: Equatable {}
-
-        static var body: some ReducerOf<Self> {
-            @Dependency(\.avsMessageValidator) var avsMessageValidator
-            @Dependency(\.avsRedeemService) var avsRedeemService
-
-            Scope(state: \.redeemViaAVS, action: \.redeemViaAVS) {
-                PharmacyRedeemDomain()
-                    .dependency(\.redeemInputValidator, avsMessageValidator)
-                    .dependency(\.redeemService, avsRedeemService())
-            }
-
-            @Dependency(\.erxTaskOrderValidator) var erxTaskOrderValidator
-            @Dependency(\.erxTaskRepositoryRedeemService) var erxTaskRepositoryRedeemService
-
-            Scope(state: \.redeemViaErxTaskRepository, action: \.redeemViaErxTaskRepository) {
-                PharmacyRedeemDomain()
-                    .dependency(\.redeemInputValidator, erxTaskOrderValidator)
-                    .dependency(\.redeemService, erxTaskRepositoryRedeemService())
-            }
-        }
     }
 
     @ObservableState
@@ -78,7 +52,7 @@ struct PharmacyDetailDomain {
         /// Boolean is true when called within redeeming process
         var inRedeemProcess: Bool
         /// View can be shown as sheet inside order details
-        var inOrdersMessage = false
+        var inOrdersMessage: Bool
         var pharmacyViewModel: PharmacyLocationViewModel
         var pharmacy: PharmacyLocation {
             pharmacyViewModel.pharmacyLocation
@@ -88,18 +62,37 @@ struct PharmacyDetailDomain {
         /// Boolean for handling the different navigation paths
         var onMapView = false
 
-        @Shared var pharmacyRedeemState: PharmacyRedeemDomain.State?
-        /// If there was a login before the profile is locked to that
-        var wasProfileAuthenticatedBefore = false
-        var reservationService: RedeemServiceOption = .noService
-        var shipmentService: RedeemServiceOption = .noService
-        var deliveryService: RedeemServiceOption = .noService
+        // Child domain states
+        var serviceOptionState: ServiceOptionDomain.State
+
         @Presents var destination: Destination.State?
 
-        var serviceIsMissing: [Bool] {
-            [shipmentService.hasService,
-             deliveryService.hasService,
-             reservationService.hasService].filter { !$0 }
+        init(
+            prescriptions: Shared<[Prescription]>,
+            selectedPrescriptions: Shared<[Prescription]>,
+            inRedeemProcess: Bool,
+            inOrdersMessage: Bool = false,
+            pharmacyViewModel: PharmacyLocationViewModel,
+            hasRedeemableTasks: Bool = false,
+            availableServiceOptions: Set<RedeemOption> = [],
+            onMapView: Bool = false,
+            destination: Destination.State? = nil,
+            serviceOptionState: ServiceOptionDomain.State? = nil
+        ) {
+            _prescriptions = prescriptions
+            _selectedPrescriptions = selectedPrescriptions
+            self.inRedeemProcess = inRedeemProcess
+            self.inOrdersMessage = inOrdersMessage
+            self.pharmacyViewModel = pharmacyViewModel
+            self.hasRedeemableTasks = hasRedeemableTasks
+            self.onMapView = onMapView
+            self.destination = destination
+
+            self.serviceOptionState = serviceOptionState ?? .init(
+                prescriptions: prescriptions,
+                selectedOption: nil,
+                availableOptions: availableServiceOptions
+            )
         }
     }
 
@@ -114,8 +107,6 @@ struct PharmacyDetailDomain {
         case openBrowserApp
         /// Opens Mail app with pharmacy email address
         case openMailApp
-        /// Selects  the `RedeemOption`
-        case tappedRedeemOption(RedeemOption)
         /// Changes favorite state of pharmacy or creates a local pharmacy
         case toggleIsFavorite
         /// Changes favorite state of pharmacy or creates a local pharmacy
@@ -127,26 +118,27 @@ struct PharmacyDetailDomain {
         /// delegate actions
         case delegate(Delegate)
 
+        // Child Domain Actions
+        case serviceOption(ServiceOptionDomain.Action)
+
         enum Response: Equatable {
-            /// response of `task` action
-            case currentProfileReceived(Profile?)
-            /// response of loading certificates (loaded in `currentProfileReceived`)
-            case avsCertificatesReceived(Result<[X509], PharmacyRepositoryError>)
             /// response of `toggleIsFavorite` action
             case toggleIsFavoriteReceived(Result<PharmacyLocationViewModel, PharmacyRepositoryError>)
             /// response of `prescriptionRepository.loadLocal()`
             case loadLocalPrescriptionsReceived(Result<[Prescription], PrescriptionRepositoryError>)
+            /// response of `redeemOrderService.provider`
+            case redeemOptionProviderReceived(RedeemOptionProvider)
         }
 
         enum Delegate: Equatable {
             /// Closes and stores the PharmacyRedeemDomain.State
             case changePharmacy(PharmacyRedeemDomain.State)
-            /// Delegate required properties to parent to form the RedeemState
-            case showPharmacyRedeemView(
-                service: RedeemServiceOption,
-                option: RedeemOption,
+            /// Pushes PharmacyRedeemView on NavigationStack with required properties
+            case redeem(
                 prescriptions: [Prescription],
-                selectedPrescriptions: [Prescription]
+                selectedPrescriptions: [Prescription],
+                pharmacy: PharmacyLocation,
+                option: RedeemOption
             )
             /// Closes the details page
             case close
@@ -156,12 +148,16 @@ struct PharmacyDetailDomain {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
+    @Dependency(\.redeemOrderService) var redeemOrderService: RedeemOrderService
     @Dependency(\.feedbackReceiver) var feedbackReceiver
     @Dependency(\.prescriptionRepository) var prescriptionRepository: PrescriptionRepository
     @Dependency(\.date) var date
     @Dependency(\.calendar) var calendar
 
     var body: some ReducerOf<Self> {
+        Scope(state: \State.serviceOptionState, action: \.serviceOption) {
+            ServiceOptionDomain()
+        }
         Reduce(self.core)
             .ifLet(\.$destination, action: \.destination)
     }
@@ -170,8 +166,13 @@ struct PharmacyDetailDomain {
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
-            return .merge(loadProfilePublisher(),
-                          loadPrescriptionsPublisher())
+            return .merge(
+                loadPrescriptionsPublisher(),
+                .run { [pharmacy = state.pharmacy] send in
+                    let provider = try await redeemOrderService.redeemOptionProvider(pharmacy: pharmacy)
+                    await send(.response(.redeemOptionProviderReceived(provider)))
+                }
+            )
         case let .response(.loadLocalPrescriptionsReceived(result)):
             switch result {
             case let .success(prescriptions):
@@ -181,45 +182,19 @@ struct PharmacyDetailDomain {
                 state.prescriptions = []
             }
             return .none
-        case let .response(.currentProfileReceived(profile)):
-            if let profile = profile {
-                state.wasProfileAuthenticatedBefore = profile.isLinkedToInsuranceId
+        case let .response(.redeemOptionProviderReceived(provider)):
+            var options = Set<RedeemOption>()
+            if provider.reservationService.hasService {
+                options.insert(.onPremise)
             }
-            if state.pharmacy.hasAVSEndpoints {
-                // load certificate for avs service
-                return .publisher(
-                    pharmacyRepository.loadAvsCertificates(for: state.pharmacyViewModel.id)
-                        .first()
-                        .receive(on: schedulers.main)
-                        .catchToPublisher()
-                        .map { result in Action.response(.avsCertificatesReceived(result)) }
-                        .eraseToAnyPublisher
-                )
-            } else {
-                let provider = RedeemOptionProvider(
-                    wasAuthenticatedBefore: state.wasProfileAuthenticatedBefore,
-                    pharmacy: state.pharmacy
-                )
-                state.reservationService = provider.reservationService
-                state.shipmentService = provider.shipmentService
-                state.deliveryService = provider.deliveryService
-                return .none
+            if provider.deliveryService.hasService {
+                options.insert(.delivery)
             }
-        case let .response(.avsCertificatesReceived(result)):
-            switch result {
-            case let .success(certificates):
-                state.pharmacyViewModel.pharmacyLocation.avsCertificates = certificates
-            default:
-                break
+            if provider.shipmentService.hasService {
+                options.insert(.shipment)
             }
-
-            let provider = RedeemOptionProvider(
-                wasAuthenticatedBefore: state.wasProfileAuthenticatedBefore,
-                pharmacy: state.pharmacy
-            )
-            state.reservationService = provider.reservationService
-            state.shipmentService = provider.shipmentService
-            state.deliveryService = provider.deliveryService
+            state.serviceOptionState.availableOptions = options
+            state.serviceOptionState.redeemOptionProvider = provider
             return .none
         case .openMapApp:
             guard let longitude = state.pharmacy.position?.longitude?.doubleValue,
@@ -264,75 +239,36 @@ struct PharmacyDetailDomain {
                 UIApplication.shared.open(url)
             }
             return .none
-        case let .tappedRedeemOption(option):
+        case let .serviceOption(.redeemOptionTapped(option)):
             if !state.hasRedeemableTasks {
                 state.destination = .toast(ToastStates.noErxTask)
                 return .none
             }
 
-            if state.onMapView {
-                switch option {
-                case .onPremise:
-                    return .send(.delegate(.showPharmacyRedeemView(service: state.reservationService,
-                                                                   option: option,
-                                                                   prescriptions: state.prescriptions,
-                                                                   selectedPrescriptions: state.selectedPrescriptions)))
-                case .delivery:
-                    return .send(.delegate(.showPharmacyRedeemView(service: state.deliveryService,
-                                                                   option: option,
-                                                                   prescriptions: state.prescriptions,
-                                                                   selectedPrescriptions: state.selectedPrescriptions)))
-                case .shipment:
-                    return .send(.delegate(.showPharmacyRedeemView(service: state.shipmentService,
-                                                                   option: option,
-                                                                   prescriptions: state.prescriptions,
-                                                                   selectedPrescriptions: state.selectedPrescriptions)))
-                }
-            }
+            state.destination = nil
+            state.serviceOptionState.selectedOption = nil
+            // swiftlint:disable closure_parameter_position
+            return .run { [
+                pharmacy = state.pharmacy,
+                prescriptions = state.prescriptions,
+                selectedPrescriptions = state.selectedPrescriptions
+            ] send in
+            // swiftlint:enable closure_parameter_position
 
-            // An array of prescriptions that represents the selected prescriptions.
-            var arrayOfPrescriptions: [Prescription] = []
-            if let redeemPrescriptions = state.pharmacyRedeemState?.selectedPrescriptions {
-                // If the user has already selected prescription from the current redeeming process,
-                // these will be used first
-                arrayOfPrescriptions = redeemPrescriptions
-            } else if state.inRedeemProcess {
-                // If the user has started the redeeming process from the main view, we select these prescriptions.
-                arrayOfPrescriptions = state.selectedPrescriptions
-            }
+            // disable navigation stack pop transition
+            await UINavigationBar.setAnimationsEnabled(false)
+            await send(.delegate(.redeem(
+                prescriptions: prescriptions,
+                selectedPrescriptions: selectedPrescriptions,
+                pharmacy: pharmacy,
+                option: option
+            )))
 
-            let redeemState = PharmacyRedeemDomain.State(
-                redeemOption: option,
-                prescriptions: state.$prescriptions,
-                pharmacy: state.pharmacy,
-                selectedPrescriptions: Shared(arrayOfPrescriptions)
-            )
-            switch option {
-            case .onPremise:
-                state.destination = state.reservationService.destination(with: redeemState)
-            case .delivery:
-                state.destination = state.deliveryService.destination(with: redeemState)
-            case .shipment:
-                state.destination = state.shipmentService.destination(with: redeemState)
+            Task {
+                try await schedulers.main.sleep(for: 0.01)
+                // reenable navigation stack transition
+                await UINavigationBar.setAnimationsEnabled(true)
             }
-            return .none
-        case let .destination(.presented(.redeemViaAVS(.delegate(action)))),
-             let .destination(.presented(.redeemViaErxTaskRepository(.delegate(action)))):
-            switch action {
-            case .close:
-                state.destination = nil
-                return .run { send in
-                    // swiftlint:disable:next todo
-                    // TODO: this is workaround to avoid `onAppear` of the the child view getting called
-                    try await schedulers.main.sleep(for: 0.1)
-                    await send(.delegate(.close))
-                }
-            case .closeRedeemView:
-                state.destination = nil
-                return .none
-            case let .changePharmacy(saveState):
-                state.destination = nil
-                return .send(.delegate(.changePharmacy(saveState)))
             }
         case .toggleIsFavorite:
             var pharmacyViewModel = state.pharmacyViewModel
@@ -372,7 +308,8 @@ struct PharmacyDetailDomain {
                 state.destination = .alert(.init(for: error))
             }
             return .none
-        case .destination,
+        case .serviceOption,
+             .destination,
              .delegate:
             return .none
         }
@@ -423,22 +360,6 @@ extension PharmacyDetailDomain {
             .init(style: .simple(L10n.phaDetailTxtNoPrescriptionToast.key))
     }
 
-    func loadProfilePublisher() -> Effect<PharmacyDetailDomain.Action> {
-        .publisher(
-            userSession.profile()
-                .first()
-                .catchToPublisher()
-                .map { result in
-                    if case let .success(profile) = result {
-                        return Action.response(.currentProfileReceived(profile))
-                    }
-                    return Action.response(.currentProfileReceived(nil))
-                }
-                .receive(on: schedulers.main)
-                .eraseToAnyPublisher
-        )
-    }
-
     func loadPrescriptionsPublisher() -> Effect<PharmacyDetailDomain.Action> {
         .publisher(
             prescriptionRepository.loadLocal()
@@ -448,19 +369,6 @@ extension PharmacyDetailDomain {
                 .map { Action.response(.loadLocalPrescriptionsReceived($0)) }
                 .eraseToAnyPublisher
         )
-    }
-}
-
-extension RedeemServiceOption {
-    func destination(with state: PharmacyRedeemDomain.State) -> PharmacyDetailDomain.Destination.State? {
-        switch self {
-        case .avs:
-            return .redeemViaAVS(state)
-        case .erxTaskRepository, .erxTaskRepositoryAvailable:
-            return .redeemViaErxTaskRepository(state)
-        case .noService:
-            return nil
-        }
     }
 }
 
@@ -494,17 +402,12 @@ extension PharmacyDetailDomain {
             prescriptions: Shared(prescriptions),
             selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
-            pharmacyViewModel: pharmacyViewModel,
-            pharmacyRedeemState: Shared(nil),
-            reservationService: .erxTaskRepository,
-            shipmentService: .erxTaskRepository,
-            deliveryService: .erxTaskRepository
+            pharmacyViewModel: pharmacyViewModel
         )
+
         static let store = Store(
             initialState: state
         ) { PharmacyDetailDomain()
         }
     }
 }
-
-// swiftlint:enable type_body_length

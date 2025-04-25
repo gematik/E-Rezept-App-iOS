@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "סיסמה";
 "auth_btn_bap_faceid" = "FaceID";
 "auth_btn_bap_touchid" = "Touch ID";
-"auth_btn_biometrics_faceid" = "בטל את הנעילה באמצעות Face ID";
-"auth_btn_biometrics_touchid" = "בטל את הנעילה באמצעות Touch ID";
+"auth_btn_biometrics_faceid" = "מזהה פנים";
+"auth_btn_biometrics_touchid" = "Touch ID";
 "auth_btn_password_continue" = "נוסף";
 "auth_txt_bap_password_message" = "אנא נסה שוב או הזן את הסיסמה שלך.";
 "auth_txt_biometrics_disclaimer" = "אנא ודא שלאנשים שאיתם אתה עשוי לחלוק מכשיר זה ואשר המאפיינים הביומטריים שלהם עשויים להיות מאוחסנים במכשיר זה, יש גם גישה למרשמים שלך.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "ההתחברות נכשלה";
 "auth_txt_biometrics_failed_not_enrolled" = "לא הוגדרה אבטחה ביומטרית במכשיר זה.";
 "auth_txt_biometrics_failed_user_fallback" = "חלופה לכניסה ביומטרית אינה מוגדרת. הכנס סיסמא בבקשה.";
-"auth_txt_biometrics_footer" = "יש לך שאלות או בעיות בשימוש באפליקציה? אתה יכול להגיע לתמיכה הטלפונית שלנו בטלפון 0800 277 377 7. \n\n כבר ענינו עבורך על שאלות רבות באתר das-e-rezept-fuer-deutschland.de.";
+"auth_txt_biometrics_footer" = "שכחת את הסיסמה שלך? נא למחוק את האפליקציה ולאחר מכן להתקין אותה מחדש. זה הכרחי מכיוון שאנו מאחסנים רק את נתוני הגישה שלך באופן מקומי ולא משתמשים בכתובת דוא\"ל לאימות.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -37,11 +37,11 @@
 "auth_txt_biometrics_lockout" = "היו לך יותר מדי ניסיונות התחברות כושלים. עבור להגדרות האייפון שלך והפעל מחדש את פונקציית FaceID או TouchID על ידי הזנת PIN.";
 "auth_txt_biometrics_password_title" = "מאובטח עם סיסמה";
 "auth_txt_biometrics_reason" = "יש צורך ב %@ כדי להגן על האפליקציה מפני גישה לא מורשית.";
-"auth_txt_biometrics_title" = "ברוך הבא";
+"auth_txt_biometrics_title" = "קַבָּלַת פָּנִים";
 "auth_txt_biometrics_touch_id_title" = "מאובטח עם Touch ID";
 "auth_txt_biometrics_touchid_description" = "כדי לאבטח את הנתונים שלך, בחרת ב-Touch ID.";
 "auth_txt_biometrics_touchid_start" = "בטל את הנעילה באמצעות Touch ID";
-"auth_txt_failed_login_hint_title" = "ניסיונות התחברות לא מוצלחים";
+"auth_txt_failed_login_hint_title" = "למרבה הצער, זה לא עבד";
 "auth_txt_password_failure" = "סיסמה שגויה. אנא נסה זאת שוב.";
 "auth_txt_password_label" = "שדה הזנת סיסמה";
 "auth_txt_password_placeholder" = "הזן את הסיסמה";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "פתח את סורק המתכונים";
 "erx_title" = "מתכונים";
 "erx_txt_authored" = "מוצג";
-"erx_txt_claimed_at_%@" = "הניח %@";
+"erx_txt_claimed_at_%@" = "מקובל %@";
 "erx_txt_current" = "נוֹכְחִי";
 "erx_txt_dispensed_at_%@" = "מסופק %@";
 "erx_txt_expired_on_%@" = "פג תוקף ב %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "נא להיכנס לאתר בית המרקחת להשלמת ההזמנה.";
 "ord_detail_txt_%@_send_to_%@" = "%@ נשלח ל %@ . בחלק מבתי המרקחת אין עדיין אפשרות תגובה דיגיטלית. אם לא תהיה תגובה עד מחר, נא להתקשר כאמצעי זהירות.";
 "ord_detail_txt_charge_item%@" = "קיבלת קבלה על עלות התרופה %@ .";
+"ord_detail_txt_chip_all" = "כל מתכוני המסדר";
 "ord_detail_txt_contact" = "אפשרויות ליצירת קשר";
 "ord_detail_txt_contact_email" = "כתוב מייל";
 "ord_detail_txt_contact_map" = "הצג מסלול";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "תוכל למצוא מידע מאומת במומחיות על מחלות, קודי ICD ונושאי מניעה וטיפול בפורטל הבריאות הלאומי.";
 "prsc_dtl_med_ingredient_name" = "שם החומר הפעיל";
 "prsc_dtl_med_manufacturing_instructions" = "הוראות ייצור";
-"prsc_dtl_med_ov_txt_dispensed_header" = "לְקַבֵּל";
+"prsc_dtl_med_ov_txt_dispensed_header" = "התקבל";
 "prsc_dtl_med_ov_txt_subscribed_header" = "רשום";
 "prsc_dtl_med_txt_Note" = "עצה מבית המרקחת שלך";
 "prsc_dtl_med_txt_amount" = "עוצמה ואחדות";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "מצב הדגמה פעיל. אתה לא צריך כרטיס בריאות או חיבור לאינטרנט. לא ניתן לממש את מרשמי הבדיקה המוצגים בבית מרקחת.";
 "stg_txt_alert_title_demo_mode" = "האם תרצה לחקור?";
 "stg_txt_alert_title_demo_mode_off" = "מצב הדגמה מושבת";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "מספר ביטוח: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "מזהה טלמטיקה: %@";
 "stg_txt_audit_events_banner_connect" = "לְחַבֵּר";
 "stg_txt_audit_events_banner_message" = "כדי לקבל יומני גישה, עליך להיות מחובר לשרת.";
 "stg_txt_audit_events_missing_date" = "אין חותמת זמן";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "צור פרופיל חדש";
 "stg_txt_reg_devices_empty_list" = "אין מכשירים מחוברים לכרטיס בריאות זה.";
 "stg_txt_reg_devices_empty_list_title" = "אין מכשירים";
-"stg_txt_reg_devices_info" = "נדרש אימות נוסף כדי להציג את המכשירים.";
-"stg_txt_reg_devices_info_title" = "נדרש אימות";
+"stg_txt_reg_devices_info" = "אנא היכנס ושמור את פרטי ההתחברות שלך כדי להציג מכשירים מחוברים.";
+"stg_txt_reg_devices_info_title" = "נדרש הרשמה";
 "stg_txt_reg_devices_registered_since_%@" = "רשום מאז %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "רשום מאז %@ (מכשיר זה)";
 "stg_txt_reg_devices_title" = "מכשירים מחוברים";

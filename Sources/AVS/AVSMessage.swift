@@ -34,7 +34,7 @@ public struct AVSMessage: Encodable, Equatable {
     public let taskID: String
     public let accessCode: String
 
-    public enum SupplyOptionsType: String, Encodable {
+    public enum SupplyOptionsType: String, Encodable, Sendable {
         case onPremise
         case shipment
         case delivery

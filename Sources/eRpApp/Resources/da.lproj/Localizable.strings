@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "adgangskode";
 "auth_btn_bap_faceid" = "FaceID";
 "auth_btn_bap_touchid" = "Tryk på ID";
-"auth_btn_biometrics_faceid" = "Lås op med Face ID";
-"auth_btn_biometrics_touchid" = "Lås op med Touch ID";
+"auth_btn_biometrics_faceid" = "Face ID";
+"auth_btn_biometrics_touchid" = "Tryk på ID";
 "auth_btn_password_continue" = "Yderligere";
 "auth_txt_bap_password_message" = "Prøv venligst igen eller indtast din adgangskode.";
 "auth_txt_biometrics_disclaimer" = "Sørg for, at personer, som du må dele denne enhed med, og hvis biometriske karakteristika kan være gemt på denne enhed, også har adgang til dine recepter.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Login mislykkedes";
 "auth_txt_biometrics_failed_not_enrolled" = "Der er ikke konfigureret nogen biometrisk sikkerhed på denne enhed.";
 "auth_txt_biometrics_failed_user_fallback" = "Et alternativ til biometrisk login er ikke konfigureret. Indtast venligst en adgangskode.";
-"auth_txt_biometrics_footer" = "Har du spørgsmål eller problemer med at bruge appen? Du kan kontakte vores telefonsupport på 0800 277 377 7. \n\n Vi har allerede besvaret mange spørgsmål til dig på das-e-rezept-fuer-deutschland.de.";
+"auth_txt_biometrics_footer" = "Har du glemt din adgangskode? Slet venligst appen og geninstaller den. Dette er nødvendigt, fordi vi kun gemmer dine adgangsdata lokalt og ikke bruger en e-mailadresse til bekræftelse.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -37,11 +37,11 @@
 "auth_txt_biometrics_lockout" = "Du har haft for mange mislykkede loginforsøg. Gå til din iPhones indstillinger og genaktiver FaceID- eller TouchID-funktionen ved at indtaste en pinkode.";
 "auth_txt_biometrics_password_title" = "Sikker med adgangskode";
 "auth_txt_biometrics_reason" = "%@ er nødvendig for at beskytte appen mod uautoriseret adgang.";
-"auth_txt_biometrics_title" = "Velkommen";
+"auth_txt_biometrics_title" = "Velkomst";
 "auth_txt_biometrics_touch_id_title" = "Sikker med Touch ID";
 "auth_txt_biometrics_touchid_description" = "For at sikre dine data har du valgt Touch ID.";
 "auth_txt_biometrics_touchid_start" = "Lås op med Touch ID";
-"auth_txt_failed_login_hint_title" = "Mislykkede loginforsøg";
+"auth_txt_failed_login_hint_title" = "Det virkede desværre ikke";
 "auth_txt_password_failure" = "Forkert kodeord. Prøv det igen.";
 "auth_txt_password_label" = "Indtastningsfelt for adgangskode";
 "auth_txt_password_placeholder" = "Indtast adgangskode";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Åbn opskriftsscanner";
 "erx_title" = "Opskrifter";
 "erx_txt_authored" = "Vises";
-"erx_txt_claimed_at_%@" = "Antaget %@";
+"erx_txt_claimed_at_%@" = "Accepteret %@";
 "erx_txt_current" = "Nuværende";
 "erx_txt_dispensed_at_%@" = "Forudsat %@";
 "erx_txt_expired_on_%@" = "Udløb den %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Gå til apotekets hjemmeside for at fuldføre ordren.";
 "ord_detail_txt_%@_send_to_%@" = "%@ sendt til %@ . Nogle apoteker har endnu ikke en digital svarmulighed. Hvis der ikke er noget svar i morgen, bedes du ringe for en sikkerheds skyld.";
 "ord_detail_txt_charge_item%@" = "Du har modtaget en kvittering for prisen på din medicin %@ .";
+"ord_detail_txt_chip_all" = "Alle bestillingens opskrifter";
 "ord_detail_txt_contact" = "Kontaktmuligheder";
 "ord_detail_txt_contact_email" = "Skriv e-mail";
 "ord_detail_txt_contact_map" = "Vis rute";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "Du kan finde ekspertverificeret information om sygdomme, ICD-koder og forebyggelses- og plejeemner i den nationale sundhedsportal.";
 "prsc_dtl_med_ingredient_name" = "Aktiv ingrediens navn";
 "prsc_dtl_med_manufacturing_instructions" = "Fremstillingsvejledning";
-"prsc_dtl_med_ov_txt_dispensed_header" = "Modtage";
+"prsc_dtl_med_ov_txt_dispensed_header" = "Modtaget";
 "prsc_dtl_med_ov_txt_subscribed_header" = "Foreskrevet";
 "prsc_dtl_med_txt_Note" = "Råd fra dit apotek";
 "prsc_dtl_med_txt_amount" = "styrke og enhed";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Demotilstand er aktiv. Du behøver ikke et sundhedskort eller en internetforbindelse. De viste testrecepter kan ikke indløses på et apotek.";
 "stg_txt_alert_title_demo_mode" = "Kunne du tænke dig at udforske?";
 "stg_txt_alert_title_demo_mode_off" = "Demotilstand deaktiveret";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Forsikringsnummer: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "Telematik-id: %@";
 "stg_txt_audit_events_banner_connect" = "Forbinde";
 "stg_txt_audit_events_banner_message" = "For at modtage adgangslogfiler skal du være forbundet til serveren.";
 "stg_txt_audit_events_missing_date" = "Intet tidsstempel";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Opret en ny profil";
 "stg_txt_reg_devices_empty_list" = "Der er ingen enheder forbundet til dette sundhedskort.";
 "stg_txt_reg_devices_empty_list_title" = "Ingen enheder";
-"stg_txt_reg_devices_info" = "Yderligere godkendelse er påkrævet for at se enhederne.";
-"stg_txt_reg_devices_info_title" = "Godkendelse påkrævet";
+"stg_txt_reg_devices_info" = "Log ind og gem dine loginoplysninger for at se tilsluttede enheder.";
+"stg_txt_reg_devices_info_title" = "tilmelding nødvendig";
 "stg_txt_reg_devices_registered_since_%@" = "Registreret siden %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Registreret siden %@ (denne enhed)";
 "stg_txt_reg_devices_title" = "Tilsluttede enheder";

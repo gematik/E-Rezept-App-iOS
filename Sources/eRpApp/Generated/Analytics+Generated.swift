@@ -383,6 +383,10 @@ typealias AnalyticsEvent = String
     struct Redeem_methodSelection: AnalyticsScreen {
       let name = "redeem:methodSelection"
     }
+    static let redeem_overview = Redeem_overview()
+    struct Redeem_overview: AnalyticsScreen {
+      let name = "redeem:overview"
+    }
     static let redeem_prescriptionAllOrSelection = Redeem_prescriptionAllOrSelection()
     struct Redeem_prescriptionAllOrSelection: AnalyticsScreen {
       let name = "redeem:prescriptionAllOrSelection"

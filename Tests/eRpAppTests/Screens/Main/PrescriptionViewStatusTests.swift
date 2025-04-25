@@ -24,7 +24,7 @@ import XCTest
 
 final class PrescriptionViewStatusTests: XCTestCase {
     func generateTask(status: ErxTask.Status = .ready,
-                      flowType: ErxTask.FlowType? = nil,
+                      flowType: ErxTask.FlowType = .pharmacyOnly,
                       expiresOn: String? = DemoDate.createDemoDate(.tomorrow),
                       acceptedUntil: String? = DemoDate.createDemoDate(.twentyEightDaysAhead),
                       multiplePrescription: MultiplePrescription? = nil,
@@ -223,6 +223,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let task = ErxTask(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .completed,
+            flowType: .pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             redeemedOn: DemoDate.createDemoDate(.yesterday),
             source: .scanner

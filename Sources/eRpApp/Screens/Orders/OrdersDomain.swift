@@ -143,19 +143,6 @@ struct OrdersDomain {
 }
 
 extension OrdersDomain {
-    func getInsertIndexForCommunicationMessage(newMessage: CommunicationMessage,
-                                               array: IdentifiedArrayOf<CommunicationMessage>) -> Int {
-        if let existingIndex = array.firstIndex(where: { $0.id == newMessage.id }) {
-            return existingIndex
-        } else {
-            return array.firstIndex {
-                $0.lastUpdated < newMessage.lastUpdated
-            } ?? array.count
-        }
-    }
-}
-
-extension OrdersDomain {
     enum Dummies {
         static let state =
             State(communicationMessage: [CommunicationMessage.order(Order.Dummies.orderCommunications1),

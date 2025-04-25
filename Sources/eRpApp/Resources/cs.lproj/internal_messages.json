@@ -16,5 +16,11 @@
         "text": "**Lepší čitelnost** \n Barvu naší značky jsme mírně ztmavili, abychom zvýšili barevný kontrast a zlepšili tak čitelnost. \n \n **Optimalizované vstupní pole** \n Kurzor ve vstupním poli pro přístupové číslo byl odstraněn.",
         "timestamp": "2025-01-28T08:00:00.000Z",
         "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Vylepšený tok objednávek** \nProces objednávání je nyní jednodušší a rychlejší. \n \n🌐 **Nové jazyky** \nNaše aplikace je nyní k dispozici také ve španělštině a irštině. \n \n📞 **Rozšířené možnosti kontaktu** \nZavedli jsme nové možnosti kontaktu pro vybrané pojišťovny. \n \n🔍 **Podrobné protokoly přístupu** \nNyní také zobrazujeme telematická ID v protokolech přístupu, aby bylo snazší identifikovat, kdo měl přístup.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
     }
 ]

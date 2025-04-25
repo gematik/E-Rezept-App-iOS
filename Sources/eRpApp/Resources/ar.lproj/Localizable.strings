@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "كلمة المرور";
 "auth_btn_bap_faceid" = "بصمة الوجه";
 "auth_btn_bap_touchid" = "معرف الشاشة";
-"auth_btn_biometrics_faceid" = "الفتح باستخدام بصمة الوجه";
-"auth_btn_biometrics_touchid" = "الفتح باستخدام معرف الشاشة";
+"auth_btn_biometrics_faceid" = "معرف الوجه";
+"auth_btn_biometrics_touchid" = "معرف اللمس";
 "auth_btn_password_continue" = "متابعة";
 "auth_txt_bap_password_message" = "يرجى المحاولة مرة أخرى أو إدخال كلمة المرور الخاصة بك.";
 "auth_txt_biometrics_disclaimer" = "يُرجى الانتباه إلى أن الأشخاص الذين تشارك معهم هذا الجهاز والذين قد يمكنهم تخزين الصفات البيومترية لهم على هذا الجهاز، قد يمكنهم أيضًا الوصول إلى وصفاتك الطبية.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "فشل تسجيل الدخول";
 "auth_txt_biometrics_failed_not_enrolled" = "لم يتم إعداد أي تأمين بيومتري على هذا الجهاز.";
 "auth_txt_biometrics_failed_user_fallback" = "لم يتم تكوين بديل لتسجيل الدخول البيومتري. يرجى تقديم كلمة مرور.";
-"auth_txt_biometrics_footer" = "هل لديك أي أسئلة أو مشاكل في استخدام التطبيق؟ يمكنك التواصل مع فريق الدعم عبر الهاتف على الرقم 08002773777. \n\n لقد أجبنا بالفعل على العديد من الأسئلة لك على موقع das-e-rezept-fuer-deutschland.de.";
+"auth_txt_biometrics_footer" = "نسيت كلمة السر؟ يرجى حذف التطبيق ثم إعادة تثبيته. يعد هذا ضروريًا لأننا نقوم بتخزين بيانات الوصول الخاصة بك محليًا فقط ولا نستخدم عنوان بريد إلكتروني للتحقق.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "ميلتو:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -37,11 +37,11 @@
 "auth_txt_biometrics_lockout" = "لقد أجريت الكثير من محاولات تسجيل الدخول الفاشلة. انتقل إلى إعدادات جهاز الآيفون الخاص بك وأعد تنشيط وظيفة بصمة الوجه أو شاشة اللمس بإدخال رمز التعريف الشخصي.";
 "auth_txt_biometrics_password_title" = "التأمين باستخدام كلمة مرور";
 "auth_txt_biometrics_reason" = "%@ مطلوب لحماية التطبيق من الوصول غير المصرح به.";
-"auth_txt_biometrics_title" = "أهلًا وسهلًا";
+"auth_txt_biometrics_title" = "مرحباً";
 "auth_txt_biometrics_touch_id_title" = "التأمين باستخدام معرف الشاشة";
 "auth_txt_biometrics_touchid_description" = "لقد اخترت معرف الشاشة لتأمين بياناتك.";
-"auth_txt_biometrics_touchid_start" = "الفتح باستخدام معرف الشاشة";
-"auth_txt_failed_login_hint_title" = "محاولات تسجيل دخول غير ناجحة";
+"auth_txt_biometrics_touchid_start" = "فتح القفل باستخدام Touch ID";
+"auth_txt_failed_login_hint_title" = "لسوء الحظ، هذا لم ينجح";
 "auth_txt_password_failure" = "كلمة مرور خاطئة. من فضلك حاول مرة أخرى.";
 "auth_txt_password_label" = "حقل إدخال كلمة المرور";
 "auth_txt_password_placeholder" = "إدخال كلمة المرور";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "فتح الماسح الضوئي للوصفة";
 "erx_title" = "الوصفات الطبية";
 "erx_txt_authored" = "عرض";
-"erx_txt_claimed_at_%@" = "يفترض %@";
+"erx_txt_claimed_at_%@" = "مقبولة %@";
 "erx_txt_current" = "حديث";
 "erx_txt_dispensed_at_%@" = "متاح %@";
 "erx_txt_expired_on_%@" = "انتهت يوم %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "برجاء الدخول إلى موقع الصيدلية لإتمام الطلب.";
 "ord_detail_txt_%@_send_to_%@" = "تم إرسال %@ إلى %@ . بعض الصيدليات ليس لديها خيار الاستجابة الرقمية حتى الآن. إذا لم يتم الرد بحلول يوم غد، يرجى الاتصال كإجراء احترازي.";
 "ord_detail_txt_charge_item%@" = "لقد تلقيت إيصالاً بتكلفة الدواء %@ .";
+"ord_detail_txt_chip_all" = "جميع وصفات الطلب";
 "ord_detail_txt_contact" = "خيارات الاتصال";
 "ord_detail_txt_contact_email" = "كتابة بريد إلكتروني";
 "ord_detail_txt_contact_map" = "عرض الطريق";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "تجدون في البوابة الوطنية للصحة معلومات مُراجعة  تخصصيًا عن الأمراض وأكواد ICD وموضوعات الرعاية والتمريض.";
 "prsc_dtl_med_ingredient_name" = "اسم المادة الفعالة";
 "prsc_dtl_med_manufacturing_instructions" = "تعليمات التصنيع";
-"prsc_dtl_med_ov_txt_dispensed_header" = "استلام";
+"prsc_dtl_med_ov_txt_dispensed_header" = "تلقى";
 "prsc_dtl_med_ov_txt_subscribed_header" = "المنصوص عليها";
 "prsc_dtl_med_txt_Note" = "نصيحة من الصيدلية الخاصة بك";
 "prsc_dtl_med_txt_amount" = "الفاعلية والوحدة";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "الوضع التجريبي فعال. لا تحتاج إلى بطاقة صحية أو اتصال بالإنترنت. كما لا يمكن صرف الوصفات الطبية التي تظهر أمامك في الصيدلية.";
 "stg_txt_alert_title_demo_mode" = "هل ترغب في جولة استكشافية؟";
 "stg_txt_alert_title_demo_mode_off" = "تم تعطيل الوضع التجريبي";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "رقم التأمين: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "معرف المعلوماتية عن بعد: %@";
 "stg_txt_audit_events_banner_connect" = "التوصيل";
 "stg_txt_audit_events_banner_message" = "لتلقي سجلات الوصول، يجب أن تكون متصلاً بالخادم.";
 "stg_txt_audit_events_missing_date" = "ليس هناك طابع زمني";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "إنشاء بروفايل جديد";
 "stg_txt_reg_devices_empty_list" = "لا توجد أجهزة متصلة بهذه البطاقة الصحية.";
 "stg_txt_reg_devices_empty_list_title" = "لا توجد أجهزة";
-"stg_txt_reg_devices_info" = "يلزم إجراء مصادقة إضافية لعرض الأجهزة.";
-"stg_txt_reg_devices_info_title" = "يلزم المصادقة";
+"stg_txt_reg_devices_info" = "يرجى تسجيل الدخول وحفظ تفاصيل تسجيل الدخول الخاصة بك لعرض الأجهزة المتصلة.";
+"stg_txt_reg_devices_info_title" = "التسجيل مطلوب";
 "stg_txt_reg_devices_registered_since_%@" = "مسجل منذ %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "مسجل منذ %@ (هذا الجهاز)";
 "stg_txt_reg_devices_title" = "الأجهزة المتصلة";

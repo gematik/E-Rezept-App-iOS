@@ -17,11 +17,7 @@
                     "prescriptionId": "1234",
                     "communications":
                     [],
-                    "flowType":
-                    {
-                        "pharmacyOnly":
-                        {}
-                    },
+                    "flowType": "160",
                     "author": "Les Moore",
                     "source": "server",
                     "medication":

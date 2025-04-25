@@ -18,6 +18,7 @@
 
 import AVS
 import Dependencies
+import DependenciesMacros
 import eRpKit
 import Foundation
 
@@ -26,25 +27,52 @@ public enum Validity: Equatable {
     case invalid(String)
 }
 
+@DependencyClient
+struct RedeemOrderInputValidator {
+    var type: @Sendable (RedeemServiceOption?) -> RedeemInputValidator?
+}
+
+extension RedeemOrderInputValidator: DependencyKey {
+    static let liveValue: Self = {
+        @Dependency(\.avsMessageValidator) var avsMessageValidator
+        @Dependency(\.erxTaskOrderValidator) var erxTaskOrderValidator
+
+        return Self { option in
+            switch option {
+            case .avs:
+                return avsMessageValidator
+            case .erxTaskRepository, .erxTaskRepositoryAvailable:
+                return erxTaskOrderValidator
+            case .noService, .none:
+                return nil
+            }
+        }
+    }()
+}
+
+extension DependencyValues {
+    var redeemOrderInputValidator: RedeemOrderInputValidator {
+        get { self[RedeemOrderInputValidator.self] }
+        set { self[RedeemOrderInputValidator.self] = newValue }
+    }
+}
+
+extension RedeemOrderInputValidator: TestDependencyKey {
+    static let previewValue = Self()
+    static let testValue = Self()
+}
+
 protocol RedeemInputValidator {
     var service: RedeemServiceOption { get }
 
     func isValid(version: Int) -> Validity
-
     func isValid(name: String?) -> Validity
-
     func isValid(street: String?) -> Validity
-
     func isValid(zip: String?) -> Validity
-
     func isValid(city: String?) -> Validity
-
     func isValid(hint: String?) -> Validity
-
     func isValid(text: String?) -> Validity
-
     func isValid(phone: String?) -> Validity
-
     func isValid(mail: String?) -> Validity
 
     func ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
@@ -420,49 +448,29 @@ extension DependencyValues {
 struct DemoRedeemInputValidator: RedeemInputValidator {
     var service: RedeemServiceOption = .erxTaskRepository
 
-    func isValid(version _: Int) -> Validity {
-        .valid
-    }
+    func isValid(version _: Int) -> Validity { .valid }
 
-    func isValid(name _: String?) -> Validity {
-        .valid
-    }
+    func isValid(name _: String?) -> Validity { .valid }
 
-    func isValid(street _: String?) -> Validity {
-        .valid
-    }
+    func isValid(street _: String?) -> Validity { .valid }
 
-    func isValid(zip _: String?) -> Validity {
-        .valid
-    }
+    func isValid(zip _: String?) -> Validity { .valid }
 
-    func isValid(city _: String?) -> Validity {
-        .valid
-    }
+    func isValid(city _: String?) -> Validity { .valid }
 
-    func isValid(hint _: String?) -> Validity {
-        .valid
-    }
+    func isValid(hint _: String?) -> Validity { .valid }
 
-    func isValid(text _: String?) -> Validity {
-        .valid
-    }
+    func isValid(text _: String?) -> Validity { .valid }
 
-    func isValid(phone _: String?) -> Validity {
-        .valid
-    }
+    func isValid(phone _: String?) -> Validity { .valid }
 
-    func isValid(mail _: String?) -> Validity {
-        .valid
-    }
+    func isValid(mail _: String?) -> Validity { .valid }
 
     func ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
         optionType _: RedeemOption,
         phone _: String?,
         mail _: String?
-    ) -> Validity {
-        .valid
-    }
+    ) -> Validity { .valid }
 }
 
 extension String {

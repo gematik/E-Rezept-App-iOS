@@ -165,9 +165,7 @@
 					},
 					"acceptedUntil": "{{DATE:+5D}}",
 					"authoredOn": "{{DATETIME:-50D}}",
-					"flowType": {
-						"pharmacyOnly": {}
-					},
+					"flowType": "160",
 					"prescriptionId": "160.000.006.405.283.05"
 				}
 			]

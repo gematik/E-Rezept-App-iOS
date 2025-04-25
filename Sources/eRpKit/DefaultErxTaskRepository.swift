@@ -416,8 +416,11 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                 let uniqueCommunications = communications.filterUnique()
                 // make sure there is a communication to an existing charge item
                 // since there can be chargeItems without orders
-                let taskIds = uniqueCommunications.map(\.taskId)
-                let relevantChargeItems = chargeItems.filter { taskIds.contains($0.identifier) }
+                let taskIds = uniqueCommunications.map(\.taskIds)
+                let relevantChargeItems = chargeItems.filter { chargeItem in taskIds.contains { task in
+                    task.contains(chargeItem.identifier)
+                }
+                }
                 var count = 0
                 count += uniqueCommunications.filter { $0.isRead == false }.count
                 count += relevantChargeItems.filter { $0.isRead == false }.count

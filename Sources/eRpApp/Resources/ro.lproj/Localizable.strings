@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "parola";
 "auth_btn_bap_faceid" = "FaceID";
 "auth_btn_bap_touchid" = "Touch ID";
-"auth_btn_biometrics_faceid" = "Deblocați cu Face ID";
-"auth_btn_biometrics_touchid" = "Deblocați cu Touch ID";
+"auth_btn_biometrics_faceid" = "Face ID";
+"auth_btn_biometrics_touchid" = "Touch ID";
 "auth_btn_password_continue" = "Mai departe";
 "auth_txt_bap_password_message" = "Vă rugăm să încercați din nou sau introduceți parola.";
 "auth_txt_biometrics_disclaimer" = "Vă rugăm să vă asigurați că persoanele cu care puteți partaja acest dispozitiv și ale căror caracteristici biometrice pot fi stocate pe acest dispozitiv au și acces la rețetele dvs.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Autentificare eșuată";
 "auth_txt_biometrics_failed_not_enrolled" = "Nu a fost configurată nicio securitate biometrică pe acest dispozitiv.";
 "auth_txt_biometrics_failed_user_fallback" = "O alternativă la autentificarea biometrică nu este configurată. Vă rugăm să introduceți o parolă.";
-"auth_txt_biometrics_footer" = "Aveți întrebări sau probleme cu utilizarea aplicației? Puteți contacta asistența noastră telefonică la 0800 277 377 7. \n\n Am răspuns deja la multe întrebări pentru tine pe das-e-rezept-fuer-deutschland.de.";
+"auth_txt_biometrics_footer" = "Ați uitat parola? Vă rugăm să ștergeți aplicația și apoi să o reinstalați. Acest lucru este necesar deoarece stocăm datele dvs. de acces doar local și nu folosim o adresă de e-mail pentru verificare.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -37,11 +37,11 @@
 "auth_txt_biometrics_lockout" = "Ați avut prea multe încercări de conectare eșuate. Accesați setările iPhone-ului și reactivați funcția FaceID sau TouchID introducând un PIN.";
 "auth_txt_biometrics_password_title" = "Securizat cu parola";
 "auth_txt_biometrics_reason" = "%@ este necesar pentru a proteja aplicația împotriva accesului neautorizat.";
-"auth_txt_biometrics_title" = "Bine ati venit";
+"auth_txt_biometrics_title" = "Bun venit";
 "auth_txt_biometrics_touch_id_title" = "Securizat cu Touch ID";
 "auth_txt_biometrics_touchid_description" = "Pentru a vă securiza datele, ați ales Touch ID.";
 "auth_txt_biometrics_touchid_start" = "Deblocați cu Touch ID";
-"auth_txt_failed_login_hint_title" = "Încercări de conectare nereușite";
+"auth_txt_failed_login_hint_title" = "Din păcate, asta nu a funcționat";
 "auth_txt_password_failure" = "Parola gresita. Vă rugăm să încercați din nou.";
 "auth_txt_password_label" = "Câmp de introducere a parolei";
 "auth_txt_password_placeholder" = "Introdu parola";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Deschideți scanerul de rețete";
 "erx_title" = "Rețete";
 "erx_txt_authored" = "Afișat";
-"erx_txt_claimed_at_%@" = "Asumat %@";
+"erx_txt_claimed_at_%@" = "Acceptat %@";
 "erx_txt_current" = "Actual";
 "erx_txt_dispensed_at_%@" = "Furnizat %@";
 "erx_txt_expired_on_%@" = "A expirat pe %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Vă rugăm să accesați site-ul farmaciei pentru a finaliza comanda.";
 "ord_detail_txt_%@_send_to_%@" = "%@ trimis la %@ . Unele farmacii nu au încă o opțiune de răspuns digital. Dacă nu există niciun răspuns până mâine, vă rugăm să sunați ca măsură de precauție.";
 "ord_detail_txt_charge_item%@" = "Ați primit o chitanță pentru costul medicamentului dvs. %@ .";
+"ord_detail_txt_chip_all" = "Toate rețetele comenzii";
 "ord_detail_txt_contact" = "Opțiuni de contact";
 "ord_detail_txt_contact_email" = "Scrie email";
 "ord_detail_txt_contact_map" = "Arată traseul";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "Puteți găsi informații verificate de experți despre boli, coduri ICD și subiecte de prevenire și îngrijire în Portalul Național de Sănătate.";
 "prsc_dtl_med_ingredient_name" = "Numele ingredientului activ";
 "prsc_dtl_med_manufacturing_instructions" = "Instructiuni de fabricatie";
-"prsc_dtl_med_ov_txt_dispensed_header" = "A primi";
+"prsc_dtl_med_ov_txt_dispensed_header" = "Primit";
 "prsc_dtl_med_ov_txt_subscribed_header" = "Prescris";
 "prsc_dtl_med_txt_Note" = "Sfaturi de la farmacie";
 "prsc_dtl_med_txt_amount" = "potenta si unitate";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Modul Demo este activ. Nu aveți nevoie de card de sănătate sau de conexiune la internet. Rețetele de testare afișate nu pot fi răscumpărate într-o farmacie.";
 "stg_txt_alert_title_demo_mode" = "Ți-ar plăcea să explorezi?";
 "stg_txt_alert_title_demo_mode_off" = "Modul demonstrativ dezactivat";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Număr de asigurare: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "ID telematică: %@";
 "stg_txt_audit_events_banner_connect" = "Conectați";
 "stg_txt_audit_events_banner_message" = "Pentru a primi jurnalele de acces, trebuie să fiți conectat la server.";
 "stg_txt_audit_events_missing_date" = "Fără marcaj de timp";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Creați un profil nou";
 "stg_txt_reg_devices_empty_list" = "Nu există dispozitive conectate la acest card de sănătate.";
 "stg_txt_reg_devices_empty_list_title" = "Fără dispozitive";
-"stg_txt_reg_devices_info" = "Este necesară o autentificare suplimentară pentru a vizualiza dispozitivele.";
-"stg_txt_reg_devices_info_title" = "Autentificare necesara";
+"stg_txt_reg_devices_info" = "Vă rugăm să vă conectați și să salvați detaliile de conectare pentru a vedea dispozitivele conectate.";
+"stg_txt_reg_devices_info_title" = "este necesară înregistrarea";
 "stg_txt_reg_devices_registered_since_%@" = "Înregistrat din %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Înregistrat de la %@ (acest dispozitiv)";
 "stg_txt_reg_devices_title" = "Dispozitive conectate";

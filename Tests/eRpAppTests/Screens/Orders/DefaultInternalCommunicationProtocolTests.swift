@@ -59,8 +59,8 @@ final class DefaultInternalCommunicationProtocolTests: XCTestCase {
         let messages = result.elements.flatMap(\.messages)
         expect(messages.count) == 2
 
-        // expect that only the version numbers ["1.27.0", "0.0.0"] are included
-        expect(messages.compactMap(\.version).elementsEqual(["1.27.0", "0.0.0"])) == true
+        // expect that only version numbers ["0.0.0", "1.27.0"] & "0.0.0" should be the first element
+        expect(messages.compactMap(\.version).elementsEqual(["0.0.0", "1.27.0"])) == true
     }
 
     func testLoadWithWithUpdatedOldApp() async throws {

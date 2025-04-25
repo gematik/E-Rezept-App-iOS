@@ -143,16 +143,24 @@ extension ErxTask.Communication.Profile {
     init?(rawValue: RawValue) {
         switch rawValue {
         case Workflow.Key.communicationReply[.v1_1_1],
-             Workflow.Key.communicationReply[.v1_2_0]:
+             Workflow.Key.communicationReply[.v1_2_0],
+             Workflow.Key.communicationReply[.v1_3_0],
+             Workflow.Key.communicationReply[.v1_4_3]:
             self = .reply
         case Workflow.Key.communicationDispReq[.v1_1_1],
-             Workflow.Key.communicationDispReq[.v1_2_0]:
+             Workflow.Key.communicationDispReq[.v1_2_0],
+             Workflow.Key.communicationDispReq[.v1_3_0],
+             Workflow.Key.communicationDispReq[.v1_4_3]:
             self = .dispReq
         case Workflow.Key.communicationInfoReq[.v1_1_1],
-             Workflow.Key.communicationInfoReq[.v1_2_0]:
+             Workflow.Key.communicationInfoReq[.v1_2_0],
+             Workflow.Key.communicationInfoReq[.v1_3_0],
+             Workflow.Key.communicationInfoReq[.v1_4_3]:
             self = .infoReq
         case Workflow.Key.communicationRepresentative[.v1_1_1],
-             Workflow.Key.communicationRepresentative[.v1_2_0]:
+             Workflow.Key.communicationRepresentative[.v1_2_0],
+             Workflow.Key.communicationRepresentative[.v1_3_0],
+             Workflow.Key.communicationRepresentative[.v1_4_3]:
             self = .representative
         default:
             self = .none

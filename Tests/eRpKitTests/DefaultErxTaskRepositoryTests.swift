@@ -438,7 +438,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
             profile: profilePublisher
         )
 
-        let task = ErxTask(identifier: "1234-5678-9098", status: .ready)
+        let task = ErxTask(identifier: "1234-5678-9098", status: .ready, flowType: .pharmacyOnly)
 
         // tasks
         mockLocalDataStore.fetchLatestLastModifiedForErxTasksClosure = {
@@ -448,7 +448,9 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
 
         mockRemoteDataStore.listAllTasksAfterClosure = { _ in
             actualCallOrder.append("listAllTasksRemote")
-            return Just(PagedContent(content: [ErxTask(identifier: task.identifier, status: .cancelled)], next: nil))
+            return Just(PagedContent(
+                content: [ErxTask(identifier: task.identifier, status: .cancelled, flowType: .pharmacyOnly)], next: nil
+            ))
                 .setFailureType(to: RemoteStoreError.self)
                 .eraseToAnyPublisher()
         }
@@ -590,19 +592,20 @@ extension DefaultErxTaskRepositoryTests {
             epaMedication: nil
         )
 
-        static let erxTask1 = ErxTask(identifier: "task1", status: .ready)
-        static let erxTask2 = ErxTask(identifier: "task2", status: .ready)
-        static let erxTask3 = ErxTask(identifier: "task3", status: .ready)
-        static let erxTask4 = ErxTask(identifier: "task4", status: .ready)
-        static let erxTask5 = ErxTask(identifier: "task5", status: .ready)
-        static let erxTask6 = ErxTask(identifier: "task6", status: .ready)
-        static let erxTask7 = ErxTask(identifier: "task7", status: .ready)
-        static let erxTask8 = ErxTask(identifier: "task8", status: .ready)
-        static let erxTask9 = ErxTask(identifier: "task9", status: .ready)
+        static let erxTask1 = ErxTask(identifier: "task1", status: .ready, flowType: .pharmacyOnly)
+        static let erxTask2 = ErxTask(identifier: "task2", status: .ready, flowType: .pharmacyOnly)
+        static let erxTask3 = ErxTask(identifier: "task3", status: .ready, flowType: .pharmacyOnly)
+        static let erxTask4 = ErxTask(identifier: "task4", status: .ready, flowType: .pharmacyOnly)
+        static let erxTask5 = ErxTask(identifier: "task5", status: .ready, flowType: .pharmacyOnly)
+        static let erxTask6 = ErxTask(identifier: "task6", status: .ready, flowType: .pharmacyOnly)
+        static let erxTask7 = ErxTask(identifier: "task7", status: .ready, flowType: .pharmacyOnly)
+        static let erxTask8 = ErxTask(identifier: "task8", status: .ready, flowType: .pharmacyOnly)
+        static let erxTask9 = ErxTask(identifier: "task9", status: .ready, flowType: .pharmacyOnly)
 
         static let scannedTaskWithMedicationSchedule = ErxTask(
             identifier: "scannedTask",
             status: .ready,
+            flowType: .pharmacyOnly,
             source: .scanner,
             medicationSchedule: medicationSchedule
         )
@@ -661,6 +664,7 @@ extension DefaultErxTaskRepositoryTests {
         static let erxTaskWithSchedule = ErxTask(
             identifier: "task1",
             status: .ready,
+            flowType: .pharmacyOnly,
             medicationSchedule: medicationSchedule
         )
 

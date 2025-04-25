@@ -105,13 +105,13 @@ extension AppSecurityManagerError: CodedError {
     var erpErrorCode: String {
         switch self {
             case .savePasswordFailed:
-                return "i-00601"
+                return "i-04401"
             case .retrievePasswordFailed:
-                return "i-00602"
+                return "i-04402"
             case .localAuthenticationContext:
-                return "i-00603"
+                return "i-04403"
             case .migrationFailed:
-                return "i-00604"
+                return "i-04404"
         }
     }
     var erpErrorCodeList: [String] {
@@ -277,17 +277,17 @@ extension ChargeItemConsentService.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .localStore:
-                return "i-03601"
+                return "i-04101"
             case .loginHandler:
-                return "i-03602"
+                return "i-04102"
             case .erxRepository:
-                return "i-03603"
+                return "i-04103"
             case .unexpectedGrantConsentResponse:
-                return "i-03604"
+                return "i-04104"
             case .unexpected:
-                return "i-03605"
+                return "i-04105"
             case .unexpectedRevokeConsentResponse:
-                return "i-03606"
+                return "i-04106"
         }
     }
     var erpErrorCodeList: [String] {
@@ -640,9 +640,9 @@ extension ErxTaskOrder.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .unableToConstructCommunicationRequest:
-                return "i-20601"
+                return "i-20801"
             case .invalidErxTaskOrderInput:
-                return "i-20602"
+                return "i-20802"
         }
     }
     var erpErrorCodeList: [String] {
@@ -1199,7 +1199,7 @@ extension MedicationReminderListDomain.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .generic:
-                return "i-03601"
+                return "i-04201"
         }
     }
     var erpErrorCodeList: [String] {
@@ -1617,6 +1617,29 @@ extension ProfileCoreDataStore.Error: CodedError {
     }
 }
 
+extension RedeemOrderServiceError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .localStore:
+                return "i-03901"
+            case .pharmacy:
+                return "i-03902"
+            case .redeem:
+                return "i-03903"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .localStore(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .pharmacy(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .redeem(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+        }
+    }
+}
+
 extension RedeemServiceError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1877,7 +1900,7 @@ extension ShareSheetDomain.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .shareFailure:
-                return "i-03801"
+                return "i-04301"
         }
     }
     var erpErrorCodeList: [String] {

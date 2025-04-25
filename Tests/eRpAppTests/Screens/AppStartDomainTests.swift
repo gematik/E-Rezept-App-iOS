@@ -80,11 +80,12 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
-                    pharmacySearch: PharmacySearchDomain.State(
-                        selectedPrescriptions: Shared([]),
-                        inRedeemProcess: false,
-                        pharmacyRedeemState: Shared(nil),
-                        pharmacyFilterOptions: Shared([])
+                    pharmacy: PharmacyContainerDomain.State(
+                        pharmacySearch: PharmacySearchDomain.State(
+                            selectedPrescriptions: Shared([]),
+                            inRedeemProcess: false,
+                            pharmacyFilterOptions: Shared([])
+                        )
                     ),
                     orders: OrdersDomain.State(communicationMessage: []),
                     settings: SettingsDomain.State(isDemoMode: false),
@@ -112,10 +113,13 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
-                    pharmacySearch: PharmacySearchDomain.State(selectedPrescriptions: Shared([]),
-                                                               inRedeemProcess: false,
-                                                               pharmacyRedeemState: Shared(nil),
-                                                               pharmacyFilterOptions: Shared([])),
+                    pharmacy: PharmacyContainerDomain.State(
+                        pharmacySearch: PharmacySearchDomain.State(
+                            selectedPrescriptions: Shared([]),
+                            inRedeemProcess: false,
+                            pharmacyFilterOptions: Shared([])
+                        )
+                    ),
                     orders: OrdersDomain.State(communicationMessage: []),
                     settings: .init(isDemoMode: false),
                     unreadOrderMessageCount: 0,

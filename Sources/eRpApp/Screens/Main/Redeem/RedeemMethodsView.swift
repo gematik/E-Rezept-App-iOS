@@ -28,94 +28,84 @@ struct RedeemMethodsView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            NavigationStack {
-                ScrollView {
-                    VStack(alignment: .center, spacing: 16) {
-                        if sizeCategory <= ContentSizeCategory.extraExtraExtraLarge {
-                            Spacer()
-                            Image(asset: Asset.Redeem.pharmacistBlue)
-                                .resizable()
-                                .scaledToFit()
-                                .clipShape(Circle())
-                                .frame(width: 240, height: 240)
-                        }
+            ScrollView {
+                VStack(alignment: .center, spacing: 16) {
+                    if sizeCategory <= ContentSizeCategory.extraExtraExtraLarge {
+                        Spacer()
+                        Image(asset: Asset.Redeem.pharmacistBlue)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
+                            .frame(width: 240, height: 240)
+                    }
 
-                        VStack(spacing: 8) {
-                            Text(L10n.rdmTxtTitle)
-                                .foregroundColor(Colors.systemLabel)
-                                .font(Font.title.bold())
-                                .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacyTitle)
+                    VStack(spacing: 8) {
+                        Text(L10n.rdmTxtTitle)
+                            .foregroundColor(Colors.systemLabel)
+                            .font(Font.title.bold())
+                            .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacyTitle)
 
-                            Text(L10n.rdmTxtSubtitle)
-                                .font(.subheadline)
-                                .foregroundColor(Colors.systemLabelSecondary)
-                                .multilineTextAlignment(.center)
-                                .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacySubtitle)
-                        }
-                        .padding(.horizontal)
+                        Text(L10n.rdmTxtSubtitle)
+                            .font(.subheadline)
+                            .foregroundColor(Colors.systemLabelSecondary)
+                            .multilineTextAlignment(.center)
+                            .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacySubtitle)
+                    }
+                    .padding(.horizontal)
 
-                        if sizeCategory <= ContentSizeCategory.extraExtraExtraLarge {
-                            Spacer()
-                        }
-
-                        Button(
-                            action: { store.send(.showMatrixCodeTapped) },
-                            label: {
-                                Tile(
-                                    title: L10n.rdmBtnRedeemPharmacyTitle,
-                                    description: L10n.rdmBtnRedeemPharmacyDescription,
-                                    discloseIcon: SFSymbolName.rightDisclosureIndicator
-                                )
-                                .padding([.leading, .trailing], 16)
-                            }
-                        )
-                        .buttonStyle(.plain)
-                        .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
-
-                        Button(
-                            action: { store.send(.showPharmacySearchTapped) },
-                            label: {
-                                Tile(
-                                    title: L10n.rdmBtnRedeemSearchPharmacyTitle,
-                                    description: L10n.rdmBtnRedeemSearchPharmacyDescription,
-                                    discloseIcon: SFSymbolName.rightDisclosureIndicator
-                                )
-                                .padding([.leading, .trailing], 16)
-                            }
-                        )
-                        .buttonStyle(.plain)
-                        .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
-
+                    if sizeCategory <= ContentSizeCategory.extraExtraExtraLarge {
                         Spacer()
                     }
-                }
-                .navigationBarItems(
-                    trailing: NavigationBarCloseItem { store.send(.closeButtonTapped) }
-                        .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
-                )
-                .navigationBarTitleDisplayMode(.inline)
-                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
-                    let navigationBar = navigationController.navigationBar
-                    navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                    let navigationBarAppearance = UINavigationBarAppearance()
-                    navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                    navigationBar.standardAppearance = navigationBarAppearance
-                }
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.matrixCode, action: \.destination.matrixCode)
-                ) { store in
-                    MatrixCodeView(store: store)
-                }
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.pharmacySearch, action: \.destination.pharmacySearch)
-                ) { store in
-                    PharmacySearchView(store: store)
-                        .navigationBarTitleDisplayMode(.inline)
+
+                    Button(
+                        action: { store.send(.matrixCodeTapped) },
+                        label: {
+                            Tile(
+                                title: L10n.rdmBtnRedeemPharmacyTitle,
+                                description: L10n.rdmBtnRedeemPharmacyDescription,
+                                discloseIcon: SFSymbolName.rightDisclosureIndicator
+                            )
+                            .padding([.leading, .trailing], 16)
+                        }
+                    )
+                    .buttonStyle(.plain)
+                    .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
+
+                    Button(
+                        action: { store.send(.delegate(.redeemOverview(store.prescriptions))) },
+                        label: {
+                            Tile(
+                                title: L10n.rdmBtnRedeemSearchPharmacyTitle,
+                                description: L10n.rdmBtnRedeemSearchPharmacyDescription,
+                                discloseIcon: SFSymbolName.rightDisclosureIndicator
+                            )
+                            .padding([.leading, .trailing], 16)
+                        }
+                    )
+                    .buttonStyle(.plain)
+                    .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
+
+                    Spacer()
                 }
             }
-            .tint(Colors.primary700)
-            .navigationViewStyle(StackNavigationViewStyle())
+            .navigationBarItems(
+                trailing: NavigationBarCloseItem { store.send(.closeButtonTapped) }
+                    .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
+                let navigationBar = navigationController.navigationBar
+                navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                let navigationBarAppearance = UINavigationBarAppearance()
+                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                navigationBar.standardAppearance = navigationBarAppearance
+            }
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.matrixCode, action: \.destination.matrixCode)
+            ) { store in
+                MatrixCodeView(store: store)
+            }
         }
     }
 }

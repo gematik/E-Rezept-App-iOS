@@ -60,6 +60,7 @@ class PharmacyContactDomainTests: XCTestCase {
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.shipmentInfoDataStore = mockShipmentInfoDataStore
             dependencies.redeemInputValidator = mockInputValidator
+            dependencies.redeemOrderInputValidator.type = { [mockInputValidator] _ in mockInputValidator }
         }
     }
 
@@ -67,7 +68,7 @@ class PharmacyContactDomainTests: XCTestCase {
         // given
         let sut = testStore(for: PharmacyContactDomain.State(
             shipmentInfo: shipmentInfo,
-            service: .erxTaskRepository
+            serviceOption: .erxTaskRepository
         ))
         mockInputValidator.returnValue = .valid
         mockShipmentInfoDataStore.saveShipmentInfosReturnValue = Just([shipmentInfo])
@@ -89,7 +90,7 @@ class PharmacyContactDomainTests: XCTestCase {
         let sut = testStore(
             for: PharmacyContactDomain.State(
                 shipmentInfo: shipmentInfo,
-                service: .erxTaskRepository
+                serviceOption: .erxTaskRepository
             )
         )
         mockInputValidator.returnValue = .valid
@@ -121,7 +122,7 @@ class PharmacyContactDomainTests: XCTestCase {
         let sut = testStore(
             for: PharmacyContactDomain.State(
                 shipmentInfo: shipmentInfo,
-                service: .erxTaskRepository
+                serviceOption: .erxTaskRepository
             )
         )
 
@@ -178,7 +179,7 @@ class PharmacyContactDomainTests: XCTestCase {
         let sut = testStore(
             for: PharmacyContactDomain.State(
                 shipmentInfo: shipmentInfo,
-                service: .erxTaskRepository
+                serviceOption: .erxTaskRepository
             )
         )
 

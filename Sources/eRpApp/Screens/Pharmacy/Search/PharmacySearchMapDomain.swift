@@ -51,10 +51,6 @@ struct PharmacySearchMapDomain {
         @Shared(.pharmacyFilterOptions) var pharmacyFilterOptions
 
         @Presents var destination: Destination.State?
-        /// Stores the pharmacy used for the detail view so it can be displayed again when going back to the redeem view
-        var detailsPharmacy: PharmacyLocationViewModel?
-
-        var pharmacyRedeemState: PharmacyRedeemDomain.State?
         /// Boolean for searching after location got authorized
         var searchAfterAuthorized = false
         /// Boolean for only displaying the result from the text search result and not from the map
@@ -72,10 +68,6 @@ struct PharmacySearchMapDomain {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = alert
         case alert(ErpAlertState<Alert>)
-        // sourcery: AnalyticsScreen = redeem_viaAVS
-        case redeemViaAVS(PharmacyRedeemDomain)
-        // sourcery: AnalyticsScreen = redeem_viaTI
-        case redeemViaErxTaskRepository(PharmacyRedeemDomain)
 
         case clusterSheet(PharmacySearchClusterDomain)
 
@@ -83,38 +75,6 @@ struct PharmacySearchMapDomain {
             case openAppSpecificSettings
             case performSearch
             case close
-        }
-
-        static var body: some ReducerOf<Self> {
-            @Dependency(\.avsMessageValidator) var avsMessageValidator
-            @Dependency(\.avsRedeemService) var avsRedeemService
-
-            Scope(state: \.redeemViaAVS, action: \.redeemViaAVS) {
-                PharmacyRedeemDomain()
-                    .dependency(\.redeemInputValidator, avsMessageValidator)
-                    .dependency(\.redeemService, avsRedeemService())
-            }
-
-            @Dependency(\.erxTaskOrderValidator) var erxTaskOrderValidator
-            @Dependency(\.erxTaskRepositoryRedeemService) var erxTaskRepositoryRedeemService
-
-            Scope(state: \.redeemViaErxTaskRepository, action: \.redeemViaErxTaskRepository) {
-                PharmacyRedeemDomain()
-                    .dependency(\.redeemInputValidator, erxTaskOrderValidator)
-                    .dependency(\.redeemService, erxTaskRepositoryRedeemService())
-            }
-
-            Scope(state: \.pharmacy, action: \.pharmacy) {
-                PharmacyDetailDomain()
-            }
-
-            Scope(state: \.filter, action: \.filter) {
-                PharmacySearchFilterDomain()
-            }
-
-            Scope(state: \.clusterSheet, action: \.clusterSheet) {
-                PharmacySearchClusterDomain()
-            }
         }
     }
 
@@ -264,10 +224,7 @@ struct PharmacySearchMapDomain {
             return .none
         case let .destination(.presented(.clusterSheet(.delegate(.showDetails(viewModel))))):
             state.destination = nil
-            state.detailsPharmacy = viewModel
-            return .run { send in
-                await send(.showDetails(viewModel))
-            }
+            return .send(.showDetails(viewModel))
         case .performSearch:
             if let index = state.pharmacyFilterOptions.firstIndex(of: .currentLocation) {
                 state.pharmacyFilterOptions.remove(at: index)
@@ -308,16 +265,13 @@ struct PharmacySearchMapDomain {
             }
             return .none
         case let .showDetails(viewModel):
-            state.detailsPharmacy = viewModel
-
             state.destination = .pharmacy(PharmacyDetailDomain.State(
                 prescriptions: Shared([]),
                 selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
                 hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                onMapView: true,
-                pharmacyRedeemState: Shared(nil)
+                onMapView: true
             ))
             return .none
         case .onAppear:
@@ -369,62 +323,6 @@ struct PharmacySearchMapDomain {
             if let index = state.pharmacies.firstIndex(where: { $0.telematikID == pharmacy.telematikID }) {
                 state.pharmacies[index] = pharmacy
             }
-            return .none
-        case let .destination(.presented(.pharmacy(.delegate(
-            .showPharmacyRedeemView(service: service,
-                                    option: option,
-                                    prescriptions: prescriptions,
-                                    selectedPrescriptions: selectedPrescriptions)
-        )))):
-            guard let pharmacy = state.detailsPharmacy else { return .none }
-
-            // An array of prescriptions that represents the selected prescriptions.
-            var arrayOfPrescriptions: [Prescription] = []
-            if let redeemPrescriptions = state.pharmacyRedeemState?.selectedPrescriptions {
-                // If the user has already selected prescription from the current redeeming process,
-                // these will be used first
-                arrayOfPrescriptions = redeemPrescriptions
-            } else if state.inRedeemProcess {
-                // If the user has started the redeeming process from the main view, we select these prescriptions.
-                arrayOfPrescriptions = selectedPrescriptions
-            }
-
-            let redeemState = PharmacyRedeemDomain.State(
-                redeemOption: option,
-                prescriptions: Shared(state.pharmacyRedeemState?.prescriptions ?? prescriptions),
-                pharmacy: pharmacy.pharmacyLocation,
-                selectedPrescriptions: Shared(arrayOfPrescriptions)
-            )
-            state.destination = destination(service: service, state: redeemState)
-            state.pharmacyRedeemState = nil
-            return .none
-        case .destination(.presented(.redeemViaErxTaskRepository(.delegate(.closeRedeemView)))),
-             .destination(.presented(.redeemViaAVS(.delegate(.closeRedeemView)))):
-            guard let viewModel = state.detailsPharmacy else { return .none }
-
-            state.destination = .pharmacy(PharmacyDetailDomain.State(
-                prescriptions: Shared([]),
-                selectedPrescriptions: state.$selectedPrescriptions,
-                inRedeemProcess: state.inRedeemProcess,
-                pharmacyViewModel: viewModel,
-                hasRedeemableTasks: !state.selectedPrescriptions.isEmpty,
-                onMapView: true,
-                pharmacyRedeemState: Shared(nil)
-            ))
-            return .none
-        case .destination(.presented(.redeemViaErxTaskRepository(.delegate(.close)))),
-             .destination(.presented(.redeemViaAVS(.delegate(.close)))):
-            state.destination = nil
-            return .run { send in
-                // swiftlint:disable:next todo
-                // TODO: this is workaround to avoid `onAppear` of the the child view getting called
-                try await schedulers.main.sleep(for: 0.1)
-                await send(.delegate(.close))
-            }
-        case let .destination(.presented(.redeemViaAVS(.delegate(.changePharmacy(saveState))))),
-             let .destination(.presented(.redeemViaErxTaskRepository(.delegate(.changePharmacy(saveState))))):
-            state.destination = nil
-            state.pharmacyRedeemState = saveState
             return .none
         // Location
         case .requestLocation:
@@ -592,18 +490,6 @@ extension PharmacySearchMapDomain {
         let avgLongitude = totalLongitude / Double(pharmacies.count)
 
         return Location(rawValue: .init(latitude: avgLatitude, longitude: avgLongitude))
-    }
-
-    func destination(service: RedeemServiceOption, state: PharmacyRedeemDomain.State) -> PharmacySearchMapDomain
-        .Destination.State? {
-        switch service {
-        case .avs:
-            return .redeemViaAVS(state)
-        case .erxTaskRepository, .erxTaskRepositoryAvailable:
-            return .redeemViaErxTaskRepository(state)
-        case .noService:
-            return nil
-        }
     }
 
     func loadSearchAction(location: Location,

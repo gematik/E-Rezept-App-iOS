@@ -80,11 +80,30 @@ extension ModelsR4.Bundle {
                 }
             }
 
-            return ErxAuditEvent(identifier: identifier,
-                                 locale: auditEvent.language?.value?.string,
-                                 text: text,
-                                 timestamp: auditEvent.recorded.value?.description,
-                                 taskId: taskId)
+            var agentName: String?
+            var agentTelematikId: String?
+            // For accesses by pharmacies we also want to display the Telematik ID
+            if let agent = auditEvent.agent.first {
+                // According to simplifier the name is mandatory
+                // https://simplifier.net/packages/de.gematik.erezept-workflow.r4/1.4.3/files/2550117
+                agentName = agent.name?.value?.string
+                if let who = agent.who,
+                   // According to simplifier the identifier is mandatory
+                   // https://simplifier.net/packages/de.gematik.erezept-workflow.r4/1.4.3/files/2550117
+                   let agentIdentifier = who.identifier {
+                    agentTelematikId = agentIdentifier.value?.value?.string
+                }
+            }
+
+            return ErxAuditEvent(
+                identifier: identifier,
+                locale: auditEvent.language?.value?.string,
+                text: text,
+                timestamp: auditEvent.recorded.value?.description,
+                taskId: taskId,
+                agentName: agentName,
+                agentTelematikId: agentTelematikId
+            )
         } ?? []
     }
 }

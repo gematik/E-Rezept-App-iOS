@@ -83,7 +83,8 @@ extension UserProfile {
             let elements = ssoToken.split(separator: 0x2E, omittingEmptySubsequences: false)
             if let header = elements.first,
                let decodedHeader = Data(base64Encoded: header),
-               let tokenHeader = try? JSONDecoder().decode(SSOTokenHeader.self, from: decodedHeader),
+               // dateDecodingStrategy for SSOTokenHeader needs to be .secondsSince1970
+               let tokenHeader = try? JSONDecoder.base1970DateDecoder.decode(SSOTokenHeader.self, from: decodedHeader),
                tokenHeader.exp?.compare(Date()) == .orderedDescending {
                 return .connected
             }

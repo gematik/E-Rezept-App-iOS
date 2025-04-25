@@ -163,19 +163,17 @@ struct DefaultUserProfileService: UserProfileService {
     func activeUserProfilePublisher() -> AnyPublisher<UserProfile, UserProfileServiceError> {
         userSession.profile()
             .mapError(UserProfileServiceError.localStoreError)
-            .combineLatest(
-                userSession.isAuthenticated
-                    .catch { _ in
-                        Just(false)
-                    }
-                    .setFailureType(to: UserProfileServiceError.self)
-                    .eraseToAnyPublisher(),
-                userSession.activityIndicating.isActive
-                    .setFailureType(to: UserProfileServiceError.self)
+            .map { (profile: Profile) -> AnyPublisher<UserProfile, Never> in
+                Just(profile)
+                    .combineLatest(
+                        profileOnlineChecker.token(for: profile),
+                        userSessionProvider.userSession(for: profile.id).activityIndicating.isActive
+                    )
+                    .map(UserProfile.init)
+                    .removeDuplicates()
                     .eraseToAnyPublisher()
-            )
-            .map(UserProfile.init)
-            .removeDuplicates()
+            }
+            .switchToLatest()
             .eraseToAnyPublisher()
     }
 

@@ -38,8 +38,10 @@ struct PrescriptionListView<StickyHeader: View>: View {
                 content: {
                     if store.openPrescriptions.isEmpty {
                         PrescriptionListEmptyView(store: store)
+                            .transition(.opacity.animation(.easeOut(duration: 0.2)))
                     } else {
                         ListView(store: store)
+                            .transition(.opacity.animation(.easeOut(duration: 0.2)))
                     }
                 },
                 header: {
@@ -52,11 +54,9 @@ struct PrescriptionListView<StickyHeader: View>: View {
             )
             .onAppear {
                 store.send(.registerActiveUserProfileListener)
-                store.send(.registerSelectedProfileIDListener)
             }
             .onDisappear {
                 store.send(.unregisterActiveUserProfileListener)
-                store.send(.unregisterSelectedProfileIDListener)
             }
             .alert(
                 L10n.alertErrorTitle.key,

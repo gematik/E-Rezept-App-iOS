@@ -74,6 +74,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
         erxTask = ErxTask(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
+            flowType: .pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.today),
@@ -95,6 +96,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
         .init(
             identifier: "34235f983-1e67-331g-8955-63bf44e44fb8",
             status: .ready,
+            flowType: .pharmacyOnly,
             accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.yesterday),
@@ -106,7 +108,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
     func testStore() -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         return TestStore(initialState: RedeemMethodsDomain
-            .State(prescriptions: Shared([Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady]))) {
+            .State(prescriptions: [Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady])) {
                 RedeemMethodsDomain()
         } withDependencies: { dependencies in
             dependencies.schedulers = schedulers
@@ -123,26 +125,9 @@ final class RedeemMethodsDomainTests: XCTestCase {
         )
 
         // when
-        await store.send(.showMatrixCodeTapped) { sut in
+        await store.send(.matrixCodeTapped) { sut in
             // then
             sut.destination = .matrixCode(expectedState)
-        }
-    }
-
-    func testOpenPharmacySearchScreen() async {
-        let store = testStore()
-
-        let expectedState = PharmacySearchDomain.State(
-            selectedPrescriptions: Shared([Prescription.Dummies.scanned, Prescription.Dummies.prescriptionReady]),
-            inRedeemProcess: true,
-            pharmacyRedeemState: Shared(nil),
-            pharmacyFilterOptions: Shared([])
-        )
-
-        // when
-        await store.send(.showPharmacySearchTapped) { sut in
-            // then
-            sut.destination = .pharmacySearch(expectedState)
         }
     }
 }

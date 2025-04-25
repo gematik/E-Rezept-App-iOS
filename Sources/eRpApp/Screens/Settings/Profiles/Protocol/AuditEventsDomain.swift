@@ -54,6 +54,18 @@ struct AuditEventsDomain {
             let title: String?
             let description: String?
             let date: String?
+            let agentName: String?
+            let agentTelematikId: String?
+
+            var telematikIdInfo: String? {
+                guard let agentTelematikId else { return nil }
+
+                if KVNR(value: agentTelematikId).isValid {
+                    return L10n.stgTxtAuditEventEventTelematikIdInfoKvnr(agentTelematikId).text
+                } else {
+                    return L10n.stgTxtAuditEventEventTelematikIdInfoTelematikId(agentTelematikId).text
+                }
+            }
         }
     }
 
@@ -195,7 +207,9 @@ extension Collection where Element == ErxAuditEvent {
                 id: $0.id,
                 title: $0.title,
                 description: $0.text?.trimmed(),
-                date: date
+                date: date,
+                agentName: $0.agentName,
+                agentTelematikId: $0.agentTelematikId
             )
         }
     }

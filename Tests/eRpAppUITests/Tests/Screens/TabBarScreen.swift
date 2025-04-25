@@ -36,7 +36,8 @@ struct TabBarScreen: Screen {
     }
 
     @discardableResult
-    func tapRedeemTab(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> PharmacySearchScreen {
+    func tapPharmacySearchTab(fileID: String = #fileID, file: String = #filePath,
+                              line: UInt = #line) -> PharmacySearchScreen {
         button(within: app.tabBars, by: "Apothekensuche", fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)

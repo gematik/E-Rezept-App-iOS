@@ -32,9 +32,9 @@ struct AppDomain {
             // sourcery: AnalyticsState = main
             // sourcery: AnalyticsScreen = main
             case main
-            // sourcery: AnalyticsState = pharmacySearch
+            // sourcery: AnalyticsState = pharmacy
             // sourcery: AnalyticsScreen = pharmacySearch
-            case pharmacySearch
+            case pharmacy
             // sourcery: AnalyticsState = orders
             // sourcery: AnalyticsScreen = orders
             case orders
@@ -55,7 +55,7 @@ struct AppDomain {
         var destination: Destinations.State
 
         var main: MainDomain.State
-        var pharmacySearch: PharmacySearchDomain.State
+        var pharmacy: PharmacyContainerDomain.State
         var orders: OrdersDomain.State
         var settings: SettingsDomain.State
 
@@ -70,7 +70,7 @@ struct AppDomain {
         init(
             destination: Destinations.State,
             main: MainDomain.State,
-            pharmacySearch: PharmacySearchDomain.State,
+            pharmacy: PharmacyContainerDomain.State,
             orders: OrdersDomain.State,
             settings: SettingsDomain.State,
             unreadOrderMessageCount: Int,
@@ -79,7 +79,7 @@ struct AppDomain {
         ) {
             self.destination = destination
             self.main = main
-            self.pharmacySearch = pharmacySearch
+            self.pharmacy = pharmacy
             self.orders = orders
             self.settings = settings
             self.unreadOrderMessageCount = unreadOrderMessageCount
@@ -99,7 +99,7 @@ struct AppDomain {
         case setNavigation(Destinations.State)
 
         case main(action: MainDomain.Action)
-        case pharmacySearch(action: PharmacySearchDomain.Action)
+        case pharmacy(action: PharmacyContainerDomain.Action)
         case orders(action: OrdersDomain.Action)
         case settings(action: SettingsDomain.Action)
     }
@@ -114,8 +114,8 @@ struct AppDomain {
             MainDomain()
         }
 
-        Scope(state: \.pharmacySearch, action: \.pharmacySearch) {
-            PharmacySearchDomain()
+        Scope(state: \.pharmacy, action: \.pharmacy) {
+            PharmacyContainerDomain()
         }
 
         Scope(state: \.orders, action: \.orders) {
@@ -146,12 +146,12 @@ struct AppDomain {
             return .concatenate(
                 .send(.main(action: .setNavigation(tag: .none))),
                 .send(.orders(action: .resetNavigation)),
-                .send(.pharmacySearch(action: .resetNavigation))
+                .send(.pharmacy(action: .pharmacySearch(.resetNavigation)))
             )
         case .main(action: .horizontalProfileSelection(action: .selectProfile)):
             return .concatenate(
                 .send(.orders(action: .resetNavigation)),
-                .send(.pharmacySearch(action: .resetNavigation))
+                .send(.pharmacy(action: .pharmacySearch(.resetNavigation)))
             )
         case let .isDemoModeReceived(isDemoMode):
             state.isDemoMode = isDemoMode
@@ -197,8 +197,8 @@ struct AppDomain {
                 case .main:
                     state.main.destination = nil
                     return .none
-                case .pharmacySearch:
-                    state.pharmacySearch.destination = nil
+                case .pharmacy:
+                    state.pharmacy.pharmacySearch.destination = nil
                     return .none
                 case .orders:
                     state.orders.destination = nil
@@ -211,7 +211,7 @@ struct AppDomain {
                 state.destination = destination
                 return .none
             }
-        case .main, .settings, .pharmacySearch, .orders:
+        case .main, .settings, .pharmacy, .orders:
             return .none
         }
     }
@@ -226,7 +226,9 @@ extension AppDomain {
         static let state = State(
             destination: .main,
             main: MainDomain.Dummies.state,
-            pharmacySearch: PharmacySearchDomain.Dummies.stateStartView,
+            pharmacy: PharmacyContainerDomain.State(
+                pharmacySearch: PharmacySearchDomain.Dummies.stateStartView
+            ),
             orders: OrdersDomain.Dummies.state,
             settings: SettingsDomain.Dummies.state,
             unreadOrderMessageCount: 0,

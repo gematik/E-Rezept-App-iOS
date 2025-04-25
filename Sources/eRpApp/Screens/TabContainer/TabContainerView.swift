@@ -42,19 +42,16 @@ struct TabContainerView: View {
                             }
                             .tag(AppDomain.Destinations.State.main)
 
-                        NavigationStack {
-                            PharmacySearchView(
-                                store: store.scope(
-                                    state: \.pharmacySearch,
-                                    action: \.pharmacySearch
-                                )
+                        PharmacyContainerView(
+                            store: store.scope(
+                                state: \.pharmacy,
+                                action: \.pharmacy
                             )
-                        }
-                        .navigationViewStyle(StackNavigationViewStyle())
+                        )
                         .tabItem {
                             Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
                         }
-                        .tag(AppDomain.Destinations.State.pharmacySearch)
+                        .tag(AppDomain.Destinations.State.pharmacy)
 
                         OrdersView(store: store.scope(state: \.orders, action: \.orders))
                             .tabItem {

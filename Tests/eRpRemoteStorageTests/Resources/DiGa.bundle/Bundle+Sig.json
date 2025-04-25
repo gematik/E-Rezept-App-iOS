@@ -1,0 +1,132 @@
+{
+	"resourceType": "Bundle",
+	"type": "searchset",
+	"entry": [
+		{
+			"resource": {
+				"resourceType": "Task",
+				"id": "5e00e907-1e4f-11b2-80be-b806a73c0cd0",
+				"meta": {
+					"versionId": "1",
+					"lastUpdated": "2021-03-24T08:35:26.755528037+00:00",
+					"profile": [
+						"https://gematik.de/fhir/StructureDefinition/ErxTask"
+					]
+				},
+				"extension": [
+					{
+						"url": "https://gematik.de/fhir/StructureDefinition/PrescriptionType",
+						"valueCoding": {
+							"system": "https://gematik.de/fhir/CodeSystem/Flowtype",
+							"code": "160",
+							"display": "Muster 16 (Apothekenpflichtige Arzneimittel)"
+						}
+					},
+					{
+						"url": "https://gematik.de/fhir/StructureDefinition/AcceptDate",
+						"valueDate": "2021-04-23"
+					},
+					{
+						"url": "https://gematik.de/fhir/StructureDefinition/ExpiryDate",
+						"valueDate": "2021-06-24"
+					}
+				],
+				"identifier": [
+					{
+						"system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+						"value": "160.000.711.572.601.54"
+					},
+					{
+						"system": "https://gematik.de/fhir/NamingSystem/AccessCode",
+						"value": "9d6f58a2c5a89c0681f91cbd69dd666f365443e3ae114d7d9ca9162181f7d34d"
+					}
+				],
+				"status": "ready",
+				"intent": "order",
+				"for": {
+					"identifier": {
+						"system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+						"value": "X234567890"
+					}
+				},
+				"authoredOn": "2021-03-24T08:35:26.548167988+00:00",
+				"lastModified": "2021-03-24T08:35:26.548174460+00:00",
+				"performerType": [
+					{
+						"coding": [
+							{
+								"system": "urn:ietf:rfc:3986",
+								"code": "urn:oid:1.2.276.0.76.4.54",
+								"display": "Öffentliche Apotheke"
+							}
+						]
+					}
+				],
+				"input": [
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "https://gematik.de/fhir/CodeSystem/Documenttype",
+									"code": "1",
+									"display": "Health Care Provider Prescription"
+								}
+							]
+						},
+						"valueReference": {
+							"reference": "36B97247A9AA92CD46A4D65A2247C6B00B89C8D1867CB0D597AE979914F8855E"
+						}
+					},
+					{
+						"type": {
+							"coding": [
+								{
+									"system": "https://gematik.de/fhir/CodeSystem/Documenttype",
+									"code": "2",
+									"display": "Patient Confirmation"
+								}
+							]
+						},
+						"valueReference": {
+							"reference": "5e2061f0-1e4f-11b2-80bf-b806a73c0cd0"
+						}
+					}
+				]
+			}
+		},
+		{
+			"resource": {
+				"resourceType": "Bundle",
+				"id": "5e2061f0-1e4f-11b2-80bf-b806a73c0cd0",
+				"meta": {
+					"profile": [
+						"https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.0.2"
+					]
+				},
+				"identifier": {
+					"system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+					"value": "160.123.456.789.123.58"
+				},
+				"type": "document",
+				"timestamp": "2020-06-23T08:30:00+00:00",
+                "entry": "{{ENTRYDIGA}}",
+				"signature": {
+					"type": [
+						{
+							"system": "urn:iso-astm:E1762-95:2013",
+							"code": "1.2.840.10065.1.12.1.1",
+							"display": "Author's Signature"
+						}
+					],
+					"when": "2021-03-24T08:35:26.755524033+00:00",
+					"who": {
+						"reference": "Device/software"
+					},
+					"targetFormat": "application/fhir+json",
+					"sigFormat": "application/jose",
+					"data": "eyJhbGciOiJCUDI1NlIxIiwieDVjIjpbIk1JSUN4RENDQW11Z0F3SUJBZ0lIQVBQeE1jNkR4ekFLQmdncWhrak9QUVFEQWpDQmhERUxNQWtHQTFVRUJoTUNSRVV4SHpBZEJnTlZCQW9NRm1kbGJXRjBhV3NnUjIxaVNDQk9UMVF0VmtGTVNVUXhNakF3QmdOVkJBc01LVXR2YlhCdmJtVnVkR1Z1TFVOQklHUmxjaUJVWld4bGJXRjBhV3RwYm1aeVlYTjBjblZyZEhWeU1TQXdIZ1lEVlFRRERCZEhSVTB1UzA5TlVDMURRVEV3SUZSRlUxUXRUMDVNV1RBZUZ3MHlNREV3TURjd01EQXdNREJhRncweU5UQTRNRGN3TURBd01EQmFNRjR4Q3pBSkJnTlZCQVlUQWtSRk1TWXdKQVlEVlFRS0RCMW5aVzFoZEdscklGUkZVMVF0VDA1TVdTQXRJRTVQVkMxV1FVeEpSREVuTUNVR0ExVUVBd3dlUlZKUUlGSmxabVZ5Wlc1NlpXNTBkMmxqYTJ4MWJtY2dSa1FnVTJsbk1Gb3dGQVlIS29aSXpqMENBUVlKS3lRREF3SUlBUUVIQTBJQUJFbGRZbjZDSzlmdDhMOEhNcEpCUkxTRzg1Mkx3cWJtRlVraGJkc0sxRzRvQkRZaEFxQjBJTXlvK1BKM2ZVbHVnZ29BT0hSRFRQVDBHUjBXaHFURmtGdWpnZXN3Z2Vnd09BWUlLd1lCQlFVSEFRRUVMREFxTUNnR0NDc0dBUVVGQnpBQmhoeG9kSFJ3T2k4dlpXaGpZUzVuWlcxaGRHbHJMbVJsTDI5amMzQXZNQTRHQTFVZER3RUIvd1FFQXdJSGdEQWhCZ05WSFNBRUdqQVlNQW9HQ0NxQ0ZBQk1CSUZMTUFvR0NDcUNGQUJNQklFak1COEdBMVVkSXdRWU1CYUFGQ2p3K09hcHlIZk1RMFhibXE3WE9vT3NEZytvTUIwR0ExVWREZ1FXQkJURk9GN2pDNEhlOVA0MXROMkVneWdhcmM5enJ6QU1CZ05WSFJNQkFmOEVBakFBTUNzR0JTc2tDQU1EQkNJd0lEQWVNQnd3R2pBWU1Bb01DRVV0VW1WNlpYQjBNQW9HQ0NxQ0ZBQk1CSUlETUFvR0NDcUdTTTQ5QkFNQ0EwY0FNRVFDSUMzR2huV0FlaldPNzNXd0VLREpYdHVNQ1FOUWVtdy9LbGpTZUFCem4wSGRBaUIrd1NGa0JjY0VNRTMrUWpaRU0wU0piUTAybisyS2RVNHBpdTJvMFQzNWFBPT0iXX0..oPJLW8tt9UhAn9j7NtP4r5Dc1mmJPzhOfeguwg_EzgE5rTnsO4NcQ82NUGMMy6Siezxkv9TOKEDvNFE8cZiHaQ"
+				}
+			}
+		}
+	]
+}

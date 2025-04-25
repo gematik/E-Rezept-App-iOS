@@ -117,8 +117,8 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             color: .grey,
             image: .boyWithCard,
             lastAuthenticated: Date(),
-            erxTasks: [ErxTask(identifier: "id1", status: .ready, accessCode: "accessCode1"),
-                       ErxTask(identifier: "id2", status: .ready, accessCode: "accessCode2")]
+            erxTasks: [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
+                       ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
         )
     }()
 
@@ -264,7 +264,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             insuranceId: "k1234",
             color: .red,
             lastAuthenticated: Date(),
-            erxTasks: [ErxTask(identifier: "id", status: .ready, accessCode: "access")]
+            erxTasks: [ErxTask(identifier: "id", status: .ready, flowType: .pharmacyOnly, accessCode: "access")]
         )
         // when updating the saved profile
         try store.add(profiles: [updatedProfile])

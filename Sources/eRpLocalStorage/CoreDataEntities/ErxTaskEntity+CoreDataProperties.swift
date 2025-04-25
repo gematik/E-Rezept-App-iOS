@@ -57,6 +57,7 @@ extension ErxTaskEntity {
     @NSManaged public var accidentInfo: ErxTaskAccidentInfoEntity?
     @NSManaged public var quantity: ErxTaskQuantityEntity?
     @NSManaged public var medicationSchedule: MedicationScheduleEntity?
+    @NSManaged public var deviceRequest: ErxTaskDeviceRequestEntity?
 }
 
 // MARK: Generated accessors for avsTransaction

@@ -1,0 +1,284 @@
+[ {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Composition/1dcf9311-c44f-4d69-9e49-ca41567df6f1",
+  "resource": {
+    "resourceType": "Composition",
+    "id": "1dcf9311-c44f-4d69-9e49-ca41567df6f1",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_EVDGA_Composition|1.0" ]
+    },
+    "extension": [ {
+      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Legal_basis",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_STATUSKENNZEICHEN",
+        "code": "00"
+      }
+    } ],
+    "status": "final",
+    "type": {
+      "coding": [ {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_FORMULAR_ART",
+        "code": "e16D"
+      } ]
+    },
+    "subject": {
+      "reference": "Patient/40acd463-b25d-4ede-8b1f-2b0994f29aa5"
+    },
+    "date": "2023-03-26T13:12:00Z",
+    "author": [ {
+      "reference": "Practitioner/3f88bad6-2bb3-4ef8-a622-1625816e6de6",
+      "type": "Practitioner"
+    }, {
+      "type": "Device",
+      "identifier": {
+        "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_FOR_Pruefnummer",
+        "value": "Y/450/2501/36/523"
+      }
+    } ],
+    "title": "elektronische Verordnung digitaler Gesundheitsanwendungen",
+    "custodian": {
+      "reference": "Organization/6878b966-901b-4750-b382-70332bca29c3"
+    },
+    "section": [ {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_EVDGA_Section_Type",
+          "code": "Prescription"
+        } ]
+      },
+      "entry": [ {
+        "reference": "DeviceRequest/625e0b13-3a43-43ee-98f2-be7f8539089d"
+      } ]
+    }, {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_EVDGA_Section_Type",
+          "code": "HealthInsurance"
+        } ]
+      },
+      "entry": [ {
+        "reference": "Coverage/2d3a92c2-c93c-47ad-8ab5-49b275be97ee"
+      } ]
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/DeviceRequest/625e0b13-3a43-43ee-98f2-be7f8539089d",
+  "resource": {
+    "resourceType": "DeviceRequest",
+    "id": "625e0b13-3a43-43ee-98f2-be7f8539089d",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_EVDGA_HealthAppRequest|1.0" ]
+    },
+    "extension": [ {
+      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_EVDGA_SER",
+      "valueBoolean": false
+    } ],
+    "status": "active",
+    "intent": "order",
+    "codeCodeableConcept": {
+      "coding": [ {
+        "system": "http://fhir.de/CodeSystem/ifa/pzn",
+        "code": "17946626"
+      } ],
+      "text": "HelloBetter Schmerzen 001"
+    },
+    "subject": {
+      "reference": "Patient/40acd463-b25d-4ede-8b1f-2b0994f29aa5"
+    },
+    "authoredOn": "2023-03-26",
+    "requester": {
+      "reference": "Practitioner/3f88bad6-2bb3-4ef8-a622-1625816e6de6"
+    },
+    "insurance": [ {
+      "reference": "Coverage/2d3a92c2-c93c-47ad-8ab5-49b275be97ee"
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Patient/40acd463-b25d-4ede-8b1f-2b0994f29aa5",
+  "resource": {
+    "resourceType": "Patient",
+    "id": "40acd463-b25d-4ede-8b1f-2b0994f29aa5",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.1.0" ]
+    },
+    "identifier": [ {
+      "type": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+          "code": "GKV"
+        } ]
+      },
+      "system": "http://fhir.de/sid/gkv/kvid-10",
+      "value": "X234567890"
+    } ],
+    "name": [ {
+      "use": "official",
+      "family": "Königsstein",
+      "_family": {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+          "valueString": "Königsstein"
+        } ]
+      },
+      "given": [ "Ludger" ]
+    } ],
+    "birthDate": "1935-06-22",
+    "address": [ {
+      "type": "both",
+      "line": [ "Musterstr. 1" ],
+      "_line": [ {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+          "valueString": "1"
+        }, {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+          "valueString": "Musterstr."
+        } ]
+      } ],
+      "city": "Berlin",
+      "postalCode": "10623"
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Practitioner/3f88bad6-2bb3-4ef8-a622-1625816e6de6",
+  "resource": {
+    "resourceType": "Practitioner",
+    "id": "3f88bad6-2bb3-4ef8-a622-1625816e6de6",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.1.0" ]
+    },
+    "identifier": [ {
+      "type": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+          "code": "ZANR"
+        } ]
+      },
+      "system": "http://fhir.de/sid/kzbv/zahnarztnummer",
+      "value": "911275091"
+    } ],
+    "name": [ {
+      "use": "official",
+      "family": "Topp-Glücklich",
+      "_family": {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+          "valueString": "Topp-Glücklich"
+        } ]
+      },
+      "given": [ "Hannelore" ],
+      "prefix": [ "Dr. med." ],
+      "_prefix": [ {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier",
+          "valueCode": "AC"
+        } ]
+      } ]
+    } ],
+    "qualification": [ {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Qualification_Type",
+          "code": "01"
+        } ]
+      }
+    }, {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Berufsbezeichnung",
+          "code": "Berufsbezeichnung"
+        } ],
+        "text": "Zahnarzt"
+      }
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Organization/6878b966-901b-4750-b382-70332bca29c3",
+  "resource": {
+    "resourceType": "Organization",
+    "id": "6878b966-901b-4750-b382-70332bca29c3",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.1.0" ]
+    },
+    "identifier": [ {
+      "type": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+          "code": "KZVA"
+        } ]
+      },
+      "system": "http://fhir.de/sid/kzbv/kzvabrechnungsnummer",
+      "value": "030764827"
+    } ],
+    "name": "Zahnarztpraxis Dr. Topp-Glücklich",
+    "telecom": [ {
+      "system": "phone",
+      "value": "0307654321"
+    } ],
+    "address": [ {
+      "type": "both",
+      "line": [ "Musterstr. 5" ],
+      "_line": [ {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+          "valueString": "5"
+        }, {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+          "valueString": "Musterstr."
+        } ]
+      } ],
+      "city": "Berlin",
+      "postalCode": "10623"
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Coverage/2d3a92c2-c93c-47ad-8ab5-49b275be97ee",
+  "resource": {
+    "resourceType": "Coverage",
+    "id": "2d3a92c2-c93c-47ad-8ab5-49b275be97ee",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.1.0" ]
+    },
+    "extension": [ {
+      "url": "http://fhir.de/StructureDefinition/gkv/besondere-personengruppe",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PERSONENGRUPPE",
+        "code": "00"
+      }
+    }, {
+      "url": "http://fhir.de/StructureDefinition/gkv/dmp-kennzeichen",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DMP",
+        "code": "00"
+      }
+    }, {
+      "url": "http://fhir.de/StructureDefinition/gkv/wop",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ITA_WOP",
+        "code": "03"
+      }
+    }, {
+      "url": "http://fhir.de/StructureDefinition/gkv/versichertenart",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_VERSICHERTENSTATUS",
+        "code": "1"
+      }
+    } ],
+    "status": "active",
+    "type": {
+      "coding": [ {
+        "system": "http://fhir.de/CodeSystem/versicherungsart-de-basis",
+        "code": "GKV"
+      } ]
+    },
+    "beneficiary": {
+      "reference": "Patient/40acd463-b25d-4ede-8b1f-2b0994f29aa5"
+    },
+    "payor": [ {
+      "identifier": {
+        "system": "http://fhir.de/sid/arge-ik/iknr",
+        "value": "104212059"
+      },
+      "display": "AOK Rheinland/Hamburg"
+    } ]
+  }
+} ]

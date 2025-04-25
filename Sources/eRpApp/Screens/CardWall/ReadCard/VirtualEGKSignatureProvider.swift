@@ -111,13 +111,8 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
             [derBytes]
         }
 
-        func sign(message: Data) -> AnyPublisher<Data, Error> {
-            Future { promise in
-                promise(Result {
-                    try self.key.sign(message: message).rawRepresentation
-                })
-            }
-            .eraseToAnyPublisher()
+        func sign(message: Data) async throws -> Data {
+            try key.sign(message: message).rawRepresentation
         }
     }
 }

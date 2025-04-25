@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "Receta electrónica";
+"NFCReaderUsageDescription" = "Permite identificarte y autenticarte mediante tu tarjeta sanitaria electrónica";
+"NSCameraUsageDescription" = "La cámara es necesaria para capturar recetas o tomar fotografías.";
+"NSFaceIDUsageDescription" = "E-Rezept utiliza FaceID para proteger su aplicación contra accesos no autorizados.";

@@ -73,7 +73,7 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
         taskId: "taskID",
         userId: "userID",
         telematikId: "telematikID",
-        timestamp: "2021-05-26T10:59:37.098245933+00:00",
+        timestamp: "2021-05-29T10:59:37.098245933+00:00",
         payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs.\", \"pickUpCodeHR\":\"4711\", \"url\": \"https://das-e-rezept-fuer-deutschland.de\"}" // swiftlint:disable:this line_length
     )
 
@@ -200,6 +200,52 @@ final class OrderDetailViewSnapshotTests: ERPSnapshotTestCase {
             communications: [communicationWithInfoTextPhoneNumber],
             chargeItems: []
         )
+        let sut = OrderDetailView(
+            store: StoreOf<OrderDetailDomain>(
+                initialState: .init(
+                    communicationMessage: CommunicationMessage.order(order),
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
+                )
+            ) {
+                EmptyReducer()
+            }
+        )
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testOderDetailViewWithSingleChips() {
+        var order = Order(orderId: "test",
+                          communications: [communicationDispRequest],
+                          chargeItems: [],
+                          timelineEntries: [.dispReq(ErxTask.Communication.Unique(from: communicationDispRequest),
+                                                     pharmacy: nil,
+                                                     chipTexts: ["Traubenzucker 100g"])])
+
+        let sut = OrderDetailView(
+            store: StoreOf<OrderDetailDomain>(
+                initialState: .init(
+                    communicationMessage: CommunicationMessage.order(order),
+                    erxTasks: IdentifiedArray(arrayLiteral: ErxTask.Fixtures.erxTask1)
+                )
+            ) {
+                EmptyReducer()
+            }
+        )
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    // TODO: Add Test with multiple rows of chips but view is broken for Snapshots // swiftlint:disable:this todo
+    func testOderDetailViewWithMultipleChips() {
+        let order = Order(orderId: "test",
+                          communications: [communicationDispRequest],
+                          chargeItems: [],
+                          timelineEntries: [.dispReq(ErxTask.Communication.Unique(from: communicationDispRequest),
+                                                     pharmacy: nil,
+                                                     chipTexts: ["Traubenzucker 100g", "Vita-Tee"])])
         let sut = OrderDetailView(
             store: StoreOf<OrderDetailDomain>(
                 initialState: .init(

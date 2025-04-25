@@ -23,7 +23,7 @@ import XCTest
 
 final class PharmacyContactViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacyDetailWithAllButtons() {
-        let sut = PharmacyContactView(store: PharmacyContactDomain.Dummies.store)
+        let sut = NavigationStack { PharmacyContactView(store: PharmacyContactDomain.Dummies.store) }
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())

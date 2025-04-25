@@ -29,10 +29,12 @@ struct LoopingVideoPlayerContainerView: UIViewRepresentable {
     }
 
     func makeUIView(context _: Context) -> PlayerView {
-        PlayerView(withURL: url)
+        PlayerView()
     }
 
-    func updateUIView(_: PlayerView, context _: Context) {}
+    func updateUIView(_ playerView: PlayerView, context _: Context) {
+        playerView.updateWith(url: url)
+    }
 
     final class PlayerView: UIView {
         var player: AVPlayer? {
@@ -61,7 +63,7 @@ struct LoopingVideoPlayerContainerView: UIViewRepresentable {
         }
         #endif
 
-        init(withURL url: URL) {
+        init() {
             super.init(frame: .zero)
 
             #if targetEnvironment(simulator)
@@ -71,12 +73,23 @@ struct LoopingVideoPlayerContainerView: UIViewRepresentable {
             }
             #endif
 
+            playerLayer?.contentsGravity = .resizeAspectFill
+            playerLayer?.videoGravity = .resizeAspectFill
+
+            NotificationCenter.default.addObserver(self,
+                                                   selector: #selector(playerItemDidReachEnd(notification:)),
+                                                   name: .AVPlayerItemDidPlayToEndTime,
+                                                   object: player?.currentItem)
+        }
+
+        func updateWith(url: URL) {
             #if DEBUG
             // Enable Subtitles
             let playerItem = AVPlayerItem(url: url)
             let asset = playerItem.asset
 
-            if let group = asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) {
+            asset.loadMediaSelectionGroup(for: .legible) { group, _ in
+                guard let group else { return }
                 let locale = Locale(identifier: "eng")
                 let options =
                     AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
@@ -98,14 +111,6 @@ struct LoopingVideoPlayerContainerView: UIViewRepresentable {
                 player?.currentItem?.seek(to: .zero, completionHandler: nil)
             }
             player?.play()
-
-            playerLayer?.contentsGravity = .resizeAspectFill
-            playerLayer?.videoGravity = .resizeAspectFill
-
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(playerItemDidReachEnd(notification:)),
-                                                   name: .AVPlayerItemDidPlayToEndTime,
-                                                   object: player?.currentItem)
         }
 
         required init?(coder: NSCoder) {

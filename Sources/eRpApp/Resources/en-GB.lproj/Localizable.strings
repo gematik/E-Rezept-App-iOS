@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "password";
 "auth_btn_bap_faceid" = "Face ID";
 "auth_btn_bap_touchid" = "Touch ID";
-"auth_btn_biometrics_faceid" = "Unlock with Face ID";
-"auth_btn_biometrics_touchid" = "Unlock with Touch ID";
+"auth_btn_biometrics_faceid" = "Face ID";
+"auth_btn_biometrics_touchid" = "Touch ID";
 "auth_btn_password_continue" = "Next";
 "auth_txt_bap_password_message" = "Please try again or enter your password.";
 "auth_txt_biometrics_disclaimer" = "Please be aware that people with whom you may share this device and whose biometrics may be stored on this device may also have access to your prescriptions.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Login failed";
 "auth_txt_biometrics_failed_not_enrolled" = "No biometric security has been set up on this device.";
 "auth_txt_biometrics_failed_user_fallback" = "An alternative to biometric login is not configured. Please deposit a password.";
-"auth_txt_biometrics_footer" = "Do you have any questions or problems using the app? You can reach our telephone support on 0800 277 377 7. \n\n We have already answered many questions for you on das-e-rezept-fuer-deutschland.de.";
+"auth_txt_biometrics_footer" = "Forgot your password? Please delete the app and then reinstall it. This is necessary because we only store your login details locally and do not use an email address for verification.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -41,7 +41,7 @@
 "auth_txt_biometrics_touch_id_title" = "Secure with Touch ID";
 "auth_txt_biometrics_touchid_description" = "You have selected Touch ID to secure your data.";
 "auth_txt_biometrics_touchid_start" = "Unlock with Touch ID";
-"auth_txt_failed_login_hint_title" = "Unsuccessful login attempts";
+"auth_txt_failed_login_hint_title" = "Unfortunately, that didn't work";
 "auth_txt_password_failure" = "Incorrect password. Please try again.";
 "auth_txt_password_label" = "Password input field";
 "auth_txt_password_placeholder" = "Enter password";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Open prescription scanner";
 "erx_title" = "Prescriptions";
 "erx_txt_authored" = "Displayed";
-"erx_txt_claimed_at_%@" = "Assumed %@";
+"erx_txt_claimed_at_%@" = "Accepted %@";
 "erx_txt_current" = "Current";
 "erx_txt_dispensed_at_%@" = "Provided %@";
 "erx_txt_expired_on_%@" = "Expired on %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Please go to the pharmacy website to complete the order.";
 "ord_detail_txt_%@_send_to_%@" = "%@ sent to %@ . Some pharmacies do not yet have a digital response option. If you do not receive a response by tomorrow, please call as a precaution.";
 "ord_detail_txt_charge_item%@" = "You have received a receipt for the cost of your medication %@ .";
+"ord_detail_txt_chip_all" = "All recipes of the order";
 "ord_detail_txt_contact" = "Contact options";
 "ord_detail_txt_contact_email" = "Write email";
 "ord_detail_txt_contact_map" = "Show route";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.";
 "prsc_dtl_med_ingredient_name" = "Active ingredient name";
 "prsc_dtl_med_manufacturing_instructions" = "Manufacturing instructions";
-"prsc_dtl_med_ov_txt_dispensed_header" = "Receive";
+"prsc_dtl_med_ov_txt_dispensed_header" = "Received";
 "prsc_dtl_med_ov_txt_subscribed_header" = "Prescribed";
 "prsc_dtl_med_txt_Note" = "Advice from your pharmacy";
 "prsc_dtl_med_txt_amount" = "potency and unity";
@@ -1348,7 +1349,7 @@
 "stg_btn_reg_devices_load" = "Register";
 "stg_con_btn_gemmunity" = "E-prescription forum";
 "stg_con_btn_gesund_bund_de" = "gesund.bund.de";
-"stg_con_btn_organ_donor" = "organ donation register";
+"stg_con_btn_organ_donor" = "Organ donation register";
 "stg_con_btn_organ_donor_alert_cancel" = "Cancel";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback from the e-prescription app";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Demo mode is active. You do not need a medical card or a connection to the Internet. The displayed test prescriptions cannot be redeemed in a pharmacy.";
 "stg_txt_alert_title_demo_mode" = "Would you like a tour of the app?";
 "stg_txt_alert_title_demo_mode_off" = "Demo mode disabled";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Insurance number: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "Telematics ID: %@";
 "stg_txt_audit_events_banner_connect" = "Connect";
 "stg_txt_audit_events_banner_message" = "To receive access logs, you must be connected to the server.";
 "stg_txt_audit_events_missing_date" = "No timestamp";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Create new profile";
 "stg_txt_reg_devices_empty_list" = "There are no devices associated with this medical card.";
 "stg_txt_reg_devices_empty_list_title" = "No devices";
-"stg_txt_reg_devices_info" = "Additional authentication is required to display the devices.";
-"stg_txt_reg_devices_info_title" = "Authentication required";
+"stg_txt_reg_devices_info" = "Please log in and save your login details to view connected devices.";
+"stg_txt_reg_devices_info_title" = "registration required";
 "stg_txt_reg_devices_registered_since_%@" = "Registered since %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Registered since %@ (this device)";
 "stg_txt_reg_devices_title" = "Connected devices";

@@ -29,6 +29,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
         let order = OrderRequest(
             version: "1",
             redeemType: .onPremise,
+            flowType: "160",
             taskID: "taskID",
             accessCode: "accessCode"
         )
@@ -94,6 +95,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
             version: String(validExample.version),
             redeemType: validExample.supplyOptionsType.asRedeemOption,
             name: longName,
+            flowType: "160",
             transactionID: validExample.transactionID,
             taskID: validExample.taskID,
             accessCode: validExample.accessCode
@@ -110,6 +112,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
             version: String(validExample.version),
             redeemType: .delivery,
             name: validExample.name,
+            flowType: "160",
             phone: "",
             mail: "",
             transactionID: validExample.transactionID,
@@ -124,6 +127,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
             version: String(validExample.version),
             redeemType: .delivery,
             name: validExample.name,
+            flowType: "160",
             phone: "0123467890",
             mail: "",
             transactionID: validExample.transactionID,
@@ -136,6 +140,7 @@ final class AVSMessageFromOrderTests: XCTestCase {
             version: String(validExample.version),
             redeemType: .shipment,
             name: validExample.name,
+            flowType: "160",
             phone: "",
             mail: "",
             transactionID: validExample.transactionID,

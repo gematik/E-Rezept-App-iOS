@@ -24,16 +24,16 @@ import Pharmacy
 import UIKit
 
 enum TimelineEntry: Equatable, Identifiable {
-    case dispReq(ErxTask.Communication, pharmacy: PharmacyLocation?)
-    case reply(ErxTask.Communication)
+    case dispReq(ErxTask.Communication.Unique, pharmacy: PharmacyLocation?, chipTexts: [String])
+    case reply(ErxTask.Communication.Unique, chipTexts: [String])
     case chargeItem(ErxChargeItem)
     case internalCommunication(InternalCommunication.Message)
 
     var id: String {
         switch self {
-        case let .dispReq(communication, _):
+        case let .dispReq(communication, _, _):
             return communication.identifier
-        case let .reply(communication):
+        case let .reply(communication, _):
             return communication.identifier
         case let .chargeItem(chargeItem):
             return chargeItem.identifier
@@ -44,9 +44,9 @@ enum TimelineEntry: Equatable, Identifiable {
 
     var lastUpdated: String {
         switch self {
-        case let .dispReq(communication, _):
+        case let .dispReq(communication, _, _):
             return communication.timestamp
-        case let .reply(communication):
+        case let .reply(communication, _):
             return communication.timestamp
         case let .chargeItem(chargeItem):
             return chargeItem.enteredDate ?? ""
@@ -58,9 +58,9 @@ enum TimelineEntry: Equatable, Identifiable {
 
     var isRead: Bool {
         switch self {
-        case let .dispReq(communication, _):
+        case let .dispReq(communication, _, _):
             return communication.isRead
-        case let .reply(communication):
+        case let .reply(communication, _):
             return communication.isRead
         case let .chargeItem(chargeItem):
             return chargeItem.isRead
@@ -71,13 +71,13 @@ enum TimelineEntry: Equatable, Identifiable {
 
     var text: String {
         switch self {
-        case let .dispReq(_, pharmacy):
+        case let .dispReq(_, pharmacy, _):
             let pharmacyName = pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text
             return L10n.ordDetailTxtSendTo(
                 L10n.ordDetailTxtPresc(1).text,
                 pharmacyName
             ).text
-        case let .reply(communication):
+        case let .reply(communication, _):
             guard let payload = communication.payload else {
                 return L10n.ordDetailTxtError.text
             }
@@ -100,7 +100,7 @@ enum TimelineEntry: Equatable, Identifiable {
     /// Returns formatted text  (e.g. inline markdown)
     var formattedText: AttributedString {
         switch self {
-        case let .dispReq(_, pharmacy):
+        case let .dispReq(_, pharmacy, _):
             if let name = pharmacy?.name,
                let formattedText = try? AttributedString(markdown: L10n.ordDetailTxtSendTo(
                    L10n.ordDetailTxtPresc(1).text,
@@ -109,7 +109,7 @@ enum TimelineEntry: Equatable, Identifiable {
                 return formattedText
             }
             return AttributedString(text)
-        case let .reply(communication):
+        case let .reply(communication, _):
             if let payload = communication.payload,
                let text = payload.infoText, !text.isEmpty {
                 @Dependency(\.dataDetector) var dataDetector: DataDetector
@@ -188,13 +188,13 @@ enum TimelineEntry: Equatable, Identifiable {
         }
     }
 
-    var chipText: String? {
+    var chipTexts: [String] {
         switch self {
-        case .dispReq,
-             .reply,
-
-             .chargeItem:
-            return nil
+        case let .dispReq(_, _, text): return text
+        case let .reply(_, text): return text
+        case let .chargeItem(chargeItem):
+            guard let displayName = chargeItem.medication?.displayName else { return [] }
+            return [displayName]
         case let .internalCommunication(message):
             let chipText: String
             if message.version == "0.0.0" {
@@ -203,7 +203,7 @@ enum TimelineEntry: Equatable, Identifiable {
             } else {
                 chipText = L10n.internMsgChangeLogChip(message.version).text
             }
-            return chipText
+            return [chipText]
         }
     }
 
@@ -236,14 +236,14 @@ enum TimelineEntry: Equatable, Identifiable {
 
     var actions: IdentifiedArrayOf<ActionEntry> {
         switch self {
-        case let .dispReq(_, pharmacy):
+        case let .dispReq(_, pharmacy, _):
             guard let name = pharmacy?.name else {
                 return IdentifiedArray(uniqueElements: [])
             }
             return IdentifiedArray(uniqueElements: [
                 ActionEntry(id: .loadAndShowPharmacy, name: name, action: .loadAndShowPharmacy),
             ])
-        case let .reply(communication):
+        case let .reply(communication, _):
             guard let payload = communication.payload else {
                 return IdentifiedArray(uniqueElements: [
                     ActionEntry(

@@ -135,6 +135,7 @@ public enum Workflow {
             .v1_1_1: "https://gematik.de/fhir/NamingSystem/TelematikID",
             .v1_2_0: "https://gematik.de/fhir/sid/telematik-id",
             .v1_3_0: "https://gematik.de/fhir/sid/telematik-id",
+            .v1_4_3: "https://gematik.de/fhir/sid/telematik-id",
         ]
         /// Communication Reply
         public static let communicationReply: [Version: String] = [
@@ -146,9 +147,9 @@ public enum Workflow {
         /// Communication Dispense Request
         public static let communicationDispReq: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq",
+            .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
             .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
-            .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
         ]
         /// Communication Info Request
         public static let communicationInfoReq: [Version: String] = [
@@ -188,6 +189,7 @@ public enum Workflow {
             .v1_1_1: "https://gematik.de/fhir/NamingSystem/OrderID",
             .v1_2_0: "https://gematik.de/fhir/NamingSystem/OrderID",
             .v1_3_0: "https://gematik.de/fhir/NamingSystem/OrderID",
+            .v1_4_3: "https://gematik.de/fhir/NamingSystem/OrderID",
         ]
     }
 }
@@ -298,6 +300,20 @@ public enum ErpPrescription {
             /// dosage instruction has been provided
             /// source: KBV_ITA_SIEX_Infos_Dosierungsangabe
             public static let dosageInstructionDj = "Dj"
+        }
+
+        /// DeviceRequest keys
+        public enum DeviceRequest {
+            /// Accident Info
+            public static let accidentInfoKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Accident"
+            /// Accident Type
+            public static let accidentTypeKey = "Unfallkennzeichen"
+            /// Accident Place
+            public static let accidentPlaceKey = "Unfallbetrieb"
+            /// Accident Date
+            public static let accidentDateKey = "Unfalltag"
+            /// SER Info
+            public static let serInfoKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_EVDGA_SER"
         }
 
         /// CoverageType
@@ -617,6 +633,28 @@ public enum Dispense {
             public static let pzn: [Version: String] = [
                 .v1_2_0: "http://fhir.de/CodeSystem/ifa/pzn",
             ]
+        }
+    }
+}
+
+/// https://simplifier.net/vzd-fhir-directory
+public enum FHIRDirectory {
+    /// Supported Versions of GEM `Workflow` definitions
+    public enum Version {
+        /// https://simplifier.net/packages/de.gematik.fhir.directory/0.12.0
+        case v0_12_0
+    }
+
+    /// Supported Keys of GEM `FHIRDirectory` definitions
+    public enum Key {
+        /// Specialty key for pharmacies
+        public static let specialtyKey = "apo-vzd"
+
+        /// http://terminology.hl7.org/CodeSystem
+        public enum CodeSystem {
+            /// code system for pharmacy services (e.g. pickup, shipment, delivery)
+            public static let pharmacyHealthcareSpecialty =
+                "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS"
         }
     }
 }

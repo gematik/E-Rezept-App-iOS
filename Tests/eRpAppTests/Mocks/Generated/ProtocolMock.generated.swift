@@ -767,30 +767,6 @@ final class MockInternalCommunicationProtocol: InternalCommunicationProtocol {
 }
 
 
-// MARK: - MockJWTSigner -
-
-final class MockJWTSigner: JWTSigner {
-    
-   // MARK: - sign
-
-    var signMessageCallsCount = 0
-    var signMessageCalled: Bool {
-        signMessageCallsCount > 0
-    }
-    var signMessageReceivedMessage: Data?
-    var signMessageReceivedInvocations: [Data] = []
-    var signMessageReturnValue: AnyPublisher<Data, Swift.Error>!
-    var signMessageClosure: ((Data) -> AnyPublisher<Data, Swift.Error>)?
-
-    func sign(message: Data) -> AnyPublisher<Data, Swift.Error> {
-        signMessageCallsCount += 1
-        signMessageReceivedMessage = message
-        signMessageReceivedInvocations.append(message)
-        return signMessageClosure.map({ $0(message) }) ?? signMessageReturnValue
-    }
-}
-
-
 // MARK: - MockKeychainAccessHelper -
 
 final class MockKeychainAccessHelper: KeychainAccessHelper {

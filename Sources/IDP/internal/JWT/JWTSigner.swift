@@ -26,5 +26,5 @@ public protocol JWTSigner {
     /// - Parameter message: (un-hashed/digested) contents to sign
     /// - Returns: raw signature
     /// - Throws: `Swift.Error`
-    func sign(message: Data) -> AnyPublisher<Data, Swift.Error>
+    func sign(message: Data) async throws -> Data
 }

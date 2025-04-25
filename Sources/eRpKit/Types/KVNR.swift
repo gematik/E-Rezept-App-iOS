@@ -21,12 +21,19 @@ import Foundation
 /// Represents a health insurance number (Krankenversicherungs Nummer)
 ///
 /// Format should be a Letter followed by 9 digits, e.g. A123456785, where last digit is a checksum.
-public typealias KVNR = String
+public struct KVNR {
+    let value: String
+
+    /// Initializes a KVNR with a given value.
+    public init(value: String) {
+        self.value = value
+    }
+}
 
 extension KVNR {
     /// Validates a KVNR and checks for format, length and checksum.
     public var isValid: Bool {
-        let input = uppercased()
+        let input = value.uppercased()
 
         guard input.count == 10 else { return false }
         guard let letter = input.first else { return false }

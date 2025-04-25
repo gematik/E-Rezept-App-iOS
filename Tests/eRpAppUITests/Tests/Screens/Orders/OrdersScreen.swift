@@ -25,7 +25,9 @@ struct OrdersScreen: Screen {
 
     func tapOrderDetailsForPharmacyNamed(_ name: String, fileID: String = #fileID, file: String = #filePath,
                                          line: UInt = #line) -> OrderDetailsScreen {
-        staticText(by: name, fileID: fileID, file: file, line: line).tap()
+        let staticText = staticText(by: name, fileID: fileID, file: file, line: line)
+        expect(staticText.waitForExistence(timeout: 3)).to(beTrue())
+        staticText.tap()
         return OrderDetailsScreen(app: app)
     }
 

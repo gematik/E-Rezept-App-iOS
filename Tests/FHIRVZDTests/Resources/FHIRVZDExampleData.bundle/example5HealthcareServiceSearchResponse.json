@@ -1,0 +1,1239 @@
+{
+    "resourceType": "Bundle",
+    "id": "e98ca92a-f9a2-486d-8e39-99888de3fa12",
+    "meta": {
+        "lastUpdated": "2025-03-04T10:23:29.247+01:00",
+        "tag": [
+            {
+                "system": "https://gematik.de/fhir/StructureDefinition/filtered-endpoints-count",
+                "code": "0",
+                "display": "Reason: hideVersicherte"
+            }
+        ]
+    },
+    "type": "searchset",
+    "total": 100,
+    "entry": [
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/HealthcareService/7025fc46-9809-4ee0-abb9-9e248798e5eb",
+            "resource": {
+                "resourceType": "HealthcareService",
+                "id": "7025fc46-9809-4ee0-abb9-9e248798e5eb",
+                "meta": {
+                    "versionId": "7",
+                    "lastUpdated": "2024-10-23T02:07:13.062+02:00",
+                    "source": "#9xQpuInrrfEsLArD",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "84d54eee-b7e5-4ba9-80f1-d686fb7f924c"
+                    }
+                ],
+                "providedBy": {
+                    "reference": "Organization/3a0caa6a-d241-4eac-9f99-8dc6a18ad7f3"
+                },
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "specialty": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "30",
+                                "display": "Botendienst"
+                            },
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "location": [
+                    {
+                        "reference": "Location/e5be09f0-d221-49df-bf8f-880f033d8c55"
+                    }
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "0521 4002430",
+                        "rank": 10
+                    },
+                    {
+                        "system": "fax",
+                        "value": "0521 13 62 525",
+                        "rank": 20
+                    },
+                    {
+                        "system": "email",
+                        "value": "info@apoimbrock.de",
+                        "rank": 30
+                    },
+                    {
+                        "system": "url",
+                        "value": "http://www.gesundheit-brackwede.de",
+                        "rank": 40
+                    }
+                ],
+                "coverageArea": [
+                    {
+                        "extension": [
+                            {
+                                "url": "https://gematik.de/fhir/directory/StructureDefinition/ServiceCoverageArea",
+                                "valueQuantity": {
+                                    "value": 5000,
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "m"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "availableTime": [
+                    {
+                        "daysOfWeek": [
+                            "mon"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "tue"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "wed"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "thu"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "fri"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "sat"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    }
+                ]
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/HealthcareService/c5706315-9cac-4f04-b5c5-6e9369b8dfad",
+            "resource": {
+                "resourceType": "HealthcareService",
+                "id": "c5706315-9cac-4f04-b5c5-6e9369b8dfad",
+                "meta": {
+                    "versionId": "7",
+                    "lastUpdated": "2024-10-11T11:14:53.136+02:00",
+                    "source": "#QfFusJ0PXvJeTdON",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "0b404c17-f91b-4660-8682-1992b0a98669"
+                    }
+                ],
+                "providedBy": {
+                    "reference": "Organization/34668e8c-c14c-44bb-a979-79105ca6b8ca"
+                },
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "specialty": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "30",
+                                "display": "Botendienst"
+                            },
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "location": [
+                    {
+                        "reference": "Location/1e55db01-8441-4fb1-8d4f-11970f9497c7"
+                    }
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "05225/79876",
+                        "rank": 10
+                    },
+                    {
+                        "system": "fax",
+                        "value": "05225/897765",
+                        "rank": 20
+                    },
+                    {
+                        "system": "email",
+                        "value": "info@westerenger-apotheke.de",
+                        "rank": 30
+                    },
+                    {
+                        "system": "url",
+                        "value": "http://www.westerenger-apotheke-app.de",
+                        "rank": 40
+                    }
+                ],
+                "coverageArea": [
+                    {
+                        "extension": [
+                            {
+                                "url": "https://gematik.de/fhir/directory/StructureDefinition/ServiceCoverageArea",
+                                "valueQuantity": {
+                                    "value": 10000,
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "m"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/HealthcareService/93336e26-497c-4c83-ac9a-a25a5ad238dd",
+            "resource": {
+                "resourceType": "HealthcareService",
+                "id": "93336e26-497c-4c83-ac9a-a25a5ad238dd",
+                "meta": {
+                    "versionId": "7",
+                    "lastUpdated": "2025-02-26T05:02:49.306+01:00",
+                    "source": "#30ui7q8R8Reycsod",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "f786e370-43f4-449a-8be1-6664685c1ed3"
+                    }
+                ],
+                "providedBy": {
+                    "reference": "Organization/7103591c-c3c0-49ec-93c7-7be017a7e538"
+                },
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "specialty": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "location": [
+                    {
+                        "reference": "Location/9305c6e4-e78d-4097-8512-ee0af5a3e5e1"
+                    }
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "0235182519"
+                    },
+                    {
+                        "system": "fax",
+                        "value": "023514338585"
+                    },
+                    {
+                        "system": "email",
+                        "value": "apothekezurkluse@gmx.de"
+                    }
+                ]
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/HealthcareService/a301b8a9-3dbc-4668-af51-23d0c9a3c87b",
+            "resource": {
+                "resourceType": "HealthcareService",
+                "id": "a301b8a9-3dbc-4668-af51-23d0c9a3c87b",
+                "meta": {
+                    "versionId": "9",
+                    "lastUpdated": "2025-02-26T07:02:00.458+01:00",
+                    "source": "#fPjl279sM6TzInl6",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "11e36f39-efbd-4dd8-be49-9f62f76c917d"
+                    }
+                ],
+                "providedBy": {
+                    "reference": "Organization/06dfce21-c696-44cd-a22d-3cce523fdc66"
+                },
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "specialty": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "30",
+                                "display": "Botendienst"
+                            },
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "location": [
+                    {
+                        "reference": "Location/43d2bc59-8b92-40d0-9806-8d3de30e739c"
+                    }
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "02302 2020317",
+                        "rank": 10
+                    },
+                    {
+                        "system": "fax",
+                        "value": "02302 2020493",
+                        "rank": 20
+                    },
+                    {
+                        "system": "email",
+                        "value": "service@apothekeamboni-center.de",
+                        "rank": 30
+                    },
+                    {
+                        "system": "url",
+                        "value": "http://www.apothekeamboni-center.de",
+                        "rank": 40
+                    }
+                ],
+                "coverageArea": [
+                    {
+                        "extension": [
+                            {
+                                "url": "https://gematik.de/fhir/directory/StructureDefinition/ServiceCoverageArea",
+                                "valueQuantity": {
+                                    "value": 20000,
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "m"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/HealthcareService/2f4f38fb-faff-4670-a7d5-5141c692ef4b",
+            "resource": {
+                "resourceType": "HealthcareService",
+                "id": "2f4f38fb-faff-4670-a7d5-5141c692ef4b",
+                "meta": {
+                    "versionId": "8",
+                    "lastUpdated": "2025-02-26T00:23:00.325+01:00",
+                    "source": "#pa2mGMaOpHSFeKDw",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "be3daaf1-fe0d-439c-8c31-974c4700bedc"
+                    }
+                ],
+                "providedBy": {
+                    "reference": "Organization/4daab26d-e565-45ad-83cf-0fca0cf456c7"
+                },
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "specialty": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "30",
+                                "display": "Botendienst"
+                            },
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "location": [
+                    {
+                        "reference": "Location/d5a9d06d-7d93-4aef-a77f-a1f88eca46c1"
+                    }
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "05731306720",
+                        "rank": 10
+                    },
+                    {
+                        "system": "fax",
+                        "value": "05731306725",
+                        "rank": 20
+                    },
+                    {
+                        "system": "email",
+                        "value": "Apotheke-in-Rehme@t-online.de",
+                        "rank": 30
+                    }
+                ],
+                "coverageArea": [
+                    {
+                        "extension": [
+                            {
+                                "url": "https://gematik.de/fhir/directory/StructureDefinition/ServiceCoverageArea",
+                                "valueQuantity": {
+                                    "value": 10000,
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "m"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "availableTime": [
+                    {
+                        "daysOfWeek": [
+                            "mon"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "13:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "mon"
+                        ],
+                        "availableStartTime": "15:00:00",
+                        "availableEndTime": "18:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "tue"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "13:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "tue"
+                        ],
+                        "availableStartTime": "15:00:00",
+                        "availableEndTime": "18:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "wed"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "13:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "thu"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "13:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "thu"
+                        ],
+                        "availableStartTime": "15:00:00",
+                        "availableEndTime": "18:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "fri"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "13:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "fri"
+                        ],
+                        "availableStartTime": "15:00:00",
+                        "availableEndTime": "18:00:00"
+                    }
+                ],
+                "endpoint": [
+                    {
+                        "reference": "Endpoint/26a83bb8-9cab-4551-beb6-f2eae97d95f9"
+                    },
+                    {
+                        "reference": "Endpoint/58363f10-2b7c-4419-a162-1ebff7a5e198"
+                    }
+                ]
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Organization/3a0caa6a-d241-4eac-9f99-8dc6a18ad7f3",
+            "resource": {
+                "resourceType": "Organization",
+                "id": "3a0caa6a-d241-4eac-9f99-8dc6a18ad7f3",
+                "meta": {
+                    "versionId": "2",
+                    "lastUpdated": "2024-05-22T22:54:08.498+02:00",
+                    "source": "#XGePqjWCYISNTmGa",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                    "code": "PRN"
+                                }
+                            ]
+                        },
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-17.2.1024109000.518"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "84d54eee-b7e5-4ba9-80f1-d686fb7f924c"
+                    }
+                ],
+                "active": true,
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                                "code": "1.2.276.0.76.4.54",
+                                "display": "Öffentliche Apotheke"
+                            }
+                        ]
+                    }
+                ],
+                "name": "Apotheke im real,-"
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Organization/34668e8c-c14c-44bb-a979-79105ca6b8ca",
+            "resource": {
+                "resourceType": "Organization",
+                "id": "34668e8c-c14c-44bb-a979-79105ca6b8ca",
+                "meta": {
+                    "versionId": "2",
+                    "lastUpdated": "2024-05-22T22:54:38.450+02:00",
+                    "source": "#mMTT5I57IKdk6pCZ",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                    "code": "PRN"
+                                }
+                            ]
+                        },
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-17.2.1053005000.180"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "0b404c17-f91b-4660-8682-1992b0a98669"
+                    }
+                ],
+                "active": true,
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                                "code": "1.2.276.0.76.4.54",
+                                "display": "Öffentliche Apotheke"
+                            }
+                        ]
+                    }
+                ],
+                "name": "Apotheke in Westerenger"
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Organization/7103591c-c3c0-49ec-93c7-7be017a7e538",
+            "resource": {
+                "resourceType": "Organization",
+                "id": "7103591c-c3c0-49ec-93c7-7be017a7e538",
+                "meta": {
+                    "versionId": "3",
+                    "lastUpdated": "2025-02-26T05:02:49.306+01:00",
+                    "source": "#30ui7q8R8Reycsod",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                    "code": "PRN"
+                                }
+                            ]
+                        },
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-17.2.1130017000.458"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "f786e370-43f4-449a-8be1-6664685c1ed3"
+                    }
+                ],
+                "active": true,
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                                "code": "1.2.276.0.76.4.54",
+                                "display": "Öffentliche Apotheke"
+                            }
+                        ]
+                    }
+                ],
+                "name": "Apotheke zur Kluse"
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Organization/06dfce21-c696-44cd-a22d-3cce523fdc66",
+            "resource": {
+                "resourceType": "Organization",
+                "id": "06dfce21-c696-44cd-a22d-3cce523fdc66",
+                "meta": {
+                    "versionId": "3",
+                    "lastUpdated": "2025-02-26T07:02:00.458+01:00",
+                    "source": "#fPjl279sM6TzInl6",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                    "code": "PRN"
+                                }
+                            ]
+                        },
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-17.2.1231031000.137"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "11e36f39-efbd-4dd8-be49-9f62f76c917d"
+                    }
+                ],
+                "active": true,
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                                "code": "1.2.276.0.76.4.54",
+                                "display": "Öffentliche Apotheke"
+                            }
+                        ]
+                    }
+                ],
+                "name": "Apotheke am boni-Center"
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Organization/4daab26d-e565-45ad-83cf-0fca0cf456c7",
+            "resource": {
+                "resourceType": "Organization",
+                "id": "4daab26d-e565-45ad-83cf-0fca0cf456c7",
+                "meta": {
+                    "versionId": "3",
+                    "lastUpdated": "2025-02-26T00:23:00.325+01:00",
+                    "source": "#pa2mGMaOpHSFeKDw",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                    "code": "PRN"
+                                }
+                            ]
+                        },
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-17.2.1014015000.10.326"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "be3daaf1-fe0d-439c-8c31-974c4700bedc"
+                    }
+                ],
+                "active": true,
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                                "code": "1.2.276.0.76.4.54",
+                                "display": "Öffentliche Apotheke"
+                            }
+                        ]
+                    }
+                ],
+                "name": "Apotheke in Rehme"
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Location/e5be09f0-d221-49df-bf8f-880f033d8c55",
+            "resource": {
+                "resourceType": "Location",
+                "id": "e5be09f0-d221-49df-bf8f-880f033d8c55",
+                "meta": {
+                    "versionId": "3",
+                    "lastUpdated": "2024-06-13T11:56:33.230+02:00",
+                    "source": "#eUOzvQNnDZgjDw9N",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "84d54eee-b7e5-4ba9-80f1-d686fb7f924c"
+                    }
+                ],
+                "address": {
+                    "use": "work",
+                    "type": "postal",
+                    "text": "Gütersloher Str. 122&#13;&#10;33649&#13;&#10;Bielefeld&#13;&#10;null&#13;&#10;DE",
+                    "line": [
+                        "Gütersloher Str. 122"
+                    ],
+                    "city": "Bielefeld",
+                    "postalCode": "33649",
+                    "country": "DE"
+                },
+                "position": {
+                    "longitude": 8.485683,
+                    "latitude": 51.987705
+                }
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Location/1e55db01-8441-4fb1-8d4f-11970f9497c7",
+            "resource": {
+                "resourceType": "Location",
+                "id": "1e55db01-8441-4fb1-8d4f-11970f9497c7",
+                "meta": {
+                    "versionId": "3",
+                    "lastUpdated": "2024-06-13T12:04:49.247+02:00",
+                    "source": "#nd5h3iUnmHjkgWsU",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "0b404c17-f91b-4660-8682-1992b0a98669"
+                    }
+                ],
+                "address": {
+                    "use": "work",
+                    "type": "postal",
+                    "text": "Taubenweg 21&#13;&#10;32130&#13;&#10;Enger&#13;&#10;null&#13;&#10;DE",
+                    "line": [
+                        "Taubenweg 21"
+                    ],
+                    "city": "Enger",
+                    "postalCode": "32130",
+                    "country": "DE"
+                },
+                "position": {
+                    "longitude": 8.502859,
+                    "latitude": 52.140357
+                }
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Location/9305c6e4-e78d-4097-8512-ee0af5a3e5e1",
+            "resource": {
+                "resourceType": "Location",
+                "id": "9305c6e4-e78d-4097-8512-ee0af5a3e5e1",
+                "meta": {
+                    "versionId": "4",
+                    "lastUpdated": "2025-02-26T05:02:49.306+01:00",
+                    "source": "#30ui7q8R8Reycsod",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "f786e370-43f4-449a-8be1-6664685c1ed3"
+                    }
+                ],
+                "address": {
+                    "use": "work",
+                    "type": "postal",
+                    "text": "Kluser Str. 30&#13;&#10;58511&#13;&#10;Lüdenscheid&#13;&#10;null&#13;&#10;DE",
+                    "line": [
+                        "Kluser Str. 30"
+                    ],
+                    "city": "Lüdenscheid",
+                    "postalCode": "58511",
+                    "country": "DE"
+                },
+                "position": {
+                    "longitude": 7.640769,
+                    "latitude": 51.21996
+                }
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Location/43d2bc59-8b92-40d0-9806-8d3de30e739c",
+            "resource": {
+                "resourceType": "Location",
+                "id": "43d2bc59-8b92-40d0-9806-8d3de30e739c",
+                "meta": {
+                    "versionId": "4",
+                    "lastUpdated": "2025-02-26T07:02:00.458+01:00",
+                    "source": "#fPjl279sM6TzInl6",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "11e36f39-efbd-4dd8-be49-9f62f76c917d"
+                    }
+                ],
+                "address": {
+                    "use": "work",
+                    "type": "postal",
+                    "text": "Schlachthofstr. 27&#13;&#10;58455&#13;&#10;Witten&#13;&#10;null&#13;&#10;DE",
+                    "line": [
+                        "Schlachthofstr. 27"
+                    ],
+                    "city": "Witten",
+                    "postalCode": "58455",
+                    "country": "DE"
+                },
+                "position": {
+                    "longitude": 7.341864,
+                    "latitude": 51.443954
+                }
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Location/d5a9d06d-7d93-4aef-a77f-a1f88eca46c1",
+            "resource": {
+                "resourceType": "Location",
+                "id": "d5a9d06d-7d93-4aef-a77f-a1f88eca46c1",
+                "meta": {
+                    "versionId": "4",
+                    "lastUpdated": "2025-02-26T00:23:00.325+01:00",
+                    "source": "#pa2mGMaOpHSFeKDw",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD"
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "be3daaf1-fe0d-439c-8c31-974c4700bedc"
+                    }
+                ],
+                "address": {
+                    "use": "work",
+                    "type": "postal",
+                    "text": "Zum Rehmer Eck 5&#13;&#10;32547&#13;&#10;Bad Oeynhausen&#13;&#10;null&#13;&#10;DE",
+                    "line": [
+                        "Zum Rehmer Eck 5"
+                    ],
+                    "city": "Bad Oeynhausen",
+                    "postalCode": "32547",
+                    "country": "DE"
+                },
+                "position": {
+                    "longitude": 8.819654,
+                    "latitude": 52.213999
+                }
+            },
+            "search": {
+                "mode": "include"
+            }
+        }
+    ]
+}

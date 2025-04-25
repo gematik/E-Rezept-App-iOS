@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "E-oideas";
+"NFCReaderUsageDescription" = "Ligeann sé duit tú féin a aithint agus a fhíordheimhniú trí úsáid a bhaint as do chárta sláinte leictreonach";
+"NSCameraUsageDescription" = "Teastaíonn an ceamara chun oidis a ghlacadh nó chun grianghraif a ghlacadh.";
+"NSFaceIDUsageDescription" = "Úsáideann E-Rezept FaceID chun d’aip a chosaint ó rochtain neamhúdaraithe.";

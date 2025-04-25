@@ -307,6 +307,7 @@ extension Sequence where Element == ScannedErxTask {
             let task = ErxTask(
                 identifier: scannedTask.id,
                 status: status,
+                flowType: ErxTask.FlowType(taskId: scannedTask.id),
                 accessCode: scannedTask.accessCode,
                 authoredOn: authoredOn,
                 author: L10n.scnTxtAuthor.text,

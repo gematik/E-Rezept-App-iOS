@@ -24,10 +24,10 @@ struct RedeemSelectionScreen: Screen {
     let app: XCUIApplication
 
     func tapRedeemRemote(fileID: String = #fileID, file: String = #filePath,
-                         line: UInt = #line) -> PharmacySearchScreen {
+                         line: UInt = #line) -> RedeemScreen {
         button(by: A11y.redeem.overview.rdmBtnDeliveryTile, fileID: fileID, file: file, line: line).tap()
 
-        return PharmacySearchScreen(app: app)
+        return RedeemScreen(app: app)
     }
 
     func tapRedeemLocal(fileID: String = #fileID, file: String = #filePath,

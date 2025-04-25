@@ -170,6 +170,7 @@ struct OrderDetailDomain {
             return loadTasks(taskIds)
         case let .tasksReceived(tasks):
             state.erxTasks = IdentifiedArray(uniqueElements: tasks.sorted())
+            state.timelineEntries = state.timelineEntries.updateChipTexts(with: tasks)
             return .none
         case let .showPickupCode(dmcCode: dmcCode, hrCode: hrCode):
             state.destination = .pickupCode(
@@ -212,8 +213,7 @@ struct OrderDetailDomain {
                         pharmacyViewModel: .init(
                             pharmacy: pharmacy,
                             timeOnlyFormatter: uiDateFormatter.timeOnlyFormatter
-                        ),
-                        pharmacyRedeemState: Shared(nil)
+                        )
                     )
                 )
             case let .failure(error):
@@ -349,6 +349,37 @@ extension OrderDetailDomain {
         return erxTaskRepository.save(chargeItems: readChargeItems.map(\.sparseChargeItem))
             .receive(on: schedulers.main)
             .eraseToAnyPublisher()
+    }
+}
+
+extension Array where Element == TimelineEntry {
+    func updateChipTexts(with tasks: [ErxTask]) -> [TimelineEntry] {
+        map { entry in
+            switch entry {
+            case let .dispReq(communication, pharmacy, _):
+                let relatedTasks = tasks.compactMap { $0.medication?.displayName }
+                var chipTexts: [String] = []
+                if relatedTasks.count == 1 {
+                    chipTexts = relatedTasks
+                } else {
+                    chipTexts = [L10n.ordDetailTxtChipAll.text]
+                }
+                return TimelineEntry.dispReq(communication, pharmacy: pharmacy, chipTexts: chipTexts)
+            case let .reply(communication, _):
+                let relatedTasks = tasks.filter { task in communication.taskIds.contains(task.identifier) }
+                    .compactMap { $0.medication?.displayName }
+                var chipTexts: [String] = []
+                if relatedTasks.count > 1, relatedTasks.count == tasks.count {
+                    chipTexts = [L10n.ordDetailTxtChipAll.text]
+                } else {
+                    chipTexts = relatedTasks
+                }
+                return TimelineEntry.reply(communication, chipTexts: chipTexts)
+            case .chargeItem,
+                 .internalCommunication:
+                return entry
+            }
+        }
     }
 }
 

@@ -57,7 +57,6 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             searchText: "",
             pharmacies: pharmacies,
             localPharmacies: pharmacies,
-            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .startView(loading: false)
         )
@@ -82,7 +81,6 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
                         selectedPrescriptions: Shared([]),
                         inRedeemProcess: false,
                         searchText: "Apothekesdfwerwerasdf",
-                        pharmacyRedeemState: Shared(nil),
                         pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
                         searchState: .searchResultEmpty
                     )
@@ -106,7 +104,6 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
                         inRedeemProcess: false,
                         searchText: "Adler Apo",
                         pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
-                        pharmacyRedeemState: Shared(nil),
                         pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
                         searchState: .searchResultOk
                     )

@@ -38,15 +38,11 @@ public class BiometricsSHA256Signer: JWTSigner {
         case signatureFailed
     }
 
-    public func sign(message: Data) -> AnyPublisher<Data, Swift.Error> {
-        Future { [weak self] promise in
-            promise(Result {
-                guard let result = try self?.privateKeyContainer.sign(data: message) else {
-                    throw Error.signatureFailed
-                }
-                return result
-            })
+    public func sign(message: Data) async throws -> Data {
+        do {
+            return try privateKeyContainer.sign(data: message)
+        } catch {
+            throw Error.signatureFailed
         }
-        .eraseToAnyPublisher()
     }
 }

@@ -164,7 +164,7 @@ struct HealthCardPasswordCanView: View {
                         NavigationStack {
                             CANCameraScanner(canScan: $scannedcan) { canScan in
                                 if let canScan = scannedcan {
-                                    store.send(.updateCan(canScan))
+                                    store.send(.updateCan(canScan.value))
                                 }
                                 store.send(.resetNavigation)
                             }

@@ -118,13 +118,11 @@ class TestJWTSigner: JWTSigner {
     var messages = [Data]()
     var signature: Data?
 
-    func sign(message: Data) -> AnyPublisher<Data, Error> {
-        Deferred { () -> AnyPublisher<Data, Error> in
-            self.messages.append(message)
-            guard let signature = self.signature else {
-                return Fail(error: "No signature set in TestJWTSigner").eraseToAnyPublisher()
-            }
-            return Just(signature).setFailureType(to: Error.self).eraseToAnyPublisher()
-        }.eraseToAnyPublisher()
+    func sign(message: Data) async throws -> Data {
+        messages.append(message)
+        guard let signature = signature else {
+            throw IDPError.unsupported("No signature set in TestJWTSigner")
+        }
+        return signature
     }
 }

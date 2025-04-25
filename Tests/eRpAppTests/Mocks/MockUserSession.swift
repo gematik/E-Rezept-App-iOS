@@ -492,6 +492,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "0390f983-1e67-11b2-8555-63bf44e44fb8": ErxTask(
                 identifier: "0390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnThirtyDaysBefore,
@@ -506,6 +507,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "1": ErxTask(
                 identifier: "1390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnThirtyDaysBefore,
@@ -520,6 +522,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "2": ErxTask(
                 identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnThirtyDaysBefore,
@@ -535,6 +538,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "3": ErxTask(
                 identifier: "3390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnThirtyDaysBefore,
@@ -550,6 +554,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "4": ErxTask(
                 identifier: "490f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnWeekBefore,
@@ -564,6 +569,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "5": ErxTask(
                 identifier: "5390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnWeekBefore,
@@ -578,6 +584,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "6": ErxTask(
                 identifier: "6390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnWeekBefore,
@@ -593,6 +600,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "7": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnWeekBefore,
@@ -609,6 +617,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "8": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f1c",
                 status: .completed,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnSixteenDaysBefore,
@@ -625,6 +634,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "9": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f2c",
                 status: .completed,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOnSixteenDaysBefore,
@@ -642,6 +652,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "10": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f3c",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
                 authoredOn: authoredOnSixteenDaysBefore,
@@ -660,6 +671,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "11": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f4c",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
                 authoredOn: authoredOnSixteenDaysBefore,
@@ -678,6 +690,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "12": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f5c",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
                 authoredOn: authoredOnSixteenDaysBefore,
@@ -697,6 +710,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "13": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f6c",
                 status: .completed,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
                 authoredOn: authoredOnNinetyTwoDaysBefore,
@@ -729,6 +743,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
             "14": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f7c",
                 status: .completed,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
                 authoredOn: authoredOnNinetyTwoDaysBefore,

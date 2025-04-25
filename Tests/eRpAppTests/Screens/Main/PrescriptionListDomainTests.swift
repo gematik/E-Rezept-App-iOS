@@ -59,6 +59,7 @@ final class PrescriptionListDomainTests: XCTestCase {
     func testLoadingPrescriptionsLocalTwoTimes() async {
         // given
         let input: [Prescription] = []
+        let userProfile = UserProfile.Fixtures.privatePaul
         mockPrescriptionRepository.loadLocalReturnValue = Just(input)
             .setFailureType(to: PrescriptionRepositoryError.self)
             .eraseToAnyPublisher()
@@ -68,25 +69,26 @@ final class PrescriptionListDomainTests: XCTestCase {
             .value(input)
 
         // when
-        await store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions(userProfile)) {
             // then
             $0.loadingState = .loading([])
         }
         // when
         await testScheduler.advance()
-        await store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expected, userProfile))) { state in
             // then
+            state.profile = userProfile
             state.loadingState = expected
             state.prescriptions = input
         }
         // when
-        await store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions(userProfile)) {
             // then
             $0.loadingState = .loading(input)
         }
         // when
         await testScheduler.advance()
-        await store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expected, userProfile))) { state in
             // then
             state.loadingState = expected
         }
@@ -165,6 +167,7 @@ final class PrescriptionListDomainTests: XCTestCase {
 
     func testLoadingPrescriptionsFromDiskAndCloudWhenNotAuthenticated() async {
         // given
+        let userProfile = UserProfile.Fixtures.privatePaul
         let input = Prescription.Fixtures.prescriptions
         mockPrescriptionRepository.loadLocalReturnValue = Just(input)
             .setFailureType(to: PrescriptionRepositoryError.self)
@@ -179,7 +182,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         let expectedValueForFetch: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value([])
         // when
-        await store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions(userProfile)) {
             // then
             $0.loadingState = .loading([])
         }
@@ -190,8 +193,9 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         await testScheduler.advance()
-        await store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad))) { state in
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad, userProfile))) { state in
             // then
+            state.profile = userProfile
             state.loadingState = expectedValueForLoad
             state.prescriptions = input
         }
@@ -204,6 +208,7 @@ final class PrescriptionListDomainTests: XCTestCase {
     func testLoadingPrescriptionsFromDiskAndCloudWhenAuthenticated() async {
         // given
         let input = Prescription.Fixtures.prescriptions
+        let userProfile = UserProfile.Fixtures.privatePaul
 
         mockPrescriptionRepository.loadLocalReturnValue = Just(input)
             .setFailureType(to: PrescriptionRepositoryError.self)
@@ -219,7 +224,7 @@ final class PrescriptionListDomainTests: XCTestCase {
             .value(input)
         let expectedValueForFetch = expectedValueForLoad
         // when
-        await store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions(userProfile)) {
             // then
             $0.loadingState = .loading([])
         }
@@ -230,8 +235,9 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         await testScheduler.advance()
-        await store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad))) { state in
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad, userProfile))) { state in
             // then
+            state.profile = userProfile
             state.loadingState = expectedValueForLoad
             state.prescriptions = input
         }
@@ -247,22 +253,24 @@ final class PrescriptionListDomainTests: XCTestCase {
             failure: loadingErrorTasks
         )
         .eraseToAnyPublisher()
+        let userProfile = UserProfile.Fixtures.privatePaul
 
         let store = testStore(for: mockPrescriptionRepository)
 
         let expected: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .error(loadingErrorTasks)
         // when
-        await store.send(.loadLocalPrescriptions) {
+        await store.send(.loadLocalPrescriptions(userProfile)) {
             // then
             $0.loadingState = .loading([])
             XCTAssert($0.loadingState.isError == false)
         }
         // when
         await testScheduler.advance()
-        await store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
+        await store.receive(.response(.loadLocalPrescriptionsReceived(expected, userProfile))) { state in
             // then
             state.loadingState = expected
+            state.profile = userProfile
             XCTAssert(state.loadingState.isError == true)
         }
     }

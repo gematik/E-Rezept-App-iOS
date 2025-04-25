@@ -237,7 +237,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
     }
 
     func testSavingAVSTransactionUpdatesErxTask() {
-        let task = ErxTask(identifier: "12345", status: .ready, source: .scanner)
+        let task = ErxTask(identifier: "12345", status: .ready, flowType: .pharmacyOnly, source: .scanner)
 
         let erxTaskStore = loadErxTaskCoreDataStore()
         _ = erxTaskStore.save(

@@ -154,7 +154,6 @@ struct ChargeItemListView: View {
                                         label: { Text(entry.labelText) }
                                     )
                                     .accessibilityIdentifier(entry.a11y)
-                                    .disabled(entry.isDisabled)
                                 }
                             },
                             label: {

@@ -18,6 +18,8 @@
 
 import eRpStyleKit
 import SwiftUI
+import SwiftUIIntrospect
+import UIKit
 
 struct ScrollViewWithStickyHeader<Content: View, Header: View>: View {
     private var header: Header
@@ -45,6 +47,13 @@ struct ScrollViewWithStickyHeader<Content: View, Header: View>: View {
 
                 content
             }
+        }
+        // Mitigate unwanted behaviour of the navigation bar On devices/simulators starting with iOS 18.2:
+        // the ScrollView's content would be visible below the navigation bar when scrolling down.
+        .introspect(.viewController, on: .iOS(.v18)) { (viewController: UIViewController) in
+            guard let scrollView = viewController.view?.recursiveSubviews.compactMap({ $0 as? UIScrollView }).first
+            else { return }
+            viewController.setContentScrollView(scrollView, for: .top)
         }
         .overlayPreferenceValue(StickyHeaderAnchorKey.self, alignment: .top) { stickyHeader in
             if let stickyHeader = stickyHeader {
@@ -148,5 +157,13 @@ struct ScrollViewWithStickyHeader_Preview: PreviewProvider {
                 }
             }
         }
+    }
+}
+
+extension UIView {
+    var recursiveSubviews: [UIView] {
+        var allSubviews = subviews
+        allSubviews.forEach { allSubviews.append(contentsOf: $0.recursiveSubviews) }
+        return allSubviews
     }
 }

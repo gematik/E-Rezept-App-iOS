@@ -28,7 +28,7 @@ struct OnboardingAnalyticsView: View {
             ScrollView {
                 VStack {
                     TitleView()
-                        .padding()
+                        .padding(.bottom)
 
                     // [REQ:gemSpec_eRp_FdV:A_19184] Information for the user what is collected
                     VStack(alignment: .leading, spacing: 16) {
@@ -64,7 +64,7 @@ struct OnboardingAnalyticsView: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .multilineTextAlignment(.leading)
                     }
-                    .padding()
+                    .padding(.vertical)
                 }
             }
             Spacer()
@@ -77,8 +77,8 @@ struct OnboardingAnalyticsView: View {
 
             Button(action: action) {
                 Text(L10n.onbAnaBtnNext)
-                    .padding()
                     .padding(.horizontal, 64)
+                    .padding(.vertical)
             }
             .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnContinue)
             .font(Font.body.weight(.semibold))
@@ -86,6 +86,7 @@ struct OnboardingAnalyticsView: View {
             .background(Colors.primary700)
             .cornerRadius(16)
         }
+        .padding()
     }
 }
 

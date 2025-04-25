@@ -62,7 +62,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         setupLocationAlertForDenial()
 
         let mapScreen = tabBar
-            .tapRedeemTab()
+            .tapPharmacySearchTab()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()
@@ -85,7 +85,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         setupLocationAlertForAcceptance()
 
         tabBar
-            .tapRedeemTab()
+            .tapPharmacySearchTab()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()
@@ -101,7 +101,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         setupLocationAlertForDenial()
 
         tabBar
-            .tapRedeemTab()
+            .tapPharmacySearchTab()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()
@@ -123,6 +123,7 @@ final class PharmacySearchMapUITests: XCTestCase {
             .tapPrescriptionsTab()
             .tapRedeem()
             .tapRedeemRemote()
+            .tapAddPharmacy()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()
@@ -147,7 +148,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         setupLocationAlertForDenial()
 
         let mapScreen = tabBar
-            .tapRedeemTab()
+            .tapPharmacySearchTab()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()
@@ -169,7 +170,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         setupLocationAlertForDenial()
 
         let pharmacyDetail = tabBar
-            .tapRedeemTab()
+            .tapPharmacySearchTab()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()
@@ -194,7 +195,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         setupLocationAlertForDenial()
 
         let mapScreen = tabBar
-            .tapRedeemTab()
+            .tapPharmacySearchTab()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()
@@ -221,7 +222,7 @@ final class PharmacySearchMapUITests: XCTestCase {
         setupLocationAlertForDenial()
 
         let mapScreen = tabBar
-            .tapRedeemTab()
+            .tapPharmacySearchTab()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()
@@ -259,7 +260,7 @@ final class PharmacySearchMapUITests: XCTestCase {
 
         // navigate and open the map
         let mapScreen = tabBar
-            .tapRedeemTab()
+            .tapPharmacySearchTab()
             .tapMapSearch()
 
         forceTriggerInterruptMonitors()

@@ -37,7 +37,7 @@ final class AppDomainTests: XCTestCase {
             initialState: .init(
                 destination: .settings,
                 main: Self.Fixtures.mainDomainState,
-                pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
+                pharmacy: Self.Fixtures.pharmacyContainerState,
                 orders: Self.Fixtures.ordersDomainState,
                 settings: SettingsDomain.State(
                     isDemoMode: false,
@@ -60,7 +60,7 @@ final class AppDomainTests: XCTestCase {
             initialState: .init(
                 destination: .settings,
                 main: Self.Fixtures.mainDomainState,
-                pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
+                pharmacy: Self.Fixtures.pharmacyContainerState,
                 orders: Self.Fixtures.ordersDomainState,
                 settings: SettingsDomain.State(
                     isDemoMode: false,
@@ -87,7 +87,7 @@ final class AppDomainTests: XCTestCase {
             initialState: .init(
                 destination: .settings,
                 main: Self.Fixtures.mainDomainState,
-                pharmacySearch: Self.Fixtures.pharmacySearchDomainState,
+                pharmacy: Self.Fixtures.pharmacyContainerState,
                 orders: Self.Fixtures.ordersDomainState,
                 settings: SettingsDomain.State(
                     isDemoMode: false,
@@ -126,12 +126,15 @@ final class AppDomainTests: XCTestCase {
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
         )
 
+        static let pharmacyContainerState = PharmacyContainerDomain.State(
+            pharmacySearch: pharmacySearchDomainState
+        )
+
         static let pharmacySearchDomainState = PharmacySearchDomain.State(
             selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: [],
-            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .searchResultEmpty
         )

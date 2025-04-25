@@ -42,7 +42,9 @@ extension FHIRClient {
                 // fall back to JSON dictionary parsing
                 let accessCode = fhirResponse.body.recoverAccessCode
                 let pvsPruefnummer = fhirResponse.body.recoverPvsPruefnummer
-                let recoverdFlowType = fhirResponse.body.recoverFlowType
+                let flowType = fhirResponse.body.recoverFlowType.map {
+                    ErxTask.FlowType(rawValue: $0)
+                } ?? ErxTask.FlowType(taskId: id)
                 let authoredOn = fhirResponse.body.recoverAuthoredOn
                 let prettyCodingPath = context.codingPath.reduce("") { partialResult, key -> String in
                     partialResult + "\(key.intValue?.description ?? key.stringValue)."
@@ -57,7 +59,7 @@ extension FHIRClient {
                         debug description: \(context.debugDescription)
                         """
                     )),
-                    flowType: ErxTask.FlowType(rawValue: recoverdFlowType),
+                    flowType: flowType,
                     accessCode: accessCode,
                     authoredOn: authoredOn
                 )

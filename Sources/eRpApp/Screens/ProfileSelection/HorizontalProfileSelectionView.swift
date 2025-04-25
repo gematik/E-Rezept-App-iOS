@@ -63,6 +63,7 @@ struct HorizontalProfileSelectionView: View {
 
                     Spacer()
                 }
+
                 .padding(.vertical)
                 .padding(.horizontal)
                 .task {

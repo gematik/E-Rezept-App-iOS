@@ -103,8 +103,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gematik/OpenSSL-Swift",
       "state" : {
-        "revision" : "c07b5380a4e1b324856e5edb7852d21e1835df1e",
-        "version" : "4.3.0"
+        "revision" : "bec06b51e306b84b51fe09b7d26acb3b10e5e2e3",
+        "version" : "4.3.1"
       }
     },
     {
@@ -112,8 +112,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gematik/ref-OpenHealthCardKit",
       "state" : {
-        "revision" : "4230060f01eaf707379949ade9866b325ab21cea",
-        "version" : "5.10.1"
+        "revision" : "1831d7e1ee5725c1dfe8d44a4c8e044c17f79494",
+        "version" : "5.11.0"
       }
     },
     {
@@ -184,8 +184,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gematik/swift-gemPDFKit",
       "state" : {
-        "revision" : "06851ed602e5b3bbd3aedf0dd8d91372de9fa11d",
-        "version" : "0.1.1"
+        "revision" : "c9fa84c525b8a204a572aed89f15cb05921a0917",
+        "version" : "0.2.0"
       }
     },
     {

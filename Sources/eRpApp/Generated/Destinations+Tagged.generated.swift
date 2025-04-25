@@ -7,7 +7,7 @@ import Foundation
 extension AppDomain.Destinations.State {
     enum Tag: Int {
         case main
-        case pharmacySearch
+        case pharmacy
         case orders
         case settings
     }
@@ -16,8 +16,8 @@ extension AppDomain.Destinations.State {
         switch self {
             case .main:
                 return .main
-            case .pharmacySearch:
-                return .pharmacySearch
+            case .pharmacy:
+                return .pharmacy
             case .orders:
                 return .orders
             case .settings:

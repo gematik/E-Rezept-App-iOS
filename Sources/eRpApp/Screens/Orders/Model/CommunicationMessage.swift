@@ -47,20 +47,7 @@ enum CommunicationMessage: Identifiable, Equatable {
     var timelineEntries: [TimelineEntry] {
         switch self {
         case let .order(order):
-            let displayedCommunications = IdentifiedArray(uniqueElements: order.communications.filterUnique())
-            var timelineEntries: [TimelineEntry] = displayedCommunications
-                .compactMap { communication in
-                    switch communication.profile {
-                    case .dispReq:
-                        return TimelineEntry.dispReq(communication, pharmacy: order.pharmacy)
-                    case .reply:
-                        return TimelineEntry.reply(communication)
-                    default:
-                        return nil
-                    }
-                }
-            timelineEntries.append(contentsOf: order.chargeItems.map { TimelineEntry.chargeItem($0) })
-            return timelineEntries
+            return order.timelineEntries
         case let .internalCommunication(message):
             return message.messages.compactMap { message in
                 TimelineEntry.internalCommunication(message)
