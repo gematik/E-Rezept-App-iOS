@@ -37,26 +37,35 @@ extension ErxTaskOrder {
     }
 
     private func createFHIRCommunication() throws -> Communication {
-        #warning(
-            "Updated version to .v1_3_0 after after 15.01.25 and before 15.7.2025 More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
-        )
-        guard let communicationDispReq = Workflow.Key.communicationDispReq[.v1_2_0]?
-            .asFHIRCanonicalPrimitive(for: "1.2") else {
+        guard let communicationDispReq = Workflow.Key.communicationDispReq[.v1_4_3]?
+            .asFHIRCanonicalPrimitive(for: "1.4") else {
             throw ErxTaskOrder.Error.unableToConstructCommunicationRequest
         }
         let meta = Meta(profile: [communicationDispReq])
         let reference = Reference(reference: taskIdAndAccessCode.asFHIRStringPrimitive())
         let payloadString = payload.asJsonString().asFHIRStringPrimitive()
         let payload = CommunicationPayload(content: .string(payloadString))
-        let telematikUri = Workflow.Key.telematikIdKeys[.v1_2_0]?.asFHIRURIPrimitive()
+        let telematikUri = Workflow.Key.telematikIdKeys[.v1_4_3]?.asFHIRURIPrimitive()
         let telematikId = Identifier(system: telematikUri,
                                      value: pharmacyTelematikId.asFHIRStringPrimitive())
-        let orderUri = Workflow.Key.orderIdKeys[.v1_2_0]?.asFHIRURIPrimitive()
+        let orderUri = Workflow.Key.orderIdKeys[.v1_4_3]?.asFHIRURIPrimitive()
         let orderId = Identifier(system: orderUri,
                                  value: identifier.asFHIRStringPrimitive())
         let recipient = Reference(identifier: telematikId)
+
+        guard let prescriptionTypeKey = Workflow.Key.prescriptionTypeKeys[.v1_4_3]?.asFHIRURIPrimitive() else {
+            throw ErxTaskOrder.Error.unableToConstructCommunicationRequest
+        }
+        let flowType = Extension(
+            url: prescriptionTypeKey,
+            value: .coding(Coding(
+                code: flowType.asFHIRStringPrimitive(),
+                system: Workflow.Key.flowTypeKeys[.v1_4_3]?.asFHIRURIPrimitive()
+            ))
+        )
         return Communication(
             basedOn: [reference],
+            extension: [flowType],
             identifier: [orderId],
             meta: meta,
             payload: [payload],

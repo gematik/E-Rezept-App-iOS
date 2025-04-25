@@ -45,15 +45,19 @@ struct OrderMessageView: View {
                     .foregroundColor(Colors.systemLabel)
                     .padding(.horizontal)
 
-                if let chipText = timelineEntry.chipText {
-                    Text(chipText)
-                        .font(Font.caption)
-                        .multilineTextAlignment(.leading)
-                        .foregroundColor(Colors.systemLabel)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Colors.primary100)
-                        .cornerRadius(16)
+                if !timelineEntry.chipTexts.isEmpty {
+                    RowStack {
+                        ForEach(timelineEntry.chipTexts, id: \.self) { chipText in
+                            Text(chipText)
+                                .font(Font.caption)
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(Colors.systemLabel)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Colors.primary100)
+                                .cornerRadius(16)
+                        }
+                    }.accessibility(identifier: A11y.orderDetail.message.msgTxtChips)
                         .padding(.horizontal)
                 }
 
@@ -190,6 +194,72 @@ struct OrderMessageView: View {
             }
         }
     }
+
+    /// A custom layout that arranges subview in a row-like pattern
+    /// wrapping to a new row when the elements exceed the available width.
+    struct RowStack: Layout {
+        let horizontalPadding: CGFloat = 4
+        let verticalPadding: CGFloat = 4
+
+        // Calculate the total size needed
+        func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache _: inout Void) -> CGSize {
+            var currentRowWidth: CGFloat = 0
+            var currentRowHeight: CGFloat = 0
+            var totalHeight: CGFloat = 0
+            let maxWidth = proposal.width ?? .infinity
+
+            for subview in subviews {
+                // get the size of current subview
+                let size = subview.sizeThatFits(.unspecified)
+                let elementWidth = size.width + horizontalPadding
+                let elementHeight = size.height
+
+                // Check if new elements is exceeding maxWidth
+                if currentRowWidth + elementWidth > maxWidth {
+                    // "create" a new row
+                    currentRowWidth = 0
+                    totalHeight += currentRowHeight + verticalPadding
+                    currentRowHeight = 0
+                }
+
+                currentRowWidth += elementWidth
+                // store height of the tallest element
+                currentRowHeight = max(currentRowHeight, elementHeight)
+            }
+            totalHeight += currentRowHeight
+            return CGSize(width: currentRowWidth, height: totalHeight)
+        }
+
+        // Places the subviews
+        func placeSubviews(in bounds: CGRect, proposal _: ProposedViewSize, subviews: Subviews, cache _: inout Void) {
+            // values based on the boundary
+            var currentRowWidth: CGFloat = bounds.minX
+            var currentRowHeight: CGFloat = bounds.minY
+            var totalHeight: CGFloat = 0
+            let maxWidth = bounds.maxX
+
+            for subview in subviews {
+                // get the size of current subview
+                let size = subview.sizeThatFits(.unspecified)
+                let elementWidth = size.width + horizontalPadding
+                let elementHeight = size.height
+
+                // Check if new elements is exceeding maxWidth
+                if currentRowWidth + elementWidth > maxWidth {
+                    // "create" a new row
+                    currentRowWidth = bounds.minX
+                    currentRowHeight += totalHeight + verticalPadding
+                    totalHeight = 0
+                }
+
+                subview.place(at: CGPoint(x: currentRowWidth, y: currentRowHeight), proposal: ProposedViewSize(size))
+                // modify x-value for new insert position
+                currentRowWidth += elementWidth
+                // store height of the tallest element
+                totalHeight = max(totalHeight, elementHeight)
+            }
+        }
+    }
 }
 
 struct OrderMessageView_Previews: PreviewProvider {
@@ -211,76 +281,78 @@ struct OrderMessageView_Previews: PreviewProvider {
             OrderMessageView(
                 store: OrderDetailDomain.Dummies.store,
                 timelineEntry: .reply(
-                    ErxTask.Communication(
+                    ErxTask.Communication.Unique(
                         identifier: "4",
                         profile: .reply,
-                        taskId: "taskID",
-                        userId: "userID",
+                        taskIds: ["taskID"],
+                        insuranceId: "userID",
                         telematikId: "telematikID",
                         timestamp: "2021-05-29T10:59:37.098245933+00:00",
                         payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"delivery\",\"info_text\": \"Your prescription is on the way. Make sure you are at home. We will not come back and bring you more drugs! Just kidding ;)\", \"url\":\"https://www.tree.fm/forest/33\"}" // swiftlint:disable:this line_length
-                    )
+                    ),
+                    chipTexts: []
                 )
             )
 
             OrderMessageView(
                 store: OrderDetailDomain.Dummies.store,
                 timelineEntry: .reply(
-                    ErxTask.Communication(
+                    ErxTask.Communication.Unique(
                         identifier: "3",
                         profile: .reply,
-                        taskId: "taskID",
-                        userId: "userID",
+                        taskIds: ["taskID"],
+                        insuranceId: "userID",
                         telematikId: "telematikID",
                         timestamp: "2021-05-29T10:59:37.098245933+00:00",
                         payloadJSON: "{\"version\":\"1\" , \"supplyOptionsType\":\"onPremise\" , \"info_text\":\"01 Info/Para + HRcode/Para + DMC/Para + URL/Para\" , \"pickUpCodeHR\":\"T01__R01\" , \"pickUpCodeDMC\":\"Test_01___Rezept_01___abcdefg12345\" }" // swiftlint:disable:this line_length
-                    )
+                    ), chipTexts: []
                 )
             )
 
             OrderMessageView(
                 store: OrderDetailDomain.Dummies.store,
                 timelineEntry: .reply(
-                    ErxTask.Communication(
+                    ErxTask.Communication.Unique(
                         identifier: "2",
                         profile: .reply,
-                        taskId: "taskID",
-                        userId: "userID",
+                        taskIds: ["taskID"],
+                        insuranceId: "userID",
                         telematikId: "telematikID",
                         timestamp: "2021-05-29T10:59:37.098245933+00:00",
                         payloadJSON: "{\"version\":\"1\" , \"supplyOptionsType\":\"shipment\" , \"info_text\":\"10 Info/Para + HRcode/Para + DMC/Para + URL/Para\" , \"pickUpCodeHR\":\"T10__R03\" , \"pickUpCodeDMC\":\"Test_10___Rezept_03___abcdefg12345\" , \"url\":\"https://www.tree.fm/forest/33\"}" // swiftlint:disable:this line_length
-                    )
+                    ), chipTexts: []
                 )
             )
 
             OrderMessageView(
                 store: OrderDetailDomain.Dummies.store,
                 timelineEntry: .reply(
-                    ErxTask.Communication(
+                    ErxTask.Communication.Unique(
                         identifier: "2",
                         profile: .reply,
-                        taskId: "taskID",
-                        userId: "userID",
+                        taskIds: ["taskID"],
+                        insuranceId: "userID",
                         telematikId: "telematikID",
                         timestamp: "2021-05-29T10:59:37.098245933+00:00",
                         payloadJSON: "not a json"
-                    )
+                    ), chipTexts: []
                 )
             )
 
             OrderMessageView(
                 store: OrderDetailDomain.Dummies.store,
                 timelineEntry: .dispReq(
-                    ErxTask.Communication(
+                    ErxTask.Communication.Unique(
                         identifier: "1",
                         profile: .dispReq,
-                        taskId: "taskID",
-                        userId: "userID",
+                        taskIds: ["taskID"],
+                        insuranceId: "userID",
                         telematikId: "telematikID",
                         timestamp: "2021-05-29T09:59:37.098245933+00:00",
                         payloadJSON: ""
                     ),
-                    pharmacy: nil
+                    pharmacy: nil,
+                    chipTexts: []
                 ),
                 style: .single
             )

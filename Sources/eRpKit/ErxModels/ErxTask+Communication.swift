@@ -171,7 +171,60 @@ extension ErxTask {
 }
 
 extension ErxTask.Communication: Comparable, Hashable {
-    struct Unique: Equatable, Hashable {
+    public struct Unique: Equatable, Identifiable, Codable, Sendable {
+        public let identifier: String
+        public let profile: Profile
+        public let taskIds: [String]
+        public let insuranceId: String
+        public let telematikId: String
+        public let orderId: String?
+        public let timestamp: String
+        public let isRead: Bool
+        public let payloadJSON: String
+        public let payload: Payload?
+        public var id: String {
+            identifier
+        }
+
+        public init(
+            identifier: String,
+            profile: Profile,
+            taskIds: [String],
+            insuranceId: String,
+            telematikId: String,
+            orderId: String? = nil,
+            timestamp: String,
+            payloadJSON: String,
+            isRead: Bool = false
+        ) {
+            self.identifier = identifier
+            self.taskIds = taskIds
+            self.insuranceId = insuranceId
+            self.telematikId = telematikId
+            self.orderId = orderId
+            self.timestamp = timestamp
+            self.payloadJSON = payloadJSON
+            self.isRead = isRead
+            self.profile = profile
+            payload = try? Payload.from(string: payloadJSON)
+        }
+
+        public init(from communication: ErxTask.Communication) {
+            identifier = communication.identifier
+            taskIds = [communication.taskId]
+            insuranceId = communication.insuranceId
+            telematikId = communication.telematikId
+            orderId = communication.orderId
+            timestamp = communication.timestamp
+            payloadJSON = communication.payloadJSON
+            isRead = communication.isRead
+            profile = communication.profile
+            payload = try? Payload.from(string: communication.payloadJSON)
+        }
+    }
+
+    // Acts as the key for an Unique Communication
+    struct UniqueKey: Equatable, Hashable {
         let profile: Profile
         let payload: String
         let insuranceId: String
@@ -189,28 +242,46 @@ extension ErxTask.Communication: Comparable, Hashable {
 }
 
 extension Collection where Element == ErxTask.Communication {
-    /// Returns a filtered result of `[ErxTask.Communication]` that are unique for there properties:
+    /// Returns a result of `[ErxTask.Communication.Unique]` that are unique for there properties:
     /// `profile`, `payload`, `insuranceId`, `telematikId`and `orderId`
-    ///  The element is also unique if the `orderId` is `nil`
+    ///  The element is also unique if the `orderId` is `nil`. Duplicated `taskId` from `ErxTask.Communication` with
+    ///  the same `ErxTask.Communication.UniqueKey` are stored within `ErxTask.Communication.Unique.taskIds`
     ///
-    /// - Returns: `[ErxTask.Communication]` that are unique in there filtered properties
+    /// - Returns: `[ErxTask.Communication.Unique]` that are unique in there filtered properties
     public func filterUnique()
-        -> [ErxTask.Communication] {
-        var seen = Set<ErxTask.Communication.Unique>()
+        -> [ErxTask.Communication.Unique] {
+        var groupDict = [ErxTask.Communication.UniqueKey: [ErxTask.Communication]]()
         // sort by timestamp to filter newer elements
-        let filteredResult = sorted { $0.timestamp < $1.timestamp }.filter { element in
-            guard seen.insert(
-                ErxTask.Communication.Unique(
-                    profile: element.profile,
-                    payload: element.payloadJSON,
-                    insuranceId: element.insuranceId,
-                    telematikId: element.telematikId,
-                    orderId: element.orderId ?? UUID().uuidString
-                )
-            )
-            .inserted else { return false }
-            return true
+        let sortedElements = sorted { $0.timestamp < $1.timestamp }
+
+        for element in sortedElements {
+            let key = ErxTask.Communication.UniqueKey(profile: element.profile,
+                                                      payload: element.payloadJSON,
+                                                      insuranceId: element.insuranceId,
+                                                      telematikId: element.telematikId,
+                                                      orderId: element.orderId ?? UUID().uuidString)
+            groupDict[key, default: []].append(element)
         }
-        return filteredResult
+
+        let grouped = groupDict.map { key, elements -> ErxTask.Communication.Unique in
+            // Array of all taskIds that have the same unique properties and remove all duplicated taskIds
+            let taskIds = Array(Set(elements.map(\.taskId)))
+            // isRead false if any communication isRead is false
+            let isRead = !elements.contains { !$0.isRead }
+
+            let latestTimestamp = elements.map(\.timestamp).max { $0 < $1 } ?? ""
+            let firstId = elements.first?.id ?? UUID().uuidString
+
+            return ErxTask.Communication.Unique(identifier: firstId,
+                                                profile: key.profile,
+                                                taskIds: taskIds.sorted(),
+                                                insuranceId: key.insuranceId,
+                                                telematikId: key.telematikId,
+                                                orderId: key.orderId,
+                                                timestamp: latestTimestamp,
+                                                payloadJSON: key.payload,
+                                                isRead: isRead)
+        }
+        return grouped
     }
 }

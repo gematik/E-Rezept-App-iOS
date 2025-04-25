@@ -32,6 +32,7 @@ import VAUClient
 // NOTE: Use (and migrate to) `AutoMockable` rather than `ProtocolMock`.
 
 // sourcery:begin: AutoMockable
+extension JWTSigner {}
 extension SearchHistory {}
 // sourcery:end
 
@@ -72,7 +73,6 @@ extension PagedAuditEventsController {}
 extension AuditEventsService {}
 extension PharmacyRepository {}
 extension OrdersRepository {}
-extension JWTSigner {}
 extension AppSecurityManager {}
 extension KeychainAccessHelper {}
 extension InternalCommunicationProtocol {}

@@ -26,6 +26,7 @@ extension OrderRequest {
     enum Fixtures {
         static let order1 = OrderRequest(
             redeemType: .onPremise,
+            flowType: "160",
             taskID: "task_id_1",
             accessCode: "access_code_1",
             endpoint: endpoint,
@@ -34,6 +35,7 @@ extension OrderRequest {
 
         static let order2 = OrderRequest(
             redeemType: .onPremise,
+            flowType: "160",
             taskID: "task_id_2",
             accessCode: "access_code_2",
             endpoint: endpoint,
@@ -42,6 +44,7 @@ extension OrderRequest {
 
         static let order3 = OrderRequest(
             redeemType: .onPremise,
+            flowType: "160",
             taskID: "task_id_3",
             accessCode: "access_code_3",
             endpoint: endpoint,
@@ -53,6 +56,7 @@ extension OrderRequest {
                 OrderRequest(
                     orderID: id,
                     redeemType: .onPremise,
+                    flowType: "160",
                     taskID: "task_id_1",
                     accessCode: "access_code_1",
                     endpoint: endpoint,
@@ -61,6 +65,7 @@ extension OrderRequest {
                 OrderRequest(
                     orderID: id,
                     redeemType: .onPremise,
+                    flowType: "160",
                     taskID: "task_id_2",
                     accessCode: "access_code_2",
                     endpoint: endpoint,
@@ -69,6 +74,7 @@ extension OrderRequest {
                 OrderRequest(
                     orderID: id,
                     redeemType: .onPremise,
+                    flowType: "160",
                     taskID: "task_id_3",
                     accessCode: "access_code_3",
                     endpoint: endpoint,
@@ -79,6 +85,7 @@ extension OrderRequest {
 
         static let orderNoEndpoint = OrderRequest(
             redeemType: .onPremise,
+            flowType: "160",
             taskID: "task_id_1",
             accessCode: "access_code_1"
         )

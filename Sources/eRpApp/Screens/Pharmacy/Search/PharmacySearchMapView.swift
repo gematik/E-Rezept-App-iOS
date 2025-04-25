@@ -114,23 +114,6 @@ struct PharmacySearchMapView: View {
                         }.padding(.bottom, 24)
                     }
                 }
-                .navigationDestination(
-                    item: $store.scope(
-                        state: \.destination?.redeemViaAVS,
-                        action: \.destination.redeemViaAVS
-                    )
-                ) { store in
-                    PharmacyRedeemView(store: store)
-                }
-
-                .navigationDestination(
-                    item: $store.scope(
-                        state: \.destination?.redeemViaErxTaskRepository,
-                        action: \.destination.redeemViaErxTaskRepository
-                    )
-                ) { store in
-                    PharmacyRedeemView(store: store)
-                }
                 .alert($store.scope(
                     state: \.destination?.alert?.alert,
                     action: \.destination.alert
@@ -140,8 +123,10 @@ struct PharmacySearchMapView: View {
                     UIApplication.shared.dismissKeyboard()
                 }
             }
-            .sheet(item: $store.scope(state: \.destination?.clusterSheet,
-                                      action: \.destination.clusterSheet)) { store in
+            .sheet(item: $store.scope(
+                state: \.destination?.clusterSheet,
+                action: \.destination.clusterSheet
+            )) { store in
                 ClusterView(store: store)
                     .presentationDetents([.fraction(0.45), .fraction(0.85), .large])
             }

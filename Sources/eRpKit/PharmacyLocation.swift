@@ -183,7 +183,8 @@ public struct PharmacyLocation: Identifiable, Equatable {
             self.deliveryUrlAdditionalHeaders = deliveryUrlAdditionalHeaders
         }
 
-        public func url(for redeemOption: RedeemOption, transactionId: String, telematikId: String) -> Endpoint? {
+        public func url(for redeemOption: RedeemOption?, transactionId: String, telematikId: String) -> Endpoint? {
+            guard let redeemOption else { return nil }
             guard let sanatizedUrl = url(for: redeemOption)?
                 .replacingOccurrences(of: "<ti_id>", with: telematikId.urlPercentEscapedString() ?? "")
                 .replacingOccurrences(of: "<transactionID>", with: transactionId.urlPercentEscapedString() ?? "") else {

@@ -263,6 +263,7 @@ settings:
     - stg_ctn_audit_events_event_title
     - stg_ctn_audit_events_event_description
     - stg_ctn_audit_events_event_date
+    - stg_ctn_audit_events_event_telematik_id_info
     - stg_txt_audit_events_last_updated
     - stg_txt_audit_events_activity_indicator
     - stg_txt_audit_events_no_protocol_title
@@ -337,6 +338,7 @@ orderDetail:
     - puc_btn_close
   message:
     - msg_txt_title
+    - msg_txt_chips
 mainScreen:
   - erx_btn_login
   - erx_btn_refresh

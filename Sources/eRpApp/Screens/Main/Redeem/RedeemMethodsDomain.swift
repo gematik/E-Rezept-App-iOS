@@ -27,7 +27,7 @@ import UIKit
 struct RedeemMethodsDomain {
     @ObservableState
     struct State: Equatable {
-        @Shared var prescriptions: [Prescription]
+        var prescriptions: [Prescription]
         @Presents var destination: Destination.State?
     }
 
@@ -37,11 +37,11 @@ struct RedeemMethodsDomain {
         case delegate(Delegate)
 
         case resetNavigation
-        case showMatrixCodeTapped
-        case showPharmacySearchTapped
+        case matrixCodeTapped
 
         enum Delegate: Equatable {
             case close
+            case redeemOverview([Prescription])
         }
     }
 
@@ -49,8 +49,6 @@ struct RedeemMethodsDomain {
     enum Destination {
         // sourcery: AnalyticsScreen = redeem_matrixCode
         case matrixCode(MatrixCodeDomain)
-        // sourcery: AnalyticsScreen = pharmacySearch
-        case pharmacySearch(PharmacySearchDomain)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
@@ -59,31 +57,14 @@ struct RedeemMethodsDomain {
         Reduce { state, action in
             switch action {
             case .closeButtonTapped:
-                return Effect.send(.delegate(.close))
-            case let .destination(.presented(.pharmacySearch(.delegate(action)))):
-                switch action {
-                case .close:
-                    state.destination = nil
-                    return .run { send in
-                        try await schedulers.main.sleep(for: 0.1)
-                        await send(.delegate(.close))
-                    }
-                }
-            case .showMatrixCodeTapped:
+                return .send(.delegate(.close))
+            case .matrixCodeTapped:
                 state.destination = .matrixCode(
                     MatrixCodeDomain.State(
                         type: .erxTask,
                         erxTasks: state.prescriptions.map(\.erxTask)
                     )
                 )
-                return .none
-            case .showPharmacySearchTapped:
-                state.destination = .pharmacySearch(PharmacySearchDomain
-                    .State(
-                        selectedPrescriptions: state.$prescriptions,
-                        inRedeemProcess: true,
-                        pharmacyRedeemState: Shared(nil)
-                    ))
                 return .none
             case .resetNavigation:
                 state.destination = nil
@@ -99,7 +80,7 @@ struct RedeemMethodsDomain {
 extension RedeemMethodsDomain {
     enum Dummies {
         static let state = State(
-            prescriptions: Shared([Prescription.Dummies.prescriptionReady])
+            prescriptions: [Prescription.Dummies.prescriptionReady]
         )
 
         static let store = Store(

@@ -357,7 +357,14 @@ struct ScenarioLoader {
         }
         do {
             return try JSONDecoder().decode(T.self, from: jsonData)
+        } catch let DecodingError.typeMismatch(type, context) {
+            print(String(data: jsonData, encoding: .utf8))
+            print("Type mismatch error: \(type)")
+            print("Context: \(context)")
+            fatalError("Failed to decode scenario file")
         } catch let error as DecodingError {
+            print(String(data: jsonData, encoding: .utf8))
+            print("wait")
             switch error {
             case let .valueNotFound(_, context),
                  let .dataCorrupted(context),

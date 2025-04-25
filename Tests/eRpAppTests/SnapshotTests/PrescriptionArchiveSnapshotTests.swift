@@ -52,6 +52,7 @@ extension PrescriptionArchiveSnapshotTests {
             ErxTask(
                 identifier: "7360f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .completed,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),

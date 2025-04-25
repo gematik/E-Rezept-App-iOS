@@ -326,7 +326,7 @@ class CANCameraScannerViewController: UIViewController {
         // Check if we have any temporally stable numbers.
         if let sureNumber = numberTracker.getStableString() {
             DispatchQueue.main.async { [weak self] in
-                self?.canScanned?(sureNumber as ScanCAN)
+                self?.canScanned?(ScanCAN(value: sureNumber))
                 self?.pauseCaptureSession()
                 self?.numberTracker.reset(string: sureNumber)
             }
@@ -362,7 +362,7 @@ extension CANCameraScannerViewController: AVCaptureVideoDataOutputSampleBufferDe
 
 extension String {
     func extractCAN() -> (Range<String.Index>, String)? {
-        if (self as ScanCAN).isValid,
+        if ScanCAN(value: self).isValid,
            let range = range(of: self) {
             return (range, self)
         }

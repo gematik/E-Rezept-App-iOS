@@ -600,17 +600,14 @@ class EGKSigner: JWTSigner {
     }
 
     // [REQ:BSI-eRp-ePA:O.Cryp_4#7|12] Signature creation with eGK with dedicated C.CH.AUT
-    func sign(message: Data) -> AnyPublisher<Data, Swift.Error> {
+    func sign(message: Data) async throws -> Data {
         // [REQ:gemSpec_IDP_Frontend:A_20700-07] perform signature with OpenHealthCardKit
-        card.sign(data: message)
-            .tryMap { response in
-                if response.responseStatus == ResponseStatus.success, let signature = response.data {
-                    return signature
-                } else {
-                    throw NFCSignatureProviderError.signingFailure(.responseStatus(response.responseStatus))
-                }
-            }
-            .eraseToAnyPublisher()
+        let response = try await card.signAsync(data: message)
+        if response.responseStatus == ResponseStatus.success, let signature = response.data {
+            return signature
+        } else {
+            throw NFCSignatureProviderError.signingFailure(.responseStatus(response.responseStatus))
+        }
     }
 }
 

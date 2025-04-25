@@ -49,6 +49,11 @@ struct PrescriptionListDomain {
 
         var profile: UserProfile?
 
+        /// tempProfile is used to store the current loading UserProfile because activeUserProfileReceived updates
+        /// before state.profile is set during the effect.action causing an loop. By using tempProfile i can store
+        /// the Id of the loading profile and prevent loading the same profile again
+        var tempProfile: UserProfile?
+
         var showError: Bool {
             loadingState.error != nil
         }
@@ -74,14 +79,11 @@ struct PrescriptionListDomain {
 
     enum Action: Equatable {
         /// Loads locally stored Prescriptions
-        case loadLocalPrescriptions
+        case loadLocalPrescriptions(UserProfile)
         ///  Loads Prescriptions from server and stores them in the local store
         case loadRemotePrescriptionsAndSave
         /// Presents the CardWall when not logged in or executes `loadFromCloudAndSave`
         case refresh
-        /// Listener for selectedProfileID switches
-        case registerSelectedProfileIDListener
-        case unregisterSelectedProfileIDListener
         /// Listener for active UserProfile update changes (including connectivity status, activity status)
         case registerActiveUserProfileListener
         case unregisterActiveUserProfileListener
@@ -98,10 +100,9 @@ struct PrescriptionListDomain {
 
         enum Response: Equatable {
             /// Response from `loadLocalPrescriptions`
-            case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
+            case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>, UserProfile)
             /// Response from `loadRemotePrescriptionsAndSave`
             case loadRemotePrescriptionsAndSaveReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
-            case selectedProfileIDReceived(UUID?)
             case activeUserProfileReceived(Result<UserProfile, UserProfileServiceError>)
             /// Response from `refresh` that presents the CardWall sheet
             case showCardWallReceived(CardWallIntroductionDomain.State)
@@ -137,21 +138,6 @@ struct PrescriptionListDomain {
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case .registerSelectedProfileIDListener:
-            return .publisher(
-                userProfileService.selectedProfileId
-                    .removeDuplicates()
-                    .map { .response(.selectedProfileIDReceived($0)) }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
-            )
-        case .unregisterSelectedProfileIDListener:
-            return .cancel(id: CancelID.selectedProfileId)
-        case .response(.selectedProfileIDReceived):
-            return .concatenate(
-                Effect.send(.loadLocalPrescriptions),
-                Effect.send(.loadRemotePrescriptionsAndSave)
-            )
         case .unregisterActiveUserProfileListener:
             return .cancel(id: CancelID.activeUserProfile)
         case .registerActiveUserProfileListener:
@@ -165,20 +151,43 @@ struct PrescriptionListDomain {
         case .response(.activeUserProfileReceived(.failure)):
             state.profile = nil
             return .none
-        case let .response(.activeUserProfileReceived(.success(profile))):
-            state.profile = profile
+        case let .response(.activeUserProfileReceived(.success(newProfile))):
+            // First time need to set profile and tempProfile to first loaded activeUserProfile and load prescriptions
+            guard let currentProfile = state.profile, let tempProfile = state.tempProfile else {
+                state.profile = newProfile
+                state.tempProfile = newProfile
+                return .concatenate(
+                    Effect.send(.loadLocalPrescriptions(newProfile)),
+                    Effect.send(.loadRemotePrescriptionsAndSave)
+                )
+            }
+
+            // load new profile when id is not the same
+            if currentProfile.id != newProfile.id, tempProfile.id != newProfile.id {
+                // Need to set tempProfile because activeUserProfileReceived calles before profile is set correct
+                state.tempProfile = newProfile
+                // concatenate is broken and wont go in order
+                return .concatenate(
+                    Effect.send(.loadLocalPrescriptions(newProfile)),
+                    Effect.send(.loadRemotePrescriptionsAndSave)
+                )
+                // update current profile
+            } else if currentProfile.id == newProfile.id, currentProfile != newProfile {
+                state.profile = newProfile
+            }
             return .none
-        case .loadLocalPrescriptions:
+        case let .loadLocalPrescriptions(profile):
             state.loadingState = .loading(state.prescriptions)
             return .publisher(
                 prescriptionRepository.loadLocal()
                     .receive(on: schedulers.main.animation())
                     .catchToLoadingStateEffect()
-                    .map { Action.response(.loadLocalPrescriptionsReceived($0)) }
+                    .map { Action.response(.loadLocalPrescriptionsReceived($0, profile)) }
                     .eraseToAnyPublisher
             )
             .cancellable(id: CancelID.loadLocalPrescriptionId, cancelInFlight: true)
-        case let .response(.loadLocalPrescriptionsReceived(loadingState)):
+        case let .response(.loadLocalPrescriptionsReceived(loadingState, profile)):
+            state.profile = profile
             state.loadingState = loadingState
             state.prescriptions = loadingState.value ?? []
             return .none

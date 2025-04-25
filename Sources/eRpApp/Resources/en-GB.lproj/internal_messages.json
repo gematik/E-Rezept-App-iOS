@@ -16,5 +16,11 @@
         "text": "**Better readability** \n We have made our brand color a little darker to increase the color contrast and thereby improve readability. \n \n **Optimized input field** \n The cursor in the input field for the access number has been removed.",
         "timestamp": "2025-01-28T08:00:00.000Z",
         "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Improved order flow** \nThe ordering process is now easier and faster. \n \n🌐 **New languages** \nOur app is now also available in Spanish and Irish. \n \n📞 **Expanded contact options** \nWe have introduced new contact options for selected insurance companies. \n \n🔍 **Detailed access logs** \nWe now also display the telematics IDs in the access logs, making it easier to identify who had access.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
     }
 ]

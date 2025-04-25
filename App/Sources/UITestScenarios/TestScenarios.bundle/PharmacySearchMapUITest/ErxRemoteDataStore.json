@@ -12,6 +12,7 @@
                 "content":
                 [
                     {
+                        "flowType": "160",
                         "medicationRequest":
                         {
                             "substitutionAllowed": true,
@@ -53,11 +54,7 @@
                 "content":
                 [
                     {
-                        "flowType":
-                        {
-                            "pharmacyOnly":
-                            {}
-                        },
+                        "flowType": "160",
                         "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
                         "medicationRequest":
                         {
@@ -151,6 +148,7 @@
             "erxTaskId": "erxTaskId",
             "accessCode": "accessCode",
             "pharmacyTelematikId": "pharmacyTelematikId",
+            "flowType": "160",
             "payload": {
                 "version": 1,
                 "supplyOptionsType": "shipment",

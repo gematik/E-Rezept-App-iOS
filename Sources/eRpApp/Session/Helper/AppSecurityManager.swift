@@ -131,7 +131,7 @@ struct DefaultAppSecurityManager: AppSecurityManager {
     }
 }
 
-// sourcery: CodedError = "006"
+// sourcery: CodedError = "044"
 enum AppSecurityManagerError: Error, Equatable {
     // sourcery: errorCode = "01"
     case savePasswordFailed

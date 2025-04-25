@@ -27,7 +27,9 @@ public struct ErxAuditEvent: Identifiable, Hashable, Codable {
         text: String? = nil,
         timestamp: String? = nil,
         taskId: String? = nil,
-        title: String? = nil
+        title: String? = nil,
+        agentName: String? = nil,
+        agentTelematikId: String? = nil
     ) {
         self.identifier = identifier
         self.locale = locale
@@ -35,6 +37,8 @@ public struct ErxAuditEvent: Identifiable, Hashable, Codable {
         self.timestamp = timestamp
         self.taskId = taskId
         self.title = title
+        self.agentName = agentName
+        self.agentTelematikId = agentTelematikId
     }
 
     /// Id of the audit event
@@ -52,4 +56,8 @@ public struct ErxAuditEvent: Identifiable, Hashable, Codable {
     public let taskId: String?
     /// Title for the AuditEvent, typically ErxTask name
     public let title: String?
+    /// The name of the agent performing this event
+    public let agentName: String?
+    /// TelematikId of the agent performing this event
+    public let agentTelematikId: String?
 }

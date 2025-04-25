@@ -166,7 +166,6 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
-    fastlane-plugin-appcenter (2.1.2)
     ffi (1.17.0)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
@@ -314,7 +313,6 @@ PLATFORMS
 
 DEPENDENCIES
   fastlane (~> 2.220)
-  fastlane-plugin-appcenter
   jazzy (~> 0.14.4)
   kramdown
   nokogiri (>= 1.16.5)

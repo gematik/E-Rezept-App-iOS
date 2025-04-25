@@ -23,7 +23,7 @@ import SwiftUI
 import SwiftUINavigation
 
 extension ChargeItemConsentService {
-    // sourcery: CodedError = "036"
+    // sourcery: CodedError = "041"
     @CasePathable
     enum Error: LocalizedError, Equatable, Swift.Error {
         // sourcery: errorCode = "01"

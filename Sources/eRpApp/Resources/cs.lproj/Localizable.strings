@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "Heslo";
 "auth_btn_bap_faceid" = "FaceID";
 "auth_btn_bap_touchid" = "Touch ID";
-"auth_btn_biometrics_faceid" = "Odemkněte pomocí Face ID";
-"auth_btn_biometrics_touchid" = "Odemkněte pomocí Touch ID";
+"auth_btn_biometrics_faceid" = "ID obličeje";
+"auth_btn_biometrics_touchid" = "Touch ID";
 "auth_btn_password_continue" = "Dále";
 "auth_txt_bap_password_message" = "Zkuste to znovu nebo zadejte heslo.";
 "auth_txt_biometrics_disclaimer" = "Zajistěte prosím, aby lidé, se kterými můžete toto zařízení sdílet a jejichž biometrické charakteristiky mohou být v tomto zařízení uloženy, měli také přístup k vašim předpisům.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Přihlášení selhalo";
 "auth_txt_biometrics_failed_not_enrolled" = "Na tomto zařízení nebylo nastaveno žádné biometrické zabezpečení.";
 "auth_txt_biometrics_failed_user_fallback" = "Alternativa k biometrickému přihlášení není nakonfigurována. Prosím, vložte heslo.";
-"auth_txt_biometrics_footer" = "Máte nějaké dotazy nebo problémy s používáním aplikace? Naši telefonickou podporu můžete kontaktovat na čísle 0800 277 377 7. \n\n Na das-e-rezept-fuer-deutschland.de jsme vám již odpověděli na mnoho otázek.";
+"auth_txt_biometrics_footer" = "Zapomněli jste heslo? Smažte aplikaci a poté ji znovu nainstalujte. Je to nutné, protože vaše přístupové údaje ukládáme pouze lokálně a k ověření nepoužíváme e-mailovou adresu.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -41,7 +41,7 @@
 "auth_txt_biometrics_touch_id_title" = "Zabezpečení pomocí Touch ID";
 "auth_txt_biometrics_touchid_description" = "Pro zabezpečení dat jste zvolili Touch ID.";
 "auth_txt_biometrics_touchid_start" = "Odemkněte pomocí Touch ID";
-"auth_txt_failed_login_hint_title" = "Neúspěšné pokusy o přihlášení";
+"auth_txt_failed_login_hint_title" = "Bohužel to nefungovalo";
 "auth_txt_password_failure" = "Špatné heslo. Zkuste to znovu.";
 "auth_txt_password_label" = "Pole pro zadání hesla";
 "auth_txt_password_placeholder" = "Zadejte heslo";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Otevřete skener receptů";
 "erx_title" = "Recepty";
 "erx_txt_authored" = "Zobrazeno";
-"erx_txt_claimed_at_%@" = "Předpokládaný %@";
+"erx_txt_claimed_at_%@" = "Přijato %@";
 "erx_txt_current" = "Aktuální";
 "erx_txt_dispensed_at_%@" = "Poskytováno %@";
 "erx_txt_expired_on_%@" = "Platnost vypršela %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Pro dokončení objednávky přejděte na webovou stránku lékárny.";
 "ord_detail_txt_%@_send_to_%@" = "%@ odeslána %@ . Některé lékárny zatím nemají možnost digitální odpovědi. Pokud do zítřka nedostanete žádnou odpověď, preventivně zavolejte.";
 "ord_detail_txt_charge_item%@" = "Obdrželi jste potvrzení o ceně vašeho léku %@ .";
+"ord_detail_txt_chip_all" = "Všechny recepty z objednávky";
 "ord_detail_txt_contact" = "Možnosti kontaktu";
 "ord_detail_txt_contact_email" = "Napište email";
 "ord_detail_txt_contact_map" = "Zobrazit trasu";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "Odborně ověřené informace o nemocech, ICD kódech a tématech prevence a péče naleznete v Národním portálu zdraví.";
 "prsc_dtl_med_ingredient_name" = "Název účinné látky";
 "prsc_dtl_med_manufacturing_instructions" = "Návod na výrobu";
-"prsc_dtl_med_ov_txt_dispensed_header" = "Dostávat";
+"prsc_dtl_med_ov_txt_dispensed_header" = "Přijato";
 "prsc_dtl_med_ov_txt_subscribed_header" = "Předepsané";
 "prsc_dtl_med_txt_Note" = "Rady z vaší lékárny";
 "prsc_dtl_med_txt_amount" = "síla a jednota";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Demo režim je aktivní. Nepotřebujete zdravotní kartu ani připojení k internetu. Zobrazené zkušební recepty nelze v lékárně vykoupit.";
 "stg_txt_alert_title_demo_mode" = "Chcete prozkoumat?";
 "stg_txt_alert_title_demo_mode_off" = "Demo režim zakázán";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Číslo pojištění: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "Telematické ID: %@";
 "stg_txt_audit_events_banner_connect" = "Připojit";
 "stg_txt_audit_events_banner_message" = "Chcete-li přijímat protokoly o přístupu, musíte být připojeni k serveru.";
 "stg_txt_audit_events_missing_date" = "Žádné časové razítko";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Vytvořte nový profil";
 "stg_txt_reg_devices_empty_list" = "K této zdravotní kartě nejsou připojena žádná zařízení.";
 "stg_txt_reg_devices_empty_list_title" = "Žádná zařízení";
-"stg_txt_reg_devices_info" = "K zobrazení zařízení je vyžadováno další ověření.";
-"stg_txt_reg_devices_info_title" = "Vyžadováno ověření";
+"stg_txt_reg_devices_info" = "Pro zobrazení připojených zařízení se prosím přihlaste a uložte své přihlašovací údaje.";
+"stg_txt_reg_devices_info_title" = "nutná registrace";
 "stg_txt_reg_devices_registered_since_%@" = "Registrován od %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Registrováno od %@ (toto zařízení)";
 "stg_txt_reg_devices_title" = "Připojená zařízení";

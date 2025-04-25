@@ -22,6 +22,7 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 import IDP
+import SwiftUI
 
 // swiftlint:disable type_body_length file_length
 @Reducer
@@ -44,8 +45,6 @@ struct MainDomain {
         case prescriptionArchive(PrescriptionArchiveDomain)
         // sourcery: AnalyticsScreen = prescriptionDetail
         case prescriptionDetail(PrescriptionDetailDomain)
-        // sourcery: AnalyticsScreen = redeem_methodSelection
-        case redeemMethods(RedeemMethodsDomain)
         // sourcery: AnalyticsScreen = main_medicationReminder
         case medicationReminder(MedicationReminderOneDaySummaryDomain)
         // sourcery: AnalyticsScreen = main_welcomeDrawer
@@ -79,6 +78,8 @@ struct MainDomain {
     struct State: Equatable {
         var isDemoMode = false
         @Presents var destination: Destination.State?
+
+        var path = StackState<Path.State>()
 
         // Child domain states
         var prescriptionListState: PrescriptionListDomain.State
@@ -120,8 +121,11 @@ struct MainDomain {
         case grantChargeItemsConsentDismiss
         case refreshPrescription
         case destination(PresentationAction<Destination.Action>)
+        case path(StackActionOf<Path>)
         case setNavigation(tag: Bool?)
         case startCardWall
+        case redeemPrescriptions(_ prescriptions: Shared<[Prescription]>)
+        case redeemFromPharmacy(_ pharmacy: PharmacyLocation, option: RedeemOption)
         case response(Response)
 
         // Child Domain Actions
@@ -137,6 +141,16 @@ struct MainDomain {
             case grantChargeItemsConsentActivate(ChargeItemConsentService.GrantResult)
             case showUpdateAlertResponse(Bool)
         }
+    }
+
+    @Reducer(state: .equatable, action: .equatable)
+    enum Path {
+        // sourcery: AnalyticsScreen = redeem_methodSelection
+        case redeemMethods(RedeemMethodsDomain)
+        // sourcery: AnalyticsScreen = redeem_overview
+        case redeem(PharmacyRedeemDomain)
+        // sourcery: AnalyticsScreen = pharmacySearch
+        case pharmacy(PharmacySearchDomain)
     }
 
     // sourcery: CodedError = "015"
@@ -194,6 +208,7 @@ struct MainDomain {
         }
 
         Reduce(self.core)
+            .forEach(\.path, action: \.path)
             .ifLet(\.$destination, action: \.destination)
     }
 
@@ -335,16 +350,15 @@ struct MainDomain {
             ))
             return .none
         case let .prescriptionList(action: .redeemButtonTapped(openPrescriptions)):
-            state.destination = .redeemMethods(
-                RedeemMethodsDomain
-                    .State(prescriptions: Shared(openPrescriptions.filter(\.isRedeemable)))
-            )
+            state.destination = nil
+            state.path.append(.redeemMethods(RedeemMethodsDomain.State(
+                prescriptions: openPrescriptions.filter(\.isRedeemable)
+            )))
             return .none
         case .prescriptionList(action: .showArchivedButtonTapped):
             state.destination = .prescriptionArchive(.init())
             return .none
-        case .destination(.presented(.redeemMethods(action: .delegate(.close)))),
-             .destination(.presented(.cardWall(action: .delegate(.close)))):
+        case .destination(.presented(.cardWall(action: .delegate(.close)))):
             state.destination = nil
             return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
         case .destination(.presented(.prescriptionArchive(action: .delegate(.close)))),
@@ -500,24 +514,94 @@ struct MainDomain {
             return .run { _ in
                 await environment.router.routeTo(.settings(.unlockCard))
             }
-
-        case let .destination(.presented(.prescriptionDetail(action: .delegate(.redeem(task))))):
-            let prescriptions = Shared([task])
-            state.destination = .redeemMethods(
-                RedeemMethodsDomain
-                    .State(
-                        prescriptions: prescriptions,
-                        destination: .pharmacySearch(.init(
-                            selectedPrescriptions: prescriptions,
-                            inRedeemProcess: true,
-                            pharmacyRedeemState: Shared(nil)
-                        ))
+        case let .destination(.presented(.prescriptionDetail(action: .delegate(.redeem(prescription))))):
+            state.destination = nil
+            let prescriptions = Shared([prescription])
+            return .run { send in
+                // wait for running effects to finish
+                try await schedulers.main.sleep(for: 0.05)
+                await send(.redeemPrescriptions(prescriptions))
+            }
+        case let .path(.element(id: _, action: .redeemMethods(.delegate(delegate)))):
+            switch delegate {
+            case let .redeemOverview(prescriptions):
+                let prescriptions = Shared(prescriptions)
+                return .send(.redeemPrescriptions(prescriptions))
+            case .close:
+                guard !state.path.isEmpty else {
+                    reportIssue(
+                        "RedeemMethodsDomain was closed but no redeem path is available. This should not happen."
                     )
-            )
-
+                    return .none
+                }
+                state.path.removeLast()
+                return .none
+            }
+        case let .path(.element(id: _, action: .pharmacy(
+            .destination(.presented(
+                .pharmacyDetail(.delegate(.redeem(
+                    prescriptions: _,
+                    selectedPrescriptions: _,
+                    pharmacy: pharmacy,
+                    option: redeemOption
+                )))
+            ))
+        ))),
+        let .path(.element(id: _, action: .pharmacy(
+            .destination(.presented(
+                .pharmacyMapSearch(.destination(.presented(
+                    .pharmacy(.delegate(.redeem(
+                        prescriptions: _,
+                        selectedPrescriptions: _,
+                        pharmacy: pharmacy,
+                        option: redeemOption
+                    )))
+                )))
+            ))
+        ))):
+            return .run { send in
+                // wait for running effects to finish
+                try await schedulers.main.sleep(for: 0.05)
+                await send(.redeemFromPharmacy(pharmacy, option: redeemOption))
+            }
+        case let .redeemPrescriptions(prescriptions):
+            state.path.append(.redeem(PharmacyRedeemDomain.State(
+                prescriptions: prescriptions,
+                selectedPrescriptions: Shared(prescriptions.wrappedValue)
+            )))
             return .none
+        case let .redeemFromPharmacy(pharmacy, option: redeemOption):
+            guard !state.path.isEmpty else {
+                reportIssue("state.path is empty but should not be empty here. This should not happen.")
+                return .none
+            }
+            state.path.removeLast()
 
+            guard let redeemId = state.path.ids.last
+            else { return .none }
+            state.path[id: redeemId, case: \.redeem]?.pharmacy = pharmacy
+            state.path[id: redeemId, case: \.redeem]?.serviceOptionState.selectedOption = redeemOption
+            return .none
+        case let .path(.element(id: _, action: .redeem(.delegate(delegate)))):
+            switch delegate {
+            case .close:
+                state.path.removeAll()
+                return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
+            case .changePharmacy:
+                state.path.append(.pharmacy(PharmacySearchDomain.State(
+                    selectedPrescriptions: Shared([]),
+                    inRedeemProcess: true
+                )))
+            }
+            return .none
+        case .path(.element(id: _, action: .pharmacy(.delegate(.close)))),
+             .path(.element(id: _,
+                            action: .pharmacy(.destination(.presented(.pharmacyMapSearch(.delegate(.close))))))),
+             .path(.element(id: _, action: .pharmacy(.destination(.presented(.pharmacyDetail(.delegate(.close))))))):
+            state.path.removeAll()
+            return .none
         case .destination,
+             .path,
              .setNavigation,
              .prescriptionList,
              .extAuthPending,

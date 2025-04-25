@@ -86,6 +86,11 @@ struct OrderDetailsScreen: Screen {
             )
         }
 
+        func chipTexts(fileID _: String = #fileID, file _: String = #file, line _: UInt = #line) -> [XCUIElement] {
+            container.staticTexts.matching(.any, identifier: A11y.orderDetail.message.msgTxtChips)
+                .allElementsBoundByIndex
+        }
+
         func tapDmcButton(fileID: String = #fileID, file: String = #file, line: UInt = #line) -> DMCScreen {
             elements(
                 query: container.buttons,

@@ -16,5 +16,11 @@
         "text": "**Bedre læsbarhed** \n Vi har gjort vores mærkefarve lidt mørkere for at øge farvekontrasten og derved forbedre læsbarheden. \n \n **Optimeret indtastningsfelt** \n Markøren i indtastningsfeltet for adgangsnummeret er blevet fjernet.",
         "timestamp": "2025-01-28T08:00:00.000Z",
         "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Forbedret ordreflow** \nBestillingsprocessen er nu nemmere og hurtigere. \n \n🌐 **Nye sprog** \nVores app er nu også tilgængelig på spansk og irsk. \n \n📞 **Udvidede kontaktmuligheder** \nVi har indført nye kontaktmuligheder for udvalgte forsikringsselskaber. \n \n🔍 **Detaljerede adgangslogfiler** \nVi viser nu også telematik-id'erne i adgangsloggene, så det er nemmere at identificere, hvem der havde adgang.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
     }
 ]

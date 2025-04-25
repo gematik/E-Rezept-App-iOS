@@ -64,7 +64,6 @@ extension PharmacySearchDomain {
             inRedeemProcess: false,
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: [],
-            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .searchResultEmpty
         )
@@ -74,7 +73,6 @@ extension PharmacySearchDomain {
             inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmaciesLocationViewModel,
-            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .searchResultOk
         )
@@ -84,7 +82,6 @@ extension PharmacySearchDomain {
             inRedeemProcess: false,
             searchText: "Apotheke",
             pharmacies: [],
-            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .searchRunning
         )
@@ -92,7 +89,6 @@ extension PharmacySearchDomain {
             selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             pharmacies: [],
-            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([
                 PharmacySearchFilterDomain.PharmacyFilterOption.delivery,
             ])
@@ -101,7 +97,6 @@ extension PharmacySearchDomain {
             selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             pharmacies: [],
-            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .error
         )
@@ -110,7 +105,6 @@ extension PharmacySearchDomain {
             inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmaciesLocationViewModel,
-            pharmacyRedeemState: Shared(nil),
             pharmacyFilterOptions: Shared([]),
             searchState: .startView(loading: false)
             // .searchResultOk(pharmaciesLocationViewModel)

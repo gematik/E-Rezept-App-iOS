@@ -1,0 +1,328 @@
+[ {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Composition/1758cde6-06e1-49c5-acb2-8d57d732135a",
+  "resource": {
+    "resourceType": "Composition",
+    "id": "1758cde6-06e1-49c5-acb2-8d57d732135a",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_EVDGA_Composition|1.0" ]
+    },
+    "extension": [ {
+      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Legal_basis",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_STATUSKENNZEICHEN",
+        "code": "00"
+      }
+    } ],
+    "status": "final",
+    "type": {
+      "coding": [ {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_FORMULAR_ART",
+        "code": "e16D"
+      } ]
+    },
+    "subject": {
+      "reference": "Patient/40acd463-b25d-4ede-8b1f-2b0994f29aa5"
+    },
+    "date": "2023-03-26T13:12:00Z",
+    "author": [ {
+      "reference": "Practitioner/1228772e-1c72-493b-8b5c-5ae54d25843d",
+      "type": "Practitioner"
+    }, {
+      "type": "Device",
+      "identifier": {
+        "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_FOR_Pruefnummer",
+        "value": "Y/450/2501/36/523"
+      }
+    } ],
+    "title": "elektronische Verordnung digitaler Gesundheitsanwendungen",
+    "custodian": {
+      "reference": "Organization/b87b9d90-c8db-4660-93eb-fed916caa2da"
+    },
+    "section": [ {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_EVDGA_Section_Type",
+          "code": "Prescription"
+        } ]
+      },
+      "entry": [ {
+        "reference": "DeviceRequest/a6528123-f17c-4a67-bdbc-7509a8ccdb47"
+      } ]
+    }, {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_EVDGA_Section_Type",
+          "code": "HealthInsurance"
+        } ]
+      },
+      "entry": [ {
+        "reference": "Coverage/27ad42a1-4e3e-497c-8b2d-73f9b934592c"
+      } ]
+    }, {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_EVDGA_Section_Type",
+          "code": "AmbulatorySpecializedCare"
+        } ]
+      },
+      "entry": [ {
+        "reference": "PractitionerRole/dea28620-ea7e-4706-8280-831be0ddfe3f"
+      } ]
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/DeviceRequest/a6528123-f17c-4a67-bdbc-7509a8ccdb47",
+  "resource": {
+    "resourceType": "DeviceRequest",
+    "id": "a6528123-f17c-4a67-bdbc-7509a8ccdb47",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_EVDGA_HealthAppRequest|1.0" ]
+    },
+    "extension": [ {
+      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_EVDGA_SER",
+      "valueBoolean": false
+    }, {
+      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Accident",
+      "extension": [ {
+        "url": "Unfallkennzeichen",
+        "valueCoding": {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Ursache_Type",
+          "code": "4"
+        }
+      } ]
+    } ],
+    "status": "active",
+    "intent": "order",
+    "codeCodeableConcept": {
+      "coding": [ {
+        "system": "http://fhir.de/CodeSystem/ifa/pzn",
+        "code": "17622734"
+      } ],
+      "text": "Mawendo 001"
+    },
+    "subject": {
+      "reference": "Patient/40acd463-b25d-4ede-8b1f-2b0994f29aa5"
+    },
+    "authoredOn": "2023-03-26",
+    "requester": {
+      "reference": "Practitioner/1228772e-1c72-493b-8b5c-5ae54d25843d"
+    },
+    "insurance": [ {
+      "reference": "Coverage/27ad42a1-4e3e-497c-8b2d-73f9b934592c"
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Patient/40acd463-b25d-4ede-8b1f-2b0994f29aa5",
+  "resource": {
+    "resourceType": "Patient",
+    "id": "40acd463-b25d-4ede-8b1f-2b0994f29aa5",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.1.0" ]
+    },
+    "identifier": [ {
+      "type": {
+        "coding": [ {
+          "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+          "code": "GKV"
+        } ]
+      },
+      "system": "http://fhir.de/sid/gkv/kvid-10",
+      "value": "X234567890"
+    } ],
+    "name": [ {
+      "use": "official",
+      "family": "Königsstein",
+      "_family": {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+          "valueString": "Königsstein"
+        } ]
+      },
+      "given": [ "Ludger" ]
+    } ],
+    "birthDate": "1935-06-22",
+    "address": [ {
+      "type": "both",
+      "line": [ "Musterstr. 1" ],
+      "_line": [ {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+          "valueString": "1"
+        }, {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+          "valueString": "Musterstr."
+        } ]
+      } ],
+      "city": "Berlin",
+      "postalCode": "10623"
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Practitioner/1228772e-1c72-493b-8b5c-5ae54d25843d",
+  "resource": {
+    "resourceType": "Practitioner",
+    "id": "1228772e-1c72-493b-8b5c-5ae54d25843d",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.1.0" ]
+    },
+    "identifier": [ {
+      "type": {
+        "coding": [ {
+          "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+          "code": "LANR"
+        } ]
+      },
+      "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_ANR",
+      "value": "838382202"
+    } ],
+    "name": [ {
+      "use": "official",
+      "family": "Topp-Glücklich",
+      "_family": {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+          "valueString": "Topp-Glücklich"
+        } ]
+      },
+      "given": [ "Hans" ],
+      "prefix": [ "Dr. med." ],
+      "_prefix": [ {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier",
+          "valueCode": "AC"
+        } ]
+      } ]
+    } ],
+    "qualification": [ {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Qualification_Type",
+          "code": "00"
+        } ]
+      }
+    }, {
+      "code": {
+        "coding": [ {
+          "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Berufsbezeichnung",
+          "code": "Berufsbezeichnung"
+        } ],
+        "text": "Hausarzt"
+      }
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Organization/b87b9d90-c8db-4660-93eb-fed916caa2da",
+  "resource": {
+    "resourceType": "Organization",
+    "id": "b87b9d90-c8db-4660-93eb-fed916caa2da",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.1.0" ]
+    },
+    "identifier": [ {
+      "type": {
+        "coding": [ {
+          "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+          "code": "BSNR"
+        } ]
+      },
+      "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR",
+      "value": "031234567"
+    } ],
+    "name": "Hausarztpraxis Dr. Topp-Glücklich",
+    "telecom": [ {
+      "system": "phone",
+      "value": "0301234567"
+    } ],
+    "address": [ {
+      "type": "both",
+      "line": [ "Musterstr. 2" ],
+      "_line": [ {
+        "extension": [ {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+          "valueString": "2"
+        }, {
+          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+          "valueString": "Musterstr."
+        } ]
+      } ],
+      "city": "Berlin",
+      "postalCode": "10623"
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/Coverage/27ad42a1-4e3e-497c-8b2d-73f9b934592c",
+  "resource": {
+    "resourceType": "Coverage",
+    "id": "27ad42a1-4e3e-497c-8b2d-73f9b934592c",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.1.0" ]
+    },
+    "extension": [ {
+      "url": "http://fhir.de/StructureDefinition/gkv/besondere-personengruppe",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PERSONENGRUPPE",
+        "code": "00"
+      }
+    }, {
+      "url": "http://fhir.de/StructureDefinition/gkv/dmp-kennzeichen",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DMP",
+        "code": "00"
+      }
+    }, {
+      "url": "http://fhir.de/StructureDefinition/gkv/wop",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ITA_WOP",
+        "code": "03"
+      }
+    }, {
+      "url": "http://fhir.de/StructureDefinition/gkv/versichertenart",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_VERSICHERTENSTATUS",
+        "code": "1"
+      }
+    } ],
+    "status": "active",
+    "type": {
+      "coding": [ {
+        "system": "http://fhir.de/CodeSystem/versicherungsart-de-basis",
+        "code": "BG"
+      } ]
+    },
+    "beneficiary": {
+      "reference": "Patient/40acd463-b25d-4ede-8b1f-2b0994f29aa5"
+    },
+    "payor": [ {
+      "identifier": {
+        "extension": [ {
+          "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Alternative_IK",
+          "valueIdentifier": {
+            "system": "http://fhir.de/sid/arge-ik/iknr",
+            "value": "121192344"
+          }
+        } ],
+        "system": "http://fhir.de/sid/arge-ik/iknr",
+        "value": "104212059"
+      },
+      "display": "BG der Bauwirtschaft"
+    } ]
+  }
+}, {
+  "fullUrl": "http://pvs.praxis-topp-gluecklich.local/fhir/PractitionerRole/dea28620-ea7e-4706-8280-831be0ddfe3f",
+  "resource": {
+    "resourceType": "PractitionerRole",
+    "id": "dea28620-ea7e-4706-8280-831be0ddfe3f",
+    "meta": {
+      "profile": [ "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_PractitionerRole|1.1.0" ]
+    },
+    "practitioner": {
+      "reference": "Practitioner/1228772e-1c72-493b-8b5c-5ae54d25843d"
+    },
+    "organization": {
+      "identifier": {
+        "system": "http://fhir.de/NamingSystem/asv/teamnummer",
+        "value": "003456789"
+      }
+    }
+  }
+} ]

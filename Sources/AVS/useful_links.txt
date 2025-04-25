@@ -1,0 +1,16 @@
+https://datatracker.ietf.org/doc/html/rfc5083
+https://datatracker.ietf.org/doc/html/rfc3852#section-6.1
+https://datatracker.ietf.org/doc/html/rfc5084
+https://www.openssl.org/docs/man3.0/man1/openssl-cms.html
+https://www.openssl.org/docs/manmaster/man3/CMS_encrypt.html
+https://www.openssl.org/docs/man1.1.1/man3/EVP_PKEY_CTX_ctrl_str.html
+https://github.com/openssl/openssl/blob/master/crypto/cms/cms_env.c
+https://stackoverflow.com/questions/66986946/how-to-programmatically-create-encrypted-pkcs7-using-ecc-certificate-and-openss
+https://crypto.stackexchange.com/questions/86638/ecies-vs-rsa-aes?noredirect=1&lq=1
+https://en.wikipedia.org/wiki/Integrated_Encryption_Scheme
+https://crypto.stackexchange.com/questions/86483/using-public-key-cryptography-with-multiple-recipients
+https://lapo.it/asn1js
+https://luca.ntop.org/Teaching/Appunti/asn1.html
+https://letsencrypt.org/docs/a-warm-welcome-to-asn1-and-der/
+https://fachportal.gematik.de/fachportal-import/files/gemSMIME_KOMLE_V1.5.0.pdf
+https://www.teletrust.de/fileadmin/files/ISIS-MTT_Core_Specification_v1.1.pdf

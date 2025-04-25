@@ -53,7 +53,7 @@ final class AVSRedeemServiceTests: XCTestCase {
         let order2: OrderRequest = .Fixtures.order2
         let order3: OrderRequest = .Fixtures.order3
 
-        var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
+        var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
         let cancellable = sut.redeem([order1, order2, order3])
             .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
             .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
@@ -66,52 +66,23 @@ final class AVSRedeemServiceTests: XCTestCase {
                     fail("no error expected")
                 }
             } receiveValue: { orderResponses in
-                receivedResponses.append(orderResponses)
+                receivedResponse = orderResponses
             }
 
-        await expect(receivedResponses).toEventually(haveCount(3))
-        let firstResponse = receivedResponses[0]
+        await expect(receivedResponse).toEventually(haveCount(3))
 
-        expect(firstResponse.count) == 3
-        expect(firstResponse.inProgress).to(beTrue())
-        expect(firstResponse.areFailing).to(beFalse())
-        expect(firstResponse.areSuccessful).to(beFalse())
-        expect(firstResponse.arePartiallySuccessful).to(beFalse())
-        expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-        expect(firstResponse[0].requested).to(equal(order1))
-        expect(firstResponse[1].requested).to(equal(order2))
-        expect(firstResponse[2].requested).to(equal(order3))
+        expect(receivedResponse.inProgress).to(beFalse())
+        expect(receivedResponse.areFailing).to(beFalse())
+        expect(receivedResponse.areSuccessful).to(beTrue())
+        expect(receivedResponse.arePartiallySuccessful).to(beFalse())
+        expect(receivedResponse.progress).to(equal(1.0))
+        expect(receivedResponse.count) == 3
+        expect(receivedResponse[id: order1.taskID]?.requested).to(equal(order1))
+        expect(receivedResponse[id: order2.taskID]?.requested).to(equal(order2))
+        expect(receivedResponse[id: order3.taskID]?.requested).to(equal(order3))
 
-        expect(firstResponse.filter(\.isSuccess)).to(haveCount(1))
-        expect(firstResponse.filter(\.inProgress)).to(haveCount(2))
-
-        let secondResponse = receivedResponses[1]
-        expect(secondResponse.count) == 3
-        expect(secondResponse.inProgress).to(beTrue())
-        expect(secondResponse.areFailing).to(beFalse())
-        expect(secondResponse.areSuccessful).to(beFalse())
-        expect(secondResponse.arePartiallySuccessful).to(beFalse())
-        expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-        expect(secondResponse[0].requested).to(equal(order1))
-        expect(secondResponse[1].requested).to(equal(order2))
-        expect(secondResponse[2].requested).to(equal(order3))
-
-        expect(secondResponse.filter(\.isSuccess)).to(haveCount(2))
-        expect(secondResponse.filter(\.inProgress)).to(haveCount(1))
-
-        let thirdResponse = receivedResponses[2]
-        expect(thirdResponse.inProgress).to(beFalse())
-        expect(thirdResponse.areFailing).to(beFalse())
-        expect(thirdResponse.areSuccessful).to(beTrue())
-        expect(thirdResponse.arePartiallySuccessful).to(beFalse())
-        expect(thirdResponse.progress).to(equal(1.0))
-        expect(thirdResponse.count) == 3
-        expect(thirdResponse[0].requested).to(equal(order1))
-        expect(thirdResponse[1].requested).to(equal(order2))
-        expect(thirdResponse[2].requested).to(equal(order3))
-
-        expect(thirdResponse.filter(\.isSuccess)).to(haveCount(3))
-        expect(thirdResponse.filter(\.inProgress)).to(haveCount(0))
+        expect(receivedResponse.filter(\.isSuccess)).to(haveCount(3))
+        expect(receivedResponse.filter(\.inProgress)).to(haveCount(0))
 
         await expect(mockAVSTransactionDataStore.saveAvsTransactionsCalled).toEventually(beTrue())
         await expect(mockAVSTransactionDataStore.saveAvsTransactionsCallsCount).toEventually(equal(3))
@@ -145,7 +116,7 @@ final class AVSRedeemServiceTests: XCTestCase {
         let order2: OrderRequest = .Fixtures.order2
         let order3: OrderRequest = .Fixtures.order3
 
-        var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
+        var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
         let cancellable = sut.redeem([order1, order2, order3])
             .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
             .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
@@ -158,51 +129,24 @@ final class AVSRedeemServiceTests: XCTestCase {
                     fail("no error expected")
                 }
             } receiveValue: { orderResponses in
-                receivedResponses.append(orderResponses)
+                receivedResponse = orderResponses
             }
 
-        await expect(receivedResponses).toEventually(haveCount(3))
-        let firstResponse = receivedResponses[0]
+        await expect(receivedResponse).toEventually(haveCount(3))
 
-        expect(firstResponse.count) == 3
-        expect(firstResponse.inProgress).to(beTrue())
-        expect(firstResponse.areFailing).to(beFalse())
-        expect(firstResponse.areSuccessful).to(beFalse())
-        expect(firstResponse.arePartiallySuccessful).to(beFalse())
-        expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-        expect(firstResponse[0].requested).to(equal(order1))
-        expect(firstResponse[1].requested).to(equal(order2))
-        expect(firstResponse[2].requested).to(equal(order3))
+        expect(receivedResponse.inProgress).to(beFalse())
+        expect(receivedResponse.areFailing).to(beFalse())
+        expect(receivedResponse.areSuccessful).to(beFalse())
+        expect(receivedResponse.arePartiallySuccessful).to(beTrue())
+        expect(receivedResponse.progress).to(equal(1.0))
+        expect(receivedResponse.count) == 3
+        expect(receivedResponse[id: order1.taskID]?.requested).to(equal(order1))
+        expect(receivedResponse[id: order2.taskID]?.requested).to(equal(order2))
+        expect(receivedResponse[id: order3.taskID]?.requested).to(equal(order3))
 
-        expect(firstResponse.filter(\.inProgress)).to(haveCount(2))
-
-        let secondResponse = receivedResponses[1]
-        expect(secondResponse.count) == 3
-        expect(secondResponse.inProgress).to(beTrue())
-        expect(secondResponse.areFailing).to(beFalse())
-        expect(secondResponse.areSuccessful).to(beFalse())
-        expect(secondResponse.arePartiallySuccessful).to(beFalse())
-        expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-        expect(secondResponse[0].requested).to(equal(order1))
-        expect(secondResponse[1].requested).to(equal(order2))
-        expect(secondResponse[2].requested).to(equal(order3))
-
-        expect(secondResponse.filter(\.inProgress)).to(haveCount(1))
-
-        let thirdResponse = receivedResponses[2]
-        expect(thirdResponse.inProgress).to(beFalse())
-        expect(thirdResponse.areFailing).to(beFalse())
-        expect(thirdResponse.areSuccessful).to(beFalse())
-        expect(thirdResponse.arePartiallySuccessful).to(beTrue())
-        expect(thirdResponse.progress).to(equal(1.0))
-        expect(thirdResponse.count) == 3
-        expect(thirdResponse[0].requested).to(equal(order1))
-        expect(thirdResponse[1].requested).to(equal(order2))
-        expect(thirdResponse[2].requested).to(equal(order3))
-
-        expect(thirdResponse.filter(\.inProgress)).to(haveCount(0))
-        expect(thirdResponse.filter(\.isFailure)).to(haveCount(1))
-        expect(thirdResponse.filter(\.isSuccess)).to(haveCount(2))
+        expect(receivedResponse.filter(\.inProgress)).to(haveCount(0))
+        expect(receivedResponse.filter(\.isFailure)).to(haveCount(1))
+        expect(receivedResponse.filter(\.isSuccess)).to(haveCount(2))
 
         expect(mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
         expect(mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 2
@@ -237,7 +181,7 @@ final class AVSRedeemServiceTests: XCTestCase {
             let order2: OrderRequest = .Fixtures.order2
             let order3: OrderRequest = .Fixtures.order3
 
-            var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
+            var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
             let cancellable = sut.redeem([order1, order2, order3])
                 .subscribe(on: AnySchedulerOf<DispatchQueue>.immediate)
                 .receive(on: AnySchedulerOf<DispatchQueue>.immediate)
@@ -250,52 +194,23 @@ final class AVSRedeemServiceTests: XCTestCase {
                         fail("no error expected")
                     }
                 } receiveValue: { orderResponses in
-                    receivedResponses.append(orderResponses)
+                    receivedResponse = orderResponses
                 }
 
-            await expect(receivedResponses).toEventually(haveCount(3))
-            let firstResponse = receivedResponses[0]
+            await expect(receivedResponse).toEventually(haveCount(3))
 
-            expect(firstResponse.count) == 3
-            expect(firstResponse.inProgress).to(beTrue())
-            expect(firstResponse.areFailing).to(beFalse())
-            expect(firstResponse.areSuccessful).to(beFalse())
-            expect(firstResponse.arePartiallySuccessful).to(beFalse())
-            expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-            expect(firstResponse[0].requested).to(equal(order1))
-            expect(firstResponse[1].requested).to(equal(order2))
-            expect(firstResponse[2].requested).to(equal(order3))
+            expect(receivedResponse.count) == 3
+            expect(receivedResponse[id: order1.taskID]?.requested).to(equal(order1))
+            expect(receivedResponse[id: order2.taskID]?.requested).to(equal(order2))
+            expect(receivedResponse[id: order3.taskID]?.requested).to(equal(order3))
+            expect(receivedResponse.filter(\.isFailure)).to(haveCount(3))
+            expect(receivedResponse.filter(\.inProgress)).to(haveCount(0))
 
-            expect(firstResponse.filter(\.inProgress)).to(haveCount(2))
-            expect(firstResponse.filter(\.isFailure)).to(haveCount(1))
-
-            let secondResponse = receivedResponses[1]
-            expect(secondResponse.count) == 3
-            expect(secondResponse.inProgress).to(beTrue())
-            expect(secondResponse.areFailing).to(beFalse())
-            expect(secondResponse.areSuccessful).to(beFalse())
-            expect(secondResponse.arePartiallySuccessful).to(beFalse())
-            expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-            expect(secondResponse[0].requested).to(equal(order1))
-            expect(secondResponse[1].requested).to(equal(order2))
-            expect(secondResponse[2].requested).to(equal(order3))
-
-            expect(secondResponse.filter(\.inProgress)).to(haveCount(1))
-            expect(secondResponse.filter(\.isFailure)).to(haveCount(2))
-
-            let thirdResponse = receivedResponses[2]
-            expect(thirdResponse.inProgress).to(beFalse())
-            expect(thirdResponse.areFailing).to(beTrue())
-            expect(thirdResponse.areSuccessful).to(beFalse())
-            expect(thirdResponse.arePartiallySuccessful).to(beFalse())
-            expect(thirdResponse.progress).to(equal(1.0))
-            expect(thirdResponse.count) == 3
-            expect(thirdResponse[0].requested).to(equal(order1))
-            expect(thirdResponse[1].requested).to(equal(order2))
-            expect(thirdResponse[2].requested).to(equal(order3))
-
-            expect(thirdResponse.filter(\.isFailure)).to(haveCount(3))
-            expect(thirdResponse.filter(\.inProgress)).to(haveCount(0))
+            expect(receivedResponse.inProgress).to(beFalse())
+            expect(receivedResponse.areFailing).to(beTrue())
+            expect(receivedResponse.areSuccessful).to(beFalse())
+            expect(receivedResponse.arePartiallySuccessful).to(beFalse())
+            expect(receivedResponse.progress).to(equal(1.0))
 
             expect(mockAVSTransactionDataStore.saveAvsTransactionsCalled) == false
         }

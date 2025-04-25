@@ -54,9 +54,9 @@ struct Order: Identifiable, Equatable {
             var timelineEntries: [TimelineEntry] = displayedCommunications.compactMap { communication in
                 switch communication.profile {
                 case .dispReq:
-                    return .dispReq(communication, pharmacy: pharmacy)
+                    return .dispReq(communication, pharmacy: pharmacy, chipTexts: [])
                 case .reply:
-                    return .reply(communication)
+                    return .reply(communication, chipTexts: [])
                 default:
                     return nil
                 }
@@ -106,5 +106,32 @@ extension Order {
                 pharmacy: PharmacyLocation.Dummies.pharmacy
             )
         }()
+    }
+}
+
+extension Order {
+    /// This initialiser is only used for testing purposes
+    ///
+    /// - Important: timelineEntries property should only be used for testing
+    init(
+        orderId: String,
+        communications: IdentifiedArrayOf<ErxTask.Communication>,
+        chargeItems: IdentifiedArrayOf<ErxChargeItem>,
+        pharmacy: PharmacyLocation? = nil,
+        timelineEntries: [TimelineEntry] = []
+    ) {
+        self.orderId = orderId
+        self.communications = communications
+        self.chargeItems = chargeItems
+        self.pharmacy = pharmacy
+        let communicationTimestamp = communications.max { $0.timestamp < $1.timestamp }?.timestamp ?? ""
+        if let chargeItemTimestamp = chargeItems.max(by: { $0.enteredDate ?? "" < $1.enteredDate ?? "" })?
+            .enteredDate {
+            lastUpdated = [communicationTimestamp, chargeItemTimestamp].max(by: <) ?? ""
+        } else {
+            lastUpdated = communicationTimestamp
+        }
+        tasksCount = Set(communications.map(\.taskId)).count
+        self.timelineEntries = timelineEntries
     }
 }

@@ -308,31 +308,6 @@ final class MainDomainTests: XCTestCase {
         expect(self.mockUserSession.mockIDPSession.invalidateAccessToken_Called).to(beTrue())
     }
 
-    func testRedeemPrescriptionsOnlyWithReadyStatus() async {
-        await withDependencies {
-            $0.date = DateGenerator { Date() }
-        } operation: {
-            // given
-            let sut = testStore(for: .init(
-                prescriptionListState: .init(),
-                horizontalProfileSelectionState: .init()
-            ))
-            let expectedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTask1,
-                                                    dateFormatter: UIDateFormatter.testValue)
-            let nonReadyPrescriptions = [
-                Prescription(erxTask: ErxTask.Fixtures.erxTask9, dateFormatter: UIDateFormatter.testValue),
-                Prescription(erxTask: ErxTask.Fixtures.erxTask10, dateFormatter: UIDateFormatter.testValue),
-                Prescription(erxTask: ErxTask.Fixtures.erxTask11, dateFormatter: UIDateFormatter.testValue),
-            ]
-            // when
-            await sut
-                .send(.prescriptionList(action: .redeemButtonTapped(openPrescriptions: nonReadyPrescriptions +
-                        [expectedPrescription]))) { state in
-                        state.destination = .redeemMethods(.init(prescriptions: Shared([expectedPrescription])))
-                }
-        }
-    }
-
     func testGrantChargeItemConsentActivate_happyPath() async {
         // given
         let sut = testStore(

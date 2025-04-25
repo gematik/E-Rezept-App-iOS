@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "парола";
 "auth_btn_bap_faceid" = "FaceID";
 "auth_btn_bap_touchid" = "Touch ID";
-"auth_btn_biometrics_faceid" = "Отключете с Face ID";
-"auth_btn_biometrics_touchid" = "Отключване с Touch ID";
+"auth_btn_biometrics_faceid" = "Face ID";
+"auth_btn_biometrics_touchid" = "Touch ID";
 "auth_btn_password_continue" = "По-нататък";
 "auth_txt_bap_password_message" = "Моля, опитайте отново или въведете паролата си.";
 "auth_txt_biometrics_disclaimer" = "Моля, уверете се, че хората, с които можете да споделяте това устройство и чиито биометрични характеристики може да се съхраняват на това устройство, също имат достъп до вашите рецепти.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Неуспешно влизане";
 "auth_txt_biometrics_failed_not_enrolled" = "На това устройство не е настроена биометрична защита.";
 "auth_txt_biometrics_failed_user_fallback" = "Алтернатива на биометричното влизане не е конфигурирана. Моля, въведете парола.";
-"auth_txt_biometrics_footer" = "Имате ли въпроси или проблеми при използването на приложението? Можете да се свържете с нашата телефонна поддръжка на 0800 277 377 7. \n\n Вече отговорихме на много въпроси за вас на das-e-rezept-fuer-deutschland.de.";
+"auth_txt_biometrics_footer" = "Забравена парола? Моля, изтрийте приложението и го инсталирайте отново. Това е необходимо, защото ние съхраняваме вашите данни за достъп само локално и не използваме имейл адрес за проверка.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -41,7 +41,7 @@
 "auth_txt_biometrics_touch_id_title" = "Защитете с Touch ID";
 "auth_txt_biometrics_touchid_description" = "За да защитите вашите данни, вие сте избрали Touch ID.";
 "auth_txt_biometrics_touchid_start" = "Отключване с Touch ID";
-"auth_txt_failed_login_hint_title" = "Неуспешни опити за влизане";
+"auth_txt_failed_login_hint_title" = "За съжаление това не проработи";
 "auth_txt_password_failure" = "Грешна парола. Моля, опитайте отново.";
 "auth_txt_password_label" = "Поле за въвеждане на парола";
 "auth_txt_password_placeholder" = "Въведете паролата";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Отворете скенера за рецепти";
 "erx_title" = "Рецепти";
 "erx_txt_authored" = "Показва";
-"erx_txt_claimed_at_%@" = "Предполага се %@";
+"erx_txt_claimed_at_%@" = "Прието %@";
 "erx_txt_current" = "Текущ";
 "erx_txt_dispensed_at_%@" = "Предоставено %@";
 "erx_txt_expired_on_%@" = "Изтекъл на %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Моля, посетете уебсайта на аптеката, за да завършите поръчката.";
 "ord_detail_txt_%@_send_to_%@" = "%@ изпратени на %@ . Някои аптеки все още нямат опция за дигитален отговор. Ако до утре няма отговор, моля, обадете се като предпазна мярка.";
 "ord_detail_txt_charge_item%@" = "Получихте разписка за цената на вашето лекарство %@ .";
+"ord_detail_txt_chip_all" = "Всички рецепти от поръчката";
 "ord_detail_txt_contact" = "Опции за контакт";
 "ord_detail_txt_contact_email" = "Пишете имейл";
 "ord_detail_txt_contact_map" = "Покажи маршрут";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "В Националния здравен портал можете да намерите експертно проверена информация за заболявания, МКБ кодове и теми за профилактика и грижи.";
 "prsc_dtl_med_ingredient_name" = "Име на активната съставка";
 "prsc_dtl_med_manufacturing_instructions" = "Инструкции за производство";
-"prsc_dtl_med_ov_txt_dispensed_header" = "Получете";
+"prsc_dtl_med_ov_txt_dispensed_header" = "получено";
 "prsc_dtl_med_ov_txt_subscribed_header" = "Предписано";
 "prsc_dtl_med_txt_Note" = "Съвет от вашата аптека";
 "prsc_dtl_med_txt_amount" = "сила и единство";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Демо режимът е активен. Нямате нужда от здравна карта или интернет връзка. Показаните тестови рецепти не могат да бъдат изкупени в аптека.";
 "stg_txt_alert_title_demo_mode" = "Искате ли да изследвате?";
 "stg_txt_alert_title_demo_mode_off" = "Демонстрационният режим е деактивиран";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Застрахователен номер: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "Телематичен идентификатор: %@";
 "stg_txt_audit_events_banner_connect" = "Свържете се";
 "stg_txt_audit_events_banner_message" = "За да получавате регистрационни файлове за достъп, трябва да сте свързани към сървъра.";
 "stg_txt_audit_events_missing_date" = "Няма клеймо за време";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Създайте нов профил";
 "stg_txt_reg_devices_empty_list" = "Няма устройства, свързани с тази здравна карта.";
 "stg_txt_reg_devices_empty_list_title" = "Няма устройства";
-"stg_txt_reg_devices_info" = "За преглед на устройствата е необходимо допълнително удостоверяване.";
-"stg_txt_reg_devices_info_title" = "Изисква се удостоверяване";
+"stg_txt_reg_devices_info" = "Моля, влезте и запазете данните си за вход, за да видите свързаните устройства.";
+"stg_txt_reg_devices_info_title" = "необходима регистрация";
 "stg_txt_reg_devices_registered_since_%@" = "Регистриран от %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Регистриран от %@ (това устройство)";
 "stg_txt_reg_devices_title" = "Свързани устройства";

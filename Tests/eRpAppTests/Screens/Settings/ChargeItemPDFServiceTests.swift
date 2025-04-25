@@ -95,6 +95,44 @@ final class ChargeItemPDFServiceTests: XCTestCase {
         try actualResult.write(to: outputURL2)
     }
 
+    func testGenerateChargeItemPDF() throws {
+        let sut = DefaultChargeItemPDFService()
+
+        let resultUrl = try sut.loadPDFOrGenerate(for: ErxChargeItem.Fixtures.chargeItemWithFHIRData)
+
+        let pdfData = try Data(contentsOf: resultUrl)
+        guard let resultString = String(data: pdfData, encoding: .isoLatin1) else {
+            fatalError("invalid result string")
+        }
+
+        let document = try PDFDocument.PDFDocumentParserPrinter().parse(resultString)
+
+        let attachments = try document.allAttachments()
+        expect(attachments.count).to(equal(3))
+
+        let expected = [
+            PDFAttachment(
+                filename: "chargeItem_id_12_taskID_verordnung.p7s",
+                content: "vDAo+tog==".data(using: .utf8)!
+            ),
+            PDFAttachment(
+                filename: "chargeItem_id_12_taskID_abgabedaten.p7s",
+                content: "aOEsSfDw==".data(using: .utf8)!
+            ),
+            PDFAttachment(
+                filename: "chargeItem_id_12_taskID_quittung.p7s",
+                content: "Mb3ej1h4E=".data(using: .utf8)!
+            ),
+        ]
+
+        for expectedAttachment in expected {
+            expect(attachments.map(\.filename)).to(containElementSatisfying { element in
+                element.contains(expectedAttachment.filename)
+            })
+            expect(attachments.map(\.content)).to(contain(expectedAttachment.content))
+        }
+    }
+
     func testGenerateChargeItemPDFName() throws {
         let sut = DefaultChargeItemPDFService()
 

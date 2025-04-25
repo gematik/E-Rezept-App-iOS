@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "şifre";
 "auth_btn_bap_faceid" = "Face ID";
 "auth_btn_bap_touchid" = "Touch ID";
-"auth_btn_biometrics_faceid" = "Kilidi Face ID ile aç";
-"auth_btn_biometrics_touchid" = "Kilidi Touch ID ile aç";
+"auth_btn_biometrics_faceid" = "Yüz Kimliği";
+"auth_btn_biometrics_touchid" = "Dokunmatik Kimlik";
 "auth_btn_password_continue" = "İleri";
 "auth_txt_bap_password_message" = "Lütfen tekrar deneyin veya şifrenizi girin.";
 "auth_txt_biometrics_disclaimer" = "Bu cihazı başka kişilerle paylaşıyorsanız, biyometrik özellikleri bu cihazda saklanan kişilerin de reçetelerinize erişebildiğini lütfen dikkate alın.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Oturum açma başarısız";
 "auth_txt_biometrics_failed_not_enrolled" = "Bu cihazda biyometrik güvenlik ayarlanmadı.";
 "auth_txt_biometrics_failed_user_fallback" = "Biometrik giriş için bir alternatif ayarlanmamış. Lütfen bir şifre belirleyin.";
-"auth_txt_biometrics_footer" = "Uygulamayı kullanırken herhangi bir sorunuz veya sorununuz mu var? 0800 277 377 7 nolu telefon desteğimize ulaşabilirsiniz. \n\n Das-e-rezept-fuer-deutschland.de adresinde sizin için birçok soruyu yanıtladık.";
+"auth_txt_biometrics_footer" = "Şifrenizi mi unuttunuz? Lütfen uygulamayı silin ve ardından yeniden yükleyin. Bu gereklidir çünkü erişim verilerinizi yalnızca yerel olarak saklıyoruz ve doğrulama için e-posta adresi kullanmıyoruz.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -37,11 +37,11 @@
 "auth_txt_biometrics_lockout" = "Çok fazla başarısız oturum açma girişiminiz oldu. iPhone'unuzun ayarlarına gidin ve bir PIN girerek FaceID veya TouchID fonksiyonunu yeniden etkinleştirin.";
 "auth_txt_biometrics_password_title" = "Parola ile kaydet";
 "auth_txt_biometrics_reason" = "Uygulamayı yetkisiz erişime karşı korumak için %@ gereklidir.";
-"auth_txt_biometrics_title" = "Hoş geldiniz";
+"auth_txt_biometrics_title" = "Hoş geldin";
 "auth_txt_biometrics_touch_id_title" = "Touch ID ile kaydet";
 "auth_txt_biometrics_touchid_description" = "Verilerinizi güvence altına almak için Touch ID'yi seçtiniz.";
-"auth_txt_biometrics_touchid_start" = "Kilidi Touch ID ile aç";
-"auth_txt_failed_login_hint_title" = "Başarısız oturum açma girişimleri";
+"auth_txt_biometrics_touchid_start" = "Touch ID ile kilidi açın";
+"auth_txt_failed_login_hint_title" = "Maalesef işe yaramadı";
 "auth_txt_password_failure" = "Şifre yanlış. Lütfen tekrar deneyin.";
 "auth_txt_password_label" = "Şifre giriş alanı";
 "auth_txt_password_placeholder" = "Şifreyi gir";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Reçete tarayıcıyı aç";
 "erx_title" = "Reçeteler";
 "erx_txt_authored" = "Görüntülendi";
-"erx_txt_claimed_at_%@" = "Varsayılan %@";
+"erx_txt_claimed_at_%@" = "Kabul edildi %@";
 "erx_txt_current" = "Güncel";
 "erx_txt_dispensed_at_%@" = "Tedarik edilen %@";
 "erx_txt_expired_on_%@" = "%@ tarihinde süresi doldu";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Siparişi tamamlamak için lütfen eczanenin web sitesine gidin.";
 "ord_detail_txt_%@_send_to_%@" = "%@ a gönderildi %@ . Bazı eczanelerde henüz dijital yanıt seçeneği bulunmamaktadır. Yarına kadar yanıt gelmezse lütfen önlem olarak arayın.";
 "ord_detail_txt_charge_item%@" = "%@ ilacınızın ücretine ilişkin makbuz aldınız.";
+"ord_detail_txt_chip_all" = "Siparişin tüm tarifleri";
 "ord_detail_txt_contact" = "İletişim seçenekleri";
 "ord_detail_txt_contact_email" = "E-posta yaz";
 "ord_detail_txt_contact_map" = "Rotayı göster";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "Das Nationale Gesundheitsportal'da hastalıklar, ICD kodları ve önleme ve bakım konularında uzmanlar tarafından doğrulanmış bilgileri bulabilirsiniz.";
 "prsc_dtl_med_ingredient_name" = "Aktif madde adı";
 "prsc_dtl_med_manufacturing_instructions" = "Üretim talimatları";
-"prsc_dtl_med_ov_txt_dispensed_header" = "Almak";
+"prsc_dtl_med_ov_txt_dispensed_header" = "Kabul edilmiş";
 "prsc_dtl_med_ov_txt_subscribed_header" = "Reçeteli";
 "prsc_dtl_med_txt_Note" = "Eczanenizden tavsiye";
 "prsc_dtl_med_txt_amount" = "güç ve birlik";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Demo modu etkin. Bir sağlık kartına veya internet bağlantısına ihtiyacınız yoktur. Görüntülenen test reçeteleri eczanede kullanılamaz.";
 "stg_txt_alert_title_demo_mode" = "Bir keşif turuna ne dersiniz?";
 "stg_txt_alert_title_demo_mode_off" = "Demo modu devre dışı";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Sigorta numarası: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "Telematik Kimliği: %@";
 "stg_txt_audit_events_banner_connect" = "Bağlamak";
 "stg_txt_audit_events_banner_message" = "Erişim günlüklerini almak için sunucuya bağlı olmanız gerekir.";
 "stg_txt_audit_events_missing_date" = "Zaman damgası yok";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Yeni profil oluştur";
 "stg_txt_reg_devices_empty_list" = "Bu sağlık kartına bağlı cihaz yok.";
 "stg_txt_reg_devices_empty_list_title" = "Cihaz yok";
-"stg_txt_reg_devices_info" = "Cihazları görüntülemek için ek kimlik doğrulama gereklidir.";
-"stg_txt_reg_devices_info_title" = "Kimlik doğrulama gerekli";
+"stg_txt_reg_devices_info" = "Bağlı cihazları görüntülemek için lütfen giriş yapın ve giriş bilgilerinizi kaydedin.";
+"stg_txt_reg_devices_info_title" = "kayıt gerekli";
 "stg_txt_reg_devices_registered_since_%@" = "%@ tarihinden beri kayıtlı";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "%@ (bu cihaz) tarihinden itibaren kayıtlı";
 "stg_txt_reg_devices_title" = "Bağlı cihazlar";

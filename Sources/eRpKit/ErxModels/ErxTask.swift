@@ -24,7 +24,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
     public init(
         identifier: String,
         status: Status,
-        flowType: FlowType? = nil,
+        flowType: FlowType,
         accessCode: String? = nil,
         fullUrl: String? = nil,
         authoredOn: String? = nil,
@@ -44,7 +44,8 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
         practitioner: ErxPractitioner? = nil,
         organization: ErxOrganization? = nil,
         communications: [Communication] = [],
-        medicationDispenses: [ErxMedicationDispense] = []
+        medicationDispenses: [ErxMedicationDispense] = [],
+        deviceRequest: ErxDeviceRequest? = nil
     ) {
         self.identifier = identifier
         self.status = status
@@ -69,6 +70,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
         self.communications = communications
         self.medicationDispenses = medicationDispenses
         self.avsTransactions = avsTransactions
+        self.deviceRequest = deviceRequest
     }
 
     // MARK: Variables that only exist locally
@@ -90,7 +92,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
     public var status: Status
     /// FlowType describes type of task (e.G. Direktzuweisung).
     /// Usually the flowtype is identical to the beginning of the task id
-    public var flowType: FlowType?
+    public var flowType: FlowType
     /// When the prescription will be expired
     public let expiresOn: String?
     /// When the prescription was authored
@@ -134,6 +136,8 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
     public let communications: [Communication]
     /// List of actual medication dispenses
     public let medicationDispenses: [ErxMedicationDispense]
+    /// IDK This is a test
+    public let deviceRequest: ErxDeviceRequest?
 
     /// Changes status of `ErxTask` and updates the manual changed `redeemedOn` property
     /// Use this method only for scanned `ErxTask`s that have been manually redeemed by the user
@@ -172,7 +176,8 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
             practitioner: practitioner,
             organization: organization,
             communications: communications,
-            medicationDispenses: medicationDispenses
+            medicationDispenses: medicationDispenses,
+            deviceRequest: deviceRequest
         )
     }
 }
@@ -200,7 +205,7 @@ extension ErxTask {
             public static var kDirectAssignmentForPKV = "209"
         }
 
-        public typealias RawValue = String?
+        public typealias RawValue = String
         /// Muster 16 (Apothekenpflichtige Arzneimittel)
         case pharmacyOnly
         /// Muster 16 (Betäubungsmittel)
@@ -223,8 +228,7 @@ extension ErxTask {
         /// all other (unknown) cases
         case unknown(String)
 
-        public init?(rawValue: RawValue) {
-            guard let rawValue = rawValue else { return nil }
+        public init(rawValue: RawValue) {
             switch rawValue {
             case Code.kPharmacyOnly: self = .pharmacyOnly
             case Code.kNarcotic: self = .narcotic
@@ -238,7 +242,12 @@ extension ErxTask {
             }
         }
 
-        public var rawValue: String? {
+        public init(taskId: String) {
+            let code = taskId.components(separatedBy: ".").first ?? ErxTask.FlowType.Code.kPharmacyOnly
+            self.init(rawValue: code)
+        }
+
+        public var rawValue: String {
             switch self {
             case .pharmacyOnly: return Code.kPharmacyOnly
             case .narcotic: return Code.kNarcotic

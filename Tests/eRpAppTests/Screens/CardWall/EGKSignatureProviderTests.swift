@@ -28,13 +28,13 @@ import XCTest
 
 final class EGKSignatureProviderTests: XCTestCase {
     var mockSecureUserDataStore: MockSecureUserDataStore!
-    var mockJWTSigner: MockJWTSigner!
+    var mockJWTSigner: JWTSignerMock!
     var mockNFCHealthCardSessionHandle: MockNFCHealthCardSessionHandle!
 
     override func setUp() {
         super.setUp()
         mockSecureUserDataStore = MockSecureUserDataStore()
-        mockJWTSigner = MockJWTSigner()
+        mockJWTSigner = JWTSignerMock()
         mockNFCHealthCardSessionHandle = MockNFCHealthCardSessionHandle()
     }
 
@@ -49,7 +49,7 @@ final class EGKSignatureProviderTests: XCTestCase {
             readCertificateCallsCount += 1
             return Self.Fixtures.autCertificateResponse
         }
-        mockJWTSigner.signMessageReturnValue = Just(Data()).setFailureType(to: Error.self).eraseToAnyPublisher()
+        mockJWTSigner.signMessageDataDataReturnValue = Data()
 
         let mockIdpChallengeSigner = EGKSignatureProvider.IDPChallengeSessionSigner { _, _, _, _ in
             Self.Fixtures.signedChallenge
@@ -88,7 +88,7 @@ final class EGKSignatureProviderTests: XCTestCase {
             readCertificateCallsCount += 1
             return Self.Fixtures.autCertificateResponse
         }
-        mockJWTSigner.signMessageReturnValue = Just(Data()).setFailureType(to: Error.self).eraseToAnyPublisher()
+        mockJWTSigner.signMessageDataDataReturnValue = Data()
 
         let mockIdpChallengeSigner = EGKSignatureProvider.IDPChallengeSessionSigner { _, _, _, _ in
             Self.Fixtures.signedChallenge
@@ -129,7 +129,7 @@ final class EGKSignatureProviderTests: XCTestCase {
             readCertificateCallsCount += 1
             return Self.Fixtures.autCertificateResponse
         }
-        mockJWTSigner.signMessageReturnValue = Just(Data()).setFailureType(to: Error.self).eraseToAnyPublisher()
+        mockJWTSigner.signMessageDataDataReturnValue = Data()
 
         let mockIdpChallengeSigner = EGKSignatureProvider.IDPChallengeSessionSigner { _, _, _, _ in
             Self.Fixtures.signedChallenge

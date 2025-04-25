@@ -57,7 +57,7 @@ struct ShareSheetDomain {
         }
     }
 
-    // sourcery: CodedError = "038"
+    // sourcery: CodedError = "043"
     enum Error: Swift.Error, Equatable, LocalizedError {
         // sourcery: errorCode = "01"
         case shareFailure(String)

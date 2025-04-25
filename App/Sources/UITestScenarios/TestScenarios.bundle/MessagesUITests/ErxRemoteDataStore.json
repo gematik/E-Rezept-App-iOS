@@ -13,6 +13,7 @@
             "pharmacyTelematikId": "3-01.2.2023001.16.204",
             "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
             "erxTaskId": "160.000.006.456.334.16",
+            "flowType": "160",
             "payload":
             {
                 "name": "Boaty Mc Boatface",
@@ -37,13 +38,31 @@
             {
                 "_FILE": "Generics.json#dispReq",
                 "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
                     "{{TASKID}}": "160.000.006.456.334.01"
                 }
             },
             {
+                "_FILE": "Generics.json#dispReq",
+                "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.03"
+                }
+            },
+            {
+                "_FILE": "Generics.json#dispReq",
+                "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.04"
+                }
+            },
+            {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
                     "{{TASKID}}": "160.000.006.456.334.01",
                     "{{TIMESTAMP}}": "{{DATETIME:-10m}}"
@@ -53,6 +72,27 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.03",
+                    "{{TIMESTAMP}}": "{{DATETIME:-10m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"onPremise\" , \"info_text\":\"01 Info/Para + HRcode/Para + DMC/Para + URL/Para\" , \"pickUpCodeHR\":\"T01__R01\" , \"pickUpCodeDMC\":\"Test_01___Rezept_01___abcdefg12345\" , \"url\":\"https://www.gematik.de\"}"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
+                    "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
+                    "{{TASKID}}": "160.000.006.456.334.04",
+                    "{{TIMESTAMP}}": "{{DATETIME:-9m}}"
+                },
+                "payloadJSON": "{\"version\":1 , \"supplyOptionsType\":\"onPremise\" , \"info_text\":\"\" , \"pickUpCodeHR\" : \"\" , \"pickUpCodeDMC\" : \"\" }"
+            },
+            {
+                "_FILE": "Generics.json#reply",
+                "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
                     "{{TASKID}}": "160.000.006.456.334.01",
                     "{{TIMESTAMP}}": "{{DATETIME:-9m}}"
@@ -62,6 +102,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
                     "{{TASKID}}": "160.000.006.456.334.01",
                     "{{TIMESTAMP}}": "{{DATETIME:-8m}}"
@@ -71,6 +112,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "AFVARD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.101",
                     "{{TASKID}}": "160.000.006.456.334.01",
                     "{{TIMESTAMP}}": "{{DATETIME:-7m}}"
@@ -80,6 +122,7 @@
             {
                 "_FILE": "Generics.json#dispReq",
                 "_REPLACE": {
+                    "{{ORDERID}}": "CDGTZD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
                     "{{TASKID}}": "160.000.006.456.334.02"
                 }
@@ -87,6 +130,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "CDGTZD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
                     "{{TASKID}}": "160.000.006.456.334.02",
                     "{{TIMESTAMP}}": "{{DATETIME:-10m}}"
@@ -96,6 +140,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "CDGTZD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
                     "{{TASKID}}": "160.000.006.456.334.02",
                     "{{TIMESTAMP}}": "{{DATETIME:-9m}}"
@@ -105,6 +150,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "CDGTZD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
                     "{{TASKID}}": "160.000.006.456.334.02",
                     "{{TIMESTAMP}}": "{{DATETIME:-8m}}"
@@ -114,6 +160,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "CDGTZD0-D818-413F-A91D-71ABB8AF4FTR",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.102",
                     "{{TASKID}}": "160.000.006.456.334.02",
                     "{{TIMESTAMP}}": "{{DATETIME:-7m}}"
@@ -123,6 +170,7 @@
             {
                 "_FILE": "Generics.json#dispReq",
                 "_REPLACE": {
+                    "{{ORDERID}}": "UOFRZD0-D818-413F-A91D-71ABB8ER4RUG",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
                     "{{TASKID}}": "160.000.006.456.334.03"
                 }
@@ -130,6 +178,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "UOFRZD0-D818-413F-A91D-71ABB8ER4RUG",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
                     "{{TASKID}}": "160.000.006.456.334.03",
                     "{{TIMESTAMP}}": "{{DATETIME:-10m}}"
@@ -139,6 +188,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "UOFRZD0-D818-413F-A91D-71ABB8ER4RUG",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
                     "{{TASKID}}": "160.000.006.456.334.03",
                     "{{TIMESTAMP}}": "{{DATETIME:-9m}}"
@@ -148,6 +198,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "UOFRZD0-D818-413F-A91D-71ABB8ER4RUG",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
                     "{{TASKID}}": "160.000.006.456.334.03",
                     "{{TIMESTAMP}}": "{{DATETIME:-8m}}"
@@ -157,6 +208,7 @@
             {
                 "_FILE": "Generics.json#reply",
                 "_REPLACE": {
+                    "{{ORDERID}}": "UOFRZD0-D818-413F-A91D-71ABB8ER4RUG",
                     "{{TELEMATIKID}}": "3-01.2.2023001.16.103",
                     "{{TASKID}}": "160.000.006.456.334.03",
                     "{{TIMESTAMP}}": "{{DATETIME:-7m}}"
@@ -173,15 +225,31 @@
                 "content":
                 [
                     {
-                        "_FILE": "Generics.json#task",
+                        "_FILE": "Generics.json#taskDetail",
                         "_REPLACE": {
-                            "{{TASKID}}": "160.000.006.456.334.01"
+                            "{{TASKID}}": "160.000.006.456.334.01",
+                            "{{MEDICATIONNAME}}": "Ibuprofen 08"
                         }
                     },
                     {
-                        "_FILE": "Generics.json#task",
+                        "_FILE": "Generics.json#taskDetail",
                         "_REPLACE": {
-                            "{{TASKID}}": "160.000.006.456.334.02"
+                            "{{TASKID}}": "160.000.006.456.334.02",
+                            "{{MEDICATIONNAME}}": "Vita-Tee"
+                        }
+                    },
+                    {
+                        "_FILE": "Generics.json#taskDetail",
+                        "_REPLACE": {
+                            "{{TASKID}}": "160.000.006.456.334.03",
+                            "{{MEDICATIONNAME}}": "Traubenzucker 5g"
+                        }
+                    },
+                    {
+                        "_FILE": "Generics.json#taskDetail",
+                        "_REPLACE": {
+                            "{{TASKID}}": "160.000.006.456.334.04",
+                            "{{MEDICATIONNAME}}": "Super Heiler 15g"
                         }
                     }
                 ]
@@ -195,15 +263,31 @@
                 "content":
                 [
                     {
-                        "_FILE": "Generics.json#task",
+                        "_FILE": "Generics.json#taskDetail",
                         "_REPLACE": {
-                            "{{TASKID}}": "160.000.006.456.334.01"
+                            "{{TASKID}}": "160.000.006.456.334.01",
+                            "{{MEDICATIONNAME}}": "Ibuprofen 08"
                         }
                     },
                     {
-                        "_FILE": "Generics.json#task",
+                        "_FILE": "Generics.json#taskDetail",
                         "_REPLACE": {
-                            "{{TASKID}}": "160.000.006.456.334.02"
+                            "{{TASKID}}": "160.000.006.456.334.02",
+                            "{{MEDICATIONNAME}}": "Vita-Tee"
+                        }
+                    },
+                    {
+                        "_FILE": "Generics.json#taskDetail",
+                        "_REPLACE": {
+                            "{{TASKID}}": "160.000.006.456.334.03",
+                            "{{MEDICATIONNAME}}": "Traubenzucker 5g"
+                        }
+                    },
+                    {
+                        "_FILE": "Generics.json#taskDetail",
+                        "_REPLACE": {
+                            "{{TASKID}}": "160.000.006.456.334.04",
+                            "{{MEDICATIONNAME}}": "Super Heiler 15g"
                         }
                     }
                 ]

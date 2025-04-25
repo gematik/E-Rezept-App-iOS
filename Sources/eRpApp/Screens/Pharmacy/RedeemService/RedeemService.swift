@@ -116,14 +116,19 @@ struct AVSRedeemService: RedeemService {
                 .eraseToAnyPublisher()
             }
 
+        // Collects all order responses and merges them into a single emit of the publisher
         return Publishers.MergeMany(redeemMessagePublishers)
-            .setFailureType(to: RedeemServiceError.self)
-            .tryMap { response in
-                guard let index = responses.firstIndex(where: { $0.id == response.id }) else {
-                    throw RedeemServiceError.InternalError.idMissmatch
+            .collect(redeemMessagePublishers.count)
+            .tryMap { collection in
+                var responseCollection: IdentifiedArrayOf<OrderResponse> = []
+                try collection.forEach { response in
+                    guard let index = responses.firstIndex(where: { $0.id == response.id }) else {
+                        throw RedeemServiceError.InternalError.idMissmatch
+                    }
+                    responses.update(response, at: index)
+                    responses.forEach { responseCollection.updateOrAppend($0) }
                 }
-                responses.update(response, at: index)
-                return responses
+                return responseCollection
             }
             .mapError(RedeemServiceError.from)
             .eraseToAnyPublisher()
@@ -249,14 +254,20 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
                     .eraseToAnyPublisher()
             }
 
+        // Collects all order responses and merges them into a single emit of the publisher
         return Publishers.MergeMany(redeemErxTaskPublishers)
+            .collect(redeemErxTaskPublishers.count)
             .setFailureType(to: RedeemServiceError.self)
-            .tryMap { response in
-                guard let index = responses.firstIndex(where: { $0.id == response.id }) else {
-                    throw RedeemServiceError.InternalError.idMissmatch
+            .tryMap { collection in
+                var responseCollection: IdentifiedArrayOf<OrderResponse> = []
+                try collection.forEach { response in
+                    guard let index = responses.firstIndex(where: { $0.id == response.id }) else {
+                        throw RedeemServiceError.InternalError.idMissmatch
+                    }
+                    responses.update(response, at: index)
+                    responses.forEach { responseCollection.updateOrAppend($0) }
                 }
-                responses.update(response, at: index)
-                return responses
+                return responseCollection
             }
             .eraseToAnyPublisher()
     }

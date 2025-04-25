@@ -129,7 +129,7 @@ struct LightSwitch: View {
 struct KVNRCameraScanner_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            CANCameraScanner(canScan: .constant("123123")) { _ in }
+            CANCameraScanner(canScan: .constant(ScanCAN(value: "123123"))) { _ in }
         }
     }
 }

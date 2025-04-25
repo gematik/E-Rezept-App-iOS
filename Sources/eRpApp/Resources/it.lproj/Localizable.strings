@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "parola d'ordine";
 "auth_btn_bap_faceid" = "FaceID";
 "auth_btn_bap_touchid" = "Tocca l'ID";
-"auth_btn_biometrics_faceid" = "Sblocca con Face ID";
-"auth_btn_biometrics_touchid" = "Sblocca con Touch ID";
+"auth_btn_biometrics_faceid" = "Identificazione facciale";
+"auth_btn_biometrics_touchid" = "Identificazione tramite tocco";
 "auth_btn_password_continue" = "Ulteriore";
 "auth_txt_bap_password_message" = "Riprova o inserisci la password.";
 "auth_txt_biometrics_disclaimer" = "Assicurati che anche le persone con cui condividi questo dispositivo e le cui caratteristiche biometriche potrebbero essere memorizzate su questo dispositivo abbiano accesso alle tue prescrizioni.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Accesso non riuscito";
 "auth_txt_biometrics_failed_not_enrolled" = "Su questo dispositivo non è stata impostata alcuna sicurezza biometrica.";
 "auth_txt_biometrics_failed_user_fallback" = "Non è configurata un'alternativa al login biometrico. Per favore inserire una password.";
-"auth_txt_biometrics_footer" = "Hai domande o problemi con l'utilizzo dell'app? Puoi contattare il nostro supporto telefonico al numero 0800 277 377 7. \n\n Abbiamo già risposto a molte domande per te su das-e-rezept-fuer-deutschland.de.";
+"auth_txt_biometrics_footer" = "Hai dimenticato la password? Elimina l'app e reinstallala. Ciò è necessario perché memorizziamo i tuoi dati di accesso solo localmente e non utilizziamo un indirizzo e-mail per la verifica.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -41,7 +41,7 @@
 "auth_txt_biometrics_touch_id_title" = "Proteggilo con Touch ID";
 "auth_txt_biometrics_touchid_description" = "Per proteggere i tuoi dati, hai scelto Touch ID.";
 "auth_txt_biometrics_touchid_start" = "Sblocca con Touch ID";
-"auth_txt_failed_login_hint_title" = "Tentativi di accesso non riusciti";
+"auth_txt_failed_login_hint_title" = "Sfortunatamente, non ha funzionato";
 "auth_txt_password_failure" = "Password errata. Per favore riprova.";
 "auth_txt_password_label" = "Campo di immissione della password";
 "auth_txt_password_placeholder" = "Inserire la password";
@@ -403,7 +403,7 @@
 "erx_btn_scn_prescription" = "Apri lo scanner delle ricette";
 "erx_title" = "Ricette";
 "erx_txt_authored" = "Visualizzato";
-"erx_txt_claimed_at_%@" = "Presunto %@";
+"erx_txt_claimed_at_%@" = "Accettato %@";
 "erx_txt_current" = "Attuale";
 "erx_txt_dispensed_at_%@" = "Fornito %@";
 "erx_txt_expired_on_%@" = "Scaduto il %@";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Vai al sito web della farmacia per completare l'ordine.";
 "ord_detail_txt_%@_send_to_%@" = "%@ inviato a %@ . Alcune farmacie non dispongono ancora di un'opzione di risposta digitale. Se non si riceve risposta entro domani, chiamare per precauzione.";
 "ord_detail_txt_charge_item%@" = "Hai ricevuto una ricevuta per il costo dei tuoi farmaci %@ .";
+"ord_detail_txt_chip_all" = "Tutte le ricette dell'ordine";
 "ord_detail_txt_contact" = "Opzioni di contatto";
 "ord_detail_txt_contact_email" = "Scrivi e-mail";
 "ord_detail_txt_contact_map" = "Mostra percorso";
@@ -1085,7 +1086,7 @@
 "prsc_dtl_hnt_gesund_bund_de_text" = "Puoi trovare informazioni verificate da esperti su malattie, codici ICD e argomenti di prevenzione e cura nel Portale sanitario nazionale.";
 "prsc_dtl_med_ingredient_name" = "Nome del principio attivo";
 "prsc_dtl_med_manufacturing_instructions" = "Istruzioni per la produzione";
-"prsc_dtl_med_ov_txt_dispensed_header" = "Ricevere";
+"prsc_dtl_med_ov_txt_dispensed_header" = "Ricevuto";
 "prsc_dtl_med_ov_txt_subscribed_header" = "Prescritta";
 "prsc_dtl_med_txt_Note" = "I consigli della vostra farmacia";
 "prsc_dtl_med_txt_amount" = "potenza e unità";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "La modalità demo è attiva. Non serve la tessera sanitaria né la connessione internet. Le prescrizioni dei test visualizzate non possono essere riscattate in farmacia.";
 "stg_txt_alert_title_demo_mode" = "Ti piacerebbe esplorare?";
 "stg_txt_alert_title_demo_mode_off" = "Modalità demo disabilitata";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Numero di assicurazione: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "ID telematico: %@";
 "stg_txt_audit_events_banner_connect" = "Collegare";
 "stg_txt_audit_events_banner_message" = "Per ricevere i log di accesso, è necessario essere connessi al server.";
 "stg_txt_audit_events_missing_date" = "Nessun timestamp";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Crea un nuovo profilo";
 "stg_txt_reg_devices_empty_list" = "Non ci sono dispositivi collegati a questa tessera sanitaria.";
 "stg_txt_reg_devices_empty_list_title" = "Nessun dispositivo";
-"stg_txt_reg_devices_info" = "Per visualizzare i dispositivi è necessaria un'ulteriore autenticazione.";
-"stg_txt_reg_devices_info_title" = "Autenticazione richiesta";
+"stg_txt_reg_devices_info" = "Effettua l'accesso e salva i dati di accesso per visualizzare i dispositivi connessi.";
+"stg_txt_reg_devices_info_title" = "registrazione richiesta";
 "stg_txt_reg_devices_registered_since_%@" = "Registrato dal %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Registrato dal %@ (questo dispositivo)";
 "stg_txt_reg_devices_title" = "Dispositivi connessi";

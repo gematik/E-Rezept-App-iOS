@@ -109,5 +109,53 @@ extension ErxTask.Communication {
             payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Hello\"}",
             isRead: true
         )
+
+        static let communicationDispReq2ComputedDate: ErxTask.Communication = .init(
+            identifier: "disp_req_1",
+            profile: .dispReq,
+            taskId: "53210f983-1e67-22c5-8955-63bf44e44fb8",
+            userId: "user_id_1",
+            telematikId: "12345.1",
+            orderId: "order_id_1",
+            timestamp: "2021-05-28T10:59:37.098245933+00:00",
+            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Hello\"}",
+            isRead: true
+        )
+
+        static let communicationDispReqYesterDay: ErxTask.Communication = .init(
+            identifier: "disp_req_2",
+            profile: .dispReq,
+            taskId: "34235f983-1e67-22c5-8955-63bf44e44fb8",
+            userId: "user_id_1",
+            telematikId: "12345.1",
+            orderId: "order_id_1",
+            timestamp: "2021-05-27T10:59:37.098245933+00:00",
+            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Hello\"}",
+            isRead: true
+        )
+
+        static let communicationReply2ComputedDate: ErxTask.Communication = .init(
+            identifier: "disp_reply_1",
+            profile: .reply,
+            taskId: "53210f983-1e67-22c5-8955-63bf44e44fb8",
+            userId: "user_id_1",
+            telematikId: "12345.1",
+            orderId: "order_id_1",
+            timestamp: "2021-05-28T10:59:37.098245933+00:00",
+            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Hello\"}",
+            isRead: true
+        )
+
+        static let communicationReplyYesterDay: ErxTask.Communication = .init(
+            identifier: "disp_reply_2",
+            profile: .reply,
+            taskId: "34235f983-1e67-22c5-8955-63bf44e44fb8",
+            userId: "user_id_1",
+            telematikId: "12345.1",
+            orderId: "order_id_1",
+            timestamp: "2021-05-27T10:59:37.098245933+00:00",
+            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Hello\"}",
+            isRead: true
+        )
     }
 }

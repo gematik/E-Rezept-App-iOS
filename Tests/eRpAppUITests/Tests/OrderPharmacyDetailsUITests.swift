@@ -47,7 +47,8 @@ class OrderPharmacyDetailsUITests: XCTestCase {
     }
 
     @MainActor
-    func testPharmacyDetails() {
+    func testPharmacyDetails() async throws {
+        let bridge = UITestBridgeClient()
         let pharmacyName = "Schloss Apotheke"
         let tabBar = TabBarScreen(app: app)
         let orderView = tabBar.tapOrderTab()
@@ -62,6 +63,23 @@ class OrderPharmacyDetailsUITests: XCTestCase {
         pharmacyDetails.expandSheet()
 
         expect(pharmacyDetails.contactSectionHeader().exists).to(beTrue())
+
+        pharmacyDetails.tapClose()
+
+        await bridge.sendMessage(.scenarioStep(1))
+
+        let pharmacyDetails2 = orderDetailsView.tapOpenPharmacyDetails()
+
+        expect(pharmacyDetails2.buttonForContact(.mail).exists).to(beTrue())
+        expect(pharmacyDetails2.buttonForContact(.map).exists).to(beTrue())
+
+        pharmacyDetails.tapClose()
+
+        await bridge.sendMessage(.scenarioStep(2))
+
+        let pharmacyDetails3 = orderDetailsView.tapOpenPharmacyDetails()
+
+        expect(pharmacyDetails3.buttonForContact(.map).exists).to(beTrue())
 
         pharmacyDetails.tapClose()
     }

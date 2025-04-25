@@ -1,3 +1,37 @@
+# Release 1.30.0
+
+### added (7 changes)
+
+- Add ErxDeviceRequest from ModelsR4.DeviceRequest and add Tests for parsing
+- Add FHIRVZD spm module
+- Overview reworked for all redeeming flows
+- Add multiple attachments for chargeitems instead of just one
+- Show telematik ID of event performing agents in audit logs
+- Added UITests with Pharmacy that have missing contact options
+- Support for Spanish and Irish
+
+### internal (4 changes)
+
+- UI tests for all redeem flows
+- Fix Simulator archive not able to access keychain
+- Fix UI tests for redeem options
+- Fix simulator build not starting
+
+### other (1 change)
+
+- De-duplicate CodedError code ids
+
+### fixed (3 changes)
+
+- Fix loading InternalCommunication welcomeMessage should be set as first element in array
+- Fix direct assignment (169) info drawer margin
+- Fix padding OnboardingAnalyticsView
+
+### changed (2 changes)
+
+- Remove deactivated options entries from ChargeItemListDomain
+- Changed MessageUITests to include (prescription) chips for each communication
+
 # Release 1.29.0
 
 ### internal (2 changes)

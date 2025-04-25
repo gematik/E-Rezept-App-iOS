@@ -16,5 +16,11 @@
         "text": "**Betere leesbaarheid** \n We hebben onze merkkleur iets donkerder gemaakt om het kleurcontrast te vergroten en daardoor de leesbaarheid te verbeteren. \n \n **Geoptimaliseerd invoerveld** \n De cursor in het invoerveld voor het toegangsnummer is verwijderd.",
         "timestamp": "2025-01-28T08:00:00.000Z",
         "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Verbeterde bestelstroom** \nHet bestelproces is nu eenvoudiger en sneller. \n \n🌐 **Nieuwe talen** \nOnze app is nu ook beschikbaar in het Spaans en Iers. \n \n📞 **Uitgebreide contactopties** \nWe hebben nieuwe contactopties geïntroduceerd voor geselecteerde verzekeringsmaatschappijen. \n \n🔍 **Gedetailleerde toegangslogboeken** \nWe geven nu ook de telematica-ID's weer in de toegangslogboeken, zodat het gemakkelijker is om te identificeren wie toegang had.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
     }
 ]

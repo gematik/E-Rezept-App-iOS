@@ -54,8 +54,7 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
                     prescriptions: Shared([]),
                     selectedPrescriptions: Shared([]),
                     inRedeemProcess: true,
-                    pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive,
-                    pharmacyRedeemState: Shared(nil)
+                    pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive
                 )
             )
         )
@@ -80,15 +79,12 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
 extension PharmacyDetailViewSnapshotTests {
     enum Fixtures {
         static let allServiceOptionsState = PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
+            prescriptions: Shared(Prescription.Fixtures.prescriptions),
             selectedPrescriptions: Shared([]),
             inRedeemProcess: true,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA,
             hasRedeemableTasks: true,
-            pharmacyRedeemState: Shared(nil),
-            reservationService: .erxTaskRepository,
-            shipmentService: .erxTaskRepository,
-            deliveryService: .erxTaskRepository
+            availableServiceOptions: [.delivery, .onPremise, .shipment]
         )
 
         static let inactiveState = PharmacyDetailDomain.State(
@@ -97,10 +93,7 @@ extension PharmacyDetailViewSnapshotTests {
             inRedeemProcess: true,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive,
             hasRedeemableTasks: false,
-            pharmacyRedeemState: Shared(nil),
-            reservationService: .erxTaskRepository,
-            shipmentService: .erxTaskRepository,
-            deliveryService: .erxTaskRepository
+            availableServiceOptions: [.delivery, .onPremise, .shipment]
         )
 
         static let sheetNoServiceState = PharmacyDetailDomain.State(
@@ -108,11 +101,7 @@ extension PharmacyDetailViewSnapshotTests {
             selectedPrescriptions: Shared([]),
             inRedeemProcess: false,
             inOrdersMessage: true,
-            pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive,
-            pharmacyRedeemState: Shared(nil),
-            reservationService: .noService,
-            shipmentService: .noService,
-            deliveryService: .noService
+            pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive
         )
     }
 }

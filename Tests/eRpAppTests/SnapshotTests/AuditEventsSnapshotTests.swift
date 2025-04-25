@@ -28,24 +28,36 @@ import XCTest
 final class AuditEventsSnapshotTests: ERPSnapshotTestCase {
     func testAuditEventsLoadedSnapshots() {
         let elements: [AuditEventsDomain.State.AuditEvent] = [
-            .init(id: "abc",
-                  title: "Medication1",
-                  description:
-                  "A very long description for a very very important audit event for some very " +
-                      "interesting medication.",
-                  date: "2021-01-20, 16:21"),
-            .init(id: "def",
-                  title: "Medication2",
-                  description:
-                  "A very long description for a very very important audit event for some very " +
-                      "interesting medication.",
-                  date: "2021-01-20, 16:22"),
-            .init(id: "ghi",
-                  title: "Medication3",
-                  description:
-                  "A very long description for a very very important audit event for some very " +
-                      "interesting medication.",
-                  date: "2021-01-20, 16:23"),
+            .init(
+                id: "abc",
+                title: "Medication1",
+                description:
+                "A very long description for a very very important audit event for some very " +
+                    "interesting medication.",
+                date: "2021-01-20, 16:21",
+                agentName: nil,
+                agentTelematikId: nil
+            ),
+            .init(
+                id: "def",
+                title: "Medication2",
+                description:
+                "A very long description for a very very important audit event for some very " +
+                    "interesting medication.",
+                date: "2021-01-20, 16:22",
+                agentName: nil,
+                agentTelematikId: nil
+            ),
+            .init(
+                id: "ghi",
+                title: "Medication3",
+                description:
+                "A very long description for a very very important audit event for some very " +
+                    "interesting medication.",
+                date: "2021-01-20, 16:23",
+                agentName: nil,
+                agentTelematikId: nil
+            ),
         ]
 
         let sut = NavigationStack {
@@ -68,8 +80,12 @@ final class AuditEventsSnapshotTests: ERPSnapshotTestCase {
     func testEmptyAuditEventsSnapshots() {
         let sut = NavigationStack {
             AuditEventsView(
-                store: .init(initialState: .init(profileUUID: UUID(),
-                                                 entries: IdentifiedArrayOf<AuditEventsDomain.State.AuditEvent>())) {
+                store: .init(
+                    initialState: .init(
+                        profileUUID: UUID(),
+                        entries: IdentifiedArrayOf<AuditEventsDomain.State.AuditEvent>()
+                    )
+                ) {
                     EmptyReducer()
                 }
             )

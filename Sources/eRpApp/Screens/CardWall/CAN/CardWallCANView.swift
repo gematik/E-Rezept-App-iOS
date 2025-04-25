@@ -156,7 +156,7 @@ struct CardWallCANView: View {
                         NavigationStack {
                             CANCameraScanner(canScan: $scannedcan) { canScan in
                                 if let canScan = scannedcan {
-                                    store.send(.update(can: canScan))
+                                    store.send(.update(can: canScan.value))
                                 }
                                 store.send(.resetNavigation)
                             }

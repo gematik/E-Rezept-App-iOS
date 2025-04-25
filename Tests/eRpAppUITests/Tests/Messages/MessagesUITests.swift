@@ -58,90 +58,134 @@ class MessagesUITests: XCTestCase {
             let link: String?
             let DMC: Bool
             let HDMC: String?
+            let chips: [String]
         }
+
+        let dispReqBaseText = """
+        Rezept an %@ gesendet. Einige Apotheken haben noch keine digitale Antwortmöglichkeit. \
+        Falls bis morgen keine Rückmeldung erfolgt, rufen Sie bitte vorsichtshalber an.
+        """
 
         let orders = [
             // [TEST:COM001]
             "ZoTI_01_TEST-ONLY": [
                 Message(
+                    title: String(format: dispReqBaseText, "ZoTI_01_TEST-ONLY"),
+                    link: nil,
+                    DMC: false,
+                    HDMC: nil,
+                    chips: ["Alle Rezepte der Bestellung"]
+                ),
+                Message(
                     title: "01 Info/Para + HRcode/Para + DMC/Para + URL/Para",
                     link: "https://www.gematik.de",
                     DMC: false,
-                    HDMC: "T01__R01"
+                    HDMC: "T01__R01",
+                    chips: ["Ibuprofen 08", "Traubenzucker 5g"]
                 ),
                 Message(
                     title: "Leider war die Nachricht Ihrer Apotheke leer. Bitte kontaktieren Sie Ihre Apotheke.",
                     link: nil,
                     DMC: false,
-                    HDMC: nil
+                    HDMC: nil,
+                    chips: ["Ibuprofen 08", "Super Heiler 15g"]
                 ),
                 Message(
                     title: "🎉 Ihre Bestellung liegt zur Abholung bereit. Bitte zeigen Sie diesen Abholcode vor um" +
                         " sich auszuweisen.",
                     link: "https://www.gematik.de",
                     DMC: false,
-                    HDMC: "T03__R01"
+                    HDMC: "T03__R01",
+                    chips: ["Ibuprofen 08"]
                 ),
                 Message(
                     title: "04 Info_Para + HRcode_Para + DMC_noPara + URL_Para",
                     link: "https://www.gematik.de",
                     DMC: true,
-                    HDMC: "T04__R01"
+                    HDMC: "T04__R01",
+                    chips: ["Ibuprofen 08"]
                 ),
             ].reversed(),
             // [TEST:COM002]
             "ZoTI_02_TEST-ONLY": [
                 Message(
+                    title: String(format: dispReqBaseText, "ZoTI_02_TEST-ONLY"),
+                    link: nil,
+                    DMC: false,
+                    HDMC: nil,
+                    chips: ["Vita-Tee"]
+                ),
+                Message(
                     title: "05 Info/Para + NoHRcode + NoDMC + URL/Para",
                     link: "https://www.gematik.de",
                     DMC: false,
-                    HDMC: nil
+                    HDMC: nil,
+                    chips: ["Vita-Tee"]
                 ),
                 Message(
                     title: "Leider war die Nachricht Ihrer Apotheke leer. Bitte kontaktieren Sie Ihre Apotheke.",
                     link: nil,
                     DMC: false,
-                    HDMC: nil
+                    HDMC: nil,
+                    chips: ["Vita-Tee"]
                 ),
                 Message(
                     title: "Leider war die Nachricht Ihrer Apotheke leer. Bitte kontaktieren Sie Ihre Apotheke.",
                     link: nil,
                     DMC: false,
-                    HDMC: nil
+                    HDMC: nil,
+                    chips: ["Vita-Tee"]
                 ),
                 Message(
                     title: "08 Info/Para + NoHRcode + NoDMC + NoURL",
                     link: nil,
                     DMC: false,
-                    HDMC: nil
+                    HDMC: nil,
+                    chips: ["Vita-Tee"]
                 ),
             ].reversed(),
             // [TEST:COM003]
             "ZoTI_03_TEST-ONLY": [
                 Message(
+                    title: String(format: dispReqBaseText, "ZoTI_03_TEST-ONLY"),
+                    link: nil,
+                    DMC: false,
+                    HDMC: nil,
+                    chips: ["Traubenzucker 5g"]
+                ),
+                Message(
                     title: "Leider war die Nachricht Ihrer Apotheke leer. Bitte kontaktieren Sie Ihre Apotheke.",
                     link: nil,
                     DMC: false,
-                    HDMC: nil
+                    HDMC: nil,
+                    chips: ["Traubenzucker 5g"]
                 ),
                 Message(
                     title: "10 Info/Para + NoHRcode + NoDMC + URL/Para",
                     link: "https://www.gematik.de",
                     DMC: false,
-                    HDMC: nil
+                    HDMC: nil,
+                    chips: ["Traubenzucker 5g"]
                 ),
-                Message(title: "11 Info/Para + NoHRcode + NoDMC + NoURL", link: nil, DMC: false, HDMC: nil),
+                Message(
+                    title: "11 Info/Para + NoHRcode + NoDMC + NoURL",
+                    link: nil,
+                    DMC: false,
+                    HDMC: nil,
+                    chips: ["Traubenzucker 5g"]
+                ),
                 Message(
                     title: "Die Apotheke hat Ihnen einen Link zur Verfügung gestellt.",
                     link: "https://www.gematik.de",
                     DMC: false,
-                    HDMC: nil
+                    HDMC: nil,
+                    chips: ["Traubenzucker 5g"]
                 ),
             ].reversed(),
         ]
 
         // Prefill Pharmacies by adding favorites
-        let pharmacySearch = tabBar.tapRedeemTab()
+        let pharmacySearch = tabBar.tapPharmacySearchTab()
         pharmacySearch.searchFor("A")
 
         for name in orders.keys {
@@ -161,6 +205,8 @@ class MessagesUITests: XCTestCase {
                 let messageDescription = "\(name) - \(messages.count - 1 - index)"
                 let messageContainer = orderDetails.message(at: index)
                 let title = messageContainer.title()
+                let chipsLabel = messageContainer.chipTexts().map(\.label)
+                expect(chipsLabel).to(contain(message.chips))
                 expect(title.value as? String).to(equal(message.title), description: messageDescription)
                 expect(messageContainer.linkButton().exists)
                     .to(equal(message.link != nil), description: messageDescription)

@@ -82,6 +82,7 @@ extension Sequence where Element == SharedTask {
             let task = ErxTask(
                 identifier: sharedTask.id,
                 status: status,
+                flowType: ErxTask.FlowType(taskId: sharedTask.id),
                 accessCode: sharedTask.accessCode,
                 authoredOn: authoredOn,
                 author: author,

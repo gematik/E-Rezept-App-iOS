@@ -42,7 +42,9 @@ struct DebugEGKScannerView: View {
                           scanning: show) { output in
                 guard case let .text(keyBase64Wrapped) = output.first,
                       let keyBase64 = keyBase64Wrapped,
-                      let data = Data(base64Encoded: keyBase64)
+                      let data = Data(
+                          base64Encoded: keyBase64.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                      )
                 else { return }
 
                 if (try? BrainpoolP256r1.Verify.PrivateKey(raw: data)) != nil {

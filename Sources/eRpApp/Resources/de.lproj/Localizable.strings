@@ -17,8 +17,8 @@
 "auth_btn_bap_change" = "Passwort";
 "auth_btn_bap_faceid" = "Face ID";
 "auth_btn_bap_touchid" = "Touch ID";
-"auth_btn_biometrics_faceid" = "Mit Face ID entsperren";
-"auth_btn_biometrics_touchid" = "Mit Touch ID entsperren";
+"auth_btn_biometrics_faceid" = "Face ID";
+"auth_btn_biometrics_touchid" = "Touch ID";
 "auth_btn_password_continue" = "Weiter";
 "auth_txt_bap_password_message" = "Bitte probieren Sie es erneut oder geben Sie Ihr Passwort ein.";
 "auth_txt_biometrics_disclaimer" = "Bitte achten Sie darauf, dass Personen, mit denen Sie gegebenenfalls dieses Gerät teilen und deren biometrische Merkmale auf diesem Gerät gespeichert sein könnten, ebenfalls Zugriff auf Ihre Rezepte erhalten.";
@@ -29,7 +29,7 @@
 "auth_txt_biometrics_failed_default" = "Anmeldung fehlgeschlagen";
 "auth_txt_biometrics_failed_not_enrolled" = "Auf diesem Gerät wurde keine biometrische Sicherung eingerichtet.";
 "auth_txt_biometrics_failed_user_fallback" = "Eine Alternative zum biometrischen Login ist nicht konfiguriert. Bitte hinterlegen Sie ein Kennwort.";
-"auth_txt_biometrics_footer" = "Sie haben Fragen oder Probleme bei der Nutzung der App? Unseren telefonischen Support erreichen Sie unter 0800 277 377 7. \n\nViele Fragen haben wir bereits auf das-e-rezept-fuer-deutschland.de für Sie beantwortet.";
+"auth_txt_biometrics_footer" = "Passwort vergessen? Bitte löschen Sie die App und installieren Sie sie anschließend neu. Dies ist notwendig, da wir Ihre Zugangsdaten nur lokal speichern und keine E-Mail-Adresse zur Verifizierung nutzen.";
 "auth_txt_biometrics_footer_email_display" = "app-feedback@gematik.de";
 "auth_txt_biometrics_footer_email_link" = "mailto:app-feedback@gematik.de";
 "auth_txt_biometrics_footer_url_display" = "das-e-rezept-fuer-deutschland.de";
@@ -37,11 +37,11 @@
 "auth_txt_biometrics_lockout" = "Sie hatten zu viele fehlerhafte Anmeldeversuche. Gehen Sie in die Einstellungen ihres iPhones und reaktivieren sie die FaceID oder TouchID Funktion durch eine PIN Eingabe.";
 "auth_txt_biometrics_password_title" = "Mit Kennwort sichern";
 "auth_txt_biometrics_reason" = "%@ wird benötigt, um die App vor unerlaubtem Zugriff zu schützen.";
-"auth_txt_biometrics_title" = "Willkommen";
+"auth_txt_biometrics_title" = "Herzlich willkommen";
 "auth_txt_biometrics_touch_id_title" = "Mit Touch ID sichern";
 "auth_txt_biometrics_touchid_description" = "Zur Sicherung Ihrer Daten haben Sie Touch ID gewählt.";
 "auth_txt_biometrics_touchid_start" = "Mit Touch ID entsperren";
-"auth_txt_failed_login_hint_title" = "Erfolglose Anmeldeversuche";
+"auth_txt_failed_login_hint_title" = "Das hat leider nicht geklappt";
 "auth_txt_password_failure" = "Falsches Kennwort. Bitte probieren Sie es erneut.";
 "auth_txt_password_label" = "Eingabefeld Kennwort";
 "auth_txt_password_placeholder" = "Kennwort eingeben";
@@ -860,6 +860,7 @@
 "ord_detail_shipment_link_text" = "Bitte wechseln Sie nun auf die Website der Apotheke, um die Bestellung abzuschließen.";
 "ord_detail_txt_%@_send_to_%@" = "%@ an %@ gesendet. Einige Apotheken haben noch keine digitale Antwortmöglichkeit. Falls bis morgen keine Rückmeldung erfolgt, rufen Sie bitte vorsichtshalber an.";
 "ord_detail_txt_charge_item%@" = "Sie haben einen Kostenbeleg zu Ihrem Medikament %@ erhalten.";
+"ord_detail_txt_chip_all" = "Alle Rezepte der Bestellung";
 "ord_detail_txt_contact" = "Kontakt Optionen";
 "ord_detail_txt_contact_email" = "Mail schreiben";
 "ord_detail_txt_contact_map" = "Route anzeigen";
@@ -1399,6 +1400,8 @@
 "stg_txt_alert_message_demo_mode_on" = "Demo-Modus ist aktiv. Sie benötigen keine Gesundheitskarte und keine Verbindung zum Internet. Die angezeigten Testrezepte können in einer Apotheke nicht eingelöst werden.";
 "stg_txt_alert_title_demo_mode" = "Erkundungstour gefällig?";
 "stg_txt_alert_title_demo_mode_off" = "Demo-Modus deaktiviert";
+"stg_txt_audit_event_event_telematik_id_info_kvnr_%@" = "Versichertennummer: %@";
+"stg_txt_audit_event_event_telematik_id_info_telematik_id_%@" = "Telematik ID: %@";
 "stg_txt_audit_events_banner_connect" = "Verbinden";
 "stg_txt_audit_events_banner_message" = "Um Zugriffsprotokolle zu empfangen, müssen Sie mit dem Server verbunden sein.";
 "stg_txt_audit_events_missing_date" = "Kein Zeitstempel";
@@ -1544,8 +1547,8 @@
 "stg_txt_new_profile_title" = "Neues Profil anlegen";
 "stg_txt_reg_devices_empty_list" = "Es sind keine Geräte mit dieser Gesundheitskarte verbunden.";
 "stg_txt_reg_devices_empty_list_title" = "Keine Geräte";
-"stg_txt_reg_devices_info" = "Zum Anzeigen der Geräte ist eine zusätzliche Authentifizierung nötig.";
-"stg_txt_reg_devices_info_title" = "Authentifizierung notwendig";
+"stg_txt_reg_devices_info" = "Bitte melden Sie sich an und speichern Sie die Zugangsdaten, um die verbundenen Geräte anzuzeigen.";
+"stg_txt_reg_devices_info_title" = "Anmeldung notwendig";
 "stg_txt_reg_devices_registered_since_%@" = "Registriert seit %@";
 "stg_txt_reg_devices_registered_since_%@_this_device" = "Registriert seit %@ (dieses Gerät)";
 "stg_txt_reg_devices_title" = "Verbundene Geräte";

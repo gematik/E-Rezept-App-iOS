@@ -779,6 +779,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 erxTask: .init(
                     identifier: "identifier",
                     status: .ready,
+                    flowType: .pharmacyOnly,
                     medicationSchedule: medicationSchedule
                 ),
                 dateFormatter: UIDateFormatter.previewValue
@@ -821,6 +822,7 @@ extension PrescriptionDetailDomainTests {
             ErxTask(
                 identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: .ready,
+                flowType: .pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
                 authoredOn: authoredOn,
@@ -870,6 +872,7 @@ extension PrescriptionDetailDomainTests {
                 erxTask: ErxTask(
                     identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
                     status: .ready,
+                    flowType: .pharmacyOnly,
                     accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                     fullUrl: nil,
                     authoredOn: DemoDate.createDemoDate(.today),
@@ -922,6 +925,7 @@ extension PrescriptionDetailDomainTests {
                 erxTask: ErxTask(
                     identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
                     status: .ready,
+                    flowType: .pharmacyOnly,
                     accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                     fullUrl: nil,
                     authoredOn: DemoDate.createDemoDate(.today),

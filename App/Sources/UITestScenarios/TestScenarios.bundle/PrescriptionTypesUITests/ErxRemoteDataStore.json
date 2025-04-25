@@ -17,6 +17,7 @@
                 "content":
                 [
                     {
+                        "flowType": "160",
                         "medicationRequest":
                         {
                             "substitutionAllowed": false,
@@ -48,6 +49,7 @@
                         "lastModified": "{{DATETIME:-20m}}"
                     },
                     {
+                        "flowType": "160",
                         "medicationRequest":
                         {
                             "substitutionAllowed": true,
@@ -79,6 +81,7 @@
                         "lastModified": "{{DATETIME:-21m}}"
                     },
                     {
+                        "flowType": "160",
                         "medicationRequest":
                         {
                             "substitutionAllowed": false,
@@ -110,6 +113,7 @@
                         "lastModified": "{{DATETIME:-22m}}"
                     },
                     {
+                        "flowType": "160",
                         "medicationRequest":
                         {
                             "substitutionAllowed": true,
@@ -151,11 +155,7 @@
                 "content":
                 [
                     {
-                        "flowType":
-                        {
-                            "pharmacyOnly":
-                            {}
-                        },
+                        "flowType": "160",
                         "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
                         "medicationRequest":
                         {
@@ -240,11 +240,7 @@
                         "lastModified": "{{DATETIME:-20m}}"
                     },
                     {
-                        "flowType":
-                        {
-                            "pharmacyOnly":
-                            {}
-                        },
+                        "flowType": "160",
                         "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
                         "medicationRequest":
                         {
@@ -329,11 +325,7 @@
                         "lastModified": "{{DATETIME:-21m}}"
                     },
                     {
-                        "flowType":
-                        {
-                            "pharmacyOnly":
-                            {}
-                        },
+                        "flowType": "160",
                         "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
                         "medicationRequest":
                         {
@@ -418,11 +410,7 @@
                         "lastModified": "{{DATETIME:-22m}}"
                     },
                     {
-                        "flowType":
-                        {
-                            "pharmacyOnly":
-                            {}
-                        },
+                        "flowType": "160",
                         "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
                         "medicationRequest":
                         {

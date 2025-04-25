@@ -258,6 +258,7 @@ internal enum A11y {
   }
     internal enum message {
       static let msgTxtTitle = "msg_txt_title"
+      static let msgTxtChips = "msg_txt_chips"
   }
     internal enum pickupCode {
       static let pucTxtTitle = "puc_txt_title"
@@ -536,6 +537,7 @@ internal enum A11y {
       static let stgCtnAuditEventsEventTitle = "stg_ctn_audit_events_event_title"
       static let stgCtnAuditEventsEventDescription = "stg_ctn_audit_events_event_description"
       static let stgCtnAuditEventsEventDate = "stg_ctn_audit_events_event_date"
+      static let stgCtnAuditEventsEventTelematikIdInfo = "stg_ctn_audit_events_event_telematik_id_info"
       static let stgTxtAuditEventsLastUpdated = "stg_txt_audit_events_last_updated"
       static let stgTxtAuditEventsActivityIndicator = "stg_txt_audit_events_activity_indicator"
       static let stgTxtAuditEventsNoProtocolTitle = "stg_txt_audit_events_no_protocol_title"

@@ -1,0 +1,62 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "TextBlock",
+      "size": "Medium",
+      "weight": "Bolder",
+      "text": "<%= message_card_content_data['title'] %>"
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "Image",
+              "style": "Person",
+              "url": "<%= message_card_content_data['image_url'] %>",
+              "altText": "<%= message_card_content_data['creator_name'] %>",
+              "size": "Large"
+            }
+          ],
+          "width": "auto"
+        },
+        {
+          "type": "Column",
+          "items": [
+            {
+              "type": "TextBlock",
+              "weight": "Bolder",
+              "text": "<%= message_card_content_data['sub_title'] %>",
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "text": "<%= message_card_content_data['description'] %>",
+              "wrap": true
+            }
+          ],
+          "width": "stretch"
+        }
+      ]
+    },
+    {
+      "type": "FactSet",
+      "facts": <%= message_card_content_data['facts'] %>
+    }
+<% if message_card_content_data['qr_code_url'] then %>
+    ,      
+    {
+      "type": "Image",
+      "size": "Large",
+      "altText": "QR-Code",
+      "horizontalAlignment": "Center",
+      "url": "<%= message_card_content_data['qr_code_url'] %>"
+    }
+<% end %>
+  ]
+}

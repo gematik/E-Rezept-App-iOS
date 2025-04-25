@@ -166,16 +166,12 @@ final class IDPIntegrationTests: XCTestCase {
             case signatureFailed
         }
 
-        func sign(message: Data) -> AnyPublisher<Data, Swift.Error> {
-            Future { [weak self] promise in
-                promise(Result {
-                    guard let result = try self?.privateKeyContainer.sign(data: message) else {
-                        throw Error.signatureFailed
-                    }
-                    return result
-                })
+        func sign(message: Data) async throws -> Data {
+            do {
+                return try privateKeyContainer.sign(data: message)
+            } catch {
+                throw Error.signatureFailed
             }
-            .eraseToAnyPublisher()
         }
     }
 
@@ -589,13 +585,8 @@ class Brainpool256r1Signer: JWTSigner {
         [x5c.derBytes!]
     }
 
-    func sign(message: Data) -> AnyPublisher<Data, Error> {
-        Future { promise in
-            promise(Result {
-                try self.key.sign(message: message).rawRepresentation
-            })
-        }
-        .eraseToAnyPublisher()
+    func sign(message: Data) async throws -> Data {
+        try key.sign(message: message).rawRepresentation
     }
 }
 

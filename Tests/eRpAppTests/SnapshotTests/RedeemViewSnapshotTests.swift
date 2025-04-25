@@ -25,7 +25,9 @@ import XCTest
 
 final class RedeemViewSnapshotTests: ERPSnapshotTestCase {
     func testRedeemViewSnapshot() {
-        let sut = RedeemMethodsView(store: RedeemMethodsDomain.Dummies.store)
+        let sut = NavigationStack {
+            RedeemMethodsView(store: RedeemMethodsDomain.Dummies.store)
+        }
 
         // View takes current device Size into account, other devices would record wrong representations
         assertSnapshots(of: sut, as: snapshotModiCurrentDevice())

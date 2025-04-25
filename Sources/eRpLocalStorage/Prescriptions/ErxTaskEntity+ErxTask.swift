@@ -29,7 +29,7 @@ extension ErxTaskEntity {
     convenience init(task: ErxTask, in context: NSManagedObjectContext) {
         self.init(context: context)
         identifier = task.identifier
-        flowType = task.flowType?.rawValue
+        flowType = task.flowType.rawValue
         prescriptionId = task.prescriptionId
         accessCode = task.accessCode
         fullUrl = task.fullUrl
@@ -67,6 +67,8 @@ extension ErxTaskEntity {
                                                  in: context)
         organization = ErxTaskOrganizationEntity(organization: task.organization,
                                                  in: context)
+        deviceRequest = ErxTaskDeviceRequestEntity(request: task.deviceRequest,
+                                                   in: context)
         // Note: communications, avsTransactions and medicationDispenses are not set here
         // since they are loaded asynchronous from remote
     }
@@ -134,6 +136,13 @@ extension ErxTask {
     init?(entity: ErxTaskEntity, dateProvider: () -> Date) {
         guard let identifier = entity.identifier else {
             return nil
+        }
+
+        var flowType: ErxTask.FlowType
+        if let flowTypeCode = entity.flowType {
+            flowType = ErxTask.FlowType(rawValue: flowTypeCode)
+        } else {
+            flowType = ErxTask.FlowType(taskId: identifier)
         }
 
         let now = dateProvider()
@@ -204,7 +213,7 @@ extension ErxTask {
         self.init(
             identifier: identifier,
             status: erxTaskStatus,
-            flowType: ErxTask.FlowType(rawValue: entity.flowType),
+            flowType: flowType,
             accessCode: entity.accessCode,
             fullUrl: entity.fullUrl,
             authoredOn: entity.authoredOn,

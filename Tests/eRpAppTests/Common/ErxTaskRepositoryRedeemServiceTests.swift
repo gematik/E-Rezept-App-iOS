@@ -33,6 +33,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
 
     lazy var order1 = OrderRequest(
         redeemType: .onPremise,
+        flowType: "160",
         taskID: "task_id_1",
         accessCode: "access_code_1",
         telematikId: "telematik_id_1"
@@ -40,6 +41,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
 
     lazy var order2 = OrderRequest(
         redeemType: .shipment,
+        flowType: "160",
         phone: "1234567",
         taskID: "task_id_2",
         accessCode: "access_code_2",
@@ -47,6 +49,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     )
     lazy var order3 = OrderRequest(
         redeemType: .delivery,
+        flowType: "160",
         phone: "1234567",
         taskID: "task_id_3",
         accessCode: "access_code_3",
@@ -65,58 +68,29 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
 
-        var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
+        var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
         sut.redeem([order1, order2, order3])
             .test(failure: { error in
                 print(error)
                 fail("no error expected")
             }, expectations: { orderResponses in
-                receivedResponses.append(orderResponses)
+                receivedResponse = orderResponses
             })
 
-        expect(receivedResponses.count).toEventually(equal(3))
+        expect(receivedResponse.count).toEventually(equal(3))
 
-        let firstResponse = receivedResponses[0]
-        expect(firstResponse.count) == 3
-        expect(firstResponse.inProgress).to(beTrue())
-        expect(firstResponse.areFailing).to(beFalse())
-        expect(firstResponse.areSuccessful).to(beFalse())
-        expect(firstResponse.arePartiallySuccessful).to(beFalse())
-        expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-        expect(firstResponse[0].isSuccess).to(beTrue())
-        expect(firstResponse[0].requested).to(equal(order1))
-        expect(firstResponse[1].inProgress).to(beTrue())
-        expect(firstResponse[1].requested).to(equal(order2))
-        expect(firstResponse[2].inProgress).to(beTrue())
-        expect(firstResponse[2].requested).to(equal(order3))
-
-        let secondResponse = receivedResponses[1]
-        expect(secondResponse.count) == 3
-        expect(secondResponse.inProgress).to(beTrue())
-        expect(secondResponse.areFailing).to(beFalse())
-        expect(secondResponse.areSuccessful).to(beFalse())
-        expect(secondResponse.arePartiallySuccessful).to(beFalse())
-        expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-        expect(secondResponse[0].isSuccess).to(beTrue())
-        expect(secondResponse[0].requested).to(equal(order1))
-        expect(secondResponse[1].isSuccess).to(beTrue())
-        expect(secondResponse[1].requested).to(equal(order2))
-        expect(secondResponse[2].inProgress).to(beTrue())
-        expect(secondResponse[2].requested).to(equal(order3))
-
-        let thirdResponse = receivedResponses[2]
-        expect(thirdResponse.inProgress).to(beFalse())
-        expect(thirdResponse.areFailing).to(beFalse())
-        expect(thirdResponse.areSuccessful).to(beTrue())
-        expect(thirdResponse.arePartiallySuccessful).to(beFalse())
-        expect(thirdResponse.progress).to(equal(1.0))
-        expect(thirdResponse.count) == 3
-        expect(thirdResponse[0].isSuccess).to(beTrue())
-        expect(thirdResponse[0].requested).to(equal(order1))
-        expect(thirdResponse[1].isSuccess).to(beTrue())
-        expect(thirdResponse[1].requested).to(equal(order2))
-        expect(thirdResponse[2].isSuccess).to(beTrue())
-        expect(thirdResponse[2].requested).to(equal(order3))
+        expect(receivedResponse.inProgress).to(beFalse())
+        expect(receivedResponse.areFailing).to(beFalse())
+        expect(receivedResponse.areSuccessful).to(beTrue())
+        expect(receivedResponse.arePartiallySuccessful).to(beFalse())
+        expect(receivedResponse.progress).to(equal(1.0))
+        expect(receivedResponse.count) == 3
+        expect(receivedResponse[id: self.order1.taskID]?.isSuccess).to(beTrue())
+        expect(receivedResponse[id: self.order1.taskID]?.requested).to(equal(order1))
+        expect(receivedResponse[id: self.order2.taskID]?.isSuccess).to(beTrue())
+        expect(receivedResponse[id: self.order2.taskID]?.requested).to(equal(order2))
+        expect(receivedResponse[id: self.order3.taskID]?.isSuccess).to(beTrue())
+        expect(receivedResponse[id: self.order3.taskID]?.requested).to(equal(order3))
     }
 
     func testRedeemResponses_PartialSuccess() throws {
@@ -138,58 +112,29 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
             }
         }
 
-        var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
+        var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
         sut.redeem([order1, order2, order3])
             .test(failure: { error in
                 print(error)
                 fail("no error expected")
             }, expectations: { orderResponses in
-                receivedResponses.append(orderResponses)
+                receivedResponse = orderResponses
             })
 
-        expect(receivedResponses.count).toEventually(equal(3))
-        let firstResponse = receivedResponses[0]
+        expect(receivedResponse.count).toEventually(equal(3))
 
-        expect(firstResponse.count) == 3
-        expect(firstResponse.inProgress).to(beTrue())
-        expect(firstResponse.areFailing).to(beFalse())
-        expect(firstResponse.areSuccessful).to(beFalse())
-        expect(firstResponse.arePartiallySuccessful).to(beFalse())
-        expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-        expect(firstResponse[0].isFailure).to(beTrue())
-        expect(firstResponse[0].requested).to(equal(order1))
-        expect(firstResponse[1].inProgress).to(beTrue())
-        expect(firstResponse[1].requested).to(equal(order2))
-        expect(firstResponse[2].inProgress).to(beTrue())
-        expect(firstResponse[2].requested).to(equal(order3))
-
-        let secondResponse = receivedResponses[1]
-        expect(secondResponse.count) == 3
-        expect(secondResponse.inProgress).to(beTrue())
-        expect(secondResponse.areFailing).to(beFalse())
-        expect(secondResponse.areSuccessful).to(beFalse())
-        expect(secondResponse.arePartiallySuccessful).to(beFalse())
-        expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-        expect(secondResponse[0].isFailure).to(beTrue())
-        expect(secondResponse[0].requested).to(equal(order1))
-        expect(secondResponse[1].isSuccess).to(beTrue())
-        expect(secondResponse[1].requested).to(equal(order2))
-        expect(secondResponse[2].inProgress).to(beTrue())
-        expect(secondResponse[2].requested).to(equal(order3))
-
-        let thirdResponse = receivedResponses[2]
-        expect(thirdResponse.inProgress).to(beFalse())
-        expect(thirdResponse.areFailing).to(beFalse())
-        expect(thirdResponse.areSuccessful).to(beFalse())
-        expect(thirdResponse.arePartiallySuccessful).to(beTrue())
-        expect(thirdResponse.progress).to(equal(1.0))
-        expect(thirdResponse.count) == 3
-        expect(thirdResponse[0].isFailure).to(beTrue())
-        expect(thirdResponse[0].requested).to(equal(order1))
-        expect(thirdResponse[1].isSuccess).to(beTrue())
-        expect(thirdResponse[1].requested).to(equal(order2))
-        expect(thirdResponse[2].isSuccess).to(beTrue())
-        expect(thirdResponse[2].requested).to(equal(order3))
+        expect(receivedResponse.inProgress).to(beFalse())
+        expect(receivedResponse.areFailing).to(beFalse())
+        expect(receivedResponse.areSuccessful).to(beFalse())
+        expect(receivedResponse.arePartiallySuccessful).to(beTrue())
+        expect(receivedResponse.progress).to(equal(1.0))
+        expect(receivedResponse.count) == 3
+        expect(receivedResponse[id: self.order1.taskID]?.isFailure).to(beTrue())
+        expect(receivedResponse[id: self.order1.taskID]?.requested).to(equal(order1))
+        expect(receivedResponse[id: self.order2.taskID]?.isSuccess).to(beTrue())
+        expect(receivedResponse[id: self.order2.taskID]?.requested).to(equal(order2))
+        expect(receivedResponse[id: self.order3.taskID]?.isSuccess).to(beTrue())
+        expect(receivedResponse[id: self.order3.taskID]?.requested).to(equal(order3))
     }
 
     let now = Date()
@@ -200,8 +145,8 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
             loginHandler: loginHandlerMock(authenticated: true)
         )
 
-        let task1 = ErxTask(identifier: "task_id_1", status: .inProgress)
-        let task2 = ErxTask(identifier: "task_id_2", status: .ready)
+        let task1 = ErxTask(identifier: "task_id_1", status: .inProgress, flowType: .pharmacyOnly)
+        let task2 = ErxTask(identifier: "task_id_2", status: .ready, flowType: .pharmacyOnly)
 
         mockRepository.loadRemoteAndSavedPublisher = Just([task1, task2])
             .setFailureType(to: ErxRepositoryError.self)
@@ -244,58 +189,29 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
 
-        var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
+        var receivedResponse: IdentifiedArrayOf<OrderResponse> = []
         sut.redeem([order1, order2, order3])
             .test(failure: { error in
                 print(error)
                 fail("no error expected")
             }, expectations: { orderResponses in
-                receivedResponses.append(orderResponses)
+                receivedResponse = orderResponses
             })
 
-        expect(receivedResponses.count).toEventually(equal(3))
-        let firstResponse = receivedResponses[0]
+        expect(receivedResponse.count).toEventually(equal(3))
 
-        expect(firstResponse.count) == 3
-        expect(firstResponse.inProgress).to(beTrue())
-        expect(firstResponse.areFailing).to(beFalse())
-        expect(firstResponse.areSuccessful).to(beFalse())
-        expect(firstResponse.arePartiallySuccessful).to(beFalse())
-        expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-        expect(firstResponse[0].isFailure).to(beTrue())
-        expect(firstResponse[0].requested).to(equal(order1))
-        expect(firstResponse[1].inProgress).to(beTrue())
-        expect(firstResponse[1].requested).to(equal(order2))
-        expect(firstResponse[2].inProgress).to(beTrue())
-        expect(firstResponse[2].requested).to(equal(order3))
-
-        let secondResponse = receivedResponses[1]
-        expect(secondResponse.count) == 3
-        expect(secondResponse.inProgress).to(beTrue())
-        expect(secondResponse.areFailing).to(beFalse())
-        expect(secondResponse.areSuccessful).to(beFalse())
-        expect(secondResponse.arePartiallySuccessful).to(beFalse())
-        expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-        expect(secondResponse[0].isFailure).to(beTrue())
-        expect(secondResponse[0].requested).to(equal(order1))
-        expect(secondResponse[1].isFailure).to(beTrue())
-        expect(secondResponse[1].requested).to(equal(order2))
-        expect(secondResponse[2].inProgress).to(beTrue())
-        expect(secondResponse[2].requested).to(equal(order3))
-
-        let thirdResponse = receivedResponses[2]
-        expect(thirdResponse.inProgress).to(beFalse())
-        expect(thirdResponse.areFailing).to(beTrue())
-        expect(thirdResponse.areSuccessful).to(beFalse())
-        expect(thirdResponse.arePartiallySuccessful).to(beFalse())
-        expect(thirdResponse.progress).to(equal(1.0))
-        expect(thirdResponse.count) == 3
-        expect(thirdResponse[0].isFailure).to(beTrue())
-        expect(thirdResponse[0].requested).to(equal(order1))
-        expect(thirdResponse[1].isFailure).to(beTrue())
-        expect(thirdResponse[1].requested).to(equal(order2))
-        expect(thirdResponse[2].isFailure).to(beTrue())
-        expect(thirdResponse[2].requested).to(equal(order3))
+        expect(receivedResponse.inProgress).to(beFalse())
+        expect(receivedResponse.areFailing).to(beTrue())
+        expect(receivedResponse.areSuccessful).to(beFalse())
+        expect(receivedResponse.arePartiallySuccessful).to(beFalse())
+        expect(receivedResponse.progress).to(equal(1.0))
+        expect(receivedResponse.count) == 3
+        expect(receivedResponse[id: self.order1.taskID]?.isFailure).to(beTrue())
+        expect(receivedResponse[id: self.order1.taskID]?.requested).to(equal(order1))
+        expect(receivedResponse[id: self.order2.taskID]?.isFailure).to(beTrue())
+        expect(receivedResponse[id: self.order2.taskID]?.requested).to(equal(order2))
+        expect(receivedResponse[id: self.order3.taskID]?.isFailure).to(beTrue())
+        expect(receivedResponse[id: self.order3.taskID]?.requested).to(equal(order3))
     }
 
     func testRedeemResponses_InputFailure() throws {
@@ -312,6 +228,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
 
         let orderWithMissingTelematikId = OrderRequest(
             redeemType: .shipment,
+            flowType: "160",
             taskID: "task_id_3",
             accessCode: "access_code_3"
         )

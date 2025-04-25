@@ -48,8 +48,9 @@ public struct JWT {
     /// Initialize a JWT from String
     /// - Parameters:
     ///   - string: JWT string that should be formatted according to the RFC-7519 JWT specification
+    ///   - decoder: JSONDecoder needed with dateDecodingStrategy = .secondsSince1970 and dataDecodingStrategy = .base64
     /// - Throws: `JWT.Error`
-    public init(from string: String) throws {
+    public init(from string: String, decoder: JSONDecoder = JSONDecoder.base1970DateDecoder) throws {
         /// Regex magic
         /// if we find a match we should have a parsable JWT structure.
         /// Note: the signature is not validated at this point
@@ -91,15 +92,8 @@ public struct JWT {
                 nil
             )
         }
-        header = try Self.header(from: rawHeader, parser: Self.jsonDecoder)
+        header = try Self.header(from: rawHeader, parser: decoder)
     }
-
-    private static var jsonDecoder: JSONDecoder = {
-        let jsonParser = JSONDecoder()
-        jsonParser.dateDecodingStrategy = .secondsSince1970
-        jsonParser.dataDecodingStrategy = .base64
-        return jsonParser
-    }()
 
     private static func header(from data: Base64URLEncodedData, parser: JSONDecoder) throws -> Header {
         guard let decodedData = data.decodeBase64URLEncoded() else {
@@ -118,7 +112,7 @@ public struct JWT {
         guard let decodedPayload = backing.payload.decodeBase64URLEncoded() else {
             throw Error.encodingError
         }
-        return try Self.jsonDecoder.decode(type, from: decodedPayload)
+        return try JSONDecoder.base1970DateDecoder.decode(type, from: decodedPayload)
     }
 
     /// Verify the JWT by checking the signature
@@ -136,16 +130,16 @@ public struct JWT {
     /// - Parameter signer: `JWTSigner` that is used to create the signature
     /// - Returns: A stream that publishes the signed `JWT` if successful, an `Swift.Error` otherwise.
     public func sign(with signer: JWTSigner) -> AnyPublisher<JWT, Swift.Error> {
-        Deferred { () -> AnyPublisher<JWT, Swift.Error> in
-            let data = backing.rawHeader + Self.dot + backing.payload
-            return signer.sign(message: data)
-                .tryMap { signature in
-                    guard let encodedSignature = signature.encodeBase64UrlSafe()
-                    else { throw Error.encodingError }
-                    return try JWT(from: data + Self.dot + encodedSignature)
-                }
-                .eraseToAnyPublisher()
-        }.eraseToAnyPublisher()
+        let data = backing.rawHeader + Self.dot + backing.payload
+        return Future {
+            try await signer.sign(message: data)
+        }
+        .tryMap { (signature: Data) -> JWT in
+            guard let encodedSignature = signature.encodeBase64UrlSafe()
+            else { throw Error.encodingError }
+            return try JWT(from: data + Self.dot + encodedSignature)
+        }
+        .eraseToAnyPublisher()
     }
 
     /// Serialize the JWT
@@ -278,4 +272,14 @@ extension JWT {
             }
         }
     }
+}
+
+extension JSONDecoder {
+    /// A JSONDecoder that uses .secondsSince1970 and .base64 for dateDecodingStrategy
+    public static var base1970DateDecoder: JSONDecoder = {
+        let jsonParser = JSONDecoder()
+        jsonParser.dateDecodingStrategy = .secondsSince1970
+        jsonParser.dataDecodingStrategy = .base64
+        return jsonParser
+    }()
 }

@@ -184,8 +184,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gematik/swift-gemPDFKit",
       "state" : {
-        "revision" : "06851ed602e5b3bbd3aedf0dd8d91372de9fa11d",
-        "version" : "0.1.1"
+        "revision" : "c9fa84c525b8a204a572aed89f15cb05921a0917",
+        "version" : "0.2.0"
       }
     },
     {
@@ -211,8 +211,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-parsing",
       "state" : {
-        "revision" : "a0e7d73f462c1c38c59dc40a3969ac40cea42950",
-        "version" : "0.13.0"
+        "revision" : "3432cb81164dd3d69a75d0d63205be5fbae2c34b",
+        "version" : "0.14.1"
       }
     },
     {

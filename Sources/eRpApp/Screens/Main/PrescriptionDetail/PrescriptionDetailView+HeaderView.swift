@@ -209,6 +209,7 @@ extension PrescriptionDetailView {
                     Spacer()
                 }
                 .padding()
+                .frame(maxWidth: .infinity)
                 .background(Colors.systemBackground.ignoresSafeArea())
             }
         }

@@ -1,0 +1,56 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "TextBlock",
+      "size": "Medium",
+      "weight": "Bolder",
+      "text": "iOS Release Build"
+    },
+    {
+      "type": "TextBlock",
+      "spacing": "None",
+      "text": "<%= message_card['version'] %>",
+      "isSubtle": true,
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "size": "Medium",
+      "weight": "Bolder",
+      "text": "Builds & Links"
+    },
+    {
+      "type": "TextBlock",
+      "text": "
+<% if message_card['devbuild'] then %>
+  - **Debug-Build:** [Jenkins](<%= message_card['devbuild'] %>) ([QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= ERB::Util.url_encode(message_card['devbuild']) %>))
+<% end %>
+<% if message_card['builds'].count > 0 then %>
+  <% message_card['builds'].each do |build| %>
+  - **<%= build['stream'] %>:** [Jenkins](<%= build['url'] %>) ([QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= ERB::Util.url_encode(message_card['url']) %>))
+  <% end %>
+<% end %>
+<% if message_card['jira'] then %>
+  - **JIRA Tickets:** [Filter](<%= message_card['jira'] %>)
+<% end %>
+",
+    "wrap": true
+  }, 
+
+  {
+    "type": "TextBlock",
+    "size": "Medium",
+    "weight": "Bolder",
+    "text": "Release Notes"
+  },
+  {
+    "type": "TextBlock",
+    "text": "<%= message_card['releasenotes'] %>",
+    "wrap": true
+  }
+  ]
+}
+

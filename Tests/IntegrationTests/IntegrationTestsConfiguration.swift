@@ -32,7 +32,9 @@ extension IntegrationTestsConfiguration {
     }
 }
 
-class IntegrationTestsConfiguration {
+extension Brainpool256r1Signer: @unchecked Sendable {}
+
+final class IntegrationTestsConfiguration: Sendable {
     let appConfiguration: AppConfiguration
     let brainpool256r1Signer: Brainpool256r1Signer?
     let idpsekURLServer: AppConfiguration.Server?

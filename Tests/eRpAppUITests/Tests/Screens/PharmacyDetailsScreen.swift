@@ -23,8 +23,13 @@ import XCTest
 struct PharmacyDetailsScreen: Screen {
     var app: XCUIApplication
 
-    func tapRedeem(fileID _: String = #fileID, file: String = #filePath, line: UInt = #line) -> RedeemScreen {
-        buttonForService(.shipment, file: file, line: line).tap()
+    func tapRedeem(
+        _ service: Service = .shipment,
+        fileID _: String = #fileID,
+        file: String = #filePath,
+        line: UInt = #line
+    ) -> RedeemScreen {
+        buttonForService(service, file: file, line: line).tap()
 
         return RedeemScreen(app: app)
     }

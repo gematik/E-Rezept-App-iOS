@@ -28,6 +28,8 @@ public struct ErxTaskOrder: Equatable, Codable {
     public let accessCode: String
     /// Identifier of the pharmacy where order will be issued
     public let pharmacyTelematikId: String
+    /// FlowType describes type of task (e.G. Direktzuweisung).
+    public var flowType: String
     /// Contains informations about the user and the selected redeem option
     public let payload: Payload
 
@@ -42,12 +44,14 @@ public struct ErxTaskOrder: Equatable, Codable {
                 erxTaskId: String,
                 accessCode: String,
                 pharmacyTelematikId: String,
+                flowType: String,
                 payload: Payload) {
         self.identifier = identifier
         self.payload = payload
         self.erxTaskId = erxTaskId
         self.accessCode = accessCode
         self.pharmacyTelematikId = pharmacyTelematikId
+        self.flowType = flowType
     }
 
     public struct Payload: Codable, Equatable {
@@ -113,7 +117,7 @@ public struct Address: Codable, Equatable {
 }
 
 extension ErxTaskOrder {
-    // sourcery: CodedError = "206"
+    // sourcery: CodedError = "208"
     public enum Error: Swift.Error {
         // sourcery: errorCode = "01"
         /// Unable to construct communication request
@@ -124,7 +128,7 @@ extension ErxTaskOrder {
     }
 }
 
-public enum RedeemOption: String, Codable, Equatable, CaseIterable, Sendable {
+public enum RedeemOption: String, Codable, Hashable, CaseIterable, Sendable {
     case onPremise
     case delivery
     case shipment

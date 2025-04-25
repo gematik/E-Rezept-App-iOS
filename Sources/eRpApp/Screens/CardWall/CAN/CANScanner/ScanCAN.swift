@@ -20,11 +20,13 @@ import Foundation
 /// Represent a CAN number
 ///
 /// Format should be a number with a count of 6 digits.
-public typealias ScanCAN = String
+struct ScanCAN {
+    let value: String
+}
 
 extension ScanCAN {
     /// Validates a CAN and checks for length and digits.
     public var isValid: Bool {
-        allSatisfy(Set("0123456789").contains) && count == 6
+        value.allSatisfy(Set("0123456789").contains) && value.count == 6
     }
 }

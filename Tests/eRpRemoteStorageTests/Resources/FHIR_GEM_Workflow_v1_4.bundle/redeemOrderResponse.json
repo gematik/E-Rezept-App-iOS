@@ -1,0 +1,49 @@
+{
+    "basedOn": [
+        {
+            "reference": "Task/39c67d5b-1df3-11b2-80b4-783a425d8e87/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
+        }
+    ],
+    "extension": [
+        {
+            "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
+            "valueCoding": {
+                "code": "160",
+                "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType"
+            }
+        }
+    ],
+    "identifier": [
+        {
+            "system": "https://gematik.de/fhir/NamingSystem/OrderID",
+            "value": "d58894dd-c93c-4841-b6f6-4ac4cda4922f"
+        }
+    ],
+    "meta": {
+        "profile": [
+            "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq|1.4"
+        ]
+    },
+    "payload": [
+        {
+            "contentString": "{\"address\":[\"Schloss Bran\",\"Strada General Traian Moșoiu 24\",\"Bran 507025\",\"Rumänien\"],\"hint\":\"Nur bei Tageslicht liefern!\",\"name\":\"Graf Dracula\",\"phone\":\"666 999 666\",\"supplyOptionsType\":\"shipment\",\"version\":1}"
+        }
+    ],
+    "recipient": [
+        {
+            "identifier": {
+                "system": "https://gematik.de/fhir/sid/telematik-id",
+                "value": "606358757"
+            }
+        }
+    ],
+    "resourceType": "Communication",
+    "status": "unknown",
+    "sent": "2025-03-20T11:21:54.941+00:00",
+    "sender": {
+        "identifier": {
+            "value": "X110366628",
+            "system": "http://fhir.de/sid/gkv/kvid-10"
+        }
+    },
+}

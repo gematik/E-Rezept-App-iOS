@@ -26,27 +26,25 @@ final class KVNRTests: XCTestCase {
     }
 
     func testValidatorSucceeds() {
-        XCTAssertTrue(("A123456780" as KVNR).isValid)
-        XCTAssertTrue(("a123456780" as KVNR).isValid)
-        XCTAssertTrue(("Q123456784" as KVNR).isValid)
-        XCTAssertTrue(("Z123456783" as KVNR).isValid)
-        XCTAssertTrue(("z123456783" as KVNR).isValid)
+        XCTAssertTrue(KVNR(value: "A123456780").isValid)
+        XCTAssertTrue(KVNR(value: "a123456780").isValid)
+        XCTAssertTrue(KVNR(value: "Q123456784").isValid)
+        XCTAssertTrue(KVNR(value: "Z123456783").isValid)
+        XCTAssertTrue(KVNR(value: "z123456783").isValid)
     }
 
     func testValidatorFails() {
-        let kvnrBase: KVNR = "Q12345678"
-
         let kvnrs: [KVNR] = [
-            kvnrBase + "1",
-            kvnrBase + "2",
-            kvnrBase + "3",
-            kvnrBase + "5",
-            kvnrBase + "6",
-            kvnrBase + "7",
-            kvnrBase + "8",
-            kvnrBase + "9",
-            kvnrBase + "0",
-        ]
+            "Q123456781",
+            "Q123456782",
+            "Q123456783",
+            "Q123456785",
+            "Q123456786",
+            "Q123456787",
+            "Q123456788",
+            "Q123456789",
+            "Q123456780",
+        ].map(KVNR.init)
 
         for kvnr in kvnrs {
             XCTAssertFalse(kvnr.isValid)
@@ -54,43 +52,43 @@ final class KVNRTests: XCTestCase {
     }
 
     func testInvalidInput() {
-        XCTAssertFalse(("Q12345678" as KVNR).isValid)
-        XCTAssertFalse(("Q1234567893" as KVNR).isValid)
-        XCTAssertFalse(("" as KVNR).isValid)
+        XCTAssertFalse(KVNR(value: "Q12345678").isValid)
+        XCTAssertFalse(KVNR(value: "Q1234567893").isValid)
+        XCTAssertFalse(KVNR(value: "").isValid)
     }
 
     func testInvalidCharacterInput() {
-        XCTAssertFalse(("0123456780" as KVNR).isValid)
-        XCTAssertFalse(("0123456781" as KVNR).isValid)
-        XCTAssertFalse(("0123456782" as KVNR).isValid)
-        XCTAssertFalse(("0123456783" as KVNR).isValid)
-        XCTAssertFalse(("0123456784" as KVNR).isValid)
-        XCTAssertFalse(("0123456785" as KVNR).isValid)
-        XCTAssertFalse(("0123456786" as KVNR).isValid)
-        XCTAssertFalse(("0123456787" as KVNR).isValid)
-        XCTAssertFalse(("0123456788" as KVNR).isValid)
-        XCTAssertFalse(("0123456789" as KVNR).isValid)
-        XCTAssertFalse(("â123456780" as KVNR).isValid)
-        XCTAssertFalse(("â123456781" as KVNR).isValid)
-        XCTAssertFalse(("â123456782" as KVNR).isValid)
-        XCTAssertFalse(("â123456783" as KVNR).isValid)
-        XCTAssertFalse(("â123456784" as KVNR).isValid)
-        XCTAssertFalse(("â123456785" as KVNR).isValid)
-        XCTAssertFalse(("â123456786" as KVNR).isValid)
-        XCTAssertFalse(("â123456787" as KVNR).isValid)
-        XCTAssertFalse(("â123456788" as KVNR).isValid)
-        XCTAssertFalse(("â123456789" as KVNR).isValid)
-        XCTAssertFalse(("ä123456780" as KVNR).isValid)
-        XCTAssertFalse(("ä123456781" as KVNR).isValid)
-        XCTAssertFalse(("ä123456782" as KVNR).isValid)
-        XCTAssertFalse(("ä123456783" as KVNR).isValid)
-        XCTAssertFalse(("ä123456784" as KVNR).isValid)
-        XCTAssertFalse(("ä123456785" as KVNR).isValid)
-        XCTAssertFalse(("ä123456786" as KVNR).isValid)
-        XCTAssertFalse(("ä123456787" as KVNR).isValid)
-        XCTAssertFalse(("ä123456788" as KVNR).isValid)
-        XCTAssertFalse(("ä123456789" as KVNR).isValid)
-        XCTAssertFalse(("Ö123456780" as KVNR).isValid)
-        XCTAssertFalse(("§123456780" as KVNR).isValid)
+        XCTAssertFalse(KVNR(value: "0123456780").isValid)
+        XCTAssertFalse(KVNR(value: "0123456781").isValid)
+        XCTAssertFalse(KVNR(value: "0123456782").isValid)
+        XCTAssertFalse(KVNR(value: "0123456783").isValid)
+        XCTAssertFalse(KVNR(value: "0123456784").isValid)
+        XCTAssertFalse(KVNR(value: "0123456785").isValid)
+        XCTAssertFalse(KVNR(value: "0123456786").isValid)
+        XCTAssertFalse(KVNR(value: "0123456787").isValid)
+        XCTAssertFalse(KVNR(value: "0123456788").isValid)
+        XCTAssertFalse(KVNR(value: "0123456789").isValid)
+        XCTAssertFalse(KVNR(value: "â123456780").isValid)
+        XCTAssertFalse(KVNR(value: "â123456781").isValid)
+        XCTAssertFalse(KVNR(value: "â123456782").isValid)
+        XCTAssertFalse(KVNR(value: "â123456783").isValid)
+        XCTAssertFalse(KVNR(value: "â123456784").isValid)
+        XCTAssertFalse(KVNR(value: "â123456785").isValid)
+        XCTAssertFalse(KVNR(value: "â123456786").isValid)
+        XCTAssertFalse(KVNR(value: "â123456787").isValid)
+        XCTAssertFalse(KVNR(value: "â123456788").isValid)
+        XCTAssertFalse(KVNR(value: "â123456789").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456780").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456781").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456782").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456783").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456784").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456785").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456786").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456787").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456788").isValid)
+        XCTAssertFalse(KVNR(value: "ä123456789").isValid)
+        XCTAssertFalse(KVNR(value: "Ö123456780").isValid)
+        XCTAssertFalse(KVNR(value: "§123456780").isValid)
     }
 }

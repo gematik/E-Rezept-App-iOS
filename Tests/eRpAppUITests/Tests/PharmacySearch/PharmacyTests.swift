@@ -48,7 +48,7 @@ final class PharmacyTests: XCTestCase {
     @MainActor
     func assertPharmacyServices(
         pharmacyName: String,
-        services: [Service],
+        services: [PharmacyDetailsScreen.Service],
         file: StaticString = #file,
         line: UInt = #line
     ) {
@@ -67,7 +67,7 @@ final class PharmacyTests: XCTestCase {
             line: line
         )
 
-        for serviceType in Service.allCases {
+        for serviceType in PharmacyDetailsScreen.Service.allCases {
             XCTAssertEqual(
                 services.contains(serviceType),
                 app.buttons[serviceType.buttonId].exists,
@@ -80,32 +80,6 @@ final class PharmacyTests: XCTestCase {
 
         // Back
         app.navigationBars.buttons.firstMatch.tap()
-    }
-
-    enum Service: String, CaseIterable {
-        case pickup
-        case pickupViaLogin
-        case delivery
-        case deliveryViaLogin
-        case shipment
-        case shipmentViaLogin
-
-        var buttonId: String {
-            switch self {
-            case .pickup:
-                return A11y.pharmacyDetail.phaDetailBtnPickup
-            case .pickupViaLogin:
-                return A11y.pharmacyDetail.phaDetailBtnPickupViaLogin
-            case .delivery:
-                return A11y.pharmacyDetail.phaDetailBtnDelivery
-            case .deliveryViaLogin:
-                return A11y.pharmacyDetail.phaDetailBtnDeliveryViaLogin
-            case .shipment:
-                return A11y.pharmacyDetail.phaDetailBtnShipment
-            case .shipmentViaLogin:
-                return A11y.pharmacyDetail.phaDetailBtnShipmentViaLogin
-            }
-        }
     }
 
     @MainActor
@@ -167,7 +141,7 @@ final class PharmacyTests: XCTestCase {
     func testSearchFilter() throws {
         let tabBar = TabBarScreen(app: app)
 
-        let resultScreen = tabBar.tapRedeemTab()
+        let resultScreen = tabBar.tapPharmacySearchTab()
 
         app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
         app.typeText("A")
@@ -187,6 +161,7 @@ final class PharmacyTests: XCTestCase {
         let redeemSearchScreen = tabBar.tapPrescriptionsTab()
             .tapRedeem()
             .tapRedeemRemote()
+            .tapAddPharmacy()
 
         app.navigationBars["Apothekensuche"].searchFields.firstMatch.tap()
         app.typeText("A")
@@ -216,7 +191,7 @@ final class PharmacyTests: XCTestCase {
         redeemSearchScreen.tapCancelButton()
         redeemSearchScreen.tapCancelButton()
 
-        tabBar.tapRedeemTab()
+        tabBar.tapPharmacySearchTab()
 
         // Check for filter Botendienst & Open + neue Suche
         XCTAssertTrue(app.otherElements[A11y.pharmacySearch.phaFilterFilterList]
@@ -228,6 +203,72 @@ final class PharmacyTests: XCTestCase {
             .children(matching: .button)
             .matching(identifier: "delivery")
             .element.exists)
+    }
+
+    @MainActor
+    func testRedeemWithShipmentSuccess() async throws {
+        let pharmacySearchScreen = TabBarScreen(app: app)
+            .tapPharmacySearchTab()
+
+        let redeemScreen = pharmacySearchScreen
+            .pharmacyDetailsForPharmacy("ZoTI_04_TEST-ONLY")
+            .tapRedeem()
+
+        redeemScreen.addPrescriptionButton().tap()
+        app.buttons["Adavomilproston"].tap()
+        app.buttons["Speichern"].tap()
+
+        let editAdressScreen = redeemScreen
+            .tapEditAddress()
+
+        editAdressScreen.setPhoneNumber("1234567890")
+        try await editAdressScreen.tapSave()
+
+        try await redeemScreen
+            .tapRedeem()
+            .tapClose()
+    }
+
+    @MainActor
+    func testRedeemWithPickupSuccess() async throws {
+        let pharmacySearchScreen = TabBarScreen(app: app)
+            .tapPharmacySearchTab()
+
+        let redeemScreen = pharmacySearchScreen
+            .pharmacyDetailsForPharmacy("ZoTI_02_TEST-ONLY")
+            .tapRedeem(.pickup)
+
+        redeemScreen.addPrescriptionButton().tap()
+        app.buttons["Adavomilproston"].tap()
+        app.buttons["Speichern"].tap()
+
+        try await redeemScreen
+            .tapRedeem()
+            .tapClose()
+    }
+
+    @MainActor
+    func testRedeemWithDeliverySuccess() async throws {
+        let pharmacySearchScreen = TabBarScreen(app: app)
+            .tapPharmacySearchTab()
+
+        let redeemScreen = pharmacySearchScreen
+            .pharmacyDetailsForPharmacy("ZoTI_03_TEST-ONLY")
+            .tapRedeem(.delivery)
+
+        redeemScreen.addPrescriptionButton().tap()
+        app.buttons["Adavomilproston"].tap()
+        app.buttons["Speichern"].tap()
+
+        let editAdressScreen = redeemScreen
+            .tapEditAddress()
+
+        editAdressScreen.setPhoneNumber("1234567890")
+        try await editAdressScreen.tapSave()
+
+        try await redeemScreen
+            .tapRedeem()
+            .tapClose()
     }
 
     override func tearDown() {

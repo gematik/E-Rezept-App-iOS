@@ -1,0 +1,296 @@
+{
+    "resourceType": "Bundle",
+    "id": "e98ca92a-f9a2-486d-8e39-99888de3fa12",
+    "meta": {
+        "lastUpdated": "2025-03-04T10:23:29.247+01:00",
+        "tag": [
+            {
+                "system": "https://gematik.de/fhir/StructureDefinition/filtered-endpoints-count",
+                "code": "0",
+                "display": "Reason: hideVersicherte"
+            }
+        ]
+    },
+    "type": "searchset",
+    "total": 100,
+    "entry": [
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/HealthcareService/7025fc46-9809-4ee0-abb9-9e248798e5eb",
+            "resource": {
+                "resourceType": "HealthcareService",
+                "id": "7025fc46-9809-4ee0-abb9-9e248798e5eb",
+                "meta": {
+                    "versionId": "7",
+                    "lastUpdated": "2024-10-23T02:07:13.062+02:00",
+                    "source": "#9xQpuInrrfEsLArD",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "84d54eee-b7e5-4ba9-80f1-d686fb7f924c"
+                    }
+                ],
+                "providedBy": {
+                    "reference": "Organization/3a0caa6a-d241-4eac-9f99-8dc6a18ad7f3"
+                },
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyTypeCS",
+                                "code": "offizin-apotheke",
+                                "display": "Offizin-Apotheke"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "specialty": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "30",
+                                "display": "Botendienst"
+                            },
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "50",
+                                "display": "Sterilherstellung"
+                            },
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "10",
+                                "display": "Handverkauf"
+                            }
+                        ],
+                        "text": "ldap"
+                    }
+                ],
+                "location": [
+                    {
+                        "reference": "Location/e5be09f0-d221-49df-bf8f-880f033d8c55"
+                    }
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "0521 4002430",
+                        "rank": 10
+                    },
+                    {
+                        "system": "fax",
+                        "value": "0521 13 62 525",
+                        "rank": 20
+                    },
+                    {
+                        "system": "email",
+                        "value": "info@apoimbrock.de",
+                        "rank": 30
+                    },
+                    {
+                        "system": "url",
+                        "value": "http://www.gesundheit-brackwede.de",
+                        "rank": 40
+                    }
+                ],
+                "coverageArea": [
+                    {
+                        "extension": [
+                            {
+                                "url": "https://gematik.de/fhir/directory/StructureDefinition/ServiceCoverageArea",
+                                "valueQuantity": {
+                                    "value": 5000,
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "m"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "availableTime": [
+                    {
+                        "daysOfWeek": [
+                            "mon"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "tue"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "wed"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "thu"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "fri"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "sat"
+                        ],
+                        "availableStartTime": "08:00:00",
+                        "availableEndTime": "20:00:00"
+                    }
+                ]
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Location/e5be09f0-d221-49df-bf8f-880f033d8c55",
+            "resource": {
+                "resourceType": "Location",
+                "id": "e5be09f0-d221-49df-bf8f-880f033d8c55",
+                "meta": {
+                    "versionId": "3",
+                    "lastUpdated": "2024-06-13T11:56:33.230+02:00",
+                    "source": "#eUOzvQNnDZgjDw9N",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "84d54eee-b7e5-4ba9-80f1-d686fb7f924c"
+                    }
+                ],
+                "address": {
+                    "use": "work",
+                    "type": "postal",
+                    "text": "Gütersloher Str. 122&#13;&#10;33649&#13;&#10;Bielefeld&#13;&#10;null&#13;&#10;DE",
+                    "line": [
+                        "Gütersloher Str. 122"
+                    ],
+                    "city": "Bielefeld",
+                    "postalCode": "33649",
+                    "country": "DE"
+                },
+                "position": {
+                    "longitude": 8.485683,
+                    "latitude": 51.987705
+                }
+            },
+            "search": {
+                "mode": "include"
+            }
+        },
+        {
+            "fullUrl": "https://fhir-directory.vzd.ti-dienste.de/fdv/search/Organization/3a0caa6a-d241-4eac-9f99-8dc6a18ad7f3",
+            "resource": {
+                "resourceType": "Organization",
+                "id": "3a0caa6a-d241-4eac-9f99-8dc6a18ad7f3",
+                "meta": {
+                    "versionId": "2",
+                    "lastUpdated": "2024-05-22T22:54:08.498+02:00",
+                    "source": "#XGePqjWCYISNTmGa",
+                    "profile": [
+                        "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+                    ],
+                    "tag": [
+                        {
+                            "system": "https://gematik.de/fhir/directory/CodeSystem/Origin",
+                            "code": "ldap",
+                            "display": "Synchronized from LDAP VZD",
+                            "userSelected": false
+                        }
+                    ]
+                },
+                "identifier": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                    "code": "PRN"
+                                }
+                            ]
+                        },
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-17.2.1024109000.518"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/directory/CodeSystem/ldapUID",
+                        "value": "84d54eee-b7e5-4ba9-80f1-d686fb7f924c"
+                    }
+                ],
+                "active": true,
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                                "code": "1.2.276.0.76.4.54",
+                                "display": "Öffentliche Apotheke"
+                            }
+                        ]
+                    }
+                ],
+                "name": "Apotheke im real,-"
+            },
+            "search": {
+                "mode": "include"
+            }
+        }
+    ]
+}

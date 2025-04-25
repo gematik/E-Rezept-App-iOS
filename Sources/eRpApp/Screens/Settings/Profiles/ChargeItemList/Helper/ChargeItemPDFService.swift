@@ -93,16 +93,34 @@ struct DefaultChargeItemPDFService: ChargeItemPDFService {
             throw ChargeItemPDFServiceError.parsingError(error)
         }
 
-        let attachmentData = chargeItem.receiptSignature?.data?.data(using: .utf8) ?? Data()
-        let attachment = PDFAttachment(filename: "Data", content: attachmentData)
+        var attachments: [PDFAttachment] = []
 
-        let printedAttachment: Data
+        if let prescriptionData = chargeItem.prescriptionSignature?.data?.data(using: .utf8) {
+            // Verordnungsdatensatz
+            attachments.append(PDFAttachment(
+                filename: "\(chargeItem.taskId ?? chargeItem.identifier)_verordnung.p7s",
+                content: prescriptionData
+            ))
+        }
+        if let dispenseData = chargeItem.dispenseSignature?.data?.data(using: .utf8) {
+            attachments.append(PDFAttachment(
+                filename: "\(chargeItem.taskId ?? chargeItem.identifier)_abgabedaten.p7s",
+                content: dispenseData
+            ))
+        }
+        if let receiptData = chargeItem.receiptSignature?.data?.data(using: .utf8) {
+            attachments.append(PDFAttachment(
+                filename: "\(chargeItem.taskId ?? chargeItem.identifier)_quittung.p7s",
+                content: receiptData
+            ))
+        }
+
         do {
-            printedAttachment = try document.append(attachment: attachment, startObj: result.count)
+            let attachementsData = try document.append(attachments: attachments, startObj: result.count)
+            result.append(attachementsData.reduce(Data(), +))
         } catch {
             throw ChargeItemPDFServiceError.failedToCreateAttachment(error)
         }
-        result.append(printedAttachment)
 
         try result.write(to: outputURL)
 

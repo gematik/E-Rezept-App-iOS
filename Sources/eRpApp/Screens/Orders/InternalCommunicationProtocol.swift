@@ -121,7 +121,7 @@ final class DefaultInternalCommunication: InternalCommunicationProtocol {
                 version: "0.0.0",
                 isRead: readMessages.contains("1")
             )
-            messages.append(welcomeMessage)
+            messages.insert(welcomeMessage, at: 0)
         }
         let emptyArray: [InternalCommunication] = []
         return IdentifiedArray(uniqueElements: messages

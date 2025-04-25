@@ -32,6 +32,7 @@ let package = Package(
         .library(name: "eRpLocalStorage", targets: ["eRpLocalStorage"]),
         .library(name: "eRpRemoteStorage", targets: ["eRpRemoteStorage"]),
         .library(name: "Pharmacy", targets: ["Pharmacy"]),
+        .library(name: "FHIRVZD", targets: ["FHIRVZD"]),
         .library(name: "AVS", targets: ["AVS"]),
         .library(name: "IDP", targets: ["IDP"]),
         .library(name: "FHIRClient", targets: ["FHIRClient"]),
@@ -59,7 +60,7 @@ let package = Package(
         .package(url: "https://github.com/zxing-cpp/zxing-cpp", from: "2.2.1"),
         .package(url: "https://github.com/gematik/ASN1Kit", from: "1.2.1"),
         .package(url: "https://github.com/gematik/OpenSSL-Swift", from: "4.2.0"),
-        .package(url: "https://github.com/gematik/swift-gemPDFKit", from: "0.1.1"),
+        .package(url: "https://github.com/gematik/swift-gemPDFKit", from: "0.2.0"),
         .package(url: "https://github.com/gematik/ref-OpenHealthCardKit",  from: "5.8.0"),
     ],
     targets: [
@@ -168,6 +169,16 @@ let package = Package(
             ]
         ),
         .target(
+            name: "FHIRVZD",
+            dependencies: [
+                "HTTPClient",
+                "FHIRClient",
+                "eRpKit",
+                .product(name: "ModelsR4", package: "FHIRModels"),
+                .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
+            ]
+        ),
+        .target(
             name: "AVS",
             dependencies: [
                 "HTTPClient",
@@ -183,6 +194,7 @@ let package = Package(
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
+                .product(name: "CasePaths", package: "swift-case-paths"),
             ]
         ),
         .target(
@@ -285,6 +297,19 @@ let package = Package(
             dependencies: [
                 "TestUtils",
                 "Pharmacy",
+                .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
+                .product(name: "CombineSchedulers", package: "combine-schedulers"),
+                .product(name: "Nimble", package: "Nimble"),
+            ],
+            resources: [
+                .copy("Resources")
+            ]
+        ),
+        .testTarget(
+            name: "FHIRVZDTests",
+            dependencies: [
+                "TestUtils",
+                "FHIRVZD",
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "Nimble", package: "Nimble"),

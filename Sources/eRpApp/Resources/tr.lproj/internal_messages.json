@@ -16,5 +16,11 @@
         "text": "**Daha iyi okunabilirlik** \n Renk kontrastını artırmak ve böylece okunabilirliği artırmak için markamızın rengini biraz daha koyu yaptık. \n \n **Optimize edilmiş giriş alanı** \n Erişim numarasının giriş alanındaki imleç kaldırıldı.",
         "timestamp": "2025-01-28T08:00:00.000Z",
         "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Geliştirilmiş sipariş akışı** \nSipariş verme süreci artık daha kolay ve daha hızlı. \n \n🌐 **Yeni diller** \nUygulamamız artık İspanyolca ve İrlandaca dillerinde de mevcut. \n \n📞 **Genişletilmiş iletişim seçenekleri** \nSeçili sigorta şirketleri için yeni iletişim seçenekleri sunduk. \n \n🔍 **Ayrıntılı erişim kayıtları** \nArtık erişim kayıtlarında telematik kimliklerini de görüntülüyoruz, böylece kimin erişimi olduğunu belirlemek daha kolay oluyor.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
     }
 ]

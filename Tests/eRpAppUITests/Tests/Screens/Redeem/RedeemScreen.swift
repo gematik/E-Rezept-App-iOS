@@ -41,12 +41,46 @@ struct RedeemScreen: Screen {
         button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, fileID: fileID, file: file, line: line)
     }
 
+    func editPrescriptionButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnEditPrescription, fileID: fileID, file: file, line: line)
+    }
+
+    func addPrescriptionButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnAddPrescription, fileID: fileID, file: file, line: line)
+    }
+
+    func editPharmacyButton(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnEditPharmacy, fileID: fileID, file: file, line: line)
+    }
+
+    func tapServiceOption(
+        _ service: PharmacyDetailsScreen.Service = .shipment,
+        fileID: String = #fileID, file: String = #filePath, line: UInt = #line
+    ) -> RedeemScreen {
+        button(by: service.buttonId, fileID: fileID, file: file, line: line).tap()
+        return RedeemScreen(app: app)
+    }
+
     func tapRedeem(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> SuccessScreen {
         let button = button(by: A11y.pharmacyRedeem.phaRedeemBtnRedeem, fileID: fileID, file: file, line: line)
 
         button.tap()
 
         return SuccessScreen(app: app, file: file, line: line)
+    }
+
+    func tapAddPharmacy(fileID: String = #fileID, file: String = #filePath,
+                        line: UInt = #line) -> PharmacySearchScreen {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnAddPharmacy, fileID: fileID, file: file, line: line).tap()
+
+        return PharmacySearchScreen(app: app)
+    }
+
+    func tapEditPharmacy(fileID: String = #fileID, file: String = #filePath,
+                         line: UInt = #line) -> PharmacySearchScreen {
+        button(by: A11y.pharmacyRedeem.phaRedeemBtnEditPharmacy, fileID: fileID, file: file, line: line).tap()
+
+        return PharmacySearchScreen(app: app)
     }
 
     func tapEditAddress(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> RedeemEditAddress {

@@ -41,7 +41,9 @@ struct MainView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            NavigationStack {
+            NavigationStack(
+                path: $store.scope(state: \.path, action: \.path)
+            ) {
                 ZStack(alignment: .topLeading) {
                     PrescriptionListView(
                         store: store.scope(state: \.prescriptionListState, action: \.prescriptionList)
@@ -66,12 +68,6 @@ struct MainView: View {
                 }
                 .demoBanner(isPresented: store.isDemoMode) {
                     store.send(MainDomain.Action.turnOffDemoMode)
-                }
-                .smallSheet($store.scope(
-                    state: \.destination?.grantChargeItemConsentDrawer,
-                    action: \.destination.grantChargeItemConsentDrawer
-                )) { _ in
-                    GrantChargeItemConsentDrawerView(store: store)
                 }
                 .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
                 .navigationTitle(Text(L10n.erxTitle))
@@ -113,6 +109,17 @@ struct MainView: View {
                     }
                 }
                 .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+            } destination: { store in
+                WithPerceptionTracking {
+                    switch store.case {
+                    case let .redeemMethods(store):
+                        RedeemMethodsView(store: store)
+                    case let .redeem(store):
+                        PharmacyRedeemView(store: store)
+                    case let .pharmacy(store):
+                        PharmacySearchView(store: store)
+                    }
+                }
             }
             .tint(Colors.primary700)
             .navigationViewStyle(StackNavigationViewStyle())
@@ -151,6 +158,17 @@ private extension MainView {
 
         var body: some View {
             WithPerceptionTracking {
+                // ConsentDrawerView small sheet presentation
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet($store.scope(
+                        state: \.destination?.grantChargeItemConsentDrawer,
+                        action: \.destination.grantChargeItemConsentDrawer
+                    )) { _ in
+                        GrantChargeItemConsentDrawerView(store: store)
+                    }
+                    .accessibilityHidden(true)
+
                 // WelcomeDrawerView small sheet presentation
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
@@ -215,20 +233,6 @@ private extension MainView {
                         PrescriptionArchiveView(store: store)
                     }
                     .accessibility(hidden: true)
-
-                // RedeemMethodsView sheet presentation
-                Rectangle()
-                    .frame(width: 0, height: 0, alignment: .center)
-                    .fullScreenCover(
-                        item: $store.scope(
-                            state: \.destination?.redeemMethods,
-                            action: \.destination.redeemMethods
-                        )
-                    ) { store in
-                        RedeemMethodsView(store: store)
-                    }
-                    .accessibility(hidden: true)
-                    .hidden()
 
                 // CardWallIntroductionView sheet presentation
                 Rectangle()

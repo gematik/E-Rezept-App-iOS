@@ -16,5 +16,11 @@
         "text": "**Migliore leggibilità** \n Abbiamo reso il colore del nostro marchio leggermente più scuro per aumentare il contrasto cromatico e quindi migliorare la leggibilità. \n \n **Campo di immissione ottimizzato** \n Il cursore nel campo di immissione del numero di accesso è stato rimosso.",
         "timestamp": "2025-01-28T08:00:00.000Z",
         "version": "1.29.0"
+    },
+    {
+        "id": "5",
+        "text": "🛒 **Flusso degli ordini migliorato** \nIl processo di ordinazione è ora più semplice e veloce. \n \n 🌐 **Nuove lingue** \nLa nostra app è ora disponibile anche in spagnolo e irlandese. \n \n📞 **Opzioni di contatto estese** \nAbbiamo introdotto nuove opzioni di contatto per compagnie assicurative selezionate. \n \n🔍 **Registri di accesso dettagliati** \nOra visualizziamo anche gli ID telematici nei registri di accesso, in modo che sia più facile identificare chi ha avuto accesso.",
+        "timestamp": "2025-04-04T08:00:00.000Z",
+        "version": "1.30.0"
     }
 ]

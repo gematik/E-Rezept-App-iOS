@@ -65,6 +65,7 @@ schemes:
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
         - package: eRpKit/AVSTests
+        - package: eRpKit/FHIRVZDTests
   AllTests_macOS:
     build:
       targets:
@@ -83,6 +84,8 @@ schemes:
         - package: eRpKit/FHIRClientTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
+        - package: eRpKit/AVSTests
+        - package: eRpKit/FHIRVZDTests
   AllIntegrationTests_iOS:
     build:
       targets:

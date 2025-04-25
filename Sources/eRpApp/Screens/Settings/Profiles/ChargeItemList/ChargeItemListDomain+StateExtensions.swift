@@ -90,36 +90,22 @@ extension ChargeItemListDomain {
             let labelText: TextState
             let action: Action
             let a11y: String
-            let isDisabled: Bool
             var destructive = false
-
-            var disabled: Self {
-                if isDisabled { return self }
-                return .init(
-                    labelText: labelText,
-                    action: action,
-                    a11y: a11y,
-                    isDisabled: true
-                )
-            }
 
             static let connect: Self = .init(
                 labelText: .init(L10n.stgTxtChargeItemListToolbarMenuAuthenticate),
                 action: .connectMenuButtonTapped,
-                a11y: A11y.settings.chargeItemList.stgTxtChargeItemListMenuEntryConnect,
-                isDisabled: false
+                a11y: A11y.settings.chargeItemList.stgTxtChargeItemListMenuEntryConnect
             )
             static let activate: Self = .init(
                 labelText: .init(L10n.stgTxtChargeItemListToolbarMenuGrant),
                 action: .activateMenuButtonTapped,
-                a11y: A11y.settings.chargeItemList.stgTxtChargeItemListMenuEntryActivate,
-                isDisabled: false
+                a11y: A11y.settings.chargeItemList.stgTxtChargeItemListMenuEntryActivate
             )
             static let deactivate: Self = .init(
                 labelText: .init(L10n.stgTxtChargeItemListToolbarMenuRevoke),
                 action: .deactivateMenuButtonTapped,
                 a11y: A11y.settings.chargeItemList.stgTxtChargeItemListMenuEntryDeactivate,
-                isDisabled: false,
                 destructive: true
             )
         }

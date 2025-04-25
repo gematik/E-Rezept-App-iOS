@@ -232,22 +232,6 @@ extension View {
         ) { store in
             PharmacyDetailView(store: store)
         }
-        .navigationDestination(
-            item: store.scope(
-                state: \.destination?.redeemViaAVS,
-                action: \.destination.redeemViaAVS
-            )
-        ) { store in
-            PharmacyRedeemView(store: store)
-        }
-        .navigationDestination(
-            item: store.scope(
-                state: \.destination?.redeemViaErxTaskRepository,
-                action: \.destination.redeemViaErxTaskRepository
-            )
-        ) { store in
-            PharmacyRedeemView(store: store)
-        }
         .smallSheet(store.scope(
             state: \.destination?.pharmacyFilter,
             action: \.destination.pharmacyFilter
