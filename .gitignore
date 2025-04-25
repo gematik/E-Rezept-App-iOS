@@ -129,7 +129,7 @@ doc/architecture
 Tests/IntegrationTests/Resources/Certificates.bundle
 # Solution needed for private key part 
 Tests/IDPTests/Resources/Certificates.bundle
-# Has a reference to BSI-eRp-ePA": "https://gitlab.prod.ccs.gematik.solutions/api/v4/projects/833/repository/files/security_review%2Frequirements%2F2024.html/raw?ref=main
+# Has a reference to BSI-eRp-ePA": "https://path-to-gematik-gitlab/api/v4/projects/833/repository/files/security_review%2Frequirements%2F2024.html/raw?ref=main
 fastlane/audit_afos.json
 
 # will go away with public fastlane plugin
