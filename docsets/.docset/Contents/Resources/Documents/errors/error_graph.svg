@@ -1293,63 +1293,63 @@
 <text text-anchor="start" x="1176.12" y="-1866.3" font-family="Times,serif" font-size="16.00">NFCSignatureProviderError</text>
 <polyline fill="none" stroke="black" points="1181.88,-1859.75 1151.88,-1859.75 1151.88,-1842.5 1181.88,-1842.5"/>
 <text text-anchor="start" x="1154.88" y="-1848.4" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00401</text>
-<g id="a_NFCSignatureProviderError_137"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_137"><a xlink:href="#" xlink:title="Error while establishing a connection to the card">
 <polyline fill="none" stroke="black" points="1181.88,-1842.5 1381.88,-1842.5 1381.88,-1859.75 1181.88,-1859.75"/>
 <text text-anchor="start" x="1184.88" y="-1847.25" font-family="Times,serif" font-size="10.00">cardError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1181.88,-1842.5 1151.88,-1842.5 1151.88,-1825.25 1181.88,-1825.25"/>
 <text text-anchor="start" x="1154.88" y="-1831.15" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00405</text>
-<g id="a_NFCSignatureProviderError_138"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_138"><a xlink:href="#" xlink:title="Any error related to PIN verification">
 <polyline fill="none" stroke="black" points="1181.88,-1825.25 1381.88,-1825.25 1381.88,-1842.5 1181.88,-1842.5"/>
 <text text-anchor="start" x="1184.88" y="-1830" font-family="Times,serif" font-size="10.00">verifyCardError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1181.88,-1825.25 1151.88,-1825.25 1151.88,-1808 1181.88,-1808"/>
 <text text-anchor="start" x="1154.88" y="-1813.9" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00406</text>
-<g id="a_NFCSignatureProviderError_139"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_139"><a xlink:href="#" xlink:title="ESIGN Failed">
 <polyline fill="none" stroke="black" points="1181.88,-1808 1381.88,-1808 1381.88,-1825.25 1181.88,-1825.25"/>
 <text text-anchor="start" x="1184.88" y="-1812.75" font-family="Times,serif" font-size="10.00">signingFailure</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1181.88,-1808 1151.88,-1808 1151.88,-1790.75 1181.88,-1790.75"/>
 <text text-anchor="start" x="1154.88" y="-1796.65" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00410</text>
-<g id="a_NFCSignatureProviderError_140"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_140"><a xlink:href="#" xlink:title="Generic error while reading something from the card">
 <polyline fill="none" stroke="black" points="1181.88,-1790.75 1381.88,-1790.75 1381.88,-1808 1181.88,-1808"/>
 <text text-anchor="start" x="1184.88" y="-1795.5" font-family="Times,serif" font-size="10.00">secureEnclaveError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1181.88,-1790.75 1151.88,-1790.75 1151.88,-1773.5 1181.88,-1773.5"/>
 <text text-anchor="start" x="1154.88" y="-1779.4" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00403</text>
-<g id="a_NFCSignatureProviderError_141"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_141"><a xlink:href="#" xlink:title="Error while verifying the CAN">
 <polyline fill="none" stroke="black" points="1181.88,-1773.5 1381.88,-1773.5 1381.88,-1790.75 1181.88,-1790.75"/>
 <text text-anchor="start" x="1184.88" y="-1778.25" font-family="Times,serif" font-size="10.00">wrongCAN</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1181.88,-1773.5 1151.88,-1773.5 1151.88,-1756.25 1181.88,-1756.25"/>
 <text text-anchor="start" x="1154.88" y="-1762.15" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00404</text>
-<g id="a_NFCSignatureProviderError_142"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_142"><a xlink:href="#" xlink:title="Error while establishing Secure channel or card connection">
 <polyline fill="none" stroke="black" points="1181.88,-1756.25 1381.88,-1756.25 1381.88,-1773.5 1181.88,-1773.5"/>
 <text text-anchor="start" x="1184.88" y="-1761" font-family="Times,serif" font-size="10.00">cardConnectionError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1181.88,-1756.25 1151.88,-1756.25 1151.88,-1739 1181.88,-1739"/>
 <text text-anchor="start" x="1154.88" y="-1744.9" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00408</text>
-<g id="a_NFCSignatureProviderError_143"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_143"><a xlink:href="#" xlink:title="Generic error while trying to sign the challenge">
 <polyline fill="none" stroke="black" points="1181.88,-1739 1381.88,-1739 1381.88,-1756.25 1181.88,-1756.25"/>
 <text text-anchor="start" x="1184.88" y="-1743.75" font-family="Times,serif" font-size="10.00">genericError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1181.88,-1739 1151.88,-1739 1151.88,-1721.75 1181.88,-1721.75"/>
 <text text-anchor="start" x="1154.88" y="-1727.65" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00409</text>
-<g id="a_NFCSignatureProviderError_144"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_144"><a xlink:href="#" xlink:title="Generic error while reading something from the card">
 <polyline fill="none" stroke="black" points="1181.88,-1721.75 1381.88,-1721.75 1381.88,-1739 1181.88,-1739"/>
 <text text-anchor="start" x="1184.88" y="-1726.5" font-family="Times,serif" font-size="10.00">cardReadingError</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="1181.88,-1721.75 1151.88,-1721.75 1151.88,-1704.5 1181.88,-1704.5"/>
 <text text-anchor="start" x="1154.88" y="-1710.4" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;00411</text>
-<g id="a_NFCSignatureProviderError_145"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_NFCSignatureProviderError_145"><a xlink:href="#" xlink:title="Any error regarding the communication with the NFC health card itself, or sending/receiving data (operation execution)">
 <polyline fill="none" stroke="black" points="1181.88,-1704.5 1381.88,-1704.5 1381.88,-1721.75 1181.88,-1721.75"/>
 <text text-anchor="start" x="1184.88" y="-1709.25" font-family="Times,serif" font-size="10.00">nfcHealthCardSession</text>
 </a>
@@ -3030,14 +3030,14 @@
 <text text-anchor="start" x="109.62" y="-3464.93" font-family="Times,serif" font-size="16.00">ErxTaskOrder.Error</text>
 <polyline fill="none" stroke="black" points="88.38,-3458.38 58.38,-3458.38 58.38,-3441.12 88.38,-3441.12"/>
 <text text-anchor="start" x="61.38" y="-3447.03" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20801</text>
-<g id="a_ErxTaskOrder_Error_283"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ErxTaskOrder_Error_283"><a xlink:href="#" xlink:title="Unable to construct communication request">
 <polyline fill="none" stroke="black" points="88.38,-3441.12 288.38,-3441.12 288.38,-3458.38 88.38,-3458.38"/>
 <text text-anchor="start" x="91.38" y="-3445.88" font-family="Times,serif" font-size="10.00">unableToConstructCommunicationRequest</text>
 </a>
 </g>
 <polyline fill="none" stroke="black" points="88.38,-3441.12 58.38,-3441.12 58.38,-3423.88 88.38,-3423.88"/>
 <text text-anchor="start" x="61.38" y="-3429.78" font-family="Times,serif" font-size="8.00" fill="GRAY">i&#45;20802</text>
-<g id="a_ErxTaskOrder_Error_284"><a xlink:href="#" xlink:title="&lt;TABLE&gt;">
+<g id="a_ErxTaskOrder_Error_284"><a xlink:href="#" xlink:title="Invalid ErxTaskOrder though previous validation checks have been passed">
 <polyline fill="none" stroke="black" points="88.38,-3423.88 288.38,-3423.88 288.38,-3441.12 88.38,-3441.12"/>
 <text text-anchor="start" x="91.38" y="-3428.62" font-family="Times,serif" font-size="10.00">invalidErxTaskOrderInput</text>
 </a>

@@ -39,15 +39,15 @@ i-01304,"LoginHandlerError.ssoExpired","",
 i-01305,"LoginHandlerError.idpError","",IDPError
 i-01306,"LoginHandlerError.network","",
 i-,"LoginHandlerError.LoadingError.message","",
-i-00401,"NFCSignatureProviderError.cardError","",NFCTagReaderSession.Error
-i-00403,"NFCSignatureProviderError.wrongCAN","",
-i-00404,"NFCSignatureProviderError.cardConnectionError","",
-i-00405,"NFCSignatureProviderError.verifyCardError","",NFCSignatureProviderError.VerifyPINError
-i-00406,"NFCSignatureProviderError.signingFailure","",NFCSignatureProviderError.SigningError
-i-00408,"NFCSignatureProviderError.genericError","",
-i-00409,"NFCSignatureProviderError.cardReadingError","",
-i-00410,"NFCSignatureProviderError.secureEnclaveError","",SecureEnclaveSignatureProviderError
-i-00411,"NFCSignatureProviderError.nfcHealthCardSession","",
+i-00401,"NFCSignatureProviderError.cardError","Error while establishing a connection to the card",NFCTagReaderSession.Error
+i-00403,"NFCSignatureProviderError.wrongCAN","Error while verifying the CAN",
+i-00404,"NFCSignatureProviderError.cardConnectionError","Error while establishing Secure channel or card connection",
+i-00405,"NFCSignatureProviderError.verifyCardError","Any error related to PIN verification",NFCSignatureProviderError.VerifyPINError
+i-00406,"NFCSignatureProviderError.signingFailure","ESIGN Failed",NFCSignatureProviderError.SigningError
+i-00408,"NFCSignatureProviderError.genericError","Generic error while trying to sign the challenge",
+i-00409,"NFCSignatureProviderError.cardReadingError","Generic error while reading something from the card",
+i-00410,"NFCSignatureProviderError.secureEnclaveError","Generic error while reading something from the card",SecureEnclaveSignatureProviderError
+i-00411,"NFCSignatureProviderError.nfcHealthCardSession","Any error regarding the communication with the NFC health card itself\nor sending/receiving data (operation execution)",
 i-00501,"NFCSignatureProviderError.SigningError.unsupportedAlgorithm","",
 i-00502,"NFCSignatureProviderError.SigningError.responseStatus","",
 i-00503,"NFCSignatureProviderError.SigningError.certificate","",
@@ -180,8 +180,8 @@ i-20103,"ErxTask.Status.Error.missingStatus","",
 i-20104,"ErxTask.Status.Error.missingPatientReceiptReference","",
 i-20105,"ErxTask.Status.Error.missingPatientReceiptIdentifier","",
 i-20106,"ErxTask.Status.Error.missingPatientReceiptBundle","",
-i-20801,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","",
-i-20802,"ErxTaskOrder.Error.invalidErxTaskOrderInput","",
+i-20801,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","Unable to construct communication request",
+i-20802,"ErxTaskOrder.Error.invalidErxTaskOrderInput","Invalid ErxTaskOrder though previous validation checks have been passed",
 i-20001,"ErxRepositoryError.local","",LocalStoreError
 i-20002,"ErxRepositoryError.remote","",RemoteStoreError
 i-20301,"LocalStoreError.notImplemented","",
