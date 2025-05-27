@@ -32,6 +32,7 @@ extension ErxTaskDeviceRequestEntity {
     @NSManaged public var status: Data?
     @NSManaged public var accidentInfo: ErxTaskAccidentInfoEntity?
     @NSManaged public var task: ErxTaskEntity?
+    @NSManaged public var diGaInfo: DiGaInfoEntity?
 }
 
 extension ErxTaskDeviceRequestEntity: Identifiable {}

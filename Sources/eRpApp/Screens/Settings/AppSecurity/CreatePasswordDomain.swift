@@ -86,7 +86,6 @@ struct CreatePasswordDomain: Reducer {
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.passwordStrengthTester) var passwordStrengthTester: PasswordStrengthTester
-    @Dependency(\.userDataStore) var userDataStore: UserDataStore
 
     var body: some Reducer<State, Action> {
         BindingReducer()

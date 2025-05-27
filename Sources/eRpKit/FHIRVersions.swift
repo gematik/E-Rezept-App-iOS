@@ -314,6 +314,10 @@ public enum ErpPrescription {
             public static let accidentDateKey = "Unfalltag"
             /// SER Info
             public static let serInfoKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_EVDGA_SER"
+            /// redeem code (used in MedicationDispenses)
+            public static let redeemCode = "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_RedeemCode"
+            ///
+            public static let deepLink = "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_DeepLink"
         }
 
         /// CoverageType
@@ -649,6 +653,15 @@ public enum FHIRDirectory {
     public enum Key {
         /// Specialty key for pharmacies
         public static let specialtyKey = "apo-vzd"
+
+        /// The codes for Organizations based on Profession OID's
+        /// https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID
+        public enum OrganizationProfession: String, Equatable, Codable {
+            /// public pharmacies (Öffentliche Apotheke)
+            case publicPharmacy = "1.2.276.0.76.4.54"
+            /// cost-carrier (Betriebsstätte Kostenträger)
+            case insuranceCompany = "1.2.276.0.76.4.59"
+        }
 
         /// http://terminology.hl7.org/CodeSystem
         public enum CodeSystem {

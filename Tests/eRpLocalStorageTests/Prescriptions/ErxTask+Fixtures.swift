@@ -132,7 +132,8 @@ extension ErxTask {
             quantity: .init(value: "1", unit: "Packung"),
             noteText: "Take good care",
             medication: compoundingMedication,
-            epaMedication: nil
+            epaMedication: nil,
+            diGaDispense: nil
         )
 
         static let medicationDispenseWithEpaMedication: ErxMedicationDispense = .init(
@@ -145,7 +146,8 @@ extension ErxTask {
             quantity: .init(value: "1", unit: "Packung"),
             noteText: "Take good care",
             medication: nil,
-            epaMedication: epaMedicationMedicinalProductPackage
+            epaMedication: epaMedicationMedicinalProductPackage,
+            diGaDispense: nil
         )
 
         static let medicationDispenseWithPZN: ErxMedicationDispense = .init(
@@ -158,7 +160,8 @@ extension ErxTask {
             quantity: .init(value: "1", unit: "Packung"),
             noteText: "read everything",
             medication: pznMedication,
-            epaMedication: nil
+            epaMedication: nil,
+            diGaDispense: nil
         )
 
         static let compoundingMedication: ErxMedication = .init(

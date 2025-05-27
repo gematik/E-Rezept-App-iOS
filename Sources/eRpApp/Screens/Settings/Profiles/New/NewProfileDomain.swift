@@ -61,7 +61,13 @@ struct NewProfileDomain {
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
-    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+
+    // Use changebaleUserSesisonContainer to set the correct user session for demo mode
+    var userDataStore: UserDataStore {
+        changeableUserSessionContainer.userSession.localUserStore
+    }
+
+    @Dependency(\.changeableUserSessionContainer) var changeableUserSessionContainer
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
 
     var body: some Reducer<State, Action> {

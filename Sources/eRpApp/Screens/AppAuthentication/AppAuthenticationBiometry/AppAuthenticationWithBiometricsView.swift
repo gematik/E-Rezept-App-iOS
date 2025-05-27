@@ -51,20 +51,15 @@ struct AppAuthenticationWithBiometricsView: View {
         let action: () -> Void
 
         var body: some View {
-            Text(L10n.authTxtBiometricsFaceidStart)
-                .font(Font.body.weight(.semibold))
-
-            Text(L10n.authTxtBiometricsFaceidDescription)
-                .font(.subheadline)
-                .multilineTextAlignment(.center)
-                .foregroundColor(Color(.secondaryLabel))
-                .fixedSize(horizontal: false, vertical: true)
-
-            PrimaryTextButton(text: L10n.authBtnBiometricsFaceid,
-                              a11y: A18n.auth.authBtnBiometricsFaceid,
-                              image: Image(systemName: SFSymbolName.faceId),
-                              action: action)
-                .padding()
+            PrimaryTextButton(
+                text: L10n.authBtnBiometricsFaceid,
+                a11y: A18n.auth.authBtnBiometricsFaceid,
+                image: Image(systemName: SFSymbolName.faceId),
+                useFullWidth: false,
+                action: action
+            )
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .center)
         }
     }
 
@@ -72,19 +67,15 @@ struct AppAuthenticationWithBiometricsView: View {
         let action: () -> Void
 
         var body: some View {
-            Text(L10n.authTxtBiometricsTouchidStart)
-                .font(Font.body.weight(.semibold))
-
-            Text(L10n.authTxtBiometricsTouchidDescription)
-                .multilineTextAlignment(.center)
-                .foregroundColor(Color(.secondaryLabel))
-                .fixedSize(horizontal: false, vertical: true)
-
-            PrimaryTextButton(text: L10n.authBtnBiometricsTouchid,
-                              a11y: A18n.auth.authBtnBiometricsTouchid,
-                              image: Image(systemName: SFSymbolName.touchId),
-                              action: action)
-                .padding()
+            PrimaryTextButton(
+                text: L10n.authBtnBiometricsTouchid,
+                a11y: A18n.auth.authBtnBiometricsTouchid,
+                image: Image(systemName: SFSymbolName.touchId),
+                useFullWidth: false,
+                action: action
+            )
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .center)
         }
     }
 }

@@ -19,15 +19,16 @@
 import Foundation
 
 /// Structure is based on https://simplifier.net/evdga/kbv_pr_evdga_healthapprequest
-public struct ErxDeviceRequest: Hashable, Codable, Sendable {
+public struct ErxDeviceRequest: Equatable, Hashable, Codable, Sendable {
     public init(
         status: DeviceRequestStatus? = nil,
-        intent: Intent? = nil,
+        intent: DeviceRequestIntent? = nil,
         pzn: String? = nil,
         appName: String? = nil,
         isSER: Bool? = false,
         accidentInfo: AccidentInfo? = nil,
-        authoredOn: String? = nil
+        authoredOn: String? = nil,
+        diGaInfo: DiGaInfo? = nil
     ) {
         self.status = status
         self.intent = intent
@@ -36,12 +37,13 @@ public struct ErxDeviceRequest: Hashable, Codable, Sendable {
         self.isSER = isSER ?? false
         self.accidentInfo = accidentInfo
         self.authoredOn = authoredOn
+        self.diGaInfo = diGaInfo
     }
 
     /// status of the request.
     public let status: DeviceRequestStatus?
     /// intent of the request
-    public let intent: Intent?
+    public let intent: DeviceRequestIntent?
     /// (PZN) of the DiGA prescription
     public let pzn: String?
     /// Name of the DiGA
@@ -52,6 +54,8 @@ public struct ErxDeviceRequest: Hashable, Codable, Sendable {
     public let accidentInfo: AccidentInfo?
     /// When the deviceRequest was authored
     public let authoredOn: String?
+    /// Information about the DiGa that are saved local
+    public var diGaInfo: DiGaInfo?
 
     // This code system http://hl7.org/fhir/request-status defines the following codes:
     public enum DeviceRequestStatus: String, Equatable, Codable, Sendable {
@@ -73,7 +77,7 @@ public struct ErxDeviceRequest: Hashable, Codable, Sendable {
     }
 
     /// This code system http://hl7.org/fhir/request-intent defines the following codes:
-    public enum Intent: String, Equatable, Codable, Sendable {
+    public enum DeviceRequestIntent: String, Equatable, Codable, Sendable {
         /// a suggestion made by someone/something that does not have an intention to ensure it occurs and
         /// without providing an authorization to act.
         case proposal

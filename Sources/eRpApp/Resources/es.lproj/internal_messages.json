@@ -22,5 +22,11 @@
         "text": "🛒 **Flujo de pedidos mejorado** \nEl proceso de pedido ahora es más fácil y rápido. \n \n🌐 **Nuevos idiomas** \nNuestra aplicación ahora también está disponible en español e irlandés. \n \n📞 **Opciones de contacto ampliadas** \nHemos introducido nuevas opciones de contacto para compañías de seguros seleccionadas. \n \n🔍 **Registros de acceso detallados** \nAhora también mostramos las identificaciones telemáticas en los registros de acceso para que sea más fácil identificar quién tuvo acceso.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Canjear DiGAs prescritos** \nA partir de ahora podrás canjear recetas para aplicaciones de salud digital (DiGAs) directamente a través de la aplicación de receta electrónica. Recibirás el código de activación y el enlace a la aplicación prescrita inmediatamente después del canje. \n \n **🏥Nueva base de datos de farmacias** \nHemos presentado una nueva base de datos preparada para el futuro para búsquedas de farmacias.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

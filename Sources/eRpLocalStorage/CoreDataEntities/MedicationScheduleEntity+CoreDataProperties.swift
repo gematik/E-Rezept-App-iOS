@@ -32,6 +32,7 @@ extension MedicationScheduleEntity {
     @NSManaged public var title: String?
     @NSManaged public var isActive: Bool
     @NSManaged public var entries: NSSet?
+    @NSManaged public var weekdays: String?
     @NSManaged public var erxTask: ErxTaskEntity?
 }
 

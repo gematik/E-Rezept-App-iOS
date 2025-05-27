@@ -22,5 +22,11 @@
         "text": "🛒 **Vylepšený tok objednávek** \nProces objednávání je nyní jednodušší a rychlejší. \n \n🌐 **Nové jazyky** \nNaše aplikace je nyní k dispozici také ve španělštině a irštině. \n \n📞 **Rozšířené možnosti kontaktu** \nZavedli jsme nové možnosti kontaktu pro vybrané pojišťovny. \n \n🔍 **Podrobné protokoly přístupu** \nNyní také zobrazujeme telematická ID v protokolech přístupu, aby bylo snazší identifikovat, kdo měl přístup.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Uplatněte si předepsané DiGA** \nOdteď můžete uplatnit recepty pro digitální zdravotní aplikace (DiGA) přímo prostřednictvím aplikace pro elektronické recepty. Aktivační kód a odkaz na předepsanou aplikaci obdržíte ihned po uplatnění. \n \n **🏥 Nová databáze lékáren** \nZavedli jsme novou databázi pro vyhledávání lékáren, která je připravena na budoucnost.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

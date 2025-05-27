@@ -22,5 +22,11 @@
         "text": "🛒 **Forbedret ordreflow** \nBestillingsprocessen er nu nemmere og hurtigere. \n \n🌐 **Nye sprog** \nVores app er nu også tilgængelig på spansk og irsk. \n \n📞 **Udvidede kontaktmuligheder** \nVi har indført nye kontaktmuligheder for udvalgte forsikringsselskaber. \n \n🔍 **Detaljerede adgangslogfiler** \nVi viser nu også telematik-id'erne i adgangsloggene, så det er nemmere at identificere, hvem der havde adgang.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Indløs ordinerede DiGA'er** \nFra nu af kan du indløse recepter til digitale sundhedsapplikationer (DiGA'er) direkte via e-receptappen. Du modtager aktiveringskoden og linket til den angivne app umiddelbart efter indløsning. \n \n **🏥 Ny apoteksdatabase** \nVi har introduceret en ny, fremtidssikret database til apotekssøgninger.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

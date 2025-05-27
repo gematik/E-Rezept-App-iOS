@@ -30,172 +30,165 @@ struct MedicationReminderSetupView: View {
         self.store = store
     }
 
-    @Dependency(\.uiDateFormatter) var dateFormatter
     @FocusState var focus: MedicationReminderSetupDomain.State.Field?
 
     var body: some View {
         WithPerceptionTracking {
             Form {
-                WithPerceptionTracking {
-                    Section {
-                        Toggle(isOn: $store.medicationSchedule.isActive.animation()) {
-                            Text(L10n.medReminderBtnActivationToggle)
+                Section {
+                    Toggle(isOn: $store.medicationSchedule.isActive.animation()) {
+                        Text(L10n.medReminderBtnActivationToggle)
+                    }
+                    .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnActivationToggle)
+
+                    Button {
+                        store.send(.showDosageInstructionsInfo)
+                    } label: {
+                        HStack(spacing: 10) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(store.medicationSchedule.dosageInstructions)
+                                    .foregroundColor(Colors.text)
+                                Text(L10n.medReminderTxtDosageInstructionSubtitle)
+                                    .font(.subheadline)
+                                    .foregroundColor(Colors.textSecondary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: SFSymbolName.info)
+                                .font(.body.weight(.semibold))
+                                .foregroundColor(Colors.primary)
                         }
-                        .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnActivationToggle)
+                        .contentShape(Rectangle()) // iOS15 workaround to fix button tap area
+                    }
+                    .buttonStyle(.plain) // iOS15 workaround to fix button embedded in forms
+                    .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnDosageInstruction)
+                } header: {
+                    VStack(spacing: 16) {
+                        Image(systemName: SFSymbolName.alarm)
+                            .font(.largeTitle.bold())
+                            .foregroundColor(Colors.primary)
+                            .accessibilityRemoveTraits(.isHeader)
 
+                        Text(store.medicationSchedule.title)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .multilineTextAlignment(.center)
+                            .padding(.bottom)
+                            .accessibilityIdentifier(A11y.medicationReminder.medReminderTxtScheduleHeader)
+                    }
+                }
+                .headerProminence(.increased)
+
+                if store.medicationSchedule.isActive {
+                    Section {
                         Button {
-                            store.send(.showDosageInstructionsInfo)
+                            store.send(.showRepetitionDetails)
                         } label: {
-                            HStack(spacing: 10) {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(store.medicationSchedule.dosageInstructions)
-                                        .foregroundColor(Colors.text)
-                                    Text(L10n.medReminderTxtDosageInstructionSubtitle)
-                                        .font(.subheadline)
-                                        .foregroundColor(Colors.textSecondary)
-                                }
-
+                            HStack {
+                                Text(L10n.medReminderTxtRepetitionTitle)
+                                    .foregroundColor(Colors.text)
                                 Spacer()
 
-                                Image(systemName: SFSymbolName.info)
+                                Text(store.repetitionValue)
+                                    .foregroundColor(Colors.textSecondary)
+                                Image(systemName: SFSymbolName.chevronForward)
+                                    .foregroundColor(Color(.tertiaryLabel))
                                     .font(.body.weight(.semibold))
-                                    .foregroundColor(Colors.primary)
                             }
                             .contentShape(Rectangle()) // iOS15 workaround to fix button tap area
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(L10n.medReminderTxtRepetitionTitle)
+                        .accessibilityValue(store.repetitionValue)
                         .buttonStyle(.plain) // iOS15 workaround to fix button embedded in forms
-                        .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnDosageInstruction)
+                        .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDetails)
                     } header: {
-                        VStack(spacing: 16) {
-                            Image(systemName: SFSymbolName.alarm)
-                                .font(.largeTitle.bold())
-                                .foregroundColor(Colors.primary)
-
-                            Text(store.medicationSchedule.title)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .multilineTextAlignment(.center)
-                                .padding(.bottom)
-                                .accessibilityIdentifier(A11y.medicationReminder.medReminderTxtScheduleHeader)
-                        }
+                        Label(L10n.medReminderTxtScheduleSectionHeader)
+                            .font(.headline)
+                            .accessibilityIdentifier(A11y.medicationReminder
+                                .medReminderTxtScheduleTimeSectionHeader)
                     }
                     .headerProminence(.increased)
 
-                    if store.medicationSchedule.isActive {
-                        let repetitionValue = store.medicationSchedule.repetitionType == .infinite
-                            ? L10n.medReminderTxtRepetitionTypeInfinite
-                            : L10n.medReminderTxtRepetitionFiniteTill(
-                                dateFormatter.relativeDate(from: store.medicationSchedule.end)
-                            )
-                        Section {
-                            Button {
-                                store.send(.showRepetitionDetails)
-                            } label: {
-                                HStack {
-                                    Text(L10n.medReminderTxtRepetitionTitle)
-                                        .foregroundColor(Colors.text)
-                                    Spacer()
+                    Section {
+                        ForEach($store.medicationSchedule.entries) { $entry in
+                            HStack {
+                                // Dummy Element to fix cell separator length
+                                Text("")
+                                    .accessibilityHidden(true)
 
-                                    Text(repetitionValue)
-                                        .foregroundColor(Colors.textSecondary)
-                                    Image(systemName: SFSymbolName.chevronForward)
-                                        .foregroundColor(Color(.tertiaryLabel))
-                                        .font(.body.weight(.semibold))
-                                }
-                                .contentShape(Rectangle()) // iOS15 workaround to fix button tap area
-                            }
-                            .accessibilityElement(children: .combine)
-                            .accessibilityLabel(L10n.medReminderTxtRepetitionTitle)
-                            .accessibilityValue(repetitionValue.text)
-                            .buttonStyle(.plain) // iOS15 workaround to fix button embedded in forms
-                            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDetails)
-                        } header: {
-                            Label(L10n.medReminderTxtScheduleSectionHeader)
-                                .font(.headline)
-                                .accessibilityIdentifier(A11y.medicationReminder
-                                    .medReminderTxtScheduleTimeSectionHeader)
-                        }
-                        .headerProminence(.increased)
-
-                        Section {
-                            ForEach($store.medicationSchedule.entries) { $entry in
-                                HStack {
-                                    // Dummy Element to fix cell separator length
-                                    Text("")
-                                        .accessibilityHidden(true)
-
-                                    DatePicker(
-                                        selection: .init(
-                                            get: {
-                                                let calendar = Calendar.autoupdatingCurrent
-                                                return calendar.date(
-                                                    from: .init(
-                                                        hour: entry.hourComponent,
-                                                        minute: entry.minuteComponent,
-                                                        second: 0
-                                                    )
-                                                )! // swiftlint:disable:this force_unwrapping
-                                            },
-                                            set: { date in
-                                                let calendar = Calendar.autoupdatingCurrent
-                                                entry.hourComponent = calendar.component(.hour, from: date)
-                                                entry.minuteComponent = calendar.component(.minute, from: date)
-                                            }
-                                        ),
-                                        displayedComponents: .hourAndMinute
-                                    ) {}
-                                        .offset(x: -16) // layout priority + offset makes it look correct
-                                        .focused($focus, equals: .time(entry.id))
-                                        .introspect(.datePicker, on: .iOS(.v15, .v16, .v17, .v18)) { datePicker in
-                                            datePicker.minuteInterval = 5
+                                DatePicker(
+                                    selection: .init(
+                                        get: {
                                             let calendar = Calendar.autoupdatingCurrent
-                                            datePicker.calendar = calendar
+                                            return calendar.date(
+                                                from: .init(
+                                                    hour: entry.hourComponent,
+                                                    minute: entry.minuteComponent,
+                                                    second: 0
+                                                )
+                                            )! // swiftlint:disable:this force_unwrapping
+                                        },
+                                        set: { date in
+                                            let calendar = Calendar.autoupdatingCurrent
+                                            entry.hourComponent = calendar.component(.hour, from: date)
+                                            entry.minuteComponent = calendar.component(.minute, from: date)
                                         }
-                                        .accessibilityIdentifier(A11y.medicationReminder
-                                            .medReminderBtnScheduleTimeDatePicker)
-
-                                    HStack {
-                                        TextField(
-                                            L10n.medReminderTxtTimeScheduleAmountPlaceholder,
-                                            text: $entry.amount
-                                        )
-                                        .focused($focus, equals: .dose(entry.id))
-                                        .multilineTextAlignment(.trailing)
-                                        .textFieldStyle(PlainTextFieldStyle())
-                                        .accessibilityIdentifier(A11y.medicationReminder
-                                            .medReminderBtnScheduleTimeTextfieldAmount)
-
-                                        Text(L10n.medReminderTxtTimeScheduleDosageLabel)
-                                            .accessibilityHidden(true)
+                                    ),
+                                    displayedComponents: .hourAndMinute
+                                ) {}
+                                    .offset(x: -16) // layout priority + offset makes it look correct
+                                    .focused($focus, equals: .time(entry.id))
+                                    .introspect(.datePicker, on: .iOS(.v15, .v16, .v17, .v18)) { datePicker in
+                                        datePicker.minuteInterval = 5
+                                        let calendar = Calendar.autoupdatingCurrent
+                                        datePicker.calendar = calendar
                                     }
-                                    .frame(maxWidth: .infinity, alignment: .trailing)
-                                    .layoutPriority(100.0)
+                                    .accessibilityIdentifier(A11y.medicationReminder
+                                        .medReminderBtnScheduleTimeDatePicker)
+
+                                HStack {
+                                    TextField(
+                                        L10n.medReminderTxtTimeScheduleAmountPlaceholder,
+                                        text: $entry.amount
+                                    )
+                                    .focused($focus, equals: .dose(entry.id))
+                                    .multilineTextAlignment(.trailing)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .accessibilityIdentifier(A11y.medicationReminder
+                                        .medReminderBtnScheduleTimeTextfieldAmount)
+
+                                    Text(L10n.medReminderTxtTimeScheduleDosageLabel)
+                                        .accessibilityHidden(true)
                                 }
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .layoutPriority(100.0)
                             }
-                            .onDelete { indexSet in
-                                store.send(.delete(indexSet))
-                            }
-                            .accessibilityElement(children: .contain)
-                            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnScheduleTimeList)
-
-                            Button {
-                                store.send(.addButtonPressed, animation: .default)
-                            } label: {
-                                Label(
-                                    title: {
-                                        Text(L10n.medReminderBtnTimeScheduleAddEntry)
-                                            .foregroundColor(Colors.primary)
-                                    },
-                                    icon: {
-                                        Image(systemName: SFSymbolName.plusCircleFill)
-                                            .foregroundColor(.green)
-                                            .offset(x: -2)
-                                    }
-                                )
-                                .contentShape(Rectangle()) // iOS15 workaround to fix button tap area
-                            }
-                            .buttonStyle(.plain) // iOS15 workaround to fix button embedded in forms
-                            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnScheduleTimeAddEntry)
                         }
+                        .onDelete { indexSet in
+                            store.send(.delete(indexSet))
+                        }
+                        .accessibilityElement(children: .contain)
+                        .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnScheduleTimeList)
+
+                        Button {
+                            store.send(.addButtonPressed, animation: .default)
+                        } label: {
+                            Label(
+                                title: {
+                                    Text(L10n.medReminderBtnTimeScheduleAddEntry)
+                                        .foregroundColor(Colors.primary)
+                                },
+                                icon: {
+                                    Image(systemName: SFSymbolName.plusCircleFill)
+                                        .foregroundColor(.green)
+                                        .offset(x: -2)
+                                }
+                            )
+                            .contentShape(Rectangle()) // iOS15 workaround to fix button tap area
+                        }
+                        .buttonStyle(.plain) // iOS15 workaround to fix button embedded in forms
+                        .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnScheduleTimeAddEntry)
                     }
                 }
             }

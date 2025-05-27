@@ -77,6 +77,10 @@ public protocol ErxTaskRepository {
     /// - Parameter communications: communications where the `isRead` state should be changed.
     func saveLocal(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, ErxRepositoryError>
 
+    /// Updates `DiGaInfo` property to local data store.
+    /// - Parameter diGaInfo: new`DiGaInfo` that should be updated.
+    func updateLocal(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, ErxRepositoryError>
+
     /// Returns a count for all unread communications for the given profile
     /// - Parameter profile: profile for which you want to have the count
     func countAllUnreadCommunicationsAndChargeItems(

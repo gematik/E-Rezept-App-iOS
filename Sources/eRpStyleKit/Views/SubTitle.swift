@@ -98,20 +98,21 @@ public struct DefaultSubTitleStyle: SubTitleStyle {
     public func makeBody(configuration: SubTitleConfiguration) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             configuration.title
-                .font(.body.weight(.semibold))
+                .font(.body)
+                .foregroundColor(Color(.label))
 
             if let description = configuration.description {
                 description
                     .font(.subheadline)
+                    .foregroundColor(Color(.secondaryLabel))
             }
 
             if let details = configuration.details {
                 details
                     .font(.subheadline)
-                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(Color(.tertiaryLabel))
             }
         }
-        .padding()
     }
 }
 

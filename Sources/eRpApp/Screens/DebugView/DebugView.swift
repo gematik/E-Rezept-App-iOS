@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  Copyright (c) 2024 gematik GmbH
 //
@@ -33,7 +34,7 @@ struct DebugView: View {
             List {
                 EnvironmentSection(store: store)
                 LogSection(store: store)
-                FeatureFlagsSection()
+                FeatureFlagsSection(store: store)
                 VirtualEGKLogin(store: store)
                 LocalTaskStatusView(store: store)
                 CardWallSection(store: store)
@@ -68,6 +69,9 @@ extension DebugView {
                     Toggle("Tracking OptOut", isOn: $store.trackingOptIn)
                     Button("Reset tooltips") {
                         store.send(.resetTooltips)
+                    }
+                    Button("Reset AppDefaults") {
+                        store.send(.resetAppDefaults)
                     }
                 }
             }
@@ -241,7 +245,7 @@ extension DebugView {
                         Button("Mark as PKV") {
                             store.send(.setProfileInsuranceTypeToPKV)
                         }
-//                        .disabled(profile.insuranceType != .gKV)
+                        //                        .disabled(profile.insuranceType != .gKV)
                         .foregroundColor(profile.insuranceType == .gKV ? Color.orange : Color.gray)
                         .accessibilityIdentifier("debug_btn_mark_profile_as_pkv")
 
@@ -397,18 +401,17 @@ extension DebugView {
     private struct EnvironmentSection: View {
         @Perception.Bindable var store: StoreOf<DebugDomain>
 
-        var selectedEnvironment: Binding<String> { Binding(
-            get: {
-                store.selectedEnvironment?.name ?? "TU"
-            }, set: { newValue in
-                store.send(.setServerEnvironment(newValue))
-            }
-        ) }
-
         var body: some View {
             WithPerceptionTracking {
+                let environmentName = store.selectedEnvironment?.name ?? "TU"
                 Section(content: {
-                    Picker("Environment", selection: selectedEnvironment) {
+                    Picker("Environment", selection: Binding(
+                        get: {
+                            environmentName
+                        }, set: { newValue in
+                            store.send(.setServerEnvironment(newValue))
+                        }
+                    )) {
                         ForEach(store.availableEnvironments, id: \.id) { serverEnvironment in
                             Text(serverEnvironment.configuration.name).tag(serverEnvironment.name)
                         }
@@ -423,6 +426,8 @@ extension DebugView {
                         DebugView.TechDetail("IDP", value: environment.idp.absoluteString)
                         DebugView.TechDetail("FD", value: environment.erp.absoluteString)
                         DebugView.TechDetail("APO VZD", value: environment.apoVzd.absoluteString)
+                        DebugView.TechDetail("FHIR VZD", value: environment.fhirVzd.absoluteString)
+                        DebugView.TechDetail("eRezept API", value: environment.eRezept.absoluteString)
                     }
 
                     Button("Reset") {
@@ -434,31 +439,71 @@ extension DebugView {
     }
 
     private struct FeatureFlagsSection: View {
+        @Perception.Bindable var store: StoreOf<DebugDomain>
+
         var body: some View {
             Section(content: {
-                NavigationLink(destination: FeatureFlags()) {
+                NavigationLink(destination: FeatureFlags(store: store)) {
                     Text("Feature Flags")
                 }
             }, header: { Text("Feature Flags") })
         }
 
         private struct FeatureFlags: View {
-            @AppStorage("show_debug_pharmacies") var showDebugPharmacies = false
+            @Perception.Bindable var store: StoreOf<DebugDomain>
 
             var body: some View {
-                List {
-                    VStack(alignment: .leading) {
-                        Toggle("Show Debug Pharmacies", isOn: $showDebugPharmacies)
-                        Text("Zeigt die unter 'Debug Pharmacies' hinterlegten Apotheken in der Apothekensuche an")
+                WithPerceptionTracking {
+                    List {
+                        Section {
+                            TextField(
+                                "Overwrite DIGA IK (e.g. 101570104)",
+                                text: $store.overwriteDIGAIK
+                            )
+                        } header: {
+                            Text("DIGA")
+                        } footer: {
+                            HStack {
+                                Button {
+                                    store.$overwriteDIGAIK.withLock { $0 = "101570104" }
+                                } label: {
+                                    Text("Set to 101570104")
+                                }
+                                Button {
+                                    store.$overwriteDIGAIK.withLock { $0 = "" }
+                                } label: {
+                                    Text("Reset")
+                                }
+                            }
+                        }
+                        Section {
+                            Toggle("Show Debug Pharmacies", isOn: $store.showDebugPharmacies)
+                            Text(
+                                "Displays under 'Debug Pharmacies' stored pharmacies in the pharmacy search"
+                            )
                             .font(.footnote)
+                            NavigationLink(destination: AVSDebugView()) {
+                                Text("Debug Pharmacies")
+                            }.disabled(!store.showDebugPharmacies)
+                        }
                     }
-
-                    NavigationLink(destination: AVSDebugView()) {
-                        Text("Debug Pharmacies")
-                    }.disabled(!showDebugPharmacies)
                 }
             }
         }
+    }
+}
+
+extension SharedReaderKey
+    where Self == AppStorageKey<Bool>.Default {
+    static var showDebugPharmacies: Self {
+        Self[.appStorage("show_debug_pharmacies"), default: false]
+    }
+}
+
+extension SharedReaderKey
+    where Self == AppStorageKey<String>.Default {
+    static var overwriteDIGAIK: Self {
+        Self[.appStorage("overwriteDIGAIK"), default: ""]
     }
 }
 
@@ -472,3 +517,5 @@ struct DebugView_Previews: PreviewProvider {
 }
 
 #endif
+
+// swiftlint:enable file_length

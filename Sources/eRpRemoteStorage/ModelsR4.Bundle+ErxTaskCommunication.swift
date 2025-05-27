@@ -59,8 +59,9 @@ extension ModelsR4.Bundle {
             throw RemoteStorageBundleParsingError.parseError("Could not parse sent value from communication")
         }
 
-        guard let payloadContent = communication.payloadContent else {
-            throw RemoteStorageBundleParsingError.parseError("Could not parse payload value from communication")
+        var payloadJSON: String?
+        if let payloadContent = communication.payloadContent {
+            payloadJSON = payloadContent
         }
 
         return ErxTask.Communication(
@@ -71,7 +72,7 @@ extension ModelsR4.Bundle {
             telematikId: communication.telematikId(for: profile) ?? "",
             orderId: communication.orderId,
             timestamp: timestamp,
-            payloadJSON: payloadContent,
+            payloadJSON: payloadJSON,
             isRead: false
         )
     }

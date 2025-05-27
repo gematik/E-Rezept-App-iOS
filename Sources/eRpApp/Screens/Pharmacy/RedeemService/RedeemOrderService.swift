@@ -30,6 +30,8 @@ struct RedeemOrderService {
     var redeemViaAVS: @Sendable (_ orders: [OrderRequest]) async throws -> IdentifiedArrayOf<OrderResponse>
     var redeemViaErxTaskRepository: @Sendable (_ orders: [OrderRequest]) async throws
         -> IdentifiedArrayOf<OrderResponse>
+    var redeemViaErxTaskRepositoryDiGa: @Sendable (_ orders: [OrderDiGaRequest]) async throws
+        -> IdentifiedArrayOf<OrderDiGaResponse>
 }
 
 extension RedeemOrderService: DependencyKey {
@@ -60,6 +62,10 @@ extension RedeemOrderService: DependencyKey {
             },
             redeemViaErxTaskRepository: { orders in
                 try await erxTaskRepositoryRedeemService().redeem(orders)
+                    .async(\RedeemOrderServiceError.Cases.redeem)
+            },
+            redeemViaErxTaskRepositoryDiGa: { orders in
+                try await erxTaskRepositoryRedeemService().redeemDiGa(orders)
                     .async(\RedeemOrderServiceError.Cases.redeem)
             }
         )

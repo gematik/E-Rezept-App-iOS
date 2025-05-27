@@ -42,6 +42,7 @@ extension ErxTaskMedicationDispenseEntity {
         quantity = ErxTaskQuantityEntity(quantity: medicationDispense.quantity, in: context)
         medication = ErxTaskMedicationEntity(medication: medicationDispense.medication, in: context)
         epaMedication = ErxEpaMedicationEntity(epaMedication: medicationDispense.epaMedication, in: context)
+        digaDispense = DiGaDispenseEntity(diGaDispense: medicationDispense.diGaDispense, in: context)
     }
 }
 
@@ -68,7 +69,8 @@ extension ErxMedicationDispense {
             quantity: quantity,
             noteText: entity.noteText,
             medication: ErxMedication(entity: entity.medication),
-            epaMedication: ErxEpaMedication(entity: entity.epaMedication)
+            epaMedication: ErxEpaMedication(entity: entity.epaMedication),
+            diGaDispense: DiGaDispense(entity: entity.digaDispense)
         )
     }
 }

@@ -21,32 +21,60 @@ import eRpKit
 import Foundation
 import OpenSSL
 
+public struct PharmacyRemoteDataStoreFilter: Codable, Equatable {
+    public let key: String
+    public let value: String
+
+    public init(key: String, value: String) {
+        self.key = key
+        self.value = value
+    }
+}
+
 /// Interface for the remote data store
 public protocol PharmacyRemoteDataStore {
     /// API for requesting pharmacies with the passed search term
     ///
     /// [REQ:gemSpec_eRp_FdV:A_20183]
     ///
-    /// - Parameter searchTerm: String that send to the server for filtering the pharmacies response
-    /// - Parameter position: Position (latitude and longitude) of pharmacy
-    /// - Parameter filter: further filter parameters for pharmacies
+    /// - Parameters:
+    ///   - searchTerm: String that send to the server for filtering the pharmacies response
+    ///   - position: Position (latitude and longitude) of pharmacy
+    ///   - filter: further filter parameters for pharmacies
     /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
-    func searchPharmacies(by searchTerm: String,
-                          position: Position?,
-                          filter: [String: String])
-        -> AnyPublisher<[PharmacyLocation], PharmacyFHIRDataSource.Error>
+    func searchPharmacies(
+        by searchTerm: String,
+        position: Position?,
+        filter: [PharmacyRemoteDataStoreFilter]
+    ) -> AnyPublisher<[PharmacyLocation], PharmacyFHIRDataSource.Error>
 
     /// Convenience function for requesting a certain pharmacy by ID
     ///
     /// - Parameters:
     ///   - telematikId: The Telematik-ID of the pharmacy to be requested
     /// - Returns: `AnyPublisher` that emits the `PharmacyLocation` or nil when not found
-    func fetchPharmacy(by telematikId: String)
-        -> AnyPublisher<PharmacyLocation?, PharmacyFHIRDataSource.Error>
+    func fetchPharmacy(
+        by telematikId: String
+    ) -> AnyPublisher<PharmacyLocation?, PharmacyFHIRDataSource.Error>
 
     /// Load certificates for a given `PharmacyLocation` id
     ///
     /// - Parameter locationId: id of `PharmacyLocation` from which to load the certificate
     /// - Returns: Emits an array of certificates on success or fails with a `PharmacyFHIRDataSource.Error`
     func loadAvsCertificates(for locationId: String) -> AnyPublisher<[X509], PharmacyFHIRDataSource.Error>
+
+    /// Converts pharmacy filter into query parameters
+    ///
+    /// - Parameter filter: `PharmacyRepositoryFilter`s for filtering the pharmacy response
+    /// - Returns: Key / value query parameters to use in url requests
+    func apiFilters(for filter: [PharmacyRepositoryFilter]) -> [PharmacyRemoteDataStoreFilter]
+
+    /// Convenience function for requesting a telematikId by institution identifier (IK)
+    ///
+    /// - Parameters:
+    ///   - ikNumber: The institution (IK) identifier of the organization to be requested
+    /// - Returns: `AnyPublisher` that emits the `TelematikId` or nil when not found
+    func fetchTelematikId(
+        by ikNumber: String
+    ) -> AnyPublisher<String?, PharmacyFHIRDataSource.Error>
 }

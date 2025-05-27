@@ -125,6 +125,24 @@ final class MockTrustStoreSession: TrustStoreSession {
         return validateCertificateClosure.map({ $0(certificate) }) ?? validateCertificateReturnValue
     }
     
+   // MARK: - vauCertificate
+
+    var vauCertificateThrowableError: Error?
+    var vauCertificateCallsCount = 0
+    var vauCertificateCalled: Bool {
+        vauCertificateCallsCount > 0
+    }
+    var vauCertificateReturnValue: X509!
+    var vauCertificateClosure: (() throws -> X509)?
+
+    func vauCertificate() throws -> X509 {
+        if let error = vauCertificateThrowableError {
+            throw error
+        }
+        vauCertificateCallsCount += 1
+        return try vauCertificateClosure.map({ try $0() }) ?? vauCertificateReturnValue
+    }
+    
    // MARK: - reset
 
     var resetCallsCount = 0

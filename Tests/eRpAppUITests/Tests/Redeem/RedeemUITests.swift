@@ -242,7 +242,7 @@ final class RedeemUITests: XCTestCase {
             .tapRedeem()
 
         expect(redeemScreen.editPharmacyButton().exists).to(beTrue())
-        expect(redeemScreen.redeemButton().isEnabled).to(beTrue())
+        expect(redeemScreen.redeemButton().isEnabled).to(beFalse())
 
         let prescriptions = redeemScreen.editPrescriptionButton()
         expect(prescriptions.staticTexts["Adavomilproston"]).to(exist("Adavomilproston"))
@@ -296,7 +296,7 @@ final class RedeemUITests: XCTestCase {
             .tapRedeem(.delivery)
 
         expect(redeemScreen.editPharmacyButton().exists).to(beTrue())
-        expect(redeemScreen.redeemButton().isEnabled).to(beTrue())
+        expect(redeemScreen.redeemButton().isEnabled).to(beFalse())
 
         let prescriptions = redeemScreen.editPrescriptionButton()
         expect(prescriptions.staticTexts["Adavomilproston"]).to(exist("Adavomilproston"))

@@ -7,7 +7,9 @@ import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
 import FHIRClient
+import FHIRVZD
 import Foundation
+import FHIRVZD
 import HTTPClient
 import IDP
 import ModelsR4
@@ -63,6 +65,7 @@ extension AVSError.InternalError: CodedError {
     }
 }
 
+extension AVSTransactionCoreDataStore.Error: @retroactive LocalizedError {}
 extension AVSTransactionCoreDataStore.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -166,6 +169,7 @@ extension AuthenticationChallengeProviderError: CodedError {
     }
 }
 
+extension BiometricsSHA256Signer.Error: @retroactive LocalizedError {}
 extension BiometricsSHA256Signer.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -478,6 +482,7 @@ extension ChargeItemPDFServiceError: CodedError {
     }
 }
 
+extension ConversionError: @retroactive LocalizedError {}
 extension ConversionError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -510,6 +515,7 @@ extension CoreDataController.Error: CodedError {
     }
 }
 
+extension DefaultDataMatrixStringEncoderError: @retroactive LocalizedError {}
 extension DefaultDataMatrixStringEncoderError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -569,6 +575,7 @@ extension DemoError: CodedError {
     }
 }
 
+extension ErxConsent.Error: @retroactive LocalizedError {}
 extension ErxConsent.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -607,6 +614,7 @@ extension ErxRepositoryError: CodedError {
     }
 }
 
+extension ErxTask.Status.Error: @retroactive LocalizedError {}
 extension ErxTask.Status.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -636,6 +644,7 @@ extension ErxTask.Status.Error: CodedError {
     }
 }
 
+extension ErxTaskOrder.Error: @retroactive LocalizedError {}
 extension ErxTaskOrder.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -709,6 +718,39 @@ extension FHIRClient.Error: CodedError {
     }
 }
 
+extension FHIRVZDError: @retroactive LocalizedError {}
+extension FHIRVZDError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .network:
+                return "i-30001"
+            case .tokenUnavailable:
+                return "i-30002"
+            case .decoding:
+                return "i-30003"
+            case .unspecified:
+                return "i-30004"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .network(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .decoding(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .decoding:
+                return [erpErrorCode]
+            case let .unspecified(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .unspecified:
+                return [erpErrorCode]
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension FileManager.ExcludeFileError: @retroactive LocalizedError {}
 extension FileManager.ExcludeFileError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -764,6 +806,22 @@ extension HTTPClientError: CodedError {
             case let .unknown(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
             case .unknown:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension HealthcareServiceBundleParsingError: @retroactive LocalizedError {}
+extension HealthcareServiceBundleParsingError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .parseError:
+                return "i-61001"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .parseError:
                 return [erpErrorCode]
         }
     }
@@ -852,6 +910,7 @@ extension IDPError: CodedError {
     }
 }
 
+extension IDPError.InternalError: @retroactive LocalizedError {}
 extension IDPError.InternalError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1007,6 +1066,7 @@ extension InternalCommunicationError: CodedError {
     }
 }
 
+extension JWE.Error: @retroactive LocalizedError {}
 extension JWE.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1047,6 +1107,7 @@ extension JWT.Error: CodedError {
     }
 }
 
+extension KeyVerifier.Error: @retroactive LocalizedError {}
 extension KeyVerifier.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1445,6 +1506,7 @@ extension OrganDonorJumpServiceError: CodedError {
     }
 }
 
+extension PharmacyBundleParsingError: @retroactive LocalizedError {}
 extension PharmacyBundleParsingError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1460,6 +1522,7 @@ extension PharmacyBundleParsingError: CodedError {
     }
 }
 
+extension PharmacyCoreDataStore.Error: @retroactive LocalizedError {}
 extension PharmacyCoreDataStore.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1547,6 +1610,7 @@ extension PrescriptionRepositoryError: CodedError {
     }
 }
 
+extension PrivateKeyContainer.Error: @retroactive LocalizedError {}
 extension PrivateKeyContainer.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1596,6 +1660,7 @@ extension PrivateKeyContainer.Error: CodedError {
     }
 }
 
+extension ProfileCoreDataStore.Error: @retroactive LocalizedError {}
 extension ProfileCoreDataStore.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1752,6 +1817,7 @@ extension RegisteredDevicesServiceError: CodedError {
     }
 }
 
+extension RemoteStorageBundleParsingError: @retroactive LocalizedError {}
 extension RemoteStorageBundleParsingError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1838,6 +1904,7 @@ extension ScannerDomain.Error: CodedError {
     }
 }
 
+extension SecureEnclaveSignatureProviderError: @retroactive LocalizedError {}
 extension SecureEnclaveSignatureProviderError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1911,6 +1978,7 @@ extension ShareSheetDomain.Error: CodedError {
     }
 }
 
+extension SharedTask.Error: @retroactive LocalizedError {}
 extension SharedTask.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1934,6 +2002,7 @@ extension SharedTask.Error: CodedError {
     }
 }
 
+extension ShipmentInfoCoreDataStore.Error: @retroactive LocalizedError {}
 extension ShipmentInfoCoreDataStore.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1951,6 +2020,7 @@ extension ShipmentInfoCoreDataStore.Error: CodedError {
     }
 }
 
+extension TokenPayload.Error: @retroactive LocalizedError {}
 extension TokenPayload.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1974,6 +2044,7 @@ extension TokenPayload.Error: CodedError {
     }
 }
 
+extension TrustAnchor.Error: @retroactive LocalizedError {}
 extension TrustAnchor.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -2004,6 +2075,10 @@ extension TrustStoreError: CodedError {
                 return "i-56005"
             case .`internal`:
                 return "i-56006"
+            case .noValidVauCertificateAvailable:
+                return "i-56007"
+            case .malformedCertificate:
+                return "i-56008"
         }
     }
     var erpErrorCodeList: [String] {
@@ -2022,23 +2097,30 @@ extension TrustStoreError: CodedError {
     }
 }
 
+extension TrustStoreError.InternalError: @retroactive LocalizedError {}
 extension TrustStoreError.InternalError: CodedError {
     var erpErrorCode: String {
         switch self {
             case .loadOCSPCheckedTrustStoreUnexpectedNil:
-                return "i-5611"
+                return "i-56101"
             case .loadCertListFromServerUnexpectedNil:
-                return "i-5612"
+                return "i-56102"
             case .loadOCSPListFromServerUnexpectedNil:
-                return "i-5613"
+                return "i-56103"
             case .trustStoreCertListUnexpectedNil:
-                return "i-5614"
+                return "i-56104"
             case .loadOCSPResponsesUnexpectedNil:
-                return "i-5615"
+                return "i-56105"
             case .missingSignerForEECertificate:
-                return "i-5616"
+                return "i-56106"
             case .notImplemented:
-                return "i-5617"
+                return "i-56107"
+            case .trustAnchorUnexpectedFormat:
+                return "i-56108"
+            case .vauCertificateUnexpectedFormat:
+                return "i-56109"
+            case .trustStoreCreationFailed:
+                return "i-56110"
         }
     }
     var erpErrorCodeList: [String] {
@@ -2094,6 +2176,7 @@ extension UserSessionProviderError: CodedError {
     }
 }
 
+extension VAUError: @retroactive LocalizedError {}
 extension VAUError: CodedError {
     var erpErrorCode: String {
         switch self {

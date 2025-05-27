@@ -94,7 +94,12 @@ struct PrescriptionListView<StickyHeader: View>: View {
                             PrescriptionView(
                                 prescription: prescription
                             ) {
-                                store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
+                                if prescription.isDiGaPrescription {
+                                    store.send(.diGaDetailViewTapped(selectedPrescription: prescription,
+                                                                     profile: store.profile))
+                                } else {
+                                    store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
+                                }
                             }
                         }
                     }
@@ -201,9 +206,7 @@ struct PrescriptionListView_Previews: PreviewProvider {
             VStack {
                 PrescriptionListView(
                     store: PrescriptionListDomain.Dummies.storeFor(
-                        PrescriptionListDomain.State(
-                            prescriptions: Prescription.Dummies.prescriptions
-                        )
+                        PrescriptionListDomain.State()
                     )
                 ) {
                     Text("Header")
@@ -214,9 +217,7 @@ struct PrescriptionListView_Previews: PreviewProvider {
             VStack {
                 PrescriptionListView(
                     store: PrescriptionListDomain.Dummies.storeFor(
-                        PrescriptionListDomain.State(
-                            prescriptions: Prescription.Dummies.prescriptions
-                        )
+                        PrescriptionListDomain.State()
                     )
                 ) {
                     Text("Header")

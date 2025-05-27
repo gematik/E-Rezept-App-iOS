@@ -95,6 +95,42 @@ extension ModelsR4.Bundle {
         )
     }
 
+    /// Parse and extract all found Pharmacy Locations from `Self`
+    ///
+    /// - Returns: Array with all found and parsed pharmacies
+    /// - Throws: `ModelsR4.Bundle.Error`
+    func parseTelematikId() throws -> String? {
+        // Collect and parse all Pharmacy Locations
+        try entry?.compactMap {
+            guard let healthcareService = $0.resource?.get(if: ModelsR4.HealthcareService.self) else {
+                return nil
+            }
+            return try Self.parseString(healthcareService: healthcareService, bundle: self)
+        }.first
+    }
+
+    static func parseString(
+        healthcareService: ModelsR4.HealthcareService,
+        bundle: ModelsR4.Bundle
+    ) throws -> String? {
+        guard let id = healthcareService.id?.value?.string else {
+            throw HealthcareServiceBundleParsingError.parseError("Could not parse id from healthcare service.")
+        }
+
+        guard let organizationReference = healthcareService.providedBy?.reference,
+              let organization = bundle.findResource(with: organizationReference, type: ModelsR4.Organization.self)
+        else {
+            throw HealthcareServiceBundleParsingError
+                .parseError("Could not parse organization from healthcare service.")
+        }
+
+        guard let telematikID = organization.telematikID else {
+            throw HealthcareServiceBundleParsingError.parseError("Could not parse telematikID from organization.")
+        }
+
+        return telematikID
+    }
+
     func findResource<Resource: ModelsR4.Resource>(
         with identifier: FHIRPrimitive<FHIRString>,
         type _: Resource.Type

@@ -17,15 +17,24 @@
 //
 
 import Combine
+import Dependencies
 @testable import eRpFeatures
 import eRpKit
 import Nimble
 import XCTest
 
 final class MultiplePrescriptionExtensionTests: XCTestCase {
+    override func invokeTest() {
+        withDependencies { dependencies in
+            dependencies.date.now = TestDate.defaultReferenceDate
+        } operation: {
+            super.invokeTest()
+        }
+    }
+
     func testMultiplePrescriptionStartDateTodayIsRedeemable() {
         // given
-        let sut = multiplePrescription(startDate: DemoDate.createDemoDate(.today))
+        let sut = multiplePrescription(startDate: Date.Fixtures.createFormattedDate(.today))
 
         // when then
         expect(sut.isRedeemable).to(beTrue())
@@ -33,9 +42,9 @@ final class MultiplePrescriptionExtensionTests: XCTestCase {
 
     func testMultiplePrescriptionStartDateInPastIsRedeemable() {
         // given
-        let yesterday = multiplePrescription(startDate: DemoDate.createDemoDate(.yesterday))
-        let nearPast = multiplePrescription(startDate: DemoDate.createDemoDate(.weekBefore))
-        let past = multiplePrescription(startDate: DemoDate.createDemoDate(.ninetyTwoDaysBefore))
+        let yesterday = multiplePrescription(startDate: TestDate.createFormattedDate(.yesterday))
+        let nearPast = multiplePrescription(startDate: TestDate.createFormattedDate(.weekBefore))
+        let past = multiplePrescription(startDate: TestDate.createFormattedDate(.ninetyTwoDaysBefore))
 
         // when then
         expect(yesterday.isRedeemable).to(beTrue())
@@ -45,9 +54,11 @@ final class MultiplePrescriptionExtensionTests: XCTestCase {
 
     func testMultiplePrescriptionStartDateInFutureIsNotRedeemable() {
         // given
-        let tomorrow = multiplePrescription(startDate: DemoDate.createDemoDate(.tomorrow))
-        let nearFuture = multiplePrescription(startDate: DemoDate.createDemoDate(.twelveDaysAhead))
-        let future = multiplePrescription(startDate: DemoDate.createDemoDate(.ninetyTwoDaysAhead))
+        let tomorrow = multiplePrescription(startDate: TestDate.createFormattedDate(.tomorrow))
+        let nearFuture = multiplePrescription(startDate: TestDate
+            .createFormattedDate(.twelveDaysAhead))
+        let future = multiplePrescription(startDate: TestDate
+            .createFormattedDate(.ninetyTwoDaysAhead))
 
         // when then
         expect(tomorrow.isRedeemable).to(beFalse())

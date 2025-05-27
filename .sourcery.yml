@@ -69,9 +69,9 @@ configurations:
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/IntegrationTests
     args:
-      protocolMockImports: [ Combine,eRpKit ]
+      protocolMockImports: [ Combine,eRpKit,OpenSSL,TrustStore ]
       protocolMockTestableImports: [ Pharmacy ]
-      autoMockableImports: [ Combine,eRpKit ]
+      autoMockableImports: [ Combine,eRpKit,OpenSSL,TrustStore ]
       autoMockableTestableImports: [ Pharmacy ]
   - sources: # writes to Tests/PharmacyTests/Mocks/Generated/
       - Sources

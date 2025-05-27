@@ -26,9 +26,15 @@ extension Prescription {
         static let prescriptions = {
             let dateFormatter = UIDateFormatter.testValue
             return withDependencies { dependencies in
-                dependencies.date = .constant(Date())
+                dependencies.date = .constant(TestDate.defaultReferenceDate)
             } operation: {
-                ErxTask.Fixtures.erxTasks.map { Prescription(erxTask: $0, dateFormatter: dateFormatter) }
+                ErxTask.Fixtures.erxTasks.map {
+                    Prescription(
+                        erxTask: $0,
+                        date: TestDate.defaultReferenceDate,
+                        dateFormatter: dateFormatter
+                    )
+                }
             }
         }()
     }

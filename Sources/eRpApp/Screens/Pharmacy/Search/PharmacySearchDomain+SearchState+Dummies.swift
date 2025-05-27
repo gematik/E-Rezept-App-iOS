@@ -60,52 +60,52 @@ extension PharmacySearchDomain {
             }
 
         static let stateEmpty = State(
-            selectedPrescriptions: Shared([]),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: [],
-            pharmacyFilterOptions: Shared([]),
+            pharmacyFilterOptions: Shared(value: []),
             searchState: .searchResultEmpty
         )
 
         static let stateSearchResultOk = State(
-            selectedPrescriptions: Shared([]),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmaciesLocationViewModel,
-            pharmacyFilterOptions: Shared([]),
+            pharmacyFilterOptions: Shared(value: []),
             searchState: .searchResultOk
         )
 
         static let stateSearchRunning = State(
-            selectedPrescriptions: Shared([]),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             searchText: "Apotheke",
             pharmacies: [],
-            pharmacyFilterOptions: Shared([]),
+            pharmacyFilterOptions: Shared(value: []),
             searchState: .searchRunning
         )
         static let stateFilterItems = State(
-            selectedPrescriptions: Shared([]),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacies: [],
-            pharmacyFilterOptions: Shared([
+            pharmacyFilterOptions: Shared(value: [
                 PharmacySearchFilterDomain.PharmacyFilterOption.delivery,
             ])
         )
         static let stateError = State(
-            selectedPrescriptions: Shared([]),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacies: [],
-            pharmacyFilterOptions: Shared([]),
+            pharmacyFilterOptions: Shared(value: []),
             searchState: .error
         )
         static let stateStartView = State(
-            selectedPrescriptions: Shared([]),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmaciesLocationViewModel,
-            pharmacyFilterOptions: Shared([]),
+            pharmacyFilterOptions: Shared(value: []),
             searchState: .startView(loading: false)
             // .searchResultOk(pharmaciesLocationViewModel)
         )

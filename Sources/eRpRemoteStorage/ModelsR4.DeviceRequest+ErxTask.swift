@@ -28,9 +28,9 @@ extension ModelsR4.DeviceRequest {
         return nil
     }
 
-    var deviceRequestIntent: ErxDeviceRequest.Intent? {
+    var deviceRequestIntent: ErxDeviceRequest.DeviceRequestIntent? {
         if let rawStatus = intent.value?.rawValue {
-            return ErxDeviceRequest.Intent(rawValue: rawStatus)
+            return ErxDeviceRequest.DeviceRequestIntent(rawValue: rawStatus)
         }
         return nil
     }

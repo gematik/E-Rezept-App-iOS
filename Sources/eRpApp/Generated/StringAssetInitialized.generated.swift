@@ -22,6 +22,16 @@ import eRpStyleKit
 
 
 
+extension AnnotationBadge {
+    init(text: StringAsset, bundle: Bundle? = nil) {
+    self.init(text: text.key, bundle: bundle)
+    }
+}
+extension AnnotationBadgeModifier {
+    init(text: StringAsset, bundle: Bundle? = nil) {
+    self.init(text: text.key, bundle: bundle)
+    }
+}
 extension DefaultTextButton {
     init(text: StringAsset, a11y: String, style: Style = .primary, action: @escaping () -> Void) {
         self.init(text: text.key, a11y: a11y, style: style, action: action)
@@ -96,8 +106,8 @@ extension OptInCell {
     }
 }
 extension PrimaryTextButton {
-    init(text: StringAsset, a11y: String, image: Image? = nil, isEnabled: Bool = true, action: @escaping () -> Void) {
-        self.init(text: text.key, a11y: a11y, image: image, isEnabled: isEnabled, action: action)
+    init(text: StringAsset, a11y: String, image: Image? = nil, isEnabled: Bool = true, useFullWidth: Bool = true, action: @escaping () -> Void) {
+        self.init(text: text.key, a11y: a11y, image: image, isEnabled: isEnabled, useFullWidth: useFullWidth, action: action)
     }
 }
 extension PrimaryTextButtonBorder {

@@ -48,7 +48,7 @@ public struct TokenPayload: Codable {
         let njwt: String
     }
 
-    public struct AccesTokenPayload: Claims {
+    public struct AccessTokenPayload: Claims {
         public let exp: Date?
     }
 
@@ -69,6 +69,8 @@ public struct TokenPayload: Codable {
         public let displayName: String?
         /// Organization name
         public let organizationName: String?
+        /// Organization IK-Number
+        public let organizationIK: String?
         /// Profession ID of the user (e.g.: "1.2.276.0.76.4.49")
         public let professionOID: String?
         /// Health card number (e.g.: "X110443874")
@@ -97,6 +99,7 @@ public struct TokenPayload: Codable {
             case familyName = "family_name"
             case displayName = "display_name"
             case organizationName
+            case organizationIK
             case professionOID
             case idNummer
             case azp

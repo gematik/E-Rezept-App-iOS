@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -136,7 +136,7 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
     public let communications: [Communication]
     /// List of actual medication dispenses
     public let medicationDispenses: [ErxMedicationDispense]
-    /// IDK This is a test
+    /// DiGa of the task
     public let deviceRequest: ErxDeviceRequest?
 
     /// Changes status of `ErxTask` and updates the manual changed `redeemedOn` property
@@ -162,9 +162,9 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
             fullUrl: fullUrl,
             authoredOn: authoredOn,
             lastModified: date,
-            expiresOn: prescriptionId,
-            acceptedUntil: expiresOn,
-            redeemedOn: acceptedUntil,
+            expiresOn: expiresOn,
+            acceptedUntil: acceptedUntil,
+            redeemedOn: redeemedOn,
             avsTransactions: avsTransactions,
             author: author,
             prescriptionId: prescriptionId,

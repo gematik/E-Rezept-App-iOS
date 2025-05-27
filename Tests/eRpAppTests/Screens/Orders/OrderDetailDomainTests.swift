@@ -160,8 +160,8 @@ final class OrderDetailDomainTests: XCTestCase {
         await store.receive(.response(.loadAndShowPharmacyReceived(.success(remotePharmacy)))) { state in
             state.order = Order.lens.pharmacy.set(remotePharmacy)(order)
             state.destination = .pharmacyDetail(.init(
-                prescriptions: Shared([]),
-                selectedPrescriptions: Shared([]),
+                prescriptions: Shared(value: []),
+                selectedPrescriptions: Shared(value: []),
                 inRedeemProcess: false,
                 inOrdersMessage: true,
                 pharmacyViewModel: .init(pharmacy: remotePharmacy)
@@ -178,7 +178,8 @@ final class OrderDetailDomainTests: XCTestCase {
             for: order,
             resourceHandler: mockApplication
         )
-        mockPharmacyRepository.updateFromRemoteByReturnValue = Fail(error: PharmacyRepositoryError.remote(.notFound))
+        mockPharmacyRepository
+            .updateFromRemoteByReturnValue = Fail(error: PharmacyRepositoryError.remote(.notFound))
             .eraseToAnyPublisher()
         mockPharmacyRepository.deletePharmaciesReturnValue = Just(true)
             .setFailureType(to: PharmacyRepositoryError.self)

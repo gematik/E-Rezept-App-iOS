@@ -48,6 +48,7 @@ extension ProfileEntity {
         displayName = profile.displayName
         insurance = profile.insurance
         insuranceId = profile.insuranceId
+        insuranceIK = profile.insuranceIK
         insuranceType = profile.insuranceType.rawValue
         color = profile.color.rawValue
         image = profile.image.rawValue
@@ -114,6 +115,7 @@ extension Profile {
             displayName: entity.displayName,
             insurance: entity.insurance,
             insuranceId: entity.insuranceId,
+            insuranceIK: entity.insuranceIK,
             insuranceType: insuranceType,
             color: profileColor,
             image: profilePicture,

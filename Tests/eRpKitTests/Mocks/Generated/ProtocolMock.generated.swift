@@ -307,6 +307,24 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         deleteChargeItemsReceivedInvocations.append(chargeItems)
         return deleteChargeItemsClosure.map({ $0(chargeItems) }) ?? deleteChargeItemsReturnValue
     }
+    
+   // MARK: - update
+
+    var updateDiGaInfoCallsCount = 0
+    var updateDiGaInfoCalled: Bool {
+        updateDiGaInfoCallsCount > 0
+    }
+    var updateDiGaInfoReceivedDiGaInfo: DiGaInfo?
+    var updateDiGaInfoReceivedInvocations: [DiGaInfo] = []
+    var updateDiGaInfoReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var updateDiGaInfoClosure: ((DiGaInfo) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func update(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, LocalStoreError> {
+        updateDiGaInfoCallsCount += 1
+        updateDiGaInfoReceivedDiGaInfo = diGaInfo
+        updateDiGaInfoReceivedInvocations.append(diGaInfo)
+        return updateDiGaInfoClosure.map({ $0(diGaInfo) }) ?? updateDiGaInfoReturnValue
+    }
 }
 
 

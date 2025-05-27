@@ -94,9 +94,13 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
 
         init?(x5c x5cBase64: String, key keyBase64: String) {
             guard
-                let derBytes = Data(base64Encoded: x5cBase64),
+                let derBytes = Data(
+                    base64Encoded: x5cBase64.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                ),
                 let x5c = try? X509(der: derBytes),
-                let keyBytes = Data(base64Encoded: keyBase64),
+                let keyBytes = Data(
+                    base64Encoded: keyBase64.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                ),
                 let key = try? BrainpoolP256r1.Verify.PrivateKey(raw: keyBytes)
             else {
                 return nil

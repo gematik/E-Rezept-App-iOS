@@ -86,9 +86,9 @@ struct PharmacySearchFilterDomain {
             return .none
         case let .toggleFilter(filterOption):
             if let index = state.pharmacyFilterOptions.firstIndex(of: filterOption) {
-                state.pharmacyFilterOptions.remove(at: index)
+                state.$pharmacyFilterOptions.withLock { _ = $0.remove(at: index) }
             } else {
-                state.pharmacyFilterOptions.append(filterOption)
+                state.$pharmacyFilterOptions.withLock { $0.append(filterOption) }
             }
             return .none
         }
@@ -114,7 +114,7 @@ extension Collection where Element == PharmacySearchFilterDomain.PharmacyFilterO
 extension PharmacySearchFilterDomain {
     enum Dummies {
         static let state = State(
-            pharmacyFilterOptions: Shared([.open, .delivery])
+            pharmacyFilterOptions: Shared(value: [.open, .delivery])
         )
 
         static let store = Store(

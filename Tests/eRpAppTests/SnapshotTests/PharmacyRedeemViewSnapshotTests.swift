@@ -27,12 +27,12 @@ import XCTest
 final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacyRedeemViewMissingAddress() {
         let initialState = PharmacyRedeemDomain.State(
-            prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
+            prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(value: Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
             serviceOptionState: .init(
-                prescriptions: Shared(Prescription.Fixtures.prescriptions),
+                prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
                 selectedOption: .onPremise,
                 availableOptions: [.onPremise, .shipment]
             )
@@ -51,8 +51,8 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPharmacyRedeemViewFullAddress() {
         let initialState = PharmacyRedeemDomain.State(
-            prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
+            prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(value: Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Maria Vetter",
@@ -66,7 +66,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             ),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
             serviceOptionState: .init(
-                prescriptions: Shared(Prescription.Fixtures.prescriptions),
+                prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
                 selectedOption: .shipment,
                 availableOptions: [.onPremise, .delivery, .shipment]
             )
@@ -85,8 +85,8 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPharmacyRedeemViewTypeShipmentMissingPhone() {
         let initialState = PharmacyRedeemDomain.State(
-            prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
+            prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(value: Prescription.Fixtures.prescriptions),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Vetter",
@@ -97,7 +97,7 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
             ),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
             serviceOptionState: .init(
-                prescriptions: Shared(Prescription.Fixtures.prescriptions),
+                prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
                 selectedOption: .shipment,
                 availableOptions: [.onPremise, .delivery]
             )
@@ -116,12 +116,12 @@ final class PharmacyRedeemViewSnapshotTests: ERPSnapshotTestCase {
 
     func testPharmacyRedeemViewSelfPayerWarning() {
         let initialState = PharmacyRedeemDomain.State(
-            prescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
-            selectedPrescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
+            prescriptions: Shared(value: [Prescription.Dummies.prescriptionSelfPayer]),
+            selectedPrescriptions: Shared(value: [Prescription.Dummies.prescriptionSelfPayer]),
             pharmacy: PharmacyLocation.Dummies.pharmacy,
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red),
             serviceOptionState: .init(
-                prescriptions: Shared([Prescription.Dummies.prescriptionSelfPayer]),
+                prescriptions: Shared(value: [Prescription.Dummies.prescriptionSelfPayer]),
                 selectedOption: .onPremise,
                 availableOptions: [.delivery]
             )

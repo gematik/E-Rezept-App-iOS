@@ -135,6 +135,14 @@ public enum SFSymbolName {
     public static let chevronForward = "chevron.forward"
     public static let chevronBackward = "chevron.backward"
     public static let lightbulb = "lightbulb"
+    public static var lightbulbMax: String {
+        if #available(iOS 17.0, *) {
+            return "lightbulb.max"
+        } else {
+            return "lightbulb"
+        }
+    }
+
     public static let lightbulbSlash = "lightbulb.slash"
     public static let questionmarkCircle = "questionmark.circle"
     public static let personCirclePlus = "person.crop.circle.badge.plus"
@@ -153,6 +161,9 @@ public enum SFSymbolName {
 
     public static let clockWarning = "clock.badge.exclamationmark"
     public static let iPhonelocked = "lock.iphone"
+    public static let iPhoneGen2 = "iphone.smartbatterycase.gen2"
+    public static let infoBubble = "info.bubble"
+    public static let archivebox = "archivebox"
 
     public static let hourglass = "hourglass"
     public static var euroSign: String {

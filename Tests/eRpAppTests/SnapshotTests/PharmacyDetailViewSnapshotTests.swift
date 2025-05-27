@@ -51,8 +51,8 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PharmacyDetailView(
             store: store(
                 for: .init(
-                    prescriptions: Shared([]),
-                    selectedPrescriptions: Shared([]),
+                    prescriptions: Shared(value: []),
+                    selectedPrescriptions: Shared(value: []),
                     inRedeemProcess: true,
                     pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive
                 )
@@ -79,8 +79,8 @@ final class PharmacyDetailViewSnapshotTests: ERPSnapshotTestCase {
 extension PharmacyDetailViewSnapshotTests {
     enum Fixtures {
         static let allServiceOptionsState = PharmacyDetailDomain.State(
-            prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: true,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA,
             hasRedeemableTasks: true,
@@ -88,8 +88,8 @@ extension PharmacyDetailViewSnapshotTests {
         )
 
         static let inactiveState = PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: true,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive,
             hasRedeemableTasks: false,
@@ -97,8 +97,8 @@ extension PharmacyDetailViewSnapshotTests {
         )
 
         static let sheetNoServiceState = PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             inOrdersMessage: true,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive

@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FHIRVZD
 import MapKit
 import Pharmacy
 import SwiftUI
@@ -194,8 +195,10 @@ struct OrderDetailDomain {
             guard let pharmacy = state.order?.pharmacy else { return .none }
             return .run { send in
                 await send(.response(.loadAndShowPharmacyReceived(
-                    try await pharmacyRepository.updateFromRemote(by: pharmacy.telematikID)
-                        .asyncResult(\.self)
+                    try await pharmacyRepository.updateFromRemote(
+                        by: pharmacy.telematikID
+                    )
+                    .asyncResult(\.self)
                 )))
             }
         case let .response(.loadAndShowPharmacyReceived(result)):
@@ -206,8 +209,8 @@ struct OrderDetailDomain {
 
                 state.destination = .pharmacyDetail(
                     PharmacyDetailDomain.State(
-                        prescriptions: Shared([]),
-                        selectedPrescriptions: Shared([]),
+                        prescriptions: Shared(value: []),
+                        selectedPrescriptions: Shared(value: []),
                         inRedeemProcess: false,
                         inOrdersMessage: true,
                         pharmacyViewModel: .init(

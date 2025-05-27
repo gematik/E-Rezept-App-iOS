@@ -24,6 +24,14 @@ import SwiftUI
 import XCTest
 
 final class MainViewSnapshotTests: ERPSnapshotTestCase {
+    override func invokeTest() {
+        withDependencies { dependencies in
+            dependencies.date.now = TestDate.defaultReferenceDate
+        } operation: {
+            super.invokeTest()
+        }
+    }
+
     private func store(for state: MainDomain.State) -> StoreOf<MainDomain> {
         StoreOf<MainDomain>(initialState: state) {
             EmptyReducer()
@@ -128,22 +136,18 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
     }
 
     func testMainView_ALotOfPrescriptions() {
-        withDependencies {
-            $0.date = DateGenerator { Date() }
-        } operation: {
-            let prescriptions = Prescription.Fixtures.prescriptions
+        let prescriptions = Prescription.Fixtures.prescriptions
 
-            let sut = MainView(store: store(for: MainDomain.State(
-                prescriptionListState: PrescriptionListDomain.State(
-                    prescriptions: prescriptions,
-                    profile: UserProfile.Dummies.profileA
-                ),
-                horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
-            )))
-                .frame(width: 320, height: 2000)
+        let sut = MainView(store: store(for: MainDomain.State(
+            prescriptionListState: PrescriptionListDomain.State(
+                prescriptions: prescriptions,
+                profile: UserProfile.Dummies.profileA
+            ),
+            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
+        )))
+            .frame(width: 320, height: 2000)
 
-            assertSnapshots(of: sut, as: snapshotModi())
-        }
+        assertSnapshots(of: sut, as: snapshotModi())
     }
 
     func testMainView_WelcomeDrawer() {

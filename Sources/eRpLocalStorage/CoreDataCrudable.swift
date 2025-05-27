@@ -141,6 +141,9 @@ extension CoreDataCrudable {
                         moc.reset()
                     }
                 }
+                foregroundQueue.schedule {
+                    coreData.container.viewContext.refreshAllObjects()
+                }
             }
         }
         .subscribe(on: backgroundQueue)

@@ -756,7 +756,7 @@
             "identifier": "identifier",
             "erxTaskId": "erxTaskId",
             "accessCode": "accessCode",
-            "pharmacyTelematikId": "pharmacyTelematikId",
+            "telematikId": "telematikId",
             "flowType": "160",
             "payload": {
                 "version": 1,

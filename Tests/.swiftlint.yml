@@ -14,3 +14,13 @@ opt_in_rules:
   - file_name
 file_name: 
   excluded: ["SnapshotHelper.swift"]
+
+custom_rules:
+  must_not_contain_demodate:
+    included: "Tests.*\\.swift"
+    name: "Must not contain DemoDate"
+    regex: ".*DemoDate.*"
+    message: "File contains the string 'DemoDate'. Use 'TestDate' instead."
+    severity: error
+
+

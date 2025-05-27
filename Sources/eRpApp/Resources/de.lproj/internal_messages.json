@@ -22,5 +22,11 @@
         "text": "🛒 **Verbesserter Bestellflow**\nDer Bestellprozess ist jetzt einfacher und schneller.\n\n🌐 **Neue Sprachen**\nUnsere App ist ab jetzt auch in Spanisch und Irisch verfügbar.\n\n📞 **Erweiterte Kontaktmöglichkeiten**\nWir haben neue Kontaktoptionen für ausgewählte Versicherungen eingeführt.\n\n🔍 **Detaillierte Zugriffsprotokolle**\nIn den Zugriffsprotokollen zeigen wir jetzt auch die TelematikIDs an, sodass besser identifiziert werden kann, wer Zugriff hatte.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Verordnete DiGAs einlösen**\nAb sofort können Sie Verordnungen für digitale Gesundheitsanwendungen (DiGAs) direkt über die E-Rezept App einlösen. Den Freischaltcode und den Link zur verschriebenen App erhalten Sie direkt nach der Einlösung.\n\n**🏥 Neue Apothekendatenbank**\nWir haben eine neue, zukunftssichere Datenbank für die Apothekensuche eingeführt.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

@@ -157,3 +157,160 @@ public class TrustStoreClientMock: TrustStoreClient {
 
 
 }
+public class TrustStoreStorageMock: TrustStoreStorage {
+
+    public init() {}
+
+    public var certList: AnyPublisher<CertList?, Never> {
+        get { return underlyingCertList }
+        set(value) { underlyingCertList = value }
+    }
+    public var underlyingCertList: (AnyPublisher<CertList?, Never>)!
+    public var ocspList: AnyPublisher<OCSPList?, Never> {
+        get { return underlyingOcspList }
+        set(value) { underlyingOcspList = value }
+    }
+    public var underlyingOcspList: (AnyPublisher<OCSPList?, Never>)!
+
+
+    //MARK: - set
+
+    public var setCertListCertListVoidCallsCount = 0
+    public var setCertListCertListVoidCalled: Bool {
+        return setCertListCertListVoidCallsCount > 0
+    }
+    public var setCertListCertListVoidReceivedCertList: (CertList)?
+    public var setCertListCertListVoidReceivedInvocations: [(CertList)?] = []
+    public var setCertListCertListVoidClosure: ((CertList?) -> Void)?
+
+    public func set(certList: CertList?) {
+        setCertListCertListVoidCallsCount += 1
+        setCertListCertListVoidReceivedCertList = certList
+        setCertListCertListVoidReceivedInvocations.append(certList)
+        setCertListCertListVoidClosure?(certList)
+    }
+
+    //MARK: - set
+
+    public var setOcspListOCSPListVoidCallsCount = 0
+    public var setOcspListOCSPListVoidCalled: Bool {
+        return setOcspListOCSPListVoidCallsCount > 0
+    }
+    public var setOcspListOCSPListVoidReceivedOcspList: (OCSPList)?
+    public var setOcspListOCSPListVoidReceivedInvocations: [(OCSPList)?] = []
+    public var setOcspListOCSPListVoidClosure: ((OCSPList?) -> Void)?
+
+    public func set(ocspList: OCSPList?) {
+        setOcspListOCSPListVoidCallsCount += 1
+        setOcspListOCSPListVoidReceivedOcspList = ocspList
+        setOcspListOCSPListVoidReceivedInvocations.append(ocspList)
+        setOcspListOCSPListVoidClosure?(ocspList)
+    }
+
+    //MARK: - getPKICertificates
+
+    public var getPKICertificatesPKICertificatesCallsCount = 0
+    public var getPKICertificatesPKICertificatesCalled: Bool {
+        return getPKICertificatesPKICertificatesCallsCount > 0
+    }
+    public var getPKICertificatesPKICertificatesReturnValue: PKICertificates?
+    public var getPKICertificatesPKICertificatesClosure: (() -> PKICertificates?)?
+
+    public func getPKICertificates() -> PKICertificates? {
+        getPKICertificatesPKICertificatesCallsCount += 1
+        if let getPKICertificatesPKICertificatesClosure = getPKICertificatesPKICertificatesClosure {
+            return getPKICertificatesPKICertificatesClosure()
+        } else {
+            return getPKICertificatesPKICertificatesReturnValue
+        }
+    }
+
+    //MARK: - set
+
+    public var setPkiCertificatesPKICertificatesVoidCallsCount = 0
+    public var setPkiCertificatesPKICertificatesVoidCalled: Bool {
+        return setPkiCertificatesPKICertificatesVoidCallsCount > 0
+    }
+    public var setPkiCertificatesPKICertificatesVoidReceivedPkiCertificates: (PKICertificates)?
+    public var setPkiCertificatesPKICertificatesVoidReceivedInvocations: [(PKICertificates)?] = []
+    public var setPkiCertificatesPKICertificatesVoidClosure: ((PKICertificates?) -> Void)?
+
+    public func set(pkiCertificates: PKICertificates?) {
+        setPkiCertificatesPKICertificatesVoidCallsCount += 1
+        setPkiCertificatesPKICertificatesVoidReceivedPkiCertificates = pkiCertificates
+        setPkiCertificatesPKICertificatesVoidReceivedInvocations.append(pkiCertificates)
+        setPkiCertificatesPKICertificatesVoidClosure?(pkiCertificates)
+    }
+
+    //MARK: - getVauCertificate
+
+    public var getVauCertificateDataCallsCount = 0
+    public var getVauCertificateDataCalled: Bool {
+        return getVauCertificateDataCallsCount > 0
+    }
+    public var getVauCertificateDataReturnValue: Data?
+    public var getVauCertificateDataClosure: (() -> Data?)?
+
+    public func getVauCertificate() -> Data? {
+        getVauCertificateDataCallsCount += 1
+        if let getVauCertificateDataClosure = getVauCertificateDataClosure {
+            return getVauCertificateDataClosure()
+        } else {
+            return getVauCertificateDataReturnValue
+        }
+    }
+
+    //MARK: - set
+
+    public var setVauCertificateDataVoidCallsCount = 0
+    public var setVauCertificateDataVoidCalled: Bool {
+        return setVauCertificateDataVoidCallsCount > 0
+    }
+    public var setVauCertificateDataVoidReceivedVauCertificate: (Data)?
+    public var setVauCertificateDataVoidReceivedInvocations: [(Data)?] = []
+    public var setVauCertificateDataVoidClosure: ((Data?) -> Void)?
+
+    public func set(vauCertificate: Data?) {
+        setVauCertificateDataVoidCallsCount += 1
+        setVauCertificateDataVoidReceivedVauCertificate = vauCertificate
+        setVauCertificateDataVoidReceivedInvocations.append(vauCertificate)
+        setVauCertificateDataVoidClosure?(vauCertificate)
+    }
+
+    //MARK: - getVauCertificateOcspResponse
+
+    public var getVauCertificateOcspResponseDataCallsCount = 0
+    public var getVauCertificateOcspResponseDataCalled: Bool {
+        return getVauCertificateOcspResponseDataCallsCount > 0
+    }
+    public var getVauCertificateOcspResponseDataReturnValue: Data?
+    public var getVauCertificateOcspResponseDataClosure: (() -> Data?)?
+
+    public func getVauCertificateOcspResponse() -> Data? {
+        getVauCertificateOcspResponseDataCallsCount += 1
+        if let getVauCertificateOcspResponseDataClosure = getVauCertificateOcspResponseDataClosure {
+            return getVauCertificateOcspResponseDataClosure()
+        } else {
+            return getVauCertificateOcspResponseDataReturnValue
+        }
+    }
+
+    //MARK: - set
+
+    public var setVauCertificateOcspResponseDataVoidCallsCount = 0
+    public var setVauCertificateOcspResponseDataVoidCalled: Bool {
+        return setVauCertificateOcspResponseDataVoidCallsCount > 0
+    }
+    public var setVauCertificateOcspResponseDataVoidReceivedVauCertificateOcspResponse: (Data)?
+    public var setVauCertificateOcspResponseDataVoidReceivedInvocations: [(Data)?] = []
+    public var setVauCertificateOcspResponseDataVoidClosure: ((Data?) -> Void)?
+
+    public func set(vauCertificateOcspResponse: Data?) {
+        setVauCertificateOcspResponseDataVoidCallsCount += 1
+        setVauCertificateOcspResponseDataVoidReceivedVauCertificateOcspResponse = vauCertificateOcspResponse
+        setVauCertificateOcspResponseDataVoidReceivedInvocations.append(vauCertificateOcspResponse)
+        setVauCertificateOcspResponseDataVoidClosure?(vauCertificateOcspResponse)
+    }
+
+
+}

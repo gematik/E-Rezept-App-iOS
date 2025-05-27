@@ -66,7 +66,11 @@ final class IDPIntegrationTests: XCTestCase {
             ]
         )
 
-        let trustStoreSession = MockTrustStoreSession()
+        let trustStoreSession = TrustStoreSessionMock()
+        trustStoreSession.validateCertificateX509AnyPublisherBoolTrustStoreErrorReturnValue = Just(true)
+            .setFailureType(to: TrustStoreError.self)
+            .eraseToAnyPublisher()
+
         let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
         let session = DefaultIDPSession(
             config: configuration,
@@ -207,7 +211,10 @@ final class IDPIntegrationTests: XCTestCase {
                 LoggingInterceptor(log: .body),
             ]
         )
-        let trustStoreSession = MockTrustStoreSession()
+        let trustStoreSession = TrustStoreSessionMock()
+        trustStoreSession.validateCertificateX509AnyPublisherBoolTrustStoreErrorReturnValue = Just(true)
+            .setFailureType(to: TrustStoreError.self)
+            .eraseToAnyPublisher()
 
         let pairingIDPSession = DefaultIDPSession(
             config: pairingIDPSessionConfiguration,
@@ -347,7 +354,10 @@ final class IDPIntegrationTests: XCTestCase {
                 LoggingInterceptor(log: .body),
             ]
         )
-        let trustStoreSession = MockTrustStoreSession()
+        let trustStoreSession = TrustStoreSessionMock()
+        trustStoreSession.validateCertificateX509AnyPublisherBoolTrustStoreErrorReturnValue = Just(true)
+            .setFailureType(to: TrustStoreError.self)
+            .eraseToAnyPublisher()
 
         let pairingIDPSession = DefaultIDPSession(
             config: pairingIDPSessionConfiguration,
@@ -428,7 +438,10 @@ final class IDPIntegrationTests: XCTestCase {
             ]
         )
 
-        let trustStoreSession = MockTrustStoreSession()
+        let trustStoreSession = TrustStoreSessionMock()
+        trustStoreSession.validateCertificateX509AnyPublisherBoolTrustStoreErrorReturnValue = Just(true)
+            .setFailureType(to: TrustStoreError.self)
+            .eraseToAnyPublisher()
         let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
         let session = DefaultIDPSession(
             config: configuration,
@@ -478,9 +491,6 @@ final class IDPIntegrationTests: XCTestCase {
             .startExtAuth(entry: selectedEntry)
             .test(
                 timeout: 100,
-                failure: { error in
-                    fail("\(error)")
-                },
                 expectations: { list in
 
                     // MARK: - Step 2: Authentication Request Response
@@ -587,18 +597,6 @@ class Brainpool256r1Signer: JWTSigner {
 
     func sign(message: Data) async throws -> Data {
         try key.sign(message: message).rawRepresentation
-    }
-}
-
-class MockTrustStoreSession: TrustStoreSession {
-    func reset() {}
-
-    func validate(certificate _: X509) -> AnyPublisher<Bool, TrustStoreError> {
-        Just(true).setFailureType(to: TrustStoreError.self).eraseToAnyPublisher()
-    }
-
-    func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError> {
-        Just(try! X509(der: Data())).setFailureType(to: TrustStoreError.self).eraseToAnyPublisher()
     }
 }
 

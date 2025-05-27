@@ -18,11 +18,13 @@
 
 import AVS
 import Combine
+import ComposableArchitecture
 import Dependencies
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
 import FHIRClient
+import FHIRVZD
 import Foundation
 import HTTPClient
 import IDP
@@ -127,6 +129,15 @@ class StandardSessionContainer: UserSession {
         )
     }()
 
+    lazy var fhirVZDSession: FHIRVZDSession = {
+        let fhirVZDConfig = FHIRVZDClient.Configuration(
+            eRezeptAPIServer: appConfiguration.eRezept,
+            eRezeptAdditionalHeader: appConfiguration.eRezeptAdditionalHeader
+        )
+
+        return DefaultFHIRVZDSession(config: fhirVZDConfig)
+    }()
+
     lazy var extAuthRequestStorage: ExtAuthRequestStorage = { PersistentExtAuthRequestStorage() }()
     lazy var secureUserStore: SecureUserDataStore = { keychainStorage }()
     lazy var localUserStore: UserDataStore = { UserDefaultsStore() }()
@@ -180,14 +191,14 @@ class StandardSessionContainer: UserSession {
     @Dependency(\.pharmacyServiceFactory) var pharmacyServiceFactory: PharmacyServiceFactory
 
     lazy var pharmacyRepository: PharmacyRepository = {
-        DefaultPharmacyRepository(
+        let fhirClient = FHIRClient(
+            server: appConfiguration.fhirVzd,
+            httpClient: fhirVZDHttpClient
+        )
+
+        return DefaultPharmacyRepository(
             disk: pharmacyCoreDataStore,
-            cloud: pharmacyServiceFactory.construct(
-                FHIRClient(
-                    server: appConfiguration.apoVzd,
-                    httpClient: pharmacyHttpClient
-                )
-            )
+            cloud: pharmacyServiceFactory.construct(fhirClient, fhirVZDSession)
         )
     }()
 
@@ -402,6 +413,20 @@ extension StandardSessionContainer {
     var pharmacyHttpClient: HTTPClient {
         let interceptors: [Interceptor] = [
             AdditionalHeaderInterceptor(additionalHeader: appConfiguration.apoVzdAdditionalHeader),
+            LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
+            DebugLiveLogger.LogInterceptor(),
+        ]
+
+        // Remote FHIR data source configuration
+        return DefaultHTTPClient(
+            urlSessionConfiguration: .ephemeral,
+            interceptors: interceptors
+        )
+    }
+
+    var fhirVZDHttpClient: HTTPClient {
+        let interceptors: [Interceptor] = [
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.fhirVzdAdditionalHeader),
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
         ]

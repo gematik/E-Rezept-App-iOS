@@ -131,11 +131,11 @@ final class AppDomainTests: XCTestCase {
         )
 
         static let pharmacySearchDomainState = PharmacySearchDomain.State(
-            selectedPrescriptions: Shared([]),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: [],
-            pharmacyFilterOptions: Shared([]),
+            pharmacyFilterOptions: Shared(value: []),
             searchState: .searchResultEmpty
         )
 

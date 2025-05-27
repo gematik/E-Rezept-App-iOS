@@ -38,7 +38,7 @@ extension ErxTask {
         /// `true` if user has interacted with this communication, otherwise false if loaded from server
         public var isRead: Bool
         /// JSON string containing informations the actual message (to-do: parse into object)
-        public let payloadJSON: String
+        public let payloadJSON: String?
         /// Parsed `payloadJSON` into `Payload` or nil if format is wrong
         public let payload: Payload?
 
@@ -65,7 +65,7 @@ extension ErxTask {
             telematikId: String,
             orderId: String? = nil,
             timestamp: String,
-            payloadJSON: String,
+            payloadJSON: String?,
             isRead: Bool = false
         ) {
             self.identifier = identifier
@@ -112,8 +112,9 @@ extension ErxTask {
             /// Version of the JSON
             let version: Int
 
-            public static func from(string: String, decoder: JSONDecoder = defaultDecoder) throws -> Self {
-                try from(data: Data(string.utf8), decoder: decoder)
+            public static func from(string: String?, decoder: JSONDecoder = defaultDecoder) throws -> Self? {
+                guard let string = string else { return nil }
+                return try from(data: Data(string.utf8), decoder: decoder)
             }
 
             static func from(data: Data, decoder: JSONDecoder = defaultDecoder) throws -> Self {
@@ -180,7 +181,7 @@ extension ErxTask.Communication: Comparable, Hashable {
         public let orderId: String?
         public let timestamp: String
         public let isRead: Bool
-        public let payloadJSON: String
+        public let payloadJSON: String?
         public let payload: Payload?
         public var id: String {
             identifier
@@ -194,7 +195,7 @@ extension ErxTask.Communication: Comparable, Hashable {
             telematikId: String,
             orderId: String? = nil,
             timestamp: String,
-            payloadJSON: String,
+            payloadJSON: String? = nil,
             isRead: Bool = false
         ) {
             self.identifier = identifier
@@ -226,7 +227,7 @@ extension ErxTask.Communication: Comparable, Hashable {
     // Acts as the key for an Unique Communication
     struct UniqueKey: Equatable, Hashable {
         let profile: Profile
-        let payload: String
+        let payload: String?
         let insuranceId: String
         let telematikId: String
         let orderId: String

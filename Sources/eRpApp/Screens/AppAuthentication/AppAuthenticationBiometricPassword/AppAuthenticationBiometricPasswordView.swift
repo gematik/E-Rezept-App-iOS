@@ -34,59 +34,30 @@ struct AppAuthenticationBiometricPasswordView: View {
         WithPerceptionTracking {
             if !store.showPassword {
                 VStack(alignment: .center) {
-                    if store.showUsePasswordMessage {
-                        Text(L10n.authTxtBapPasswordMessage)
-                            .font(.subheadline.weight(.regular))
-                            .foregroundColor(Colors.textSecondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.bottom)
-                    }
-
                     switch store.biometryType {
                     case .faceID:
-                        Button(action: {
+                        PrimaryTextButton(
+                            text: L10n.authBtnBapFaceid,
+                            a11y: A11y.auth.authBtnBapFaceid,
+                            image: Image(systemName: SFSymbolName.faceId),
+                            useFullWidth: false
+                        ) {
                             store.send(.startAuthenticationChallenge)
-                        }, label: {
-                            HStack {
-                                Image(systemName: SFSymbolName.faceId)
-                                    .foregroundColor(.white)
-                                    .font(Font.body.weight(.bold))
-                                Text(L10n.authBtnBapFaceid)
-                                    .fontWeight(.semibold)
-                                    .font(.body)
-                                    .multilineTextAlignment(.center)
-                                    .foregroundColor(Colors.systemColorWhite)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding(.vertical)
-                            .padding(.horizontal, 64)
-                        })
-                            .accessibility(identifier: A11y.auth.authBtnBapFaceid)
-                            .background(Colors.primary)
-                            .cornerRadius(16)
-                            .padding()
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .center)
+
                     case .touchID:
-                        Button(action: {
+                        PrimaryTextButton(
+                            text: L10n.authBtnBapTouchid,
+                            a11y: A11y.auth.authBtnBapTouchid,
+                            image: Image(systemName: SFSymbolName.touchId),
+                            useFullWidth: false
+                        ) {
                             store.send(.startAuthenticationChallenge)
-                        }, label: {
-                            HStack {
-                                Image(systemName: SFSymbolName.touchId)
-                                    .foregroundColor(.white)
-                                    .font(Font.body.weight(.bold))
-                                Text(L10n.authBtnBapTouchid)
-                                    .fontWeight(.semibold)
-                                    .font(.body)
-                                    .multilineTextAlignment(.center)
-                                    .foregroundColor(Colors.systemColorWhite)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding(.vertical)
-                            .padding(.horizontal, 64)
-                        })
-                            .accessibility(identifier: A11y.auth.authBtnBapTouchid)
-                            .background(Colors.primary)
-                            .cornerRadius(16)
-                            .padding()
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .center)
                     }
 
                     Button(L10n.authBtnBapChange) {
@@ -119,7 +90,7 @@ struct PasswordView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            VStack(alignment: .center) {
+            VStack(alignment: .leading) {
                 SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
                                       accessibilityLabelKey: L10n.authTxtPasswordLabel,
                                       text: $store.password.sending(\.setPassword),
@@ -129,35 +100,44 @@ struct PasswordView: View {
                 .padding()
                 .font(Font.body)
                 .background(Color(.systemBackground))
-                .padding(.vertical, 1)
-                .background(Colors.systemGray3)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(
+                            store.showUnsuccessfulAttemptMessage ? Colors.red600 : Color(.systemGray3),
+                            lineWidth: 1
+                        )
+                )
+                .padding(.horizontal)
                 .accessibility(identifier: A11y.auth.authEdtPasswordInput)
 
                 if store.showUnsuccessfulAttemptMessage {
                     UnsuccessfulAttemptMessageView()
                         .padding(.horizontal)
+                        .padding(.top, 4)
                 }
 
                 PrimaryTextButton(
                     text: L10n.authBtnPasswordContinue,
                     a11y: A11y.auth.authBtnPasswordContinue,
-                    isEnabled: !store.password.isEmpty
+                    isEnabled: !store.password.isEmpty,
+                    useFullWidth: false
                 ) {
                     store.send(.loginButtonTapped, animation: .default)
                 }
                 .padding()
+                .frame(maxWidth: .infinity, alignment: .center)
 
                 Button(action: {
                     store.send(.switchToPassword(false), animation: .default)
                 }, label: {
-                    Text(store
-                        .biometryType == .faceID ? L10n.authBtnBapBackFaceID : L10n.authBtnBapBackTouchID)
+                    Text(L10n.authBtnBapBack)
                 }).foregroundColor(Colors.primary700)
                     .font(.body.weight(.regular))
                     .accessibility(identifier: A11y.auth.authBtnBapChange)
                     .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .center)
                     .multilineTextAlignment(.center)
-                    .padding()
             }
         }
     }

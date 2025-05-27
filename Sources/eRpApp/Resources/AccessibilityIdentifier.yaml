@@ -287,6 +287,7 @@ settings:
     - stg_con_txt_footnote
     - stg_con_txt_mail
     - stg_con_txt_survey
+    - stg_con_txt_diga_survey
     - stg_con_btn_organ_donor
   dataPrivacy:
     - stg_dpr_txt_data_privacy
@@ -348,6 +349,7 @@ mainScreen:
   - erx_detailed_prescription_validity
   - erx_detailed_multiple_prescription_index
   - erx_detailed_self_payer
+  - erx_detailed_diGa_bage
   - erx_detailed_status
   - erx_btn_profile
   - erx_img_profile
@@ -480,6 +482,37 @@ prescriptionDetails:
   - prsc_dtl_img_hint_pkv_activate
   - prsc_dtl_img_hint_pkv_no_invoice
   - prsc_dtl_btn_pkv_invoice
+diga_detail:
+  - diga_dtl_btn_main_action
+  - diga_dtl_btn_toolbar_item
+  - diga_dtl_txt_name_header
+  - diga_dtl_txt_patient_header
+  - diga_dtl_btn_archive_toolbar
+  - diga_dtl_btn_unarchive_toolbar
+  - diga_dtl_btn_redeem_again_toolbar
+  - diga_dtl_btn_request_toolbar
+  - diga_dtl_btn_delete_toolbar
+  - diga_dtl_btn_toolbar_menu
+  - diga_dtl_txt_app_name
+  - diga_dtl_txt_languages
+  - diga_dtl_txt_platform
+  - diga_dtl_txt_medical_service
+  - diga_dtl_txt_additional_devices
+  - diga_dtl_txt_patient_cost
+  - diga_dtl_txt_production_cost
+  - diga_dtl_txt_patient
+  - diga_dtl_txt_practitioner
+  - diga_dtl_txt_organization
+  - diga_dtl_txt_authoredOn
+  - diga_dtl_support_txt_header
+  - diga_dtl_support_txt_provided_link
+  - diga_dtl_support_btn_open_link
+  - diga_dtl_description_txt_header
+  - diga_dtl_description_txt_desc
+  - diga_dtl_valid_txt_header
+  - diga_dtl_valid_txt_subheader
+  - diga_dtl_valid_txt_start_date
+  - diga_dtl_valid_txt_end_date
 pharmacySearch:
   - pha_search_txt_result_list
   - pha_search_txt_result_list_entry
@@ -613,6 +646,13 @@ medicationReminder:
   - med_reminder_drawer_dosage_instruction_info
   - med_reminder_drawer_dosage_instruction_info_title
   - med_reminder_drawer_dosage_instruction_info_description
+  - med_reminder_btn_weekday_monday
+  - med_reminder_btn_weekday_tuesday
+  - med_reminder_btn_weekday_wednesday
+  - med_reminder_btn_weekday_thursday
+  - med_reminder_btn_weekday_friday
+  - med_reminder_btn_weekday_saturday
+  - med_reminder_btn_weekday_sunday
   - med_reminder_btn_repetition_infinite
   - med_reminder_btn_repetition_finite
   - med_reminder_btn_repetition_date_start

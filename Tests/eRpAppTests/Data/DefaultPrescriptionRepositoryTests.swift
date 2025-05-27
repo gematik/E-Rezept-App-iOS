@@ -48,6 +48,7 @@ final class DefaultPrescriptionRepositoryTests: XCTestCase {
                     // swiftlint:disable:previous trailing_closure
                     expect(prescriptions.count) == 15
 
+                    // Note: This can only work if we'd inject the refer
                     let notArchivedPrescriptions = prescriptions.filter { !$0.isArchived }
                     expect(notArchivedPrescriptions.count) == 10
 

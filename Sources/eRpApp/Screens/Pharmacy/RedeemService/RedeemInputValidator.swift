@@ -16,6 +16,8 @@
 //
 //
 
+// swiftlint:disable file_length
+
 import AVS
 import Dependencies
 import DependenciesMacros
@@ -80,6 +82,15 @@ protocol RedeemInputValidator {
         phone: String?,
         mail: String?
     ) -> Validity
+
+    func onPremiseOrElseIsNonEmptyContactData( // swiftlint:disable:this function_parameter_count
+        optionType: RedeemOption,
+        name: String?,
+        street: String?,
+        zip: String?,
+        city: String?,
+        phone: String?
+    ) -> Bool
 }
 
 struct RedeemInputValidatorDependency: DependencyKey {
@@ -267,6 +278,22 @@ extension AVSMessage {
             )
         }
 
+        func onPremiseOrElseIsNonEmptyContactData( // swiftlint:disable:this function_parameter_count
+            optionType: RedeemOption,
+            name: String?,
+            street: String?,
+            zip: String?,
+            city: String?,
+            phone: String?
+        ) -> Bool {
+            switch optionType {
+            case .onPremise:
+                return true
+            case .shipment, .delivery:
+                return isCompleteContactData(name: name, street: street, zip: zip, city: city, phone: phone)
+            }
+        }
+
         var service: RedeemServiceOption {
             .avs
         }
@@ -278,6 +305,11 @@ extension AVSMessage {
             case let (phone?, nil): return !phone.isEmpty
             case let (nil, mail?): return !mail.isEmpty
             }
+        }
+
+        func isCompleteContactData(name: String?, street: String?, zip: String?, city: String?,
+                                   phone: String?) -> Bool {
+            name != nil && street != nil && zip != nil && city != nil && phone != nil
         }
     }
 }
@@ -425,8 +457,29 @@ extension ErxTaskOrder {
             }
         }
 
+        func onPremiseOrElseIsNonEmptyContactData( // swiftlint:disable:this function_parameter_count
+            optionType: RedeemOption,
+            name: String?,
+            street: String?,
+            zip: String?,
+            city: String?,
+            phone: String?
+        ) -> Bool {
+            switch optionType {
+            case .onPremise:
+                return true
+            case .shipment, .delivery:
+                return isCompleteContactData(name: name, street: street, zip: zip, city: city, phone: phone)
+            }
+        }
+
         var service: RedeemServiceOption {
             .erxTaskRepository
+        }
+
+        func isCompleteContactData(name: String?, street: String?, zip: String?, city: String?,
+                                   phone: String?) -> Bool {
+            name != nil && street != nil && zip != nil && city != nil && phone != nil
         }
     }
 }
@@ -470,7 +523,20 @@ struct DemoRedeemInputValidator: RedeemInputValidator {
         optionType _: RedeemOption,
         phone _: String?,
         mail _: String?
-    ) -> Validity { .valid }
+    ) -> Validity {
+        .valid
+    }
+
+    func onPremiseOrElseIsNonEmptyContactData( // swiftlint:disable:this function_parameter_count
+        optionType _: RedeemOption,
+        name _: String?,
+        street _: String?,
+        zip _: String?,
+        city _: String?,
+        phone _: String?
+    ) -> Bool {
+        true
+    }
 }
 
 extension String {
@@ -483,3 +549,5 @@ extension String {
         return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: self)
     }
 }
+
+// swiftlint:enable file_length

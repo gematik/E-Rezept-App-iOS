@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -202,6 +202,7 @@ struct ExtAuthPendingDomain {
                     saveProfileWith(
                         insuranceId: payload?.idNummer,
                         insurance: payload?.organizationName,
+                        insuranceIK: payload?.organizationIK,
                         displayName: payload?.displayName,
                         overrideInsuranceTypeToPkv: overrideInsuranceTypeToPkv,
                         gIdEntry: entry
@@ -244,6 +245,7 @@ struct ExtAuthPendingDomain {
     func saveProfileWith(
         insuranceId: String?,
         insurance: String?,
+        insuranceIK: String?,
         displayName: String?,
         overrideInsuranceTypeToPkv: Bool = false,
         gIdEntry: KKAppDirectory.Entry?
@@ -266,6 +268,7 @@ struct ExtAuthPendingDomain {
                         profile.insurance = insurance
                         profile.displayName = displayName
                         profile.gIdEntry = gIdEntry
+                        profile.insuranceIK = insuranceIK
 
                         if profile.shouldAutoUpdateNameAtNextLogin,
                            let displayName = profile.displayName {

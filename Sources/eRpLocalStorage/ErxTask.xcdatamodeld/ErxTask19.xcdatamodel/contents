@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24D70" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23231" systemVersion="24E248" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="AuthEntry" representedClassName="AuthEntry" syncable="YES" codeGenerationType="class">
         <attribute name="gID" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="insuranceID" optional="YES" attributeType="String"/>
@@ -20,6 +20,24 @@
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="transactionID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="DiGaDispenseEntity" representedClassName="DiGaDispenseEntity" syncable="YES">
+        <attribute name="deepLink" optional="YES" attributeType="String"/>
+        <attribute name="isMissingData" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="redeemCode" optional="YES" attributeType="String"/>
+        <relationship name="medicationDispense" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationDispenseEntity" inverseName="digaDispense" inverseEntity="ErxTaskMedicationDispenseEntity"/>
+    </entity>
+    <entity name="DiGaInfoEntity" representedClassName="DiGaInfoEntity" syncable="YES">
+        <attribute name="isRead" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="refreshDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="state" optional="YES" attributeType="Binary"/>
+        <attribute name="taskId" optional="YES" attributeType="String"/>
+        <relationship name="deviceRequest" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskDeviceRequestEntity" inverseName="diGaInfo" inverseEntity="ErxTaskDeviceRequestEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="taskId"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
@@ -82,9 +100,11 @@
         <attribute name="authoredOn" optional="YES" attributeType="String"/>
         <attribute name="intent" optional="YES" attributeType="Binary"/>
         <attribute name="isSer" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="progress" optional="YES" attributeType="Binary"/>
         <attribute name="pzn" optional="YES" attributeType="String"/>
         <attribute name="status" optional="YES" attributeType="Binary"/>
         <relationship name="accidentInfo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskAccidentInfoEntity" inverseName="deviceRequest" inverseEntity="ErxTaskAccidentInfoEntity"/>
+        <relationship name="diGaInfo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DiGaInfoEntity" inverseName="deviceRequest" inverseEntity="DiGaInfoEntity"/>
         <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="deviceRequest" inverseEntity="ErxTaskEntity"/>
     </entity>
     <entity name="ErxTaskEntity" representedClassName="ErxTaskEntity" syncable="YES">
@@ -150,6 +170,7 @@
         <attribute name="taskId" optional="YES" attributeType="String"/>
         <attribute name="telematikId" optional="YES" attributeType="String"/>
         <attribute name="whenHandedOver" optional="YES" attributeType="String"/>
+        <relationship name="digaDispense" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DiGaDispenseEntity" inverseName="medicationDispense" inverseEntity="DiGaDispenseEntity"/>
         <relationship name="epaMedication" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxEpaMedicationEntity" inverseName="medicationDispense" inverseEntity="ErxEpaMedicationEntity"/>
         <relationship name="medication" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskMedicationEntity" inverseName="medicationDispense" inverseEntity="ErxTaskMedicationEntity"/>
         <relationship name="quantity" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="quantityMedicationDispense" inverseEntity="ErxTaskQuantityEntity"/>
@@ -235,6 +256,7 @@
         <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="taskId" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="weekdays" optional="YES" attributeType="String" defaultValueString="1,2,3,4,5,6,7"/>
         <relationship name="entries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MedicationScheduleEntryEntity" inverseName="medicationSchedule" inverseEntity="MedicationScheduleEntryEntity"/>
         <relationship name="erxTask" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="medicationSchedule" inverseEntity="ErxTaskEntity"/>
         <fetchIndex name="byObjectIdIndex">
@@ -298,6 +320,7 @@
         <attribute name="image" optional="YES" attributeType="String"/>
         <attribute name="insurance" optional="YES" attributeType="String"/>
         <attribute name="insuranceId" optional="YES" attributeType="String"/>
+        <attribute name="insuranceIK" optional="YES" attributeType="String"/>
         <attribute name="insuranceType" optional="YES" attributeType="String"/>
         <attribute name="lastAuthenticated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" attributeType="String"/>

@@ -33,17 +33,24 @@ final class NewProfileDomainTests: XCTestCase {
             dependencies.schedulers = Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler())
             dependencies.userDataStore = MockUserDataStore()
             dependencies.profileDataStore = mockProfileDataStore
+            dependencies.changeableUserSessionContainer = mockUsersSessionContainer
         }
     }
 
     let mainQueue = DispatchQueue.test
 
     var mockProfileDataStore: MockProfileDataStore!
+    var mockUsersSessionContainer: MockUsersSessionContainer!
+    var mockUserSession: MockUserSession!
+    var mockUserDataStore: MockUserDataStore!
 
     override func setUp() {
         super.setUp()
 
         mockProfileDataStore = MockProfileDataStore()
+        mockUserDataStore = MockUserDataStore()
+        mockUsersSessionContainer = MockUsersSessionContainer()
+        mockUserSession = MockUserSession()
     }
 
     func testSavingAnEmptyNameDisplaysError() async {
@@ -55,6 +62,9 @@ final class NewProfileDomainTests: XCTestCase {
     }
 
     func testSavingSucceeds() async {
+        mockUsersSessionContainer.userSession = mockUserSession
+        mockUserSession.mockUserDataStore = mockUserDataStore
+
         let sut = testStore(for: .init(name: "Bob", color: .red))
 
         mockProfileDataStore.saveProfilesReturnValue = Just(true)

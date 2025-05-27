@@ -35,6 +35,7 @@ extension ErxTaskMedicationDispenseEntity {
     @NSManaged public var quantity: ErxTaskQuantityEntity?
     @NSManaged public var medication: ErxTaskMedicationEntity?
     @NSManaged public var epaMedication: ErxEpaMedicationEntity?
+    @NSManaged public var digaDispense: DiGaDispenseEntity?
 }
 
 extension ErxTaskMedicationDispenseEntity: Identifiable {}

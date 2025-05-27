@@ -193,6 +193,9 @@ struct UnimplementedErxTaskRepository: ErxTaskRepository {
     func saveLocal(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, ErxRepositoryError> {
         fatalError("saveLocal(communications:) has not been implemented")
     }
+    func updateLocal(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, ErxRepositoryError> {
+        fatalError("updateLocal(diGaInfo:) has not been implemented")
+    }
     func countAllUnreadCommunicationsAndChargeItems(for fhirProfile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
         fatalError("countAllUnreadCommunicationsAndChargeItems(for:) has not been implemented")
     }
@@ -424,6 +427,9 @@ struct UnimplementedPharmacyRepository: PharmacyRepository {
     func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError> {
         fatalError("loadAvsCertificates(for:) has not been implemented")
     }
+    func fetchTelematikId(ikNumber: String) -> AnyPublisher<String?, PharmacyRepositoryError> {
+        fatalError("fetchTelematikId(ikNumber:) has not been implemented")
+    }
     func save(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         fatalError("save(pharmacy:) has not been implemented")
     }
@@ -549,8 +555,14 @@ struct UnimplementedRedeemInputValidator: RedeemInputValidator {
     func ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(optionType: RedeemOption, phone: String?, mail: String?) -> Validity {
         fatalError("ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(optionType:phone:mail:) has not been implemented")
     }
+    func onPremiseOrElseIsNonEmptyContactData(optionType: RedeemOption, name: String?, street: String?, zip: String?, city: String?, phone: String?) -> Bool {
+        fatalError("onPremiseOrElseIsNonEmptyContactData(optionType:name:street:zip:city:phone:) has not been implemented")
+    }
     func validate(_ shipmentInfo: ShipmentInfo?, for redeemOption: RedeemOption) -> Validity {
         fatalError("validate(_:for:) has not been implemented")
+    }
+    func hasCompleteContactData(_ shipmentInfo: ShipmentInfo?, for redeemOption: RedeemOption) -> Bool {
+        fatalError("hasCompleteContactData(_:for:) has not been implemented")
     }
     func validate(_ contactInfo: PharmacyContactDomain.ContactInfo) -> Validity {
         fatalError("validate(_:) has not been implemented")
@@ -564,6 +576,9 @@ struct UnimplementedRedeemService: RedeemService {
 
     func redeem(_ orders: [OrderRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         fatalError("redeem(_:) has not been implemented")
+    }
+    func redeemDiGa(_ orders: [OrderDiGaRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
+        fatalError("redeemDiGa(_:) has not been implemented")
     }
 }
 struct UnimplementedRegisteredDevicesService: RegisteredDevicesService {

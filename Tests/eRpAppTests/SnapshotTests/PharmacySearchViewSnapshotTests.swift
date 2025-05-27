@@ -52,12 +52,12 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             )
         }
         let state = PharmacySearchDomain.State(
-            selectedPrescriptions: Shared([]),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             searchText: "",
             pharmacies: pharmacies,
             localPharmacies: pharmacies,
-            pharmacyFilterOptions: Shared([]),
+            pharmacyFilterOptions: Shared(value: []),
             searchState: .startView(loading: false)
         )
         let sut = NavigationStack {
@@ -78,7 +78,7 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             PharmacySearchView(
                 store: .init(
                     initialState: PharmacySearchDomain.State(
-                        selectedPrescriptions: Shared([]),
+                        selectedPrescriptions: Shared(value: []),
                         inRedeemProcess: false,
                         searchText: "Apothekesdfwerwerasdf",
                         pharmacyFilterOptions: PharmacySearchMapDomainTests.Fixtures.sharedEmptyFilter,
@@ -100,7 +100,7 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
             PharmacySearchView(
                 store: .init(
                     initialState: PharmacySearchDomain.State(
-                        selectedPrescriptions: Shared([]),
+                        selectedPrescriptions: Shared(value: []),
                         inRedeemProcess: false,
                         searchText: "Adler Apo",
                         pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
@@ -122,7 +122,7 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
         let sut = PharmacySearchMapView(
             store: .init(
                 initialState: PharmacySearchMapDomain.State(
-                    selectedPrescriptions: Shared([]),
+                    selectedPrescriptions: Shared(value: []),
                     inRedeemProcess: false,
                     mapLocation: .manual(MKCoordinateRegion.gematikHQRegion),
                     pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
@@ -155,6 +155,6 @@ final class PharmacySearchViewSnapshotTests: ERPSnapshotTestCase {
 
 extension PharmacySearchMapDomainTests {
     enum Fixtures {
-        static let sharedEmptyFilter: Shared<[PharmacySearchFilterDomain.PharmacyFilterOption]> = Shared([])
+        static let sharedEmptyFilter: Shared<[PharmacySearchFilterDomain.PharmacyFilterOption]> = Shared(value: [])
     }
 }

@@ -83,12 +83,12 @@ struct PharmacyPrescriptionSelectionDomain {
             }
             return .none
         case let .response(.loadLocalPrescriptionsReceived(.success(prescriptions))):
-            state.prescriptions = prescriptions.filter(\.isRedeemable)
+            state.$prescriptions.withLock { $0 = prescriptions.filter(\.isPharmacyRedeemable) }
             return .none
         case .response(.loadLocalPrescriptionsReceived(.failure)):
             return .none
         case let .saveSelection(prescriptions):
-            state.selectedPrescriptions = prescriptions
+            state.$selectedPrescriptions.withLock { $0 = prescriptions }
             return .run { _ in
                 await dismiss()
             }
@@ -99,7 +99,8 @@ struct PharmacyPrescriptionSelectionDomain {
 extension PharmacyPrescriptionSelectionDomain {
     enum Dummies {
         static let state = State(
-            prescriptions: Shared([Prescription.Dummies.prescriptionReady]), selectedPrescriptions: Shared([])
+            prescriptions: Shared(value: [Prescription.Dummies.prescriptionReady]),
+            selectedPrescriptions: Shared(value: [])
         )
 
         static let store = Store(

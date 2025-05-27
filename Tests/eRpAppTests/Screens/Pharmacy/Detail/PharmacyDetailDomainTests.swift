@@ -37,6 +37,14 @@ class PharmacyDetailDomainTests: XCTestCase {
 
     typealias TestStore = TestStoreOf<PharmacyDetailDomain>
 
+    override func invokeTest() {
+        withDependencies { dependencies in
+            dependencies.date.now = TestDate.defaultReferenceDate
+        } operation: {
+            super.invokeTest()
+        }
+    }
+
     override func setUp() {
         super.setUp()
         mockUserSession = MockUserSession()
@@ -122,8 +130,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         // Given a pharmacy with all avs and ErxTaskRepository services
         let pharmacyModel = allServicesPharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyModel,
             availableServiceOptions: [.delivery]
@@ -148,12 +156,12 @@ class PharmacyDetailDomainTests: XCTestCase {
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
-            $0.prescriptions = prescriptions
-            $0.serviceOptionState.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
+            $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
         }
 
         await sut.receive(.response(.loadLocalPrescriptionsReceived(expected))) {
-            $0.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
             $0.hasRedeemableTasks = true
         }
 
@@ -183,8 +191,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         // Given a pharmacy with all avs and ErxTaskRepository services
         var pharmacyModel = allServicesPharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyModel,
             availableServiceOptions: [.shipment]
@@ -209,12 +217,12 @@ class PharmacyDetailDomainTests: XCTestCase {
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
-            $0.prescriptions = prescriptions
-            $0.serviceOptionState.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
+            $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
         }
 
         await sut.receive(.response(.loadLocalPrescriptionsReceived(expected))) {
-            $0.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
             $0.hasRedeemableTasks = true
         }
 
@@ -243,8 +251,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         // Given a pharmacy with all avs and ErxTaskRepository services
         let pharmacyModel = allServicesPharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyModel
         ))
@@ -267,12 +275,12 @@ class PharmacyDetailDomainTests: XCTestCase {
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
-            $0.prescriptions = prescriptions
-            $0.serviceOptionState.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
+            $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
         }
         // Then only redeem services for `avs` should be available
         await sut.receive(.response(.loadLocalPrescriptionsReceived(expected))) {
-            $0.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
             $0.hasRedeemableTasks = true
         }
 
@@ -300,8 +308,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         // Given a pharmacy with only ErxTaskRepository services
         let pharmacyModel = PharmacyLocationViewModel.Dummies.pharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyModel
         ))
@@ -320,12 +328,12 @@ class PharmacyDetailDomainTests: XCTestCase {
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
-            $0.prescriptions = prescriptions
-            $0.serviceOptionState.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
+            $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
         }
         // Then only redeem services for ErxTaskRepository should be available (after login)
         await sut.receive(.response(.loadLocalPrescriptionsReceived(expected))) {
-            $0.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
             $0.hasRedeemableTasks = true
         }
 
@@ -353,8 +361,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         // Given a pharmacy without any services
         let pharmacyModel = noServicePharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyModel
         ))
@@ -371,12 +379,12 @@ class PharmacyDetailDomainTests: XCTestCase {
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
-            $0.prescriptions = prescriptions
-            $0.serviceOptionState.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
+            $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
         }
         // then no state change occurs (default is no service)
         await sut.receive(.response(.loadLocalPrescriptionsReceived(expected))) {
-            $0.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
             $0.hasRedeemableTasks = true
         }
 
@@ -417,8 +425,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         // Given a pharmacy without any services
         let pharmacyModel = noServicePharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyModel
         ))
@@ -435,12 +443,12 @@ class PharmacyDetailDomainTests: XCTestCase {
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
-            $0.prescriptions = prescriptions
-            $0.serviceOptionState.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
+            $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
         }
         // then no state change occurs (default is no service)
         await sut.receive(.response(.loadLocalPrescriptionsReceived(expected))) {
-            $0.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
             $0.hasRedeemableTasks = true
         }
 
@@ -479,8 +487,8 @@ class PharmacyDetailDomainTests: XCTestCase {
 
     func testTogglingFavoriteState_Success() async {
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
         ))
@@ -510,8 +518,8 @@ class PharmacyDetailDomainTests: XCTestCase {
 
     func testSetFavoriteStateTrue() async {
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
         ))
@@ -543,8 +551,8 @@ class PharmacyDetailDomainTests: XCTestCase {
 
     func testTogglingFavoriteState_Failure() async {
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA
         ))
@@ -568,8 +576,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         // Given a pharmacy without any services
         let pharmacyModel = noServicePharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared([]),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: []),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyModel
         ))
@@ -607,8 +615,8 @@ class PharmacyDetailDomainTests: XCTestCase {
             // Given a pharmacy with all avs and ErxTaskRepository services
             let pharmacyModel = allServicesPharmacy
             let sut = testStore(for: PharmacyDetailDomain.State(
-                prescriptions: Shared([]),
-                selectedPrescriptions: Shared([]),
+                prescriptions: Shared(value: []),
+                selectedPrescriptions: Shared(value: []),
                 inRedeemProcess: false,
                 pharmacyViewModel: pharmacyModel
             ))
@@ -623,11 +631,24 @@ class PharmacyDetailDomainTests: XCTestCase {
                 .eraseToAnyPublisher()
 
             let expectedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTask1,
+                                                    date: TestDate.defaultReferenceDate,
                                                     dateFormatter: UIDateFormatter.testValue)
             let nonReadyPrescriptions = [
-                Prescription(erxTask: ErxTask.Fixtures.erxTask9, dateFormatter: UIDateFormatter.testValue),
-                Prescription(erxTask: ErxTask.Fixtures.erxTask10, dateFormatter: UIDateFormatter.testValue),
-                Prescription(erxTask: ErxTask.Fixtures.erxTask11, dateFormatter: UIDateFormatter.testValue),
+                Prescription(
+                    erxTask: ErxTask.Fixtures.erxTask9,
+                    date: TestDate.defaultReferenceDate,
+                    dateFormatter: UIDateFormatter.testValue
+                ),
+                Prescription(
+                    erxTask: ErxTask.Fixtures.erxTask10,
+                    date: TestDate.defaultReferenceDate,
+                    dateFormatter: UIDateFormatter.testValue
+                ),
+                Prescription(
+                    erxTask: ErxTask.Fixtures.erxTask11,
+                    date: TestDate.defaultReferenceDate,
+                    dateFormatter: UIDateFormatter.testValue
+                ),
             ]
 
             let prescriptions = nonReadyPrescriptions + [expectedPrescription]
@@ -638,12 +659,12 @@ class PharmacyDetailDomainTests: XCTestCase {
             await sut.send(.task) {
                 // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`
                 // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
-                $0.prescriptions = [expectedPrescription]
-                $0.serviceOptionState.prescriptions = [expectedPrescription]
+                $0.$prescriptions.withLock { $0 = [expectedPrescription] }
+                $0.serviceOptionState.$prescriptions.withLock { $0 = [expectedPrescription] }
             }
 
             await sut.receive(.response(.loadLocalPrescriptionsReceived(.success(prescriptions)))) {
-                $0.prescriptions = [expectedPrescription]
+                $0.$prescriptions.withLock { $0 = [expectedPrescription] }
                 $0.hasRedeemableTasks = true
             }
 
@@ -664,8 +685,8 @@ class PharmacyDetailDomainTests: XCTestCase {
         let pharmacyModel = allServicesPharmacy
         let selectedPrescriptions = [Prescription.Dummies.prescriptionMVO]
         let sut = testStore(for: PharmacyDetailDomain.State(
-            prescriptions: Shared<[Prescription]>([]),
-            selectedPrescriptions: Shared(selectedPrescriptions),
+            prescriptions: Shared<[Prescription]>(value: []),
+            selectedPrescriptions: Shared(value: selectedPrescriptions),
             inRedeemProcess: true,
             pharmacyViewModel: pharmacyModel
         ))
@@ -687,12 +708,12 @@ class PharmacyDetailDomainTests: XCTestCase {
         await sut.send(.task) {
             // technically this should happen on `sut.receive(.response(.loadLocalPrescriptionsReceived(expected)))`,
             // due to shared state the test snapshot is wrong here, this might get fixed within TCA in the future?
-            $0.prescriptions = prescriptions
-            $0.serviceOptionState.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
+            $0.serviceOptionState.$prescriptions.withLock { $0 = prescriptions }
         }
 
         await sut.receive(.response(.loadLocalPrescriptionsReceived(expected))) {
-            $0.prescriptions = prescriptions
+            $0.$prescriptions.withLock { $0 = prescriptions }
             $0.hasRedeemableTasks = true
         }
 

@@ -188,6 +188,15 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
 	}
 
+	func updateLocal(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, ErxRepositoryError> {
+        stream
+        	.map { $0.updateLocal(
+				diGaInfo: diGaInfo
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
 	func countAllUnreadCommunicationsAndChargeItems(for fhirProfile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
         stream
         	.map { $0.countAllUnreadCommunicationsAndChargeItems(
@@ -727,6 +736,15 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
         stream
         	.map { $0.loadAvsCertificates(
 				for: id
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func fetchTelematikId(ikNumber: String) -> AnyPublisher<String?, PharmacyRepositoryError> {
+        stream
+        	.map { $0.fetchTelematikId(
+				ikNumber: ikNumber
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()

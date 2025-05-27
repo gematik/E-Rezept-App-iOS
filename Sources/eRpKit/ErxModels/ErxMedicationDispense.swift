@@ -35,7 +35,8 @@ public struct ErxMedicationDispense: Hashable, Codable, Sendable {
         quantity: ErxMedication.Quantity? = nil,
         noteText: String? = nil,
         medication: ErxMedication?,
-        epaMedication: ErxEpaMedication?
+        epaMedication: ErxEpaMedication?,
+        diGaDispense: DiGaDispense?
     ) {
         self.identifier = identifier
         self.taskId = taskId
@@ -47,6 +48,7 @@ public struct ErxMedicationDispense: Hashable, Codable, Sendable {
         self.noteText = noteText
         self.medication = medication
         self.epaMedication = epaMedication
+        self.diGaDispense = diGaDispense
     }
 
     /// unique identifier in each `ErxTask`
@@ -72,4 +74,6 @@ public struct ErxMedicationDispense: Hashable, Codable, Sendable {
     /// Beginning with GemWorkflow 1.4 the MedicationDispense's Medication is derived from the profile
     /// `GEM_ERP_PR_Medication` hence it replaces the now outdated `ErxMedication`
     public let epaMedication: ErxEpaMedication?
+    /// Dispense information for an DiGa - Task
+    public let diGaDispense: DiGaDispense?
 }

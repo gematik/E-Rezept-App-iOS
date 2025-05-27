@@ -51,7 +51,9 @@ struct PharmacySearchMapScreen<Previous>: Screen where Previous: Screen {
 
     @discardableResult
     func tapOnAnnotation(id: String, file _: StaticString = #file, line _: UInt = #line) -> PharmacyDetailsScreen {
-        app.otherElements.matching(identifier: "\(id)").firstMatch.tap()
+        let annotation = app.otherElements.matching(identifier: "\(id)").firstMatch
+        _ = annotation.waitForExistence(timeout: 2)
+        annotation.tap()
         return PharmacyDetailsScreen(app: app)
     }
 

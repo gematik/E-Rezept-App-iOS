@@ -107,6 +107,22 @@ typealias AnalyticsEvent = String
     struct ContactInsuranceCompany_selectReason: AnalyticsScreen {
       let name = "contactInsuranceCompany:selectReason"
     }
+    static let digasMain = DigasMain()
+    struct DigasMain: AnalyticsScreen {
+      let name = "digasMain"
+    }
+    static let digasMain_descriptionScreen = DigasMain_descriptionScreen()
+    struct DigasMain_descriptionScreen: AnalyticsScreen {
+      let name = "digasMain:descriptionScreen"
+    }
+    static let digasMain_digaSupportBottomSheetScreen = DigasMain_digaSupportBottomSheetScreen()
+    struct DigasMain_digaSupportBottomSheetScreen: AnalyticsScreen {
+      let name = "digasMain:digaSupportBottomSheetScreen"
+    }
+    static let digasMain_howLongDigaValidBottomSheetScreen = DigasMain_howLongDigaValidBottomSheetScreen()
+    struct DigasMain_howLongDigaValidBottomSheetScreen: AnalyticsScreen {
+      let name = "digasMain:howLongDigaValidBottomSheetScreen"
+    }
     static let errorAlert = ErrorAlert()
     struct ErrorAlert: AnalyticsScreen {
       let name = "Error Alert"

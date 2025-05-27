@@ -22,5 +22,11 @@
         "text": "🛒 **Sreabhadh ordaithe feabhsaithe** \nTá an próiseas ordaithe níos éasca agus níos tapúla anois. \n \n🌐 **Teangacha nua** \nTá ár aip ar fáil anois i Spáinnis agus i nGaeilge freisin. \n \n 📞 **Roghanna breise teagmhála** \nTá roghanna teagmhála nua tugtha isteach againn do chuideachtaí árachais roghnaithe. \n \n 🔍 **Logaí rochtana mionsonraithe** \nTaispeánaimid freisin na haitheantais teileamaitice sna logaí rochtana ionas gur fusa a aithint cé a raibh rochtain acu.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Fuascail oidis DiGA ar oideas** \nAs seo amach is féidir leat oidis a fhuascailt le haghaidh feidhmchlár sláinte digiteach (DiGA) go díreach tríd an aip ríomh-oideas. Gheobhaidh tú an cód gníomhachtaithe agus an nasc chuig an aip fhorordaithe díreach tar éis fuascailte. \n \n **🏥 Bunachar sonraí nua cógaisíochta** \nTá bunachar sonraí nua, atá réidh don todhchaí, tugtha isteach againn le haghaidh cuardaigh cógaisíochta.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

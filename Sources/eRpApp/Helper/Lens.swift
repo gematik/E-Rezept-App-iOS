@@ -121,6 +121,39 @@ extension ErxTask {
                 }
             }
         )
+
+        static let deviceRequest = Lens<ErxTask, ErxDeviceRequest?>(
+            get: { $0.deviceRequest },
+            set: { newdeviceRequest in
+                { oldErxTask in
+                    ErxTask(
+                        identifier: oldErxTask.identifier,
+                        status: oldErxTask.status,
+                        flowType: oldErxTask.flowType,
+                        accessCode: oldErxTask.accessCode,
+                        fullUrl: oldErxTask.fullUrl,
+                        authoredOn: oldErxTask.authoredOn,
+                        lastModified: oldErxTask.lastModified,
+                        expiresOn: oldErxTask.expiresOn,
+                        acceptedUntil: oldErxTask.acceptedUntil,
+                        redeemedOn: oldErxTask.redeemedOn,
+                        avsTransactions: oldErxTask.avsTransactions,
+                        author: oldErxTask.author,
+                        prescriptionId: oldErxTask.prescriptionId,
+                        source: oldErxTask.source,
+                        medication: oldErxTask.medication,
+                        medicationRequest: oldErxTask.medicationRequest,
+                        medicationSchedule: oldErxTask.medicationSchedule,
+                        patient: oldErxTask.patient,
+                        practitioner: oldErxTask.practitioner,
+                        organization: oldErxTask.organization,
+                        communications: oldErxTask.communications,
+                        medicationDispenses: oldErxTask.medicationDispenses,
+                        deviceRequest: newdeviceRequest
+                    )
+                }
+            }
+        )
     }
 }
 
@@ -184,6 +217,26 @@ extension Order {
                         chargeItems: oldOrder.chargeItems,
                         pharmacy: newPharmacy
                     )
+                }
+            }
+        )
+    }
+}
+
+extension ErxDeviceRequest {
+    enum lens {
+        static let diGaInfo = Lens<ErxDeviceRequest, DiGaInfo?>(
+            get: { $0.diGaInfo },
+            set: { newDiGaInfo in
+                { oldDeviceRequest in
+                    ErxDeviceRequest(status: oldDeviceRequest.status,
+                                     intent: oldDeviceRequest.intent,
+                                     pzn: oldDeviceRequest.pzn,
+                                     appName: oldDeviceRequest.appName,
+                                     isSER: oldDeviceRequest.isSER,
+                                     accidentInfo: oldDeviceRequest.accidentInfo,
+                                     authoredOn: oldDeviceRequest.authoredOn,
+                                     diGaInfo: newDiGaInfo)
                 }
             }
         )

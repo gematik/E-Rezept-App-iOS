@@ -530,6 +530,7 @@ class SmartMockErxTaskCoreDataStore: ErxTaskCoreDataStore, SmartMock {
         listAllChargeItemsRecordings = mocks?.listAllChargeItemsRecordings ?? .delegate
         saveChargeItemsRecordings = mocks?.saveChargeItemsRecordings ?? .delegate
         deleteChargeItemsRecordings = mocks?.deleteChargeItemsRecordings ?? .delegate
+        updateDiGaInfoRecordings = mocks?.updateDiGaInfoRecordings ?? .delegate
     }
 
     /// ErxLocalDataStore
@@ -931,6 +932,30 @@ class SmartMockErxTaskCoreDataStore: ErxTaskCoreDataStore, SmartMock {
         }
     }
 
+    var updateDiGaInfoRecordings: MockAnswer<Bool>
+
+    func update(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, LocalStoreError> {
+        guard !isRecording else {
+            let result = wrapped.update(
+                    diGaInfo: diGaInfo
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.updateDiGaInfoRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = updateDiGaInfoRecordings.next() {
+            return Just(value)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.update(
+                    diGaInfo: diGaInfo
+            )
+        }
+    }
+
     struct Mocks: Codable {
         var fetchTaskByAccessCodeRecordings: MockAnswer<ErxTask?>? = .delegate
         var listAllTasksRecordings: MockAnswer<[ErxTask]>? = .delegate
@@ -949,6 +974,7 @@ class SmartMockErxTaskCoreDataStore: ErxTaskCoreDataStore, SmartMock {
         var listAllChargeItemsRecordings: MockAnswer<[ErxSparseChargeItem]>? = .delegate
         var saveChargeItemsRecordings: MockAnswer<Bool>? = .delegate
         var deleteChargeItemsRecordings: MockAnswer<Bool>? = .delegate
+        var updateDiGaInfoRecordings: MockAnswer<Bool>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -970,7 +996,8 @@ class SmartMockErxTaskCoreDataStore: ErxTaskCoreDataStore, SmartMock {
                 fetchLatestTimestampForChargeItemsRecordings: fetchLatestTimestampForChargeItemsRecordings,
                 listAllChargeItemsRecordings: listAllChargeItemsRecordings,
                 saveChargeItemsRecordings: saveChargeItemsRecordings,
-                deleteChargeItemsRecordings: deleteChargeItemsRecordings
+                deleteChargeItemsRecordings: deleteChargeItemsRecordings,
+                updateDiGaInfoRecordings: updateDiGaInfoRecordings
             )
         )
     }
@@ -1369,11 +1396,13 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
         searchPharmaciesByPositionFilterRecordings = mocks?.searchPharmaciesByPositionFilterRecordings ?? .delegate
         fetchPharmacyByRecordings = mocks?.fetchPharmacyByRecordings ?? .delegate
         loadAvsCertificatesForRecordings = mocks?.loadAvsCertificatesForRecordings ?? .delegate
+        apiFiltersForRecordings = mocks?.apiFiltersForRecordings ?? .delegate
+        fetchTelematikIdByRecordings = mocks?.fetchTelematikIdByRecordings ?? .delegate
     }
 
     var searchPharmaciesByPositionFilterRecordings: MockAnswer<[PharmacyLocation]>
 
-    func searchPharmacies(by searchTerm: String, position: Position?, filter: [String: String]) -> AnyPublisher<[PharmacyLocation], PharmacyFHIRDataSource.Error> {
+    func searchPharmacies(by searchTerm: String, position: Position?, filter: [PharmacyRemoteDataStoreFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyFHIRDataSource.Error> {
         guard !isRecording else {
             let result = wrapped.searchPharmacies(
                     by: searchTerm,
@@ -1447,10 +1476,55 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
         }
     }
 
+    var apiFiltersForRecordings: MockAnswer<[PharmacyRemoteDataStoreFilter]>
+
+    func apiFilters(for filter: [PharmacyRepositoryFilter]) -> [PharmacyRemoteDataStoreFilter] {
+        guard !isRecording else {
+            let result = wrapped.apiFilters(
+                    for: filter
+            )
+            apiFiltersForRecordings.record(result)
+            return result
+        }
+        if let value = apiFiltersForRecordings.next() {
+            return value // [PharmacyRemoteDataStoreFilter]
+        } else {
+            return wrapped.apiFilters(
+                    for: filter
+            )
+        }
+    }
+
+    var fetchTelematikIdByRecordings: MockAnswer<String?>
+
+    func fetchTelematikId(by ikNumber: String) -> AnyPublisher<String?, PharmacyFHIRDataSource.Error> {
+        guard !isRecording else {
+            let result = wrapped.fetchTelematikId(
+                    by: ikNumber
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.fetchTelematikIdByRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = fetchTelematikIdByRecordings.next() {
+            return Just(value)
+                .setFailureType(to: PharmacyFHIRDataSource.Error.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.fetchTelematikId(
+                    by: ikNumber
+            )
+        }
+    }
+
     struct Mocks: Codable {
         var searchPharmaciesByPositionFilterRecordings: MockAnswer<[PharmacyLocation]>? = .delegate
         var fetchPharmacyByRecordings: MockAnswer<PharmacyLocation?>? = .delegate
         var loadAvsCertificatesForRecordings: MockAnswer<[SerializableX509]>? = .delegate
+        var apiFiltersForRecordings: MockAnswer<[PharmacyRemoteDataStoreFilter]>? = .delegate
+        var fetchTelematikIdByRecordings: MockAnswer<String?>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -1458,7 +1532,9 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
             Mocks(
                 searchPharmaciesByPositionFilterRecordings: searchPharmaciesByPositionFilterRecordings,
                 fetchPharmacyByRecordings: fetchPharmacyByRecordings,
-                loadAvsCertificatesForRecordings: loadAvsCertificatesForRecordings
+                loadAvsCertificatesForRecordings: loadAvsCertificatesForRecordings,
+                apiFiltersForRecordings: apiFiltersForRecordings,
+                fetchTelematikIdByRecordings: fetchTelematikIdByRecordings
             )
         )
     }
@@ -1476,6 +1552,7 @@ class SmartMockRedeemService: RedeemService, SmartMock {
         self.isRecording = isRecording
 
         redeemRecordings = mocks?.redeemRecordings ?? .delegate
+        redeemDiGaRecordings = mocks?.redeemDiGaRecordings ?? .delegate
     }
 
     var redeemRecordings: MockAnswer<IdentifiedArrayOf<OrderResponse>>
@@ -1502,14 +1579,40 @@ class SmartMockRedeemService: RedeemService, SmartMock {
         }
     }
 
+    var redeemDiGaRecordings: MockAnswer<IdentifiedArrayOf<OrderDiGaResponse>>
+
+    func redeemDiGa(_ orders: [OrderDiGaRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
+        guard !isRecording else {
+            let result = wrapped.redeemDiGa(
+                    orders
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.redeemDiGaRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = redeemDiGaRecordings.next() {
+            return Just(value)
+                .setFailureType(to: RedeemServiceError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.redeemDiGa(
+                    orders
+            )
+        }
+    }
+
     struct Mocks: Codable {
         var redeemRecordings: MockAnswer<IdentifiedArrayOf<OrderResponse>>? = .delegate
+        var redeemDiGaRecordings: MockAnswer<IdentifiedArrayOf<OrderDiGaResponse>>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
             "RedeemService",
             Mocks(
-                redeemRecordings: redeemRecordings
+                redeemRecordings: redeemRecordings,
+                redeemDiGaRecordings: redeemDiGaRecordings
             )
         )
     }

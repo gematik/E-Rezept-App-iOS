@@ -334,7 +334,7 @@ public class DefaultIDPSession: IDPSession {
 
                 // [REQ:gemSpec_IDP_Frontend:A_21414] Encrypt ACCESS_TOKEN when requesting the pairing endpoint
                 guard let tokenJWT = try? JWT(from: token.accessToken),
-                      let tokenPayload = try? tokenJWT.decodePayload(type: TokenPayload.AccesTokenPayload.self),
+                      let tokenPayload = try? tokenJWT.decodePayload(type: TokenPayload.AccessTokenPayload.self),
                       let tokenJWE = try? JWE.nest(jwt: tokenJWT,
                                                    with: document.encryptionPublicKey,
                                                    using: self.cryptoBox,
@@ -359,7 +359,7 @@ public class DefaultIDPSession: IDPSession {
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the unregister endpoint
                 guard let tokenJWT = try? JWT(from: token.accessToken),
-                      let tokenPayload = try? tokenJWT.decodePayload(type: TokenPayload.AccesTokenPayload.self),
+                      let tokenPayload = try? tokenJWT.decodePayload(type: TokenPayload.AccessTokenPayload.self),
                       let tokenJWE = try? JWE.nest(jwt: tokenJWT,
                                                    with: document.encryptionPublicKey,
                                                    using: self.cryptoBox,
@@ -383,7 +383,7 @@ public class DefaultIDPSession: IDPSession {
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the list endpoint
                 guard let tokenJWT = try? JWT(from: token.accessToken),
-                      let tokenPayload = try? tokenJWT.decodePayload(type: TokenPayload.AccesTokenPayload.self),
+                      let tokenPayload = try? tokenJWT.decodePayload(type: TokenPayload.AccessTokenPayload.self),
                       let tokenJWE = try? JWE.nest(jwt: tokenJWT,
                                                    with: document.encryptionPublicKey,
                                                    using: self.cryptoBox,
@@ -524,7 +524,7 @@ public class DefaultIDPSession: IDPSession {
                 guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: token.state) else {
                     return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
                 }
-                let isPkvExtAuthFlowInitiated = challengeSession.entry.identifier.hasSuffix("pkv")
+                let isPkvExtAuthFlowInitiated = challengeSession.entry.pkv
                 // swiftlint:disable:next trailing_closure
                 return self.exchange(
                     token: token,

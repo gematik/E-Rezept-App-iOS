@@ -47,7 +47,7 @@ final class AppAuthenticationViewSnapshotTests: ERPSnapshotTestCase {
             store: StoreOf<AppAuthenticationDomain>(
                 initialState: AppAuthenticationDomain.State(
                     didCompleteAuthentication: false,
-                    subdomain: .password(AppAuthenticationPasswordDomain.State()),
+                    subdomain: .password(AppAuthenticationPasswordDomain.State(lastMatchResultSuccessful: false)),
                     failedAuthenticationsCount: 1
                 )
             ) {

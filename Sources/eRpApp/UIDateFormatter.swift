@@ -136,6 +136,14 @@ struct UIDateFormatter {
         return relativeTimeFormatter.localizedString(for: date, relativeTo: dateGenerator())
     }
 
+    func relativeTime(from date: Date?,
+                      formattingContext: RelativeDateTimeFormatter.Context = .beginningOfSentence) -> String? {
+        @Dependency(\.date) var dateGenerator
+        relativeTimeFormatter.formattingContext = formattingContext
+        guard let date = date else { return nil }
+        return relativeTimeFormatter.localizedString(for: date, relativeTo: dateGenerator())
+    }
+
     func formattedTime(from date: Date) -> String {
         timeFormatter.string(from: date)
     }

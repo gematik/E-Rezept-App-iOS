@@ -22,5 +22,11 @@
         "text": "🛒 **Ulepszony proces składania zamówień** \n Proces składania zamówień jest teraz łatwiejszy i szybszy. \n \n🌐 **Nowe języki** \nNasza aplikacja jest teraz dostępna również w języku hiszpańskim i irlandzkim. \n \n📞 **Rozszerzone możliwości kontaktu** \nWprowadziliśmy nowe możliwości kontaktu z wybranymi towarzystwami ubezpieczeniowymi. \n \n🔍 **Szczegółowe dzienniki dostępu** \nTeraz wyświetlamy również identyfikatory telematyczne w dziennikach dostępu, aby łatwiej było ustalić, kto miał dostęp.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Wykorzystaj przepisane recepty DiGA** \nOd teraz możesz realizować recepty na aplikacje związane ze zdrowiem cyfrowym (DiGA) bezpośrednio za pomocą aplikacji do e-recept. Kod aktywacyjny i link do wskazanej aplikacji otrzymasz natychmiast po wykorzystaniu kodu. \n \n **🏥 Nowa baza danych aptek** \nWprowadziliśmy nową, odporną na wyzwania przyszłości bazę danych do wyszukiwania aptek.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

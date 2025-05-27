@@ -31,10 +31,10 @@ extension String {
     static let pharmacySearchFilterOptions = "pharmacySearchFilterOptions"
 }
 
-extension PersistenceReaderKey
-    where Self == PersistenceKeyDefault<InMemoryKey<[PharmacySearchFilterDomain.PharmacyFilterOption]>> {
+extension SharedReaderKey
+    where Self == InMemoryKey<[PharmacySearchFilterDomain.PharmacyFilterOption]>.Default {
     static var pharmacyFilterOptions: Self {
-        PersistenceKeyDefault(.inMemory(.pharmacySearchFilterOptions), [])
+        Self[.inMemory("pharmacySearchFilterOptions"), default: []]
     }
 }
 
@@ -306,7 +306,7 @@ struct PharmacySearchDomain {
         case .task:
             state.searchHistory = searchHistory.historyItems()
             return .merge(
-                .publisher { state.$pharmacyFilterOptions.publisher.map(Action.quickSearch) },
+                .publisher { state.$pharmacyFilterOptions.publisher.dropFirst().map(Action.quickSearch) },
                 .publisher(
                     pharmacyRepository.loadLocal(count: 5)
                         .first()
@@ -327,7 +327,7 @@ struct PharmacySearchDomain {
                 ), Effect.send(.mapSetUp)
             )
         case .onAppear:
-            return .run { [state = state] send in
+            return .run { [state] send in
                 if state.searchState.isNotStartView, state.searchCriteriaChanged {
                     await send(.quickSearch(filters: state.pharmacyFilterOptions))
                 }
@@ -371,6 +371,11 @@ struct PharmacySearchDomain {
                 state.pharmacies = pharmacies
                     .filter(by: state.pharmacyFilterOptions)
 
+                // sort pharmacies for distance if available
+                if state.pharmacies.first?.distanceInM != nil {
+                    state.pharmacies.sort { $0.distanceInM ?? 0 < $1.distanceInM ?? 0 }
+                }
+
                 state.searchState = pharmacies.isEmpty ? .searchResultEmpty : .searchResultOk
             case .failure:
                 state.searchState = .error
@@ -381,12 +386,14 @@ struct PharmacySearchDomain {
             state.searchState = .startView(loading: true)
             state.selectedPharmacy = pharmacyLocation
             return .publisher(
-                pharmacyRepository.updateFromRemote(by: pharmacyLocation.telematikID)
-                    .first()
-                    .receive(on: schedulers.main)
-                    .catchToPublisher()
-                    .map { .response(.loadAndNavigateToPharmacyReceived($0)) }
-                    .eraseToAnyPublisher
+                pharmacyRepository.updateFromRemote(
+                    by: pharmacyLocation.telematikID
+                )
+                .first()
+                .receive(on: schedulers.main)
+                .catchToPublisher()
+                .map { .response(.loadAndNavigateToPharmacyReceived($0)) }
+                .eraseToAnyPublisher
             )
         case let .response(.loadAndNavigateToPharmacyReceived(result)):
             state.searchState = .startView(loading: false)
@@ -402,7 +409,7 @@ struct PharmacySearchDomain {
 
                 state.destination = .pharmacyDetail(
                     PharmacyDetailDomain.State(
-                        prescriptions: Shared<[Prescription]>([]),
+                        prescriptions: Shared<[Prescription]>(value: []),
                         selectedPrescriptions: state.$selectedPrescriptions,
                         inRedeemProcess: state.inRedeemProcess,
                         pharmacyViewModel: viewModel,
@@ -430,7 +437,7 @@ struct PharmacySearchDomain {
             state.detailsPharmacy = viewModel
 
             state.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                prescriptions: Shared<[Prescription]>([]),
+                prescriptions: Shared<[Prescription]>(value: []),
                 selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
@@ -441,7 +448,7 @@ struct PharmacySearchDomain {
             guard let viewModel = state.detailsPharmacy else { return .none }
 
             state.destination = .pharmacyDetail(PharmacyDetailDomain.State(
-                prescriptions: Shared<[Prescription]>([]),
+                prescriptions: Shared<[Prescription]>(value: []),
                 selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
@@ -459,7 +466,7 @@ struct PharmacySearchDomain {
             return .send(.removeFilterOption(.currentLocation))
         case let .removeFilterOption(filterOption):
             if let index = state.pharmacyFilterOptions.firstIndex(of: filterOption) {
-                state.pharmacyFilterOptions.remove(at: index)
+                state.$pharmacyFilterOptions.withLock { _ = $0.remove(at: index) }
             }
             return .send(.performSearch)
         case let .quickSearch(filterOptions):
@@ -467,7 +474,7 @@ struct PharmacySearchDomain {
                 return .none
             }
             if filterOptions != state.pharmacyFilterOptions {
-                state.pharmacyFilterOptions = filterOptions
+                state.$pharmacyFilterOptions.withLock { $0 = filterOptions }
             }
 
             // [REQ:gemSpec_eRp_APOVZD:A_21154] If user defined filters contain location element, ask for permission

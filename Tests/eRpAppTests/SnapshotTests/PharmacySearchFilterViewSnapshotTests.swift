@@ -28,7 +28,7 @@ final class PharmacySearchFilterViewSnapshotTests: ERPSnapshotTestCase {
         let sut = NavigationStack {
             PharmacySearchFilterView(
                 store: StoreOf<PharmacySearchFilterDomain>(
-                    initialState: .init(pharmacyFilterOptions: Shared([PharmacySearchFilterDomain
+                    initialState: .init(pharmacyFilterOptions: Shared(value: [PharmacySearchFilterDomain
                             .PharmacyFilterOption]()))
 
                 ) {
@@ -46,7 +46,7 @@ final class PharmacySearchFilterViewSnapshotTests: ERPSnapshotTestCase {
         let sut = NavigationStack {
             PharmacySearchFilterView(
                 store: StoreOf<PharmacySearchFilterDomain>(
-                    initialState: .init(pharmacyFilterOptions: Shared([
+                    initialState: .init(pharmacyFilterOptions: Shared(value: [
                         PharmacySearchFilterDomain.PharmacyFilterOption.currentLocation,
                         PharmacySearchFilterDomain.PharmacyFilterOption.shipment,
                     ]))

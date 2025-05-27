@@ -168,6 +168,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         } operation: {
             let prescription = Prescription(
                 erxTask: ErxTask.Fixtures.erxTaskInProgressAndValid,
+                date: TestDate.defaultReferenceDate,
                 dateFormatter: UIDateFormatter.testValue
             )
             let sut = testStore(.init(
@@ -649,9 +650,9 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testUpdateMedicationName() async {
         let dateFormatter = UIDateFormatter.previewValue
-        let authoredOn = DemoDate.createDemoDate(.today)
-        let expiresOn = DemoDate.createDemoDate(.ninetyTwoDaysAhead)
-        let acceptedUntil = DemoDate.createDemoDate(.tomorrow)
+        let authoredOn = TestDate.createFormattedDate(.today)
+        let expiresOn = TestDate.createFormattedDate(.ninetyTwoDaysAhead)
+        let acceptedUntil = TestDate.createFormattedDate(.tomorrow)
         let sut = testStore(
             PrescriptionDetailDomain.State(
                 prescription: Prescription(
@@ -875,9 +876,9 @@ extension PrescriptionDetailDomainTests {
                     flowType: .pharmacyOnly,
                     accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                     fullUrl: nil,
-                    authoredOn: DemoDate.createDemoDate(.today),
-                    expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
-                    acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+                    authoredOn: TestDate.createFormattedDate(.today),
+                    expiresOn: TestDate.createFormattedDate(.ninetyTwoDaysAhead),
+                    acceptedUntil: TestDate.createFormattedDate(.tomorrow),
                     author: "Dr. Dr. med. Carsten van Storchhausen",
                     medication: medicationFixture,
                     medicationRequest: .init(
@@ -928,9 +929,9 @@ extension PrescriptionDetailDomainTests {
                     flowType: .pharmacyOnly,
                     accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                     fullUrl: nil,
-                    authoredOn: DemoDate.createDemoDate(.today),
-                    expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
-                    acceptedUntil: DemoDate.createDemoDate(.tomorrow),
+                    authoredOn: TestDate.createFormattedDate(.today),
+                    expiresOn: TestDate.createFormattedDate(.ninetyTwoDaysAhead),
+                    acceptedUntil: TestDate.createFormattedDate(.tomorrow),
                     author: "Dr. Dr. med. Carsten van Storchhausen",
                     medication: ErxMedication(
                         name: "Saflorblüten-Extrakt Pulver Peroral",

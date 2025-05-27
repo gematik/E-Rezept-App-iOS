@@ -25,12 +25,12 @@ struct PrimaryTextButton: View {
     var a11y: String
     var image: Image?
     var isEnabled = true
+    var useFullWidth = true
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack {
-                Spacer()
                 if let image = image {
                     image.foregroundColor(.white)
                 }
@@ -39,14 +39,13 @@ struct PrimaryTextButton: View {
                     .font(.body)
                     .multilineTextAlignment(.center)
                     .foregroundColor(isEnabled ? Color(.white) : Color(.systemGray))
-                    .padding()
                     .fixedSize(horizontal: false, vertical: true)
-                Spacer()
             }
+            .padding(.vertical)
+            .padding(.horizontal, useFullWidth ? 16 : 64)
         }
-        .buttonStyle(PrimaryButtonStyle(enabled: isEnabled))
+        .buttonStyle(PrimaryButtonStyle(enabled: isEnabled, fullWidth: useFullWidth))
         .accessibility(identifier: a11y)
-        .if(!isEnabled) { $0.accessibility(value: Text(L10n.buttonTxtIsInactiveValue)) }
         .disabled(!isEnabled)
     }
 }
@@ -131,14 +130,16 @@ struct LoadingPrimaryButton: View {
 
 struct PrimaryButtonStyle: ButtonStyle {
     private var isEnabled: Bool
+    private var useFullWidth: Bool
 
-    init(enabled: Bool = true) {
+    init(enabled: Bool = true, fullWidth: Bool = true) {
         isEnabled = enabled
+        useFullWidth = fullWidth
     }
 
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .frame(minWidth: 0, maxWidth: .infinity)
+            .frame(minWidth: 0, maxWidth: useFullWidth ? .infinity : nil)
             .opacity(configuration.isPressed ? 0.25 : 1)
             .background(isEnabled ? Colors.primary : Color(.systemGray4))
             .cornerRadius(16)

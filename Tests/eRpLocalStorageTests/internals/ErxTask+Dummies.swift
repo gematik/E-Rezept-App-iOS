@@ -232,7 +232,8 @@ extension ErxMedicationDispense {
                 quantity: .init(value: "17", unit: "St."),
                 noteText: "take good care",
                 medication: ErxMedication.Dummies.medication1,
-                epaMedication: nil
+                epaMedication: nil,
+                diGaDispense: nil
             )
         }
     }

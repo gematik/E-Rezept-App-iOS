@@ -152,16 +152,7 @@ struct CardWallExtAuthSelectionView: View {
             .onAppear {
                 store.send(.loadKKList)
             }
-            .navigationDestination(
-                item: $store.scope(state: \.destination?.help, action: \.destination.help)
-            ) { _ in
-                CardWallExtAuthHelpView()
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.destination?.confirmation, action: \.destination.confirmation)
-            ) { store in
-                CardWallExtAuthConfirmationView(store: store)
-            }
+            .destinations(store: $store)
         }
     }
 
@@ -201,6 +192,21 @@ struct CardWallExtAuthSelectionView: View {
                 .accessibilityIdentifier(A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionHelp)
             }
             .padding(.bottom, 16)
+        }
+    }
+}
+
+extension View {
+    func destinations(store: Perception.Bindable<StoreOf<CardWallExtAuthSelectionDomain>>) -> some View {
+        navigationDestination(
+            item: store.scope(state: \.destination?.help, action: \.destination.help)
+        ) { _ in
+            CardWallExtAuthHelpView()
+        }
+        .navigationDestination(
+            item: store.scope(state: \.destination?.confirmation, action: \.destination.confirmation)
+        ) { store in
+            CardWallExtAuthConfirmationView(store: store)
         }
     }
 }

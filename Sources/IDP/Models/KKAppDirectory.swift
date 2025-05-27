@@ -36,10 +36,11 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
     }
 
     public struct Entry: Hashable, Codable, Equatable, Identifiable {
-        public init(name: String, identifier: String, gId: Bool = false, logo: String? = nil) {
+        public init(name: String, identifier: String, gId: Bool = false, pkv: Bool = false, logo: String? = nil) {
             self.name = name
             self.identifier = identifier
             self.gId = gId
+            self.pkv = pkv
             self.logo = logo
         }
 
@@ -51,12 +52,14 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
         public let identifier: String
         /// is GID flow?
         public let gId: Bool
+        public let pkv: Bool
         public let logo: String?
 
         enum CodingKeysV2: String, CodingKey {
             case name = "idp_name"
             case identifier = "idp_iss"
             case gId = "idp_sek_2"
+            case pkv = "idp_pkv"
             case logo = "idp_logo"
         }
 
@@ -65,6 +68,7 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
             name = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.name)
             identifier = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.identifier)
             gId = (try? container.decode(Bool.self, forKey: KKAppDirectory.Entry.CodingKeysV2.gId)) ?? false
+            pkv = (try? container.decode(Bool.self, forKey: KKAppDirectory.Entry.CodingKeysV2.pkv)) ?? false
             logo = try? container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.logo)
         }
 
@@ -73,6 +77,7 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
             try container.encode(name, forKey: .name)
             try container.encode(identifier, forKey: .identifier)
             try container.encode(gId, forKey: .gId)
+            try container.encode(pkv, forKey: .pkv)
             try container.encode(logo, forKey: .logo)
         }
     }

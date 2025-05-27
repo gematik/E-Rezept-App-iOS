@@ -138,28 +138,7 @@ struct ChargeItemView: View {
                 }
                 ToolbarItemGroup(placement: .navigationBarTrailing) {}
             }
-            .sheet(item: $store.scope(
-                state: \.destination?.shareSheet,
-                action: \.destination.shareSheet
-            )) { scopedStore in
-                ShareViewController(store: scopedStore)
-            }
-            .sheet(item: $store.scope(
-                state: \.destination?.idpCardWall,
-                action: \.destination.idpCardWall
-            )) { store in
-                IDPCardWallView(store: store)
-            }
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            // Navigation into matrix code to alter charge item via pharmacy
-            .navigationDestination(
-                item: $store.scope(
-                    state: \.destination?.alterChargeItem,
-                    action: \.destination.alterChargeItem
-                )
-            ) { store in
-                MatrixCodeView(store: store)
-            }
+            .destinations(store: $store)
         }
     }
 
@@ -172,6 +151,33 @@ struct ChargeItemView: View {
                 .padding(.init(top: 8, leading: 12, bottom: 8, trailing: 12))
                 .background(Colors.primary100)
                 .cornerRadius(8)
+        }
+    }
+}
+
+extension View {
+    func destinations(store: Perception.Bindable<StoreOf<ChargeItemDomain>>) -> some View {
+        sheet(item: store.scope(
+            state: \.destination?.shareSheet,
+            action: \.destination.shareSheet
+        )) { scopedStore in
+            ShareViewController(store: scopedStore)
+        }
+        .sheet(item: store.scope(
+            state: \.destination?.idpCardWall,
+            action: \.destination.idpCardWall
+        )) { store in
+            IDPCardWallView(store: store)
+        }
+        .alert(store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        // Navigation into matrix code to alter charge item via pharmacy
+        .navigationDestination(
+            item: store.scope(
+                state: \.destination?.alterChargeItem,
+                action: \.destination.alterChargeItem
+            )
+        ) { store in
+            MatrixCodeView(store: store)
         }
     }
 }

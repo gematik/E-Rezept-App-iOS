@@ -68,6 +68,8 @@ let integrationTestsEnvironmentDummy = IntegrationTestsConfiguration(
         idp: AppConfiguration.Server(url: "http://dummy.idp.server", header: [:]),
         erp: AppConfiguration.Server(url: "http://dummy.erp.server", header: [:]),
         apoVzd: AppConfiguration.Server(url: "http://dummy.apo-vzd.server", header: [:]),
+        fhirVzd: AppConfiguration.Server(url: "http://dummy.fhir-vzd.server", header: [:]),
+        eRezept: AppConfiguration.Server(url: "http://dummy.api-erezept.server", header: [:]),
         organDonationUrl: nil,
         clientId: "dummyClientId"
     )!,

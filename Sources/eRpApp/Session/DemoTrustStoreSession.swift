@@ -29,5 +29,9 @@ class DemoTrustStoreSession: TrustStoreSession {
         Fail(error: TrustStoreError.internal(error: .notImplemented)).eraseToAnyPublisher()
     }
 
+    func vauCertificate() async throws -> X509 {
+        throw TrustStoreError.internal(error: .notImplemented)
+    }
+
     func reset() {}
 }

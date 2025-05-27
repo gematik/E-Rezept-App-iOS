@@ -156,6 +156,7 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
                     .eraseToAnyPublisher()
             }
         }
+        mockRemoteDataStore.apiFiltersForReturnValue = []
 
         sut.searchRemote(searchTerm: "", position: nil, filter: [.delivery])
             .first()
@@ -176,6 +177,7 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let mockRemoteDataStore = MockPharmacyRemoteDataStore()
+        mockRemoteDataStore.apiFiltersForReturnValue = []
 
         let sut = DefaultPharmacyRepository(disk: mockLocalDataStore, cloud: mockRemoteDataStore)
 

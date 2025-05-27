@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -140,7 +140,8 @@ class MockErxTaskRepository: ErxTaskRepository {
          findChargeItem: AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> = failing(),
          saveChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing(),
          deleteChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing(),
-         deleteLocalChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing()) {
+         deleteLocalChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing(),
+         updateLocalDiGaInfo: AnyPublisher<Bool, ErxRepositoryError> = failing()) {
         loadLocalAllPublisher = Just(erxTasks)
             .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
@@ -167,6 +168,7 @@ class MockErxTaskRepository: ErxTaskRepository {
         saveChargeItemsPublisher = saveChargeItems
         deleteChargeItemsPublisher = deleteChargeItems
         deleteLocalChargeItemsPublisher = deleteLocalChargeItems
+        updateLocalDiGaInfoReturnValue = updateLocalDiGaInfo
     }
 
     var loadRemoteByIdPublisher: AnyPublisher<ErxTask?, ErxRepositoryError>
@@ -392,5 +394,22 @@ class MockErxTaskRepository: ErxTaskRepository {
         } else {
             return revokeConsentReturnValue
         }
+    }
+
+    // MARK: - ErxDeviceRequest.DiGaInfo
+
+    var updateLocalDiGaInfoCallsCount = 0
+    var updateLocalDiGaInfoCalled: Bool {
+        updateLocalDiGaInfoCallsCount > 0
+    }
+
+    var updateLocalDiGaInfoReceivedCategory: DiGaInfo?
+    var updateLocalDiGaInfoReceivedInvocations: [DiGaInfo] = []
+    var updateLocalDiGaInfoReturnValue: AnyPublisher<Bool, ErxRepositoryError>!
+    var updateLocalDiGaInfoClosure: ((DiGaInfo) -> AnyPublisher<Bool, ErxRepositoryError>)?
+
+    func updateLocal(diGaInfo _: DiGaInfo) -> AnyPublisher<Bool, ErxRepositoryError> {
+        updateLocalDiGaInfoCallsCount += 1
+        return updateLocalDiGaInfoReturnValue
     }
 }

@@ -109,11 +109,11 @@ struct PharmacyContainerDomain {
             option: redeemOption
         ):
             state.path.append(.redeem(PharmacyRedeemDomain.State(
-                prescriptions: Shared(prescriptions),
-                selectedPrescriptions: Shared(selectedPrescriptions),
+                prescriptions: Shared(value: prescriptions),
+                selectedPrescriptions: Shared(value: selectedPrescriptions),
                 pharmacy: pharmacy,
                 serviceOptionState: .init(
-                    prescriptions: Shared(prescriptions),
+                    prescriptions: Shared(value: prescriptions),
                     selectedOption: redeemOption
                 )
             )))

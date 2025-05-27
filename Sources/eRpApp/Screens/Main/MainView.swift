@@ -295,6 +295,18 @@ private extension MainView {
                         MedicationReminderOneDaySummaryView(store: store)
                     }
                     .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .navigationDestination(
+                        item: $store.scope(
+                            state: \.destination?.diGaDetail,
+                            action: \.destination.diGaDetail
+                        )
+                    ) { store in
+                        DiGaDetailView(store: store)
+                    }
+                    .accessibility(hidden: true)
             }
         }
     }
@@ -320,7 +332,6 @@ struct MainView_Previews: PreviewProvider {
                 store: StoreOf<MainDomain>(
                     initialState: .init(
                         prescriptionListState: PrescriptionListDomain.State(
-                            prescriptions: Prescription.Dummies.prescriptions
                         ),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
                     )

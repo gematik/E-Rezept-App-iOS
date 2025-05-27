@@ -30,6 +30,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         displayName: String? = nil,
         insurance: String? = nil,
         insuranceId: String? = nil,
+        insuranceIK: String? = nil,
         insuranceType: InsuranceType = .unknown,
         color: Color = Color.grey,
         image: ProfilePictureType = .none,
@@ -49,6 +50,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
             .trimmingCharacters(in: .whitespaces)
         self.insurance = insurance
         self.insuranceId = insuranceId
+        self.insuranceIK = insuranceIK
         self.insuranceType = insuranceType
         self.color = color
         self.image = image
@@ -72,6 +74,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
     public var displayName: String?
     public var insurance: String?
     public var insuranceId: String?
+    public var insuranceIK: String?
     public var insuranceType: InsuranceType
     public var color: Color
     public var image: ProfilePictureType

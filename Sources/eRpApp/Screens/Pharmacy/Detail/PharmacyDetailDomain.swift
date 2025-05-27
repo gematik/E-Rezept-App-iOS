@@ -176,10 +176,10 @@ struct PharmacyDetailDomain {
         case let .response(.loadLocalPrescriptionsReceived(result)):
             switch result {
             case let .success(prescriptions):
-                state.prescriptions = prescriptions.filter(\.isRedeemable)
+                state.$prescriptions.withLock { $0 = prescriptions.filter(\.isPharmacyRedeemable) }
                 state.hasRedeemableTasks = !state.prescriptions.isEmpty
             case .failure:
-                state.prescriptions = []
+                state.$prescriptions.withLock { $0 = [] }
             }
             return .none
         case let .response(.redeemOptionProviderReceived(provider)):
@@ -399,8 +399,8 @@ extension PharmacyDetailDomain {
         static let prescriptions = [Prescription.Dummies.prescriptionReady]
 
         static let state = State(
-            prescriptions: Shared(prescriptions),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: prescriptions),
+            selectedPrescriptions: Shared(value: []),
             inRedeemProcess: false,
             pharmacyViewModel: pharmacyViewModel
         )

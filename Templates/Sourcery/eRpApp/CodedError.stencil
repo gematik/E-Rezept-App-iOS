@@ -6,7 +6,9 @@ import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
 import FHIRClient
+import FHIRVZD
 import Foundation
+import FHIRVZD
 import HTTPClient
 import IDP
 import ModelsR4
@@ -54,6 +56,11 @@ import ZXingCpp
 {% macro wrap enum %}
     {% typed enum as Enum %}
     
+{% set localizedString %}{% for case in type.inheritedTypes where case|contains:"LocalizedError" %}1{% endfor %}{% endset %}
+{% typed localizedString as String %}
+{% if localizedString.count == 0 and type.accessLevel == "public" %}
+extension {{ type.name }}: @retroactive LocalizedError {}
+{% endif %}
 extension {{ type.name }}: CodedError {
     var erpErrorCode: String {
         switch self {

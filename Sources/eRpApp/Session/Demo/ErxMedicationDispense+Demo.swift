@@ -31,7 +31,8 @@ extension ErxMedicationDispense {
             quantity: .init(value: "10", unit: "TL"),
             noteText: "Nicht mit anderen Medikamenten mischen",
             medication: ErxTask.Demo.medication1,
-            epaMedication: nil
+            epaMedication: nil,
+            diGaDispense: nil
         )
     }
 }
