@@ -39,6 +39,14 @@ public protocol TrustStoreSession {
     /// - Returns: A publisher that emits a Boolean stating whether or not the certificate could be validated.
     func validate(certificate: X509) -> AnyPublisher<Bool, TrustStoreError>
 
-    /// Delete all stored data and reload all data from remote
+    /// Request and validate the VAU certificate
+    ///
+    /// [REQ:gemSpec_eRp_FdV:A_19739]
+    ///
+    /// - Note: Thrown errors are of type `TrustStoreError`
+    /// - Returns: A validated VAU certificate
+    func vauCertificate() async throws -> X509
+
+    /// Delete all stored data
     func reset()
 }

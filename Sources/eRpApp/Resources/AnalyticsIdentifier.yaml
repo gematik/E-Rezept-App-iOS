@@ -75,6 +75,14 @@ screens:
     name: "prescriptionDetail:setupMedicationSchedule"
   prescriptionDetail_matrixCode:
     name: "prescriptionDetail:matrixCode"
+  digasMain:
+    name: "digasMain"
+  digasMain_howLongDigaValidBottomSheetScreen:
+    name: "digasMain:howLongDigaValidBottomSheetScreen"
+  digasMain_digaSupportBottomSheetScreen:
+    name: "digasMain:digaSupportBottomSheetScreen"
+  digasMain_descriptionScreen:
+    name: "digasMain:descriptionScreen"
   redeem_methodSelection:
     name: "redeem:methodSelection"
   redeem_overview:

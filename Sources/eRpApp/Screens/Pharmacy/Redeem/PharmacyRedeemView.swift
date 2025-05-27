@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 //
 //  Copyright (c) 2024 gematik GmbH
 //
@@ -22,6 +23,7 @@ import eRpStyleKit
 import Perception
 import Pharmacy
 import SwiftUI
+import SwiftUIIntrospect
 
 struct PharmacyRedeemView: View {
     @Perception.Bindable var store: StoreOf<PharmacyRedeemDomain>
@@ -57,6 +59,8 @@ struct PharmacyRedeemView: View {
                             .padding(.top)
                             .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtTitle)
 
+                        PrescriptionView(store: store)
+
                         PharmacyView(pharmacy: store.pharmacy) {
                             store.send(.delegate(.changePharmacy))
                         }
@@ -73,6 +77,7 @@ struct PharmacyRedeemView: View {
                             AddressView(
                                 shipmentInfo: shipmentInfo,
                                 redeemOption: store.serviceOptionState.selectedOption,
+                                hasCompleteContactData: store.hasCompleteContactData,
                                 profile: store.profile
                             ) { store.send(.showContact) }
                         } else {
@@ -80,8 +85,6 @@ struct PharmacyRedeemView: View {
                                 store.send(.showContact)
                             }
                         }
-
-                        PrescriptionView(store: store)
                     }
                 }
                 .navigationDestination(
@@ -136,8 +139,11 @@ struct PharmacyRedeemView: View {
                 await store.send(.task).finish()
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(Colors.gifBackground, for: .navigationBar)
+            .toolbarBackground(.visible)
+            .toolbarBackground(
+                store.serviceOptionState.selectedOption != nil ? Colors.gifBackground : Colors.systemBackground,
+                for: .navigationBar
+            )
         }
     }
 
@@ -257,6 +263,7 @@ extension PharmacyRedeemView {
     struct AddressView: View {
         let shipmentInfo: ShipmentInfo
         let redeemOption: RedeemOption?
+        let hasCompleteContactData: Bool
         let profile: Profile?
         let action: () -> Void
 
@@ -341,8 +348,8 @@ extension PharmacyRedeemView {
                             }
                             .contentShape(Rectangle())
 
-                            if shipmentInfo.phone == nil, redeemOption?.isPhoneRequired == true {
-                                Text(L10n.phaRedeemTxtMissingPhone)
+                            if !hasCompleteContactData, redeemOption != nil {
+                                Text(L10n.phaRedeemTxtMissingContactData)
                                     .font(Font.body.weight(.semibold))
                                     .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
                                     .background(Colors.red100)
@@ -435,11 +442,17 @@ extension PharmacyRedeemView {
                     SelfPayerWarningView(erxTasks: store.selectedPrescriptions.map(\.erxTask))
                         .padding()
 
-                    if store.selectedPrescriptions.isEmpty || store.pharmacy == nil {
+                    if !store.readyToRedeem {
                         PrimaryTextButton(text: L10n.phaRedeemBtnRedeem,
                                           a11y: A11y.pharmacyRedeem.phaRedeemBtnRedeem,
-                                          isEnabled: false) {}
-                            .padding(.horizontal)
+                                          isEnabled: store.readyToRedeem) {
+                            store.send(.redeem)
+                        }
+                        .padding(.horizontal)
+                        .accessibilityDisabledReason(
+                            reasonIfDisabled: store.state.accessibilityDisabledReason,
+                            isDisabled: !store.readyToRedeem
+                        )
                     } else {
                         LoadingPrimaryButton(text: L10n.phaRedeemBtnRedeem,
                                              isLoading: store.orderResponses.inProgress || store.redeemInProgress) {
@@ -454,8 +467,25 @@ extension PharmacyRedeemView {
     }
 }
 
+private struct DisabledButtonWithReason: ViewModifier {
+    let reasonIfDisabled: String
+    let isDisabled: Bool
+
+    func body(content: Content) -> some View {
+        if isDisabled {
+            content.accessibility(value: Text(reasonIfDisabled))
+        }
+    }
+}
+
+extension View {
+    func accessibilityDisabledReason(reasonIfDisabled: String, isDisabled: Bool) -> some View {
+        modifier(DisabledButtonWithReason(reasonIfDisabled: reasonIfDisabled, isDisabled: isDisabled))
+    }
+}
+
 extension RedeemOption {
-    var isPhoneRequired: Bool {
+    var isContactDataRequired: Bool {
         switch self {
         case .onPremise: return false
         case .delivery, .shipment: return true

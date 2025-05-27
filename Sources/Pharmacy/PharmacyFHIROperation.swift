@@ -24,26 +24,35 @@ import HTTPClient
 public enum PharmacyFHIROperation<Value, Handler: FHIRResponseHandler> where Handler.Value == Value {
     /// Search for pharmacies by name
     /// [REQ:gemSpec_eRp_FdV:A_20208]
-    case searchPharmacies(searchTerm: String, position: Position?, filter: [String: String], handler: Handler)
+    case searchPharmacies(
+        searchTerm: String,
+        position: Position?,
+        filter: [PharmacyRemoteDataStoreFilter],
+        accessToken: String?,
+        handler: Handler
+    )
     /// Search for pharmacies by telematikId
-    case fetchPharmacy(telematikId: String, handler: Handler)
+    case fetchPharmacy(telematikId: String, accessToken: String?, handler: Handler)
     /// Load certificates used for redeeming via avs service
     case loadCertificates(locationId: String, handler: Handler)
+    /// fetchTelematikID by IK Number
+    case fetchTelematikID(ikNumber: String, accessToken: String?, handler: Handler)
 }
 
 extension PharmacyFHIROperation: FHIRClientOperation {
     public func handle(response: FHIRClient.Response) throws -> Value {
         switch self {
-        case let .searchPharmacies(_, _, _, handler),
-             let .fetchPharmacy(_, handler),
-             let .loadCertificates(_, handler: handler):
+        case let .searchPharmacies(_, _, _, _, handler),
+             let .fetchPharmacy(_, _, handler),
+             let .loadCertificates(_, handler: handler),
+             let .fetchTelematikID(_, _, handler):
             return try handler.handle(response: response)
         }
     }
 
     public var relativeUrlString: String? {
         switch self {
-        case let .searchPharmacies(searchTerm, position, filter, _):
+        case let .searchPharmacies(searchTerm, position, filter, _, _):
             var queryItems: [URLQueryItem] = []
             if !searchTerm.isEmpty {
                 for singleSearchTerm in searchTerm.components(separatedBy: " ") {
@@ -53,13 +62,13 @@ extension PharmacyFHIROperation: FHIRClientOperation {
             if position != nil, let latitude = position?.latitude, let longitude = position?.longitude {
                 queryItems.append(URLQueryItem(name: "near", value: "\(latitude)|\(longitude)|999|km"))
             }
-            queryItems.append(contentsOf: filter.map { key, value in
-                URLQueryItem(name: key, value: value)
+            queryItems.append(contentsOf: filter.map { filter in
+                URLQueryItem(name: filter.key, value: filter.value)
             })
             var urlComps = URLComponents(string: "Location")
             urlComps?.queryItems = queryItems
             return urlComps?.string
-        case let .fetchPharmacy(telematikId, _):
+        case let .fetchPharmacy(telematikId, _, _):
             var components = URLComponents(string: "Location")
             let item = URLQueryItem(
                 name: "identifier",
@@ -72,6 +81,14 @@ extension PharmacyFHIROperation: FHIRClientOperation {
             let item = URLQueryItem(
                 name: "_securityContext",
                 value: "Location/\(locationId)"
+            )
+            components?.queryItems = [item]
+            return components?.string
+        case let .fetchTelematikID(ikNumber, _, _):
+            var components = URLComponents(string: "Organization")
+            let item = URLQueryItem(
+                name: "identifier",
+                value: "http://fhir.de/StructureDefinition/identifier-iknr|\(ikNumber)"
             )
             components?.queryItems = [item]
             return components?.string
@@ -98,9 +115,10 @@ extension PharmacyFHIROperation: FHIRClientOperation {
 
     public var acceptFormat: FHIRAcceptFormat {
         switch self {
-        case let .searchPharmacies(_, _, _, handler),
-             let .fetchPharmacy(_, handler),
-             let .loadCertificates(_, handler):
+        case let .searchPharmacies(_, _, _, _, handler),
+             let .fetchPharmacy(_, _, handler),
+             let .loadCertificates(_, handler),
+             let .fetchTelematikID(_, _, handler):
             return handler.acceptFormat
         }
     }

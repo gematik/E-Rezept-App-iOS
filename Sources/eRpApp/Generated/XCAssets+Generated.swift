@@ -109,6 +109,9 @@ internal enum Asset {
       internal static let lampIcon = ImageAsset(name: "lampIcon")
       internal static let refreshLamp = ImageAsset(name: "refreshLamp")
     }
+    internal enum DiGa {
+      internal static let diGaImage = ImageAsset(name: "DiGaImage")
+    }
     internal static let checkmarkDouble = ImageAsset(name: "checkmarkDouble")
     internal static let datamatrix = ImageAsset(name: "datamatrix")
     internal static let initialPlaceholder = ImageAsset(name: "initialPlaceholder")

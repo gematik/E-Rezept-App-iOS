@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import Foundation
 import SwiftUI
 
@@ -48,14 +49,19 @@ struct AppAuthenticationView: View {
                                 )
                             )
                             .padding()
+                        } else {
+                            Spacer()
                         }
-
-                        Spacer()
 
                         Text(L10n.authTxtBiometricsTitle)
                             .font(.title)
                             .fontWeight(.bold)
-                            .padding()
+                            .padding(.top)
+                            .padding(.bottom, 1)
+
+                        Text(L10n.authTxtSubtitle)
+                            .foregroundColor(Colors.textSecondary)
+                            .padding(.bottom)
 
                         VStack {
                             if let store = store.scope(state: \.subdomain, action: \.subdomain) {
@@ -72,9 +78,11 @@ struct AppAuthenticationView: View {
 
                         Spacer()
 
-                        Image(asset: Asset.Illustrations.groupShot)
-                            .resizable()
-                            .scaledToFit()
+                        if store.showGroupShot {
+                            Image(asset: Asset.Illustrations.groupShot)
+                                .resizable()
+                                .scaledToFit()
+                        }
                     }
                     .frame(minHeight: geometry.size.height)
                 }

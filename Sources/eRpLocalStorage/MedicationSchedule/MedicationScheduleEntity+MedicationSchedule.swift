@@ -34,6 +34,7 @@ extension MedicationScheduleEntity {
         title = schedule.title
         body = schedule.dosageInstructions
         taskId = schedule.taskId
+        weekdays = schedule.weekdaysToString()
         isActive = schedule.isActive
 
         let entryEntities = schedule.entries.compactMap {
@@ -43,6 +44,35 @@ extension MedicationScheduleEntity {
         if !entryEntities.isEmpty {
             addToEntries(NSSet(array: entryEntities))
         }
+    }
+}
+
+extension MedicationSchedule {
+    // Helper method to convert weekdays to a string for Core Data storage
+    func weekdaysToString() -> String {
+        weekdays.map { String($0.rawValue) }.sorted().joined(separator: ",")
+    }
+
+    // Helper method to convert a string from Core Data to weekdays
+    // Note: This method assumes that the string is a comma-separated list of integers
+    static func weekdaysFromString(_ string: String?) -> Set<Weekday> {
+        // Note:
+        // If the string is nil, it hasn't been set yet. This means the device is reading a
+        // schedule that was created before the introduction of the weekdays property.
+        // Thus it has been the case that all weekdays were selected.
+
+        // For newly created schedules (and DB entities), the weekdays property is set to all weekdays by default.
+        // (This is a short cut for a real data base migration step.)
+        guard let string = string else {
+            return Set(Weekday.allCases)
+        }
+
+        if string.isEmpty {
+            return Set() // Default to no weekdays if the string is empty
+        }
+
+        let weekdayValues = string.split(separator: ",").compactMap { Int(String($0)) }
+        return Set(weekdayValues.compactMap { Weekday(rawValue: $0) })
     }
 }
 
@@ -71,6 +101,7 @@ extension MedicationSchedule {
             dosageInstructions: entity.body ?? "",
             taskId: taskId,
             isActive: entity.isActive,
+            weekdays: MedicationSchedule.weekdaysFromString(entity.weekdays),
             entries: IdentifiedArray(
                 uniqueElements: entries
             )

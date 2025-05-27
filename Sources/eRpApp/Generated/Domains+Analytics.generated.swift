@@ -254,6 +254,32 @@ extension DeviceSecurityDomain.State {
     }
 }
 
+extension DiGaDetailDomain.State {
+    func routeName() -> String? {
+        guard let destination else { return nil }
+        switch destination {
+            case let .descriptionDiGA(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .validDiGa(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .supportDiGa(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case .alert:
+                return destination.analyticsName
+            case let .cardWall(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .patient(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .practitioner(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .organization(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .technicalInformations(state: state):
+                return state.routeName() ?? destination.analyticsName
+        }
+    }
+}
+
 extension DosageInstructionsDomain.State {
     func routeName() -> String? {
         return nil
@@ -461,6 +487,8 @@ extension MainDomain.State {
                 return destination.analyticsName
             case .toast:
                 return destination.analyticsName
+            case let .diGaDetail(state: state):
+                return state.routeName() ?? destination.analyticsName
         }
     }
 }
@@ -733,6 +761,8 @@ extension PrescriptionArchiveDomain.State {
         guard let destination else { return nil }
         switch destination {
             case let .prescriptionDetail(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .diGaDetail(state: state):
                 return state.routeName() ?? destination.analyticsName
         }
     }
@@ -1113,6 +1143,30 @@ extension ChargeItemListDomain.Destination.State {
         }
     }
 }
+extension DiGaDetailDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .descriptionDiGA:
+                return "descriptionDiGA"
+            case .validDiGa:
+                return "validDiGa"
+            case .supportDiGa:
+                return "supportDiGa"
+            case .alert:
+                return Analytics.Screens.alert.name
+            case .cardWall:
+                return Analytics.Screens.cardWall.name
+            case .patient:
+                return Analytics.Screens.prescriptionDetail_patient.name
+            case .practitioner:
+                return Analytics.Screens.prescriptionDetail_practitioner.name
+            case .organization:
+                return Analytics.Screens.prescriptionDetail_organization.name
+            case .technicalInformations:
+                return Analytics.Screens.prescriptionDetail_technicalInfo.name
+        }
+    }
+}
 extension EditProfileDomain.Destination.State {
     var analyticsName: String {
         switch self {
@@ -1246,6 +1300,8 @@ extension MainDomain.Destination.State {
                 return Analytics.Screens.alert.name
             case .toast:
                 return Analytics.Screens.alert.name
+            case .diGaDetail:
+                return Analytics.Screens.digasMain.name
         }
     }
 }
@@ -1410,6 +1466,8 @@ extension PrescriptionArchiveDomain.Destination.State {
         switch self {
             case .prescriptionDetail:
                 return Analytics.Screens.prescriptionDetail.name
+            case .diGaDetail:
+                return "diGaDetail"
         }
     }
 }

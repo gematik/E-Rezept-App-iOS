@@ -17,6 +17,7 @@
 //
 //
 
+import ComposableArchitecture
 import Dependencies
 import Foundation
 import XCTestDynamicOverlay
@@ -357,17 +358,20 @@ extension DependencyValues {
 // MARK: factories
 
 import FHIRClient
+import FHIRVZD
 
 struct PharmacyServiceFactory {
-    let construct: (FHIRClient) -> PharmacyRemoteDataStore
+    let construct: (_ fhirClient: FHIRClient, _ fhirVZDSession: FHIRVZDSession) -> PharmacyRemoteDataStore
 
-    init(construct: @escaping (FHIRClient) -> PharmacyRemoteDataStore) {
+    init(construct: @escaping (_ fhirClient: FHIRClient, _ fhirVZDSession: FHIRVZDSession) -> PharmacyRemoteDataStore) {
         self.construct = construct
     }
 }
 
 extension PharmacyServiceFactory: DependencyKey {
-    static var liveValue = PharmacyServiceFactory(construct: PharmacyFHIRDataSource.init)
+    static var liveValue = PharmacyServiceFactory { fhirClient, fhirVZDSession in
+        HealthcareServiceFHIRDataSource(fhirClient: fhirClient, session: fhirVZDSession)
+    }
 }
 
 extension DependencyValues {

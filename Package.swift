@@ -49,19 +49,20 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/combine-schedulers", from: "1.0.2"),
         .package(url: "https://github.com/rcasula/composable-core-location", revision: "0f3651bdaf95fcc44acef7de7d9aab0395cc2678"),
         .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.5.6"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.15.0"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.19.0"),
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.4.1"),
         .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.2"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.18.3"),
         .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.1.2"),
         .package(url: "https://github.com/Quick/Nimble", from: "13.0.0"),
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.3.0"),
         .package(url: "https://github.com/zxing-cpp/zxing-cpp", from: "2.2.1"),
         .package(url: "https://github.com/gematik/ASN1Kit", from: "1.2.1"),
         .package(url: "https://github.com/gematik/OpenSSL-Swift", from: "4.2.0"),
-        .package(url: "https://github.com/gematik/swift-gemPDFKit", from: "0.2.0"),
+        .package(url: "https://github.com/gematik/swift-gemPDFKit", from: "0.2.1"),
         .package(url: "https://github.com/gematik/ref-OpenHealthCardKit",  from: "5.8.0"),
+        .package(url: "https://github.com/apple/swift-asn1.git", .upToNextMajor(from: "1.0.0")),
     ],
     targets: [
         .target(
@@ -72,6 +73,7 @@ let package = Package(
                 "eRpKit",
                 "eRpLocalStorage",
                 "Pharmacy",
+                "FHIRVZD",
                 "IDP",
                 "HTTPClient",
                 "FHIRClient",
@@ -171,9 +173,13 @@ let package = Package(
         .target(
             name: "FHIRVZD",
             dependencies: [
+                "Pharmacy",
                 "HTTPClient",
                 "FHIRClient",
                 "eRpKit",
+                "IDP",
+                // change to swift-sharing & dependencies after TCA update
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
             ]
@@ -214,6 +220,7 @@ let package = Package(
             dependencies: [
                 "HTTPClient",
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
+                .product(name: "SwiftASN1", package: "swift-asn1"),
             ]
         ),
         .target(
@@ -310,6 +317,7 @@ let package = Package(
             dependencies: [
                 "TestUtils",
                 "FHIRVZD",
+                "Pharmacy",
                 .product(name: "OHHTTPStubsSwift", package: "OHHTTPStubs"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "Nimble", package: "Nimble"),

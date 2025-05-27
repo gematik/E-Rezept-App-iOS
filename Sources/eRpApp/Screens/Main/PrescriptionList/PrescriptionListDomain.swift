@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -62,6 +62,12 @@ struct PrescriptionListDomain {
             profile?.connectionStatus == .connected
         }
 
+        var showRedeemDiGaButton: Bool {
+            let openPrescription = prescriptions.filter { !$0.isArchived }
+            return openPrescription.filter(\.isDiGaPrescription).count >= 1 && openPrescription
+                .filter { !$0.isDiGaPrescription }.isEmpty
+        }
+
         init(
             loadingState: LoadingState<[Prescription], PrescriptionRepositoryError> = .idle,
             prescriptions: [Prescription] = [],
@@ -79,7 +85,7 @@ struct PrescriptionListDomain {
 
     enum Action: Equatable {
         /// Loads locally stored Prescriptions
-        case loadLocalPrescriptions(UserProfile)
+        case loadLocalPrescriptions(UserProfile?)
         ///  Loads Prescriptions from server and stores them in the local store
         case loadRemotePrescriptionsAndSave
         /// Presents the CardWall when not logged in or executes `loadFromCloudAndSave`
@@ -93,6 +99,7 @@ struct PrescriptionListDomain {
         case alertDismissButtonTapped
         /// Details actions
         case prescriptionDetailViewTapped(selectedPrescription: Prescription)
+        case diGaDetailViewTapped(selectedPrescription: Prescription, profile: UserProfile?)
         /// Redeem actions
         case redeemButtonTapped(openPrescriptions: [Prescription])
 
@@ -100,7 +107,7 @@ struct PrescriptionListDomain {
 
         enum Response: Equatable {
             /// Response from `loadLocalPrescriptions`
-            case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>, UserProfile)
+            case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>, UserProfile?)
             /// Response from `loadRemotePrescriptionsAndSave`
             case loadRemotePrescriptionsAndSaveReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
             case activeUserProfileReceived(Result<UserProfile, UserProfileServiceError>)
@@ -187,9 +194,10 @@ struct PrescriptionListDomain {
             )
             .cancellable(id: CancelID.loadLocalPrescriptionId, cancelInFlight: true)
         case let .response(.loadLocalPrescriptionsReceived(loadingState, profile)):
-            state.profile = profile
             state.loadingState = loadingState
             state.prescriptions = loadingState.value ?? []
+            guard let profile = profile else { return .none }
+            state.profile = profile
             return .none
         case .loadRemotePrescriptionsAndSave:
             state.loadingState = .loading(nil)
@@ -211,6 +219,7 @@ struct PrescriptionListDomain {
         case .response(.showCardWallReceived),
              .prescriptionDetailViewTapped,
              .redeemButtonTapped,
+             .diGaDetailViewTapped,
              .showArchivedButtonTapped,
              .profilePictureViewTapped:
             return .none

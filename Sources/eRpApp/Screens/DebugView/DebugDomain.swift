@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FHIRVZD
 import Foundation
 import IDP
 
@@ -30,6 +31,11 @@ struct DebugDomain {
         var trackingOptIn: Bool
 
         #if ENABLE_DEBUG_VIEW
+        @Shared(.showDebugPharmacies) var showDebugPharmacies
+        @Shared(.fhirVZDToken) var fhirVZDToken
+        @Shared(.overwriteDIGAIK) var overwriteDIGAIK
+        @Shared(.appDefaults) var appDefaults
+
         var localTasks: [ErxTask] = []
         var hideOnboarding = true
 
@@ -111,6 +117,7 @@ struct DebugDomain {
         case setServerEnvironment(String?)
         case showAlert(Bool)
         case resetAlertText
+        case resetAppDefaults
         case appear
         case resetTooltips
         case logAction(action: DebugLogsDomain.Action)
@@ -335,6 +342,9 @@ struct DebugDomain {
             userSession.trustStoreSession.reset()
             userSession.secureUserStore.set(discovery: nil)
 
+            @Shared(.fhirVZDToken) var token
+            $token.withLock { $0 = nil }
+
             localUserStore.set(serverEnvironmentConfiguration: name)
             return .none
         case .binding(\.trackingOptIn):
@@ -382,6 +392,9 @@ struct DebugDomain {
             return setHidePkvConsentDrawerOnMainView(to: newValue, profileId: profile.id)
         case .resetTooltips:
             UserDefaults.standard.setValue([String: Any](), forKey: "TOOLTIPS")
+            return .none
+        case .resetAppDefaults:
+            state.$appDefaults.withLock { $0 = AppDefaults() }
             return .none
         case let .tokenReceived(token):
             state.token = token

@@ -185,7 +185,12 @@ struct CardWallPINView: View {
                         .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
                 }
                 .onAppear {
+                    #if DEBUG
+                    // Disable focus on tests to avoid keyboard pop-up
+                    focused = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil
+                    #else
                     focused = true
+                    #endif
                 }
             }
         }

@@ -30,6 +30,37 @@ extension MedicationReminderSetupView {
             WithPerceptionTracking {
                 VStack {
                     Form {
+                        // Weekday selection
+                        Section {
+                            ForEach(MedicationSchedule.Weekday.allCases) { weekday in
+                                Button {
+                                    store.send(.repetitionWeekdayButtonTapped(weekday))
+                                } label: {
+                                    HStack {
+                                        Text(weekday.name)
+                                            .foregroundColor(Colors.text)
+                                        Spacer()
+                                        if store.isWeekdaySelected(weekday) {
+                                            Image(systemName: SFSymbolName.checkmark)
+                                                .font(.body.weight(.semibold))
+                                                .foregroundColor(Colors.primary)
+                                        }
+                                    }
+                                }
+                                .accessibilityElement(children: .combine)
+                                .accessibilityIdentifier(weekday.accessibilityIdentifier)
+                                .accessibilityValue(
+                                    store.isWeekdaySelected(weekday) ? L10n.sectionTxtIsActiveValue.text :
+                                        L10n.sectionTxtIsInactiveValue.text
+                                )
+                            }
+                        } header: {
+                            Label(L10n.medReminderTxtFormSectionHeaderWeekday)
+                                .font(.headline)
+                        }
+                        .headerProminence(.increased)
+
+                        // Duration
                         Section {
                             Button {
                                 store.send(.repetitionTypeChanged(.infinite))
@@ -80,12 +111,26 @@ extension MedicationReminderSetupView {
                                 )
                                 .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDateEnd)
                             }
+                        } header: {
+                            Text(L10n.medReminderTxtFormSectionHeaderDuration)
+                                .font(.headline)
                         }
+                        .headerProminence(.increased)
                     }
+                    .navigationTitle(L10n.medReminderTxtRepetitionTitle)
+                    .navigationBarTitleDisplayMode(.inline)
                 }
-                .navigationTitle(L10n.medReminderTxtRepetitionTitle)
-                .navigationBarTitleDisplayMode(.inline)
             }
         }
     }
+}
+
+#Preview {
+    MedicationReminderSetupView.RepetitionView(
+        store: .init(
+            initialState: MedicationReminderSetupDomain.Dummies.state
+        ) {
+            MedicationReminderSetupDomain()
+        }
+    )
 }

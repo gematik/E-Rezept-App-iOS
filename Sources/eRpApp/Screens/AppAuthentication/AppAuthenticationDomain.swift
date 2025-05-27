@@ -27,6 +27,17 @@ struct AppAuthenticationDomain {
         var didCompleteAuthentication = false
         var subdomain: Subdomain.State?
         var failedAuthenticationsCount: Int = 0
+
+        var showGroupShot: Bool {
+            switch subdomain {
+            case .biometrics, .biometricAndPassword:
+                return true
+            case .password:
+                return failedAuthenticationsCount == 0
+            case .none:
+                return false
+            }
+        }
     }
 
     enum Action: Equatable {

@@ -76,8 +76,11 @@ final class SettingsUITests: XCTestCase {
         expect(self.app.state).toEventually(equal(.runningBackground), timeout: .seconds(5))
         expect(self.settingsApp.state).to(equal(.runningForeground))
 
-        let titleCorrect = settingsApp.navigationBars.staticTexts.firstMatch.label == "E-prescription" ||
-            settingsApp.navigationBars.staticTexts.firstMatch.label == "E-Rezept"
+        // broken since ~iOS 18.4
+//        let titleCorrect = settingsApp.navigationBars.staticTexts.firstMatch.label == "E-prescription" ||
+//            settingsApp.navigationBars.staticTexts.firstMatch.label == "E-Rezept"
+
+        let titleCorrect = settingsApp.buttons["E-Rezept"].exists || settingsApp.buttons["E-prescription"].exists
         expect(titleCorrect).to(beTrue())
     }
 }

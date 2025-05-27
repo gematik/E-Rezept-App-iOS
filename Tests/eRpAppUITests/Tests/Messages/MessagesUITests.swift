@@ -27,6 +27,12 @@ class MessagesUITests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        // https://chromium.googlesource.com/chromium/src/+/HEAD/ios/build/bots/scripts/iossim_util_test.py
+        if let defaults = UserDefaults(suiteName: "com.apple.keyboard.preferences") {
+            defaults.set(true, forKey: "DidShowContinuousPathIntroduction")
+            defaults.set(true, forKey: "UIKeyboardDidShowInternationalInfoIntroduction")
+        }
+
         app = XCUIApplication()
 
         // setup host application

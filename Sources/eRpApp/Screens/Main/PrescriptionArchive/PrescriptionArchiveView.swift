@@ -30,15 +30,46 @@ struct PrescriptionArchiveView: View {
     var body: some View {
         WithPerceptionTracking {
             ScrollView(.vertical) {
+                if !store.diGaPrescriptions.isEmpty {
+                    Picker(
+                        selection: $store.pickerView.sending(\.selectView),
+                        label: Text("")
+                    ) {
+                        ForEach(PrescriptionArchiveDomain.PickerView.allCases, id: \.self) { viewOption in
+                            WithPerceptionTracking {
+                                Text(viewOption.text).tag(viewOption)
+                            }
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                }
+
                 VStack(spacing: 16) {
-                    ForEach(store.prescriptions) { prescription in
-                        WithPerceptionTracking {
-                            PrescriptionView(
-                                prescription: prescription
-                            ) {
-                                store.send(.prescriptionDetailViewTapped(
-                                    selectedPrescription: prescription
-                                ))
+                    switch store.pickerView {
+                    case .prescriptions:
+                        ForEach(store.prescriptions.filter { !$0.isDiGaPrescription }) { prescription in
+                            WithPerceptionTracking {
+                                PrescriptionView(
+                                    prescription: prescription
+                                ) {
+                                    store.send(.prescriptionDetailViewTapped(
+                                        selectedPrescription: prescription
+                                    ))
+                                }
+                            }
+                        }
+                    case .diGa:
+                        ForEach(store.diGaPrescriptions) { prescription in
+                            WithPerceptionTracking {
+                                PrescriptionView(
+                                    prescription: prescription
+                                ) {
+                                    store.send(.prescriptionDetailViewTapped(
+                                        selectedPrescription: prescription
+                                    ))
+                                }
                             }
                         }
                     }
@@ -54,6 +85,11 @@ struct PrescriptionArchiveView: View {
                 item: $store.scope(state: \.destination?.prescriptionDetail, action: \.destination.prescriptionDetail)
             ) { store in
                 PrescriptionDetailView(store: store)
+            }
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.diGaDetail, action: \.destination.diGaDetail)
+            ) { store in
+                DiGaDetailView(store: store)
             }
         }
     }

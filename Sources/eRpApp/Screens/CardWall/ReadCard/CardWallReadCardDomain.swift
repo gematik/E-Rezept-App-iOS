@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -123,6 +123,7 @@ struct CardWallReadCardDomain {
                 profileId: state.profileId,
                 insuranceId: payload?.idNummer,
                 insurance: payload?.organizationName,
+                insuranceIK: payload?.organizationIK,
                 givenName: payload?.givenName,
                 familyName: payload?.familyName
             )
@@ -223,9 +224,19 @@ struct CardWallReadCardDomain {
             state.destination = nil
             return .none
         case .destination(.presented(.alert(.wrongPIN))):
-            return .send(.delegate(.wrongPIN))
+            state.destination = nil
+            return .run { send in
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                try await schedulers.main.sleep(for: 0.5)
+                await send(.delegate(.wrongPIN))
+            }
         case .destination(.presented(.alert(.wrongCAN))):
-            return .send(.delegate(.wrongCAN))
+            state.destination = nil
+            return .run { send in
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                try await schedulers.main.sleep(for: 0.5)
+                await send(.delegate(.wrongCAN))
+            }
         case .destination(.presented(.alert(.close))):
             return .send(.delegate(.close))
         case .destination(.presented(.alert(.unlockCard))):

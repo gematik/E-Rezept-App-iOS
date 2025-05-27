@@ -209,7 +209,7 @@ struct PharmacySearchMapDomain {
                 return Effect.send(.requestLocation)
             }
             if !state.pharmacyFilterOptions.contains(.currentLocation) {
-                state.pharmacyFilterOptions.append(.currentLocation)
+                state.$pharmacyFilterOptions.withLock { $0.append(.currentLocation) }
                 // nothing else to do here: state change of pharmacyFilterOptions will automatically start quicksearch
                 return .none
             }
@@ -227,7 +227,7 @@ struct PharmacySearchMapDomain {
             return .send(.showDetails(viewModel))
         case .performSearch:
             if let index = state.pharmacyFilterOptions.firstIndex(of: .currentLocation) {
-                state.pharmacyFilterOptions.remove(at: index)
+                state.$pharmacyFilterOptions.withLock { _ = $0.remove(at: index) }
                 // nothing else to do here: state change of pharmacyFilterOptions will automatically start quicksearch
                 return .none
             }
@@ -266,7 +266,7 @@ struct PharmacySearchMapDomain {
             return .none
         case let .showDetails(viewModel):
             state.destination = .pharmacy(PharmacyDetailDomain.State(
-                prescriptions: Shared([]),
+                prescriptions: Shared(value: []),
                 selectedPrescriptions: state.$selectedPrescriptions,
                 inRedeemProcess: state.inRedeemProcess,
                 pharmacyViewModel: viewModel,
@@ -277,7 +277,7 @@ struct PharmacySearchMapDomain {
         case .onAppear:
             return
                 .merge(
-                    .publisher { state.$pharmacyFilterOptions.publisher.map(Action.quickSearch) },
+                    .publisher { state.$pharmacyFilterOptions.publisher.removeDuplicates().map(Action.quickSearch) },
                     .send(.searchWithMap),
                     .run { send in
                         await withTaskCancellation(id: CancelID.locationManager, cancelInFlight: true) {

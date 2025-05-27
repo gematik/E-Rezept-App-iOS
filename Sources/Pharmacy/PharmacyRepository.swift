@@ -30,7 +30,8 @@ public protocol PharmacyRepository {
     /// - Parameters:
     ///   - telematikId: The telematik ID of the pharmacy
     /// - Returns: Publisher for the load and saved request or fails
-    func updateFromRemote(by telematikId: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError>
+    func updateFromRemote(by telematikId: String)
+        -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError>
 
     /// Loads the `PharmacyLocation` by its telematik ID from disk or if not present from a remote (server).
     ///
@@ -47,10 +48,11 @@ public protocol PharmacyRepository {
     ///   - position: the Position which is used as a search point for an "around me" search
     ///   - filter: further filter parameters for pharmacies
     /// - Returns: `AnyPublisher` that emits a list of `PharmacyLocation`s or is empty when not found
-    func searchRemote(searchTerm: String,
-                      position: Position?,
-                      filter: [PharmacyRepositoryFilter])
-        -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
+    func searchRemote(
+        searchTerm: String,
+        position: Position?,
+        filter: [PharmacyRepositoryFilter]
+    ) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
 
     /// Loads the `PharmacyLocation` by its telematik ID from disk
     ///
@@ -81,6 +83,12 @@ public protocol PharmacyRepository {
     /// - Parameter id: id of `PharmacyLocation` from which to load the certificate
     /// - Returns: Emits an array of certificates on success or fails with a `PharmacyRepositoryError`
     func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError>
+
+    /// Convenience function for requesting a telematikId by institution identifier (IK)
+    /// - Parameters:
+    ///   - ikNumber: The institution (IK) identifier of the organization to be requested
+    /// - Returns: `AnyPublisher` that emits the `TelematikId` or nil when not found
+    func fetchTelematikId(ikNumber: String) -> AnyPublisher<String?, PharmacyRepositoryError>
 }
 
 extension PharmacyRepository {
@@ -111,27 +119,6 @@ public enum PharmacyRepositoryFilter {
     case shipment
     /// Matching pharmacies provide local delivery services (Botendienst)
     case delivery
-}
-
-extension PharmacyRepositoryFilter {
-    var asAPIFilter: (String, String)? {
-        switch self {
-        case .ready:
-            return ("status", "active")
-        case .shipment:
-            return ("type", "mobl")
-        case .delivery:
-            return nil
-        }
-    }
-}
-
-// swiftlint:disable:next no_extension_access_modifier
-public extension Collection where Element == PharmacyRepositoryFilter {
-    /// Group elements for `PharmacyRepositoryFilter` elements
-    func asAPIFilter() -> [String: String] {
-        Dictionary(uniqueKeysWithValues: compactMap(\.asAPIFilter))
-    }
 }
 
 /// Position which is used as a search point for an "around me" search.

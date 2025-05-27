@@ -109,6 +109,22 @@ public struct DefaultKeyValuePairStyle: KeyValuePairStyle {
         .accessibilityElement(children: .combine)
         .accessibilityLabel(configuration.key)
         .accessibilityValue(configuration.value)
+    }
+}
+
+struct PaddedKeyValuePairStyle: KeyValuePairStyle {
+    func makeBody(configuration: KeyValuePairConfiguration) -> some View {
+        HStack {
+            configuration.key
+                .font(.body)
+                .labelStyle(DefaultLabelStyle())
+            Spacer()
+            configuration.value
+                .font(.body.weight(.bold))
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(configuration.key)
+        .accessibilityValue(configuration.value)
         .padding()
     }
 }
@@ -156,7 +172,8 @@ public struct PlainKeyValuePairStyle: KeyValuePairStyle {
 }
 
 extension View {
-    func keyValuePairStyle<Style: KeyValuePairStyle>(_ style: Style) -> some View {
+    /// Sets a `KeyValuePairStyle` for this and the children views.
+    public func keyValuePairStyle<Style: KeyValuePairStyle>(_ style: Style) -> some View {
         environment(\.keyValuePairStyle, AnyKeyValuePairStyle(style: style))
     }
 }
@@ -208,5 +225,30 @@ extension EnvironmentValues {
 extension View {
     func keyValuePairStyle(_ keyValuePairStyle: AnyKeyValuePairStyle) -> some View {
         environment(\.keyValuePairStyle, keyValuePairStyle)
+    }
+}
+
+extension KeyValuePairStyle where Self == SeparatedNoPaddingKeyValuePairStyle {
+    /// A button style that applies a navigation chevron and wraps the button with a divider.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View/buttonStyle(_:)`` modifier.
+    public static var noPadding: SeparatedNoPaddingKeyValuePairStyle { SeparatedNoPaddingKeyValuePairStyle() }
+}
+
+public struct SeparatedNoPaddingKeyValuePairStyle: KeyValuePairStyle {
+    public func makeBody(configuration: KeyValuePairConfiguration) -> some View {
+        HStack {
+            configuration.key
+                .font(.body)
+                .labelStyle(DefaultLabelStyle())
+            Spacer()
+            configuration.value
+                .font(.body)
+                .foregroundColor(Color(.secondaryLabel))
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(configuration.key)
+        .accessibilityValue(configuration.value)
     }
 }

@@ -36,6 +36,7 @@ extension ProfileEntity {
     @NSManaged public var image: String?
     @NSManaged public var insurance: String?
     @NSManaged public var insuranceId: String?
+    @NSManaged public var insuranceIK: String?
     @NSManaged public var insuranceType: String?
     @NSManaged public var lastAuthenticated: Date?
     @NSManaged public var name: String?

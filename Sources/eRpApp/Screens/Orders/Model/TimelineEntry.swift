@@ -249,7 +249,7 @@ enum TimelineEntry: Equatable, Identifiable {
                     ActionEntry(
                         id: .ordDetailBtnError,
                         name: L10n.ordDetailBtnError.text,
-                        action: .openMail(message: communication.payloadJSON)
+                        action: .openMail(message: communication.payloadJSON ?? "")
                     ),
                 ])
             }

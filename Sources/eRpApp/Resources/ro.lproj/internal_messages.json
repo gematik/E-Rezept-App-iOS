@@ -22,5 +22,11 @@
         "text": "🛒 **Flux de comandă îmbunătățit** \nProcesul de comandă este acum mai ușor și mai rapid. \n \n🌐 **Limbi noi** \nAplicația noastră este acum disponibilă și în spaniolă și irlandeză. \n \n📞 **Opțiuni extinse de contact** \nAm introdus noi opțiuni de contact pentru companiile de asigurări selectate. \n \n🔍 **Jurnalele de acces detaliate** \nAcum afișăm și ID-urile telematice în jurnalele de acces, astfel încât să fie mai ușor de identificat cine a avut acces.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Valorificați rețetele DiGA prescrise** \nDe acum înainte puteți valorifica rețetele pentru aplicațiile digitale de sănătate (DiGA) direct prin intermediul aplicației de rețete electronice. Vei primi codul de activare și linkul către aplicația prescrisă imediat după valorificare. \n \n **🏥 Noua bază de date pentru farmacii** \nAm introdus o nouă bază de date, pregătită pentru viitor, pentru căutările în farmacii.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

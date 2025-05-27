@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -476,16 +476,22 @@ class FakeErxTaskRepository: ErxTaskRepository {
 
     }()
 
+    // MARK: - ErxDeviceRequest.DiGaInfo
+
+    func updateLocal(diGaInfo _: eRpKit.DiGaInfo) -> AnyPublisher<Bool, eRpKit.ErxRepositoryError> {
+        Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
     static var exampleStore: [String: ErxTask] = {
-        let authoredOnNinetyTwoDaysBefore = DemoDate.createDemoDate(.ninetyTwoDaysBefore)
-        let authoredOnThirtyDaysBefore = DemoDate.createDemoDate(.thirtyDaysBefore)
-        let authoredOnSixteenDaysBefore = DemoDate.createDemoDate(.sixteenDaysBefore)
-        let authoredOnWeekBefore = DemoDate.createDemoDate(.weekBefore)
-        let expiresIn12DaysString = DemoDate.createDemoDate(.twelveDaysAhead)
-        let expiresYesterdayString = DemoDate.createDemoDate(.yesterday)
-        let expiresIn31DaysString = DemoDate.createDemoDate(.twentyEightDaysAhead)
-        let redeemedOnToday = DemoDate.createDemoDate(.today)
-        let handedOverAWeekBefore = DemoDate.createDemoDate(.weekBefore)
+        let authoredOnNinetyTwoDaysBefore = TestDate.createFormattedDate(.ninetyTwoDaysBefore, referenceDate: Date())
+        let authoredOnThirtyDaysBefore = TestDate.createFormattedDate(.thirtyDaysBefore, referenceDate: Date())
+        let authoredOnSixteenDaysBefore = TestDate.createFormattedDate(.sixteenDaysBefore, referenceDate: Date())
+        let authoredOnWeekBefore = TestDate.createFormattedDate(.weekBefore, referenceDate: Date())
+        let expiresIn12DaysString = TestDate.createFormattedDate(.twelveDaysAhead, referenceDate: Date())
+        let expiresYesterdayString = TestDate.createFormattedDate(.yesterday, referenceDate: Date())
+        let expiresIn31DaysString = TestDate.createFormattedDate(.twentyEightDaysAhead, referenceDate: Date())
+        let redeemedOnToday = TestDate.createFormattedDate(.today, referenceDate: Date())
+        let handedOverAWeekBefore = TestDate.createFormattedDate(.weekBefore, referenceDate: Date())
 
         return [
             // Group 1 [0 - 2]
@@ -737,7 +743,8 @@ class FakeErxTaskRepository: ErxTaskRepository {
                         amount: .init(numerator: .init(value: "11")),
                         dosageForm: "TAB"
                     ),
-                    epaMedication: nil
+                    epaMedication: nil,
+                    diGaDispense: nil
                 )]
             ),
             "14": ErxTask(
@@ -770,7 +777,8 @@ class FakeErxTaskRepository: ErxTaskRepository {
                             amount: .init(numerator: .init(value: "6")),
                             dosageForm: "TAB"
                         ),
-                        epaMedication: nil
+                        epaMedication: nil,
+                        diGaDispense: nil
                     ),
                     ErxMedicationDispense(
                         identifier: "098767825647892-2",
@@ -784,7 +792,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                             amount: .init(numerator: .init(value: "5")),
                             dosageForm: "TAB"
                         ),
-                        epaMedication: nil
+                        epaMedication: nil,
+                        diGaDispense: nil
+
                     ),
                 ]
             ),

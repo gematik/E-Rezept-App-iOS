@@ -59,6 +59,13 @@ extension DefaultErxTaskCoreDataStore {
             )
             subPredicates.append(comProfile)
         }
+        // exclude communications from DiGas  .taskId.hasPrefix("162.")
+        let taskIdPredicate = NSPredicate(
+            format: "NOT (%K BEGINSWITH %@)",
+            #keyPath(ErxTaskCommunicationEntity.taskId),
+            "162."
+        )
+        subPredicates.append(taskIdPredicate)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subPredicates)
         return coreDataCrudable.fetch(request)
             .map { list in

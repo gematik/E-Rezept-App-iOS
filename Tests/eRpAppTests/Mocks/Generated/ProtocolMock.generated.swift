@@ -1345,6 +1345,24 @@ final class MockPharmacyRepository: PharmacyRepository {
         loadAvsCertificatesForReceivedInvocations.append(id)
         return loadAvsCertificatesForClosure.map({ $0(id) }) ?? loadAvsCertificatesForReturnValue
     }
+    
+   // MARK: - fetchTelematikId
+
+    var fetchTelematikIdIkNumberCallsCount = 0
+    var fetchTelematikIdIkNumberCalled: Bool {
+        fetchTelematikIdIkNumberCallsCount > 0
+    }
+    var fetchTelematikIdIkNumberReceivedIkNumber: String?
+    var fetchTelematikIdIkNumberReceivedInvocations: [String] = []
+    var fetchTelematikIdIkNumberReturnValue: AnyPublisher<String?, PharmacyRepositoryError>!
+    var fetchTelematikIdIkNumberClosure: ((String) -> AnyPublisher<String?, PharmacyRepositoryError>)?
+
+    func fetchTelematikId(ikNumber: String) -> AnyPublisher<String?, PharmacyRepositoryError> {
+        fetchTelematikIdIkNumberCallsCount += 1
+        fetchTelematikIdIkNumberReceivedIkNumber = ikNumber
+        fetchTelematikIdIkNumberReceivedInvocations.append(ikNumber)
+        return fetchTelematikIdIkNumberClosure.map({ $0(ikNumber) }) ?? fetchTelematikIdIkNumberReturnValue
+    }
 }
 
 
@@ -1696,6 +1714,24 @@ final class MockRedeemService: RedeemService {
         redeemReceivedOrders = orders
         redeemReceivedInvocations.append(orders)
         return redeemClosure.map({ $0(orders) }) ?? redeemReturnValue
+    }
+    
+   // MARK: - redeemDiGa
+
+    var redeemDiGaCallsCount = 0
+    var redeemDiGaCalled: Bool {
+        redeemDiGaCallsCount > 0
+    }
+    var redeemDiGaReceivedOrders: [OrderDiGaRequest]?
+    var redeemDiGaReceivedInvocations: [[OrderDiGaRequest]] = []
+    var redeemDiGaReturnValue: AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>!
+    var redeemDiGaClosure: (([OrderDiGaRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>)?
+
+    func redeemDiGa(_ orders: [OrderDiGaRequest]) -> AnyPublisher<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError> {
+        redeemDiGaCallsCount += 1
+        redeemDiGaReceivedOrders = orders
+        redeemDiGaReceivedInvocations.append(orders)
+        return redeemDiGaClosure.map({ $0(orders) }) ?? redeemDiGaReturnValue
     }
 }
 

@@ -113,7 +113,7 @@ extension Reducer {
             guard scenario != nil || isRecording else { return }
 
             dependencies.userDataStore = SmartMocks.shared.smartMockUserDataStore(scenario, isRecording)
-            dependencies.pharmacyServiceFactory = PharmacyServiceFactory { fhirClient in
+            dependencies.pharmacyServiceFactory = PharmacyServiceFactory { fhirClient, _ in
                 SmartMocks.shared.smartMockPharmacyService(fhirClient: fhirClient, scenario, isRecording)
             }
             dependencies.erxTaskCoreDataStoreFactory = ErxTaskCoreDataStoreFactory { uuid, coreDataControllerFactory in
@@ -358,12 +358,12 @@ struct ScenarioLoader {
         do {
             return try JSONDecoder().decode(T.self, from: jsonData)
         } catch let DecodingError.typeMismatch(type, context) {
-            print(String(data: jsonData, encoding: .utf8))
+            print(String(data: jsonData, encoding: .utf8) ?? "")
             print("Type mismatch error: \(type)")
             print("Context: \(context)")
             fatalError("Failed to decode scenario file")
         } catch let error as DecodingError {
-            print(String(data: jsonData, encoding: .utf8))
+            print(String(data: jsonData, encoding: .utf8) ?? "")
             print("wait")
             switch error {
             case let .valueNotFound(_, context),

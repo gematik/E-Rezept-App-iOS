@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -57,6 +57,8 @@ struct MainDomain {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = alert
         case toast(ToastState<Toast>)
+        // sourcery: AnalyticsScreen = digasMain
+        case diGaDetail(DiGaDetailDomain)
 
         enum Alert {
             case dismiss
@@ -343,16 +345,32 @@ struct MainDomain {
         case let .prescriptionList(action: .response(.showCardWallReceived(cardWallState))):
             state.destination = .cardWall(cardWallState)
             return .none
+        case let .prescriptionList(action: .diGaDetailViewTapped(prescription, profile)):
+            guard let diGaInfo = prescription.erxTask.deviceRequest?.diGaInfo else { return .none }
+            state.destination = .diGaDetail(DiGaDetailDomain.State(
+                diGaTask: .init(prescription: prescription),
+                diGaInfo: diGaInfo,
+                profile: profile
+            ))
+            return .none
         case let .prescriptionList(action: .prescriptionDetailViewTapped(prescription)):
             state.destination = .prescriptionDetail(PrescriptionDetailDomain.State(
                 prescription: prescription,
                 isArchived: prescription.isArchived
             ))
             return .none
+        case .destination(.presented(.diGaDetail(action: .delegate(.closeFromDelete)))):
+            state.destination = nil
+            return .none
         case let .prescriptionList(action: .redeemButtonTapped(openPrescriptions)):
             state.destination = nil
+            if openPrescriptions.filter(\.isDiGaPrescription).count >= 1,
+               openPrescriptions.filter({ !$0.isDiGaPrescription }).isEmpty {
+                // redeem DiGa
+                return .none
+            }
             state.path.append(.redeemMethods(RedeemMethodsDomain.State(
-                prescriptions: openPrescriptions.filter(\.isRedeemable)
+                prescriptions: openPrescriptions.filter(\.isPharmacyRedeemable)
             )))
             return .none
         case .prescriptionList(action: .showArchivedButtonTapped):
@@ -516,7 +534,7 @@ struct MainDomain {
             }
         case let .destination(.presented(.prescriptionDetail(action: .delegate(.redeem(prescription))))):
             state.destination = nil
-            let prescriptions = Shared([prescription])
+            let prescriptions = Shared(value: [prescription])
             return .run { send in
                 // wait for running effects to finish
                 try await schedulers.main.sleep(for: 0.05)
@@ -525,7 +543,7 @@ struct MainDomain {
         case let .path(.element(id: _, action: .redeemMethods(.delegate(delegate)))):
             switch delegate {
             case let .redeemOverview(prescriptions):
-                let prescriptions = Shared(prescriptions)
+                let prescriptions = Shared(value: prescriptions)
                 return .send(.redeemPrescriptions(prescriptions))
             case .close:
                 guard !state.path.isEmpty else {
@@ -567,7 +585,7 @@ struct MainDomain {
         case let .redeemPrescriptions(prescriptions):
             state.path.append(.redeem(PharmacyRedeemDomain.State(
                 prescriptions: prescriptions,
-                selectedPrescriptions: Shared(prescriptions.wrappedValue)
+                selectedPrescriptions: Shared(value: prescriptions.wrappedValue)
             )))
             return .none
         case let .redeemFromPharmacy(pharmacy, option: redeemOption):
@@ -589,7 +607,7 @@ struct MainDomain {
                 return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
             case .changePharmacy:
                 state.path.append(.pharmacy(PharmacySearchDomain.State(
-                    selectedPrescriptions: Shared([]),
+                    selectedPrescriptions: Shared(value: []),
                     inRedeemProcess: true
                 )))
             }
@@ -600,6 +618,8 @@ struct MainDomain {
              .path(.element(id: _, action: .pharmacy(.destination(.presented(.pharmacyDetail(.delegate(.close))))))):
             state.path.removeAll()
             return .none
+//        case .destination(.presented(.diGaDetail(.refreshTask))):
+//            return .send(.prescriptionList(action: .loadRemotePrescriptionsAndSave))
         case .destination,
              .path,
              .setNavigation,

@@ -43,11 +43,14 @@ extension ErxTaskOrder {
         }
         let meta = Meta(profile: [communicationDispReq])
         let reference = Reference(reference: taskIdAndAccessCode.asFHIRStringPrimitive())
-        let payloadString = payload.asJsonString().asFHIRStringPrimitive()
-        let payload = CommunicationPayload(content: .string(payloadString))
+        let payloadString = payload?.asJsonString().asFHIRStringPrimitive()
+        var payload: [CommunicationPayload]? // swiftlint:disable:this discouraged_optional_collection
+        if let payloadString = payloadString {
+            payload = [CommunicationPayload(content: .string(payloadString))]
+        }
         let telematikUri = Workflow.Key.telematikIdKeys[.v1_4_3]?.asFHIRURIPrimitive()
         let telematikId = Identifier(system: telematikUri,
-                                     value: pharmacyTelematikId.asFHIRStringPrimitive())
+                                     value: telematikId.asFHIRStringPrimitive())
         let orderUri = Workflow.Key.orderIdKeys[.v1_4_3]?.asFHIRURIPrimitive()
         let orderId = Identifier(system: orderUri,
                                  value: identifier.asFHIRStringPrimitive())
@@ -68,7 +71,7 @@ extension ErxTaskOrder {
             extension: [flowType],
             identifier: [orderId],
             meta: meta,
-            payload: [payload],
+            payload: payload,
             recipient: [recipient],
             status: EventStatus.unknown.asPrimitive()
         )

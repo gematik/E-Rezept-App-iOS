@@ -43,7 +43,9 @@ class DemoPharmacyRepository: PharmacyRepository {
         self.schedulers = schedulers
     }
 
-    func updateFromRemote(by telematikId: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
+    func updateFromRemote(
+        by telematikId: String
+    ) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
         cloud.fetchPharmacy(by: telematikId)
             .mapError(PharmacyRepositoryError.remote)
             .flatMap { pharmacy -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> in
@@ -68,13 +70,18 @@ class DemoPharmacyRepository: PharmacyRepository {
             .eraseToAnyPublisher()
     }
 
-    func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
+    func loadCached(
+        by telematikId: String
+    ) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
         loadLocal(by: telematikId)
     }
 
-    func searchRemote(searchTerm: String, position: Position?,
-                      filter: [PharmacyRepositoryFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        cloud.searchPharmacies(by: searchTerm, position: position, filter: filter.asAPIFilter())
+    func searchRemote(
+        searchTerm: String,
+        position: Position?,
+        filter: [PharmacyRepositoryFilter]
+    ) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        cloud.searchPharmacies(by: searchTerm, position: position, filter: cloud.apiFilters(for: filter))
             .map { pharmacies in
                 if filter.contains(.delivery) {
                     return pharmacies.filter(\.hasDeliveryService)
@@ -121,6 +128,10 @@ class DemoPharmacyRepository: PharmacyRepository {
 
     func loadAvsCertificates(for _: String) -> AnyPublisher<[X509], Pharmacy.PharmacyRepositoryError> {
         Just([]).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func fetchTelematikId(ikNumber _: String) -> AnyPublisher<String?, PharmacyRepositoryError> {
+        Just("").setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
 }
 
@@ -188,5 +199,9 @@ struct DummyPharmacyRepository: PharmacyRepository {
 
     func loadAvsCertificates(for _: String) -> AnyPublisher<[X509], Pharmacy.PharmacyRepositoryError> {
         Just([]).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func fetchTelematikId(ikNumber _: String) -> AnyPublisher<String?, PharmacyRepositoryError> {
+        Just("").setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
 }

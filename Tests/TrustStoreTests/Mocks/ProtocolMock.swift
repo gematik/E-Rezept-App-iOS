@@ -22,4 +22,5 @@ import TrustStore
 
 // sourcery:begin: AutoMockable
 extension TrustStoreClient {}
+extension TrustStoreStorage {}
 // sourcery:end

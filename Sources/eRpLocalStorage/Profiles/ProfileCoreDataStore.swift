@@ -140,6 +140,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                     profileEntity.name = profile.name
                     profileEntity.insuranceId = profile.insuranceId
                     profileEntity.insuranceType = profile.insuranceType.rawValue
+                    profileEntity.insuranceIK = profile.insuranceIK
                     profileEntity.insurance = profile.insurance
                     profileEntity.givenName = profile.givenName
                     profileEntity.familyName = profile.familyName
@@ -177,6 +178,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                 profileEntity.name = profile.name
                 profileEntity.insuranceId = profile.insuranceId
                 profileEntity.insuranceType = profile.insuranceType.rawValue
+                profileEntity.insuranceIK = profile.insuranceIK
                 profileEntity.insurance = profile.insurance
                 profileEntity.givenName = profile.givenName
                 profileEntity.familyName = profile.familyName

@@ -37,48 +37,54 @@ struct MedicationReminderListView: View {
                     NoRemindersView()
                         .padding(.horizontal)
                 } else {
-                    ScrollView {
+                    List {
                         ForEach(store.profileMedicationReminder) { profileMedicationReminder in
                             if !profileMedicationReminder.medicationProfileReminderList.isEmpty {
-                                SectionContainer(
-                                    header: { SectionHeaderView(profile: profileMedicationReminder.profile) },
-                                    content: {
-                                        ForEach(profileMedicationReminder
-                                            .medicationProfileReminderList) { medicationProfileReminderListEntry in
-                                                Button {
-                                                    store
-                                                        .send(
-                                                            .selectMedicationReminder(
-                                                                medicationProfileReminderListEntry
-                                                            )
+                                Section {
+                                    ForEach(profileMedicationReminder
+                                        .medicationProfileReminderList) { medicationProfileReminderListEntry in
+                                            Button {
+                                                store
+                                                    .send(.selectMedicationReminder(medicationProfileReminderListEntry))
+                                            } label: {
+                                                Label(
+                                                    title: {
+                                                        SubTitle(
+                                                            title: medicationProfileReminderListEntry.title,
+                                                            description: medicationProfileReminderListEntry.isActive ?
+                                                                L10n.medReminderTxtListPlanActive.text :
+                                                                L10n.medReminderTxtListPlanInactive.text
                                                         )
-                                                } label: {
-                                                    Label(
-                                                        title: {
-                                                            KeyValuePair(
-                                                                key: medicationProfileReminderListEntry.title,
-                                                                value: medicationProfileReminderListEntry.isActive ?
-                                                                    L10n.medReminderTxtListPlanActive.text :
-                                                                    L10n.medReminderTxtListPlanInactive.text
-                                                            )
-                                                        },
-                                                        icon: {}
-                                                    )
-                                                }
-                                                .buttonStyle(.navigation(
-                                                    showSeparator: medicationProfileReminderListEntry !=
-                                                        profileMedicationReminder.medicationProfileReminderList.last
-                                                ))
-                                                .accessibilityIdentifier(A11y.medicationReminderList
-                                                    .medReminderListCell)
-                                        }
-
-                                        EmptyView()
+                                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                                        .contentShape(Rectangle())
+                                                        .accessibilityElement(children: .combine)
+                                                        .accessibilityLabel(medicationProfileReminderListEntry.title)
+                                                        .accessibilityValue(medicationProfileReminderListEntry
+                                                            .isActive ?
+                                                            L10n.medReminderTxtListPlanActive.text :
+                                                            L10n.medReminderTxtListPlanInactive.text)
+                                                    },
+                                                    icon: {}
+                                                )
+                                            }
+                                            .buttonStyle(.simpleNavigation)
+                                            .accessibilityIdentifier(A11y.medicationReminderList.medReminderListCell)
                                     }
-                                )
+                                    .onDelete { indexSet in
+                                        store.send(.deleteFromProfileMedicationReminderList(
+                                            profileMedicationReminder.id, indexSet
+                                        ))
+                                    }
+                                } header: {
+                                    SectionHeaderView(profile: profileMedicationReminder.profile)
+                                        .font(.headline)
+                                }
+                                .headerProminence(.increased)
                             }
                         }
                     }
+                    .listStyle(InsetGroupedListStyle())
+                    .background(Color(.secondarySystemBackground))
                 }
             }
             .navigationDestination(
@@ -137,6 +143,7 @@ extension MedicationReminderListView {
                     style: .small,
                     isBorderOn: true
                 ) {}.disabled(true)
+                    .accessibilityHidden(true)
 
                 Text(profile.name).bold()
             }

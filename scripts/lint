@@ -17,3 +17,11 @@ mint run swiftlint lint --strict --quiet
  echo "Linting failed: uncommitted swiftgen changes.\nRun:\tswiftgen\nand commit your changes."
  exit 1
 }
+
+sourcery --hideVersionHeader --quiet
+if git diff --name-only | grep -q .generated.swift; then
+  echo "Linting failed: uncommitted sourcery changes.\nRun: sourcery --hideVersionHeader\nand commit your changes."
+  exit 1
+fi
+
+echo "Linting completed successfully."

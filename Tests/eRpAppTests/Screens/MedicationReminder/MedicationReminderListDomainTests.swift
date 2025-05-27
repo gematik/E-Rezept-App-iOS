@@ -166,6 +166,39 @@ final class MedicationReminderListDomainTests: XCTestCase {
             )
         }
     }
+
+    func testDeleteFromProfileMedicationReminderList() async {
+        // given
+        let medicationScheduleRepositoryDeleteCounter = LockIsolated(0)
+        let sut = TestStore(
+            initialState: .init(
+                profileMedicationReminder: [
+                    .init(
+                        profile: Self.FixturesB.profileErxTask,
+                        medicationProfileReminderList: [Self.FixturesB.medicationSchedule1]
+                    ),
+                ]
+            )
+        ) {
+            MedicationReminderListDomain()
+        } withDependencies: { dependencies in
+            dependencies.medicationScheduleRepository.delete = { _ in
+                medicationScheduleRepositoryDeleteCounter.withValue { $0 += 1 }
+            }
+            dependencies.schedulers = Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler())
+            dependencies.userProfileService = mockUserProfileService
+        }
+
+        // then
+        expect(sut.state.profileMedicationReminder.count) == 1
+        await sut.send(.deleteFromProfileMedicationReminderList(
+            MedicationReminderListDomainTests.FixturesB.profileErxTask.id,
+            IndexSet(integer: 0)
+        )) { state in
+            state.profileMedicationReminder = []
+        }
+        await expect(medicationScheduleRepositoryDeleteCounter.value).toEventually(equal(1))
+    }
 }
 
 extension MedicationReminderListDomainTests {

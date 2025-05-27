@@ -104,7 +104,7 @@ final class PharmacyFHIRClientTests: XCTestCase {
             return fixture(filePath: responseResource, headers: ["Content-Type": "application/fhir+json"])
         }
 
-        sut.searchPharmacies(by: searchTerm, position: nil, filter: [:])
+        sut.searchPharmacies(by: searchTerm, position: nil, filter: [])
             .test(failure: { error in
                 fail("Test unexpectedly failed with error: \(error)")
             }, expectations: { pharmacyLocations in
@@ -126,7 +126,7 @@ final class PharmacyFHIRClientTests: XCTestCase {
             return HTTPStubsResponse(error: expectedError)
         }
 
-        sut.searchPharmacies(by: searchTerm, position: nil, filter: [:])
+        sut.searchPharmacies(by: searchTerm, position: nil, filter: [])
             .test(failure: { error in
                 expect(counter) == 1
                 expect(error) == .http(.init(httpClientError: .httpError(expectedError), operationOutcome: nil))

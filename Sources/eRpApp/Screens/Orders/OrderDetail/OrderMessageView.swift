@@ -378,7 +378,7 @@ struct UIKitTextView: UIViewRepresentable {
                             value: UIFont.monospacedDigitSystemFont(ofSize: 16, weight: .regular),
                             range: NSRange(location: 0, length: result.length))
         result.addAttribute(.foregroundColor,
-                            value: UIColor.secondaryLabel,
+                            value: UIColor.label,
                             range: NSRange(location: 0, length: result.length))
         self.attributedString = result
         self.onLinkTap = onLinkTap

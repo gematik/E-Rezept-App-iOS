@@ -10,7 +10,7 @@
         "payload":
         {
             "identifier": "FDBB85D0-D818-413F-A91D-71ABB8AF46FD",
-            "pharmacyTelematikId": "3-01.2.2023001.16.204",
+            "telematikId": "3-01.2.2023001.16.204",
             "accessCode": "a0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
             "erxTaskId": "160.000.006.456.334.16",
             "flowType": "160",

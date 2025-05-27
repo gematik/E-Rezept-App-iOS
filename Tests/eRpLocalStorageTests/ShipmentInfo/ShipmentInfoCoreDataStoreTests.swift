@@ -243,12 +243,14 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         sut.add(shipmentInfos: [shipmentInfo2, shipmentInfo3])
 
         // then there should be only one in store with the updated values
-        expect(receivedListAllShipmentInfoValues.count).toEventually(equal(3))
+        expect(receivedListAllShipmentInfoValues.count).toEventually(equal(4))
         expect(receivedListAllShipmentInfoValues[0].count).to(equal(0))
         expect(receivedListAllShipmentInfoValues[1].count).to(equal(1))
         expect(receivedListAllShipmentInfoValues[1].first) == shipmentInfo1
-        expect(receivedListAllShipmentInfoValues[2].count).to(equal(3))
-        expect(receivedListAllShipmentInfoValues[2]).to(contain([shipmentInfo1, shipmentInfo2, shipmentInfo3]))
+        expect(receivedListAllShipmentInfoValues[1].count).to(equal(1))
+        expect(receivedListAllShipmentInfoValues[1].first) == shipmentInfo1
+        expect(receivedListAllShipmentInfoValues[3].count).to(equal(3))
+        expect(receivedListAllShipmentInfoValues[3]).to(contain([shipmentInfo1, shipmentInfo2, shipmentInfo3]))
 
         cancellable.cancel()
     }

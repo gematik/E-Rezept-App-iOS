@@ -71,6 +71,10 @@ struct DummyErxTaskRepository: ErxTaskRepository {
         Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     }
 
+    func updateLocal(diGaInfo _: DiGaInfo) -> AnyPublisher<Bool, ErxRepositoryError> {
+        Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+    }
+
     func countAllUnreadCommunicationsAndChargeItems(for _: ErxTask.Communication
         .Profile) -> AnyPublisher<Int, ErxRepositoryError> {
         Just(0).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()

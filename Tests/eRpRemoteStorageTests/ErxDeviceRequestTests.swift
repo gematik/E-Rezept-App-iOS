@@ -76,7 +76,7 @@ final class ErxDeviceRequestTests: XCTestCase {
         expect(firstRequest?.isSER).to(beFalse())
         expect(firstRequest?.accidentInfo).to(beNil())
         expect(firstRequest?.pzn) == "19205615"
-        expect(firstRequest?.intent) == ErxDeviceRequest.Intent.order
+        expect(firstRequest?.intent) == ErxDeviceRequest.DeviceRequestIntent.order
         expect(firstRequest?.status) == ErxDeviceRequest.DeviceRequestStatus.active
         expect(firstRequest?.appName) == "Vantis KHK und Herzinfarkt 001"
     }

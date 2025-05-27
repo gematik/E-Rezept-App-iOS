@@ -59,6 +59,8 @@ struct MedicationReminderListDomain {
         case profileMedicationReminderReceived([MedicationSchedule], UserProfile)
         case profileMedicationReminderFailed(Error)
 
+        case deleteFromProfileMedicationReminderList(UUID, IndexSet)
+
         case selectMedicationReminder(MedicationSchedule)
         case destination(PresentationAction<Destination.Action>)
     }
@@ -135,6 +137,27 @@ struct MedicationReminderListDomain {
                 })
             ))
             return .none
+        case let .deleteFromProfileMedicationReminderList(
+            profileMedicationReminderId,
+            profileMedicationReminderListIndexSet
+        ):
+            guard let index = state.profileMedicationReminder
+                .firstIndex(where: { $0.id == profileMedicationReminderId }) else {
+                return .none
+            }
+            let profile = state.profileMedicationReminder[index]
+            let schedulesToDelete = profile.medicationProfileReminderList
+                .enumerated()
+                .filter { profileMedicationReminderListIndexSet.contains($0.offset) }
+                .map(\.element)
+            state.profileMedicationReminder[index].medicationProfileReminderList
+                .removeAll(where: { schedulesToDelete.contains($0) })
+            if state.profileMedicationReminder[index].medicationProfileReminderList.isEmpty {
+                state.profileMedicationReminder.remove(at: index)
+            }
+            return .run { _ in
+                try await medicationScheduleRepository.delete(schedulesToDelete)
+            }
         case let .selectMedicationReminder(reminder):
             state.destination = .medicationReminder(.init(medicationSchedule: reminder))
             return .none

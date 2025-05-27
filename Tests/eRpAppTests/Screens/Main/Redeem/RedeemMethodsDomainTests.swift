@@ -77,8 +77,8 @@ final class RedeemMethodsDomainTests: XCTestCase {
             flowType: .pharmacyOnly,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
-            authoredOn: DemoDate.createDemoDate(.today),
-            expiresOn: DemoDate.createDemoDate(.tomorrow),
+            authoredOn: TestDate.createFormattedDate(.today),
+            expiresOn: TestDate.createFormattedDate(.tomorrow),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication,
             medicationRequest: .init(
@@ -99,7 +99,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
             flowType: .pharmacyOnly,
             accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
-            authoredOn: DemoDate.createDemoDate(.yesterday),
+            authoredOn: TestDate.createFormattedDate(.yesterday),
             redeemedOn: nil,
             source: .scanner
         )

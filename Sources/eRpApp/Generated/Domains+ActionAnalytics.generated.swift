@@ -377,6 +377,38 @@ extension DeviceSecurityDomain.Action {
         }
     }
 }
+extension DiGaDetailDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .destination(.presented(action)):
+                action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
+extension DiGaDetailDomain.Destination.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .descriptionDiGA(action):
+                action.analytics(tracker: tracker)
+            case let .validDiGa(action):
+                action.analytics(tracker: tracker)
+            case let .supportDiGa(action):
+                action.analytics(tracker: tracker)
+            case let .cardWall(action):
+                action.analytics(tracker: tracker)
+            case let .patient(action):
+                action.analytics(tracker: tracker)
+            case let .practitioner(action):
+                action.analytics(tracker: tracker)
+            case let .organization(action):
+                action.analytics(tracker: tracker)
+            case let .technicalInformations(action):
+                action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
 extension DosageInstructionsDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
@@ -674,6 +706,8 @@ extension MainDomain.Destination.Action {
             case let .prescriptionDetail(action):
                 action.analytics(tracker: tracker)
             case let .medicationReminder(action):
+                action.analytics(tracker: tracker)
+            case let .diGaDetail(action):
                 action.analytics(tracker: tracker)
             default: break
         }
@@ -1080,6 +1114,8 @@ extension PrescriptionArchiveDomain.Destination.Action {
     func analytics(tracker: Tracker) {
         switch self {
             case let .prescriptionDetail(action):
+                action.analytics(tracker: tracker)
+            case let .diGaDetail(action):
                 action.analytics(tracker: tracker)
             default: break
         }

@@ -28,6 +28,7 @@ public struct MedicationSchedule: Codable, Equatable, Identifiable, Sendable {
         dosageInstructions: String,
         taskId: String,
         isActive: Bool,
+        weekdays: Set<Weekday> = Set(Weekday.allCases), // Default to all days
         entries: IdentifiedArrayOf<MedicationSchedule.Entry>
     ) {
         self.id = id
@@ -37,6 +38,7 @@ public struct MedicationSchedule: Codable, Equatable, Identifiable, Sendable {
         self.dosageInstructions = dosageInstructions
         self.taskId = taskId
         self.isActive = isActive
+        self.weekdays = weekdays
         self.entries = entries
     }
 
@@ -47,6 +49,7 @@ public struct MedicationSchedule: Codable, Equatable, Identifiable, Sendable {
     public var dosageInstructions: String
     public var taskId: String
     public var isActive: Bool
+    public var weekdays: Set<Weekday>
     public var entries: IdentifiedArrayOf<MedicationSchedule.Entry>
 
     public struct Entry: Codable, Equatable, Identifiable, Sendable {
@@ -86,3 +89,21 @@ extension MedicationSchedule: CustomStringConvertible {
         "Medication (\(id)) \(title) \(dosageInstructions) \(entries)"
     }
 }
+
+extension MedicationSchedule {
+    public enum Weekday: Int, Codable, Equatable, CaseIterable, Identifiable, Sendable {
+        case monday = 1
+        case tuesday = 2
+        case wednesday = 3
+        case thursday = 4
+        case friday = 5
+        case saturday = 6
+        case sunday = 7
+
+        public var id: Int { rawValue }
+    }
+}
+
+// TODOmedicationReminder: migration strategy old reminders -> new reminders
+// put all weekdays to selected?
+// not necessary if default is all weekdays

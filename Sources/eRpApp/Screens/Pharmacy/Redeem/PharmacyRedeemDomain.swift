@@ -101,6 +101,19 @@ struct PharmacyRedeemDomain {
             self.serviceOptionState = serviceOptionState ?? .init(prescriptions: prescriptions)
             self.destination = destination
         }
+
+        var hasCompleteContactData = false
+        var readyToRedeem: Bool {
+            hasCompleteContactData
+                && !selectedPrescriptions.isEmpty
+                && serviceOptionState.selectedOption != nil
+        }
+
+        var accessibilityDisabledReason: String {
+            let noPrescription = !selectedPrescriptions.isEmpty ? nil : L10n.phaRedeemTxtNoSelectedPrescription.text
+            let missingContactData = hasCompleteContactData ? nil : L10n.phaRedeemTxtMissingContactData.text
+            return [noPrescription, missingContactData].compactMap { $0 }.joined(separator: ",")
+        }
     }
 
     enum Action: Equatable {
@@ -170,6 +183,13 @@ struct PharmacyRedeemDomain {
                     }
                 }
             )
+        case let .serviceOption(.redeemOptionTapped(redeemOption)):
+            state.hasCompleteContactData = validateContactData(
+                shipmentInfo: state.selectedShipmentInfo,
+                redeemOption: redeemOption,
+                serviceOption: state.serviceOption
+            )
+            return .none
         case .registerSelectedShipmentInfoListener:
             return .publisher(
                 shipmentInfoStore.selectedShipmentInfo
@@ -225,6 +245,12 @@ struct PharmacyRedeemDomain {
             }
             state.serviceOption = serviceOption
 
+            state.hasCompleteContactData = validateContactData(
+                shipmentInfo: state.selectedShipmentInfo,
+                redeemOption: state.serviceOptionState.selectedOption,
+                serviceOption: state.serviceOption
+            )
+
             return .none
         case .redeem,
              .destination(.presented(.alert(.retryRedeem))):
@@ -253,11 +279,11 @@ struct PharmacyRedeemDomain {
                     case .noService, .none:
                         break
                     }
-                } catch RedeemServiceError.noTokenAvailable {
+                } catch RedeemServiceError.noTokenAvailable,
+                    RedeemOrderServiceError.redeem(.noTokenAvailable) {
                     await send(.showCardWall)
-                } catch let RedeemOrderServiceError.redeem(error) {
-                    await send(.redeemReceived(.failure(error)))
-                } catch let error as RedeemServiceError {
+                } catch let RedeemOrderServiceError.redeem(error),
+                            let error as RedeemServiceError {
                     await send(.redeemReceived(.failure(error)))
                 }
             }
@@ -283,8 +309,9 @@ struct PharmacyRedeemDomain {
             state.redeemInProgress = false
             if case let RedeemServiceError.prescriptionAlreadyRedeemed(prescriptions) = error {
                 let failedPrescriptionIds = prescriptions.map(\.id)
-                state.selectedPrescriptions = state.selectedPrescriptions
+                state.$selectedPrescriptions.withLock { $0 = state.selectedPrescriptions
                     .filter { !failedPrescriptionIds.contains($0.id) }
+                }
 
                 if state.selectedPrescriptions.isEmpty {
                     state.destination = .alert(ErpAlertState<Destination.Alert>(for: error, actions: {
@@ -425,6 +452,19 @@ extension PharmacyRedeemDomain {
             .receive(on: schedulers.main)
             .eraseToAnyPublisher()
     }
+
+    func validateContactData(
+        shipmentInfo: ShipmentInfo?,
+        redeemOption: RedeemOption?,
+        serviceOption: RedeemServiceOption?
+    ) -> Bool {
+        guard let shipmentInfo, let redeemOption, let validator = validator.type(serviceOption)
+        else { return false }
+        return validator.hasCompleteContactData(
+            shipmentInfo,
+            for: redeemOption
+        )
+    }
 }
 
 extension ErxPatient {
@@ -439,9 +479,9 @@ extension ErxPatient {
         if splitAddress.count == 2 {
             street = String(splitAddress[0]).trimmed()
             let zipAndStreet = splitAddress[1].split(separator: " ")
-            if zipAndStreet.count == 2 {
+            if zipAndStreet.count >= 2 {
                 zip = zipAndStreet[0].components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
-                city = String(zipAndStreet[1]).trimmed()
+                city = String(zipAndStreet.dropFirst().joined(separator: " ")).trimmed()
             } else {
                 city = String(splitAddress[1]).trimmed()
             }
@@ -494,6 +534,17 @@ extension RedeemInputValidator {
         }
         return .valid
     }
+
+    func hasCompleteContactData(_ shipmentInfo: ShipmentInfo?, for redeemOption: RedeemOption) -> Bool {
+        onPremiseOrElseIsNonEmptyContactData(
+            optionType: redeemOption,
+            name: shipmentInfo?.name,
+            street: shipmentInfo?.street,
+            zip: shipmentInfo?.zip,
+            city: shipmentInfo?.city,
+            phone: shipmentInfo?.phone
+        )
+    }
 }
 
 extension PharmacyRedeemDomain {
@@ -516,8 +567,8 @@ extension PharmacyRedeemDomain {
         static let prescriptions = [Prescription.Dummies.prescriptionReady]
 
         static let state = State(
-            prescriptions: Shared(prescriptions),
-            selectedPrescriptions: Shared(prescriptions),
+            prescriptions: Shared(value: prescriptions),
+            selectedPrescriptions: Shared(value: prescriptions),
             pharmacy: pharmacy,
             serviceOption: .erxTaskRepository,
             selectedShipmentInfo: ShipmentInfo(
@@ -532,7 +583,7 @@ extension PharmacyRedeemDomain {
             ),
             profile: Profile(name: "Marta Maquise"),
             serviceOptionState: .init(
-                prescriptions: Shared(prescriptions),
+                prescriptions: Shared(value: prescriptions),
                 selectedOption: .shipment
             )
         )

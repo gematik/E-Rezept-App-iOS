@@ -82,9 +82,9 @@ final class AppStartDomainTests: XCTestCase {
                     ),
                     pharmacy: PharmacyContainerDomain.State(
                         pharmacySearch: PharmacySearchDomain.State(
-                            selectedPrescriptions: Shared([]),
+                            selectedPrescriptions: Shared(value: []),
                             inRedeemProcess: false,
-                            pharmacyFilterOptions: Shared([])
+                            pharmacyFilterOptions: Shared(value: [])
                         )
                     ),
                     orders: OrdersDomain.State(communicationMessage: []),
@@ -115,9 +115,9 @@ final class AppStartDomainTests: XCTestCase {
                     ),
                     pharmacy: PharmacyContainerDomain.State(
                         pharmacySearch: PharmacySearchDomain.State(
-                            selectedPrescriptions: Shared([]),
+                            selectedPrescriptions: Shared(value: []),
                             inRedeemProcess: false,
-                            pharmacyFilterOptions: Shared([])
+                            pharmacyFilterOptions: Shared(value: [])
                         )
                     ),
                     orders: OrdersDomain.State(communicationMessage: []),

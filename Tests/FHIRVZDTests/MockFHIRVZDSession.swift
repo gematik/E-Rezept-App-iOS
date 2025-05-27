@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -16,10 +16,13 @@
 //
 //
 
+import eRpKit
+import FHIRClient
+@testable import FHIRVZD
 import Foundation
 
-/// Signature-validated store holding the VAU certificate and possibly further certificates for IDP interaction.
-public protocol TrustStore {
-    /// Exportable collection of certificates constituting the TrustStore (does not contain a trust anchor).
-    var certList: CertList { get }
+class MockFHIRVZDSession: FHIRVZDSession {
+    func autoRefreshedToken() async throws -> FHIRVZDToken {
+        FHIRVZDToken(string: "mockToken")
+    }
 }

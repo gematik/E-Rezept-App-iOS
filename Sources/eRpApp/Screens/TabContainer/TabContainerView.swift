@@ -25,6 +25,16 @@ import SwiftUI
 struct TabContainerView: View {
     @Perception.Bindable var store: StoreOf<AppDomain>
 
+    @Shared(.appDefaults) var appDefaults
+
+    var settingsBadge: String? {
+        if appDefaults.diga.hasRedeemdADiga,
+           !appDefaults.diga.hasSeenDigaSurvery {
+            return L10n.stgConTextDigaSurveyBadge.text
+        }
+        return nil
+    }
+
     var body: some View {
         WithPerceptionTracking {
             ZStack(alignment: .top) {
@@ -66,6 +76,7 @@ struct TabContainerView: View {
                         .tabItem {
                             Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                         }
+                        .badge(settingsBadge)
                         .tag(AppDomain.Destinations.State.settings)
                     }
                     .toolbarBackground(.visible, for: .tabBar)

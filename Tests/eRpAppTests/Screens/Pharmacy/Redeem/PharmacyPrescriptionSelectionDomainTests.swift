@@ -52,8 +52,8 @@ class PharmacyPrescriptionSelectionDomainTests: XCTestCase {
 
         let sut = testStore(for: PharmacyPrescriptionSelectionDomain
             .State(
-                prescriptions: Shared([prescription1, prescription2]),
-                selectedPrescriptions: Shared([])
+                prescriptions: Shared(value: [prescription1, prescription2]),
+                selectedPrescriptions: Shared(value: [])
             ))
 
         await sut.send(.didSelect(prescription1.identifier)) { sut in

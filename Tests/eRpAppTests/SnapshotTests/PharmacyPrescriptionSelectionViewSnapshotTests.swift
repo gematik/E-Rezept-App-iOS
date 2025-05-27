@@ -27,8 +27,8 @@ import XCTest
 final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacyPrescriptionAllSelected() {
         let initialState = PharmacyPrescriptionSelectionDomain.State(
-            prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            selectedPrescriptions: Shared(Prescription.Fixtures.prescriptions),
+            prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(value: Prescription.Fixtures.prescriptions),
             profile: UserProfile.Fixtures.theo.profile
         )
         let sut = NavigationStack {
@@ -47,8 +47,8 @@ final class PharmacyPrescriptionSelectionViewSnapshotTests: ERPSnapshotTestCase 
 
     func testPharmacyPrescriptionNoneSelected() {
         let initialState = PharmacyPrescriptionSelectionDomain.State(
-            prescriptions: Shared(Prescription.Fixtures.prescriptions),
-            selectedPrescriptions: Shared([]),
+            prescriptions: Shared(value: Prescription.Fixtures.prescriptions),
+            selectedPrescriptions: Shared(value: []),
             profile: UserProfile.Fixtures.theo.profile
         )
         let sut = NavigationStack {

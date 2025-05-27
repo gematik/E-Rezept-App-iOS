@@ -1,0 +1,1 @@
+gem 'fastlane-plugin-ci_cd', git: "https://github.com/gematik/Fastlane-Plugin-CI-CD.git", tag: "0.3.0"

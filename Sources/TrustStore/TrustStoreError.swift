@@ -39,23 +39,35 @@ public enum TrustStoreError: Swift.Error {
     // sourcery: errorCode = "06"
     /// Internal error
     case `internal`(error: InternalError)
+    // sourcery: errorCode = "07"
+    /// When no valid VAU certificate can be provided by the system at the moment
+    case noValidVauCertificateAvailable
+    // sourcery: errorCode = "08"
+    /// When a certificate is of unexpected (e.g. not parsable) format
+    case malformedCertificate
 
     // sourcery: CodedError = "561"
     public enum InternalError: Swift.Error {
-        // sourcery: errorCode = 01
+        // sourcery: errorCode = "01"
         case loadOCSPCheckedTrustStoreUnexpectedNil
-        // sourcery: errorCode = 02
+        // sourcery: errorCode = "02"
         case loadCertListFromServerUnexpectedNil
-        // sourcery: errorCode = 03
+        // sourcery: errorCode = "03"
         case loadOCSPListFromServerUnexpectedNil
-        // sourcery: errorCode = 04
+        // sourcery: errorCode = "04"
         case trustStoreCertListUnexpectedNil
-        // sourcery: errorCode = 05
+        // sourcery: errorCode = "05"
         case loadOCSPResponsesUnexpectedNil
-        // sourcery: errorCode = 06
+        // sourcery: errorCode = "06"
         case missingSignerForEECertificate
-        // sourcery: errorCode = 07
+        // sourcery: errorCode = "07"
         case notImplemented
+        // sourcery: errorCode = "08"
+        case trustAnchorUnexpectedFormat
+        // sourcery: errorCode = "09"
+        case vauCertificateUnexpectedFormat
+        // sourcery: errorCode = "10"
+        case trustStoreCreationFailed
     }
 }
 
@@ -95,6 +107,8 @@ extension TrustStoreError: Equatable, LocalizedError {
         case .eeCertificateOCSPStatusVerification: return "TrustStoreError.eeCertificateOCSPStatusVerification"
         case let .unspecified(error: error): return error.localizedDescription
         case let .internal(error: error): return error.localizedDescription
+        case .noValidVauCertificateAvailable: return "TrustStoreError.noValidVauCertificateAvailable"
+        case .malformedCertificate: return "TrustStoreError.malformedCertificate"
         }
     }
 }

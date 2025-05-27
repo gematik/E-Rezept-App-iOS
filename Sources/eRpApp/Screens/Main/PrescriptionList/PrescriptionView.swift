@@ -24,6 +24,12 @@ import SwiftUI
 struct PrescriptionView: View {
     var prescription: Prescription
     let action: () -> Void
+    var displayName: String {
+        if let appName = prescription.erxTask.deviceRequest?.appName {
+            return appName
+        }
+        return prescription.medication?.displayName ?? L10n.erxTxtMedicationPlaceholder.text
+    }
 
     var body: some View {
         Button(
@@ -33,15 +39,12 @@ struct PrescriptionView: View {
             label: {
                 HStack {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(
-                            prescription.medication?.displayName,
-                            placeholder: L10n.erxTxtMedicationPlaceholder
-                        )
-                        .foregroundColor(Colors.systemLabel)
-                        .font(Font.body.weight(.semibold))
-                        .multilineTextAlignment(.leading)
-                        .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionName)
-                        .padding(.bottom, 4)
+                        Text(displayName)
+                            .foregroundColor(Colors.systemLabel)
+                            .font(Font.body.weight(.semibold))
+                            .multilineTextAlignment(.leading)
+                            .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionName)
+                            .padding(.bottom, 4)
                         if !(prescription.type == .directAssignment && !prescription.isArchived) {
                             Text(prescription.statusMessage)
                                 .font(Font.subheadline.weight(.regular))
@@ -64,6 +67,19 @@ struct PrescriptionView: View {
         .padding()
         .background(Colors.systemBackgroundTertiary)
         .border(Colors.separator, width: 0.5, cornerRadius: 16)
+        .overlay(alignment: .topTrailing) {
+            if let diGaInfo = prescription.erxTask.deviceRequest?.diGaInfo, !diGaInfo.isRead {
+                HStack(alignment: .center, spacing: 4) {
+                    Text(L10n.erxDetailedTxtDiGaBadge)
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+                .background(Color(red: 0.9, green: 0.24, blue: 0.24))
+                .cornerRadius(16)
+                .offset(x: 8, y: -8)
+            }
+        }
     }
 
     struct PrescriptionStatusView: View {
@@ -112,6 +128,17 @@ struct PrescriptionView: View {
                         .cornerRadius(8)
                         .accessibilityLabel(L10n.erxTxtSelfPayer)
                         .accessibility(identifier: A11y.mainScreen.erxDetailedSelfPayer)
+                }
+
+                if prescription.erxTask.deviceRequest?.authoredOn != nil {
+                    Image(systemName: SFSymbolName.iPhoneGen2)
+                        .font(Font.subheadline.weight(.regular))
+                        .padding(8)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .background(Colors.backgroundSecondary)
+                        .cornerRadius(8)
+                        .accessibilityLabel(L10n.erxDetailedTxtDiGaStatus)
+                        .accessibility(identifier: A11y.mainScreen.erxDetailedDiGaBage)
                 }
             }
             .padding(.top, 8)

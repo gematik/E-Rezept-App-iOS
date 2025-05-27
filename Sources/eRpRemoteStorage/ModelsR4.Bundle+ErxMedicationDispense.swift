@@ -62,6 +62,10 @@ extension ModelsR4.Bundle {
             erxEpaMedication = nil
         }
 
+        let diGaDispense: DiGaDispense? = .init(redeemCode: medicationDispense.redeemCode,
+                                                deepLink: medicationDispense.deepLink,
+                                                isMissingData: medicationDispense.isMissingData)
+
         return .init(
             identifier: identifier,
             taskId: taskId,
@@ -72,7 +76,8 @@ extension ModelsR4.Bundle {
             quantity: medicationDispense.erxTaskQuantity,
             noteText: medicationDispense.noteText,
             medication: erxMedication,
-            epaMedication: erxEpaMedication
+            epaMedication: erxEpaMedication,
+            diGaDispense: diGaDispense
         )
     }
 
@@ -155,6 +160,47 @@ extension ModelsR4.MedicationDispense {
         case .codeableConcept: return nil
         case let .reference(reference):
             return reference
+        }
+    }
+
+    // MARK: DiGa dispense info
+
+    var redeemCode: String? {
+        `extension`?.first {
+            $0.url.value?.url.absoluteString == ErpPrescription.Key.DeviceRequest.redeemCode
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case let Extension.ValueX.string(fhirString) = valueX {
+                return fhirString.value?.string
+            }
+            return nil
+        }
+    }
+
+    var deepLink: String? {
+        `extension`?.first {
+            $0.url.value?.url.absoluteString == ErpPrescription.Key.DeviceRequest.deepLink
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case let Extension.ValueX.uri(fhirUrl) = valueX {
+                return fhirUrl.value?.url.absoluteString
+            }
+            return nil
+        }
+    }
+
+    var isMissingData: Bool? {
+        medicationReference?.extension?.first {
+            $0.url.value?.url.absoluteString == "http://hl7.org/fhir/StructureDefinition/data-absent-reason"
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case Extension.ValueX.code("asked-declined") = valueX {
+                return true
+            }
+            return false
         }
     }
 }

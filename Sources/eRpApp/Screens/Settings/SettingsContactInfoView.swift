@@ -21,6 +21,12 @@ import eRpStyleKit
 import SwiftUI
 
 struct SettingsContactInfoView: View {
+    @Shared(.appDefaults) var appDefaults
+
+    var showDiGaBadge: Bool {
+        appDefaults.diga.hasRedeemdADiga && !appDefaults.diga.hasSeenDigaSurvery
+    }
+
     var body: some View {
         SectionContainer(header: {
             Label(title: { Text(L10n.stgTxtHeaderContactInfo) }, icon: {})
@@ -42,6 +48,29 @@ struct SettingsContactInfoView: View {
                 Label(L10n.stgConTextSurvey, systemImage: SFSymbolName.chartBarAxis)
             })
                 .accessibility(identifier: A11y.settings.contact.stgConTxtSurvey)
+                .buttonStyle(.navigation)
+
+            Button(action: {
+                if appDefaults.diga.hasRedeemdADiga {
+                    $appDefaults.withLock { $0.diga.hasSeenDigaSurvery = true }
+                }
+
+                guard let url = URL(string: "https://gematik.shortcm.li/DIGA_Feedback"),
+                      UIApplication.shared.canOpenURL(url) else { return }
+
+                UIApplication.shared.open(url)
+            }, label: {
+                WithPerceptionTracking {
+                    if showDiGaBadge {
+                        Label(L10n.stgConTextSurvey, systemImage: SFSymbolName.iPhoneGen2)
+                            .modifier(AnnotationBadgeModifier(text: L10n.stgConTextDigaSurveyBadge,
+                                                              bundle: L10n.stgConTextDigaSurvey.bundle))
+                    } else {
+                        Label(L10n.stgConTextSurvey, systemImage: SFSymbolName.iPhoneGen2)
+                    }
+                }
+            })
+                .accessibility(identifier: A11y.settings.contact.stgConTxtDigaSurvey)
                 .buttonStyle(.navigation)
 
             Button(action: {

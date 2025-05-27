@@ -29,6 +29,7 @@ struct UserProfile: ProfileCellModel, Equatable, Identifiable {
     var fullName: String? { profile.fullName }
     var insurance: String? { profile.insurance }
     var insuranceId: String? { profile.insuranceId }
+    var insuranceIK: String? { profile.insuranceIK }
 
     var image: ProfilePicture { profile.image.viewModelPicture }
     var userImageData: Data? { profile.userImageData }
@@ -110,6 +111,7 @@ extension UserProfile {
                 familyName: "Doe",
                 insurance: "Spooky BKK",
                 insuranceId: "X112233445",
+                insuranceIK: "AB123CD",
                 color: .blue,
                 lastAuthenticated: Date().addingTimeInterval(-60 * 8),
                 erxTasks: []

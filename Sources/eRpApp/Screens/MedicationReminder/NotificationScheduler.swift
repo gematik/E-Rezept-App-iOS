@@ -131,11 +131,16 @@ extension NotificationScheduler {
         let oneRequestForEachScheduleEntry = schedules
             .filter(\.isActive)
             .flatMap { schedule in
-                Request.Creator.oneNotificationRequestForEachEntry(
+                Request.Creator.oneNotificationRequestForEachEntryAccountingForWeekdaySelection(
                     schedule: schedule,
                     calendar: calendar,
                     uuid: uuid
                 )
+//                Request.Creator.oneNotificationRequestForEachEntry(
+//                    schedule: schedule,
+//                    calendar: calendar,
+//                    uuid: uuid
+//                )
             }
 
         // todomedicationReminder:
@@ -154,9 +159,139 @@ extension NotificationScheduler {
 
     enum Request {
         enum Creator {
+            // swiftlint:disable:next function_body_length
+            static func oneNotificationRequestForEachEntryAccountingForWeekdaySelection(
+                schedule: MedicationSchedule,
+                calendar: Calendar,
+                uuid: UUIDGenerator
+            ) -> [UNNotificationRequest] {
+                let content = UNMutableNotificationContent()
+                content.title = L10n.medReminderTxtNotificationContentTitle.text
+                content.body = schedule.title
+                content.sound = .default
+
+                content.threadIdentifier = "medication_schedule"
+
+                let hasFiniteEndDate = schedule.end != Date.distantFuture
+                let notificationRequests: [UNNotificationRequest] = schedule.entries
+                    .flatMap { entry -> [UNNotificationRequest] in
+                        content.userInfo = ["entries": [entry.id.uuidString]]
+
+                        var requests = [UNNotificationRequest]()
+
+                        if hasFiniteEndDate {
+                            // Handle notifications for schedules with finite end date
+                            let days = calendar.dateComponents([.day], from: schedule.start, to: schedule.end)
+                            guard let dayCountUntilEndDate = days.day,
+                                  dayCountUntilEndDate >= 0
+                            else { return [] }
+
+                            // 64 is the maximum that NotificationCenter accepts
+                            for dayInterval in 0 ... min(dayCountUntilEndDate, 64) {
+                                guard
+                                    let notificationDay = calendar.date(
+                                        byAdding: .day,
+                                        value: dayInterval,
+                                        to: schedule.start
+                                    )
+                                else { continue }
+                                // Output is Sunday = 1, Monday = 2, Tuesday = 3, ...
+                                let weekdayIndex = calendar.component(.weekday, from: notificationDay)
+                                // Transform it to Monday = 1, Tuesday = 2, Wednesday = 3, ..., Sunday = 7
+                                let transformedWeekdayIndexIndex = weekdayIndex == 1 ? 7 : weekdayIndex - 1
+                                guard
+                                    let weekday = MedicationSchedule.Weekday(rawValue: transformedWeekdayIndexIndex),
+                                    schedule.weekdays.contains(weekday),
+                                    let notificationDate = calendar.date(
+                                        bySettingHour: entry.hourComponent,
+                                        minute: entry.minuteComponent,
+                                        second: 0,
+                                        of: notificationDay
+                                    )
+                                else { continue }
+
+                                let notificationDateComponents = calendar.dateComponents(
+                                    [.year, .month, .day, .hour, .minute],
+                                    from: notificationDate
+                                )
+                                let notificationTrigger = UNCalendarNotificationTrigger(
+                                    dateMatching: notificationDateComponents,
+                                    repeats: false
+                                )
+                                let identifier = uuid().uuidString
+                                let request = UNNotificationRequest(
+                                    identifier: identifier,
+                                    content: content,
+                                    trigger: notificationTrigger
+                                )
+                                requests.append(request)
+                            }
+                        } else {
+                            // Handle repeating notifications for infinite schedules
+
+                            // Check if all weekdays are selected
+                            if schedule.weekdays.count == MedicationSchedule.Weekday.allCases.count {
+                                // All weekdays selected -> create a single daily repeating notification
+
+                                // Create a repeating trigger that fires daily at the specified time
+                                let notificationTrigger = UNCalendarNotificationTrigger(
+                                    dateMatching: DateComponents(
+                                        calendar: calendar,
+                                        hour: entry.hourComponent,
+                                        minute: entry.minuteComponent
+                                    ),
+                                    repeats: true
+                                )
+
+                                // Create the notification request
+                                let identifier = uuid().uuidString
+                                let request = UNNotificationRequest(
+                                    identifier: identifier,
+                                    content: content,
+                                    trigger: notificationTrigger
+                                )
+
+                                requests.append(request)
+                            } else {
+                                // Only specific weekdays selected - create a notification for each weekday
+                                for weekday in schedule.weekdays {
+                                    // Create date components for the trigger
+                                    var dateComponents = DateComponents()
+                                    dateComponents.calendar = calendar
+                                    dateComponents.hour = entry.hourComponent
+                                    dateComponents.minute = entry.minuteComponent
+
+                                    // Convert Monday=1, Sunday=7 to Sunday=1, Saturday=7
+                                    let calendarWeekday = weekday.rawValue == 7 ? 1 : weekday.rawValue + 1
+                                    dateComponents.weekday = calendarWeekday
+
+                                    // Create a repeating trigger for the specified weekday and time
+                                    let notificationTrigger = UNCalendarNotificationTrigger(
+                                        dateMatching: dateComponents,
+                                        repeats: true
+                                    )
+
+                                    // Create the notification request
+                                    let identifier = uuid().uuidString
+                                    let request = UNNotificationRequest(
+                                        identifier: identifier,
+                                        content: content,
+                                        trigger: notificationTrigger
+                                    )
+
+                                    requests.append(request)
+                                }
+                            }
+                        }
+                        return requests
+                    }
+                return notificationRequests
+            }
+
             /// - Note: This function may create NotificationRequests
-            ///  whose trigger's date (components) lay before the schedule's start date
-            static func oneNotificationRequestForEachEntry(
+            ///  whose trigger's date (components) lays before the schedule's start date
+            /// - Note: This function does not take into account the schedule's weekdays (and is therefore deprecated)
+            static func oneNotificationRequestForEachEntry_depr(
                 // swiftlint:disable:previous function_body_length
                 schedule: MedicationSchedule,
                 calendar: Calendar,
@@ -182,8 +317,8 @@ extension NotificationScheduler {
                                   dayCountUntilEndDate >= 0
                             else { return [] }
 
-                            for dayInterval in 0 ...
-                                min(dayCountUntilEndDate, 64) { // 64 is the maximum that NotificationCenter accepts
+                            // 64 is the maximum that NotificationCenter accepts
+                            for dayInterval in 0 ... min(dayCountUntilEndDate, 64) {
                                 guard
                                     let notificationDay = calendar.date(
                                         byAdding: .day,

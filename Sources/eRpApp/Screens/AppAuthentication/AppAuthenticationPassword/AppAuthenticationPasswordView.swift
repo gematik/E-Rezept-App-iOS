@@ -41,26 +41,37 @@ struct AppAuthenticationPasswordView: View {
                 .padding()
                 .font(Font.body)
                 .background(Color(.systemBackground))
-                .padding(.vertical, 1)
-                .background(Colors.systemGray3)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(
+                            store.showUnsuccessfulAttemptMessage ? Colors.red600 : Color(.systemGray3),
+                            lineWidth: 1
+                        )
+                )
+                .padding(.horizontal)
                 .accessibility(identifier: A11y.auth.authEdtPasswordInput)
 
                 if store.showUnsuccessfulAttemptMessage {
                     UnsuccessfulAttemptMessageView()
                         .padding(.horizontal)
+                        .padding(.top, 4)
                 }
 
                 PrimaryTextButton(
                     text: L10n.authBtnPasswordContinue,
                     a11y: A11y.auth.authBtnPasswordContinue,
-                    isEnabled: !store.password.isEmpty
+                    isEnabled: !store.password.isEmpty,
+                    useFullWidth: false
                 ) {
                     store.send(.loginButtonTapped, animation: .default)
                 }
                 .padding()
+                .frame(maxWidth: .infinity, alignment: .center)
 
                 if store.showUnsuccessfulAttemptMessage {
                     FooterView()
+                        .frame(maxHeight: .infinity, alignment: .bottom)
                 }
             }
             .padding(.vertical)
@@ -92,8 +103,15 @@ struct AppAuthenticationPasswordView: View {
                     calculatedHeight: $calculatedHeight
                 )
                 .frame(height: calculatedHeight)
-                .padding()
-            }.background(Color(.secondarySystemBackground))
+                .padding(5)
+            }
+            .background(Color(.systemBackground))
+            .overlay(
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(Color(.systemGray3)),
+                alignment: .top
+            )
         }
     }
 }

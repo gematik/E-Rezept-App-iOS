@@ -26,31 +26,31 @@ public struct ErxTaskOrder: Equatable, Codable {
     public let erxTaskId: String
     /// Access Code of the prescription
     public let accessCode: String
-    /// Identifier of the pharmacy where order will be issued
-    public let pharmacyTelematikId: String
+    /// Identifier of the organization where order will be issued
+    public let telematikId: String
     /// FlowType describes type of task (e.G. Direktzuweisung).
     public var flowType: String
-    /// Contains informations about the user and the selected redeem option
-    public let payload: Payload
+    /// Contains informations about the user and the selected redeem option (optional for flowtype 162)
+    public let payload: Payload?
 
     /// Default initializer to instantiate an ErxTask order.
     /// - Parameters:
     ///   - identifier: `ErxTaskOrder` identifier
     ///   - erxTaskId: Id of the ErxTask to order
     ///   - accessCode: AccessCode of the prescription that should be redeemed
-    ///   - pharmacyTelematikId: Telematik-ID for the pharmacy in which the order will be placed
+    ///   - telematikId: Telematik-ID for the organization in which the order will be placed
     ///   - payloadJSON: Informations about the users address and the selected redeem option
     public init(identifier: String,
                 erxTaskId: String,
                 accessCode: String,
-                pharmacyTelematikId: String,
+                telematikId: String,
                 flowType: String,
-                payload: Payload) {
+                payload: Payload? = nil) {
         self.identifier = identifier
         self.payload = payload
         self.erxTaskId = erxTaskId
         self.accessCode = accessCode
-        self.pharmacyTelematikId = pharmacyTelematikId
+        self.telematikId = telematikId
         self.flowType = flowType
     }
 

@@ -604,7 +604,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         return ErxTaskOrder(identifier: "d58894dd-c93c-4841-b6f6-4ac4cda4922f",
                             erxTaskId: "39c67d5b-1df3-11b2-80b4-783a425d8e87",
                             accessCode: "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea",
-                            pharmacyTelematikId: "606358757",
+                            telematikId: "606358757",
                             flowType: "160",
                             payload: payload)
     }()
@@ -621,7 +621,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         return ErxTaskOrder(identifier: "d58894dd-c93c-4841-b6f6-4ac4cda4922f",
                             erxTaskId: "39c67d5b-1df3-11b2-80b4-783a425d8e87",
                             accessCode: "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea",
-                            pharmacyTelematikId: "606358757",
+                            telematikId: "606358757",
                             flowType: "160",
                             payload: payload)
     }()
@@ -638,7 +638,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         return ErxTaskOrder(identifier: "d58894dd-c93c-4841-b6f6-4ac4cda4922f",
                             erxTaskId: "39c67d5b-1df3-11b2-80b4-783a425d8e87",
                             accessCode: "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea",
-                            pharmacyTelematikId: "606358757",
+                            telematikId: "606358757",
                             flowType: "160",
                             payload: payload)
     }()

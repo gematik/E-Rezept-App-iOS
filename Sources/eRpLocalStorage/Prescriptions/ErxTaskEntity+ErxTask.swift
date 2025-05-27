@@ -100,7 +100,8 @@ extension ErxTask {
     private static func updatedStatusForServerTask(
         lastModified: Date?,
         communications: [ErxTask.Communication],
-        currentDate now: Date
+        currentDate now: Date,
+        isDiGa: Bool = false
     ) -> ErxTask.Status? {
         let comms = communications.filter { communication in
             guard communication.profile == .dispReq,
@@ -116,11 +117,14 @@ extension ErxTask {
                     return false
                 }
             }
+            // For DiGa we dont have a time limit and wait until we get a response from the organization
+            guard !isDiGa else { return true }
             return redeemedTimeInterval < ErxTask.minTimeIntervalForCompletion &&
                 redeemedTimeInterval > 0
         }
         if !comms.isEmpty {
-            return .computed(status: .waiting)
+            // DiGa is instantly inProgress state and has no waiting state
+            return isDiGa ? .inProgress : .computed(status: .waiting)
         }
         return nil
     }
@@ -188,7 +192,8 @@ extension ErxTask {
             erxTaskStatus = ErxTask.updatedStatusForServerTask(
                 lastModified: entity.lastModified?.date,
                 communications: mappedCommunications,
-                currentDate: now
+                currentDate: now,
+                isDiGa: entity.deviceRequest?.pzn != nil
             ) ?? erxTaskStatus
         case (.inProgress, _):
             guard entity.lastMedicationDispense == nil else {
@@ -246,7 +251,8 @@ extension ErxTask {
             communications: mappedCommunications
                 .sorted { $0.timestamp < $1.timestamp },
             medicationDispenses: medicationDispenses
-                .sorted { $0.identifier < $1.identifier }
+                .sorted { $0.identifier < $1.identifier },
+            deviceRequest: ErxDeviceRequest(entity: entity.deviceRequest)
         )
     }
 }

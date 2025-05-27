@@ -97,7 +97,8 @@ extension ErxMedicationDispense {
             quantity: .init(value: "10", unit: "TL"),
             noteText: "Nicht mit anderen Medikamenten mischen",
             medication: nil,
-            epaMedication: ErxEpaMedication.Dummies.medicinalProductPackage
+            epaMedication: ErxEpaMedication.Dummies.medicinalProductPackage,
+            diGaDispense: nil
         )
 
         static let epaMedicationDispenseKombipackung = ErxMedicationDispense(
@@ -110,7 +111,8 @@ extension ErxMedicationDispense {
             quantity: .init(value: "10", unit: "TL"),
             noteText: "Nicht mit anderen Medikamenten mischen",
             medication: nil,
-            epaMedication: ErxEpaMedication.Dummies.extemporaneousPreparation
+            epaMedication: ErxEpaMedication.Dummies.extemporaneousPreparation,
+            diGaDispense: nil
         )
     }
 }

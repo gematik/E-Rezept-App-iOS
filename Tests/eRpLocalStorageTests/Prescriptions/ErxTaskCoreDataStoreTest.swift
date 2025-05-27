@@ -640,7 +640,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         try store.add(communications: [updatedCommunication])
 
-        expect(receivedValues.count) == 2
+        expect(receivedValues.count) == 3
         expect(receivedValues[0].count) == 1
         expect(receivedValues[0].first) == communication1
         expect(receivedValues[1].count) == 1 // must be 1 otherwise update failed
@@ -868,13 +868,14 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
                                     strength: nil,
                                     strengthFreeText: nil)]
             ),
-            epaMedication: nil
+            epaMedication: nil,
+            diGaDispense: nil
         )
 
         // when updating the same medication dispense (when taskId is equal)
         try store.add(medicationDispenses: [updatedMedicationDispense])
 
-        expect(receivedValues.count) == 2
+        expect(receivedValues.count) == 3
         expect(receivedValues[0].count) == 1
         expect(receivedValues[0].first) == ErxTask.Fixtures.medicationDispense
         expect(receivedValues[1].count) == 1 // must be 1 otherwise update failed
@@ -1033,7 +1034,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         try store.add(chargeItems: [updatedChargeItem])
 
-        expect(receivedValues.count) == 2
+        expect(receivedValues.count) == 3
         expect(receivedValues[0].count) == 1
         expect(receivedValues[0].first) == chargeItemInStore
         expect(receivedValues[1].count) == 1 // must be 1 otherwise update failed

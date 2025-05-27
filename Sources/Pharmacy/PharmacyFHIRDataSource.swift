@@ -36,14 +36,16 @@ public struct PharmacyFHIRDataSource: PharmacyRemoteDataStore {
     ///
     /// [REQ:gemSpec_eRp_FdV:A_20183]
     ///
-    /// - Parameter searchTerm: String that send to the server for filtering the pharmacies response
-    /// - Parameter position: Position (latitude and longitude) of pharmacy
-    /// - Parameter filter: further filter parameters for pharmacies
+    /// - Parameters:
+    ///   - searchTerm: String that send to the server for filtering the pharmacies response
+    ///   - position: Position (latitude and longitude) of pharmacy
+    ///   - filter: further filter parameters for pharmacies
     /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
-    public func searchPharmacies(by searchTerm: String,
-                                 position: Position?,
-                                 filter: [String: String])
-        -> AnyPublisher<[PharmacyLocation], Error> {
+    public func searchPharmacies(
+        by searchTerm: String,
+        position: Pharmacy.Position?,
+        filter: [PharmacyRemoteDataStoreFilter]
+    ) -> AnyPublisher<[PharmacyLocation], Error> {
         fhirClient.searchPharmacies(by: searchTerm, position: position, filter: filter)
             .mapError { Error.fhirClient($0) }
             .eraseToAnyPublisher()
@@ -53,9 +55,10 @@ public struct PharmacyFHIRDataSource: PharmacyRemoteDataStore {
     ///
     /// - Parameters:
     ///   - telematikId: The Telematik-ID of the pharmacy to be requested
-    /// - Returns: `AnyPublisher` that emits the pharmacy or nil when not found
-    public func fetchPharmacy(by telematikId: String)
-        -> AnyPublisher<PharmacyLocation?, Error> {
+    /// - Returns: `AnyPublisher` that emits the `PharmacyLocation` or nil when not found
+    public func fetchPharmacy(
+        by telematikId: String
+    ) -> AnyPublisher<PharmacyLocation?, Error> {
         fhirClient.fetchPharmacy(by: telematikId)
             .mapError { Error.fhirClient($0) }
             .eraseToAnyPublisher()
@@ -65,6 +68,34 @@ public struct PharmacyFHIRDataSource: PharmacyRemoteDataStore {
         fhirClient.loadAvsCertificates(for: locationId)
             .mapError { Error.fhirClient($0) }
             .eraseToAnyPublisher()
+    }
+
+    /// Convenience function for requesting a telematikId by institution identifier (IK)
+    ///
+    /// - Parameters:
+    ///   - ikNumber: The institution (IK) identifier of the organization to be requested
+    /// - Returns: `AnyPublisher` that emits the `TelematikId` or nil when not found
+    public func fetchTelematikId(by ikNumber: String) -> AnyPublisher<String?, Error> {
+        fhirClient.fetchTelematikId(by: ikNumber)
+            .mapError { Error.fhirClient($0) }
+            .eraseToAnyPublisher()
+    }
+
+    /// Converts pharmacy filter into query parameters
+    ///
+    /// - Parameter filter: `PharmacyRepositoryFilter`s for filtering the pharmacy response
+    /// - Returns: Key / value query parameters to use in url requests
+    public func apiFilters(for filter: [PharmacyRepositoryFilter]) -> [PharmacyRemoteDataStoreFilter] {
+        filter.compactMap {
+            switch $0 {
+            case .ready:
+                return PharmacyRemoteDataStoreFilter(key: "status", value: "active")
+            case .shipment:
+                return PharmacyRemoteDataStoreFilter(key: "type", value: "mobl")
+            case .delivery:
+                return nil
+            }
+        }
     }
 }
 

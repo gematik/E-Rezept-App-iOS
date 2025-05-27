@@ -17,7 +17,7 @@
 #
 
 xcodes(
-  version: ENV["FL_XCODE_VERSION"] || "16.0.0",
+  version: ENV["FL_XCODE_VERSION"] || "16.3.0",
   select_for_current_build_only: true, 
   update_list: false
 )
@@ -386,7 +386,8 @@ lane :uitests_ios do |options|
     scheme: scheme,
     configuration: "Debug",
     prelaunch_simulator: true,
-    output_directory: "./fastlane/test_output/uitests"
+    output_directory: "./fastlane/test_output/uitests",
+    number_of_retries: 2
   )
 end
 
@@ -428,12 +429,7 @@ lane :integration_tests do |options|
   )
 rescue => ex
   jenkins_job_url = "https://jenkins.prod.ccs.gematik.solutions/job/e-Rezept-iOS-App-Integration_Tests/#{ENV['BUILD_NUMBER']}"
-  message = "Failed Integration Tests for configuration: #{app_conf}
-Reason: #{ex}
-
-Basic Junit report: #{jenkins_job_url}/artifact/fastlane/test_output/#{app_conf}/report.html
-
-Console log (search for term: \"========== Run the tests for env: #{app_conf} ==========\"): #{jenkins_job_url}/consoleFull"
+  message = "Failed Integration Tests for configuration: #{app_conf} \nReason: #{ex} \n\nBasic Junit report: #{jenkins_job_url}/artifact/fastlane/test_output/#{app_conf}/report.html \n\nConsole log (search for term: \"========== Run the tests for env: #{app_conf} ==========\"): #{jenkins_job_url}/consoleFull"
   notify_teams_channel(
     channel_url: ENV["TEAMS_CHANNEL_URL_INT"],
     stream: "Integration Tests",
@@ -1147,7 +1143,7 @@ lane :build_drezept_ru do |options|
   )
 
   if is_ci
-    notify_teams_channel(channel_url: ENV["TEAMS_CHANNEL_URL_RELEASE"], stream: "D-Rezept Version")
+    notify_teams_channel(channel_url: ENV["TEAMS_CHANNEL_URL_CI"], stream: "D-Rezept Version")
   end
 end
 
@@ -1578,6 +1574,8 @@ lane :pull_shared_environment_variables do |options|
   )
 end
 
+require 'fileutils'
+
 def notify_teams_channel(channel_url: "no_url_given", stream: "Unknown stream", success: true, optional_message: "")
   message_card_content_data = {
     "stream" => stream,
@@ -1590,6 +1588,9 @@ def notify_teams_channel(channel_url: "no_url_given", stream: "Unknown stream", 
 
   image_url = teams_shiba_inu_provider(happy: success)
   message_card_content_data["image_url"] = image_url
+
+  # Create the distribution directory if it doesn't exist
+  FileUtils.mkdir_p("../distribution") unless Dir.exist?("../distribution")
 
   File.open("../distribution/build_info_#{ENV['BUILD_NUMBER']}.json", 'w+') do |file|
   file.write({

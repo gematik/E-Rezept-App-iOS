@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (c) 2025 gematik GmbH
 //
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -21,7 +21,7 @@ import eRpStyleKit
 import Foundation
 import SwiftUI
 
-// swiftlint:disable file_length
+// swiftlint:disable file_length type_body_length
 /// `Prescription` acts as a view model for an `ErxTask` to better fit the presentation logic
 @dynamicMemberLookup
 struct Prescription: Equatable, Identifiable {
@@ -111,8 +111,14 @@ struct Prescription: Equatable, Identifiable {
             }
             if let date = erxTask.lastModified?.date {
                 let localizedString = uiDateFormatter.relativeTime(from: date, formattingContext: .middleOfSentence)
+                if erxTask.deviceRequest?.diGaInfo?.diGaState != nil {
+                    return .open(until: L10n.erxTxtDigaRequestedAt(localizedString).text)
+                }
                 return .open(until: L10n.erxTxtClaimedAt(localizedString).text)
             } else {
+                if erxTask.deviceRequest?.diGaInfo?.diGaState != nil {
+                    return .open(until: L10n.erxTxtDigaRequestedAt("").text)
+                }
                 return .open(until: L10n.erxTxtClaimedAt("").text)
             }
         case .computed(status: .waiting):
@@ -125,8 +131,14 @@ struct Prescription: Equatable, Identifiable {
                     from: recentCommunication,
                     formattingContext: .middleOfSentence
                 )
+                if erxTask.deviceRequest?.diGaInfo?.diGaState != nil {
+                    return .open(until: L10n.erxTxtDigaRequestedAt(localizedString).text)
+                }
                 return .open(until: L10n.erxTxtSentAt(localizedString).text)
             } else {
+                if erxTask.deviceRequest?.diGaInfo?.diGaState != nil {
+                    return .open(until: L10n.erxTxtDigaRequestedAt("").text)
+                }
                 return .open(until: L10n.erxTxtSentAt("").text)
             }
         case .computed(status: .dispensed):
@@ -180,6 +192,14 @@ struct Prescription: Equatable, Identifiable {
             return .archived(message: L10n.erxTxtExpiredOn(formattedDate).text)
 
         case .completed:
+            if let date = erxTask.lastModified?.date,
+               erxTask.deviceRequest?.diGaInfo?.diGaState != nil {
+                let localizedString = uiDateFormatter.relativeTime(from: date, formattingContext: .middleOfSentence)
+                if erxTask.deviceRequest?.diGaInfo?.diGaState == .noInformation {
+                    return .open(until: L10n.erxTxtDigaRejectedAt(localizedString).text)
+                }
+                return .open(until: L10n.erxTxtDigaClaimedAt(localizedString).text)
+            }
             let redeemedOnDate = uiDateFormatter.relativeDate(whenHandedOver) ?? L10n.prscFdTxtNa.text
             return .archived(message: L10n.dtlTxtMedRedeemedOn(redeemedOnDate).text)
         case .cancelled:
@@ -236,6 +256,9 @@ struct Prescription: Equatable, Identifiable {
              .deleted,
              .undefined,
              .error:
+            if erxTask.deviceRequest?.diGaInfo?.diGaState.isArchive == true {
+                return true
+            }
             return false
         }
     }
@@ -266,6 +289,10 @@ struct Prescription: Equatable, Identifiable {
              (.undefined, _),
              (.error, _): return false
         }
+    }
+
+    var isPharmacyRedeemable: Bool {
+        isRedeemable && !isDiGaPrescription
     }
 
     var isManualRedeemEnabled: Bool {
@@ -317,12 +344,20 @@ struct Prescription: Equatable, Identifiable {
 
         return "\(index)/\(count)"
     }
+
+    var isDiGaPrescription: Bool {
+        erxTask.deviceRequest?.diGaInfo != nil
+    }
 }
+
+import Dependencies
 
 extension MultiplePrescription {
     var isRedeemable: Bool {
+        @Dependency(\.date) var dateGenerator
+
         guard let startDate = startDate,
-              let daysUntilStartDate = Date().days(until: startDate)
+              let daysUntilStartDate = dateGenerator.now.days(until: startDate)
         else { return false }
 
         return daysUntilStartDate <= 0
@@ -361,6 +396,16 @@ extension Prescription {
             }
         }
 
+        if let progress = erxTask.deviceRequest?.diGaInfo?.diGaState {
+            switch progress {
+            case .request: return L10n.prscStatusDigaRequest.text
+            case .insurance: return L10n.prscStatusDigaInsurance.text
+            case .download, .activate, .completed: return L10n.prscStatusDigaCode.text
+            case .archive: return L10n.prscStatusDigaArchive.text
+            case .noInformation: return L10n.prscStatusDigaRejected.text
+            }
+        }
+
         switch (erxTask.status, viewStatus) {
         case (.completed, _): return L10n.prscStatusCompleted.text
         case (.ready, .redeem): return L10n.prscStatusMultiplePrsc.text
@@ -386,6 +431,16 @@ extension Prescription {
                 return nil
             case .archived:
                 return Image(asset: Asset.Prescriptions.checkmarkDouble)
+            }
+        }
+
+        if let progress = erxTask.deviceRequest?.diGaInfo?.diGaState {
+            switch progress {
+            case .request: return nil
+            case .insurance: return Image(systemName: SFSymbolName.hourglass)
+            case .download, .activate, .completed: return Image(systemName: SFSymbolName.checkmark)
+            case .archive: return Image(systemName: SFSymbolName.archivebox)
+            case .noInformation: return Image(systemName: SFSymbolName.crossIconPlain)
             }
         }
 
@@ -418,6 +473,16 @@ extension Prescription {
         guard type != .directAssignment
         else { return Colors.systemGray }
 
+        if let progress = erxTask.deviceRequest?.diGaInfo?.diGaState {
+            switch progress {
+            case .request: return Colors.primary900
+            case .insurance: return Colors.yellow900
+            case .download, .activate, .completed: return Colors.secondary900
+            case .archive: return Colors.systemGray
+            case .noInformation: return Colors.red900
+            }
+        }
+
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
              (.undefined, _),
@@ -440,6 +505,16 @@ extension Prescription {
         guard type != .directAssignment
         else { return Colors.systemGray2 }
 
+        if let progress = erxTask.deviceRequest?.diGaInfo?.diGaState {
+            switch progress {
+            case .request: return Colors.primary500
+            case .insurance: return Colors.yellow500
+            case .download, .activate, .completed: return Colors.secondary600
+            case .archive: return Colors.systemGray2
+            case .noInformation: return Colors.red500
+            }
+        }
+
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
              (.undefined, _),
@@ -460,6 +535,16 @@ extension Prescription {
     var backgroundTint: Color {
         guard type != .directAssignment
         else { return Colors.secondary }
+
+        if let progress = erxTask.deviceRequest?.diGaInfo?.diGaState {
+            switch progress {
+            case .request: return Colors.primary100
+            case .insurance: return Colors.yellow200
+            case .download, .activate, .completed: return Colors.secondary100
+            case .archive: return Colors.secondary
+            case .noInformation: return Colors.red100
+            }
+        }
 
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
@@ -510,4 +595,4 @@ extension Prescription {
     }
 }
 
-// swiftlint:enable file_length
+// swiftlint:enable file_length type_body_length

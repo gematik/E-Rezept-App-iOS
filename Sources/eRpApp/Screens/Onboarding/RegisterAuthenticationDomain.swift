@@ -106,7 +106,6 @@ struct RegisterAuthenticationDomain {
     }
 
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
-    @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
     @Dependency(\.passwordStrengthTester) var passwordStrengthTester: PasswordStrengthTester

@@ -394,6 +394,36 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
+    /// Updates `DiGaInfo` property to local data store.
+    /// - Parameter diGaInfo: new`DiGaInfo` that should be updated.
+    public func updateLocal(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, ErrorType> {
+        disk.update(diGaInfo: diGaInfo)
+            .mapError(ErrorType.local)
+            .eraseToAnyPublisher()
+    }
+
+    public func setLocalDiGaInfo(for tasks: [ErxTask]) -> AnyPublisher<Bool, ErrorType> {
+        let taskPublishers: [AnyPublisher<Bool, ErrorType>] =
+            tasks.compactMap { task in
+                if task.deviceRequest?.appName != nil, task.deviceRequest?.diGaInfo == nil {
+                    // task with DiGa and create new DiGaInfo, return bool value of result from save function
+                    return self.disk.update(diGaInfo: DiGaInfo(diGaState: .request, taskId: task.identifier))
+                        .mapError(ErrorType.local)
+                        .eraseToAnyPublisher()
+                }
+                // task without DiGa just return true, don't expect anything
+                return Just(true)
+                    .setFailureType(to: ErrorType.self)
+                    .eraseToAnyPublisher()
+            }
+        return Publishers.MergeMany(taskPublishers)
+            .collect()
+            .map { result in
+                result.allSatisfy { $0 == true }
+            }
+            .eraseToAnyPublisher()
+    }
+
     /// Returns a count for all unread communications for the given  communication profile
     /// and for all unread ChargeItems
     /// - Parameter profile: Communication profile for which you want to have the count

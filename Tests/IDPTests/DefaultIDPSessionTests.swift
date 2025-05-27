@@ -1136,7 +1136,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("state"))
     }
 
-    func testExtAuthVerifyAndExchange_kkHasPkvIdentifierSuffix() throws {
+    func testExtAuthVerifyAndExchange_kkHasPkvIdentifierFlag() throws {
         sut = DefaultIDPSession(
             client: idpClientMock,
             storage: storage,
@@ -1164,7 +1164,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         extAuthRequestStorageMock.getExtAuthRequestForReturnValue = ExtAuthChallengeSession(
             verifierCode: "verifier_code",
             nonce: "5557577A7576615347",
-            for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234pkv")
+            for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234", pkv: true)
         )
 
         sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })

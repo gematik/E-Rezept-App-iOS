@@ -22,5 +22,11 @@
         "text": "🛒 **Verbeterde bestelstroom** \nHet bestelproces is nu eenvoudiger en sneller. \n \n🌐 **Nieuwe talen** \nOnze app is nu ook beschikbaar in het Spaans en Iers. \n \n📞 **Uitgebreide contactopties** \nWe hebben nieuwe contactopties geïntroduceerd voor geselecteerde verzekeringsmaatschappijen. \n \n🔍 **Gedetailleerde toegangslogboeken** \nWe geven nu ook de telematica-ID's weer in de toegangslogboeken, zodat het gemakkelijker is om te identificeren wie toegang had.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Voorgeschreven DiGA's inwisselen** \nVanaf nu kunt u recepten voor digitale gezondheidsapplicaties (DiGA's) rechtstreeks inwisselen via de e-recepten-app. Direct na inwisseling ontvangt u de activeringscode en de link naar de voorgeschreven app. \n \n **🏥 Nieuwe apotheekdatabase** \nWe hebben een nieuwe, toekomstbestendige database voor apotheekzoekopdrachten geïntroduceerd.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

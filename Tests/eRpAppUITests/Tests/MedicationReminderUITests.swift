@@ -176,7 +176,7 @@ final class MedicationReminderUITests: XCTestCase {
         reminderSetup.toggleActive()
 
         // Validate Wiederholen is by default unbegrenzt->
-        expect(reminderSetup.repetitionDetailsCell().value as? String).to(equal("Unbegrenzt"))
+        expect(reminderSetup.repetitionDetailsCell().value as? String).to(equal("Täglich"))
 
         // Validate no time is added by default->
         expect(reminderSetup.numberOfSetupTimes()).to(equal(0))
@@ -244,7 +244,7 @@ final class MedicationReminderUITests: XCTestCase {
         reminderSetup.toggleActive()
 
         // Validate Wiederholen is by default unbegrenzt->
-        expect(reminderSetup.repetitionDetailsCell().value as? String).to(equal("Unbegrenzt"))
+        expect(reminderSetup.repetitionDetailsCell().value as? String).to(equal("Täglich"))
 
         // Validate no time is added by default->
         expect(reminderSetup.numberOfSetupTimes()).to(equal(0))
@@ -277,7 +277,7 @@ final class MedicationReminderUITests: XCTestCase {
         repetitionSetup.tapBackButton()
 
         // Validate Zeit wiederholen is set to Begrenzt bis {heute date}->
-        expect(reminderSetup.repetitionDetailsCell().value as? String).to(equal("bis Heute"))
+        expect(reminderSetup.repetitionDetailsCell().value as? String).to(equal("Täglich"))
 
         reminderSetup.tapAddTimeButton()
         expect(reminderSetup.numberOfSetupTimes()).to(equal(1))
@@ -331,7 +331,7 @@ final class MedicationReminderUITests: XCTestCase {
         reminderSetup.toggleActive()
 
         // Validate Wiederholen is by default unbegrenzt->
-        expect(reminderSetup.repetitionDetailsCell().value as? String).to(equal("Unbegrenzt"))
+        expect(reminderSetup.repetitionDetailsCell().value as? String).to(equal("Täglich"))
 
         // Validate no time is added by default->
         expect(reminderSetup.numberOfSetupTimes()).to(equal(0))
@@ -387,7 +387,7 @@ final class MedicationReminderUITests: XCTestCase {
 
         // Validate Zeit wiederholen is set to Begrenzt bis {heute +10 date}->
         expect(repetitionSetup2.repetitionDetailsCell().value as? String)
-            .to(equal("bis \(todayPlus10.datePickerLabelFormatted())"))
+            .to(equal("Täglich"))
 
         // Add a new time->
         repetitionSetup2.tapAddTimeButton()

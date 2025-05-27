@@ -69,14 +69,18 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
                     }
                 }
 
-                let isReedemable = !store.prescriptions.filter(\.isRedeemable).isEmpty
+                let isReedemable = !store.prescriptions.filter(\.isPharmacyRedeemable).isEmpty
                 if isReedemable {
                     HStack {
                         Spacer()
                         Button {
                             action()
                         } label: {
-                            Text(L10n.mainBtnRedeem)
+                            if store.showRedeemDiGaButton {
+                                Text(L10n.digaDtlBtnMainRequest)
+                            } else {
+                                Text(L10n.mainBtnRedeem)
+                            }
                         }
                         .buttonStyle(.primaryHugging)
                         .padding(.vertical)

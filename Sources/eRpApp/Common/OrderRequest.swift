@@ -219,7 +219,7 @@ extension ErxTaskOrder {
             identifier: order.orderID.uuidString,
             erxTaskId: order.taskID,
             accessCode: order.accessCode,
-            pharmacyTelematikId: telematikId,
+            telematikId: telematikId,
             flowType: order.flowType,
             payload: payload
         )

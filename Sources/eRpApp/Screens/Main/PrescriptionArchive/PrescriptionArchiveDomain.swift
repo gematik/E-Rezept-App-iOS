@@ -27,15 +27,31 @@ struct PrescriptionArchiveDomain {
     enum Destination {
         // sourcery: AnalyticsScreen = prescriptionDetail
         case prescriptionDetail(PrescriptionDetailDomain)
+        case diGaDetail(DiGaDetailDomain)
     }
 
     @ObservableState
     struct State: Equatable {
-        var loadingState: LoadingState<[Prescription], PrescriptionRepositoryError> =
-            .idle
+        var loadingState: LoadingState<[Prescription], PrescriptionRepositoryError> = .idle
         var prescriptions: [Prescription] = []
+        var pickerView: PickerView = .prescriptions
+        var diGaPrescriptions: [Prescription] {
+            prescriptions.filter(\.isDiGaPrescription)
+        }
 
         @Presents var destination: Destination.State?
+    }
+
+    enum PickerView: String, CaseIterable, Equatable {
+        case prescriptions
+        case diGa
+
+        var text: String {
+            switch self {
+            case .prescriptions: L10n.prscArchTxtPickerPrsc.text
+            case .diGa: L10n.prscArchTxtPickerDiga.text
+            }
+        }
     }
 
     enum Action: Equatable {
@@ -43,7 +59,7 @@ struct PrescriptionArchiveDomain {
         case loadLocalPrescriptions
         /// Details actions
         case prescriptionDetailViewTapped(selectedPrescription: Prescription)
-
+        case selectView(PickerView)
         case response(Response)
         case delegate(Delegate)
 
@@ -84,13 +100,30 @@ struct PrescriptionArchiveDomain {
             state.prescriptions = loadingState.value?.filter(\.isArchived) ?? []
             return .none
         case let .prescriptionDetailViewTapped(prescription):
-            state.destination = .prescriptionDetail(PrescriptionDetailDomain.State(
-                prescription: prescription,
-                isArchived: prescription.isArchived
-            ))
+            if let diGaInfo = prescription.erxTask.deviceRequest?.diGaInfo {
+                state.destination = .diGaDetail(DiGaDetailDomain.State(
+                    diGaTask: .init(prescription: prescription),
+                    diGaInfo: diGaInfo
+                ))
+            } else {
+                state.destination = .prescriptionDetail(PrescriptionDetailDomain.State(
+                    prescription: prescription,
+                    isArchived: prescription.isArchived
+                ))
+            }
+            return .none
+        case .destination(.presented(.diGaDetail(action: .delegate(.closeFromDelete)))):
+            // When deleting the last Element it is still stored and need a workaround.
+            if state.diGaPrescriptions.count <= 1 {
+                state.pickerView = .prescriptions
+            }
+            state.destination = nil
             return .none
         case .destination(.presented(.prescriptionDetail(.delegate(.close)))):
             state.destination = nil
+            return .none
+        case let .selectView(view):
+            state.pickerView = view
             return .none
         case .delegate,
              .destination:

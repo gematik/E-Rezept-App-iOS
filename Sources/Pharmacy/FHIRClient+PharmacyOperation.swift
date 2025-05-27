@@ -30,13 +30,17 @@ extension FHIRClient {
     /// [REQ:gemSpec_eRp_FdV:A_19984] validate pharmacy data format conforming to FHIR
     ///
     /// - Parameters:
-    ///   - searchTerm: Search term
-    ///   - position: Pharmacy position (latitude and longitude)
-    /// - Returns: `AnyPublisher` that emits a list of `PharmacyLocation`s or is empty when not found
-    public func searchPharmacies(by searchTerm: String,
-                                 position: Position?,
-                                 filter: [String: String])
-        -> AnyPublisher<[PharmacyLocation], FHIRClient.Error> {
+    ///   - searchTerm: String that send to the server for filtering the pharmacies response
+    ///   - position: Position (latitude and longitude) of pharmacy
+    ///   - filter: further filter parameters for pharmacies
+    ///   - accessToken: access token to interact with the service
+    /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
+    public func searchPharmacies(
+        by searchTerm: String,
+        position: Position?,
+        filter: [PharmacyRemoteDataStoreFilter],
+        accessToken: String? = nil
+    ) -> AnyPublisher<[PharmacyLocation], FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler(
             acceptFormat: FHIRAcceptFormat.json
         ) { (fhirResponse: FHIRClient.Response) -> [PharmacyLocation] in
@@ -54,6 +58,7 @@ extension FHIRClient {
                 searchTerm: searchTerm,
                 position: position,
                 filter: filter,
+                accessToken: accessToken,
                 handler: handler
             )
         )
@@ -63,9 +68,12 @@ extension FHIRClient {
     ///
     /// - Parameters:
     ///   - telematikId: The Telematik-ID of the pharmacy to be requested
+    ///   - accessToken: access token to interact with the service
     /// - Returns: `AnyPublisher` that emits the `PharmacyLocation` or nil when not found
-    public func fetchPharmacy(by telematikId: String)
-        -> AnyPublisher<PharmacyLocation?, Error> {
+    public func fetchPharmacy(
+        by telematikId: String,
+        accessToken: String? = nil
+    ) -> AnyPublisher<PharmacyLocation?, Error> {
         let handler = DefaultFHIRResponseHandler(
             acceptFormat: FHIRAcceptFormat.json
         ) { (fhirResponse: FHIRClient.Response) -> PharmacyLocation? in
@@ -81,6 +89,37 @@ extension FHIRClient {
         return execute(
             operation: PharmacyFHIROperation.fetchPharmacy(
                 telematikId: telematikId,
+                accessToken: accessToken,
+                handler: handler
+            )
+        )
+    }
+
+    /// Convenience function for requesting a telematikId by institution identifier (IK)
+    /// - Parameters:
+    ///   - ikNumber: The institution (IK) identifier of the organization to be requested
+    /// - Returns: `AnyPublisher` that emits the `TelematikId` or nil when not found
+    public func fetchTelematikId(
+        by ikNumber: String,
+        accessToken: String? = nil
+    ) -> AnyPublisher<String?, Error> {
+        let handler = DefaultFHIRResponseHandler(
+            acceptFormat: FHIRAcceptFormat.json
+        ) { (fhirResponse: FHIRClient.Response) -> String? in
+            let decoder = JSONDecoder()
+            let resource: ModelsR4.Bundle
+            do {
+                resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+            } catch {
+                throw Error.decoding(error)
+            }
+            // This should not call only the FHIRVZD API
+            return nil
+        }
+        return execute(
+            operation: PharmacyFHIROperation.fetchTelematikID(
+                ikNumber: ikNumber,
+                accessToken: accessToken,
                 handler: handler
             )
         )

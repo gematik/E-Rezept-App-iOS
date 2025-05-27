@@ -41,11 +41,11 @@ extension ErxTaskDeviceRequestEntity {
         pzn = deviceRequest.pzn
         appName = deviceRequest.appName
         isSer = deviceRequest.isSER
+        authoredOn = deviceRequest.authoredOn
         accidentInfo = ErxTaskAccidentInfoEntity(
             accident: deviceRequest.accidentInfo,
             in: context
         )
-        authoredOn = deviceRequest.authoredOn
     }
 }
 
@@ -55,7 +55,7 @@ extension ErxDeviceRequest {
         guard let entity = entity else { return nil }
 
         let status = try? decoder.decode(DeviceRequestStatus.self, from: entity.status ?? Data())
-        let intent = try? decoder.decode(ErxDeviceRequest.Intent.self, from: entity.intent ?? Data())
+        let intent = try? decoder.decode(ErxDeviceRequest.DeviceRequestIntent.self, from: entity.intent ?? Data())
 
         self.init(
             status: status,
@@ -64,7 +64,8 @@ extension ErxDeviceRequest {
             appName: entity.appName,
             isSER: entity.isSer,
             accidentInfo: AccidentInfo(entity: entity.accidentInfo),
-            authoredOn: entity.authoredOn
+            authoredOn: entity.authoredOn,
+            diGaInfo: DiGaInfo(entity: entity.diGaInfo)
         )
     }
 }

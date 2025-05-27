@@ -22,5 +22,11 @@
         "text": "🛒 **Geliştirilmiş sipariş akışı** \nSipariş verme süreci artık daha kolay ve daha hızlı. \n \n🌐 **Yeni diller** \nUygulamamız artık İspanyolca ve İrlandaca dillerinde de mevcut. \n \n📞 **Genişletilmiş iletişim seçenekleri** \nSeçili sigorta şirketleri için yeni iletişim seçenekleri sunduk. \n \n🔍 **Ayrıntılı erişim kayıtları** \nArtık erişim kayıtlarında telematik kimliklerini de görüntülüyoruz, böylece kimin erişimi olduğunu belirlemek daha kolay oluyor.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Reçeteli DiGA'ları kullanın** \nArtık dijital sağlık uygulamaları (DiGA'lar) için reçetelerinizi doğrudan e-reçete uygulaması üzerinden kullanabilirsiniz. Kullanımdan hemen sonra aktivasyon kodunu ve belirtilen uygulama bağlantısını alacaksınız. \n \n **🏥 Yeni eczane veritabanı** \nEczane aramaları için yeni, geleceğe dönük bir veritabanı tanıttık.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

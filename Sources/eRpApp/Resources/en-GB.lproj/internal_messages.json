@@ -22,5 +22,11 @@
         "text": "🛒 **Improved order flow** \nThe ordering process is now easier and faster. \n \n🌐 **New languages** \nOur app is now also available in Spanish and Irish. \n \n📞 **Expanded contact options** \nWe have introduced new contact options for selected insurance companies. \n \n🔍 **Detailed access logs** \nWe now also display the telematics IDs in the access logs, making it easier to identify who had access.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Redeem prescribed DiGAs** \nYou can now redeem prescriptions for digital health applications (DiGAs) directly via the e-prescription app. You will receive the activation code and the link to the prescribed app immediately after redemption. \n \n **🏥 New pharmacy database** \nWe have introduced a new, future-proof database for pharmacy searches.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

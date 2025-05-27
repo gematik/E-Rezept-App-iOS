@@ -105,7 +105,7 @@ extension ErxTask.Communication {
             userId: "user_id_1",
             telematikId: "12345.1",
             orderId: "order_id_1",
-            timestamp: DemoDate.createDemoDate(.oneHourAgo)!,
+            timestamp: TestDate.createFormattedDate(.oneHourAgo)!,
             payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Hello\"}",
             isRead: true
         )

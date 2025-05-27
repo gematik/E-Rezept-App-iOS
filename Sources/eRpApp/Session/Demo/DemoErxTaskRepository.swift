@@ -128,6 +128,10 @@ class DemoErxTaskRepository: ErxTaskRepository {
         Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
+    func updateLocal(diGaInfo _: DiGaInfo) -> AnyPublisher<Bool, ErrorType> {
+        Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
     func countAllUnreadCommunicationsAndChargeItems(
         for _: ErxTask.Communication.Profile
     ) -> AnyPublisher<Int, ErrorType> {

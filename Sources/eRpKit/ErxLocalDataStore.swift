@@ -124,4 +124,9 @@ public protocol ErxLocalDataStore {
     /// - Parameter chargeItems: Array of charge items that should be deleted
     /// - Returns: `true` if delete operation was successful
     func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError>
+
+    /// Creates or updates the passed sequence of `DiGaInfo`
+    /// - Parameter diGaInfo: diGaInfo that should be saved
+    /// - Returns: `true` if save operation was successful
+    func update(diGaInfo: DiGaInfo) -> AnyPublisher<Bool, LocalStoreError>
 }

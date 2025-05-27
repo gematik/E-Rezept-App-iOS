@@ -152,7 +152,13 @@ struct EditProfileDomain {
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
-    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+
+    // Use changebaleUserSesisonContainer to set the correct user session for demo mode
+    var userDataStore: UserDataStore {
+        changeableUserSessionContainer.userSession.localUserStore
+    }
+
+    @Dependency(\.changeableUserSessionContainer) var changeableUserSessionContainer
     @Dependency(\.profileSecureDataWiper) var profileSecureDataWiper: ProfileSecureDataWiper
     @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
     @Dependency(\.router) var router: Routing

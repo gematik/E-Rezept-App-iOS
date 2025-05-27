@@ -22,5 +22,11 @@
         "text": "🛒 **Flusso degli ordini migliorato** \nIl processo di ordinazione è ora più semplice e veloce. \n \n 🌐 **Nuove lingue** \nLa nostra app è ora disponibile anche in spagnolo e irlandese. \n \n📞 **Opzioni di contatto estese** \nAbbiamo introdotto nuove opzioni di contatto per compagnie assicurative selezionate. \n \n🔍 **Registri di accesso dettagliati** \nOra visualizziamo anche gli ID telematici nei registri di accesso, in modo che sia più facile identificare chi ha avuto accesso.",
         "timestamp": "2025-04-04T08:00:00.000Z",
         "version": "1.30.0"
+    },
+    {
+        "id": "6",
+        "text": "**📲 Riscatta le prescrizioni DiGA** \nD'ora in poi puoi riscattare le prescrizioni per le applicazioni sanitarie digitali (DiGA) direttamente tramite l'app per le prescrizioni elettroniche. Riceverai il codice di attivazione e il link all'app prescritta subito dopo il riscatto. \n \n **🏥 Nuovo database delle farmacie** \nAbbiamo introdotto un nuovo database a prova di futuro per le ricerche in farmacia.",
+        "timestamp": "2025-05-22T08:00:00.000Z",
+        "version": "1.31.0"
     }
 ]

@@ -355,8 +355,8 @@ struct PharmacyDetailView_Previews: PreviewProvider {
             PharmacyDetailView(
                 store: StoreOf<PharmacyDetailDomain>(
                     initialState: PharmacyDetailDomain.State(
-                        prescriptions: Shared(PharmacyDetailDomain.Dummies.prescriptions),
-                        selectedPrescriptions: Shared([]),
+                        prescriptions: Shared(value: PharmacyDetailDomain.Dummies.prescriptions),
+                        selectedPrescriptions: Shared(value: []),
                         inRedeemProcess: false,
                         pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
                     )
@@ -370,8 +370,8 @@ struct PharmacyDetailView_Previews: PreviewProvider {
             PharmacyDetailView(
                 store: StoreOf<PharmacyDetailDomain>(
                     initialState: PharmacyDetailDomain.State(
-                        prescriptions: Shared(PharmacyDetailDomain.Dummies.prescriptions),
-                        selectedPrescriptions: Shared([]),
+                        prescriptions: Shared(value: PharmacyDetailDomain.Dummies.prescriptions),
+                        selectedPrescriptions: Shared(value: []),
                         inRedeemProcess: false,
                         pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
                     )

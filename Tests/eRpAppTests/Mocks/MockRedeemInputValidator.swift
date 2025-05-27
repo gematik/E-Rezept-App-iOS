@@ -67,4 +67,15 @@ final class MockRedeemInputValidator: RedeemInputValidator {
     ) -> Validity {
         returnValue
     }
+
+    func onPremiseOrElseIsNonEmptyContactData( // swiftlint:disable:this function_parameter_count
+        optionType _: eRpKit.RedeemOption,
+        name _: String?,
+        street _: String?,
+        zip _: String?,
+        city _: String?,
+        phone _: String?
+    ) -> Bool {
+        returnValue == .valid ? true : false
+    }
 }
