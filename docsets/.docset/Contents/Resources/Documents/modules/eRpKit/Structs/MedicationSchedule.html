@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.30.0
+           1.31.0
  Docs
         </a>
          (100% documented)
@@ -449,6 +449,9 @@
                 <a class="nav-group-task-link" href="../Structs/MedicationSchedule/Entry.html">– Entry</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/MedicationSchedule/Weekday.html">– Weekday</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/MedicationScheduleRepository.html">MedicationScheduleRepository</a>
               </li>
               <li class="nav-group-task">
@@ -559,9 +562,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit18MedicationScheduleV2id5start3end5title18dosageInstructions6taskId8isActive7entriesAC10Foundation4UUIDV_AL4DateVAPS3SSb21IdentifiedCollections0S5ArrayVyAnC5EntryVGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(id:start:end:title:dosageInstructions:taskId:isActive:entries:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit18MedicationScheduleV2id5start3end5title18dosageInstructions6taskId8isActive7entriesAC10Foundation4UUIDV_AL4DateVAPS3SSb21IdentifiedCollections0S5ArrayVyAnC5EntryVGtcfc">init(id:<wbr>start:<wbr>end:<wbr>title:<wbr>dosageInstructions:<wbr>taskId:<wbr>isActive:<wbr>entries:<wbr>)</a>
+                    <a name="/s:6eRpKit18MedicationScheduleV2id5start3end5title18dosageInstructions6taskId8isActive8weekdays7entriesAC10Foundation4UUIDV_AM4DateVAQS3SSbShyAC7WeekdayOG21IdentifiedCollections0U5ArrayVyAoC5EntryVGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(id:start:end:title:dosageInstructions:taskId:isActive:weekdays:entries:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit18MedicationScheduleV2id5start3end5title18dosageInstructions6taskId8isActive8weekdays7entriesAC10Foundation4UUIDV_AM4DateVAQS3SSbShyAC7WeekdayOG21IdentifiedCollections0U5ArrayVyAoC5EntryVGtcfc">init(id:<wbr>start:<wbr>end:<wbr>title:<wbr>dosageInstructions:<wbr>taskId:<wbr>isActive:<wbr>weekdays:<wbr>entries:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -583,6 +586,7 @@
     <span class="nv">dosageInstructions</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">taskId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">isActive</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
+    <span class="nv">weekdays</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MedicationSchedule/Weekday.html">Weekday</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">Set</span><span class="p">(</span><span class="kt"><a href="../Structs/MedicationSchedule/Weekday.html">Weekday</a></span><span class="o">.</span><span class="n">allCases</span><span class="p">),</span> <span class="c1">// Default to all days</span>
     <span class="nv">entries</span><span class="p">:</span> <span class="kt">IdentifiedArrayOf</span><span class="o">&lt;</span><span class="kt">MedicationSchedule</span><span class="o">.</span><span class="kt"><a href="../Structs/MedicationSchedule/Entry.html">Entry</a></span><span class="o">&gt;</span>
 <span class="p">)</span></code></pre>
 
@@ -776,6 +780,32 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6eRpKit18MedicationScheduleV8weekdaysShyAC7WeekdayOGvp"></a>
+                    <a name="//apple_ref/swift/Property/weekdays" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit18MedicationScheduleV8weekdaysShyAC7WeekdayOGvp">weekdays</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">weekdays</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MedicationSchedule/Weekday.html">Weekday</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6eRpKit18MedicationScheduleV7entries21IdentifiedCollections0F5ArrayVy10Foundation4UUIDVAC5EntryVGvp"></a>
                     <a name="//apple_ref/swift/Property/entries" class="dashAnchor"></a>
                     <a class="token" href="#/s:6eRpKit18MedicationScheduleV7entries21IdentifiedCollections0F5ArrayVy10Foundation4UUIDVAC5EntryVGvp">entries</a>
@@ -853,6 +883,33 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit18MedicationScheduleV7WeekdayO"></a>
+                    <a name="//apple_ref/swift/Enum/Weekday" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit18MedicationScheduleV7WeekdayO">Weekday</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="../Structs/MedicationSchedule/Weekday.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Weekday</span> <span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt">Codable</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">CaseIterable</span><span class="p">,</span> <span class="kt">Identifiable</span><span class="p">,</span> <span class="kt">Sendable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -861,7 +918,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-04-25)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-05-21)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
