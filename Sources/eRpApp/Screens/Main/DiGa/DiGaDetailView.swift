@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2025 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import ComposableArchitecture
@@ -52,11 +56,51 @@ struct DiGaDetailView: View {
 
                     GreyDivider()
 
-                    if let buttonText = store.diGaInfo.diGaState.buttonText {
-                        PrimaryTextButton(text: LocalizedStringKey(buttonText),
-                                          a11y: A11y.digaDetail.digaDtlBtnMainAction) {
-                            store.send(.mainButtonTapped)
+                    if !store.showSelectInsurance {
+                        if let buttonText = store.diGaInfo.diGaState.buttonText {
+                            PrimaryTextButton(text: LocalizedStringKey(buttonText),
+                                              a11y: A11y.digaDetail.digaDtlBtnMainAction) {
+                                store.send(.mainButtonTapped)
+                            }.padding()
+                        }
+                    } else {
+                        PrimaryTextButton(text: store.isLoading ? L10n.digaDtlBtnMainRequest : L10n
+                            .digaDtlBtnMainSelectInsurance,
+                            a11y: A11y.digaDetail.digaDtlBtnMainSelectInsurance,
+                            isEnabled: !store.isLoading) {
+                                store.send(.setNavigation(tag: .insuranceList))
                         }.padding()
+
+                        if store.isLoading {
+                            HStack(spacing: 4) {
+                                Text(L10n.digaDtlTxtLoadingInsurance)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(.secondaryLabel))
+
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle())
+                            }.padding([.horizontal, .bottom], 8)
+                        }
+                    }
+
+                    if store.showRelatedInsurance {
+                        HStack(spacing: 4) {
+                            Text(L10n.digaDtlTxtSelectedInsurance)
+                                .fixedSize()
+                                .font(.subheadline)
+                                .foregroundColor(Color(.secondaryLabel))
+
+                            if let selectedInsuranceName = store.selectedInsurance?.name {
+                                Button {
+                                    store.send(.setNavigation(tag: .insuranceList))
+                                } label: {
+                                    Text(selectedInsuranceName)
+                                        .font(.subheadline)
+                                        .foregroundColor(Colors.primary700)
+                                        .underline()
+                                }.accessibility(identifier: A11y.digaDetail.digaDtlBtnMainSelectedInsurance)
+                            }
+                        }.padding([.horizontal, .bottom], 8)
                     }
                 }
             }.task {
@@ -71,6 +115,7 @@ struct DiGaDetailView: View {
                         label: { Image(systemName: SFSymbolName.ellipsis).foregroundStyle(Colors.primary700) }
                     )
                     .accessibility(identifier: A11y.digaDetail.digaDtlBtnToolbarItem)
+                    .contentShape(Rectangle())
                 }
             }
             .destinations(store: $store)
@@ -154,7 +199,6 @@ struct DiGaDetailView: View {
                     )
                     .accessibility(identifier: A11y.digaDetail.digaDtlBtnDeleteToolbar)
                 }
-                .accessibility(identifier: A11y.digaDetail.digaDtlBtnToolbarMenu)
             }
         }
     }
@@ -188,6 +232,11 @@ extension View {
             item: store.scope(state: \.destination?.cardWall, action: \.destination.cardWall)
         ) { store in
             CardWallIntroductionView(store: store)
+        }
+        .navigationDestination(
+            item: store.scope(state: \.destination?.insuranceList, action: \.destination.insuranceList)
+        ) { store in
+            DiGaInsuranceListView(store: store)
         }
     }
 }

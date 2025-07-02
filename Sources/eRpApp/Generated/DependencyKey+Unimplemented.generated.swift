@@ -427,8 +427,11 @@ struct UnimplementedPharmacyRepository: PharmacyRepository {
     func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError> {
         fatalError("loadAvsCertificates(for:) has not been implemented")
     }
-    func fetchTelematikId(ikNumber: String) -> AnyPublisher<String?, PharmacyRepositoryError> {
-        fatalError("fetchTelematikId(ikNumber:) has not been implemented")
+    func fetchInsurance(ikNumber: String) -> AnyPublisher<Insurance?, PharmacyRepositoryError> {
+        fatalError("fetchInsurance(ikNumber:) has not been implemented")
+    }
+    func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyRepositoryError> {
+        fatalError("fetchAllInsurances has not been implemented")
     }
     func save(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         fatalError("save(pharmacy:) has not been implemented")

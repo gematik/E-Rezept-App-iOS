@@ -25,8 +25,14 @@
     },
     {
         "id": "6",
-        "text": "**📲 Fuascail oidis DiGA ar oideas** \nAs seo amach is féidir leat oidis a fhuascailt le haghaidh feidhmchlár sláinte digiteach (DiGA) go díreach tríd an aip ríomh-oideas. Gheobhaidh tú an cód gníomhachtaithe agus an nasc chuig an aip fhorordaithe díreach tar éis fuascailte. \n \n **🏥 Bunachar sonraí nua cógaisíochta** \nTá bunachar sonraí nua, atá réidh don todhchaí, tugtha isteach againn le haghaidh cuardaigh cógaisíochta.",
+        "text": "**📲 Fuascail oidis le haghaidh cógais leighis dhigiteacha** \nIs féidir leat oidis a fhuascailt anois le haghaidh feidhmchlár sláinte digiteach (DiGAanna) go díreach tríd an aip ríomh-oideas. Is féidir leat do chód gníomhachtaithe agus an nasc chuig an DiGA forordaithe a fháil anseo san aip ríomh-oideas. \n \n **🏥 Bunachar sonraí nua cógaslainne** \nTá bunachar sonraí nua atá réidh don todhchaí tugtha isteach againn le haghaidh cuardaigh cógaslainne.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Inrochtaineacht** \nTá ár ráiteas inrochtaineachta ar fáil anois sna socruithe. Tá an próiseas ionduchtaithe déanta níos inrochtana freisin. \n \n **📲 Fuascail DiGAanna le cuideachtaí árachais** \nIs féidir oidis d'fheidhmchláir sláinte digiteacha (DiGAanna) a fhuascailt anois le cuideachtaí árachais eile freisin.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
     }
 ]

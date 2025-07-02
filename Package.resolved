@@ -193,8 +193,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gematik/swift-gemPDFKit",
       "state" : {
-        "revision" : "dc094cd7548861b9d5bfecfab441a4ea3aac6a02",
-        "version" : "0.2.1"
+        "revision" : "992d7ecdee8feb131c3beef244d0f8ca097d9523",
+        "version" : "0.2.2"
       }
     },
     {

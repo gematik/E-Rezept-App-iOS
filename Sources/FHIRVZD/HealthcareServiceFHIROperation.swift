@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2025 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import Dependencies
@@ -37,7 +41,9 @@ public enum HealthcareServiceFHIROperation<Value, Handler: FHIRResponseHandler> 
     /// Search for pharmacies by telematikId
     case fetchPharmacy(telematikId: String, accessToken: String?, handler: Handler)
     /// Get the telematikID by the IK-Number of an organization
-    case fetchTelematikID(ikNumber: String, accessToken: String?, handler: Handler)
+    case fetchInsurance(ikNumber: String, accessToken: String?, handler: Handler)
+    /// Get all organizations related to DiGa
+    case fetchAllInsurances(accessToken: String?, handler: Handler)
 }
 
 extension HealthcareServiceFHIROperation: FHIRClientOperation {
@@ -45,7 +51,8 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         switch self {
         case let .searchPharmacies(_, _, _, _, handler),
              let .fetchPharmacy(_, _, handler),
-             let .fetchTelematikID(_, _, handler):
+             let .fetchInsurance(_, _, handler),
+             let .fetchAllInsurances(_, handler):
             return try handler.handle(response: response)
         }
     }
@@ -83,7 +90,7 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         case let .fetchPharmacy(telematikId, _, _):
             queryItems.append(URLQueryItem(name: "_count", value: "1"))
             queryItems.append(URLQueryItem(name: "organization.identifier", value: "\(telematikId)"))
-        case let .fetchTelematikID(ikNumber, _, _):
+        case let .fetchInsurance(ikNumber, _, _):
             queryItems.append(URLQueryItem(name: "_count", value: "1"))
             // Set type for only insurance companies
             queryItems
@@ -95,6 +102,16 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
             queryItems
                 .append(URLQueryItem(name: "organization.identifier",
                                      value: telematikIDValue))
+
+            // add queryItems to filter the results should have a telematikId
+            queryItems
+                .append(URLQueryItem(name: "organization.identifier",
+                                     value: "https://gematik.de/fhir/sid/telematik-id|"))
+        case .fetchAllInsurances:
+            // Set type for only insurance companies
+            queryItems
+                .append(URLQueryItem(name: "organization.type",
+                                     value: FHIRDirectory.Key.OrganizationProfession.insuranceCompany.rawValue))
 
             // add queryItems to filter the results should have a telematikId
             queryItems
@@ -114,7 +131,8 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         switch self {
         case let .searchPharmacies(_, _, _, token, _),
              let .fetchPharmacy(_, token, _),
-             let .fetchTelematikID(_, token, _):
+             let .fetchInsurance(_, token, _),
+             let .fetchAllInsurances(token, _):
             if let token {
                 headers["Authorization"] = "Bearer \(token)"
             }
@@ -137,7 +155,8 @@ extension HealthcareServiceFHIROperation: FHIRClientOperation {
         switch self {
         case let .searchPharmacies(_, _, _, _, handler),
              let .fetchPharmacy(_, _, handler),
-             let .fetchTelematikID(_, _, handler):
+             let .fetchInsurance(_, _, handler),
+             let .fetchAllInsurances(_, handler):
             return handler.acceptFormat
         }
     }

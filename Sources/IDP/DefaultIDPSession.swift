@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
@@ -436,7 +440,6 @@ public class DefaultIDPSession: IDPSession {
                         }
                         return try jwtContainer
                             .claims()
-                            .filterGID()
                             .sorted()
                     }
                     .mapError { $0.asIDPError() }
@@ -474,19 +477,9 @@ public class DefaultIDPSession: IDPSession {
                 // swiftlint:disable:next trailing_closure
                 return self.client.startExtAuth(extAuth, using: document)
                     .first()
-                    .handleEvents(receiveOutput: { redirectUrl in
-                        let storageIdentifier: String
-                        if entry.gId {
-                            storageIdentifier = state
-                        } else {
-                            // [REQ:gemSpec_IDP_Frontend:A_22299-01] Remember State parameter for later verification
-                            guard let components = URLComponents(url: redirectUrl, resolvingAgainstBaseURL: true),
-                                  let returnState = components.queryItemWithName("state")?.value
-                            else {
-                                return
-                            }
-                            storageIdentifier = returnState
-                        }
+                    .handleEvents(receiveOutput: { _ in
+                        // [REQ:gemSpec_IDP_Frontend:A_22299-01] Remember State parameter for later verification
+                        let storageIdentifier = state
                         // [REQ:gemSpec_IDP_Frontend:A_22301-01#12] The challenge session has been set here.
                         self.extAuthRequestStorage.setExtAuthRequest(challengeSession, for: storageIdentifier)
                     })

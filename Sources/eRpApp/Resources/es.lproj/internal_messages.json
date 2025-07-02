@@ -25,8 +25,14 @@
     },
     {
         "id": "6",
-        "text": "**📲 Canjear DiGAs prescritos** \nA partir de ahora podrás canjear recetas para aplicaciones de salud digital (DiGAs) directamente a través de la aplicación de receta electrónica. Recibirás el código de activación y el enlace a la aplicación prescrita inmediatamente después del canje. \n \n **🏥Nueva base de datos de farmacias** \nHemos presentado una nueva base de datos preparada para el futuro para búsquedas de farmacias.",
+        "text": "**📲 Canjea tus DiGAs recetadas** \nAhora puedes canjear recetas para aplicaciones de salud digital (DiGAs) directamente a través de la app de recetas electrónicas. Encuentra tu código de activación y el enlace a la DiGA recetada aquí mismo, en la app de recetas electrónicas. \n \n **🏥 Nueva base de datos de farmacias** \nHemos presentado una nueva base de datos con visión de futuro para búsquedas en farmacias.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Accesibilidad** \nNuestra declaración de accesibilidad ya está disponible en la configuración. El proceso de incorporación también es más accesible. \n \n **📲 Canjea DiGAs con aseguradoras** \nLas recetas para aplicaciones de salud digital (DiGAs) ahora también se pueden canjear con otras aseguradoras.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
     }
 ]

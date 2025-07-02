@@ -1,19 +1,23 @@
 #
-# Copyright (c) 2024 gematik GmbH
-# 
-# Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-# the European Commission - subsequent versions of the EUPL (the Licence);
-# You may not use this work except in compliance with the Licence.
-# You may obtain a copy of the Licence at:
-# 
-#     https://joinup.ec.europa.eu/software/page/eupl
-# 
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the Licence is distributed on an "AS IS" basis,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the Licence for the specific language governing permissions and
-# limitations under the Licence.
-# 
+#  Copyright (Change Date see Readme), gematik GmbH
+#
+#  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+#  European Commission – subsequent versions of the EUPL (the "Licence").
+#  You may not use this work except in compliance with the Licence.
+#
+#  You find a copy of the Licence in the "Licence" file or at
+#  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the Licence is distributed on an "AS IS" basis,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+#  In case of changes by gematik find details in the "Readme" file.
+#
+#  See the Licence for the specific language governing permissions and limitations under the Licence.
+#
+#  *******
+#
+# For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 #
 
 xcodes(
@@ -382,12 +386,20 @@ lane :uitests_ios do |options|
   reset_simulator_contents
   scheme = "UITests_iOS"
 
-  scan(
+  scan_result = scan(
     scheme: scheme,
     configuration: "Debug",
     prelaunch_simulator: true,
     output_directory: "./fastlane/test_output/uitests",
-    number_of_retries: 2
+    number_of_retries: 2,
+    output_style: 'raw'
+  )
+  flaky_note_if_necessary(scan_result: scan_result)
+
+  trainer(
+    output_directory: "./fastlane/test_output/uitests",
+    output_remove_retry_attempts: true,
+    extension: ".junit"
   )
 end
 
@@ -420,12 +432,20 @@ lane :integration_tests do |options|
   ENV["APP_CONF"] = "#{app_conf}"
 
   puts "========== Run the tests for env: #{app_conf} =========="
-  scan(
+  scan_result = scan(
     scheme: "AllIntegrationTests_iOS",
     configuration: "Debug",
     test_without_building: true,
     number_of_retries: 3,
     output_directory: "./fastlane/test_output/#{app_conf}" # default is ./fastlane/test_output
+  )
+
+  flaky_note_if_necessary(scan_result: scan_result)
+
+  trainer(
+    output_directory: "./fastlane/test_output/#{app_conf}",
+    output_remove_retry_attempts: true,
+    extension: ".junit"
   )
 rescue => ex
   jenkins_job_url = "https://jenkins.prod.ccs.gematik.solutions/job/e-Rezept-iOS-App-Integration_Tests/#{ENV['BUILD_NUMBER']}"
@@ -1027,12 +1047,16 @@ lane :build_test_version do |options|
   sign_adhoc
 
   if is_ci
+    firebase_app_distribution(
+      ipa_path: "./distribution/eRPApp_#{build_version}_adhoc.ipa",
+      release_notes: "branch #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}",
+      service_credentials_file: ENV["FIREBASE_SERVICE_ACCOUNT"]
+    )
     add_mr_note_if_possible
     notify_teams_channel(channel_url: ENV["TEAMS_CHANNEL_URL_CI"], stream: "CI Build")
   end
 
   sh "cd .. && mkdir -p artifacts/cibuild/ && rm -rf artifacts/cibuild/* && mv distribution artifacts/cibuild/; cd - "
-
 end
 
 lane :build_konnektathon_ru do |options|
@@ -1143,7 +1167,13 @@ lane :build_drezept_ru do |options|
   )
 
   if is_ci
-    notify_teams_channel(channel_url: ENV["TEAMS_CHANNEL_URL_CI"], stream: "D-Rezept Version")
+    firebase_app_distribution(
+      app: "1:20059247872:ios:f38ae6092c9e2269f1cfe5",
+      ipa_path: "./distribution/eRPApp_#{build_version}_adhoc.ipa",
+      release_notes: "D-Rezept Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}",
+      service_credentials_file: ENV["FIREBASE_SERVICE_ACCOUNT"]
+    )
+    notify_teams_channel(channel_url: ENV["TEAMS_CHANNEL_URL_INT"], stream: "D-Rezept Version")
   end
 end
 
@@ -1355,6 +1385,11 @@ lane :build_tu_version do |option|
   sign_adhoc
 
   if is_ci
+    firebase_app_distribution(
+      ipa_path: "./distribution/eRPApp_#{build_version}_adhoc.ipa",
+      release_notes: "TU Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}",
+      service_credentials_file: ENV["FIREBASE_SERVICE_ACCOUNT"]
+    )
     notify_teams_channel(channel_url: ENV["TEAMS_CHANNEL_URL_RELEASE"], stream: "TU Version")
   end
 
@@ -1368,6 +1403,11 @@ lane :build_ru_version do |option|
   sign_adhoc
 
   if is_ci
+    firebase_app_distribution(
+      ipa_path: "./distribution/eRPApp_#{build_version}_adhoc.ipa",
+      release_notes: "RU Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}",
+      service_credentials_file: ENV["FIREBASE_SERVICE_ACCOUNT"]
+    )
     notify_teams_channel(channel_url: ENV["TEAMS_CHANNEL_URL_RELEASE"], stream: "RU Version")
   end
 
@@ -1380,6 +1420,11 @@ lane :publish do |options|
 
   sign_adhoc
   if is_ci
+    firebase_app_distribution(
+      ipa_path: "./distribution/eRPApp_#{build_version}_adhoc.ipa",
+      release_notes: "PU Version #{ENV['GIT_BRANCH']} - #{ENV['BUILD_NUMBER']}",
+      service_credentials_file: ENV["FIREBASE_SERVICE_ACCOUNT"]
+    )
     notify_teams_channel(channel_url: ENV["TEAMS_CHANNEL_URL_RELEASE"], stream: "PU Version")
   end
 
@@ -1441,11 +1486,24 @@ lane :publish_release_information do |options|
 end
 
 def add_mr_note_if_possible
-  if ENV['CHANGE_ID']
-    mr = ENV['CHANGE_ID']
-    gitlab_login()
-    sh("glab mr note #{mr} --message \"[Download Test Version in Jenkins](#{jenkins_build_url}) or scan\n\n![QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=#{ERB::Util.url_encode(jenkins_build_url)})\"")
-  end
+  firebase_app_distro = lane_context[SharedValues::FIREBASE_APP_DISTRO_RELEASE] rescue nil
+  return unless ENV['CHANGE_ID'] && !firebase_app_distro.nil? && firebase_app_distro[:testingUri]
+
+  mr = ENV['CHANGE_ID']
+  firebase_testing_uri = firebase_app_distro[:testingUri]
+  gitlab_login()
+  sh("glab mr note #{mr} --message \"[Download Test Version from Firebase](#{firebase_testing_uri}) or scan\n\n![QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=#{ERB::Util.url_encode(firebase_testing_uri)})\"")
+end
+
+def flaky_note_if_necessary(options)
+  scan_result = options[:scan_result]
+  return unless ENV['CHANGE_ID']
+  return unless scan_result[:number_of_failures_excluding_retries] == 0
+  return unless scan_result[:number_of_retries] != 0
+
+  mr = ENV['CHANGE_ID']
+  gitlab_login()
+  sh("glab mr note #{mr} --message \"⚠️ All tests passed but with #{scan_result[:number_of_retries]} retries. Test Results Flaky\"")
 end
 
 def update_minor_version(version)
@@ -1497,7 +1555,7 @@ lane :pull_environment_variables do |options|
 end
 
 desc "Pull the API keys from the restricted repositories and write them in a parseble format to a file"
-desc "This lane uses the **`api_key_update`** action"
+desc "This lane uses the **`erp_api_key_pull`** action"
 desc "###Options"
 desc " * **`version`**: Version of the employed API keys. When not set, the version is read from the Info.plist file"
 desc ""
@@ -1516,10 +1574,8 @@ lane :pull_api_keys do |options|
 
   if puOnly
     fd_environments = 'PU' 
-    apovzd_environments = 'PU'
   else
     fd_environments = 'TU, RU, PU'
-    apovzd_environments = 'RU, PU'
   end
 
   gitlab_api_token = nil
@@ -1532,10 +1588,9 @@ lane :pull_api_keys do |options|
   end
   raise "Error: environment varible RESTRICTED_REPO_API_TOKEN/GITLAB_API_TOKEN not set for process, please specify" unless gitlab_api_token
 
-  api_key_pull_into_file(
+  erp_api_key_pull(
     version: "iOS #{version}",
     fd_environments: fd_environments,
-    apovzd_environments: apovzd_environments,
     gitlab_api_token: gitlab_api_token,
     output_file: output_file
   )
@@ -1545,14 +1600,18 @@ desc "Pull the data from the ERP shared repository and replace the correspoding 
 desc "Note: Incomplete (more actions/files needed)"
 desc ""
 lane :pull_erp_shared_data do
-  health_insurance_contacts(
+  gitlab_api_token = ENV['GITLAB_API_TOKEN']
+  raise "Error: environment varible GITLAB_API_TOKEN not set for process, please specify" unless gitlab_api_token
+
+  erp_shared_data_insurance_contacts(
+    gitlab_api_token: gitlab_api_token,
     replace_file_path: './Sources/eRpApp/Resources/health_insurance_contacts.json',
     transform_to_json_format: true
   )
 end
 
 desc "Pull the shared environment variables from the shared repositoriy and write them in a parseble format to a file"
-desc "This lane uses the **`pull_environment_varibles_into_file`** action"
+desc "This lane uses the **`erp_shared_data_env_vars`** action"
 desc ""
 lane :pull_shared_environment_variables do |options|
   puOnly = options[:puOnly] # when building for PU only, the other environment variables should not be included
@@ -1567,9 +1626,9 @@ lane :pull_shared_environment_variables do |options|
   gitlab_api_token = ENV['GITLAB_API_TOKEN']
   raise "Error: environment varible GITLAB_API_TOKEN not set for process, please specify" unless gitlab_api_token
 
-  pull_environment_varibles_into_file(
-    environments: environments,
+  erp_shared_data_env_vars(
     gitlab_api_token: gitlab_api_token,
+    environments: environments,
     output_file: output_file
   )
 end
@@ -1577,6 +1636,7 @@ end
 require 'fileutils'
 
 def notify_teams_channel(channel_url: "no_url_given", stream: "Unknown stream", success: true, optional_message: "")
+  # Create the message card / send body
   message_card_content_data = {
     "stream" => stream,
     "success" => success,
@@ -1589,19 +1649,23 @@ def notify_teams_channel(channel_url: "no_url_given", stream: "Unknown stream", 
   image_url = teams_shiba_inu_provider(happy: success)
   message_card_content_data["image_url"] = image_url
 
+  firebase_app_distro = lane_context[SharedValues::FIREBASE_APP_DISTRO_RELEASE] rescue nil
+  firebase_testing_uri = firebase_app_distro&.[](:testingUri) || ""
+
   # Create the distribution directory if it doesn't exist
   FileUtils.mkdir_p("../distribution") unless Dir.exist?("../distribution")
 
   File.open("../distribution/build_info_#{ENV['BUILD_NUMBER']}.json", 'w+') do |file|
-  file.write({
-    "stream" => stream,
-    "url" => jenkins_build_url,
-  }.to_json)
-    end
+    file.write({
+      "stream" => stream,
+      "url" => firebase_testing_uri,
+      "jenkins_build_url" => jenkins_build_url,
+    }.to_json)
+  end
 
-  qr_code_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=#{ERB::Util.url_encode(jenkins_build_url)}"
+  qr_code_url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=#{ERB::Util.url_encode(firebase_testing_uri)}"
   install_facts = [
-    {"title" => "Build", "value"=> "[Jenkins  ](#{jenkins_build_url}) or scan [QR-Code](#{qr_code_url})"}
+    {"title" => "Build", "value"=> "[Firebase](#{firebase_testing_uri}) or scan [QR-Code](#{qr_code_url})"}
   ]
 
   facts = [
@@ -1633,5 +1697,15 @@ def gitlab_login()
   gitlab_hostname = prompt(text: "GITLAB_HOSTNAME not set, please specify") unless gitlab_hostname
 
   sh("glab auth login --token #{gitlab_api_token} --hostname #{gitlab_hostname}")
+end
+
+# Helper method to escape JSON strings
+def json_escape(string)
+  return "" unless string
+  # First escape quotes and backslashes for JSON
+  escaped = string.to_s.gsub(/["\\]/) { |s| "\\#{s}" }
+  # Then convert newlines to actual line breaks for Teams Markdown rendering
+  # Teams Adaptive Cards use Markdown for text, which requires two spaces followed by newline for line breaks
+  escaped.gsub(/\n/, "  \n")
 end
 

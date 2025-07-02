@@ -25,8 +25,14 @@
     },
     {
         "id": "6",
-        "text": "**📲 Uplatněte si předepsané DiGA** \nOdteď můžete uplatnit recepty pro digitální zdravotní aplikace (DiGA) přímo prostřednictvím aplikace pro elektronické recepty. Aktivační kód a odkaz na předepsanou aplikaci obdržíte ihned po uplatnění. \n \n **🏥 Nová databáze lékáren** \nZavedli jsme novou databázi pro vyhledávání lékáren, která je připravena na budoucnost.",
+        "text": "**📲 Uplatněte si předepsané DiGA** \nNyní můžete uplatnit recepty pro digitální zdravotní aplikace (DiGA) přímo prostřednictvím aplikace pro elektronické recepty. Aktivační kód a odkaz na předepsané DiGA najdete přímo zde v aplikaci pro elektronické recepty. \n \n **🏥 Nová databáze lékáren** \nZavedli jsme novou databázi pro vyhledávání lékáren, která je připravena na budoucnost.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Přístupnost** \nNaše prohlášení o přístupnosti je nyní k dispozici v nastavení. Proces registrace byl také zjednodušen. \n \n **📲 Uplatněte si DiGA u pojišťoven** \nRecepty pro digitální zdravotní aplikace (DiGA) lze nyní uplatnit i u jiných pojišťoven.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
     }
 ]

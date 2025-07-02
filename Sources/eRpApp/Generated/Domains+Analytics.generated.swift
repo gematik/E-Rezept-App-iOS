@@ -276,6 +276,18 @@ extension DiGaDetailDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case let .technicalInformations(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case let .insuranceList(state: state):
+                return state.routeName() ?? destination.analyticsName
+        }
+    }
+}
+
+extension DiGaInsuranceListDomain.State {
+    func routeName() -> String? {
+        guard let destination else { return nil }
+        switch destination {
+            case .alert:
+                return destination.analyticsName
         }
     }
 }
@@ -573,6 +585,21 @@ extension NewProfileDomain.State {
 
 extension OnboardingDomain.State {
     func routeName() -> String? {
+        if let pathId = path.ids.last,
+            let path = path[id: pathId] {
+            switch path {
+            case .legalInfo:
+                return path.analyticsName
+            case let .registerAuth(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .registerPassword(state: state):
+                return state.routeName() ?? path.analyticsName
+            case .analytics:
+                return path.analyticsName
+            case .analyticsDetail:
+                return path.analyticsName
+            }
+        }
         return nil
     }
 }
@@ -881,6 +908,12 @@ extension RegisterAuthenticationDomain.State {
     }
 }
 
+extension RegisterPasswordDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
 extension RegisteredDevicesDomain.State {
     func routeName() -> String? {
         guard let destination else { return nil }
@@ -1164,6 +1197,16 @@ extension DiGaDetailDomain.Destination.State {
                 return Analytics.Screens.prescriptionDetail_organization.name
             case .technicalInformations:
                 return Analytics.Screens.prescriptionDetail_technicalInfo.name
+            case .insuranceList:
+                return "insuranceList"
+        }
+    }
+}
+extension DiGaInsuranceListDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .alert:
+                return Analytics.Screens.alert.name
         }
     }
 }
@@ -1613,6 +1656,22 @@ extension MainDomain.Path.State {
                 return Analytics.Screens.redeem_overview.name
             case .pharmacy:
                 return Analytics.Screens.pharmacySearch.name
+        }
+    }
+}
+extension OnboardingDomain.Path.State {
+    var analyticsName: String {
+        switch self {
+            case .legalInfo:
+                return "legalInfo"
+            case .registerAuth:
+                return "registerAuth"
+            case .registerPassword:
+                return "registerPassword"
+            case .analytics:
+                return "analytics"
+            case .analyticsDetail:
+                return "analyticsDetail"
         }
     }
 }

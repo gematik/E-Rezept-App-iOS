@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2025 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import eRpKit
@@ -99,7 +103,7 @@ extension ModelsR4.Bundle {
     ///
     /// - Returns: Array with all found and parsed pharmacies
     /// - Throws: `ModelsR4.Bundle.Error`
-    func parseTelematikId() throws -> String? {
+    func parseTelematikId() throws -> Insurance? {
         // Collect and parse all Pharmacy Locations
         try entry?.compactMap {
             guard let healthcareService = $0.resource?.get(if: ModelsR4.HealthcareService.self) else {
@@ -109,10 +113,24 @@ extension ModelsR4.Bundle {
         }.first
     }
 
+    /// Parse and extract all found Pharmacy Locations from `Self`
+    ///
+    /// - Returns: Array with all found and parsed pharmacies
+    /// - Throws: `ModelsR4.Bundle.Error`
+    func parseInsurance() throws -> [Insurance] {
+        // Collect and parse all Pharmacy Locations
+        try entry?.compactMap {
+            guard let healthcareService = $0.resource?.get(if: ModelsR4.HealthcareService.self) else {
+                return nil
+            }
+            return try Self.parseString(healthcareService: healthcareService, bundle: self)
+        } ?? []
+    }
+
     static func parseString(
         healthcareService: ModelsR4.HealthcareService,
         bundle: ModelsR4.Bundle
-    ) throws -> String? {
+    ) throws -> Insurance? {
         guard let id = healthcareService.id?.value?.string else {
             throw HealthcareServiceBundleParsingError.parseError("Could not parse id from healthcare service.")
         }
@@ -128,7 +146,8 @@ extension ModelsR4.Bundle {
             throw HealthcareServiceBundleParsingError.parseError("Could not parse telematikID from organization.")
         }
 
-        return telematikID
+        return Insurance(name: organization.name?.value?.string,
+                         telematikId: telematikID)
     }
 
     func findResource<Resource: ModelsR4.Resource>(

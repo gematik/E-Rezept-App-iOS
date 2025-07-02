@@ -1,0 +1,229 @@
+{
+    "listMedicationDispensesForRecordings":
+    {
+        "payload":
+        [
+            [],
+            [],
+            [
+                {
+                    "_FILE": "Generic.json#dispenseResponse"
+                }
+            ],
+            [
+                {
+                    "_FILE": "Generic.json#declinedMedicationResponse"
+                }
+            ],
+            []
+        ],
+        "type": "steps"
+    },
+    "redeemOrderRecordings":
+    {
+        "payload":
+        {
+            "identifier": "8B242ED6-64A6-4C31-92F0-D180B609C2C8",
+            "erxTaskId": "162.000.000.004.263.63",
+            "accessCode": "448fe1e4b6819fa89cd758337ef3e9ca29bb48eceb63c217d2f6b3170cfac86f",
+            "flowType": "162",
+            "telematikId": "8-01-0000000272"
+        },
+        "type": "repeated"
+    },
+    "listDetailedTasksForRecordings":
+    {
+        "payload":
+        [
+            {
+                "content":
+                [
+                    {
+                        "_FILE": "Generic.json#openTask",
+                        "_REPLACE":
+                        {
+                            "{{STATUS}}": "ready"
+                        }
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "_FILE": "Generic.json#openTask",
+                        "_REPLACE":
+                        {
+                            "{{STATUS}}": "in-progress"
+                        }
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "_FILE": "Generic.json#openTask",
+                        "_REPLACE":
+                        {
+                            "{{STATUS}}": "completed"
+                        }
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "_FILE": "Generic.json#openTask",
+                        "_REPLACE":
+                        {
+                            "{{STATUS}}": "completed"
+                        }
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "_FILE": "Generic.json#openTask",
+                        "_REPLACE":
+                        {
+                            "{{STATUS}}": "ready"
+                        }
+                    },
+                    {
+                        "_FILE": "Generic.json#reguarTask"
+                    }
+                ]
+            }
+        ],
+        "type": "steps"
+    },
+    "listAllTasksAfterRecordings":
+    {
+        "payload":
+        [
+            {
+                "content": [
+                    {
+                        "_FILE": "Generic.json#listedTaskOpen"
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "flowType": "162",
+                        "lastModified": "2025-05-15T14:59:05.197+00:00",
+                        "prescriptionId": "162.000.000.004.263.63",
+                        "authoredOn": "2025-05-15T14:44:45.482+00:00",
+                        "communications":
+                        [],
+                        "source": "server",
+                        "status": "in-progress",
+                        "expiresOn": "2025-08-15",
+                        "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
+                        "medicationDispenses":
+                        [],
+                        "identifier": "162.000.000.004.263.63",
+                        "avsTransactions":
+                        [],
+                        "acceptedUntil": "2025-08-15",
+                        "medicationRequest":
+                        {
+                            "substitutionAllowed": false,
+                            "hasEmergencyServiceFee": false,
+                            "bvg": false
+                        }
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "flowType": "162",
+                        "lastModified": "2025-05-15T14:59:09.447+00:00",
+                        "prescriptionId": "162.000.000.004.263.63",
+                        "authoredOn": "2025-05-15T14:44:45.482+00:00",
+                        "communications":
+                        [],
+                        "source": "server",
+                        "status": "completed",
+                        "expiresOn": "2025-08-15",
+                        "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
+                        "medicationDispenses":
+                        [],
+                        "identifier": "162.000.000.004.263.63",
+                        "avsTransactions":
+                        [],
+                        "acceptedUntil": "2025-08-15",
+                        "medicationRequest":
+                        {
+                            "hasEmergencyServiceFee": false,
+                            "bvg": false,
+                            "substitutionAllowed": false
+                        }
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "flowType": "162",
+                        "lastModified": "2025-05-15T14:59:09.447+00:00",
+                        "prescriptionId": "162.000.000.004.263.63",
+                        "authoredOn": "2025-05-15T14:44:45.482+00:00",
+                        "communications":
+                        [],
+                        "source": "server",
+                        "status": "completed",
+                        "expiresOn": "2025-08-15",
+                        "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
+                        "medicationDispenses":
+                        [],
+                        "identifier": "162.000.000.004.263.63",
+                        "avsTransactions":
+                        [],
+                        "acceptedUntil": "2025-08-15",
+                        "medicationRequest":
+                        {
+                            "hasEmergencyServiceFee": false,
+                            "bvg": false,
+                            "substitutionAllowed": false
+                        }
+                    }
+                ]
+            },
+            {
+                "content":
+                [
+                    {
+                        "_FILE": "Generic.json#listedTaskOpen"
+                    },
+                    {
+                        "_FILE": "Generic.json#reguarTask"
+                    }
+                ]
+            }
+        ],
+        "type": "steps"
+    },
+    "listAllCommunicationsAfterForRecordings":
+    {
+        "payload":
+        [
+            [],
+            [
+                {
+                    "_FILE": "Generic.json#persistedDispenseRequest"
+                }
+            ]
+        ],
+        "type": "steps"
+    }
+}

@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import Combine
@@ -30,51 +34,9 @@ struct RegisterAuthenticationDomain {
         let timeout: DispatchQueue.SchedulerTimeType.Stride = .seconds(0.5)
         var availableSecurityOptions: [AppSecurityOption]
         var selectedSecurityOption: AppSecurityOption = .unsecured
-        var biometrySuccessful = false
-        var passwordA: String = ""
-        var passwordB: String = ""
-        var passwordStrength = PasswordStrength.none
-        var showPasswordErrorMessage = false
-        var passwordErrorMessage: String? {
-            guard showPasswordErrorMessage, !passwordA.isEmpty else {
-                return nil
-            }
-
-            guard passwordStrength.passesMinimumThreshold else {
-                return L10n.onbAuthTxtPasswordStrengthInsufficient.text
-            }
-
-            guard !passwordB.isEmpty else {
-                return nil
-            }
-
-            guard passwordA == passwordB else {
-                return L10n.onbAuthTxtPasswordsDontMatch.text
-            }
-
-            return nil
-        }
-
-        var showNoSelectionMessage = false
         var securityOptionsError: AppSecurityManagerError?
+
         @Presents var alertState: AlertState<Action.Alert>?
-
-        var hasValidSelection: Bool {
-            guard selectedSecurityOption != .unsecured else {
-                return false
-            }
-            if selectedSecurityOption == .password {
-                return hasValidPasswordEntries
-            } else if selectedSecurityOption == .biometry(.faceID) {
-                return biometrySuccessful
-            } else {
-                return true
-            }
-        }
-
-        var hasValidPasswordEntries: Bool {
-            passwordA == passwordB && passwordStrength.passesMinimumThreshold
-        }
 
         var hasPasswordOption: Bool {
             availableSecurityOptions.contains(AppSecurityOption.password)
@@ -89,154 +51,88 @@ struct RegisterAuthenticationDomain {
         }
     }
 
-    enum Action: BindableAction, Equatable {
+    enum Action: Equatable {
         case loadAvailableSecurityOptions
-        case startBiometry
+        case startBiometry(AppSecurityOption)
         case authenticationChallengeResponse(AuthenticationChallengeProviderResult)
 
-        case binding(BindingAction<State>)
-
-        case comparePasswords
-        case enterButtonTapped
-        case continueBiometry
-        case nextPage
+        case delegate(Delegate)
         case alert(PresentationAction<Alert>)
 
         enum Alert: Equatable {}
+
+        enum Delegate: Equatable {
+            case showRegisterPassword
+            case nextPage
+        }
     }
 
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
-    @Dependency(\.passwordStrengthTester) var passwordStrengthTester: PasswordStrengthTester
     @Dependency(\.feedbackReceiver) var feedbackReceiver
 
-    var body: some ReducerOf<Self> {
-        BindingReducer()
+    var body: some Reducer<State, Action> {
+        Reduce(core)
+            .ifLet(\.$alertState, action: \.alert)
+    }
 
-        Reduce { state, action in
-            switch action {
-            case .loadAvailableSecurityOptions:
-                let availableOptions = appSecurityManager.availableSecurityOptions
-                state.availableSecurityOptions = availableOptions.options
-                state.securityOptionsError = availableOptions.error
-                if state.selectedSecurityOption == .unsecured {
-                    if availableOptions.options.contains(AppSecurityOption.biometry(.faceID)) {
-                        state.selectedSecurityOption = .biometry(.faceID)
-                    } else if availableOptions.options.contains(AppSecurityOption.biometry(.touchID)) {
-                        state.selectedSecurityOption = .biometry(.touchID)
-                    } else {
-                        state.selectedSecurityOption = .password
-                    }
-                }
-                return .none
-            case .binding(\.selectedSecurityOption):
-                state.showNoSelectionMessage = state.selectedSecurityOption == .unsecured
-                return .none
-            case .startBiometry:
-                if case .biometry = state.selectedSecurityOption {
-                    // reset password state when selecting biometry
-                    state.passwordA = ""
-                    state.passwordB = ""
-                    UIApplication.shared.dismissKeyboard()
-                    return .publisher(
-                        authenticationChallengeProvider
-                            .startAuthenticationChallenge()
-                            .first()
-                            .map { Action.authenticationChallengeResponse($0) }
-                            .receive(on: schedulers.main.animation())
-                            .eraseToAnyPublisher
+    func core(into state: inout State, action: Action) -> Effect<Action> {
+        switch action {
+        case .loadAvailableSecurityOptions:
+            let availableOptions = appSecurityManager.availableSecurityOptions
+            state.availableSecurityOptions = availableOptions.options
+            state.securityOptionsError = availableOptions.error
+            return .none
+        case let .startBiometry(option):
+            state.selectedSecurityOption = option
+            return .publisher(
+                authenticationChallengeProvider
+                    .startAuthenticationChallenge()
+                    .first()
+                    .map { Action.authenticationChallengeResponse($0) }
+                    .receive(on: schedulers.main.animation())
+                    .eraseToAnyPublisher
+            )
+        case let .authenticationChallengeResponse(response):
+            switch response {
+            case let .failure(error):
+                if let errorMessage = error.errorDescription {
+                    state.alertState = AlertState(
+                        title: { TextState(L10n.alertErrorTitle) },
+                        actions: {
+                            ButtonState(role: .cancel, action: .send(.none)) {
+                                TextState(L10n.alertBtnOk)
+                            }
+                        },
+                        message: { TextState(errorMessage) }
                     )
                 }
-                return .none
-            case let .authenticationChallengeResponse(response):
-                switch response {
-                case .success(false):
-                    state.biometrySuccessful = false
-                case let .failure(error):
-                    state.biometrySuccessful = false
-                    if let errorMessage = error.errorDescription {
-                        state.alertState = AlertState(
-                            title: { TextState(L10n.alertErrorTitle) },
-                            actions: {
-                                ButtonState(role: .cancel, action: .send(.none)) {
-                                    TextState(L10n.alertBtnOk)
-                                }
-                            },
-                            message: { TextState(errorMessage) }
-                        )
-                    }
-                case .success(true):
-                    state.biometrySuccessful = true
-                    feedbackReceiver.hapticFeedbackSuccess()
-                    switch state.selectedSecurityOption {
-                    case .biometry:
-                        return .run { [timeout = state.timeout] send in
-                            try await schedulers.main.sleep(for: timeout)
-                            await send(.continueBiometry)
-                        }
-                        .animation()
-                    default:
-                        return .none
-                    }
-                }
-                return .none
-            case .binding(\.passwordA):
-                // [REQ:BSI-eRp-ePA:O.Pass_2#3] Testing the actual password strength
-                state.passwordStrength = passwordStrengthTester.passwordStrength(for: state.passwordA)
-                if state.passwordA.isEmpty { return .none }
+            case let .success(result):
+                guard result == true else { return .none }
+                feedbackReceiver.hapticFeedbackSuccess()
                 return .run { [timeout = state.timeout] send in
                     try await schedulers.main.sleep(for: timeout)
-                    await send(.comparePasswords)
+                    await send(.delegate(.nextPage))
                 }
                 .animation()
-            case .binding(\.passwordB):
-                if state.passwordB.isEmpty { return .none }
-                return .run { [timeout = state.timeout] send in
-                    try await schedulers.main.sleep(for: timeout)
-                    await send(.comparePasswords)
-                }
-                .animation()
-            case .comparePasswords:
-                if state.hasValidPasswordEntries {
-                    // Only dismiss keyboard when verdict changes from "error" to "valid"
-                    // Don't dismiss keyboard when verdict was already "valid" so user can modify the password
-                    if state.showPasswordErrorMessage {
-                        UIApplication.shared.dismissKeyboard()
-                    }
-                    state.showPasswordErrorMessage = false
-                    state.showNoSelectionMessage = false
-                } else if state.passwordA.isEmpty, state.passwordB.isEmpty {
-                    state.showPasswordErrorMessage = false
-                } else {
-                    state.showPasswordErrorMessage = true
-                }
-                return .none
-            case .enterButtonTapped:
-                return .run { [timeout = state.timeout] send in
-                    try await schedulers.main.sleep(for: timeout)
-                    await send(.comparePasswords)
-                }
-                .animation()
-            case .nextPage:
-                UIApplication.shared.dismissKeyboard()
-                // handled by OnboardingDomain
-                return .none
-            case .continueBiometry,
-                 .binding,
-                 .alert:
-                // handled by OnboardingDomain
-                return .none
             }
-        }.ifLet(\.$alertState, action: \.alert)
+            return .none
+        case .delegate(.showRegisterPassword):
+            state.selectedSecurityOption = .password
+            return .none
+        case .delegate,
+             .alert:
+            // handled by OnboardingDomain
+            return .none
+        }
     }
 }
 
 extension RegisterAuthenticationDomain {
     enum Dummies {
         static let state = State(
-            availableSecurityOptions: [.password, .biometry(.faceID)],
-            selectedSecurityOption: .biometry(.faceID)
+            availableSecurityOptions: [.password, .biometry(.faceID)]
         )
 
         static let store = Store(

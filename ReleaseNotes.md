@@ -1,3 +1,75 @@
+# 1.32.0
+
+### added (3 changes)
+
+- Add DiGaInsuranceListView/Domain to change/select an Insurance for DiGa
+- Add UITests for DiGA screens
+- Add new entry for accessibility statement in legal info settings
+
+### changed (3 changes)
+
+- New analytics screen layout
+- New welcome screen layout
+- New legal info screen layout
+
+### fixed (10 changes)
+
+- Fix DiGaUITests and wrong button shows when DiGa is not in request state
+- Fix failing Biometrics could show loggedIn despite being unsuccessful
+- Fix unarchiving leading to an empty archive
+- Fix PKV ChargeItem medications containing slashes and other special characters...
+- Fix login not allowing gID on PKV ChargeItemList screen
+- Fix refresh not triggering after gID login.
+- Fix the self service portal link within pharmacy details
+- Fix pdf attachements for exported PDFs are not visible for acrobat reader
+- Fix ERA-12705 After exiting Demomode, no profile is selected and the demo mode...
+- Fixed acceptedUntil display date for DiGa prescriptions
+
+### removed (1 change)
+
+- Remove last Fasttrack fragments.
+
+### internal (2 changes)
+
+- Undo scan retries for snapshot tests
+- Fix integration tests for idp requiring predefined existing Test-KVNR
+
+# 1.31.0 (2025-06-18)
+
+### added (4 changes)
+
+- Add Support for DiGA Prescriptions
+- Add Survery for DiGAs with a badge after receiving one
+- Add swipe to delete items of MedicationReminderListView
+- Extend MedicationReminder Setup to use selectable Weekdays
+
+### changed (5 changes)
+
+- Change pharmacy info text for FHIRVZD
+- Synchronize FHIRVZD calls with android, add smarter paging for FHIRVZD
+- Enable FHIRVZD by default, fix minor diga issues
+- Rework accessibility of AppAuthenticationView
+- Use pkv flag in KKAppDirectory.Entry to mark insurant as PKV
+
+### fixed (4 changes)
+
+- Fix PIN Button not working on iPhone 8
+- Fix error handling for redeem flow
+- Fix navigation bar background color when no service option is selected
+- Fix mandatory delivery fields to be enforced for shipment and courier
+
+### internal (3 changes)
+
+- Change Xcode version to 16.3
+- Update TCA and snapshot testing dependencies
+- Add FHIRVZD Module
+
+# Release 1.30.1
+
+### fixed
+
+- Fix navigation regressions for iOS 16
+
 # Release 1.30.0
 
 ### added (7 changes)

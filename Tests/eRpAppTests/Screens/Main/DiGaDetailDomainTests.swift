@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2025 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import Combine
@@ -71,20 +75,38 @@ final class DiGaDetailDomainTests: XCTestCase {
     }
 
     func testDiGaUpdate() async {
-        let store = testStore()
+        let store = testStore(.init(
+            diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
+                                                       dateFormatter: UIDateFormatter.previewValue)),
+            diGaInfo: .init(diGaState: .request, isRead: false),
+            profile: UserProfile.Dummies.profileA
+        ))
         let expectedDiGaInfo = DiGaInfo(diGaState: .request, isRead: true, refreshDate: nil, taskId: nil)
         let erxTask = ErxTask(identifier: "132",
                               status: .ready,
                               flowType: .pharmacyOnly,
                               deviceRequest: .init(diGaInfo: expectedDiGaInfo))
         let prescription = Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue)
+        let insurance = Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123")
+
+        mockPharmacyRepository.fetchInsuranceIkNumberReturnValue = Just(insurance)
+            .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
         mockErxTaskRepository.loadLocalPublisher = Just(erxTask)
             .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
         mockErxTaskRepository.updateLocalDiGaInfoReturnValue = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
 
-        let task = await store.send(.task)
+        let task = await store.send(.task) { state in
+            state.isLoading = true
+        }
+
+        await store.receive(.loadInsurance)
+
+        await store.receive(.response(.receivedTelematikId(.success(insurance)))) { state in
+            state.selectedInsurance = insurance
+            state.isLoading = false
+        }
 
         await store.receive(.response(.updateDiGaInfoReceived(.success(DiGaInfo(diGaState: .request, isRead: true)))))
 
@@ -98,7 +120,13 @@ final class DiGaDetailDomainTests: XCTestCase {
     }
 
     func testDiGaUpdateFailed() async {
-        let store = testStore()
+        let store = testStore(.init(
+            diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
+                                                       dateFormatter: UIDateFormatter.previewValue)),
+            diGaInfo: .init(diGaState: .request, isRead: false),
+            profile: UserProfile.Dummies.profileA
+        ))
+
         let error = ErxRepositoryError.local(.notImplemented)
         mockErxTaskRepository.updateLocalDiGaInfoReturnValue = Fail(error: error).eraseToAnyPublisher()
 
@@ -107,12 +135,24 @@ final class DiGaDetailDomainTests: XCTestCase {
                               status: .ready,
                               flowType: .pharmacyOnly,
                               deviceRequest: .init(diGaInfo: expectedDiGaInfo))
+        let insurance = Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123")
+        mockPharmacyRepository.fetchInsuranceIkNumberReturnValue = Just(insurance)
+            .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
         let prescription = Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue)
         mockErxTaskRepository.loadLocalPublisher = Just(erxTask)
             .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
 
-        let task = await store.send(.task)
+        let task = await store.send(.task) { state in
+            state.isLoading = true
+        }
+
+        await store.receive(.loadInsurance)
+
+        await store.receive(.response(.receivedTelematikId(.success(insurance)))) { state in
+            state.selectedInsurance = insurance
+            state.isLoading = false
+        }
 
         await store.receive(.response(.updateDiGaInfoReceived(.failure(error)))) { state in
             state.destination = .alert(DiGaDetailDomain.AlertStates.alertFor(error))
@@ -127,32 +167,64 @@ final class DiGaDetailDomainTests: XCTestCase {
         await task.cancel()
     }
 
-    func testFetchTelematikIdFail() async {
+    func testfetchInsuranceFail() async {
         let store = testStore()
-        let error = PharmacyRepositoryError.remote(.notFound)
-        mockPharmacyRepository.fetchTelematikIdIkNumberReturnValue = Fail(error: error).eraseToAnyPublisher()
+        let expectedDiGaInfo = DiGaInfo(diGaState: .request, isRead: true, refreshDate: nil, taskId: nil)
+        let erxTask = ErxTask(identifier: "132",
+                              status: .ready,
+                              flowType: .pharmacyOnly,
+                              deviceRequest: .init(diGaInfo: expectedDiGaInfo))
+        let insurance = Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123")
+        let prescription = Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue)
 
-        await store.send(.mainButtonTapped)
+        mockPharmacyRepository.fetchInsuranceIkNumberReturnValue = Just(insurance)
+            .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+        mockErxTaskRepository.loadLocalPublisher = Just(erxTask)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let error = PharmacyRepositoryError.remote(.notFound)
+        mockPharmacyRepository.fetchInsuranceIkNumberReturnValue = Fail(error: error).eraseToAnyPublisher()
+
+        let task = await store.send(.task) { state in
+            state.isLoading = true
+        }
+
+        await store.receive(.loadInsurance)
+
+        await store.receive(.receivedTaskUpdate(.success(erxTask))) { state in
+            state.diGaInfo = DiGaInfo(diGaState: .request, isRead: true)
+            state.diGaTask = .init(prescription: prescription)
+            state.refreshTime = self.mockNow
+        }
 
         await store.receive(.response(.receivedTelematikId(.failure(error)))) { state in
+            state.isLoading = false
             state.destination = .alert(.init(for: error))
         }
+
+        await task.cancel()
     }
 
     func testTelematikIdAndRedeemHappy() async {
         let store = testStore()
-        let telematikId = "123321"
+        let insurance = Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123")
 
-        mockPharmacyRepository.fetchTelematikIdIkNumberReturnValue = Just(telematikId)
+        mockPharmacyRepository.fetchInsuranceIkNumberReturnValue = Just(insurance)
             .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
 
         mockErxTaskRepository.updateLocalDiGaInfoReturnValue = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
 
+        let erxTask = ErxTask.Fixtures.erxTaskDeviceRequest
         let prescription = Prescription(
-            erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
+            erxTask: erxTask,
             dateFormatter: UIDateFormatter.previewValue
         )
+
+        mockErxTaskRepository.loadLocalPublisher = Just(erxTask)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
 
         let returnValue = Just(PrescriptionRepositoryLoadRemoteResult.prescriptions([prescription]))
             .setFailureType(to: PrescriptionRepositoryError.self)
@@ -170,13 +242,28 @@ final class DiGaDetailDomainTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
 
-        await store.send(.mainButtonTapped)
+        let task = await store.send(.task) { state in
+            state.isLoading = true
+        }
 
-        await store.receive(.response(.receivedTelematikId(.success(telematikId))))
+        await store.receive(.loadInsurance)
+
+        await store.receive(.receivedTaskUpdate(.success(erxTask))) { state in
+            state.diGaInfo = DiGaInfo(diGaState: .request, isRead: true)
+            state.diGaTask = .init(prescription: prescription)
+            state.refreshTime = self.mockNow
+        }
+
+        await store.receive(.response(.receivedTelematikId(.success(insurance)))) { state in
+            state.selectedInsurance = insurance
+            state.isLoading = false
+        }
+
+        await store.send(.mainButtonTapped)
 
         await store.receive(.response(.redeemReceived(.success(expectedOrderResponses))))
 
-        let expectedDiGaInfo = DiGaInfo(diGaState: .insurance, isRead: false, refreshDate: nil, taskId: nil)
+        let expectedDiGaInfo = DiGaInfo(diGaState: .insurance, isRead: true, refreshDate: nil, taskId: nil)
 
         await store.receive(.response(.updateDiGaInfoReceived(.success(expectedDiGaInfo))))
         await store.receive(.refreshTask(silent: true))
@@ -195,14 +282,116 @@ final class DiGaDetailDomainTests: XCTestCase {
             state.refreshTime = self.mockNow
             state.$appDefaults.withLock { $0.diga.hasRedeemdADiga = true }
         }
+        await task.cancel()
+    }
+
+    func testSelectInsuranceAndRedeemHappy() async {
+        let store = testStore()
+        let insurance = Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123")
+
+        mockPharmacyRepository.fetchInsuranceIkNumberReturnValue = Just(nil)
+            .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+
+        mockErxTaskRepository.updateLocalDiGaInfoReturnValue = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let erxTask = ErxTask.Fixtures.erxTaskDeviceRequest
+        let prescription = Prescription(
+            erxTask: erxTask,
+            dateFormatter: UIDateFormatter.previewValue
+        )
+
+        mockErxTaskRepository.loadLocalPublisher = Just(erxTask)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let returnValue = Just(PrescriptionRepositoryLoadRemoteResult.prescriptions([prescription]))
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockPrescriptionRepository.silentLoadRemoteForReturnValue = returnValue
+
+        var expectedOrderResponses = IdentifiedArrayOf<OrderDiGaResponse>()
+        mockRedeemService.redeemDiGaClosure = { orders in
+            let orderResponses = orders.map { order in
+                OrderDiGaResponse(requested: order, result: .success(true))
+            }
+            expectedOrderResponses = IdentifiedArrayOf(uniqueElements: orderResponses)
+            return Just(expectedOrderResponses)
+                .setFailureType(to: RedeemServiceError.self)
+                .eraseToAnyPublisher()
+        }
+
+        let task = await store.send(.task) { state in
+            state.isLoading = true
+        }
+
+        await store.receive(.loadInsurance)
+
+        await store.receive(.receivedTaskUpdate(.success(erxTask))) { state in
+            state.diGaInfo = DiGaInfo(diGaState: .request, isRead: true)
+            state.diGaTask = .init(prescription: prescription)
+            state.refreshTime = self.mockNow
+        }
+
+        await store.receive(.response(.receivedTelematikId(.success(nil)))) { state in
+            state.isLoading = false
+            state.destination = .alert(DiGaDetailDomain.AlertStates.telematikIdEmpty())
+        }
+
+        await store.send(.setNavigation(tag: .insuranceList)) { state in
+            state.destination = .insuranceList(.init())
+        }
+
+        await store.send(.destination(.presented(.insuranceList(.selectInsurance(insurance))))) { state in
+            state.selectedInsurance = insurance
+            state.destination = nil
+        }
+
+        await store.send(.mainButtonTapped)
+
+        await store.receive(.response(.redeemReceived(.success(expectedOrderResponses))))
+
+        let expectedDiGaInfo = DiGaInfo(diGaState: .insurance, isRead: true, refreshDate: nil, taskId: nil)
+
+        await store.receive(.response(.updateDiGaInfoReceived(.success(expectedDiGaInfo))))
+        await store.receive(.refreshTask(silent: true))
+
+        await store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(.value([prescription]))))
+
+        // Fake update that supposted to come through the publisher
+        let updatedDiGaInfo = DiGaInfo(diGaState: .completed, isRead: false, refreshDate: nil, taskId: nil)
+        let updatedTask = ErxTask.lens.deviceRequest
+            .set(.init(status: .completed, appName: "Beste App", diGaInfo: updatedDiGaInfo))(ErxTask.Fixtures
+                .erxTaskDeviceRequest)
+        await store.send(.receivedTaskUpdate(.success(updatedTask))) { state in
+            state
+                .diGaTask = .init(prescription: Prescription(erxTask: updatedTask, dateFormatter: self.uiDateFormatter))
+            state.diGaInfo = updatedDiGaInfo
+            state.refreshTime = self.mockNow
+            state.$appDefaults.withLock { $0.diga.hasRedeemdADiga = true }
+        }
+        await task.cancel()
     }
 
     func testDiGaRedeemPartially() async {
         let store = testStore()
-        let telematikId = "123321"
-        let error = RedeemServiceError.eRxRepository(.remote(.notImplemented))
-        mockPharmacyRepository.fetchTelematikIdIkNumberReturnValue = Just(telematikId)
+        let expectedDiGaInfo = DiGaInfo(diGaState: .request, isRead: true, refreshDate: nil, taskId: nil)
+        let erxTask = ErxTask(identifier: "132",
+                              status: .ready,
+                              flowType: .pharmacyOnly,
+                              deviceRequest: .init(diGaInfo: expectedDiGaInfo))
+        let prescription = Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue)
+        let insurance = Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123")
+
+        mockPharmacyRepository.fetchInsuranceIkNumberReturnValue = Just(insurance)
             .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+        mockErxTaskRepository.loadLocalPublisher = Just(erxTask)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        let error = RedeemServiceError.eRxRepository(.remote(.notImplemented))
+        mockErxTaskRepository.updateLocalDiGaInfoReturnValue = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
         var expectedOrderResponses = IdentifiedArrayOf<OrderDiGaResponse>()
         mockRedeemService.redeemDiGaClosure = { orders in
             var orderResponses = orders.map { order in
@@ -217,31 +406,75 @@ final class DiGaDetailDomainTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
 
-        await store.send(.mainButtonTapped)
+        let task = await store.send(.task) { state in
+            state.isLoading = true
+        }
 
-        await store.receive(.response(.receivedTelematikId(.success(telematikId))))
+        await store.receive(.loadInsurance)
+
+        await store.receive(.receivedTaskUpdate(.success(erxTask))) { state in
+            state.diGaInfo = DiGaInfo(diGaState: .request, isRead: true)
+            state.diGaTask = .init(prescription: prescription)
+            state.refreshTime = self.mockNow
+        }
+
+        await store.receive(.response(.receivedTelematikId(.success(insurance)))) { state in
+            state.selectedInsurance = insurance
+            state.isLoading = false
+        }
+
+        await store.send(.mainButtonTapped)
 
         await store.receive(.response(.redeemReceived(.success(expectedOrderResponses)))) { state in
             state.destination = .alert(DiGaDetailDomain.AlertStates
                 .failingRequest(count: expectedOrderResponses.failedCount))
         }
+
+        await task.cancel()
     }
 
     func testRedeemFail() async {
         let store = testStore()
-        let telematikId = "123321"
+        let insurance = Insurance(id: UUID(), name: "TestInsurance", telematikId: "123123")
         let error = RedeemServiceError.eRxRepository(.remote(.notImplemented))
-        mockPharmacyRepository.fetchTelematikIdIkNumberReturnValue = Just(telematikId)
+        let expectedDiGaInfo = DiGaInfo(diGaState: .request, isRead: true, refreshDate: nil, taskId: nil)
+        let erxTask = ErxTask(identifier: "132",
+                              status: .ready,
+                              flowType: .pharmacyOnly,
+                              deviceRequest: .init(diGaInfo: expectedDiGaInfo))
+        let prescription = Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue)
+        mockErxTaskRepository.loadLocalPublisher = Just(erxTask)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockPharmacyRepository.fetchInsuranceIkNumberReturnValue = Just(insurance)
             .setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
         mockRedeemService.redeemDiGaReturnValue = Fail(error: error).eraseToAnyPublisher()
+        mockErxTaskRepository.updateLocalDiGaInfoReturnValue = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        let task = await store.send(.task) { state in
+            state.isLoading = true
+        }
+
+        await store.receive(.loadInsurance)
+
+        await store.receive(.receivedTaskUpdate(.success(erxTask))) { state in
+            state.diGaInfo = DiGaInfo(diGaState: .request, isRead: true)
+            state.diGaTask = .init(prescription: prescription)
+            state.refreshTime = self.mockNow
+        }
+
+        await store.receive(.response(.receivedTelematikId(.success(insurance)))) { state in
+            state.selectedInsurance = insurance
+            state.isLoading = false
+        }
 
         await store.send(.mainButtonTapped)
-
-        await store.receive(.response(.receivedTelematikId(.success(telematikId))))
 
         await store.receive(.response(.redeemReceived(.failure(error)))) { state in
             state.destination = .alert(.init(for: error))
         }
+
+        await task.cancel()
     }
 
     func testOpenUrlBfarm() async {
@@ -397,7 +630,7 @@ extension DiGaDetailDomainTests {
         static let defaultState = DiGaDetailDomain.State(
             diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
                                                        dateFormatter: UIDateFormatter.previewValue)),
-            diGaInfo: .init(diGaState: .request),
+            diGaInfo: .init(diGaState: .request, isRead: true),
             profile: UserProfile.Dummies.profileA
         )
     }

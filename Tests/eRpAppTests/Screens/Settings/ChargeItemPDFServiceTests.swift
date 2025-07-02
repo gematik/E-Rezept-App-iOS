@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import Combine
@@ -86,7 +90,9 @@ final class ChargeItemPDFServiceTests: XCTestCase {
 
         let attachmentData = ErxChargeItem.Fixtures.chargeItemWithFHIRData.receiptSignature?.data?
             .data(using: .utf8) ?? Data()
-        let attachment = PDFAttachment(filename: "Data", content: attachmentData)
+        let attachment = PDFAttachment(filename: "Data",
+                                       content: attachmentData,
+                                       mimeType: "application/pkcs7-signature")
 
         let printedAttachment = try document.append(attachment: attachment, startObj: result.count)
 
@@ -113,15 +119,18 @@ final class ChargeItemPDFServiceTests: XCTestCase {
         let expected = [
             PDFAttachment(
                 filename: "chargeItem_id_12_taskID_verordnung.p7s",
-                content: "vDAo+tog==".data(using: .utf8)!
+                content: "vDAo+tog==".data(using: .utf8)!,
+                mimeType: "application/pkcs7-signature"
             ),
             PDFAttachment(
                 filename: "chargeItem_id_12_taskID_abgabedaten.p7s",
-                content: "aOEsSfDw==".data(using: .utf8)!
+                content: "aOEsSfDw==".data(using: .utf8)!,
+                mimeType: "application/pkcs7-signature"
             ),
             PDFAttachment(
                 filename: "chargeItem_id_12_taskID_quittung.p7s",
-                content: "Mb3ej1h4E=".data(using: .utf8)!
+                content: "Mb3ej1h4E=".data(using: .utf8)!,
+                mimeType: "application/pkcs7-signature"
             ),
         ]
 

@@ -201,8 +201,6 @@ targets:
       - path: Sources/eRpApp/Generated/Accessibility+Generated.swift
     dependencies:
       - target: eRpApp
-      - package: eRpKit
-        product: eRpFeatures
       - package: Nimble
       - package: SnapshotTesting
   eRpAppStoreScreenshots:

@@ -68,7 +68,7 @@ custom_rules:
   must_not_contain_author:
     included:
       - "App/.*\\.swift"
-      - "Test/.*\\.swift"
+      - "Tests/.*\\.swift"
       - "Sources/.*\\.swift"
     name: "must not contain author"
     regex: "(\/\/[[:space:]]*Created by)"
@@ -96,5 +96,5 @@ custom_rules:
 file_header:
   required_pattern: |
     \/\/
-    \/\/  Copyright \(c\) \d{4} gematik GmbH
+    \/\/  Copyright \(Change Date see Readme\), gematik GmbH
     \/\/

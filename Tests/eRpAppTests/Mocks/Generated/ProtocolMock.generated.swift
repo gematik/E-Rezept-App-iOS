@@ -1346,22 +1346,36 @@ final class MockPharmacyRepository: PharmacyRepository {
         return loadAvsCertificatesForClosure.map({ $0(id) }) ?? loadAvsCertificatesForReturnValue
     }
     
-   // MARK: - fetchTelematikId
+   // MARK: - fetchInsurance
 
-    var fetchTelematikIdIkNumberCallsCount = 0
-    var fetchTelematikIdIkNumberCalled: Bool {
-        fetchTelematikIdIkNumberCallsCount > 0
+    var fetchInsuranceIkNumberCallsCount = 0
+    var fetchInsuranceIkNumberCalled: Bool {
+        fetchInsuranceIkNumberCallsCount > 0
     }
-    var fetchTelematikIdIkNumberReceivedIkNumber: String?
-    var fetchTelematikIdIkNumberReceivedInvocations: [String] = []
-    var fetchTelematikIdIkNumberReturnValue: AnyPublisher<String?, PharmacyRepositoryError>!
-    var fetchTelematikIdIkNumberClosure: ((String) -> AnyPublisher<String?, PharmacyRepositoryError>)?
+    var fetchInsuranceIkNumberReceivedIkNumber: String?
+    var fetchInsuranceIkNumberReceivedInvocations: [String] = []
+    var fetchInsuranceIkNumberReturnValue: AnyPublisher<Insurance?, PharmacyRepositoryError>!
+    var fetchInsuranceIkNumberClosure: ((String) -> AnyPublisher<Insurance?, PharmacyRepositoryError>)?
 
-    func fetchTelematikId(ikNumber: String) -> AnyPublisher<String?, PharmacyRepositoryError> {
-        fetchTelematikIdIkNumberCallsCount += 1
-        fetchTelematikIdIkNumberReceivedIkNumber = ikNumber
-        fetchTelematikIdIkNumberReceivedInvocations.append(ikNumber)
-        return fetchTelematikIdIkNumberClosure.map({ $0(ikNumber) }) ?? fetchTelematikIdIkNumberReturnValue
+    func fetchInsurance(ikNumber: String) -> AnyPublisher<Insurance?, PharmacyRepositoryError> {
+        fetchInsuranceIkNumberCallsCount += 1
+        fetchInsuranceIkNumberReceivedIkNumber = ikNumber
+        fetchInsuranceIkNumberReceivedInvocations.append(ikNumber)
+        return fetchInsuranceIkNumberClosure.map({ $0(ikNumber) }) ?? fetchInsuranceIkNumberReturnValue
+    }
+    
+   // MARK: - fetchAllInsurances
+
+    var fetchAllInsurancesCallsCount = 0
+    var fetchAllInsurancesCalled: Bool {
+        fetchAllInsurancesCallsCount > 0
+    }
+    var fetchAllInsurancesReturnValue: AnyPublisher<[Insurance], PharmacyRepositoryError>!
+    var fetchAllInsurancesClosure: (() -> AnyPublisher<[Insurance], PharmacyRepositoryError>)?
+
+    func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyRepositoryError> {
+        fetchAllInsurancesCallsCount += 1
+        return fetchAllInsurancesClosure.map({ $0() }) ?? fetchAllInsurancesReturnValue
     }
 }
 

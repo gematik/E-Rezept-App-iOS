@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2025 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import Combine
@@ -36,6 +40,8 @@ struct DiGaDetailDomain {
         var diGaInfo: DiGaInfo
         var bfarmDiGaDetails: BfArMDiGaDetails?
         var profile: UserProfile?
+        var isLoading = false
+        var selectedInsurance: Insurance?
         var refresh = false
         var refreshTime: Date?
         var successCopied = false
@@ -61,6 +67,14 @@ struct DiGaDetailDomain {
 
         var diGaDispense: DiGaDispense? {
             diGaTask.erxTask.medicationDispenses.first?.diGaDispense
+        }
+
+        var showSelectInsurance: Bool {
+            diGaInfo.diGaState == .request && selectedInsurance == nil
+        }
+
+        var showRelatedInsurance: Bool {
+            selectedInsurance != nil && diGaInfo.diGaState == .request
         }
 
         @Presents var destination: Destination.State?
@@ -100,6 +114,8 @@ struct DiGaDetailDomain {
         // sourcery: AnalyticsScreen = prescriptionDetail_technicalInfo
         case technicalInformations(TechnicalInformationsDomain)
 
+        case insuranceList(DiGaInsuranceListDomain)
+
         enum Tag: Int {
             case descriptionDiGA
             case validDiGa
@@ -110,6 +126,7 @@ struct DiGaDetailDomain {
             case practitioner
             case organization
             case technicalInformations
+            case insuranceList
         }
 
         enum Alert: Equatable {
@@ -121,6 +138,7 @@ struct DiGaDetailDomain {
 
     enum Action: Equatable {
         case task
+        case loadInsurance
         case mainButtonTapped
         case changePickerView(DiGaDetailSegments)
         case refreshTask(silent: Bool)
@@ -141,7 +159,7 @@ struct DiGaDetailDomain {
         enum Response: Equatable {
             case updateDiGaInfoReceived(Result<DiGaInfo, ErxRepositoryError>)
             case taskDeletedReceived(Result<Bool, ErxRepositoryError>)
-            case receivedTelematikId(Result<String?, PharmacyRepositoryError>)
+            case receivedTelematikId(Result<Insurance?, PharmacyRepositoryError>)
             case redeemReceived(Result<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>)
             case loadRemotePrescriptionsAndSaveReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
         }
@@ -171,6 +189,7 @@ struct DiGaDetailDomain {
     private func core(state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .task:
+            state.isLoading = true
             // MockData for future bfarm api call
 //            state.bfarmDiGaDetails = Dummies.placeholderValues
 
@@ -182,37 +201,73 @@ struct DiGaDetailDomain {
 
             if !state.diGaInfo.isRead {
                 return .concatenate(
+                    Effect.send(.loadInsurance),
                     update(diGaInfo: state.diGaInfo.with(isRead: true)),
                     loadingTask
                 )
             }
-            return loadingTask
+            return .concatenate(
+                Effect.send(.loadInsurance),
+                loadingTask
+            )
+        case .loadInsurance:
+            // If me manually selected a insurance we dont want to load the insurance via ikNumber
+            guard state.showSelectInsurance else {
+                state.isLoading = false
+                return .none
+            }
+
+            #if ENABLE_DEBUG_VIEW
+            @Shared(.overwriteDIGAIK) var overwriteDIGAIK
+
+            let ikNumber: String?
+            if !overwriteDIGAIK.isEmpty {
+                ikNumber = overwriteDIGAIK
+            } else {
+                ikNumber = state.profile?.insuranceIK
+            }
+            guard let ikNumber else { return .none }
+            #else
+            guard let ikNumber = state.profile?.insuranceIK else { return .none }
+            #endif
+
+            return .publisher(
+                pharmacyRepository.fetchInsurance(ikNumber: ikNumber)
+                    .catchToPublisher()
+                    .map { Action.response(.receivedTelematikId($0)) }
+                    .receive(on: schedulers.main)
+                    .eraseToAnyPublisher
+            )
         case let .changePickerView(newView):
             state.selectedView = newView
             return .none
         case .mainButtonTapped:
             switch state.diGaInfo.diGaState {
             case .request:
-                #if ENABLE_DEBUG_VIEW
-                @Shared(.overwriteDIGAIK) var overwriteDIGAIK
-
-                let ikNumber: String?
-                if !overwriteDIGAIK.isEmpty {
-                    ikNumber = overwriteDIGAIK
-                } else {
-                    ikNumber = state.profile?.insuranceIK
+                if let telematikId = state.selectedInsurance?.telematikId {
+                    let transactionId = UUID()
+                    let request = OrderDiGaRequest(
+                        orderID: UUID(),
+                        flowType: state.diGaTask.erxTask.flowType.rawValue,
+                        transactionID: transactionId,
+                        taskID: state.diGaTask.erxTask.id,
+                        accessCode: state.diGaTask.erxTask.accessCode ?? "",
+                        telematikId: telematikId
+                    )
+                    return .run { send in
+                        do {
+                            let orderResponses = try await redeemOrderService.redeemViaErxTaskRepositoryDiGa([request])
+                            await send(.response(.redeemReceived(.success(orderResponses))))
+                        } catch RedeemOrderServiceError.redeem(.noTokenAvailable) {
+                            await send(.setNavigation(tag: .cardWall))
+                        } catch let RedeemOrderServiceError.redeem(error) {
+                            await send(.response(.redeemReceived(.failure(error))))
+                        } catch let error as RedeemServiceError {
+                            await send(.response(.redeemReceived(.failure(error))))
+                        }
+                    }
                 }
-                guard let ikNumber else { return .none }
-                #else
-                guard let ikNumber = state.profile?.insuranceIK else { return .none }
-                #endif
-                return .publisher(
-                    pharmacyRepository.fetchTelematikId(ikNumber: ikNumber)
-                        .catchToPublisher()
-                        .map { Action.response(.receivedTelematikId($0)) }
-                        .receive(on: schedulers.main)
-                        .eraseToAnyPublisher
-                )
+                return .none
             case .download:
                 // Open deeplink or bfarm link (bfarm has the app store id)
                 return .concatenate(
@@ -242,37 +297,23 @@ struct DiGaDetailDomain {
             return .none
         case let .response(.receivedTelematikId(result)):
             switch result {
-            case let .success(telematikId):
-                if let telematikId = telematikId {
-                    let transactionId = UUID()
-                    let request = OrderDiGaRequest(
-                        orderID: UUID(),
-                        flowType: state.diGaTask.erxTask.flowType.rawValue,
-                        transactionID: transactionId,
-                        taskID: state.diGaTask.erxTask.id,
-                        accessCode: state.diGaTask.erxTask.accessCode ?? "",
-                        telematikId: telematikId
-                    )
-                    return .run { send in
-                        do {
-                            let orderResponses = try await redeemOrderService.redeemViaErxTaskRepositoryDiGa([request])
-                            await send(.response(.redeemReceived(.success(orderResponses))))
-                        } catch RedeemOrderServiceError.redeem(.noTokenAvailable) {
-                            await send(.setNavigation(tag: .cardWall))
-                        } catch let RedeemOrderServiceError.redeem(error) {
-                            await send(.response(.redeemReceived(.failure(error))))
-                        } catch let error as RedeemServiceError {
-                            await send(.response(.redeemReceived(.failure(error))))
-                        }
-                    }
+            case let .success(insurance):
+                if insurance == nil {
+                    // TelematikId is empty or not found
+                    state.destination = .alert(AlertStates.telematikIdEmpty())
                 }
-                // TelematikId is empty or not found
-                state.destination = .alert(AlertStates.telematikIdEmpty())
+                state.selectedInsurance = insurance
+                state.isLoading = false
                 return .none
             case let .failure(error):
+                state.isLoading = false
                 state.destination = .alert(.init(for: error))
                 return .none
             }
+        case let .destination(.presented(.insuranceList(.selectInsurance(insurance)))):
+            state.destination = nil
+            state.selectedInsurance = insurance
+            return .none
         case let .response(.redeemReceived(result)):
             switch result {
             case let .success(responses):
@@ -400,6 +441,8 @@ struct DiGaDetailDomain {
                     accessCode: state.diGaTask.prescription.accessCode
                 )
                 state.destination = .technicalInformations(techInfoState)
+            case .insuranceList:
+                state.destination = .insuranceList(.init())
             case .none:
                 state.destination = nil
             case .alert:
@@ -449,26 +492,30 @@ struct DiGaDetailDomain {
             }
             return .none
         case .redeem:
-            #if ENABLE_DEBUG_VIEW
-            @Shared(.overwriteDIGAIK) var overwriteDIGAIK
-
-            let ikNumber: String?
-            if !overwriteDIGAIK.isEmpty {
-                ikNumber = overwriteDIGAIK
-            } else {
-                ikNumber = state.profile?.insuranceIK
+            if let telematikId = state.selectedInsurance?.telematikId {
+                let transactionId = UUID()
+                let request = OrderDiGaRequest(
+                    orderID: UUID(),
+                    flowType: state.diGaTask.erxTask.flowType.rawValue,
+                    transactionID: transactionId,
+                    taskID: state.diGaTask.erxTask.id,
+                    accessCode: state.diGaTask.erxTask.accessCode ?? "",
+                    telematikId: telematikId
+                )
+                return .run { send in
+                    do {
+                        let orderResponses = try await redeemOrderService.redeemViaErxTaskRepositoryDiGa([request])
+                        await send(.response(.redeemReceived(.success(orderResponses))))
+                    } catch RedeemOrderServiceError.redeem(.noTokenAvailable) {
+                        await send(.setNavigation(tag: .cardWall))
+                    } catch let RedeemOrderServiceError.redeem(error) {
+                        await send(.response(.redeemReceived(.failure(error))))
+                    } catch let error as RedeemServiceError {
+                        await send(.response(.redeemReceived(.failure(error))))
+                    }
+                }
             }
-            guard let ikNumber else { return .none }
-            #else
-            guard let ikNumber = state.profile?.insuranceIK else { return .none }
-            #endif
-            return .publisher(
-                pharmacyRepository.fetchTelematikId(ikNumber: ikNumber)
-                    .catchToPublisher()
-                    .map { Action.response(.receivedTelematikId($0)) }
-                    .receive(on: schedulers.main)
-                    .eraseToAnyPublisher
-            )
+            return .none
         case .showCardWall:
             guard let profileId = state.profile?.id else { return .none }
             state.destination = .cardWall(CardWallIntroductionDomain.State(
