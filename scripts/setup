@@ -12,7 +12,12 @@ CONFIG=${1-Debug}
 bundle exec fastlane setup configuration:${CONFIG}
 
 # These files must exist for sourcery to work 
-# (Sourcery tries to read the symbolic link (e.g. Sources/eRpApp/development.env), but it fails because it's a symbolic link to a non-existing file)
+# (Sourcery tries to read the environment files (e.g. Sources/eRpApp/development.env) so these files must exist beforehand.)
 touch development.env
 touch development.apikeys.env
 touch development.static.env
+# Link to the environment variables file
+ln -sf ../../development.env.default Sources/eRpApp/development.env.default
+ln -sf ../../development.env Sources/eRpApp/development.env
+ln -sf ../../development.apikeys.env Sources/eRpApp/development.apikeys.env
+ln -sf ../../development.static.env Sources/eRpApp/development.static.env

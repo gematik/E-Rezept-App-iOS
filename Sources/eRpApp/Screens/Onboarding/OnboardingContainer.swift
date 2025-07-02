@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import ComposableArchitecture
@@ -26,84 +30,31 @@ struct OnboardingContainer: View, KeyboardReadable {
 
     var body: some View {
         WithPerceptionTracking {
-            ZStack(alignment: .bottomTrailing) {
-                TabView(
-                    selection: $store.composition.currentPageIndex.sending(\.setPage)
-                ) {
-                    ForEach(store.composition.pages, id: \.self) { page in
-                        switch page {
-                        case .start:
-                            OnboardingStartView()
-                                .tag(0)
-                        case .legalInfo:
-                            OnboardingLegalInfoView(isAllAccepted: $store.legalConfirmed.sending(\.setConfirmLegal),
-                                                    showTermsOfUse: { store.send(.setShowUse(true)) },
-                                                    showTermsOfPrivacy: { store.send(.setShowPrivacy(true)) },
-                                                    action: { store.send(.nextPage, animation: .default) })
-                                .tag(1)
-                        case .registerAuthentication:
-                            OnboardingRegisterAuthenticationView(
-                                store: store.scope(state: \.registerAuthenticationState,
-                                                   action: \.registerAuthentication)
-                            )
-                            .tag(2)
-                        case .analytics:
-                            OnboardingAnalyticsView {
-                                // [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
-                                store.send(.showTracking)
-                            }
-                            .tag(3)
-                        }
-                    }
-                }
-                // [REQ:BSI-eRp-ePA:O.Arch_9#2] DataPrivacy display within Onboarding
-                .sheet(isPresented: $store.showTermsOfPrivacy.sending(\.setShowPrivacy)) {
-                    NavigationStack {
-                        DataPrivacyView()
-                            .toolbar {
-                                CloseButton { store.send(.setShowPrivacy(false)) }
-                                    .embedToolbarContent()
-                                    .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
-                            }
-                    }
-                    .tint(Colors.primary700)
-                    .navigationViewStyle(StackNavigationViewStyle())
-                }
-                // [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
-                .sheet(isPresented: $store.showTermsOfUse.sending(\.setShowUse)) {
-                    NavigationStack {
-                        TermsOfUseView()
-                            .toolbar {
-                                CloseButton { store.send(.setShowUse(false)) }
-                                    .embedToolbarContent()
-                                    .accessibilityIdentifier(A11y.settings
-                                        .termsOfUse.stgBtnTermsOfUseClose)
-                            }
-                    }
-                    .tint(Colors.primary700)
-                    .navigationViewStyle(StackNavigationViewStyle())
-                }
-                .tabViewStyle(
-                    PageTabViewStyle(indexDisplayMode: .never)
-                )
-                .indexViewStyle(
-                    PageIndexViewStyle(backgroundDisplayMode: .never)
-                )
-                .background(Colors
-                    .systemBackground)
-                .alert($store.scope(state: \.alertState, action: \.alert))
-
-                ZStack {
-                    if store.isShowingNextButton {
-                        OnboardingNextButton(isEnabled: true) {
-                            store.send(
-                                .nextPage,
-                                animation: .default
-                            )
-                        }
+            NavigationStack(
+                path: $store.scope(state: \.path, action: \.path)
+            ) {
+                OnboardingStartView { store.send(.showLegalInfo) }
+            } destination: { pathStore in
+                WithPerceptionTracking {
+                    switch pathStore.case {
+                    case .legalInfo:
+                        OnboardingLegalInfoView(store: store)
+                            .toolbar(.hidden, for: .navigationBar)
+                    case let .registerAuth(store):
+                        OnboardingRegisterAuthenticationView(store: store)
+                            .toolbar(.hidden, for: .navigationBar)
+                    case let .registerPassword(store):
+                        OnboardingRegisterPasswordView(store: store)
+                            .toolbar(.hidden, for: .navigationBar)
+                    case .analytics:
+                        OnboardingAnalyticsView(store: store)
+                            .toolbar(.hidden, for: .navigationBar)
+                    case .analyticsDetail:
+                        OnboardingAnalyticsDetailView(store: store)
                     }
                 }
             }
+            .background(Colors.systemBackground)
         }
     }
 }

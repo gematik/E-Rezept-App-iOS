@@ -25,8 +25,14 @@
     },
     {
         "id": "6",
-        "text": "**📲 Reçeteli DiGA'ları kullanın** \nArtık dijital sağlık uygulamaları (DiGA'lar) için reçetelerinizi doğrudan e-reçete uygulaması üzerinden kullanabilirsiniz. Kullanımdan hemen sonra aktivasyon kodunu ve belirtilen uygulama bağlantısını alacaksınız. \n \n **🏥 Yeni eczane veritabanı** \nEczane aramaları için yeni, geleceğe dönük bir veritabanı tanıttık.",
+        "text": "**📲 Reçeteli DiGA'ları kullanın** \nArtık dijital sağlık uygulamaları (DiGA'lar) için reçeteleri doğrudan e-reçete uygulaması üzerinden kullanabilirsiniz. Aktivasyon kodunuzu ve reçeteli DiGA'ya giden bağlantıyı tam burada, e-reçete uygulamasında bulabilirsiniz. \n \n **🏥 Yeni eczane veritabanı** \nEczane aramaları için yeni, geleceğe yönelik bir veritabanı tanıttık.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Erişilebilirlik** \nErişilebilirlik bildirimimiz artık ayarlarda mevcut. Katılım süreci de daha erişilebilir hale getirildi. \n \n **📲 DiGA'ları sigorta şirketlerinde kullanın** \nDijital sağlık uygulamaları (DiGA'lar) için reçeteler artık diğer sigorta şirketlerinde de kullanılabilir.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
     }
 ]

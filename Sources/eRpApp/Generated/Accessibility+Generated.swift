@@ -137,6 +137,7 @@ internal enum A11y {
       static let digaDtlBtnRequestToolbar = "diga_dtl_btn_request_toolbar"
       static let digaDtlBtnDeleteToolbar = "diga_dtl_btn_delete_toolbar"
       static let digaDtlBtnToolbarMenu = "diga_dtl_btn_toolbar_menu"
+      static let digaDtlBtnRefresh = "diga_dtl_btn_refresh"
       static let digaDtlTxtAppName = "diga_dtl_txt_app_name"
       static let digaDtlTxtLanguages = "diga_dtl_txt_languages"
       static let digaDtlTxtPlatform = "diga_dtl_txt_platform"
@@ -148,6 +149,7 @@ internal enum A11y {
       static let digaDtlTxtPractitioner = "diga_dtl_txt_practitioner"
       static let digaDtlTxtOrganization = "diga_dtl_txt_organization"
       static let digaDtlTxtAuthoredOn = "diga_dtl_txt_authoredOn"
+      static let digaDtlTxtDeclineNote = "diga_dtl_txt_decline_note"
       static let digaDtlSupportTxtHeader = "diga_dtl_support_txt_header"
       static let digaDtlSupportTxtProvidedLink = "diga_dtl_support_txt_provided_link"
       static let digaDtlSupportBtnOpenLink = "diga_dtl_support_btn_open_link"
@@ -157,6 +159,12 @@ internal enum A11y {
       static let digaDtlValidTxtSubheader = "diga_dtl_valid_txt_subheader"
       static let digaDtlValidTxtStartDate = "diga_dtl_valid_txt_start_date"
       static let digaDtlValidTxtEndDate = "diga_dtl_valid_txt_end_date"
+      static let digaDtlBtnMainSelectInsurance = "diga_dtl_btn_main_select_insurance"
+      static let digaDtlBtnMainSelectedInsurance = "diga_dtl_btn_main_selected_insurance"
+  }
+    internal enum digaInsuranceList {
+      static let digaInsuranceListTxtHeader = "diga_insurance_list_txt_header"
+      static let digaInsuranceListTxtSubheader = "diga_insurance_list_txt_subheader"
   }
     internal enum directAssignment {
       static let davTxtDirectAssignmentTitle = "dav_txt_direct_assignment_title"
@@ -241,7 +249,10 @@ internal enum A11y {
   }
     internal enum onboarding { 
     internal enum analytics {
-      static let onbAnaBtnContinue = "onb_ana_btn_continue"
+      static let onbAnaTxtTitle = "onb_ana_txt_title"
+      static let onbAnaTxtSubtitle = "onb_ana_txt_subtitle"
+      static let onbAnaBtnAllow = "onb_ana_btn_allow"
+      static let onbAnaBtnDeny = "onb_ana_btn_deny"
   }
     internal enum authentication {
       static let onbAuthInpPasswordA = "onb_auth_inp_passwordA"
@@ -252,17 +263,20 @@ internal enum A11y {
       static let onbAuthTxtAltDescription = "onb_auth_txt_alt_description"
       static let onbAuthTxtNoBiometrics = "onb_auth_txt_no_biometrics"
       static let onbAuthTxtSectionTitle = "onb_auth_txt_section_title"
-      static let onbAuthBtnFaceid = "onb_auth_btn_faceid"
-      static let onbAuthBtnTouchid = "onb_auth_btn_touchid"
+      static let onbAuthTxtSectionSubtitle = "onb_auth_txt_section_subtitle"
       static let onbAuthBtnPassword = "onb_auth_btn_password"
+      static let onbAuthBtnBack = "onb_auth_btn_back"
+      static let onbAuthBtnFaceId = "onb_auth_btn_face_id"
+      static let onbAuthBtnTouchId = "onb_auth_btn_touch_id"
   }
     internal enum features {
       static let onbTxtFeaturesTitle = "onb_txt_features_title"
       static let onbImgHandWithCard = "onb_img_hand_with_card"
   }
     internal enum legalInfo {
+      static let onbImgProgress = "onb_img_progress"
       static let onbTxtLegalInfoTitle = "onb_txt_legal_info_title"
-      static let onbBtnConfirm = "onb_btn_confirm"
+      static let onbBtnNext = "onb_btn_next"
       static let onbTxtTermsOfUse = "onb_txt_terms_of_use"
       static let onbBtnAcceptTermsOfUseAndPrivacy = "onb_btn_accept_terms_of_use_and_privacy"
       static let onbTxtTermsOfPrivacy = "onb_txt_terms_of_privacy"
@@ -273,11 +287,14 @@ internal enum A11y {
       static let onbPrfTxtFootnote = "onb_prf_txt_footnote"
       static let onbPrfTxtField = "onb_prf_txt_field"
   }
+    internal enum progress {
+      static let onbAuthImgProgress = "onb_auth_img_progress"
+  }
     internal enum start {
       static let onbTxtStartTitle = "onb_txt_start_title"
       static let onbImgGematikLogo = "onb_img_gematik_logo"
       static let onbImgMan1 = "onb_img_man1"
-      static let onbBtnNext = "onb_btn_next"
+      static let onbBtnStart = "onb_btn_start"
   }
     internal enum welcome {
       static let onbTxtWelcomeTitle = "onb_txt_welcome_title"
@@ -431,6 +448,11 @@ internal enum A11y {
       static let phaSearchMap = "pha_search_map"
       static let phaSearchMapSection = "pha_search_map_section"
   }
+    internal enum prescriptionArchive {
+      static let arcBtnSegmentedControl = "arc_btn_segmented_control"
+      static let arcBtnSegmentedControlPrescriptions = "arc_btn_segmented_control_prescriptions"
+      static let arcBtnSegmentedControlDigas = "arc_btn_segmented_control_digas"
+  }
     internal enum prescriptionDetails {
       static let prscDtlTxtTitle = "prsc_dtl_txt_title"
       static let prscDtlTxtTitleInput = "prsc_dtl_txt_title_input"
@@ -572,6 +594,9 @@ internal enum A11y {
       static let selfPayerWarningTxtMessage = "self_payer_warning_txt_message"
   }
     internal enum settings { 
+    internal enum accessibilityStatement {
+      static let stgBtnAccessibilityStatement = "stg_btn_accessibility_statement"
+  }
     internal enum auditEvents {
       static let stgCtnAuditEventsEvents = "stg_ctn_audit_events_events"
       static let stgCtnAuditEventsEventTitle = "stg_ctn_audit_events_event_title"

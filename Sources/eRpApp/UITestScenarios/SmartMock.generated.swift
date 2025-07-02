@@ -1397,7 +1397,8 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
         fetchPharmacyByRecordings = mocks?.fetchPharmacyByRecordings ?? .delegate
         loadAvsCertificatesForRecordings = mocks?.loadAvsCertificatesForRecordings ?? .delegate
         apiFiltersForRecordings = mocks?.apiFiltersForRecordings ?? .delegate
-        fetchTelematikIdByRecordings = mocks?.fetchTelematikIdByRecordings ?? .delegate
+        fetchInsuranceByRecordings = mocks?.fetchInsuranceByRecordings ?? .delegate
+        fetchAllInsurancesRecordings = mocks?.fetchAllInsurancesRecordings ?? .delegate
     }
 
     var searchPharmaciesByPositionFilterRecordings: MockAnswer<[PharmacyLocation]>
@@ -1495,26 +1496,48 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
         }
     }
 
-    var fetchTelematikIdByRecordings: MockAnswer<String?>
+    var fetchInsuranceByRecordings: MockAnswer<Insurance?>
 
-    func fetchTelematikId(by ikNumber: String) -> AnyPublisher<String?, PharmacyFHIRDataSource.Error> {
+    func fetchInsurance(by ikNumber: String) -> AnyPublisher<Insurance?, PharmacyFHIRDataSource.Error> {
         guard !isRecording else {
-            let result = wrapped.fetchTelematikId(
+            let result = wrapped.fetchInsurance(
                     by: ikNumber
             )
                 .handleEvents(receiveOutput: { [weak self] value in
-                    self?.fetchTelematikIdByRecordings.record(value)
+                    self?.fetchInsuranceByRecordings.record(value)
                 })
                 .eraseToAnyPublisher()
             return result
         }
-        if let value = fetchTelematikIdByRecordings.next() {
+        if let value = fetchInsuranceByRecordings.next() {
             return Just(value)
                 .setFailureType(to: PharmacyFHIRDataSource.Error.self)
                 .eraseToAnyPublisher()
         } else {
-            return wrapped.fetchTelematikId(
+            return wrapped.fetchInsurance(
                     by: ikNumber
+            )
+        }
+    }
+
+    var fetchAllInsurancesRecordings: MockAnswer<[Insurance]>
+
+    func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyFHIRDataSource.Error> {
+        guard !isRecording else {
+            let result = wrapped.fetchAllInsurances(
+            )
+                .handleEvents(receiveOutput: { [weak self] value in
+                    self?.fetchAllInsurancesRecordings.record(value)
+                })
+                .eraseToAnyPublisher()
+            return result
+        }
+        if let value = fetchAllInsurancesRecordings.next() {
+            return Just(value)
+                .setFailureType(to: PharmacyFHIRDataSource.Error.self)
+                .eraseToAnyPublisher()
+        } else {
+            return wrapped.fetchAllInsurances(
             )
         }
     }
@@ -1524,7 +1547,8 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
         var fetchPharmacyByRecordings: MockAnswer<PharmacyLocation?>? = .delegate
         var loadAvsCertificatesForRecordings: MockAnswer<[SerializableX509]>? = .delegate
         var apiFiltersForRecordings: MockAnswer<[PharmacyRemoteDataStoreFilter]>? = .delegate
-        var fetchTelematikIdByRecordings: MockAnswer<String?>? = .delegate
+        var fetchInsuranceByRecordings: MockAnswer<Insurance?>? = .delegate
+        var fetchAllInsurancesRecordings: MockAnswer<[Insurance]>? = .delegate
     }
     func recordedData() throws -> CodableMock {
         return try CodableMock(
@@ -1534,7 +1558,8 @@ class SmartMockPharmacyRemoteDataStore: PharmacyRemoteDataStore, SmartMock {
                 fetchPharmacyByRecordings: fetchPharmacyByRecordings,
                 loadAvsCertificatesForRecordings: loadAvsCertificatesForRecordings,
                 apiFiltersForRecordings: apiFiltersForRecordings,
-                fetchTelematikIdByRecordings: fetchTelematikIdByRecordings
+                fetchInsuranceByRecordings: fetchInsuranceByRecordings,
+                fetchAllInsurancesRecordings: fetchAllInsurancesRecordings
             )
         )
     }

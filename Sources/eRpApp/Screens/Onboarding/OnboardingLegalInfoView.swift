@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import ComposableArchitecture
@@ -21,102 +25,104 @@ import eRpStyleKit
 import SwiftUI
 
 struct OnboardingLegalInfoView: View {
-    @Binding<Bool> var isAllAccepted: Bool
-
-    var showTermsOfUse: () -> Void
-    var showTermsOfPrivacy: () -> Void
-
-    var action: () -> Void
+    @Perception.Bindable var store: StoreOf<OnboardingDomain>
 
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack(alignment: .center, spacing: 0) {
-                    TitleView()
-                        .padding(.bottom)
+        WithPerceptionTracking {
+            VStack {
+                ScrollView {
+                    VStack(alignment: .center, spacing: 0) {
+                        OnboardingProgressView(currentPage: .first)
+                            .padding(.bottom)
 
-                    VStack {
-                        HStack {
-                            Button(
-                                action: { showTermsOfUse() },
-                                label: {
-                                    Text(L10n.onbTxtTermsOfUseLink)
-                                        .font(Font.body.weight(.semibold))
-                                        .multilineTextAlignment(.leading)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                        .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
-                                        .padding()
-                                        .foregroundColor(Colors.primary700)
-                                }
-                            )
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .background(Colors.systemGray6.cornerRadius(16))
-                        }
-                        .padding(.bottom, 16)
+                        TitleView()
+                            .padding(.bottom)
 
-                        HStack {
-                            Button(
-                                action: { showTermsOfPrivacy() },
-                                label: {
-                                    Text(L10n.onbTxtTermsOfPrivacyLink)
-                                        .font(Font.body.weight(.semibold))
-                                        .multilineTextAlignment(.leading)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                        .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
-                                        .padding()
-                                        .foregroundColor(Colors.primary700)
-                                }
-                            )
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .background(Colors.systemGray6.cornerRadius(16))
-                        }
-                    }
-                    .padding(.vertical, 32)
-
-                    Button(action: {
-                        withAnimation {
-                            isAllAccepted.toggle()
-                        }
-
-                    }, label: {
-                        HStack {
-                            // [REQ:BSI-eRp-ePA:O.Purp_3#3] User acceptance
-                            OnboardingLegalInfoCheckmarkView(isAccepted: $isAllAccepted)
-                                .padding(.leading, 8)
-
-                            Text(L10n.onbLegBtnAccept)
-                                .multilineTextAlignment(.leading)
+                        VStack {
+                            HStack {
+                                Button(
+                                    action: { store.send(.setShowUse(true)) },
+                                    label: {
+                                        Text(L10n.onbTxtTermsOfUseLink)
+                                            .font(Font.body.weight(.semibold))
+                                            .multilineTextAlignment(.leading)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                            .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
+                                            .padding()
+                                            .foregroundColor(Colors.primary700)
+                                    }
+                                )
+                                .frame(maxWidth: .infinity, alignment: .center)
                                 .fixedSize(horizontal: false, vertical: true)
-                                .foregroundColor(Colors.systemLabel)
-                                .padding(.trailing)
-                                .padding(.vertical)
+                                .buttonStyle(PrimaryBorderButtonStyle())
+                            }
+
+                            HStack {
+                                Button(
+                                    action: { store.send(.setShowPrivacy(true)) },
+                                    label: {
+                                        Text(L10n.onbTxtTermsOfPrivacyLink)
+                                            .font(Font.body.weight(.semibold))
+                                            .multilineTextAlignment(.leading)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                            .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
+                                            .padding()
+                                            .foregroundColor(Colors.primary700)
+                                    }
+                                )
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .buttonStyle(PrimaryBorderButtonStyle())
+                            }
                         }
-                    })
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .background(Colors.systemGray6.cornerRadius(16))
-                        .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAcceptTermsOfUseAndPrivacy)
+                        .padding(.vertical, 16)
+                    }
+                }
+
+                Spacer()
+
+                Button(action: {
+                    store.send(.showRegisterAuth)
+                }, label: {
+                    Text(L10n.onbBtnNextHint)
+                        .accessibility(identifier: A11y.onboarding.legalInfo.onbBtnNext)
+                        .accessibilityLabel(Text(L10n.onbBtnNextHint))
+                })
+                    .buttonStyle(.primaryHugging)
+                    .padding(.top, 8)
+            }
+            .padding()
+            .onAppear {
+                withAnimation {
+                    UIApplication.shared.dismissKeyboard()
                 }
             }
-            Spacer()
-
-            Button(action: action) {
-                Text(L10n.onbLegBtnTitle)
-                    .padding(.horizontal, 64)
-                    .padding(.vertical)
+            // [REQ:BSI-eRp-ePA:O.Arch_9#2] DataPrivacy display within Onboarding
+            .sheet(isPresented: $store.showTermsOfPrivacy.sending(\.setShowPrivacy)) {
+                NavigationStack {
+                    DataPrivacyView()
+                        .toolbar {
+                            CloseButton { store.send(.setShowPrivacy(false)) }
+                                .embedToolbarContent()
+                                .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
+                        }
+                }
+                .tint(Colors.primary700)
+                .navigationViewStyle(StackNavigationViewStyle())
             }
-            .disabled(!isAllAccepted)
-            .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnConfirm)
-            .font(Font.body.weight(.semibold))
-            .foregroundColor(!isAllAccepted ? Colors.systemGray : Colors.systemColorWhite)
-            .background(!isAllAccepted ? Colors.systemGray5 : Colors.primary700)
-            .cornerRadius(16)
-        }
-        .padding()
-        .onAppear {
-            withAnimation {
-                UIApplication.shared.dismissKeyboard()
+            // [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
+            .sheet(isPresented: $store.showTermsOfUse.sending(\.setShowUse)) {
+                NavigationStack {
+                    TermsOfUseView()
+                        .toolbar {
+                            CloseButton { store.send(.setShowUse(false)) }
+                                .embedToolbarContent()
+                                .accessibilityIdentifier(A11y.settings
+                                    .termsOfUse.stgBtnTermsOfUseClose)
+                        }
+                }
+                .tint(Colors.primary700)
+                .navigationViewStyle(StackNavigationViewStyle())
             }
         }
     }
@@ -140,82 +146,24 @@ extension OnboardingLegalInfoView {
                     .font(Font.title.weight(.bold))
                     .accessibility(identifier: A18n.onboarding.legalInfo.onbTxtLegalInfoTitle)
                     .padding(.top, 22)
-            }
-        }
-    }
 
-    struct OnboardingTermsOfUseView: View {
-        @Binding var showTermsOfUse: Bool
-
-        var body: some View {
-            HStack {
-                Button(
-                    action: { showTermsOfUse.toggle() },
-                    label: {
-                        Text(L10n.onbTxtTermsOfUseLink)
-                            .font(Font.body.weight(.semibold))
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
-                            .padding()
-                            .foregroundColor(Colors.primary700)
-                    }
-                )
-                .frame(maxWidth: .infinity, alignment: .center)
-                .fixedSize(horizontal: false, vertical: true)
-                .background(Colors.systemGray6.cornerRadius(16))
-            }
-            .padding(.bottom, 16)
-        }
-    }
-
-    // [REQ:BSI-eRp-ePA:O.Purp_1#1] Display as part of the onboarding
-    struct OnboardingPrivacyView: View {
-        @Binding var showTermsOfPrivacy: Bool
-
-        var body: some View {
-            HStack {
-                Button(
-                    action: { showTermsOfPrivacy.toggle() },
-                    label: {
-                        Text(L10n.onbTxtTermsOfPrivacyLink)
-                            .font(Font.body.weight(.semibold))
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
-                            .padding()
-                            .foregroundColor(Colors.primary700)
-                    }
-                )
-                .frame(maxWidth: .infinity, alignment: .center)
-                .fixedSize(horizontal: false, vertical: true)
-                .background(Colors.systemGray6.cornerRadius(16))
+                Text(L10n.onbLegTxtSubtitle)
+                    .font(Font.subheadline)
+                    .foregroundStyle(Colors.systemLabelSecondary)
+                    .padding(.top, 8)
             }
         }
     }
 }
 
-struct OnboardingLegalInfoView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            OnboardingLegalInfoView(
-                isAllAccepted: .constant(false),
-                showTermsOfUse: {},
-                showTermsOfPrivacy: {},
-                action: {}
-            )
-            OnboardingLegalInfoView(
-                isAllAccepted: .constant(false),
-                showTermsOfUse: {},
-                showTermsOfPrivacy: {},
-                action: {}
-            ).preferredColorScheme(.dark)
-            OnboardingLegalInfoView(
-                isAllAccepted: .constant(false),
-                showTermsOfUse: {},
-                showTermsOfPrivacy: {},
-                action: {}
-            ).previewDevice("iPod touch (7th generation)")
-        }
+#Preview {
+    Group {
+        OnboardingLegalInfoView(
+            store: .init(
+                initialState: OnboardingDomain.Dummies.state
+            ) {
+                OnboardingDomain()
+            }
+        )
     }
 }

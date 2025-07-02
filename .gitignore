@@ -14,6 +14,11 @@ doc/errors/generated
 development.env 
 development.apikeys.env
 development.static.env
+# Symbolic links to the above files are created during project setup
+Sources/eRpApp/development.env.default
+Sources/eRpApp/development.env
+Sources/eRpApp/development.apikeys.env
+Sources/eRpApp/development.static.env
 
 
 # AppCode project files

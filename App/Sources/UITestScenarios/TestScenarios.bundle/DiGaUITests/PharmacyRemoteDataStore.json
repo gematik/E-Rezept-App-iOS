@@ -1,0 +1,64 @@
+{
+   "fetchAllInsurancesRecordings":{
+      "payload":
+         [
+            {
+               "telematikId":"8-01-0000000001",
+               "id":"E2A82E03-4C3E-4E47-A6FB-1E1E206FCEE1",
+               "name":"Techniker Krankenkasse (TK)"
+            },
+            {
+               "telematikId":"8-01-0000000003",
+               "id":"F65E55EC-FC4E-45B9-B9C7-DB368E60CB0D",
+               "name":"AOK Bayern - Die Gesundheitskasse"
+            },
+            {
+               "telematikId":"8-01-0000000006",
+               "id":"4A126A1A-904A-4E10-8E6D-0DE68E93A9A1",
+               "name":"KNAPPSCHAFT"
+            },
+            {
+               "name":"Test GKV-SV",
+               "id":"80055F23-0905-4FE1-A3EF-9EA4B09F1628",
+               "telematikId":"9-2.59.20000006"
+            }
+         ],
+      "type":"repeated"
+   },
+   "fetchInsuranceByRecordings":{
+      "payload":[
+          {
+             "telematikId":"8-01-0000000272",
+             "id":"E2A82E03-4C3E-4E47-A6FB-1E1E206FCEE1",
+             "name":"Techniker Krankenkasse (TK)"
+          },
+          {
+             "telematikId":"8-01-0000000272",
+             "id":"E2A82E03-4C3E-4E47-A6FB-1E1E206FCEE1",
+             "name":"Techniker Krankenkasse (TK)"
+          },
+          {
+             "telematikId":"8-01-0000000272",
+             "id":"E2A82E03-4C3E-4E47-A6FB-1E1E206FCEE1",
+             "name":"Techniker Krankenkasse (TK)"
+          },
+          {
+             "telematikId":"8-01-0000000272",
+             "id":"E2A82E03-4C3E-4E47-A6FB-1E1E206FCEE1",
+             "name":"Techniker Krankenkasse (TK)"
+          },
+          {
+             "telematikId":"8-01-0000000272",
+             "id":"E2A82E03-4C3E-4E47-A6FB-1E1E206FCEE1",
+             "name":"Techniker Krankenkasse (TK)"
+          },
+          {
+             "telematikId":"8-01-0000000272",
+             "id":"E2A82E03-4C3E-4E47-A6FB-1E1E206FCEE1",
+             "name":"Techniker Krankenkasse (TK)"
+          },
+          null
+      ],
+      "type":"steps"
+   }
+}

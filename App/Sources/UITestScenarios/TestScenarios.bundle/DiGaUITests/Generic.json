@@ -1,0 +1,215 @@
+{
+    "dispenseResponse":
+    {
+        "diGaDispense":
+        {
+            "redeemCode": "B000HVZOOO",
+            "isMissingData": false
+        },
+        "taskId": "162.000.000.004.263.63",
+        "identifier": "162.000.000.004.263.63",
+        "insuranceId": "M070759114",
+        "whenHandedOver": "2025-05-15",
+        "telematikId": "8-SMC-B-Testkarte--883110000163954"
+    },
+    "declinedMedicationResponse":
+    {
+        "diGaDispense":
+        {
+            "isMissingData": true
+        },
+        "insuranceId": "M070759114",
+        "whenHandedOver": "2025-05-15",
+        "noteText": "##Insurance company decline reason##",
+        "taskId": "162.000.000.004.263.63",
+        "identifier": "162.000.000.004.263.63",
+        "telematikId": "8-SMC-B-Testkarte--883110000163954"
+    },
+    "persistedDispenseRequest":
+    {
+        "profile": "dispReq",
+        "telematikId": "8-01-0000000272",
+        "identifier": "01ebdf0b-c020-c338-d955-2ad7a2b8eb47",
+        "taskId": "162.000.000.004.263.63",
+        "timestamp": "2025-05-15T14:58:45.939+00:00",
+        "isRead": false,
+        "orderId": "8B242ED6-64A6-4C31-92F0-D180B609C2C8",
+        "insuranceId": "M070759114"
+    },
+    "openTask":
+    {
+        "organization":
+        {
+            "identifier": "031234567",
+            "address": "Musterstr. 2\n10623, Berlin",
+            "phone": "0301234567",
+            "name": "Hausarztpraxis Dr. Topp-Glücklich"
+        },
+        "flowType": "162",
+        "lastModified": "2025-05-15T14:44:45.651+00:00",
+        "prescriptionId": "162.000.000.004.263.63",
+        "authoredOn": "2025-05-15T14:44:45.482+00:00",
+        "practitioner":
+        {
+            "qualification": "Hausarzt",
+            "title": "Dr. med.",
+            "lanr": "838382202",
+            "name": "Dr. med. Hans Topp-Glücklich"
+        },
+        "communications":
+        [],
+        "source": "server",
+        "status": "{{STATUS}}",
+        "accessCode": "448fe1e4b6819fa89cd758337ef3e9ca29bb48eceb63c217d2f6b3170cfac86f",
+        "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
+        "expiresOn": "2025-08-15",
+        "deviceRequest":
+        {
+            "authoredOn": "2025-05-15",
+            "pzn": "19205615",
+            "appName": "Vantis KHK und Herzinfarkt 001",
+            "status": "active",
+            "intent": "order",
+            "isSER": false
+        },
+        "medicationDispenses":
+        [],
+        "author": "Hausarztpraxis Dr. Topp-Glücklich",
+        "identifier": "162.000.000.004.263.63",
+        "medication":
+        {
+            "isVaccine": false,
+            "ingredients":
+            []
+        },
+        "avsTransactions":
+        [],
+        "acceptedUntil": "2025-08-15",
+        "patient":
+        {
+            "insurance": "AOK Rheinland/Hamburg",
+            "address": "Musterstr. 1\n10623 Berlin",
+            "name": "Ludger Königsstein",
+            "coverageType": "GKV",
+            "birthDate": "1935-06-22",
+            "insuranceId": "M070759114",
+            "status": "1"
+        },
+        "medicationRequest":
+        {
+            "bvg": false,
+            "substitutionAllowed": false,
+            "hasEmergencyServiceFee": false
+        }
+    },
+    "listedTaskOpen":
+    {
+        "flowType": "162",
+        "lastModified": "2025-05-15T14:44:45.651+00:00",
+        "prescriptionId": "162.000.000.004.263.63",
+        "authoredOn": "2025-05-15T14:44:45.482+00:00",
+        "communications":
+        [],
+        "source": "server",
+        "status": "ready",
+        "expiresOn": "2025-08-15",
+        "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
+        "medicationDispenses":
+        [],
+        "identifier": "162.000.000.004.263.63",
+        "avsTransactions":
+        [],
+        "acceptedUntil": "2025-08-15",
+        "medicationRequest":
+        {
+            "bvg": false,
+            "hasEmergencyServiceFee": false,
+            "substitutionAllowed": false
+        }
+    },
+    "reguarTask": {
+        "flowType": "160",
+        "accessCode": "b0bb77ed3034cfbebfceaac88b3a187321d0e3b63de271127d1ff8f1bc300340",
+        "medicationRequest":
+        {
+            "substitutionAllowed": true,
+            "hasEmergencyServiceFee": false,
+            "quantity":
+            {
+                "value": "15",
+                "unit": "{Package}"
+            },
+            "dosageInstructions": "",
+            "bvg": true,
+            "coPaymentStatus": "0",
+            "authoredOn": "2024-01-16",
+            "multiplePrescription":
+            {
+                "mark": false
+            }
+        },
+        "medicationDispenses":
+        [],
+        "medication":
+        {
+            "isVaccine": false,
+            "amount":
+            {
+                "numerator":
+                {
+                    "unit": "Stk",
+                    "value": "14"
+                },
+                "denominator":
+                {
+                    "value": "1"
+                }
+            },
+            "profile": "pzn",
+            "normSizeCode": "N1",
+            "pzn": "03678010",
+            "dosageForm": "TRS",
+            "name": "Regular 160 Prescriptions",
+            "drugCategory": "00",
+            "ingredients":
+            []
+        },
+        "author": "Count Orff",
+        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Task/160.000.006.456.334.01",
+        "authoredOn": "{{DATE:-17D}}",
+        "status": "ready",
+        "expiresOn": "{{DATE:+90D}}",
+        "acceptedUntil": "{{DATE:+24D}}",
+        "practitioner":
+        {
+            "qualification": "travel agent",
+            "lanr": "312108073",
+            "name": "Dr. Adelheid Ulmenwald"
+        },
+        "identifier": "160.000.006.456.334.01",
+        "organization":
+        {
+            "name": "Count Orff",
+            "email": "hauke.albrecht@mehl.net",
+            "identifier": "500756630",
+            "address": "Gerhart-Hauptmann-Str. 06a\n09536, Lichtenhagenhagen",
+            "phone": "+49-200-3809918"
+        },
+        "patient":
+        {
+            "birthDate": "1987-09-30",
+            "name": "Boaty Mc Boatface",
+            "status": "5",
+            "insurance": "Vaillant BKK",
+            "address": "Straßburger Str. 2\n82416, Nord Ricardobrunn",
+            "insuranceId": "M070759114"
+        },
+        "prescriptionId": "160.000.006.456.334.01",
+        "source": "server",
+        "communications":
+        [],
+        "avsTransactions":
+        [],
+        "lastModified": "{{DATETIME:-27m}}"
+    }
+}

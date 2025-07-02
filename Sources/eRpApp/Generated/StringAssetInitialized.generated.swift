@@ -95,11 +95,6 @@ extension MedicationRedeemView {
         self.init(text: text.key, a11y: a11y, isEnabled: isEnabled, action: action)
     }
 }
-extension OnboardingRegisterAuthenticationView.BiometryButton {
-    init(text: StringAsset, image: Image, backgroundColor: Color, action: @escaping () -> Void) {
-        self.init(text: text.key, image: image, backgroundColor: backgroundColor, action: action)
-    }
-}
 extension OptInCell {
     init(text: StringAsset, isOn: Binding<Bool>) {
         self.init(text: text.key, isOn: isOn)

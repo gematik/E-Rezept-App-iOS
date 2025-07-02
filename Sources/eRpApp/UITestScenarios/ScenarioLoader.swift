@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 // swiftlint:disable file_length
 
@@ -24,6 +28,7 @@ import eRpLocalStorage
 import eRpRemoteStorage
 import eRpStyleKit
 import FHIRClient
+import FHIRVZD
 import Foundation
 import IDP
 import Pharmacy
@@ -78,6 +83,9 @@ extension SceneDelegate {
             _ = try? FileManager.default.removeItem(at: LocalStoreFactory.defaultDatabaseUrl)
 
             _ = try? appSecurityManager.save(password: "")
+
+            @Shared(.appDefaults) var appDefaults
+            $appDefaults.withLock { $0 = AppDefaults() }
         }
         if let password = ProcessInfo.processInfo.environment["UITEST.SET_APPLICATION_PASSWORD"] {
             _ = try? appSecurityManager.save(password: password)
@@ -90,6 +98,12 @@ extension SceneDelegate {
                 }
                 UserDefaults.standard.synchronize()
             }
+        }
+
+        if let iknr = ProcessInfo.processInfo.environment["UITEST.SET_IKNR"] {
+            @Shared(.overwriteDIGAIK) var overwriteDIGAIK
+
+            $overwriteDIGAIK.withLock { $0 = iknr }
         }
         #endif
     }
@@ -113,8 +127,13 @@ extension Reducer {
             guard scenario != nil || isRecording else { return }
 
             dependencies.userDataStore = SmartMocks.shared.smartMockUserDataStore(scenario, isRecording)
-            dependencies.pharmacyServiceFactory = PharmacyServiceFactory { fhirClient, _ in
-                SmartMocks.shared.smartMockPharmacyService(fhirClient: fhirClient, scenario, isRecording)
+            dependencies.pharmacyServiceFactory = PharmacyServiceFactory { fhirClient, fhirVZDSession in
+                SmartMocks.shared.smartMockPharmacyService(
+                    fhirClient: fhirClient,
+                    fhirVZDSession: fhirVZDSession,
+                    scenario,
+                    isRecording
+                )
             }
             dependencies.erxTaskCoreDataStoreFactory = ErxTaskCoreDataStoreFactory { uuid, coreDataControllerFactory in
                 SmartMocks.shared.smartMockErxTaskCoreDataStore(
@@ -135,14 +154,15 @@ extension Reducer {
             }
             @Dependency(\.userSession) var userSession
 
-            let loginHandler = UITestLoginHandler()
+            if !isRecording {
+                let loginHandler = UITestLoginHandler()
 
-            dependencies.loginHandlerServiceFactory = LoginHandlerServiceFactory { _, _ in
-                loginHandler
-            }
-
-            dependencies.avsRedeemService = {
-                SmartMocks.shared.smartMockRedeemService(scenario, isRecording, loginHandler)
+                dependencies.loginHandlerServiceFactory = LoginHandlerServiceFactory { _, _ in
+                    loginHandler
+                }
+                dependencies.avsRedeemService = {
+                    SmartMocks.shared.smartMockRedeemService(scenario, isRecording, loginHandler)
+                }
             }
         }
     }
@@ -185,12 +205,16 @@ struct SmartMocks {
     }
 
     private var smartMockPharmacyService: SmartMockPharmacyRemoteDataStore?
-    mutating func smartMockPharmacyService(fhirClient: FHIRClient, _ scenario: Scenario?,
-                                           _ isRecording: Bool) -> PharmacyRemoteDataStore {
+    mutating func smartMockPharmacyService(
+        fhirClient: FHIRClient,
+        fhirVZDSession: FHIRVZDSession,
+        _ scenario: Scenario?,
+        _ isRecording: Bool
+    ) -> PharmacyRemoteDataStore {
         if let existingMock = smartMockPharmacyService {
             return existingMock
         }
-        let pharmacyFhirDataSource = PharmacyFHIRDataSource(fhirClient: fhirClient)
+        let pharmacyFhirDataSource = HealthcareServiceFHIRDataSource(fhirClient: fhirClient, session: fhirVZDSession)
 
         let mock = SmartMockPharmacyRemoteDataStore(
             wrapped: pharmacyFhirDataSource,

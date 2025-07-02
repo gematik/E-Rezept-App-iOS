@@ -741,10 +741,18 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
             .eraseToAnyPublisher()
 	}
 
-	func fetchTelematikId(ikNumber: String) -> AnyPublisher<String?, PharmacyRepositoryError> {
+	func fetchInsurance(ikNumber: String) -> AnyPublisher<Insurance?, PharmacyRepositoryError> {
         stream
-        	.map { $0.fetchTelematikId(
+        	.map { $0.fetchInsurance(
 				ikNumber: ikNumber
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyRepositoryError> {
+        stream
+        	.map { $0.fetchAllInsurances(
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()

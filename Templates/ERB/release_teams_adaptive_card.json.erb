@@ -26,11 +26,11 @@
       "type": "TextBlock",
       "text": "
 <% if message_card['devbuild'] then %>
-  - **Debug-Build:** [Jenkins](<%= message_card['devbuild'] %>) ([QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= ERB::Util.url_encode(message_card['devbuild']) %>))
+  - **Debug-Build:** [Firebase](<%= message_card['devbuild'] %>) ([QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= ERB::Util.url_encode(message_card['devbuild']) %>))
 <% end %>
 <% if message_card['builds'].count > 0 then %>
   <% message_card['builds'].each do |build| %>
-  - **<%= build['stream'] %>:** [Jenkins](<%= build['url'] %>) ([QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= ERB::Util.url_encode(message_card['url']) %>))
+  - **<%= build['stream'] %>:** [Firebase](<%= build['url'] %>) ([QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= ERB::Util.url_encode(build['url']) %>))
   <% end %>
 <% end %>
 <% if message_card['jira'] then %>
@@ -48,7 +48,7 @@
   },
   {
     "type": "TextBlock",
-    "text": "<%= message_card['release_notes'] %>",
+    "text": "<%= json_escape(message_card['release_notes']) %>",
     "wrap": true
   }
   ]

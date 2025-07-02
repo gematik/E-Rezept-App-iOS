@@ -105,11 +105,13 @@ cardWall:
     - cdw_btn_rc_help_next_tip
     - cdw_btn_rc_help_next
 onboarding:
+  progress:
+    - onb_auth_img_progress
   start:
     - onb_txt_start_title
     - onb_img_gematik_logo
     - onb_img_man1
-    - onb_btn_next
+    - onb_btn_start
   welcome:
     - onb_txt_welcome_title
     - onb_img_frau1
@@ -130,14 +132,20 @@ onboarding:
     - onb_auth_txt_alt_description
     - onb_auth_txt_no_biometrics
     - onb_auth_txt_section_title
-    - onb_auth_btn_faceid
-    - onb_auth_btn_touchid
+    - onb_auth_txt_section_subtitle
     - onb_auth_btn_password
+    - onb_auth_btn_back
+    - onb_auth_btn_face_id
+    - onb_auth_btn_touch_id
   analytics:
-    - onb_ana_btn_continue
+    - onb_ana_txt_title
+    - onb_ana_txt_subtitle
+    - onb_ana_btn_allow
+    - onb_ana_btn_deny
   legalInfo:
+    - onb_img_progress
     - onb_txt_legal_info_title
-    - onb_btn_confirm
+    - onb_btn_next
     - onb_txt_terms_of_use
     - onb_btn_accept_terms_of_use_and_privacy
     - onb_txt_terms_of_privacy
@@ -299,6 +307,8 @@ settings:
     - stg_tou_txt_terms_of_use
     - stg_ww_terms_of_use
     - stg_btn_terms_of_use_close
+  accessibilityStatement:
+    - stg_btn_accessibility_statement
   tracking:
     - stg_trk_txt_title
     - stg_trk_txt_explanation
@@ -367,6 +377,10 @@ mainScreen:
   - erx_btn_consent_drawer_cancel
   - erx_txt_consent_drawer_title
   - erx_txt_consent_drawer_message
+prescriptionArchive:
+  - arc_btn_segmented_control
+  - arc_btn_segmented_control_prescriptions
+  - arc_btn_segmented_control_digas
 welcomedrawer:
   - wlcd_btn_login
   - wlcd_btn_decline
@@ -493,6 +507,7 @@ diga_detail:
   - diga_dtl_btn_request_toolbar
   - diga_dtl_btn_delete_toolbar
   - diga_dtl_btn_toolbar_menu
+  - diga_dtl_btn_refresh
   - diga_dtl_txt_app_name
   - diga_dtl_txt_languages
   - diga_dtl_txt_platform
@@ -504,6 +519,7 @@ diga_detail:
   - diga_dtl_txt_practitioner
   - diga_dtl_txt_organization
   - diga_dtl_txt_authoredOn
+  - diga_dtl_txt_decline_note
   - diga_dtl_support_txt_header
   - diga_dtl_support_txt_provided_link
   - diga_dtl_support_btn_open_link
@@ -513,6 +529,11 @@ diga_detail:
   - diga_dtl_valid_txt_subheader
   - diga_dtl_valid_txt_start_date
   - diga_dtl_valid_txt_end_date
+  - diga_dtl_btn_main_select_insurance
+  - diga_dtl_btn_main_selected_insurance
+diga_insurance_list:
+  - diga_insurance_list_txt_header
+  - diga_insurance_list_txt_subheader
 pharmacySearch:
   - pha_search_txt_result_list
   - pha_search_txt_result_list_entry

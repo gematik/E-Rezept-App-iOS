@@ -744,6 +744,8 @@ import SwiftUI
     internal static let digaDtlBtnMainDownload = StringAsset("diga_dtl_btn_main_download")
     /// Request activation code
     internal static let digaDtlBtnMainRequest = StringAsset("diga_dtl_btn_main_request")
+    /// Choose insurance
+    internal static let digaDtlBtnMainSelectInsurance = StringAsset("diga_dtl_btn_main_select_insurance")
     /// Description
     internal static let digaDtlBtnOverviewDescription = StringAsset("diga_dtl_btn_overview_description")
     /// Help & Support
@@ -804,6 +806,8 @@ import SwiftUI
     internal static let digaDtlTxtDigaName = StringAsset("diga_dtl_txt_diga_name")
     /// Available languages
     internal static let digaDtlTxtLanguages = StringAsset("diga_dtl_txt_languages")
+    /// Insurance is determined:
+    internal static let digaDtlTxtLoadingInsurance = StringAsset("diga_dtl_txt_loading_insurance")
     /// Contracted medical services required
     internal static let digaDtlTxtMedicalService = StringAsset("diga_dtl_txt_medical_service")
     /// Not specified
@@ -850,10 +854,16 @@ import SwiftUI
     internal static func digaDtlTxtRedeemUnitl(_ element1: String) -> StringAsset {
         StringAsset("diga_dtl_txt_redeem_unitl_%@", arguments: [element1])
     }
+    /// We request the code from:
+    internal static let digaDtlTxtSelectedInsurance = StringAsset("diga_dtl_txt_selected_insurance")
     /// How long is this DiGA valid?
     internal static let digaDtlValidTxtHeader = StringAsset("diga_dtl_valid_txt_header")
     /// You can request the activation code for your DiGA within this period.
     internal static let digaDtlValidTxtSubheader = StringAsset("diga_dtl_valid_txt_subheader")
+    /// Choose insurance for the DiGA
+    internal static let digaInsuranceListTxtHeader = StringAsset("diga_insurance_list_txt_header")
+    /// Select the insurance company that will pay for your Digital Health Prescription. We will request the activation code from this company.
+    internal static let digaInsuranceListTxtSubtext = StringAsset("diga_insurance_list_txt_subtext")
     /// Sharing failed
     internal static let dmcAlertTitle = StringAsset("dmc_alert_title")
     /// Done
@@ -1877,12 +1887,44 @@ import SwiftUI
     internal static let onbAnaAlertMessage = StringAsset("onb_ana_alert_message")
     /// Do you allow E-Prescription to analyze your usage behavior anonymously?
     internal static let onbAnaAlertTitle = StringAsset("onb_ana_alert_title")
+    /// Agree
+    internal static let onbAnaBtnAllow = StringAsset("onb_ana_btn_allow")
+    /// Refuse
+    internal static let onbAnaBtnDeny = StringAsset("onb_ana_btn_deny")
     /// Next
     internal static let onbAnaBtnNext = StringAsset("onb_ana_btn_next")
+    /// Analysis of app usage
+    internal static let onbAnaBtnSubtitleLink = StringAsset("onb_ana_btn_subtitle_link")
+    /// If you allow the analysis
+    internal static let onbAnaDtlTxtBodyHowPart1 = StringAsset("onb_ana_dtl_txt_body_how_part1")
+    /// • general usage data (e.g. type and extent of use and operation of the app functions) and 
+    ///  • information on the hardware and software used (e.g. type, version and manufacturer of the device and the operating system) as well as 
+    ///  • selected settings (e.g. language setting) are transmitted.
+    internal static let onbAnaDtlTxtBodyHowPart2 = StringAsset("onb_ana_dtl_txt_body_how_part2")
+    /// The data always relates only to an active usage session and is not collected over longer periods of time. IP addresses are not stored. Under no circumstances will any information about your identity or information about your health or e-prescriptions be collected. In the event of a crash, a standardized report with general technical error data is transmitted. Usage data is evaluated exclusively in an anonymized manner.
+    internal static let onbAnaDtlTxtBodyHowPart3 = StringAsset("onb_ana_dtl_txt_body_how_part3")
+    /// You can stop the analysis at any time. If you deactivate the analysis in the app settings, data collection will stop immediately.
+    internal static let onbAnaDtlTxtBodyOptOut = StringAsset("onb_ana_dtl_txt_body_opt_out")
+    /// In order to optimize the app for the entire population and reduce barriers to use, we want to understand how the app is used. These insights can then be incorporated into improvements to the app's usability, clarity, and comprehensibility, as well as to ensure the safe use of its features. The analysis also helps us determine, for example, how long older technology needs to be supported or when it can be assumed that most users have switched to a new operating system.
+    internal static let onbAnaDtlTxtBodyWhy = StringAsset("onb_ana_dtl_txt_body_why")
+    /// How does the analysis work and what is recorded?
+    internal static let onbAnaDtlTxtSubtitleHow = StringAsset("onb_ana_dtl_txt_subtitle_how")
+    /// You can stop the analysis at any time
+    internal static let onbAnaDtlTxtSubtitleOptOut = StringAsset("onb_ana_dtl_txt_subtitle_opt_out")
+    /// Why is analysis important?
+    internal static let onbAnaDtlTxtSubtitleWhy = StringAsset("onb_ana_dtl_txt_subtitle_why")
+    /// Do you allow the e-prescription app to analyze your usage behavior anonymously?
+    internal static let onbAnaDtlTxtTitle = StringAsset("onb_ana_dtl_txt_title")
+    /// Reduce barriers to use
+    internal static let onbAnaTxtAccessibility = StringAsset("onb_ana_txt_accessibility")
     /// Detect errors and crashes.
     internal static let onbAnaTxtCrash = StringAsset("onb_ana_Txt_crash")
     /// We will:
     internal static let onbAnaTxtHeader = StringAsset("onb_ana_txt_header")
+    /// With your consent, we would like to conduct a %@. To do this, we would like to collect and anonymously evaluate app usage and technical data to:
+    internal static func onbAnaTxtSubtitleWithLink(_ element1: String) -> StringAsset {
+        StringAsset("onb_ana_txt_subtitle_with_link_%@", arguments: [element1])
+    }
     /// Help us make this app better
     internal static let onbAnaTxtTitle = StringAsset("onb_ana_txt_title")
     /// Improve usability.
@@ -1891,22 +1933,46 @@ import SwiftUI
     internal static let onbAnaTxtAnonymouse = StringAsset("onb_anaTxt_anonymouse")
     /// You can modify this decision in the system settings at any time
     internal static let onbAnaTxtChangeable = StringAsset("onb_anaTxt_changeable")
+    /// Open the app conveniently with your face.
+    internal static let onbAuthBtnFaceIdSubtitle = StringAsset("onb_auth_btn_face_id_subtitle")
+    /// FaceID
+    internal static let onbAuthBtnFaceIdTitle = StringAsset("onb_auth_btn_face_id_title")
+    /// Back
+    internal static let onbAuthBtnPasswordBack = StringAsset("onb_auth_btn_password_back")
     /// Save
     internal static let onbAuthBtnPasswordSave = StringAsset("onb_auth_btn_password_save")
+    /// Enter the password every time you start the app.
+    internal static let onbAuthBtnPasswordSubtitle = StringAsset("onb_auth_btn_password_subtitle")
+    /// password
+    internal static let onbAuthBtnPasswordTitle = StringAsset("onb_auth_btn_password_title")
+    /// Please note that biometric systems like TouchID are not completely secure. By choosing TouchID, you accept this risk.
+    internal static let onbAuthBtnTouchIdSubtitle = StringAsset("onb_auth_btn_touch_id_subtitle")
+    /// Touch ID
+    internal static let onbAuthBtnTouchIdTitle = StringAsset("onb_auth_btn_touch_id_title")
     /// Make it difficult for unauthorised users to access your data and make the app secure on launch.
     internal static let onbAuthTxtAltDescription = StringAsset("onb_auth_txt_alt_description")
+    /// Recommended
+    internal static let onbAuthTxtBiometryRecommended = StringAsset("onb_auth_txt_biometry_recommended")
     /// OR
     internal static let onbAuthTxtDivider = StringAsset("onb_auth_txt_divider")
     /// Please select a method to secure the app:
     internal static let onbAuthTxtNoSelection = StringAsset("onb_auth_txt_no_selection")
     /// The security level of the chosen password is not sufficient
     internal static let onbAuthTxtPasswordStrengthInsufficient = StringAsset("onb_auth_txt_password_strength_insufficient")
+    /// Please enter a password to secure the app.
+    internal static let onbAuthTxtPasswordSubtitle = StringAsset("onb_auth_txt_password_subtitle")
+    /// password
+    internal static let onbAuthTxtPasswordTitle = StringAsset("onb_auth_txt_password_title")
     /// The entries differ from each other.
     internal static let onbAuthTxtPasswordsDontMatch = StringAsset("onb_auth_txt_passwords_dont_match")
+    /// This app needs to be secured. Please choose between:
+    internal static let onbAuthTxtSubtitle = StringAsset("onb_auth_txt_subtitle")
     /// How would you like to secure this app?
     internal static let onbAuthTxtTitle = StringAsset("onb_auth_txt_title")
     /// Next
     internal static let onbBtnNextHint = StringAsset("onb_btn_next_hint")
+    /// start
+    internal static let onbBtnStart = StringAsset("onb_btn_start")
     /// Automatically update your new prescriptions
     internal static let onbFeaTxtFeature1 = StringAsset("onb_fea_txt_feature_1")
     /// Information on how to take your medication and dosages
@@ -1945,6 +2011,10 @@ import SwiftUI
     internal static let onbStrTxtSubtitle = StringAsset("onb_str_txt_subtitle")
     /// E-prescription
     internal static let onbStrTxtTitle = StringAsset("onb_str_txt_title")
+    /// Page %@ of %@
+    internal static func onbTxtProgressOf(_ element1: String, _ element2: String) -> StringAsset {
+        StringAsset("onb_txt_progress_%@_of_%@", arguments: [element1, element2])
+    }
     /// Privacy policy
     internal static let onbTxtTermsOfPrivacyLink = StringAsset("onb_txt_terms_of_privacy_link")
     /// I accept the 
@@ -2169,7 +2239,7 @@ import SwiftUI
     internal static let phaDetailPhone = StringAsset("pha_detail_phone")
     /// . Have you found an error or would you like to correct any data?
     internal static let phaDetailTxtFooterEnd = StringAsset("pha_detail_txt_footer_end")
-    /// directory-ti.de
+    /// www.verzeichnis-ti.de
     internal static let phaDetailTxtFooterMid = StringAsset("pha_detail_txt_footer_mid")
     /// Note to pharmacies: this app obtains the contact details for and information about pharmacies from 
     internal static let phaDetailTxtFooterStart = StringAsset("pha_detail_txt_footer_start")
@@ -3097,6 +3167,10 @@ import SwiftUI
     internal static let stgConTextMail = StringAsset("stg_con_text_mail")
     /// Survey about the app
     internal static let stgConTextSurvey = StringAsset("stg_con_text_survey")
+    /// Accessibility statement on external website
+    internal static let stgDpoLblAccessibilityStatement = StringAsset("stg_dpo_lbl_accessibility_statement")
+    /// Accessibility statement
+    internal static let stgDpoTxtAccessibilityStatement = StringAsset("stg_dpo_txt_accessibility_statement")
     /// Privacy policy
     internal static let stgDpoTxtDataPrivacy = StringAsset("stg_dpo_txt_data_privacy")
     /// Open source licences
@@ -3450,7 +3524,7 @@ import SwiftUI
     internal static let stgTxtEditProfileNamePlaceholder = StringAsset("stg_txt_edit_profile_name_placeholder")
     /// Security
     internal static let stgTxtEditProfileSecuritySectionTitle = StringAsset("stg_txt_edit_profile_security_section_title")
-    /// Who accessed your prescriptions and when?
+    /// Here you can see who accessed your prescriptions and when.
     internal static let stgTxtEditProfileSecurityShowAuditEventsDescription = StringAsset("stg_txt_edit_profile_security_show_audit_events_description")
     /// Display access logs
     internal static let stgTxtEditProfileSecurityShowAuditEventsLabel = StringAsset("stg_txt_edit_profile_security_show_audit_events_label")

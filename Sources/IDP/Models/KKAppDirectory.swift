@@ -1,19 +1,23 @@
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import Foundation
@@ -36,10 +40,9 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
     }
 
     public struct Entry: Hashable, Codable, Equatable, Identifiable {
-        public init(name: String, identifier: String, gId: Bool = false, pkv: Bool = false, logo: String? = nil) {
+        public init(name: String, identifier: String, pkv: Bool = false, logo: String? = nil) {
             self.name = name
             self.identifier = identifier
-            self.gId = gId
             self.pkv = pkv
             self.logo = logo
         }
@@ -51,14 +54,12 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
         public let name: String
         public let identifier: String
         /// is GID flow?
-        public let gId: Bool
         public let pkv: Bool
         public let logo: String?
 
         enum CodingKeysV2: String, CodingKey {
             case name = "idp_name"
             case identifier = "idp_iss"
-            case gId = "idp_sek_2"
             case pkv = "idp_pkv"
             case logo = "idp_logo"
         }
@@ -67,7 +68,6 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
             let container = try decoder.container(keyedBy: KKAppDirectory.Entry.CodingKeysV2.self)
             name = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.name)
             identifier = try container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.identifier)
-            gId = (try? container.decode(Bool.self, forKey: KKAppDirectory.Entry.CodingKeysV2.gId)) ?? false
             pkv = (try? container.decode(Bool.self, forKey: KKAppDirectory.Entry.CodingKeysV2.pkv)) ?? false
             logo = try? container.decode(String.self, forKey: KKAppDirectory.Entry.CodingKeysV2.logo)
         }
@@ -76,7 +76,6 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
             var container = encoder.container(keyedBy: KKAppDirectory.Entry.CodingKeysV2.self)
             try container.encode(name, forKey: .name)
             try container.encode(identifier, forKey: .identifier)
-            try container.encode(gId, forKey: .gId)
             try container.encode(pkv, forKey: .pkv)
             try container.encode(logo, forKey: .logo)
         }
@@ -84,9 +83,5 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
 
     public func sorted() -> Self {
         KKAppDirectory(apps: apps.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending })
-    }
-
-    public func filterGID() -> Self {
-        KKAppDirectory(apps: apps.filter(\.gId))
     }
 }

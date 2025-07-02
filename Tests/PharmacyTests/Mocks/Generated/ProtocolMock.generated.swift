@@ -198,21 +198,35 @@ final class MockPharmacyRemoteDataStore: PharmacyRemoteDataStore {
         return apiFiltersForClosure.map({ $0(filter) }) ?? apiFiltersForReturnValue
     }
     
-   // MARK: - fetchTelematikId
+   // MARK: - fetchInsurance
 
-    var fetchTelematikIdByCallsCount = 0
-    var fetchTelematikIdByCalled: Bool {
-        fetchTelematikIdByCallsCount > 0
+    var fetchInsuranceByCallsCount = 0
+    var fetchInsuranceByCalled: Bool {
+        fetchInsuranceByCallsCount > 0
     }
-    var fetchTelematikIdByReceivedIkNumber: String?
-    var fetchTelematikIdByReceivedInvocations: [String] = []
-    var fetchTelematikIdByReturnValue: AnyPublisher<String?, PharmacyFHIRDataSource.Error>!
-    var fetchTelematikIdByClosure: ((String) -> AnyPublisher<String?, PharmacyFHIRDataSource.Error>)?
+    var fetchInsuranceByReceivedIkNumber: String?
+    var fetchInsuranceByReceivedInvocations: [String] = []
+    var fetchInsuranceByReturnValue: AnyPublisher<Insurance?, PharmacyFHIRDataSource.Error>!
+    var fetchInsuranceByClosure: ((String) -> AnyPublisher<Insurance?, PharmacyFHIRDataSource.Error>)?
 
-    func fetchTelematikId(by ikNumber: String) -> AnyPublisher<String?, PharmacyFHIRDataSource.Error> {
-        fetchTelematikIdByCallsCount += 1
-        fetchTelematikIdByReceivedIkNumber = ikNumber
-        fetchTelematikIdByReceivedInvocations.append(ikNumber)
-        return fetchTelematikIdByClosure.map({ $0(ikNumber) }) ?? fetchTelematikIdByReturnValue
+    func fetchInsurance(by ikNumber: String) -> AnyPublisher<Insurance?, PharmacyFHIRDataSource.Error> {
+        fetchInsuranceByCallsCount += 1
+        fetchInsuranceByReceivedIkNumber = ikNumber
+        fetchInsuranceByReceivedInvocations.append(ikNumber)
+        return fetchInsuranceByClosure.map({ $0(ikNumber) }) ?? fetchInsuranceByReturnValue
+    }
+    
+   // MARK: - fetchAllInsurances
+
+    var fetchAllInsurancesCallsCount = 0
+    var fetchAllInsurancesCalled: Bool {
+        fetchAllInsurancesCallsCount > 0
+    }
+    var fetchAllInsurancesReturnValue: AnyPublisher<[Insurance], PharmacyFHIRDataSource.Error>!
+    var fetchAllInsurancesClosure: (() -> AnyPublisher<[Insurance], PharmacyFHIRDataSource.Error>)?
+
+    func fetchAllInsurances() -> AnyPublisher<[Insurance], PharmacyFHIRDataSource.Error> {
+        fetchAllInsurancesCallsCount += 1
+        return fetchAllInsurancesClosure.map({ $0() }) ?? fetchAllInsurancesReturnValue
     }
 }

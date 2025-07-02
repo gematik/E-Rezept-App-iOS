@@ -405,6 +405,24 @@ extension DiGaDetailDomain.Destination.Action {
                 action.analytics(tracker: tracker)
             case let .technicalInformations(action):
                 action.analytics(tracker: tracker)
+            case let .insuranceList(action):
+                action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
+extension DiGaInsuranceListDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .destination(.presented(action)):
+                action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
+extension DiGaInsuranceListDomain.Destination.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
             default: break
         }
     }
@@ -848,7 +866,16 @@ extension NewProfileDomain.Destination.Action {
 extension OnboardingDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .registerAuthentication(action: action):
+            default: break
+        }
+    }
+}
+extension OnboardingDomain.Path.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            case let .registerAuth(action):
+                action.analytics(tracker: tracker)
+            case let .registerPassword(action):
                 action.analytics(tracker: tracker)
             default: break
         }
@@ -1245,6 +1272,13 @@ extension RedeemSuccessDomain.Action {
     }
 }
 extension RegisterAuthenticationDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension RegisterPasswordDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
             default: break

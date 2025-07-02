@@ -1,20 +1,24 @@
 // swiftlint:disable file_length
 //
-//  Copyright (c) 2024 gematik GmbH
+//  Copyright (Change Date see Readme), gematik GmbH
 //
-//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
-//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the
+//  European Commission – subsequent versions of the EUPL (the "Licence").
 //  You may not use this work except in compliance with the Licence.
-//  You may obtain a copy of the Licence at:
 //
-//      https://joinup.ec.europa.eu/software/page/eupl
+//  You find a copy of the Licence in the "Licence" file or at
+//  https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
 //
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the Licence is distributed on an "AS IS" basis,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the Licence for the specific language governing permissions and
-//  limitations under the Licence.
+//  Unless required by applicable law or agreed to in writing,
+//  software distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either expressed or implied.
+//  In case of changes by gematik find details in the "Readme" file.
 //
+//  See the Licence for the specific language governing permissions and limitations under the Licence.
+//
+//  *******
+//
+// For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
 import Combine
@@ -935,8 +939,10 @@ final class DefaultIDPSessionTests: XCTestCase {
             )
         let fixture = KKAppDirectory(
             apps: [
-                KKAppDirectory.Entry(name: "Andere KK", identifier: "kkAppId002", gId: true),
-                KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001", gId: true),
+                KKAppDirectory.Entry(name: "Andere KK", identifier: "kkAppId002"),
+                KKAppDirectory.Entry(name: "Andere KK2", identifier: "kkAppId002"),
+                KKAppDirectory.Entry(name: "Andere KK3", identifier: "kkAppId002"),
+                KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001"),
             ]
         )
 
@@ -996,47 +1002,6 @@ final class DefaultIDPSessionTests: XCTestCase {
 
     // [REQ:gemSpec_IDP_Frontend:A_22295-01] Test
     // [REQ:gemSpec_IDP_Frontend:A_22299-01] Test
-    func testStartExtAuth() throws {
-        sut = DefaultIDPSession(
-            client: idpClientMock,
-            storage: storage,
-            schedulers: schedulers,
-            trustStoreSession: trustStoreSessionMock,
-            extAuthRequestStorage: extAuthRequestStorageMock,
-            time: dateProvider,
-            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
-        )
-
-        let fixture = URL(string: "https://kk.dev.gematik.solutions/redirect?state=mystate")!
-        idpClientMock.startExtAuthUsingReturnValue =
-            Just(fixture).setFailureType(to: IDPError.self).eraseToAnyPublisher()
-
-        let entry = KKAppDirectory.Entry(name: "entry_name", identifier: "entry_identifier")
-
-        sut.startExtAuth(entry: entry)
-            .test(
-                failure: { error in
-                    fail("Error: \(error)")
-                },
-                expectations: { response in
-                    expect(response).to(equal(fixture))
-                }
-            )
-
-        expect(self.idpClientMock.startExtAuthUsingCallsCount).to(equal(1))
-        expect(self.idpClientMock.startExtAuthUsingReceivedArguments?.0.kkAppId).to(equal("entry_identifier"))
-
-        expect(self.extAuthRequestStorageMock.setExtAuthRequestForCalled).to(beTrue())
-        expect(self.extAuthRequestStorageMock.setExtAuthRequestForReceivedArguments?.state).to(equal("mystate"))
-
-        guard let extAuthRequest = extAuthRequestStorageMock.setExtAuthRequestForReceivedArguments?.request else {
-            return
-        }
-
-        expect(extAuthRequest.nonce).to(equal(try! cryptoBox.generateRandomNonce()))
-        expect(extAuthRequest.verifierCode).to(equal(try! cryptoBox.generateRandomVerifier()))
-    }
-
     func testExtAuthVerifyAndExchangeGID() throws {
         sut = DefaultIDPSession(
             client: idpClientMock,

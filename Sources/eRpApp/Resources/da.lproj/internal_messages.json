@@ -25,8 +25,14 @@
     },
     {
         "id": "6",
-        "text": "**📲 Indløs ordinerede DiGA'er** \nFra nu af kan du indløse recepter til digitale sundhedsapplikationer (DiGA'er) direkte via e-receptappen. Du modtager aktiveringskoden og linket til den angivne app umiddelbart efter indløsning. \n \n **🏥 Ny apoteksdatabase** \nVi har introduceret en ny, fremtidssikret database til apotekssøgninger.",
+        "text": "**📲 Indløs ordinerede DiGA'er** \nDu kan nu indløse recepter til digitale sundhedsapplikationer (DiGA'er) direkte via e-receptappen. Du kan finde din aktiveringskode og linket til den ordinerede DiGA lige her i e-receptappen. \n \n **🏥 Ny apoteksdatabase** \nVi har introduceret en ny, fremtidssikret database til apotekssøgninger.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
+    },
+    {
+        "id": "7",
+        "text": "**♿️ Tilgængelighed** \nVores tilgængelighedserklæring er nu tilgængelig i indstillingerne. Onboarding-processen er også blevet mere tilgængelig. \n \n **📲 Indløs DiGA'er hos forsikringsselskaber** \nRecepter til digitale sundhedsapplikationer (DiGA'er) kan nu også indløses hos andre forsikringsselskaber.",
+        "timestamp": "2025-06-24T08:00:00.000Z",
+        "version": "1.32.0"
     }
 ]
