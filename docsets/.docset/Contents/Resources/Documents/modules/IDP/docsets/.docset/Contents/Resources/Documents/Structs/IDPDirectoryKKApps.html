@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.32.0
+           1.33.0
  Docs
         </a>
          (100% documented)
@@ -63,25 +63,7 @@
             <a class="nav-group-name-link" href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer.html">BiometricsSHA256Signer</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer/Error.html">– Error</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession.html">DefaultIDPSession</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession/Configuration.html">– Configuration</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultSecureEnclaveSignatureProvider.html">DefaultSecureEnclaveSignatureProvider</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/IDPInterceptor.html">IDPInterceptor</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a>
+                <a class="nav-group-task-link" href="../Classes/PairingSession.html">PairingSession</a>
               </li>
             </ul>
           </li>
@@ -259,12 +241,6 @@
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP8IDPScopea">IDPScope</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP6Randoma">Random</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12TimeProvidera">TimeProvider</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12VerifierCodea">VerifierCode</a>
               </li>
             </ul>
@@ -295,6 +271,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:3IDP18IDPDirectoryKKAppsV3jwtAA3JWTVvp"></a>
+                    <a name="//apple_ref/swift/Property/jwt" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP18IDPDirectoryKKAppsV3jwtAA3JWTVvp">jwt</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>JWT containing the directory KK apps data</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">jwt</span><span class="p">:</span> <span class="kt">JWT</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:3IDP18IDPDirectoryKKAppsV3jwtACSS_tKcfc"></a>
                     <a name="//apple_ref/swift/Method/init(jwt:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:3IDP18IDPDirectoryKKAppsV3jwtACSS_tKcfc">init(jwt:<wbr>)</a>
@@ -305,7 +308,13 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Initialize IDPDirectoryKKApps with a JWT string</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    If JWT parsing fails
+
+</div>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -322,12 +331,12 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>njwt</em>
+                                <em>jwt</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>original challenge</p>
+                                  <p>JWT string to parse</p>
                                 </div>
                               </td>
                             </tr>
@@ -368,7 +377,7 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>njwt</em>
+                                <em>jwt</em>
                                 </code>
                               </td>
                               <td>
@@ -383,6 +392,97 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP18IDPDirectoryKKAppsV6verify4withSb7OpenSSL4X509C_tKF"></a>
+                    <a name="//apple_ref/swift/Method/verify(with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP18IDPDirectoryKKAppsV6verify4withSb7OpenSSL4X509C_tKF">verify(with:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Verify the JWT signature with the provided certificate</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    If verification fails
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">verify</span><span class="p">(</span><span class="n">with</span> <span class="nv">certificate</span><span class="p">:</span> <span class="kt">X509</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>certificate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>X.509 certificate used for verification</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Boolean indicating if verification was successful</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP18IDPDirectoryKKAppsV6claimsAA14KKAppDirectoryVyKF"></a>
+                    <a name="//apple_ref/swift/Method/claims()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP18IDPDirectoryKKAppsV6claimsAA14KKAppDirectoryVyKF">claims()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Extract claims from the JWT</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    If payload decoding fails
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">claims</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/KKAppDirectory.html">KKAppDirectory</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>KKAppDirectory claims from the JWT payload</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -391,7 +491,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-06-18)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-08-01)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

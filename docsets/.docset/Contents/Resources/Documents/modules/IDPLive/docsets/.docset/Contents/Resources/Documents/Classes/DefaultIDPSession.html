@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DefaultIDPSession Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/DefaultIDPSession" class="dashAnchor"></a>
+
+    <a title="DefaultIDPSession Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+           1.33.0
+ Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <div class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </div>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html"> Reference</a>
+      <img class="carat" src="../img/carat.png" alt=""/>
+      DefaultIDPSession Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer.html">BiometricsSHA256Signer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession.html">DefaultIDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession/Configuration.html">– Configuration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultSecureEnclaveSignatureProvider.html">DefaultSecureEnclaveSignatureProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/IDPInterceptor.html">IDPInterceptor</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Swift.html">Swift</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Swift/Error.html">– Error</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:7IDPLive12TimeProvidera">TimeProvider</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>DefaultIDPSession</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">DefaultIDPSession</span> <span class="p">:</span> <span class="kt">IDPSession</span></code></pre>
+
+                </div>
+              </div>
+            <p>IDPSession acts as an interactor/mediator for the IDPClient and IDPStorage</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7IDPLive17DefaultIDPSessionC6config7storage10schedulers10httpClient17trustStoreSession21extAuthRequestStorageA2C13ConfigurationV_3IDP10IDPStorage_pAL13IDPSchedulers_p10HTTPClientAO_p05TrustJ00ujK0_pAL03ExtmnO0_ptcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(config:storage:schedulers:httpClient:trustStoreSession:extAuthRequestStorage:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7IDPLive17DefaultIDPSessionC6config7storage10schedulers10httpClient17trustStoreSession21extAuthRequestStorageA2C13ConfigurationV_3IDP10IDPStorage_pAL13IDPSchedulers_p10HTTPClientAO_p05TrustJ00ujK0_pAL03ExtmnO0_ptcfc">init(config:<wbr>storage:<wbr>schedulers:<wbr>httpClient:<wbr>trustStoreSession:<wbr>extAuthRequestStorage:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initialize a DefaultIDPSession</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">convenience</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="nv">config</span><span class="p">:</span> <span class="kt"><a href="../Classes/DefaultIDPSession/Configuration.html">Configuration</a></span><span class="p">,</span>
+    <span class="nv">storage</span><span class="p">:</span> <span class="kt">IDPStorage</span><span class="p">,</span>
+    <span class="nv">schedulers</span><span class="p">:</span> <span class="kt">IDPSchedulers</span><span class="p">,</span>
+    <span class="nv">httpClient</span><span class="p">:</span> <span class="kt">HTTPClient</span><span class="p">,</span>
+    <span class="nv">trustStoreSession</span><span class="p">:</span> <span class="kt">TrustStoreSession</span><span class="p">,</span>
+    <span class="nv">extAuthRequestStorage</span><span class="p">:</span> <span class="kt">ExtAuthRequestStorage</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>config</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the IDP configuration</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>storage</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the IDP Storage</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>schedulers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the Schedulers to use for internal operations</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>httpClient</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a <code>HTTPClient</code> for performing the network operations</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>trustStoreSession</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>TrustStoreSession</code> that is used to check the validity and trust of the discoveryDocument</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7IDPLive17DefaultIDPSessionC10isLoggedIn7Combine12AnyPublisherVySb3IDP8IDPErrorOGvp"></a>
+                    <a name="//apple_ref/swift/Property/isLoggedIn" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7IDPLive17DefaultIDPSessionC10isLoggedIn7Combine12AnyPublisherVySb3IDP8IDPErrorOGvp">isLoggedIn</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Whether the session has access to a (valid) authenticated session (e.g. token)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isLoggedIn</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP21invalidateAccessTokenyyF"></a>
+                    <a name="//apple_ref/swift/Method/invalidateAccessToken()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP21invalidateAccessTokenyyF">invalidateAccessToken()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">invalidateAccessToken</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7IDPLive17DefaultIDPSessionC18autoRefreshedToken7Combine12AnyPublisherVy3IDP8IDPTokenVSgAH8IDPErrorOGvp"></a>
+                    <a name="//apple_ref/swift/Property/autoRefreshedToken" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7IDPLive17DefaultIDPSessionC18autoRefreshedToken7Combine12AnyPublisherVy3IDP8IDPTokenVSgAH8IDPErrorOGvp">autoRefreshedToken</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Subscribe to the session&rsquo;s IDPToken and receive the latest (session) token through this Publisher</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">autoRefreshedToken</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">IDPToken</span><span class="p">?,</span> <span class="kt">IDPError</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP16requestChallenge7Combine12AnyPublisherVyAA19IDPChallengeSessionVAA8IDPErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/requestChallenge()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP16requestChallenge7Combine12AnyPublisherVyAA19IDPChallengeSessionVAA8IDPErrorOGyF">requestChallenge()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">requestChallenge</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">IDPChallengeSession</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP6verifyy7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA15SignedChallengeVF"></a>
+                    <a name="//apple_ref/swift/Method/verify(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP6verifyy7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA15SignedChallengeVF">verify(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">verify</span><span class="p">(</span><span class="n">_</span> <span class="nv">signedChallenge</span><span class="p">:</span> <span class="kt">SignedChallenge</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">IDPExchangeToken</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP8exchange5token16challengeSession16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAA011IDPExchangeH0V_AA09ChallengeF0_ps6ResultOySbs5Error_pGAA0H7PayloadV07IDTokenS0VctF"></a>
+                    <a name="//apple_ref/swift/Method/exchange(token:challengeSession:idTokenValidator:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP8exchange5token16challengeSession16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAA011IDPExchangeH0V_AA09ChallengeF0_ps6ResultOySbs5Error_pGAA0H7PayloadV07IDTokenS0VctF">exchange(token:<wbr>challengeSession:<wbr>idTokenValidator:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">exchange</span><span class="p">(</span>
+    <span class="n">token</span> <span class="nv">exchange</span><span class="p">:</span> <span class="kt">IDPExchangeToken</span><span class="p">,</span>
+    <span class="nv">challengeSession</span><span class="p">:</span> <span class="kt">ChallengeSession</span><span class="p">,</span>
+    <span class="nv">idTokenValidator</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">TokenPayload</span><span class="o">.</span><span class="kt">IDTokenPayload</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">IDPToken</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP7refresh5token7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAJ_tF"></a>
+                    <a name="//apple_ref/swift/Method/refresh(token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP7refresh5token7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOGAJ_tF">refresh(token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">refresh</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt">IDPToken</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">IDPToken</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP10pairDevice4with5token7Combine12AnyPublisherVyAA12PairingEntryVAA8IDPErrorOGAA16RegistrationDataV_AA8IDPTokenVtF"></a>
+                    <a name="//apple_ref/swift/Method/pairDevice(with:token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP10pairDevice4with5token7Combine12AnyPublisherVyAA12PairingEntryVAA8IDPErrorOGAA16RegistrationDataV_AA8IDPTokenVtF">pairDevice(with:<wbr>token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">pairDevice</span><span class="p">(</span><span class="n">with</span> <span class="nv">registrationData</span><span class="p">:</span> <span class="kt">RegistrationData</span><span class="p">,</span>
+                       <span class="nv">token</span><span class="p">:</span> <span class="kt">IDPToken</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PairingEntry</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP16unregisterDevice_5token7Combine12AnyPublisherVySbAA8IDPErrorOGSS_AA8IDPTokenVtF"></a>
+                    <a name="//apple_ref/swift/Method/unregisterDevice(_:token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP16unregisterDevice_5token7Combine12AnyPublisherVySbAA8IDPErrorOGSS_AA8IDPTokenVtF">unregisterDevice(_:<wbr>token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">unregisterDevice</span><span class="p">(</span><span class="n">_</span> <span class="nv">keyIdentifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">token</span><span class="p">:</span> <span class="kt">IDPToken</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP11listDevices5token7Combine12AnyPublisherVyAA14PairingEntriesVAA8IDPErrorOGAA8IDPTokenV_tF"></a>
+                    <a name="//apple_ref/swift/Method/listDevices(token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP11listDevices5token7Combine12AnyPublisherVyAA14PairingEntriesVAA8IDPErrorOGAA8IDPTokenV_tF">listDevices(token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listDevices</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt">IDPToken</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PairingEntries</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP9altVerifyy7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA24SignedAuthenticationDataVF"></a>
+                    <a name="//apple_ref/swift/Method/altVerify(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP9altVerifyy7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA24SignedAuthenticationDataVF">altVerify(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">altVerify</span><span class="p">(</span><span class="n">_</span> <span class="nv">signedChallenge</span><span class="p">:</span> <span class="kt">SignedAuthenticationData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">IDPExchangeToken</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP19loadDirectoryKKApps7Combine12AnyPublisherVyAA05KKAppD0VAA8IDPErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/loadDirectoryKKApps()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP19loadDirectoryKKApps7Combine12AnyPublisherVyAA05KKAppD0VAA8IDPErrorOGyF">loadDirectoryKKApps()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">loadDirectoryKKApps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">KKAppDirectory</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP12startExtAuth5entry7Combine12AnyPublisherVy10Foundation3URLVAA8IDPErrorOGAA14KKAppDirectoryV5EntryV_tF"></a>
+                    <a name="//apple_ref/swift/Method/startExtAuth(entry:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP12startExtAuth5entry7Combine12AnyPublisherVy10Foundation3URLVAA8IDPErrorOGAA14KKAppDirectoryV5EntryV_tF">startExtAuth(entry:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">startExtAuth</span><span class="p">(</span><span class="nv">entry</span><span class="p">:</span> <span class="kt">KKAppDirectory</span><span class="o">.</span><span class="kt">Entry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">URL</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP24extAuthVerifyAndExchange_16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOG10Foundation3URLV_s6ResultOySbs5Error_pGAA0I7PayloadV07IDTokenT0VctF"></a>
+                    <a name="//apple_ref/swift/Method/extAuthVerifyAndExchange(_:idTokenValidator:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP24extAuthVerifyAndExchange_16idTokenValidator7Combine12AnyPublisherVyAA8IDPTokenVAA8IDPErrorOG10Foundation3URLV_s6ResultOySbs5Error_pGAA0I7PayloadV07IDTokenT0VctF">extAuthVerifyAndExchange(_:<wbr>idTokenValidator:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">extAuthVerifyAndExchange</span><span class="p">(</span>
+    <span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span>
+    <span class="nv">idTokenValidator</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt">TokenPayload</span><span class="o">.</span><span class="kt">IDTokenPayload</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">IDPToken</span><span class="p">,</span> <span class="kt">IDPError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7IDPLive17DefaultIDPSessionC13ConfigurationV"></a>
+                    <a name="//apple_ref/swift/Struct/Configuration" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7IDPLive17DefaultIDPSessionC13ConfigurationV">Configuration</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>IDP Configuration</p>
+
+                        <a href="../Classes/DefaultIDPSession/Configuration.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Configuration</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-08-01)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+    </section>
+  </body>
+</html>
