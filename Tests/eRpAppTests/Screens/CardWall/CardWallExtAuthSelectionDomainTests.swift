@@ -98,7 +98,7 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
         let sut = testStore()
 
         await sut.send(.selectKK(Self.testEntryA)) { state in
-            state.selectedKK = Self.testEntryA
+            state.destination = .confirmation(.init(selectedKK: Self.testEntryA))
         }
     }
 

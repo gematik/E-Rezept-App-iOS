@@ -25,7 +25,14 @@ import SwiftUI
 // swiftlint:disable missing_docs
 
 public enum SFSymbolName {
-    public static let accessibility = "accessibility"
+    public static var accessibility: String {
+        if #available(iOS 17.0, *) {
+            return "accessibility"
+        } else {
+            return "person.circle"
+        }
+    }
+
     public static let checkmark = "checkmark"
     public static let cardIcon = "creditcard"
     public static var cardIconAnd123 = "creditcard.and.123"

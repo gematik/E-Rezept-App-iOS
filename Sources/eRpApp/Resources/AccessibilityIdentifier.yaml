@@ -10,6 +10,8 @@ controls:
     - ctl_tooltip_container
   demoMode:
     - bnr_txt_demo_mode
+  osDeprecationBanner:
+    - bnr_txt_os_deprecation
 migration:
   - amg_txt_and_spinner
 scanner:
@@ -77,6 +79,7 @@ cardWall:
   canScanner:
     - cdw_scn_btn_close
     - cdw_scn_btn_done
+    - cdw_scn_btn_flashlight
   pinInput:
     - cdw_txt_pin_subtitle
     - cdw_txt_pin_description
@@ -382,8 +385,8 @@ prescriptionArchive:
   - arc_btn_segmented_control_prescriptions
   - arc_btn_segmented_control_digas
 welcomedrawer:
-  - wlcd_btn_login
-  - wlcd_btn_decline
+  - wlcd_btn_pkv_user
+  - wlcd_btn_gkv_user
 profileSelection:
   - pro_txt_selection_profile_list
   - pro_txt_selection_profile_list_entry
@@ -404,7 +407,6 @@ prescriptionDetails:
   - prsc_dtl_btn_edit_title
   - prsc_dtl_btn_toggle_redeem
   - prsc_dtl_btn_toolbar_item
-  - prsc_dtl_toolbar_menu
   - prsc_dtl_toolbar_menu_btn_share
   - prsc_dtl_toolbar_menu_btn_redeem
   - prsc_dtl_toolbar_menu_btn_delete

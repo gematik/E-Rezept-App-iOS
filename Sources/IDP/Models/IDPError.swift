@@ -21,15 +21,13 @@
 //
 
 import Foundation
-import HTTPClient
-import TrustStore
 
 // sourcery: CodedError = "100"
 /// The specific error types for the IDP module
 public enum IDPError: Swift.Error {
     // sourcery: errorCode = "01"
     /// In case of HTTP/Connection error
-    case network(error: HTTPClientError)
+    case network(error: Swift.Error)
     // sourcery: errorCode = "02"
     /// In case a response (or request) could not be (cryptographically) verified
     case validation(error: Swift.Error)
@@ -68,7 +66,7 @@ public enum IDPError: Swift.Error {
     case `internal`(error: InternalError)
     // sourcery: errorCode = "14"
     /// Issues related to Building or Verifying the trust store
-    case trustStore(error: TrustStoreError)
+    case trustStore(error: Swift.Error)
 
     // sourcery: errorCode = "15"
     case pairing(Swift.Error)
@@ -98,6 +96,14 @@ public enum IDPError: Swift.Error {
         public let timestamp: Int
         public let uuid: String
         public let code: String
+
+        public init(error: String, errorText: String, timestamp: Int, uuid: String, code: String) {
+            self.error = error
+            self.errorText = errorText
+            self.timestamp = timestamp
+            self.uuid = uuid
+            self.code = code
+        }
 
         // [REQ:gemSpec_IDP_Frontend:A_19937#3,A_20605,A_20085] Error formatting
         public var description: String {
@@ -289,7 +295,8 @@ extension IDPError: Equatable {
             return lhsError.localizedDescription == rhsError.localizedDescription
         case let (.invalidSignature(lhsText), .invalidSignature(rhsText)): return lhsText == rhsText
         case let (.serverError(lhsError), .serverError(rhsError)): return lhsError == rhsError
-        case let (.trustStore(lhsError), .trustStore(rhsError)): return lhsError == rhsError
+        case let (.trustStore(lhsError), .trustStore(rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
         case let (.biometrics(lhsError), .biometrics(rhsError)):
             return lhsError == rhsError
         default: return false
@@ -314,7 +321,7 @@ extension IDPError: Codable {
         let value = try? container.decode(String.self, forKey: .value)
         switch type {
         case "network":
-            self = .network(error: .unknown(LoadingError.message(value)))
+            self = .network(error: LoadingError.message(value))
         case "validation":
             self = .validation(error: LoadingError.message(value))
         case "tokenUnavailable":
@@ -340,7 +347,7 @@ extension IDPError: Codable {
         case "`internal`":
             self = .internal(error: .notImplemented)
         case "trustStore":
-            self = .trustStore(error: .unspecified(error: LoadingError.message(value)))
+            self = .trustStore(error: LoadingError.message(value))
         case "pairing":
             self = .pairing(LoadingError.message(value))
         case "invalidSignature":

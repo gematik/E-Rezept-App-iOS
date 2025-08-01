@@ -247,8 +247,10 @@ import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
 import Foundation
+import HTTPClient
 import IdentifiedCollections
 import IDP
+import IDPLive
 import OpenSSL
 import Pharmacy
 {% for type in types.protocols where type.based.SmartMock or type|annotated:"SmartMock" %}

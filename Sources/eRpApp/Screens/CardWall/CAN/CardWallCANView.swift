@@ -33,22 +33,22 @@ struct CardWallCANView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(spacing: 8) {
                 CANView(store: store)
 
                 Spacer()
 
                 GreyDivider()
 
-                PrimaryTextButton(text: L10n.cdwBtnCanDone,
-                                  a11y: A11y.cardWall.canInput.cdwBtnCanDone,
-                                  isEnabled: store.state.can.count == 6) {
+                Button {
                     // workaround: dismiss keyboard to fix safearea bug for iOS 16
                     UIApplication.shared.dismissKeyboard()
                     store.send(.advance)
+                } label: {
+                    Text(L10n.cdwBtnCanDone)
+                        .accessibilityIdentifier(A11y.cardWall.canInput.cdwBtnCanDone)
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 8)
+                .buttonStyle(.primary(isEnabled: store.state.can.count == 6, isDestructive: false, width: .wideHugging))
                 .navigationDestination(
                     item: $store.scope(state: \.destination?.pin, action: \.destination.pin)
                 ) { store in
@@ -73,101 +73,85 @@ struct CardWallCANView: View {
         @Perception.Bindable var store: StoreOf<CardWallCANDomain>
 
         @State var showAnimation = true
-        @State var scannedcan: ScanCAN?
 
         var body: some View {
             WithPerceptionTracking {
                 ScrollView(.vertical, showsIndicators: true) {
                     if store.state.wrongCANEntered {
-                        WorngCANEnteredWarningView()
+                        WrongCANEnteredWarningView()
                             .padding()
                     }
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 56) {
                         if showAnimation {
                             HStack(alignment: .center) {
                                 Spacer()
-                                Image(asset: Asset.CardWall.cardwallCard)
+                                Image(asset: Asset.CardWall.cardwallCardWithArrow)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(maxWidth: 343, maxHeight: 215, alignment: .center)
                                     .accessibility(identifier: A11y.cardWall.canInput.cdwImgCanCard)
+                                    .accessibility(removeTraits: .isImage)
                                     .accessibility(label: Text(L10n.cdwImgCanCardLabel))
-                                    .padding(.bottom, 24)
-                                    .transition(.asymmetric(insertion: .move(edge: .trailing),
-                                                            removal: .move(edge: .leading)))
+                                    .transition(.asymmetric(
+                                        insertion: .move(edge: .trailing),
+                                        removal: .move(edge: .leading)
+                                    ))
 
                                 Spacer()
                             }
                         }
-                        Text(L10n.cdwTxtCanSubtitle)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.title2)
-                            .bold()
-                            .padding(.top)
-                            .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(L10n.cdwTxtCanSubtitle)
+                                .foregroundColor(Colors.systemLabel)
+                                .font(.title)
+                                .bold()
+                                .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Text(L10n.cdwTxtCanDescription)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.body)
-                            .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
-
-                        Button(action: {
-                            store.send(.egkButtonTapped)
-                            UIApplication.shared.dismissKeyboard()
-                        }, label: {
-                            Text(L10n.cdwBtnNoCan)
-                                .multilineTextAlignment(.trailing)
-                        })
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .font(.system(size: 16))
-                            .foregroundColor(Colors.primary)
-                            .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanMore)
-                            .fullScreenCover(item: $store
-                                .scope(state: \.destination?.egk, action: \.destination.egk)) { store in
-                                    NavigationStack {
-                                        OrderHealthCardListView(store: store)
-                                            .tint(Colors.primary700)
-                                            .navigationViewStyle(StackNavigationViewStyle())
-                                    }
-                            }
-                    }.padding()
+                            CANScanButton(store: store)
+                        }
+                    }
+                    .padding()
 
                     // [REQ:BSI-eRp-ePA:O.Purp_2#2,O.Data_6#2] CAN is used for eGK connection
                     CardWallCANInputView(
                         can: $store.can.sending(\.update)
                     ) {
                         store.send(.advance)
-                    }.padding(.top)
-
-                    TertiaryListButton(
-                        text: L10n.cdwBtnCanScanner,
-                        imageName: SFSymbolName.cameraViewfinder,
-                        accessibilityIdentifier: A11y.cardWall.canInput.cdwBtnCanScan
-                    ) {
-                        store.send(.showScannerView)
                     }
-                    .padding()
-                    .fullScreenCover(isPresented: Binding<Bool>(
-                        get: { store.destination == .scanner },
-                        set: { show in
-                            if !show {
-                                store.send(.resetNavigation)
+
+                    Text(L10n.cdwTxtCanDescription2)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .font(.footnote)
+                        .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
+                        .padding(.horizontal)
+
+                    Button(
+                        action: {
+                            store.send(.egkButtonTapped)
+                            UIApplication.shared.dismissKeyboard()
+                        }, label: {
+                            HStack(spacing: 4) {
+                                Text(L10n.cdwBtnNoCan2)
+                                    .multilineTextAlignment(.leading)
+                                Image(systemName: SFSymbolName.arrowRight)
                             }
+                            .foregroundColor(Colors.primary700)
                         }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        NavigationStack {
-                            CANCameraScanner(canScan: $scannedcan) { canScan in
-                                if let canScan = scannedcan {
-                                    store.send(.update(can: canScan.value))
-                                }
-                                store.send(.resetNavigation)
+                    )
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .font(.system(size: 15))
+                    .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanMore)
+                    .padding(.horizontal)
+                    .padding(.top, 16)
+                    .fullScreenCover(item: $store
+                        .scope(state: \.destination?.egk, action: \.destination.egk)) { store in
+                            NavigationStack {
+                                OrderHealthCardListView(store: store)
+                                    .tint(Colors.primary700)
+                                    .navigationViewStyle(StackNavigationViewStyle())
                             }
-                        }
-                        .tint(Colors.primary700)
-                        .navigationViewStyle(StackNavigationViewStyle())
-                    })
+                    }
                 }
                 .onReceive(NotificationCenter.default
                     .publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
@@ -189,7 +173,7 @@ struct CardWallCANView: View {
         }
     }
 
-    private struct WorngCANEnteredWarningView: View {
+    private struct WrongCANEnteredWarningView: View {
         var body: some View {
             HStack(alignment: .center, spacing: 0) {
                 Image(systemName: SFSymbolName.exclamationMark)
@@ -217,16 +201,59 @@ struct CardWallCANView: View {
             .border(Colors.red300, width: 0.5, cornerRadius: 16)
         }
     }
-}
 
-struct CardWallCANView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            NavigationStack {
-                CardWallCANView(
-                    store: CardWallCANDomain.Dummies.store
+    struct CANScanButton: View {
+        @Perception.Bindable var store: StoreOf<CardWallCANDomain>
+        @State var scannedcan: ScanCAN?
+
+        var body: some View {
+            WithPerceptionTracking {
+                TertiaryListButton(
+                    text: L10n.cdwBtnCanScanner2.key,
+                    semiBold: true,
+                    imageName: SFSymbolName.camera,
+                    accessibilityIdentifier: A11y.cardWall.canInput.cdwBtnCanScan
+                ) {
+                    store.send(.showScannerView)
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.horizontal)
+                .fullScreenCover(
+                    isPresented: Binding<Bool>(
+                        get: { store.destination == .scanner },
+                        set: { show in
+                            if !show {
+                                store.send(.resetNavigation)
+                            }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
+                        NavigationStack {
+                            CANCameraScanner(
+                                canScan: $scannedcan,
+                                onSuccessfulScanAction: {
+                                    store.send(.successfulScan)
+                                },
+                                closeAction: { canScan in
+                                    if let canScan = scannedcan {
+                                        store.send(.update(can: canScan.value))
+                                    }
+                                    store.send(.resetNavigation)
+                                }
+                            )
+                        }
+                        .tint(Colors.primary700)
+                        .navigationViewStyle(StackNavigationViewStyle())
+                    }
                 )
             }
         }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        CardWallCANView(store: CardWallCANDomain.Dummies.store)
     }
 }

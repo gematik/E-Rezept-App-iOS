@@ -214,7 +214,7 @@ struct OrderMessageView: View {
 
             for subview in subviews {
                 // get the size of current subview
-                let size = subview.sizeThatFits(.unspecified)
+                let size = subview.sizeThatFits(ProposedViewSize(width: maxWidth - currentRowWidth, height: nil))
                 let elementWidth = size.width + horizontalPadding
                 let elementHeight = size.height
 
@@ -244,7 +244,7 @@ struct OrderMessageView: View {
 
             for subview in subviews {
                 // get the size of current subview
-                let size = subview.sizeThatFits(.unspecified)
+                let size = subview.sizeThatFits(ProposedViewSize(width: maxWidth - currentRowWidth, height: nil))
                 let elementWidth = size.width + horizontalPadding
                 let elementHeight = size.height
 

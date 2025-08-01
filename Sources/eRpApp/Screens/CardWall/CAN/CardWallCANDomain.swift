@@ -55,6 +55,7 @@ struct CardWallCANDomain {
         case showScannerView
         case toggleFlashLight
         case flashLightOff
+        case successfulScan
 
         case resetNavigation
         case egkButtonTapped
@@ -71,13 +72,14 @@ struct CardWallCANDomain {
 
     @Dependency(\.profileBasedSessionProvider) var sessionProvider: ProfileBasedSessionProvider
     @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.feedbackReceiver) var feedbackReceiver
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
             .ifLet(\.$destination, action: \.destination)
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case let .update(can: can):
@@ -128,13 +130,16 @@ struct CardWallCANDomain {
         case .flashLightOff:
             state.isFlashOn = false
             return .none
+        case .successfulScan:
+            feedbackReceiver.hapticFeedbackSuccess()
+            return .none
         }
     }
 }
 
 extension CardWallCANDomain {
     enum Dummies {
-        static let state = State(isDemoModus: true, profileId: UUID(), can: "")
+        static let state = State(isDemoModus: false, profileId: UUID(), can: "")
 
         static let store = storeFor(state)
 

@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import eRpResources
 import Foundation
 @preconcurrency import Nimble
 import XCTest
@@ -274,7 +275,7 @@ final class DiGaUITests: XCTestCase, Sendable {
                 }
 
                 expect(diGaDetails.app.buttons[A11y.digaDetail.digaDtlBtnMainSelectedInsurance].label)
-                    .to(equal("KNAPPSCHAFT"))
+                    .to(equal("Wir fragen den Code an bei: KNAPPSCHAFT"))
             }
         }
     }

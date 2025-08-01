@@ -42,8 +42,13 @@ struct SearchBar: View {
             }
             .padding(7)
             .padding(.horizontal, 25)
-            .background(Colors.systemFillTertiary)
+            .background(Color(.systemBackground))
             .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Colors.textSecondary, lineWidth: 0.5)
+            )
+            .padding(1)
             .accessibility(identifier: A11y.controls.searchBar.ctlTxtSearchBarField)
             .accessibility(label: Text(L10n.ctlTxtSearchBarFieldLabel))
             .overlay(

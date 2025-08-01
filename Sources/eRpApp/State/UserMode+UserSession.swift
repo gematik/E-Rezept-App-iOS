@@ -21,6 +21,7 @@
 //
 
 import AVS
+import BfArM
 import Combine
 import eRpKit
 import Foundation
@@ -59,6 +60,10 @@ extension UserMode: UserSession {
 
     var pharmacyRepository: PharmacyRepository {
         sessionContainer.pharmacyRepository
+    }
+
+    var bfArMService: BfArMService {
+        sessionContainer.bfArMService
     }
 
     var updateChecker: UpdateChecker {

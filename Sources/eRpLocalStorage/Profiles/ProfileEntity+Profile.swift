@@ -59,6 +59,7 @@ extension ProfileEntity {
         userImageData = profile.userImageData
         lastAuthenticated = profile.lastAuthenticated
         // Note: update of erxTasks is set when saving tasks in `save(tasks:)`
+        hideWelcomeDrawerOnMainView = profile.hideWelcomeDrawerOnMainView
         hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
         shouldAutoUpdateNameAtNextLogin = profile.shouldAutoUpdateNameAtNextLogin
         self.gIdEntry = gIdEntry
@@ -105,6 +106,7 @@ extension Profile {
             tasks = []
         }
 
+        let hideWelcomeDrawerOnMainView = entity.hideWelcomeDrawerOnMainView
         let hidePkvConsentDrawerOnMainView = entity.hidePkvConsentDrawerOnMainView
         let shouldAutoUpdateNameAtNextLogin = entity.shouldAutoUpdateNameAtNextLogin
 
@@ -126,6 +128,7 @@ extension Profile {
             userImageData: entity.userImageData,
             lastAuthenticated: entity.lastAuthenticated,
             erxTasks: tasks,
+            hideWelcomeDrawerOnMainView: hideWelcomeDrawerOnMainView,
             hidePkvConsentDrawerOnMainView: hidePkvConsentDrawerOnMainView,
             shouldAutoUpdateNameAtNextLogin: shouldAutoUpdateNameAtNextLogin,
             gIdEntry: gIdEntry

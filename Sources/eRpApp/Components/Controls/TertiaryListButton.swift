@@ -26,6 +26,7 @@ import SwiftUI
 /// sourcery: StringAssetInitialized
 struct TertiaryListButton: View {
     var text: LocalizedStringKey
+    var semiBold = false
     var imageName: String? = SFSymbolName.refresh
     var accessibilityIdentifier: String
     let action: () -> Void
@@ -38,7 +39,7 @@ struct TertiaryListButton: View {
                         .foregroundColor(Colors.primary)
                 }
                 Text(text, bundle: .module)
-                    .font(.subheadline)
+                    .font(semiBold ? Font.subheadline.weight(.semibold) : Font.subheadline)
                     .foregroundColor(Colors.primary)
             }
         }

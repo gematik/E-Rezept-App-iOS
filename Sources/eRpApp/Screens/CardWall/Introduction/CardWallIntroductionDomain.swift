@@ -60,6 +60,7 @@ struct CardWallIntroductionDomain {
         let isNFCReady: Bool
         let profileId: UUID
         var entry: KKAppDirectory.Entry?
+        var insuranceType: Profile.InsuranceType = .unknown
         var loading = false
         @Presents var destination: Destination.State?
     }
@@ -141,6 +142,14 @@ struct CardWallIntroductionDomain {
             )
         case let .response(.profileReceived(.success(profile))):
             state.entry = profile?.gIdEntry
+            state.insuranceType = profile?.insuranceType ?? .unknown
+
+            // skip to selection for initial pkv
+            if state.insuranceType == .pKV, state.entry == nil {
+                state.destination = .extAuth(CardWallExtAuthSelectionDomain.State(
+                    insuranceType: state.insuranceType
+                ))
+            }
             return .none
         case .response(.profileReceived(.failure)):
             return .none
@@ -170,7 +179,9 @@ struct CardWallIntroductionDomain {
         case .destination(.presented(.can(.delegate(.navigateToIntro)))),
              // [REQ:BSI-eRp-ePA:O.Auth_4#3] Present the gID flow for selecting the correct insurance company
              .extAuthTapped:
-            state.destination = .extAuth(CardWallExtAuthSelectionDomain.State())
+            state.destination = .extAuth(CardWallExtAuthSelectionDomain.State(
+                insuranceType: state.insuranceType
+            ))
             return .none
         case .directExtAuthTapped:
             guard let selectedKK = state.entry else { return .none }
@@ -260,7 +271,9 @@ struct CardWallIntroductionDomain {
             resourceHandler.open(url, options: [:]) { _ in }
             return .none
         case .destination(.presented(.alert(.searchKK))):
-            state.destination = .extAuth(CardWallExtAuthSelectionDomain.State())
+            state.destination = .extAuth(CardWallExtAuthSelectionDomain.State(
+                insuranceType: state.insuranceType
+            ))
             return .none
         case .destination(.presented(.can(.delegate(.close)))),
              .destination(.presented(.extAuth(.delegate(.close)))):

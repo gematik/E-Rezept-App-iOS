@@ -42,20 +42,23 @@ struct CardWallCANInputView: View {
                     Text(String(digit))
                         .font(.headline)
                         .fontWeight(.bold)
-                        .foregroundColor(.primary)
+                        .foregroundColor(Colors.systemLabel)
                         .frame(minWidth: 32, maxWidth: 48, minHeight: 56, maxHeight: 64)
-                        .background(Color(.systemGray5))
+                        .background(Colors.systemColorClear)
                         .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Colors.systemLabelSecondary, lineWidth: 0.5)
+                        )
                 }
-                ForEach(min(self.can.count, 6) ..< 6, id: \.self) { index in
+                ForEach(min(self.can.count, 6) ..< 6, id: \.self) { _ in
                     Rectangle()
-                        .fill(Colors.systemGray5)
+                        .fill(Colors.systemColorClear)
                         .frame(minWidth: 32, maxWidth: 48, minHeight: 56, maxHeight: 64)
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(Colors.primary700,
-                                        lineWidth: index == self.can.count ? 0.5 : 0)
+                                .stroke(Colors.systemLabelSecondary, lineWidth: 0.5)
                         )
                 }
             }.accessibility(hidden: true)
@@ -65,8 +68,8 @@ struct CardWallCANInputView: View {
                 .keyboardType(.numberPad)
                 .foregroundColor(.clear)
                 .tint(.clear)
-                .accessibilityHint(Text(L10n.cdwTxtCanTitleHint))
-                .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInput)
+                .accessibilityLabel(Text(L10n.cdwTxtCanInputFieldLabel))
+                .accessibilityIdentifier(A11y.cardWall.canInput.cdwTxtCanInput)
         }
         .onChange(of: can) { newValue in
             can = String(newValue.prefix(6))

@@ -2,6 +2,7 @@
 // DO NOT EDIT
 import Combine
 import Foundation
+import HTTPClient
 import OpenSSL
 import TrustStore
 

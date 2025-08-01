@@ -52,8 +52,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: ERPSnapshotTestCase {
         let sut = CardWallExtAuthSelectionView(
             store: store(for: .init(
                 kkList: Self.testDirectory,
-                error: IDPError.internal(error: .notImplemented),
-                selectedKK: Self.testEntryB
+                error: IDPError.internal(error: .notImplemented)
             ))
         )
 

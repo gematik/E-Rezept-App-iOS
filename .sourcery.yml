@@ -23,7 +23,7 @@ configurations:
     args:
       protocolMockImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp ]
       protocolMockTestableImports: [ eRpFeatures ]
-      autoMockableImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp ]
+      autoMockableImports: [ AVS, BfArM, Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingCpp ]
       autoMockableTestableImports: [ eRpFeatures ]
   - sources: # writes to Tests/eRpKitTests/Mocks/Generated/
       - Sources
@@ -57,10 +57,22 @@ configurations:
       - Templates/Sourcery/Tests/AutoMockable.stencil
     output: Tests/IDPTests
     args:
-      protocolMockImports: [ Combine,Foundation,OpenSSL,TrustStore ]
+      protocolMockImports: [ Combine,Foundation,HTTPClient,OpenSSL,TrustStore ]
       protocolMockTestableImports: [ IDP ]
-      autoMockableImports: [ Combine,Foundation,OpenSSL,TrustStore ]
+      autoMockableImports: [ Combine,Foundation,HTTPClient,OpenSSL,TrustStore ]
       autoMockableTestableImports: [ IDP ]
+  - sources: # writes to Tests/IDPLiveTests/Mocks/Generated/
+      - Sources
+      - Tests/IDPLiveTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+      - Templates/Sourcery/Tests/AutoMockable.stencil
+    output: Tests/IDPLiveTests
+    args:
+      protocolMockImports: [ Combine,Foundation,HTTPClient,IDP,OpenSSL,TrustStore ]
+      protocolMockTestableImports: [ IDPLive ]
+      autoMockableImports: [ Combine,Foundation,HTTPClient,IDP,OpenSSL,TrustStore ]
+      autoMockableTestableImports: [ IDPLive ]
   - sources: # writes to Tests/IntegrationTests/Mocks/Generated/
       - Sources
       - Tests/IntegrationTests

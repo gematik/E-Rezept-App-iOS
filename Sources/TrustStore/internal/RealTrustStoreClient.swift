@@ -28,7 +28,7 @@ class RealTrustStoreClient {
     private let serverURL: URL
     private let httpClient: HTTPClient
 
-    init(serverURL: URL, httpClient: HTTPClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)) {
+    init(serverURL: URL, httpClient: HTTPClient) {
         self.serverURL = serverURL
         self.httpClient = httpClient
     }

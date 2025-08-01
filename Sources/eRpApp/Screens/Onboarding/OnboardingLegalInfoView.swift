@@ -39,41 +39,37 @@ struct OnboardingLegalInfoView: View {
                             .padding(.bottom)
 
                         VStack {
-                            HStack {
-                                Button(
-                                    action: { store.send(.setShowUse(true)) },
-                                    label: {
-                                        Text(L10n.onbTxtTermsOfUseLink)
-                                            .font(Font.body.weight(.semibold))
-                                            .multilineTextAlignment(.leading)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
-                                            .padding()
-                                            .foregroundColor(Colors.primary700)
-                                    }
-                                )
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .buttonStyle(PrimaryBorderButtonStyle())
-                            }
+                            Button(
+                                action: { store.send(.setShowPrivacy(true)) },
+                                label: {
+                                    Text(L10n.onbTxtTermsOfPrivacyLink)
+                                        .font(Font.body.weight(.semibold))
+                                        .multilineTextAlignment(.leading)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
+                                        .padding()
+                                        .foregroundColor(Colors.primary700)
+                                }
+                            )
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .buttonStyle(PrimaryBorderButtonStyle())
 
-                            HStack {
-                                Button(
-                                    action: { store.send(.setShowPrivacy(true)) },
-                                    label: {
-                                        Text(L10n.onbTxtTermsOfPrivacyLink)
-                                            .font(Font.body.weight(.semibold))
-                                            .multilineTextAlignment(.leading)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
-                                            .padding()
-                                            .foregroundColor(Colors.primary700)
-                                    }
-                                )
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .buttonStyle(PrimaryBorderButtonStyle())
-                            }
+                            Button(
+                                action: { store.send(.setShowUse(true)) },
+                                label: {
+                                    Text(L10n.onbTxtTermsOfUseLink2)
+                                        .font(Font.body.weight(.semibold))
+                                        .multilineTextAlignment(.leading)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
+                                        .padding()
+                                        .foregroundColor(Colors.primary700)
+                                }
+                            )
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .buttonStyle(PrimaryBorderButtonStyle())
                         }
                         .padding(.vertical, 16)
                     }
@@ -145,6 +141,8 @@ extension OnboardingLegalInfoView {
                     .multilineTextAlignment(.leading)
                     .font(Font.title.weight(.bold))
                     .accessibility(identifier: A18n.onboarding.legalInfo.onbTxtLegalInfoTitle)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityRemoveTraits(.isStaticText)
                     .padding(.top, 22)
 
                 Text(L10n.onbLegTxtSubtitle)

@@ -1,18 +1,59 @@
-# 1.32.0
+# Release 1.33.0
 
-### added (3 changes)
+### Features (4 changes)
+
+- iOS Version Deprecation View
+- Add new Logos
+- Add url to sharing prescriptions
+- Increase password security by introducing an entry delay
+
+### Bug fixes (7 changes)
+
+- Fix DiGA survey to only show if user has seen DiGA prescription
+- Fixed voice over for delete option in PrescriptionDetailView
+- E-Mail link in data protection policy does now open in Mail App
+- Fix contrasts and accessibility for onboarding
+- Fix pharmacies not respecting specialities in all cases
+- Fix profile icon changes were not reflected on MainView
+- Fix CANCameraScanner accessibility and display issues
+
+### Internal changes (5 changes)
+
+- Update Dependencies & fix redirect message for moved repositories
+- Add new module for handling localization, images & identifier
+- Cleanup Fastfile and add new "prepare_release" lane to automate the manual part of the release
+- Change base Xcode version to 16.4
+- Change list_requirements to use fastlane plugin containing a refactored version of the lane
+
+### Added (1 change)
+
+- Add BfArmClient, Error and Session to handle the communication to the new endpoint
+
+### changed (8 changes)
+
+- Change insurance in profile settings
+- Changed GID list design and added filter for insurance type
+- Change welcome drawer to select GKV PKV 
+- Change help screen for PKV users
+- Make TextField for delivery instructions in the order flow adaptable in
+- Align HealthCardPasswordReadCardView with CardWallReadCardView
+- Refactor CardWallCanView
+- Add navigation icons to buttons
+
+### other (2 changes)
+
+- Separate IDP API from live implementation
+- Separate HTTPClient from live implementation
+
+# Release 1.32.0
+
+### Features (3 changes)
 
 - Add DiGaInsuranceListView/Domain to change/select an Insurance for DiGa
 - Add UITests for DiGA screens
-- Add new entry for accessibility statement in legal info settings
+- Related to ERA-12699: add new entry for accessibility statement in legal info settings
 
-### changed (3 changes)
-
-- New analytics screen layout
-- New welcome screen layout
-- New legal info screen layout
-
-### fixed (10 changes)
+### Bug fixes (10 changes)
 
 - Fix DiGaUITests and wrong button shows when DiGa is not in request state
 - Fix failing Biometrics could show loggedIn despite being unsuccessful
@@ -21,54 +62,60 @@
 - Fix login not allowing gID on PKV ChargeItemList screen
 - Fix refresh not triggering after gID login.
 - Fix the self service portal link within pharmacy details
-- Fix pdf attachements for exported PDFs are not visible for acrobat reader
-- Fix ERA-12705 After exiting Demomode, no profile is selected and the demo mode...
+- Fix pdf attachments for exported PDFs are not visible for acrobat reader
+- Fix ERA-12705 After exiting demo mode, no profile is selected and the demo mode...
 - Fixed acceptedUntil display date for DiGa prescriptions
+
+### Internal changes (2 changes)
+
+- Undo scan retries for snapshot tests
+- Fix integration tests for IDP requiring predefined existing KVNR
+
+### changed (3 changes)
+
+- New analytics screen layout
+- New welcome screen layout
+- New legal info screen layout
 
 ### removed (1 change)
 
 - Remove last Fasttrack fragments.
 
-### internal (2 changes)
+# Release 1.31.0
 
-- Undo scan retries for snapshot tests
-- Fix integration tests for idp requiring predefined existing Test-KVNR
+### Features (8 changes)
 
-# 1.31.0 (2025-06-18)
-
-### added (4 changes)
-
-- Add Support for DiGA Prescriptions
-- Add Survery for DiGAs with a badge after receiving one
-- Add swipe to delete items of MedicationReminderListView
+- Swipe to delete items of MedicationReminderListView
+- Add DiGa Survey badge after successfully retrieving a DiGa Code
+- Add TechnicalDetails screen for DiGas
+- Add auto archive for DiGas, Bugfixes
 - Extend MedicationReminder Setup to use selectable Weekdays
+- Add FHIRVZD SPM module
+- Add update func for DiGaInfo, set DiGaState with erxTask.status, UI ,Snapshottests
+- Add DiGaDetailView, Domain and other subview for DiGa-UI
 
-### changed (5 changes)
+### Bug fixes (6 changes)
 
-- Change pharmacy info text for FHIRVZD
-- Synchronize FHIRVZD calls with android, add smarter paging for FHIRVZD
-- Enable FHIRVZD by default, fix minor diga issues
-- Rework accessibility of AppAuthenticationView
+- Fix ERA-12704 PIN korrigieren Button not working on iPhone 8
+- Fix CardWall Login when request
+- Fixed error handling for redeem flow
+- Fixed navigation bar background color when no service option is selected
 - Use pkv flag in KKAppDirectory.Entry to mark insurant as PKV
+- Related to ERA-11647: fix mandatory delivery fields to be enforced for shipment and courier
 
-### fixed (4 changes)
-
-- Fix PIN Button not working on iPhone 8
-- Fix error handling for redeem flow
-- Fix navigation bar background color when no service option is selected
-- Fix mandatory delivery fields to be enforced for shipment and courier
-
-### internal (3 changes)
+### Internal changes (2 changes)
 
 - Change Xcode version to 16.3
 - Update TCA and snapshot testing dependencies
-- Add FHIRVZD Module
 
-# Release 1.30.1
+### changed (6 changes)
 
-### fixed
-
-- Fix navigation regressions for iOS 16
+- Change pharmacy info text for FHIRVZD
+- Synchronize FHIRVZD calls with android, add smarter paging for FHIRVZD
+- Update localization
+- Enable FHIRVZD by default, fix minor DiGa issues
+- Change FHIR VZD token expiration and cleanup
+- Rework accessibility of AppAuthenticationView
 
 # Release 1.30.0
 

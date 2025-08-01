@@ -32,9 +32,10 @@ extension JWE {
         let ephemeralPublicKey: JWK
     }
 
-    enum Algorithm {
-        // swiftlint:disable:next identifier_name
-        case ecdh_es(KeyExchangeContext)
+    /// JWE Algorithm for key exchange and encryption
+    public enum Algorithm {
+        /// ECDH-ES algorithm with specified key exchange context
+        case ecdh_es(KeyExchangeContext) // swiftlint:disable:this identifier_name
 
         func encryptionContext() throws -> EncryptionContext {
             switch self {
@@ -43,9 +44,11 @@ extension JWE {
             }
         }
 
-        enum KeyExchangeContext {
+        /// Key exchange context for different cryptographic curves
+        public enum KeyExchangeContext {
             // [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
             // [REQ:gemSpec_Krypt:GS-A_4367] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
+            /// BrainpoolP256r1 key exchange context
             case bpp256r1(BrainpoolP256r1.KeyExchange.PublicKey,
                           keyPairGenerator: () throws -> BrainpoolP256r1.KeyExchange.PrivateKey
                               // [REQ:BSI-eRp-ePA:O.Cryp_3#4] Brainpool key generator
@@ -82,6 +85,7 @@ extension JWE {
 }
 
 extension JWE {
+    /// Decryption algorithm for JWE
     enum DecryptionAlgorithm {
         case plain(SymmetricKey)
     }

@@ -26,7 +26,15 @@ import Foundation
 import OpenSSL
 
 extension JWE {
-    static func nest(
+    /// Nest a JWT inside a JWE for secure transport
+    /// - Parameters:
+    ///   - jwt: JWT to be nested
+    ///   - publicKey: BrainpoolP256r1 public key for encryption
+    ///   - cryptoBox: IDPCrypto instance containing encryption parameters
+    ///   - expiry: Optional expiry date for the JWE
+    /// - Returns: JWE containing the nested JWT
+    /// - Throws: IDPError if nesting fails
+    public static func nest(
         jwt: JWT,
         with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
         using cryptoBox: IDPCrypto,
@@ -59,7 +67,9 @@ extension JWE {
         return jsonEncoder
     }()
 
-    enum Encryption {
+    /// JWE encryption algorithms
+    public enum Encryption {
+        /// AES-256-GCM encryption
         case a256gcm
 
         func encrypt(payload: Data,

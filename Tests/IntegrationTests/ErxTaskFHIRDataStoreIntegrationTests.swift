@@ -28,8 +28,10 @@ import eRpRemoteStorage
 import FHIRClient
 import Foundation
 import HTTPClient
+import HTTPClientLive
 import IdentifiedCollections
 import IDP
+import IDPLive
 import Nimble
 import Pharmacy
 import TestUtils
@@ -103,7 +105,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             urlSessionConfiguration: .ephemeral,
             interceptors: [
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
-                idpSession.httpInterceptor(delegate: nil),
+                IDPInterceptor(session: idpSession, delegate: nil),
                 LoggingInterceptor(log: .body),
                 vauSession.provideInterceptor(),
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
@@ -183,7 +185,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             urlSessionConfiguration: .ephemeral,
             interceptors: [
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
-                idpSession.httpInterceptor(delegate: nil),
+                IDPInterceptor(session: idpSession, delegate: nil),
                 LoggingInterceptor(log: .body),
                 ExceptionInterceptor(order: order),
                 vauSession.provideInterceptor(),

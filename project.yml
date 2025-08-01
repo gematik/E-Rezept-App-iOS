@@ -60,7 +60,9 @@ schemes:
         - package: eRpKit/eRpRemoteStorageTests
         - package: eRpKit/PharmacyTests
         - package: eRpKit/IDPTests
+        - package: eRpKit/IDPLiveTests
         - package: eRpKit/HTTPClientTests
+        - package: eRpKit/HTTPClientLiveTests
         - package: eRpKit/FHIRClientTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
@@ -80,7 +82,9 @@ schemes:
         - package: eRpKit/eRpRemoteStorageTests
         - package: eRpKit/PharmacyTests
         - package: eRpKit/IDPTests
+        - package: eRpKit/IDPLiveTests
         - package: eRpKit/HTTPClientTests
+        - package: eRpKit/HTTPClientLiveTests
         - package: eRpKit/FHIRClientTests
         - package: eRpKit/TrustStoreTests
         - package: eRpKit/VAUClientTests
@@ -141,11 +145,6 @@ targets:
   eRpApp:
     type: application
     platform: iOS
-    preBuildScripts:
-      - script: "mint run swiftgen"
-        name: Swiftgen
-        shell: "/bin/sh -l"
-        # basedOnDependencyAnalysis: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ${GEM_PRODUCT_BUNDLE_IDENTIFIER}
@@ -198,11 +197,12 @@ targets:
       - path: Tests/eRpAppUITests/Support/Info.plist
         buildPhase: none
       - path: Tests/eRpAppUITests/Tests
-      - path: Sources/eRpApp/Generated/Accessibility+Generated.swift
     dependencies:
       - target: eRpApp
       - package: Nimble
       - package: SnapshotTesting
+      - package: eRpKit
+        product: eRpFeatures
   eRpAppStoreScreenshots:
     type: bundle.unit-test
     platform: iOS

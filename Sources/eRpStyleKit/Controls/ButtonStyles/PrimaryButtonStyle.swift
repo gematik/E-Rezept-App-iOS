@@ -81,8 +81,12 @@ extension ButtonStyle where Self == PrimaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primary(isEnabled:,isDestructive: false))`` modifier.
-    public static func primary(isEnabled: Bool = true, isDestructive: Bool = false) -> PrimaryButtonStyle {
-        PrimaryButtonStyle(enabled: isEnabled, destructive: isDestructive)
+    public static func primary(
+        isEnabled: Bool = true,
+        isDestructive: Bool = false,
+        width: PrimaryButtonStyle.Width = .infinite
+    ) -> PrimaryButtonStyle {
+        PrimaryButtonStyle(enabled: isEnabled, destructive: isDestructive, width: width)
     }
 
     /// A button style that applies fg and bg color, as well as border radius, hugging its contents.

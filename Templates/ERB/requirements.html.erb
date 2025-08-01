@@ -5,9 +5,9 @@
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>requirements</title>
-  <link rel="stylesheet" href="Templates/ERB/prism.css" />
-  <link rel="stylesheet" href="Templates/ERB/audit_style.css" />
-  <script src="Templates/ERB/prism.js"></script>
+  <link rel="stylesheet" href="./prism.css" />
+  <link rel="stylesheet" href="./audit_style.css" />
+  <script src="./prism.js"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -32,7 +32,7 @@ window.addEventListener( 'afterprint', () => {
 <li><a href="#missing_requirements" id="toc-missing-requirements">Known Missing Requirements References</a>
 <li><a href="#requirements" id="toc-requirements">Requirements</a>
 <ul>
-<% SORTED_SPECS.each do |spec_name, afos| %>
+<% sorted_specs.each do |spec_name, afos| %>
 
 <li><a href="#<%= spec_name %>" id="toc-<%= spec_name %>"><%= spec_name %></a>
   <ul>
@@ -49,20 +49,20 @@ window.addEventListener( 'afterprint', () => {
 
 <h1 id="missing_requirements">Known Missing Requirements References:</h1>
 
-<%= REQUIRED_AFOS %>
+<%= missing_afos %>
 
-<h1 id="requirements">Requirements</h1><% SORTED_SPECS.each do |spec_name, afos| %>
+<h1 id="requirements">Requirements</h1><% sorted_specs.each do |spec_name, afos| %>
 
 <h2 id="<%= spec_name %>"><%= spec_name %></h2>
 
 <% afos.each do |afo_name, details| %>
 
 <h3 id="<%= afo_name.sub(".", "") %>"><%= afo_name %></h3>
-<% if AFOS[afo_name] %>
+<% if original_afos[afo_name] %>
 
 <h4>Requirement <a href="https://gemspec.gematik.de/docs/gemSpec/<%= spec_name %>/latest/index.html#<%= afo_name %>">Gemspec Pages</a>:</h4>
 
-<%= AFOS[afo_name] %>
+<%= original_afos[afo_name] %>
 
 <% end %>
 <h4>Notes and Code:</h4>

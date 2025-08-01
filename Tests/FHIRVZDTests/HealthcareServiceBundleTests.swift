@@ -42,7 +42,7 @@ struct HealthcareServiceBundleTests {
         expect(parsedLocation.id) == "7025fc46-9809-4ee0-abb9-9e248798e5eb"
         expect(parsedLocation.telematikID) == "3-17.2.1024109000.518"
         expect(parsedLocation.name) == "Apotheke im real,-"
-        expect(parsedLocation.types) == [.delivery, .outpharm]
+        expect(parsedLocation.types) == [.outpharm, .delivery]
         // Address
         expect(parsedLocation.address?.street).to(equal("Gütersloher Str. 122"))
         expect(parsedLocation.address?.houseNumber).to(beNil())

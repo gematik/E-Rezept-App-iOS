@@ -75,13 +75,15 @@ struct CardWallLoginOptionView: View {
 
                 GreyDivider()
 
-                PrimaryTextButton(text: L10n.cdwBtnBiometryContinue,
-                                  a11y: A11y.cardWall.loginOption.cdwBtnLoginOptionContinue,
-                                  isEnabled: store.state.selectedLoginOption.hasSelection) {
+                Button {
                     store.send(.advance)
+                } label: {
+                    Text(L10n.cdwBtnBiometryContinue)
+                        .accessibilityIdentifier(A11y.cardWall.loginOption.cdwBtnLoginOptionContinue)
+                        .accessibilityLabel(Text(L10n.cdwBtnBiometryContinueLabel))
                 }
-                .accessibility(label: Text(L10n.cdwBtnBiometryContinueLabel))
-                .padding([.bottom, .leading, .trailing])
+                .buttonStyle(.primary(isEnabled: store.selectedLoginOption.hasSelection, width: .wideHugging))
+                .frame(maxWidth: .infinity, alignment: .center)
                 .navigationDestination(
                     item: $store.scope(state: \.destination?.readCard, action: \.destination.readCard)
                 ) { store in
@@ -166,15 +168,14 @@ extension CardWallLoginOptionView.PrivacyWarningViewContainer {
 
                 GreyDivider()
 
-                PrimaryTextButton(
-                    text: L10n.cdwBtnBiometrySecurityWarningAccept,
-                    a11y: A11y.cardWall.loginOption.cdwBtnLoginOptionSecurityWarningAccept
-                ) {
+                Button {
                     confirm()
+                } label: {
+                    Text(L10n.cdwBtnBiometrySecurityWarningAccept)
+                        .accessibilityIdentifier(A11y.cardWall.loginOption.cdwBtnLoginOptionSecurityWarningAccept)
                 }
-                .accessibility(label: Text(L10n.cdwBtnBiometryContinueLabel))
-                .padding(.horizontal)
-                .padding(.bottom)
+                .buttonStyle(.primary(isEnabled: true, width: .wideHugging))
+                .frame(maxWidth: .infinity, alignment: .center)
             }
         }
     }

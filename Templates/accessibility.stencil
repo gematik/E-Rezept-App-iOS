@@ -55,7 +55,7 @@ import Foundation
 {% macro valueBlock value metadata key %}
   {% set propertyName %}{{key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}{% endset %}
   {% if metadata.type == "String" %}
-      static let {{value|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = "{{ value }}"{{\n}}
+      {{accessModifier}} static let {{value|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = "{{ value }}"{{\n}}
   {% elif metadata.type == "Optional" %}
     nil
   {% elif metadata.type == "Array" and value %}

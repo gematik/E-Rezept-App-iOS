@@ -22,6 +22,7 @@
 //
 
 import AVS
+import BfArM
 import Combine
 @testable import eRpFeatures
 import eRpKit
@@ -38,6 +39,7 @@ import VAUClient
 // sourcery:begin: AutoMockable
 extension JWTSigner {}
 extension SearchHistory {}
+extension BfArMService {}
 // sourcery:end
 
 // sourcery:begin: ProtocolMock

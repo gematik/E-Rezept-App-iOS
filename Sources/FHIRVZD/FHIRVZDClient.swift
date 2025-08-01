@@ -24,6 +24,7 @@ import Dependencies
 import DependenciesMacros
 import Foundation
 import HTTPClient
+import HTTPClientLive
 
 /// FHIR VZD Client interacts with the authorization endpoints of the service
 @DependencyClient

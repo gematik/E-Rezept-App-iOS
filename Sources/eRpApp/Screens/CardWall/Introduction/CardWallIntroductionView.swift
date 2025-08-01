@@ -45,59 +45,55 @@ struct CardWallIntroductionView: View {
                             .padding(.bottom, 8)
 
                         Text(L10n.cdwTxtIntroSubheader)
-                            .font(.headline)
+                            .font(.subheadline)
                             .foregroundColor(Colors.systemLabelSecondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
 
                         VStack(spacing: 0) {
-                            if store.isNFCReady {
-                                Text(L10n.cdwBtnIntroRecommendation)
-                                    .foregroundColor(Colors.primary)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.horizontal)
-                                    .font(.body.bold())
-                            }
+                            if store.insuranceType != .pKV {
+                                if store.isNFCReady {
+                                    Text(L10n.cdwBtnIntroRecommendation)
+                                        .foregroundColor(Colors.primary)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.horizontal)
+                                        .font(.body.bold())
+                                }
 
-                            Button(action: {
-                                store.send(.advance)
-                            }, label: {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(L10n.cdwBtnIntroNfc)
-                                            .font(Font.body.weight(.medium))
-                                            .foregroundColor(!store.isNFCReady ? Colors.disabled : Colors.systemLabel)
+                                Button(action: {
+                                    store.send(.advance)
+                                }, label: {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(L10n.cdwBtnIntroNfc)
+                                                .font(Font.body.weight(.medium))
+                                                .foregroundColor(!store.isNFCReady ? Colors.disabled : Colors
+                                                    .systemLabel)
 
-                                        Text(!store.isNFCReady ? L10n.cdwBtnSubintroNonfc : L10n.cdwBtnSubintroNfc)
-                                            .font(.subheadline)
-                                            .foregroundColor(Colors.systemLabelSecondary)
+                                            Text(!store.isNFCReady ? L10n.cdwBtnSubintroNonfc : L10n.cdwBtnSubintroNfc)
+                                                .font(.subheadline)
+                                                .foregroundColor(Colors.systemLabelSecondary)
+                                        }
+                                        .multilineTextAlignment(.leading)
+
+                                        Spacer(minLength: 8)
+                                        Image(systemName: SFSymbolName.rightDisclosureIndicator)
+                                            .font(Font.headline.weight(.semibold))
+                                            .foregroundColor(store.isNFCReady ? Colors.primary : Colors
+                                                .systemLabelTertiary)
+                                            .padding(8)
                                     }
-                                    .multilineTextAlignment(.leading)
-
-                                    Spacer(minLength: 8)
-                                    Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                                        .font(Font.headline.weight(.semibold))
-                                        .foregroundColor(store.isNFCReady ? Colors.primary : Colors.systemLabelTertiary)
-                                        .padding(8)
-                                }
-                                .padding()
-                            })
-                                .buttonStyle(DefaultButtonStyle())
-                                .background(Colors.systemBackgroundTertiary)
-                                .border(store.isNFCReady ? Colors.primary : Colors.separator,
-                                        width: store.isNFCReady ? 2.0 : 0.5,
-                                        cornerRadius: 16)
-                                .padding(.bottom)
-                                .disabled(!store.isNFCReady)
-                                .navigationDestination(
-                                    item: $store.scope(state: \.destination?.can, action: \.destination.can)
-                                ) { store in
-                                    CardWallCANView(store: store)
-                                }
-                                .navigationDestination(
-                                    item: $store.scope(state: \.destination?.extAuth, action: \.destination.extAuth)
-                                ) { store in
-                                    CardWallExtAuthSelectionView(store: store)
-                                }
+                                    .padding()
+                                })
+                                    .buttonStyle(DefaultButtonStyle())
+                                    .background(Colors.systemBackgroundTertiary)
+                                    .border(store.isNFCReady ? Colors.primary : Colors.separator,
+                                            width: store.isNFCReady ? 2.0 : 0.5,
+                                            cornerRadius: 16)
+                                    .padding(.bottom)
+                                    .disabled(!store.isNFCReady)
+                            }
 
                             if let entry = store.entry {
                                 ZStack(alignment: .center) {
@@ -173,35 +169,39 @@ struct CardWallIntroductionView: View {
                         .padding()
                     }
 
-                    VStack(alignment: .leading) {
-                        Text(L10n.cdwTxtIntroFootnote)
-                            .font(.subheadline)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .padding([.leading, .trailing])
+                    if store.insuranceType == .pKV {
+                        Spacer()
+                    } else {
+                        VStack(alignment: .leading) {
+                            Text(L10n.cdwTxtIntroFootnote)
+                                .font(.subheadline)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                                .padding([.leading, .trailing])
 
-                        Button(action: {
-                            store.send(.egkButtonTapped)
-                        }, label: {
-                            Text(L10n.cdwBtnIntroFootnote)
-                        })
+                            Button(action: {
+                                store.send(.egkButtonTapped)
+                            }, label: {
+                                Text(L10n.cdwBtnIntroFootnote)
+                            })
 
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .padding()
-                            .foregroundColor(Colors.primary)
-                            .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
-                            .fullScreenCover(
-                                item: $store.scope(state: \.destination?.egk, action: \.destination.egk),
-                                onDismiss: {
-                                    store.send(.resetNavigation)
-                                },
-                                content: { store in
-                                    NavigationStack {
-                                        OrderHealthCardListView(store: store)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .padding()
+                                .foregroundColor(Colors.primary)
+                                .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
+                                .fullScreenCover(
+                                    item: $store.scope(state: \.destination?.egk, action: \.destination.egk),
+                                    onDismiss: {
+                                        store.send(.resetNavigation)
+                                    },
+                                    content: { store in
+                                        NavigationStack {
+                                            OrderHealthCardListView(store: store)
+                                        }
+                                        .tint(Colors.primary700)
+                                        .navigationViewStyle(StackNavigationViewStyle())
                                     }
-                                    .tint(Colors.primary700)
-                                    .navigationViewStyle(StackNavigationViewStyle())
-                                }
-                            )
+                                )
+                        }
                     }
                 }
                 .navigationBarItems(
@@ -211,6 +211,16 @@ struct CardWallIntroductionView: View {
                     .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
                     .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
                 )
+                .navigationDestination(
+                    item: $store.scope(state: \.destination?.can, action: \.destination.can)
+                ) { store in
+                    CardWallCANView(store: store)
+                }
+                .navigationDestination(
+                    item: $store.scope(state: \.destination?.extAuth, action: \.destination.extAuth)
+                ) { store in
+                    CardWallExtAuthSelectionView(store: store)
+                }
             }
             .task {
                 await store.send(.task).finish()

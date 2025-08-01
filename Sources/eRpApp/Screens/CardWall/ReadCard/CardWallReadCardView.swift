@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import AVKit
 import Combine
 import ComposableArchitecture
 import eRpStyleKit
@@ -67,10 +66,10 @@ struct CardWallReadCardView: View {
                         }
                     }
                 }
-                .buttonStyle(.primary(isEnabled: store.output.nextButtonEnabled))
+                .buttonStyle(.primary(isEnabled: store.output.nextButtonEnabled, width: .wideHugging))
                 .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcNext)
                 .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
-                .padding(.vertical)
+                .padding(.vertical, 8)
             }
             .demoBanner(isPresented: store.isDemoModus) {
                 Text(L10n.cdwTxtRcDemoModeInfo)
@@ -136,6 +135,7 @@ struct CardWallReadCardView: View {
                     .aspectRatio(contentMode: .fit)
                     .padding(.top, 50)
                     .padding(.trailing, 35)
+                    .accessibilityLabel(L10n.cdwTxtRcImageLabel)
             }
         }
     }
@@ -157,6 +157,5 @@ struct CardWallReadCardView_Previews: PreviewProvider {
                 store: CardWallReadCardDomain.Dummies.store
             )
         }
-        .previewDevice("iPhone 11")
     }
 }

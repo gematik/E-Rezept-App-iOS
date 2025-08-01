@@ -143,6 +143,7 @@ extension Asset.InsuranceLogo {
         Asset.InsuranceLogo._8010000000001,
         Asset.InsuranceLogo._8010000000003,
         Asset.InsuranceLogo._8010000000006,
+        Asset.InsuranceLogo._8010000000007,
         Asset.InsuranceLogo._8010000000008,
         Asset.InsuranceLogo._8010000000011,
         Asset.InsuranceLogo._8010000000012,
@@ -226,6 +227,10 @@ extension Asset.InsuranceLogo {
         Asset.InsuranceLogo._925920000033,
         Asset.InsuranceLogo._925920000034,
         Asset.InsuranceLogo._925920000035,
+        Asset.InsuranceLogo._925920000037,
+        Asset.InsuranceLogo._925920000043,
+        Asset.InsuranceLogo._925920000044,
+        Asset.InsuranceLogo._925920000047,
         Asset.InsuranceLogo.fallback,
     ]
 }

@@ -156,10 +156,7 @@ final class MainViewSnapshotTests: ERPSnapshotTestCase {
 
     func testMainView_WelcomeDrawer() {
         let sut =
-            WelcomeDrawerView(store: store(for: MainDomain.State(
-                prescriptionListState: .init(),
-                horizontalProfileSelectionState: .init()
-            )))
+            InsuranceDrawerView(root: .main) {} gkvInsuredAction: {} pkvInsuredAction: {}
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())

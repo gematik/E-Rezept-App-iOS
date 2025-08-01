@@ -42,6 +42,7 @@ struct HealthCardPasswordCanDomain {
     enum Action: Equatable {
         case updateCan(String)
         case showScannerView
+        case successfulScan
 
         case advance
         case resetNavigation
@@ -64,6 +65,8 @@ struct HealthCardPasswordCanDomain {
         case scanner
     }
 
+    @Dependency(\.feedbackReceiver) var feedbackReceiver
+
     var body: some Reducer<State, Action> {
         Reduce(self.core)
             .ifLet(\.$destination, action: \.destination)
@@ -77,6 +80,9 @@ struct HealthCardPasswordCanDomain {
             return .none
         case .showScannerView:
             state.destination = .scanner
+            return .none
+        case .successfulScan:
+            feedbackReceiver.hapticFeedbackSuccess()
             return .none
 
         case .advance:

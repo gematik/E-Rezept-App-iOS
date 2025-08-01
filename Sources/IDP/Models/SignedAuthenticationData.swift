@@ -31,6 +31,18 @@ public struct SignedAuthenticationData {
     /// Signed authentication data that is encrypted and sent to the server
     public let signedAuthenticationData: JWT
 
+    /// Initialize SignedAuthenticationData with challenge and signed data
+    /// - Parameters:
+    ///   - originalChallenge: Original IDP challenge session
+    ///   - signedAuthenticationData: JWT containing signed authentication data
+    public init(
+        originalChallenge: IDPChallengeSession,
+        signedAuthenticationData: JWT
+    ) {
+        self.originalChallenge = originalChallenge
+        self.signedAuthenticationData = signedAuthenticationData
+    }
+
     /// Serialize the signedChallenge
     ///
     /// - Returns: ASCII Encoded String
@@ -38,8 +50,14 @@ public struct SignedAuthenticationData {
         signedAuthenticationData.serialize()
     }
 
-    func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
-                   using cryptoBox: IDPCrypto) throws -> JWE {
+    /// Encrypt the signed authentication data using the provided public key
+    /// - Parameters:
+    ///   - publicKey: BrainpoolP256r1 public key for encryption
+    ///   - cryptoBox: IDPCrypto instance containing encryption parameters
+    /// - Returns: JWE containing the encrypted signed authentication data
+    /// - Throws: IDPError if encryption fails
+    public func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
+                          using cryptoBox: IDPCrypto) throws -> JWE {
         // [REQ:BSI-eRp-ePA:O.Cryp_1#3] Signature via ecdh ephemeral-static
         // [REQ:BSI-eRp-ePA:O.Cryp_4#4] one time usage for JWE ECDH-ES Encryption
         let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(

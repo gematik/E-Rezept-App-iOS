@@ -46,30 +46,69 @@ struct AppAuthenticationBiometricPasswordDomain {
         var showPassword = false
         var password: String = ""
         var lastMatchResultSuccessful: Bool?
+        // Password delay logic
+        var passwordDelay: TimeInterval = 0
+        var passwordDelayInt: Int {
+            Int(ceil(passwordDelay))
+        }
+
+        var passwordDelayIsActive: Bool {
+            passwordDelayInt > 0
+        }
+
+        var showUnsuccessfulAttemptMessage: Bool {
+            !(lastMatchResultSuccessful ?? true) || passwordDelayIsActive
+        }
+
+        var unsuccessfulAttemptMessage: String {
+            switch (lastMatchResultSuccessful ?? true, passwordDelayIsActive) {
+            case (true, true):
+                return L10n.authTxtPleaseRetryWithDelay(passwordDelayInt).text
+            case (false, true):
+                return L10n.authTxtPasswordFailurePleaseRetryWithDelay(passwordDelayInt).text
+            case (false, false):
+                return L10n.authTxtPasswordFailure.text
+            case (true, false):
+                return ""
+            }
+        }
     }
 
     enum Action: Equatable {
+        case task
         case destination(PresentationAction<Destination.Action>)
-
         case startAuthenticationChallenge
         case switchToPassword(Bool)
         case authenticationChallengeResponse(AuthenticationChallengeProviderResult)
         case loginButtonTapped
         case setPassword(String)
         case passwordVerificationReceived(Bool)
+        // Password delay actions
+        case currentPasswordDelayReceived(TimeInterval?)
+        case passwordDelayTimerTick
     }
+
+    enum CancelID { case passWordDelayTimer }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
+    @Dependency(\.continuousClock) var clock
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
             .ifLet(\.$destination, action: \.destination)
     }
 
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
     func core(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
+        case .task:
+            return .run { send in
+                // Password delay listener
+                let delay = try? appSecurityManager.currentPasswordDelay()
+                await send(.currentPasswordDelayReceived(delay))
+            }
         case .startAuthenticationChallenge:
             return .publisher(
                 authenticationChallengeProvider
@@ -96,14 +135,41 @@ struct AppAuthenticationBiometricPasswordDomain {
                 return Effect.send(.passwordVerificationReceived(false))
             }
             return Effect.send(.passwordVerificationReceived(success))
-
         case let .passwordVerificationReceived(isLoggedIn):
             state.lastMatchResultSuccessful = isLoggedIn
-            return .none
+            if isLoggedIn {
+                try? appSecurityManager.resetPasswordDelay()
+                return .none
+            } else {
+                try? appSecurityManager.registerFailedPasswordAttempt()
+                let delay = try? appSecurityManager.currentPasswordDelay()
+                return .run { send in
+                    await send(.currentPasswordDelayReceived(delay))
+                }
+            }
         case let .switchToPassword(bool):
             state.showPassword = bool
             return .none
         case .destination:
+            return .none
+        // Password delay logic
+        case let .currentPasswordDelayReceived(delay):
+            guard let delay else { return .none }
+            state.passwordDelay = delay
+            if delay > 0 {
+                return .run { send in
+                    for await _ in self.clock.timer(interval: .seconds(1)) {
+                        await send(.passwordDelayTimerTick)
+                    }
+                }
+                .cancellable(id: CancelID.passWordDelayTimer, cancelInFlight: true)
+            }
+            return .none
+        case .passwordDelayTimerTick:
+            state.passwordDelay -= 1
+            if state.passwordDelay <= 0 {
+                return .cancel(id: CancelID.passWordDelayTimer)
+            }
             return .none
         }
     }

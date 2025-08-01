@@ -2,6 +2,7 @@
 // DO NOT EDIT
 
 import AVS
+import BfArM
 import Combine
 import eRpKit
 import eRpLocalStorage
@@ -12,6 +13,7 @@ import Foundation
 import FHIRVZD
 import HTTPClient
 import IDP
+import IDPLive
 import ModelsR4
 import OpenSSL
 import Pharmacy
@@ -115,6 +117,8 @@ extension AppSecurityManagerError: CodedError {
                 return "i-04403"
             case .migrationFailed:
                 return "i-04404"
+            case .passwordDelayInfoIOFailed:
+                return "i-04405"
         }
     }
     var erpErrorCodeList: [String] {
@@ -164,6 +168,38 @@ extension AuthenticationChallengeProviderError: CodedError {
             case .cannotEvaluatePolicy:
                 return [erpErrorCode]
             case .failedEvaluatingPolicy:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension BfArMError: @retroactive LocalizedError {}
+extension BfArMError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .network:
+                return "i-30101"
+            case .decoding:
+                return "i-30102"
+            case .invalidAssetLink:
+                return "i-30103"
+            case .unspecified:
+                return "i-30104"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .network(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .decoding(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .decoding:
+                return [erpErrorCode]
+            case let .unspecified(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .unspecified:
+                return [erpErrorCode]
+            default:
                 return [erpErrorCode]
         }
     }
@@ -874,8 +910,10 @@ extension IDPError: CodedError {
     }
     var erpErrorCodeList: [String] {
         switch self {
-            case let .network(error):
+            case let .network(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
+            case .network:
+                return [erpErrorCode]
             case let .validation(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
             case .validation:
@@ -892,8 +930,10 @@ extension IDPError: CodedError {
                 return [erpErrorCode]
             case let .`internal`(error):
                 return [erpErrorCode] + error.erpErrorCodeList
-            case let .trustStore(error):
+            case let .trustStore(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
+            case .trustStore:
+                return [erpErrorCode]
             case let .pairing(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
             case .pairing:

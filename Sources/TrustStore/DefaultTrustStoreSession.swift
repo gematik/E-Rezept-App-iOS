@@ -49,7 +49,7 @@ public class DefaultTrustStoreSession {
         serverURL: URL,
         trustAnchor: TrustAnchor,
         trustStoreStorage: TrustStoreStorage,
-        httpClient: HTTPClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        httpClient: HTTPClient
     ) {
         self.init(
             serverURL: serverURL,

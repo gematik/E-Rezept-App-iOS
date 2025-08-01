@@ -27,19 +27,23 @@ import SwiftUI
 
 struct CANCameraScanner: View {
     @Binding var canScan: ScanCAN?
+    var onSuccessfulScanAction: () -> Void
     var closeAction: (ScanCAN?) -> Void
 
     var body: some View {
         ZStack(alignment: .top) {
-            VisionView(can: $canScan)
-                .edgesIgnoringSafeArea([.top, .bottom])
-                .onAppear {
-                    canScan = nil
-                }
+            VisionView(
+                can: $canScan,
+                onSuccessfulScanAction: onSuccessfulScanAction
+            )
+            .edgesIgnoringSafeArea([.top, .bottom])
+            .onAppear {
+                canScan = nil
+            }
 
             VStack {
                 if let canScan = canScan {
-                    Text("\(L10n.cdwCanScanTxtResult.text) \n\(canScan)")
+                    Text("\(L10n.cdwCanScanTxtResult.text) \n\(canScan.value)")
                         .padding()
                         .background(Color(.systemBackground))
                         .cornerRadius(8)
@@ -69,13 +73,16 @@ struct CANCameraScanner: View {
                 .padding(.bottom)
             }
             .padding()
-        }.navigationBarItems(leading: CloseButton {
-            closeAction(nil)
-            toggleFlashlight(status: false)
-        },
-        trailing: LightSwitch(isFlashOn: false)
-            .accessibility(identifier: A11y.cardWall.canScanner.cdwScnBtnClose)
-            .accessibility(label: Text(L10n.cdwCanScanBtnClose)))
+        }
+        .navigationBarItems(
+            leading: CloseButton {
+                closeAction(nil)
+                toggleFlashlight(status: false)
+            }
+            .accessibilityIdentifier(A11y.cardWall.canScanner.cdwScnBtnClose)
+            .accessibilityLabel(Text(L10n.cdwCanScanBtnClose)),
+            trailing: LightSwitch()
+        )
     }
 }
 
@@ -95,17 +102,14 @@ private func toggleFlashlight(status: Bool) {
 }
 
 struct LightSwitch: View {
-    @State var isFlashOn: Bool {
-        didSet {
-            toggleFlashlight(status: isFlashOn)
-        }
-    }
+    @State private var isFlashOn = false
 
     var body: some View {
         VStack {
             if (AVCaptureDevice.default(for: AVMediaType.video)?.hasTorch) != nil {
                 Button(action: {
                     isFlashOn.toggle()
+                    toggleFlashlight(status: isFlashOn)
                 }, label: {
                     HStack {
                         Image(systemName: !isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
@@ -120,9 +124,12 @@ struct LightSwitch: View {
                     .background(Color(.systemGray5))
                     .cornerRadius(8)
                     .padding()
+                    .accessibilityLabel(Text(!isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff))
+                    .accessibilityIdentifier(A11y.cardWall.canScanner.cdwScnBtnFlashlight)
             }
         }.onReceive(NotificationCenter.default
             .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                toggleFlashlight(status: false)
                 isFlashOn = false
         }
         .onChange(of: isFlashOn) { _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -133,13 +140,21 @@ struct LightSwitch: View {
 struct KVNRCameraScanner_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            CANCameraScanner(canScan: .constant(ScanCAN(value: "123123"))) { _ in }
+            CANCameraScanner(
+                canScan: .constant(ScanCAN(value: "123123")),
+                onSuccessfulScanAction: {
+                    print("Successfully scanned CAN")
+                },
+                closeAction: { _ in
+                }
+            )
         }
     }
 }
 
 struct VisionView: UIViewControllerRepresentable {
     @Binding var can: ScanCAN?
+    var onSuccessfulScanAction: () -> Void
 
     func makeUIViewController(context _: Context) -> CANCameraScannerViewController {
         CANCameraScannerViewController()
@@ -148,6 +163,9 @@ struct VisionView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: CANCameraScannerViewController, context _: Context) {
         uiViewController.canScanned = { can in
             self.can = can
+        }
+        uiViewController.onSuccessfulScanAction = {
+            self.onSuccessfulScanAction()
         }
     }
 }

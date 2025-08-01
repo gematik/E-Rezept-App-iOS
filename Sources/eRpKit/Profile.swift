@@ -41,6 +41,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         userImageData: Data? = nil,
         lastAuthenticated: Date? = nil,
         erxTasks: [ErxTask] = [],
+        hideWelcomeDrawerOnMainView: Bool = false,
         hidePkvConsentDrawerOnMainView: Bool = false,
         shouldAutoUpdateNameAtNextLogin: Bool = false,
         gIdEntry: KKAppDirectory.Entry? = nil
@@ -61,6 +62,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
         self.userImageData = userImageData
         self.lastAuthenticated = lastAuthenticated
         self.erxTasks = erxTasks
+        self.hideWelcomeDrawerOnMainView = hideWelcomeDrawerOnMainView
         self.hidePkvConsentDrawerOnMainView = hidePkvConsentDrawerOnMainView
         self.shouldAutoUpdateNameAtNextLogin = shouldAutoUpdateNameAtNextLogin
         self.gIdEntry = gIdEntry
@@ -86,6 +88,7 @@ public struct Profile: Identifiable, Hashable, Equatable, Codable {
     public var lastAuthenticated: Date?
     public var erxTasks: [ErxTask]
     // Note: When the list of preferences per Profile keeps growing, consider extracting them to separate struct.
+    public var hideWelcomeDrawerOnMainView: Bool
     public var hidePkvConsentDrawerOnMainView: Bool
     public var shouldAutoUpdateNameAtNextLogin: Bool
     public var gIdEntry: KKAppDirectory.Entry?

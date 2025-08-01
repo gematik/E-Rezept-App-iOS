@@ -64,11 +64,13 @@ struct AppAuthenticationBiometricPasswordView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                     }
 
-                    Button(L10n.authBtnBapChange) {
+                    NavButton(
+                        text: L10n.authBtnBapChange,
+                        a11y: A11y.auth.authBtnBapChange,
+                        back: false
+                    ) {
                         store.send(.switchToPassword(true), animation: .default)
-                    }.foregroundColor(Colors.primary700)
-                        .font(.body.weight(.semibold))
-                        .accessibility(identifier: A11y.auth.authBtnBapChange)
+                    }
                 }
                 .onAppear {
                     if store.startImmediateAuthenticationChallenge {
@@ -80,12 +82,6 @@ struct AppAuthenticationBiometricPasswordView: View {
                 PasswordView(store: store)
             }
         }
-    }
-}
-
-extension AppAuthenticationBiometricPasswordDomain.State {
-    var showUnsuccessfulAttemptMessage: Bool {
-        !(lastMatchResultSuccessful ?? true)
     }
 }
 
@@ -108,15 +104,16 @@ struct PasswordView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(
-                            store.showUnsuccessfulAttemptMessage ? Colors.red600 : Color(.systemGray3),
-                            lineWidth: 1
+                            store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.textSecondary,
+                            lineWidth: 0.5
                         )
                 )
                 .padding(.horizontal)
+                .disabled(store.passwordDelayIsActive)
                 .accessibility(identifier: A11y.auth.authEdtPasswordInput)
 
                 if store.showUnsuccessfulAttemptMessage {
-                    UnsuccessfulAttemptMessageView()
+                    UnsuccessfulAttemptMessageView(store: store)
                         .padding(.horizontal)
                         .padding(.top, 4)
                 }
@@ -124,7 +121,7 @@ struct PasswordView: View {
                 PrimaryTextButton(
                     text: L10n.authBtnPasswordContinue,
                     a11y: A11y.auth.authBtnPasswordContinue,
-                    isEnabled: !store.password.isEmpty,
+                    isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
                     useFullWidth: false
                 ) {
                     store.send(.loginButtonTapped, animation: .default)
@@ -132,23 +129,27 @@ struct PasswordView: View {
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .center)
 
-                Button(action: {
+                NavButton(
+                    text: L10n.authBtnBapBack,
+                    a11y: A11y.auth.authBtnBapChange,
+                    back: true
+                ) {
                     store.send(.switchToPassword(false), animation: .default)
-                }, label: {
-                    Text(L10n.authBtnBapBack)
-                }).foregroundColor(Colors.primary700)
-                    .font(.body.weight(.regular))
-                    .accessibility(identifier: A11y.auth.authBtnBapChange)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .multilineTextAlignment(.center)
+                }
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .multilineTextAlignment(.center)
+            }
+            .task {
+                await store.send(.task).finish()
             }
         }
     }
 
     private struct UnsuccessfulAttemptMessageView: View {
+        @Perception.Bindable var store: StoreOf<AppAuthenticationBiometricPasswordDomain>
         var body: some View {
-            Text(L10n.authTxtPasswordFailure)
+            Text(store.unsuccessfulAttemptMessage)
                 .foregroundColor(Colors.red600)
                 .font(.footnote)
                 .accessibility(identifier: A11y.auth.authTxtPasswordFailure)

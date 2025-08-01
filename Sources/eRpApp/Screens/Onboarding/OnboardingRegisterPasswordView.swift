@@ -60,6 +60,8 @@ extension OnboardingRegisterPasswordView {
                     .multilineTextAlignment(.leading)
                     .font(Font.title.weight(.bold))
                     .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtSectionTitle)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityRemoveTraits(.isStaticText)
                     .padding(.top, 22)
 
                 Text(L10n.onbAuthTxtPasswordSubtitle)
@@ -90,8 +92,13 @@ extension OnboardingRegisterPasswordView {
                         .padding()
                         .font(Font.body)
                         .foregroundColor(Colors.systemLabel)
-                        .background(Colors.systemGray6)
+                        .background(Color(.systemBackground))
                         .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Colors.textSecondary, lineWidth: 0.5)
+                        )
+                        .padding(1)
                         .textContentType(.newPassword)
                         .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
 
@@ -117,8 +124,16 @@ extension OnboardingRegisterPasswordView {
                             .padding()
                             .font(Font.body)
                             .foregroundColor(Colors.systemLabel)
-                            .background(Colors.systemGray6)
+                            .background(Color(.systemBackground))
                             .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(
+                                        store.hasValidPasswordEntries ? Color(.systemGreen) : Color(.systemGray3),
+                                        lineWidth: 1
+                                    )
+                            )
+                            .padding(1)
                             .textContentType(.newPassword)
                             .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
                             .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordB)
@@ -161,15 +176,13 @@ extension OnboardingRegisterPasswordView {
                         .multilineTextAlignment(.center)
                         .padding()
 
-                    Button(action: {
+                    NavButton(
+                        text: L10n.onbAuthBtnPasswordBack,
+                        a11y: A11y.onboarding.authentication.onbAuthBtnBack,
+                        back: true
+                    ) {
                         store.send(.delegate(.prevPage))
-                    }, label: {
-                        Text(L10n.onbAuthBtnPasswordBack)
-                    })
-                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnBack)
-                        .font(.body.weight(.semibold))
-                        .foregroundStyle(Colors.primary)
-                        .padding(.top, 8)
+                    }
                 }
                 .padding(.bottom, 32)
             }

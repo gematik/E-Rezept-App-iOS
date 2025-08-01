@@ -24,6 +24,7 @@ import Combine
 @testable import FHIRClient
 import Foundation
 import HTTPClient
+import HTTPClientLive
 import ModelsR4
 import Nimble
 import OHHTTPStubs

@@ -78,13 +78,14 @@ struct HealthCardPasswordPukView: View {
                     label: { Text(L10n.stgBtnCardResetAdvance) }
                 )
                 .disabled(!store.pukMayAdvance)
-                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: store.pukMayAdvance, destructive: false))
+                .buttonStyle(.primary(isEnabled: store.pukMayAdvance, width: .wideHugging))
+                .frame(maxWidth: .infinity, alignment: .center)
                 .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
                 .padding(.horizontal)
                 .padding(.vertical, 8)
             }
             .navigationBarTitleDisplayMode(.inline)
-            .fullScreenCover(
+            .navigationDestination(
                 item: $store.scope(
                     state: \.destination?.readCard,
                     action: \.destination.readCard

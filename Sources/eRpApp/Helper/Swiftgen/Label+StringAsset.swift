@@ -60,6 +60,18 @@ extension TextField where Label == Text {
     }
 }
 
+extension TextField where Label == Text {
+    init(
+        _ stringAsset: StringAsset,
+        text: Binding<String>,
+        axis: Axis
+    ) {
+        self.init(text: text, axis: axis) {
+            Text(stringAsset.key, bundle: .module)
+        }
+    }
+}
+
 extension SecureField where Label == Text {
     init(
         _ stringAsset: StringAsset,

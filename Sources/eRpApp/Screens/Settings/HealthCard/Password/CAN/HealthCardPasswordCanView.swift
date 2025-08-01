@@ -31,10 +31,10 @@ struct HealthCardPasswordCanView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            VStack {
+            VStack(spacing: 0) {
                 CANView(store: store)
 
-                Spacer(minLength: 0)
+                Spacer()
 
                 GreyDivider()
 
@@ -93,8 +93,7 @@ struct HealthCardPasswordCanView: View {
                     },
                     label: { Text(L10n.stgBtnCardResetAdvance) }
                 )
-                .disabled(!store.canMayAdvance)
-                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: store.canMayAdvance, destructive: false))
+                .buttonStyle(.primary(isEnabled: store.canMayAdvance, width: .wideHugging))
                 .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
                 .padding(.horizontal)
                 .padding(.vertical, 8)
@@ -110,42 +109,43 @@ struct HealthCardPasswordCanView: View {
         var body: some View {
             WithPerceptionTracking {
                 ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 56) {
                         if showAnimation {
                             HStack(alignment: .center) {
                                 Spacer()
-                                Image(asset: Asset.CardWall.cardwallCard)
+                                Image(asset: Asset.CardWall.cardwallCardWithArrow)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(maxWidth: 343, maxHeight: 215, alignment: .center)
                                     .accessibility(identifier: A11y.cardWall.canInput.cdwImgCanCard)
                                     .accessibility(label: Text(L10n.cdwImgCanCardLabel))
-                                    .padding(.bottom, 24)
-                                    .transition(.asymmetric(insertion: .move(edge: .trailing),
-                                                            removal: .move(edge: .leading)))
+                                    .transition(.asymmetric(
+                                        insertion: .move(edge: .trailing),
+                                        removal: .move(edge: .leading)
+                                    ))
 
                                 Spacer()
                             }
                         }
-                        Text(L10n.cdwTxtCanSubtitle)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.title2)
-                            .bold()
-                            .padding(.top)
-                            .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(L10n.cdwTxtCanSubtitle)
+                                .foregroundColor(Colors.systemLabel)
+                                .font(.title)
+                                .bold()
+                                .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
+                                .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Text(L10n.cdwTxtCanDescription)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.body)
-                            .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
+                            Text(L10n.cdwTxtCanDescription)
+                                .foregroundColor(Colors.systemLabel)
+                                .font(.body)
+                                .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
+                        }
                     }
                     .padding()
 
                     CardWallCANInputView(
                         can: $store.can.sending(\.updateCan)
-                        //                    can: store.binding(get: \.can) { .canUpdateCan($0) }
                     ) {}
-                        .padding(.top)
 
                     TertiaryListButton(
                         text: L10n.cdwBtnCanScanner,
@@ -166,12 +166,18 @@ struct HealthCardPasswordCanView: View {
                     onDismiss: {},
                     content: {
                         NavigationStack {
-                            CANCameraScanner(canScan: $scannedcan) { canScan in
-                                if let canScan = scannedcan {
-                                    store.send(.updateCan(canScan.value))
+                            CANCameraScanner(
+                                canScan: $scannedcan,
+                                onSuccessfulScanAction: {
+                                    store.send(.successfulScan)
+                                },
+                                closeAction: { canScan in
+                                    if let canScan = scannedcan {
+                                        store.send(.updateCan(canScan.value))
+                                    }
+                                    store.send(.resetNavigation)
                                 }
-                                store.send(.resetNavigation)
-                            }
+                            )
                         }
                         .tint(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())

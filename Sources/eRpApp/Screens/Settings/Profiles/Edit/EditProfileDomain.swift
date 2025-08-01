@@ -50,6 +50,21 @@ struct EditProfileDomain {
         var insuranceType: Profile.InsuranceType
         var routeToChargeItemList = false
 
+        var insuranceName: String {
+            if let insurance, !insurance.isEmpty {
+                return insurance
+            } else {
+                switch insuranceType {
+                case .gKV:
+                    return L10n.stgTxtEditProfileLabelGkvInsurance.text
+                case .pKV:
+                    return L10n.stgTxtEditProfileLabelPkvInsurance.text
+                case .unknown:
+                    return L10n.stgTxtEditProfileLabelUnknownInsurance.text
+                }
+            }
+        }
+
         init(name: String,
              acronym: String,
              fullName: String?,
@@ -112,6 +127,8 @@ struct EditProfileDomain {
         case registeredDevices(RegisteredDevicesDomain)
         // sourcery: AnalyticsScreen = chargeItemList
         case chargeItemList(ChargeItemListDomain)
+        // sourcery: AnalyticsScreen = profile_insuranceDrawer
+        case insuranceDrawer
         case editProfilePicture(EditProfilePictureDomain)
 
         enum Alert: Equatable {
@@ -125,6 +142,9 @@ struct EditProfileDomain {
         case onAppear
         case binding(BindingAction<State>)
         case showDeleteProfileAlert
+        case changeInsurance
+        case setUserToGKVInsured
+        case setUserToPKVInsured
         case login
         case relogin
         case showDeleteBiometricPairingAlert
@@ -252,6 +272,13 @@ struct EditProfileDomain {
                 .map(Action.response)
                 .eraseToAnyPublisher
             )
+        case .changeInsurance:
+            state.destination = .insuranceDrawer
+            return .none
+        case .setUserToGKVInsured:
+            return changeInsurance(for: .gKV, with: state.profileId)
+        case .setUserToPKVInsured:
+            return changeInsurance(for: .pKV, with: state.profileId)
         case .showDeleteProfileAlert:
             state.destination = .alert(AlertStates.deleteProfile)
             return .none
@@ -376,6 +403,20 @@ extension EditProfileDomain {
                 .map(Action.Response.biometricKeyIDReceived)
                 .map(Action.response)
                 .eraseToAnyPublisher
+        )
+    }
+
+    func changeInsurance(for type: Profile.InsuranceType, with profileId: UUID) -> Effect<Action> {
+        .concatenate(
+            .publisher(
+                updateProfile(with: profileId) { profile in
+                    profile.insuranceType = type
+                }
+                .map(Action.Response.updateProfileReceived)
+                .map(Action.response)
+                .eraseToAnyPublisher
+            ),
+            .send(.relogin)
         )
     }
 

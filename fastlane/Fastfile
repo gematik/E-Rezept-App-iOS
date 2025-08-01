@@ -20,8 +20,10 @@
 # For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 #
 
+require 'json'
+
 xcodes(
-  version: ENV["FL_XCODE_VERSION"] || "16.3.0",
+  version: ENV["FL_XCODE_VERSION"] || "16.4.0",
   select_for_current_build_only: true, 
   update_list: false
 )
@@ -36,14 +38,6 @@ def true?(obj)
   obj.to_s.downcase == "true"
 end
 
-desc "Note: This lane calls `fix_test_resources` and `fix_project_resources` (because they will be lost due to spm generate-xcodeproj)"
-desc "###Options"
-desc " * **`skip_ios`**: Whether to skip the ios build [default: false]. (`G_BUILD_IOS_SKIP`)"
-desc " * **`skip_macos`**: Whether to skip the macos build [default: false]. (`G_BUILD_MAC_SKIP`)"
-desc ""
-desc "###Example:"
-desc "```\nfastlane resolve_dependencies \n```"
-desc ""
 lane :resolve_dependencies do |options|
   sh "rm -rf DerivedData/SourcePackages"
   if File.exist? "../Package.swift"
@@ -51,190 +45,8 @@ lane :resolve_dependencies do |options|
   end
 end
 
-desc "Generate xcodeproj with SPM or Xcodegen. Depending on what is used by the target project"
-desc "When both are used, the Xcodegen takes precedence."
-desc "The lane to run when Package.swift and/or project.yml has changed and this should be reflected"
-desc "in the xcodeproj. CI builds should always run this."
-desc "Note: This lane calls `xcodegen_generate_xcodeproj` or `spm_generate_xcodeproj`"
-desc ""
-desc "###Example:"
-desc "```\nfastlane spm_generate_xcodeproj xcconfig:Other.xcconfig skip_fix_resources:true skip_fix_test_resources:true --env osx\n```"
-desc "###Options"
-desc " * **`xcconfig`**: The xcconfig file [default: Package.xcconfig]. (`G_XCCONFIG`)"
-desc " * **`skip_fix_resources`**: Whether to run lane `fix_project_resources` or not [default: true => do not run fix_project_resources]. (`G_GEN_XCODEPROJ_SKIP_PROJECT_RESOURCES`)"
-desc " * **`skip_fix_test_resources`**: Whether to run lane `fix_test_resources` or not [default: false => do run fix_test_resources]. (`G_GEN_XCODEPROJ_SKIP_TEST_RESOURCES`)"
-desc ""
 lane :generate_xcodeproj do |options|
-  if File.exist? "../project.yml"
-    xcodegen_generate_xcodeproj options
-  else
-    spm_generate_xcodeproj options
-  end
-end
-
-desc "Generate xcodeproj from project.yml file"
-desc "The lane to run when project.yml has changed and this should be reflected"
-desc "in the xcodeproj."
-desc ""
-desc "###Example:"
-desc "```\nfastlane xcodegen_generate_xcodeproj\n```"
-desc ""
-lane :xcodegen_generate_xcodeproj do |options|
   sh("pushd ..; mint run xcodegen generate --spec project.yml; popd")
-end
-
-desc "Generate xcodeproj from Package.swift file"
-desc "The lane to run when Package.swift has changed and this should be reflected"
-desc "in the xcodeproj."
-desc "Note: This lane calls `fix_test_resources` and `fix_project_resources` (because they will be lost due to spm generate-xcodeproj)"
-desc ""
-desc "###Example:"
-desc "```\nfastlane spm_generate_xcodeproj xcconfig:Other.xcconfig skip_fix_resources:true skip_fix_test_resources:true --env osx\n```"
-desc "###Options"
-desc " * **`xcconfig`**: The xcconfig file [default: Package.xcconfig]. (`G_XCCONFIG`)"
-desc " * **`skip_fix_resources`**: Whether to run lane `fix_project_resources` or not [default: true => do not run fix_project_resources]. (`G_GEN_XCODEPROJ_SKIP_PROJECT_RESOURCES`)"
-desc " * **`skip_fix_test_resources`**: Whether to run lane `fix_test_resources` or not [default: false => do run fix_test_resources]. (`G_GEN_XCODEPROJ_SKIP_TEST_RESOURCES`)"
-desc ""
-lane :spm_generate_xcodeproj do |options|
-  if options[:xcconfig]
-    xcconfig = options[:xcconfig]
-  elsif ENV["G_XCCONFIG"]
-    xcconfig = ENV["G_XCCONFIG"]
-  else
-    xcconfig = "./Package.xcconfig"
-  end
-
-  if !options[:skip_fix_resources].nil?
-    skip_fix_resources = options[:skip_fix_resources]
-  elsif !ENV["G_GEN_XCODEPROJ_SKIP_PROJECT_RESOURCES"].nil?
-    skip_fix_resources = true?(ENV["G_GEN_XCODEPROJ_SKIP_PROJECT_RESOURCES"])
-  else
-    skip_fix_resources = true
-  end
-
-  if !options[:skip_fix_test_resources].nil?
-    skip_fix_test_resources = options[:skip_fix_test_resources]
-  elsif !ENV["G_GEN_XCODEPROJ_SKIP_TEST_RESOURCES"].nil?
-    skip_fix_test_resources = true?(ENV["G_GEN_XCODEPROJ_SKIP_TEST_RESOURCES"])
-  else
-    skip_fix_test_resources = false
-  end
-
-  spm(
-    command: "generate-xcodeproj",
-    xcconfig: xcconfig
-  )
-
-  fix_test_resources options unless skip_fix_test_resources
-  fix_project_resources options unless skip_fix_resources
-end
-
-desc "Add test (Bundle) Resource(s) to the Test target"
-desc ""
-desc "###Example:"
-desc "```\nfastlane fix_test_resources project:Project.xcodeproj test_target:TargetTest test_group:Tests/Group test_bundles:\"../Resources.bundle,Tests.bundle\" --env osx\n```"
-desc "###Options"
-desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
-desc " * **`test_target`**: The target name in the Xcode project. (`G_FIX_TEST_TARGET`)"
-desc " * **`test_group`**: The group name in the Xcode project. (`G_FIX_TEST_GROUP`)"
-desc " * **`test_bundles`**: Comma separated list of the bundle resources to add to the target relative to the group in the Xcode project. (`G_FIX_TEST_BUNDLE_RESOURCES`)"
-desc ""
-lane :fix_test_resources do |options|
-  if options[:project]
-    project = options[:project]
-  elsif ENV["G_PROJECT"]
-    project = ENV["G_PROJECT"]
-  else
-    raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
-  end
-  if options[:test_target]
-    target = options[:test_target]
-  elsif ENV["G_FIX_TEST_TARGET"]
-    target = ENV["G_FIX_TEST_TARGET"]
-  else
-    raise "Target is not set. Please provide a :target or set ENV[G_FIX_TEST_TARGET] to a valid target in the project."
-  end
-
-  if options[:test_group]
-    group = options[:test_group]
-  elsif ENV["G_FIX_TEST_GROUP"]
-    group = ENV["G_FIX_TEST_GROUP"]
-  else
-    raise "Group is not set. Please provide a :group or set ENV[G_FIX_TEST_GROUP] to a valid group of the project."
-  end
-
-  if options[:test_bundles]
-    bundles = options[:test_bundles]
-  elsif ENV["G_FIX_TEST_BUNDLE_RESOURCES"]
-    bundles = ENV["G_FIX_TEST_BUNDLE_RESOURCES"]
-  else
-    raise "No bundles provided. Please provide a :bundles list or set ENV[G_FIX_TEST_BUNDLE_RESOURCES] to a valid list of bundles."
-  end
-
-  # Convert bundles to array (ignoring leading and trailing whitespace)
-  bundles = bundles.split(/\s*,\s*/)
-
-  xcodeproj(
-    command: "add",
-    project: project,
-    target: target,
-    group: group,
-    resources: bundles
-  )
-end
-
-desc "Add (Bundle) Resource(s) to the Project target"
-desc ""
-desc "###Example:"
-desc "```\nfastlane fix_project_resources project:Project.xcodeproj target:Target group:Sources/Group bundles:\"../Resources.bundle,Assets.bundle\" --env osx\n```"
-desc "###Options"
-desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
-desc " * **`target`**: The target name in the Xcode project. (`G_FIX_PROJECT_TARGET`)"
-desc " * **`group`**: The group name in the Xcode project. (`G_FIX_PROJECT_GROUP`)"
-desc " * **`bundles`**: Comma separated list of the bundle resources to add to the target relative to the group in the Xcode project. (`G_FIX_PROJECT_BUNDLE_RESOURCES`)"
-desc ""
-lane :fix_project_resources do |options|
-  if options[:project]
-    project = options[:project]
-  elsif ENV["G_PROJECT"]
-    project = ENV["G_PROJECT"]
-  else
-    raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
-  end
-  if options[:target]
-    target = options[:target]
-  elsif ENV["G_FIX_PROJECT_TARGET"]
-    target = ENV["G_FIX_PROJECT_TARGET"]
-  else
-    raise "Target is not set. Please provide a :target or set ENV[G_FIX_PROJECT_TARGET] to a valid target in the project."
-  end
-
-  if options[:group]
-    group = options[:group]
-  elsif ENV["G_FIX_PROJECT_GROUP"]
-    group = ENV["G_FIX_PROJECT_GROUP"]
-  else
-    raise "Group is not set. Please provide a :group or set ENV[G_FIX_PROJECT_GROUP] to a valid group of the project."
-  end
-
-  if options[:bundles]
-    bundles = options[:bundles]
-  elsif ENV["G_FIX_PROJECT_BUNDLE_RESOURCES"]
-    bundles = ENV["G_FIX_PROJECT_BUNDLE_RESOURCES"]
-  else
-    raise "No bundles provided. Please provide a :bundles list or set ENV[G_FIX_PROJECT_BUNDLE_RESOURCES] to a valid list of bundles."
-  end
-
-  # Convert bundles to array (ignoring leading and trailing whitespace)
-  bundles = bundles.split(/\s*,\s*/)
-
-  xcodeproj(
-    command: "add",
-    project: project,
-    target: target,
-    group: group,
-    resources: bundles
-  )
 end
 
 desc "Build and test (scan) the project for macOS"
@@ -246,18 +58,8 @@ desc "###Options"
 desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
 desc " * **`schemes`**: The (shared) schemes to build for the mac build. If only one Scheme exists you can omit this and specify a scheme in a Scanfile (`G_MAC_SCHEMES`)"
 desc " * **`mac_sdk`**: The SDK version to build against [default: macosx]. (`G_MAC_SDK`)"
-desc " * **`mac_destination`**: Build platform destination [default: platform=macOS,arch=x86_64]. (`G_MAC_DESTINATION`)"
-desc " * **`configuration`**: Build configuration (Debug|Release) [default: Release]. (`G_BUILD_CONFIGURATION`)"
 desc ""
 lane :build_mac do |options|
-  if options[:project]
-    project = options[:project]
-  elsif ENV["G_PROJECT"]
-    project = ENV["G_PROJECT"]
-  else
-    raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
-  end
-
   if options[:mac_sdk]
     sdk = options[:mac_sdk]
   elsif ENV["G_MAC_SDK"]
@@ -274,24 +76,14 @@ lane :build_mac do |options|
     destination = "platform=macOS,arch=arm64"
   end
 
-  if options[:configuration]
-    configuration = options[:configuration]
-  elsif ENV["G_BUILD_CONFIGURATION"]
-    configuration = ENV["G_BUILD_CONFIGURATION"]
-  else
-    configuration = "Debug"
-  end
-
   if options[:schemes]
     schemes = options[:schemes]
   elsif ENV["G_MAC_SCHEMES"]
     schemes = ENV["G_MAC_SCHEMES"]
   else
     scan(
-      project: project,
       sdk: sdk,
       destination: destination,
-      configuration: configuration,
       output_directory: "./fastlane/test_output/mac"
     )
   end
@@ -299,11 +91,9 @@ lane :build_mac do |options|
   if !schemes.nil?
     schemes.split(",").each do |scheme|
       scan(
-        project: project,
         scheme: scheme,
         sdk: sdk,
         destination: destination,
-        configuration: configuration,
         output_directory: "./fastlane/test_output/mac/#{scheme}"
       )
     end
@@ -314,37 +104,11 @@ desc "Build and test (scan) the project for iOS"
 desc "The lane to run by ci on every commit."
 desc ""
 desc "###Example:"
-desc "```\nfastlane build_ios ios_schemes:ProjectScheme ios_sdk:\"iphonesimulator12.0\" ios_destination:\"platform=iOS Simulator,name=iPhone 6s,OS=12.0\" configuration:Release --env ios12_xcode10\n```"
+desc "```\nbundle exec fastlane build_ios ios_schemes:ProjectScheme\n```"
 desc "###Options"
-desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
 desc " * **`schemes`**: The (shared) schemes to build for the iOS build. If only one Scheme exists you can omit this and specify a scheme in a Scanfile (`G_IOS_SCHEMES`)"
-desc " * **`ios_sdk`**: The SDK version to build against [default: iphonesimulator]. (`G_IOS_SDK`)"
-desc " * **`ios_destination`**: Build platform destination [default: NULL]. (`G_IOS_DESTINATION`)"
-desc " * **`configuration`**: Build configuration (Debug|Release) [default: Release]. (`G_BUILD_CONFIGURATION`)"
 desc ""
 lane :build_ios do |options|
-  if options[:project]
-    project = options[:project]
-  elsif ENV["G_PROJECT"]
-    project = ENV["G_PROJECT"]
-  else
-    raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
-  end
-
-  if options[:ios_destination]
-    destination = options[:ios_destination]
-  elsif ENV["G_IOS_DESTINATION"]
-    destination = ENV["G_IOS_DESTINATION"]
-  end
-
-  if options[:configuration]
-    configuration = options[:configuration]
-  elsif ENV["G_BUILD_CONFIGURATION"]
-    configuration = ENV["G_BUILD_CONFIGURATION"]
-  else
-    configuration = "Debug"
-  end
-
   reset_simulator_contents
 
   if options[:schemes]
@@ -353,8 +117,6 @@ lane :build_ios do |options|
     schemes = ENV["G_IOS_SCHEMES"]
   else
     scan(
-      destination: destination,
-      configuration: configuration,
       output_directory: "./fastlane/test_output/ios"
     )
   end
@@ -363,8 +125,6 @@ lane :build_ios do |options|
     schemes.split(",").each do |scheme|
       scan(
         scheme: scheme,
-        destination: destination,
-        configuration: configuration,
         output_directory: "./fastlane/test_output/ios/#{scheme}"
       )
     end
@@ -384,10 +144,9 @@ end
 
 lane :uitests_ios do |options|
   reset_simulator_contents
-  scheme = "UITests_iOS"
 
   scan_result = scan(
-    scheme: scheme,
+    scheme: "UITests_iOS",
     configuration: "Debug",
     prelaunch_simulator: true,
     output_directory: "./fastlane/test_output/uitests",
@@ -613,255 +372,47 @@ lane :list_errors do |options|
   sh "cd .. && cp doc/errors/generated/errors.csv docs/errors/errors.csv"
 end
 
-require 'nokogiri'
-
-lane :get_specs do |options|
-  spec_urls = JSON.parse(File.read('audit_afos.json'))['specs']
-  spec_htmls = Hash.new
-
-  gitlab_api_token = ENV['GITLAB_API_TOKEN']
-  gitlab_api_token = prompt(text: "GITLAB_API_TOKEN not set, please specify") unless gitlab_api_token
-
-  spec_urls.each do |spec, url|
-    if url.include?('gitlab')
-      html_content = URI.open(url, "PRIVATE-TOKEN" => gitlab_api_token).read
-    else
-      html_content = URI.open(url).read
-    end
-    spec_htmls[spec] = Nokogiri::HTML(html_content)
-  end
-
-  spec_htmls
-end
-
 lane :list_requirements do |options|
-  SPECS = Hash.new
+  template_dir = File.join(File.dirname(__FILE__), 'Templates', 'ERB')
+  output_dir = File.join(File.dirname(__FILE__), 'build', 'requirements')
+  output_docs_dir = File.join(File.dirname(__FILE__), 'build', 'docs', 'generated')
+  
+  templates = [
+    'requirements.csv.erb',
+    'requirements.md.erb',
+    'requirements.html.erb',
+    'requirements_filtered.html.erb'
+  ].map { |file| File.join(template_dir, file) }
 
-  AUDIT_AFOS = JSON.parse(File.read('audit_afos.json'))['audit_afos']
+  audit_generator(
+    audit_afos_json: './fastlane/audit_afos.json',
+    erb_templates: templates,
+    output_directory: output_dir,
+    source_file_globs: ["Sources/**/*.swift", "Tests/**/*.swift", "App/**/*.swift"],
+    requirement_notes_glob: "doc/manual/requirement-notes.md"
+  )
+  sh "cd .. && mkdir -p #{output_docs_dir}"
+  sh "cd .. && mv #{output_dir}/requirements.md #{output_docs_dir}"
 
-  def read_part_of_file(filename, start_line, num_lines, trimming = 0)
-    return "" unless File.exist?(filename)
-
-    lines = []
-    current_line = 1
-
-    File.foreach(filename) do |line|
-      if current_line >= start_line && current_line < start_line + num_lines
-        lines << line.chomp
-      elsif current_line >= start_line + num_lines
-        break
-      end
-      current_line += 1
-    end
-
-    lines.empty? ? "" : lines.map { |line| line.sub(/^ {0,#{trimming}}/, '') }.join("\n")
-  end
-
-  require 'kramdown'
-
-  def register(matches, file, line, code = "", source = "code", trimming = 0)
-    spec = matches[:SPEC]
-    afos = matches[:AFOS]
-
-    afos.split(',').each do |afoWithCount|
-      parts = afoWithCount.split('#')
-      afo = parts[0]
-      number = 0
-
-      if parts.count == 2
-        number = parts[1]
-      end
-
-      hit = {
-        "file" => file,
-        "line" => line,
-        "code" => code,
-        "\#" => number,
-        "source" => source
-      }
-
-      if matches.names.include?("SUBAFOS")
-        hit["part"] = matches[:SUBAFOS]
-      end
-      if matches.names.include?("DESC")
-        hit["description"] = Kramdown::Document.new(matches[:DESC]).to_html
-      end
-
-      if matches.names.include?("NUMBEROFLINES")
-        numberOfLines = matches[:NUMBEROFLINES].to_i
-        if numberOfLines > 1
-          hit["code"] += read_part_of_file(file, line + 1, numberOfLines - 1, trimming)
-          hit["line_to"] = line + numberOfLines - 1
-        end
-      end
-
-      unless SPECS[spec]
-        SPECS[spec] = Hash.new
-      end
-      unless SPECS[spec][afo]
-        SPECS[spec][afo] = Array.new
-      end
-
-      SPECS[spec][afo].append(hit)
-    end
-  end
-
-  def parseBlock(block, file, firstLineNumber, source)
-    number = firstLineNumber
-
-    trimming = block.first[/\A */].size
-    trimmedCode = block.map { |line|
-      line.sub(/^ {0,#{trimming}}/, '')
-    }.join("")
-
-    block.each do |line|
-      # Format: [REQ:<SPEC>:<AFOS>:<SUBAFOS?>] <DESC>
-      if matches = line.match(/\[REQ:(?<SPEC>[^:]*):(?<AFOS>[^:^\|\s]*)(?:(?::)(?<SUBAFOS>[^:^\|\s]*))?(?:(?:\|)(?<NUMBEROFLINES>[^:\s]*))?\](?<DESC>.*)/)
-        register(matches, file, number, trimmedCode, source, trimming)
-      end
-      number += 1
-    end
-  end 
-
-  Dir.glob("../doc/manual/requirement-notes.md").each do |file|
-    number = 0
-    firstHit = 0
-    block = Array.new
-
-    open(file).each_line do |line|
-      number += 1
-      parseBlock([line], file, number, "intro")
-    end
-  end
-
-  Dir.glob("../Sources/**/*.swift")
-  .union(Dir.glob("../Tests/**/*.swift"))
-  .union(Dir.glob("../App/**/*.swift"))
-  .each do |file|
-    # puts "Testing '#{file}'"
-
-    number = 0
-
-    # TODO:  alles mit /// vorher/nachher + 1 Zeile
-
-    firstHit = 0
-    block = Array.new
-
-    open(file).each_line do |line|
-      number += 1
-
-      if line.match(/\/\/\/?/)
-        if block.count == 0
-          firstHit = number
-        end
-        block.append(line)
-      else
-        if (block.count != 0) # first non matching line
-          block.append(line)
-          parseBlock(block, file, number, "code")
-          block = Array.new # reset block
-        end
-        # puts "NOT: #{line}"
-      end
-    end
-  end
-
-  ORIGINAL_TEXTS = get_specs()
-
-  AFOS = Hash.new
-
-  required_afos = AUDIT_AFOS
-
-  # puts SPECS.to_json
-  SPECS = SPECS.each { |spec, afos|
-    afos.each  { |afo, entries|
-        required_afos = required_afos.difference([afo])
-        if (ORIGINAL_TEXTS[spec])
-          AFOS[afo] = ORIGINAL_TEXTS[spec].at_css("\##{afo.sub(".", "")}").to_s.split("\n").map { |line|
-            line.sub(/^ */, '')
-          }.join("\n")
-        else
-          print("no spec")
-        end
-      }
-    }
-
-  # binding for erb
-  REQUIRED_AFOS = required_afos
-
-  SORTED_SPECS = SPECS.transform_values { |afos|
-    afos
-      .transform_values { |hits|
-        hits.sort_by { |hit|
-          hit["\#"].to_i
-        }
-      }
-      .sort_by { |value|
-        value.to_s.scan(/\d+|\D+/).map { |match|
-          next match if match.to_i.zero?
-          match.rjust(3, '0')
-        }.join
-      }
-      .to_h
-  }.sort_by {|k, v| k}
-
-    sh "mkdir -p ../build/docs/generated"
-
-  erb_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.csv.erb')
-  erb_out_path = erb_path.sub('.erb','').sub('/Templates/ERB','')
-  erb = ERB.new(File.read(erb_path))
-
-  erb2_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.md.erb')
-  erb2_out_path = erb2_path.sub('.erb','').sub('/Templates/ERB','/build/docs/generated')
-  erb2 = ERB.new(File.read(erb2_path))
-
-  erb3_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.html.erb')
-  erb3_out_path = erb3_path.sub('.erb','').sub('/Templates/ERB','')
-  erb3 = ERB.new(File.read(erb3_path))
-
-  erb4_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements_filtered.html.erb')
-  erb4_out_path = erb4_path.sub('.erb','').sub('/Templates/ERB','')
-  erb4 = ERB.new(File.read(erb4_path))
-
-  UI.message("Writing AFOs to #{erb_out_path}")
-
-  File.open(erb_out_path, 'w+') do |file|
-    file.write(erb.result(binding))
-  end
-
-  UI.message("Writing AFOs to #{erb2_out_path}")
-
-  File.open(erb2_out_path, 'w+') do |file|
-    file.write(erb2.result(binding))
-  end
-
-  UI.message("Writing AFOs to #{erb3_out_path}")
-
-  File.open(erb3_out_path, 'w+') do |file|
-    file.write(erb3.result(binding))
-  end
-
-  UI.message("Writing AFOs to #{erb4_out_path}")
-
-  File.open(erb4_out_path, 'w+') do |file|
-    file.write(erb4.result(binding))
-  end
+  sh "cd .. && cp Templates/ERB/style.css #{output_dir}"
+  sh "cd .. && cp Templates/ERB/audit_style.css #{output_dir}"
+  sh "cd .. && cp Templates/ERB/prism.css #{output_dir}"
+  sh "cd .. && cp Templates/ERB/prism.js #{output_dir}"
 
   `which pandoc`
   if $?.success?
     UI.message("Generating html using `pandoc`...")
     sh "cd .. && pandoc -s -f markdown -t html --toc --css Templates/ERB/style.css build/docs/generated/requirements.md > requirements.md.html"
   else
-    UI.message("`pandoc` not found, skipping html generation. To install pandoc run `brew install pandoc`.")
+  UI.message("`pandoc` not found, skipping html generation. To install pandoc run `brew install pandoc`.")
   end
-
 end
 
 desc "Refresh FOSS.html with data from Package.resolved"
 desc ""
 desc "###Hint:"
 desc "Generate a GitHub access token (Access public repositories) and call"
-desc "```\nGITHUB_API_TOKEN=token_goes_here fastlane xcodegen_generate_xcodeproj\n```"
+desc "```\nGITHUB_API_TOKEN=token_goes_here bundle exec fastlane compile_foss\n```"
 desc ""
 lane :compile_foss do
   dependencies_yaml = YAML.load_file("../dependencies.yml")
@@ -881,11 +432,15 @@ lane :compile_foss do
     UI.message("Load license text for #{entry[:name]}")
     license = ""
 
-    unless entry[:license_uri].nil? 
-      URI.open(entry[:license_uri]).read().each_line{|line| license += "#{line.strip}\n" }
-      license = license.gsub(/\R{2}/, 'PARAGRAPH_BREAK')
-      license = license.gsub(/\R{1}/, ' ')
-      license = license.gsub(/PARAGRAPH_BREAK/, "</p>\n\n<p>")
+    if entry[:license_uri] && !entry[:license_uri].empty?
+      begin
+        URI.open(entry[:license_uri]).read().each_line{|line| license += "#{line.strip}\n" }
+        license = license.gsub(/\R{2}/, 'PARAGRAPH_BREAK')
+        license = license.gsub(/\R{1}/, ' ')
+        license = license.gsub(/PARAGRAPH_BREAK/, "</p>\n\n<p>")
+      rescue => e
+        UI.error("Failed to load license from #{entry[:license_uri]}: #{e.message}")
+      end
     else
       UI.important("IMPORTANT: No license URI available for #{entry[:name]}")
     end
@@ -919,8 +474,7 @@ def dependencies_package_resolved
   file = File.read('../eRp-App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved')
   data_hash = JSON.parse(file)
 
-  github_api_token = ENV['GITHUB_API_TOKEN']
-  github_api_token = prompt(text: "GITHUB_API_TOKEN not set, please specify") unless github_api_token
+  ENV['GITHUB_API_TOKEN'] = prompt(text: "GITHUB_API_TOKEN not set, please specify") unless ENV['GITHUB_API_TOKEN']
 
   dependencies = data_hash['pins'].map do |pin|
     UI.message("#{pin}")
@@ -935,12 +489,12 @@ def dependencies_package_resolved
     dependency[:url] = location
 
     # API curls for the license URI
-    license_uri = curl_license_url_from_github(location, github_api_token) if location.include? "github.com"
+    license_uri = curl_license_url_from_github(location) if location.include? "github.com"
     dependency[:license_uri] = license_uri
     dependency[:version] = version||revision
     if location.include? "github.com"
       most_recent_version = curl_most_recent_tag(location)
-      if most_recent_version != dependency[:version]
+      if most_recent_version && most_recent_version != dependency[:version]
         UI.important("Version mismatch for package #{identity}, NEW: '#{most_recent_version}' OLD: '#{dependency[:version]}'")
       end
     end
@@ -954,26 +508,55 @@ end
 require 'net/http'
 require 'uri'
 
-def curl_license_url_from_github(repo_url, github_api_token)
+def make_github_api_request(repo_url)
+  uri = URI.parse(repo_url)
+  
+  # Follow redirects with a maximum of 5 redirects
+  max_redirects = 5
+  redirects = 0
+  
+  loop do
+    req = Net::HTTP::Get.new(uri)
+    req['Authorization'] = "Bearer #{ENV['GITHUB_API_TOKEN']}" if ENV['GITHUB_API_TOKEN']
+    response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) { |http|
+      http.request(req)
+    }
+    
+    case response
+    when Net::HTTPRedirection
+      if redirects >= max_redirects
+        UI.error("Too many redirects (#{max_redirects}) for #{repo_url}")
+        return {}
+      end
+      
+      location = response['location']
+      uri = URI.parse(location)
+      redirects += 1
+      UI.message("Following redirect to: #{location}")
+    when Net::HTTPSuccess
+      UI.error("Bad credentials or authorisation") if response.body.include? "Bad credentials"
+      begin
+        return JSON.parse(response.body)
+      rescue JSON::ParserError => e
+        UI.error("Failed to parse JSON response from #{repo_url}: #{e.message}")
+        return {}
+      end
+    else
+      UI.error("HTTP error: #{response.code} #{response.message}")
+      return {}
+    end
+  end
+end
 
-
+def curl_license_url_from_github(repo_url)
   repo_url = repo_url.gsub(".git", "")
   repo_owner, repo_name = repo_url.split("/").last(2)
 
-  download_url = ""
   repo_url = "https://api.github.com/repos/#{repo_owner}/#{repo_name}/license"
-  uri = URI.parse(repo_url)
-
-  req = Net::HTTP::Get.new(uri)
-  req['Authorization'] = "Bearer #{github_api_token}"
-  response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) { |http|
-    http.request(req)
-  }
-  UI.error("Bad credentials or authorisation") if response.body.include? "Bad credentials"
-
-  data_hash = JSON.parse(response.body)
-  download_url = data_hash['download_url']
-  download_url
+  
+  data_hash = make_github_api_request(repo_url)
+  
+  data_hash['download_url'] || ""
 end
 
 def curl_most_recent_tag(repo_url)
@@ -994,51 +577,49 @@ def curl_most_recent_tag(repo_url)
 
   download_url = ""
   repo_url = "https://api.github.com/repos/#{repo_owner}/#{repo_name}/releases"
-  uri = URI.parse(repo_url)
-
-  req = Net::HTTP::Get.new(uri)
-  req['Authorization'] = "Bearer #{ENV['GITHUB_API_TOKEN']}" if ENV['GITHUB_API_TOKEN']
-  response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) { |http|
-    http.request(req)
-  }
-  UI.error("Bad credentials or authorisation") if response.body.include? "Bad credentials"
-
+  
   puts("Parsing versions for #{repo_url}")
-  data_hash = JSON.parse(response.body)
+  data_hash = make_github_api_request(repo_url)
 
-  return data_hash['message'] if data_hash.is_a?(Hash)
+  # Check if the response is an error (contains a message field) or empty
+  if data_hash.is_a?(Hash) && (data_hash.has_key?('message') || data_hash.empty?)
+    UI.error("Failed to get releases for #{repo_url}: #{data_hash['message'] || 'Empty response'}")
+    return nil
+  end
+
+  # Ensure we have an array response
+  unless data_hash.is_a?(Array)
+    UI.error("Unexpected response format for #{repo_url}")
+    return nil
+  end
 
   # Extract names and sort them as semantic versions
-  versions = data_hash.map { |item| item['tag_name'] }
+  versions = data_hash.map { |item| item['tag_name'] }.compact
 
   if versions.length == 0
     puts("Repository contains no releases, trying tags instead")
     repo_url = "https://api.github.com/repos/#{repo_owner}/#{repo_name}/tags"
-    uri = URI.parse(repo_url)
+    data_hash = make_github_api_request(repo_url)
+    
+    # Check if the response is an error or empty
+    if data_hash.is_a?(Hash) && (data_hash.has_key?('message') || data_hash.empty?)
+      UI.error("Failed to get tags for #{repo_url}: #{data_hash['message'] || 'Empty response'}")
+      return nil
+    end
 
-    req = Net::HTTP::Get.new(uri)
-    req['Authorization'] = "Bearer #{ENV['GITHUB_API_TOKEN']}" if ENV['GITHUB_API_TOKEN']
-    response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) { |http|
-      http.request(req)
-    }
-    data_hash = JSON.parse(response.body)
-    return data_hash['message'] if data_hash.is_a?(Hash)
+    # Ensure we have an array response
+    unless data_hash.is_a?(Array)
+      UI.error("Unexpected response format for #{repo_url}")
+      return nil
+    end
 
     # Extract names and sort them as semantic versions
-    versions = data_hash.map { |item| item['name'] }
+    versions = data_hash.map { |item| item['name'] }.compact
   end
 
   semantic_versions = versions.select { |name| valid_semver?(name) }.map { |name| name.sub(/^v/, '') }
   sorted_versions = semantic_versions.sort { |a, b| compare_versions(b, a) }
   sorted_versions.first
-  # download_url = data_hash['download_url']
-  # download_url
-
-  # curl -L \                                    
-  # -H "Accept: application/vnd.github+json" \
-  # -H "Authorization: Bearer $GITHUB_API_TOKEN" \
-  # -H "X-GitHub-Api-Version: 2022-11-28" \
-  # https://api.github.com/repos/AliSoftware/OHHTTPStubs/tags | jq ".[].name" | sort -Vr | head -n 1
 end
 
 lane :build_test_version do |options|
@@ -1337,13 +918,84 @@ def isDryRun(options)
   return dry_run
 end
 
+lane :update_changelog do |option|
+  from = option[:from]
+  new_version = option[:version]
+
+  new_version = current_version_number() unless new_version
+  old_version = sh("git tag | grep -E \"^[1-9]\\d*\.(?:0|[1-9]\\d*)\.(?:0|[1-9]\\d*)$\" | sort -Vr | head -n 1").strip! unless old_version
+
+  UI.message("Updating changelog from version '#{old_version}' to '#{new_version}'")
+
+  gitlab_login()
+  release_notes = sh("cd .. && glab changelog generate --from #{from} --version #{new_version}")
+  release_notes = release_notes.gsub(/^\#\# ([0-9\.]*) \(.*\)/, '# \1')
+
+  filename = "../ReleaseNotes.md"
+  lines = File.read(filename).lines
+  lines.unshift("\n")
+  lines.unshift(release_notes)
+
+  File.open(filename, "w") { |file| file.write(lines.join) }
+
+  UI.message("Release Notes:\n\n#{release_notes}")
+end
+
+lane :prepare_release do |option|
+  old_version = current_version_number()
+  if prompt(text: "bump minor version number?", boolean: true, ci_input: "false")
+    bump_minor_version
+  elsif prompt(text: "bump maintainance (patch) version number? (\"no\" means no bump at all)", boolean: true, ci_input: "false")
+    bump_patch_version
+  end
+
+  version = current_version_number()
+
+  # version changed -> generate changelog
+  if (old_version != version)
+    existing_tags = sh("git tag | grep -E \"^[1-9]\\d*\.(?:0|[1-9]\\d*)\.(?:0|[1-9]\\d*)$\" | sort -Vr").strip!
+    raise "Missing tag '#{old_version}'. Did you forget to tag the last version?" unless existing_tags.split("\n").include?(old_version)
+
+    update_changelog(
+      from: old_version,
+      version: version
+    )
+  end
+
+  compile_foss
+  pull_erp_shared_data
+
+  update_localization
+
+  if prompt(text: "Is the changelog already available on lokalise?", boolean: true, ci_input: "false")
+    update_localization_internal_messages
+  end
+
+  build_ios # record updated screenshots
+
+end
+
+desc "Uploads the localization files to Lokalise"
+desc "A API key with write access to the project is required."
+lane :upload_localization do
+  lokalise_upload(
+    file_path: "./Sources/eRpApp/Resources/de.lproj/Localizable.strings",
+    lang_iso: "de",
+    filename: "Localizable.strings"
+  )
+  lokalise_upload(
+    file_path: "./Sources/eRpApp/Resources/de.lproj/Localizable.stringsdict",
+    lang_iso: "de",
+    filename: "Localizable.stringsdict"
+  )
+end
+
 # Localizable.strings and Localizable.stringsdict
 lane :update_localization do |option|
   languages = ["de", "en_GB", "tr", "ru", "ar", "uk", "pl", "bg", "da", "he_IL", "cs", "nl", "it", "ro", "es", "ga_IE"]
   language_dirs = languages.map { |lang| lang.gsub('_', '-') }
   
   lokalise(
-    project_identifier: ENV['LOCALISE_PROJECT_ID'],
     destination: "./Sources/eRpApp/Resources/",
     languages: languages,
     include_comments: false,
@@ -1363,6 +1015,7 @@ lane :update_localization_internal_messages do |option|
 
   sh "mkdir -p ../Sources/eRpApp/Resources_Internal_Messages"
   lokalise(
+    project_identifier: ENV['CHANGELOG_LOKALISE_PROJECT_ID'],
     destination: "./Sources/eRpApp/Resources_Internal_Messages/",
     clean_destination: true,
     languages: languages,
@@ -1451,9 +1104,8 @@ end
 lane :publish_release_information do |options|
   channel_url =  ENV["TEAMS_CHANNEL_URL_RELEASE"]
 
-  version = `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
-  gitlab_login()
-  release_notes = sh("cd .. && git fetch --tags -q && glab changelog generate --from $(git tag | grep -E \"^[1-9]\\d*\.(?:0|[1-9]\\d*)\.(?:0|[1-9]\\d*)$\" | sort -Vr | head -n 1) --version #{version}")
+  version = current_version_number()
+  release_notes = extract_release_notes_for_version(version)
 
   message_card = {
     'version' => "#{version} (#{ENV['BUILD_NUMBER']}##{git_version})",
@@ -1518,13 +1170,17 @@ def update_patch_version(version)
   "#{major}.#{minor}.#{patch}" # Return the updated version string
 end
 
+def current_version_number()
+  `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
+end
+
 def flatten_version(version)
   major, minor, patch = version.split('.').map(&:to_i)
   "#{major}.#{minor}.0" # Return the updated version string
 end
 
 lane :bump_patch_version do |options|
-  current_version = `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
+  current_version = current_version_number
   new_version = update_patch_version(current_version)
 
   sh "cd .. && /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString \\\"#{new_version}\\\"\" ./Sources/Konny/Resources/Info.plist; cd -"
@@ -1532,7 +1188,7 @@ lane :bump_patch_version do |options|
 end
 
 lane :bump_minor_version do |options|
-  current_version = `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
+  current_version = current_version_number()
   new_version = update_minor_version(current_version)
 
   sh "cd .. && /usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString \\\"#{new_version}\\\"\" ./Sources/Konny/Resources/Info.plist; cd -"
@@ -1565,7 +1221,7 @@ lane :pull_api_keys do |options|
   output_file = './development.apikeys.env'
 
   if version.nil? || version.empty?
-    version = `/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ../App/Sources/Resources/Info.plist`.strip!
+    version = current_version_number()
   end
 
   # remove patch version ("1.21.1" -> "1.21") since we use the same API key for all patch versions of a minor version
@@ -1699,13 +1355,34 @@ def gitlab_login()
   sh("glab auth login --token #{gitlab_api_token} --hostname #{gitlab_hostname}")
 end
 
-# Helper method to escape JSON strings
-def json_escape(string)
-  return "" unless string
-  # First escape quotes and backslashes for JSON
-  escaped = string.to_s.gsub(/["\\]/) { |s| "\\#{s}" }
-  # Then convert newlines to actual line breaks for Teams Markdown rendering
-  # Teams Adaptive Cards use Markdown for text, which requires two spaces followed by newline for line breaks
-  escaped.gsub(/\n/, "  \n")
+def extract_release_notes_for_version(version)
+  # Read and extract release notes for current version
+  release_notes_content = File.read("../ReleaseNotes.md")
+  lines = release_notes_content.lines
+  
+  # Find the start of the current version section
+  version_start = nil
+  lines.each_with_index do |line, index|
+    if line.match(/^#\s+Release\s+#{Regexp.escape(version)}/)
+      version_start = index
+      break
+    end
+  end
+  
+  if version_start
+    # Find the end of the current version section (next version header or end of file)
+    version_end = lines.length
+    ((version_start + 1)...lines.length).each do |index|
+      if lines[index].match(/^#\s+Release\s+\d+\.\d+\.\d+/)
+        version_end = index
+        break
+      end
+    end
+    
+    # Extract the release notes for the current version
+    return lines[version_start...version_end].join.strip
+  else
+    # Fallback if version not found
+    return "Release notes for version #{version} not found in ReleaseNotes.md"
+  end
 end
-

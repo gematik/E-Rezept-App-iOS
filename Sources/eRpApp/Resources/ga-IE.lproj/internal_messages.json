@@ -25,7 +25,7 @@
     },
     {
         "id": "6",
-        "text": "**📲 Fuascail oidis le haghaidh cógais leighis dhigiteacha** \nIs féidir leat oidis a fhuascailt anois le haghaidh feidhmchlár sláinte digiteach (DiGAanna) go díreach tríd an aip ríomh-oideas. Is féidir leat do chód gníomhachtaithe agus an nasc chuig an DiGA forordaithe a fháil anseo san aip ríomh-oideas. \n \n **🏥 Bunachar sonraí nua cógaslainne** \nTá bunachar sonraí nua atá réidh don todhchaí tugtha isteach againn le haghaidh cuardaigh cógaslainne.",
+        "text": "**📲 Fuascail oidis DiGAanna forordaithe** \nIs féidir leat oidis a fhuascailt anois le haghaidh feidhmchlár sláinte digiteach (DiGAanna) go díreach tríd an aip ríomh-oidis. Eiseoidh speisialtóirí i Hamburg na hoidis mar chuid de thionscadal píolótach. Is féidir leat do chód gníomhachtaithe agus an nasc chuig an DiGA a fháil anseo san aip ríomh-oidis. \n \n **🏥 Bunachar sonraí nua cógaslainne** \nTá bunachar sonraí nua atá réidh don todhchaí tugtha isteach againn le haghaidh cuardaigh cógaslainne.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
     },
@@ -34,5 +34,11 @@
         "text": "**♿️ Inrochtaineacht** \nTá ár ráiteas inrochtaineachta ar fáil anois sna socruithe. Tá an próiseas ionduchtaithe déanta níos inrochtana freisin. \n \n **📲 Fuascail DiGAanna le cuideachtaí árachais** \nIs féidir oidis d'fheidhmchláir sláinte digiteacha (DiGAanna) a fhuascailt anois le cuideachtaí árachais eile freisin.",
         "timestamp": "2025-06-24T08:00:00.000Z",
         "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Clárú do dhaoine atá árachaithe go príobháideach** \nTá clárú do dhaoine atá árachaithe go príobháideach optamaithe. Is féidir leat logáil isteach go háisiúil le d’aitheantas sláinte le cúpla cad a tharlaíonn. \n \n **🏥 Sonraí cógaisíochta nuashonraithe** \nTaispeántar athruithe a dhéanann cógaslanna sa bhunachar sonraí nua go hiontaofa anois. \n \n **📲 Tuilleadh eolais do DiGAanna** \nAs seo amach gheobhaidh tú tuilleadh eolais mhionsonraithe faoi d’oidis DiGA, amhail an praghas díola nó an lógó. \n \n **♿️ Inrochtaineacht** \nTá an scáileán chun uimhir rochtana an chárta sláinte a iontráil athdhearadh agus tá sé optamaithe anois le húsáid le VoiceOver. \n \n **📤 Comhroinn oidis** \nIs féidir oidis a roinnt le daoine eile anois go díreach ón aip.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
     }
 ]

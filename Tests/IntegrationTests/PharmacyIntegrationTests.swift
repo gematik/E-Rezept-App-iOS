@@ -28,6 +28,7 @@ import FHIRClient
 import FHIRVZD
 import Foundation
 import HTTPClient
+import HTTPClientLive
 import Nimble
 import Pharmacy
 import XCTest

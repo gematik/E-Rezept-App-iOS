@@ -2,12 +2,14 @@
 // Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
 
 {% if files %}
+{% set accessModifier %}{% if param.publicAccess %}public{% else %}internal{% endif %}{% endset %}
+
 import Foundation
 
-protocol AnalyticsScreen {
+{{accessModifier}} protocol AnalyticsScreen {
     var name: String { get }
 }
-typealias AnalyticsEvent = String
+{{accessModifier}} typealias AnalyticsEvent = String
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable file_length

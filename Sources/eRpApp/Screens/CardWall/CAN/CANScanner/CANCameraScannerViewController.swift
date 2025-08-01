@@ -32,6 +32,7 @@ import Vision
 
 class CANCameraScannerViewController: UIViewController {
     var canScanned: ((ScanCAN) -> Void)?
+    var onSuccessfulScanAction: (() -> Void)?
 
     @IBOutlet var previewView: PreviewView!
     @IBOutlet var cutoutView: UIView!
@@ -331,6 +332,7 @@ class CANCameraScannerViewController: UIViewController {
         if let sureNumber = numberTracker.getStableString() {
             DispatchQueue.main.async { [weak self] in
                 self?.canScanned?(ScanCAN(value: sureNumber))
+                self?.onSuccessfulScanAction?()
                 self?.pauseCaptureSession()
                 self?.numberTracker.reset(string: sureNumber)
             }

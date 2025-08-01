@@ -47,12 +47,12 @@ Equatable {
 public struct DiscoveryDocument: Codable {
     let createdOn: Date
 
-    let backing: JWT
+    public let backing: JWT
     let payload: DiscoveryDocumentPayload
     /// The IDP X.509 certificate used to validate the discovery document
     public let discKey: X509
     /// The IDP Authentication endpoint public key, used to derivce the encryption key to encrypt the JWE‘s
-    let encryptionPublicKey: BrainpoolP256r1.KeyExchange.PublicKey
+    public let encryptionPublicKey: BrainpoolP256r1.KeyExchange.PublicKey
     /// The IDP X.509 certificate that is used to check signatures
     public let signingCert: X509
 
@@ -85,7 +85,7 @@ public struct DiscoveryDocument: Codable {
         try container.encode(createdOn, forKey: .createdOn)
     }
 
-    internal init(jwt: JWT, encryptPuks: JWK, signingPuks: JWK, createdOn: Date = Date()) throws {
+    public init(jwt: JWT, encryptPuks: JWK, signingPuks: JWK, createdOn: Date = Date()) throws {
         backing = jwt
         /// Get from every set the first key we encounter and use/set it accordingly
         guard let signingX5C = signingPuks.x5c?.first else {
@@ -196,23 +196,12 @@ extension DiscoveryDocument {
 
 extension DiscoveryDocument {
     // [REQ:gemSpec_IDP_Frontend:A_20512#2|5] Validation by expiration date checking + maximum of 24h window
-    func isValid(on date: Date) -> Bool {
+    /// Check if the discovery document is valid on the given date
+    /// - Parameter date: Date to check validity against
+    /// - Returns: Boolean indicating if the document is valid
+    public func isValid(on date: Date) -> Bool {
         date <= expiresOn &&
             date >= createdOn &&
             date <= createdOn.addingTimeInterval(60 * 60 * 24)
-    }
-}
-
-extension URL {
-    func domainReplacingOccurrences(of find: String, with replace: String) -> URL {
-        // swiftlint:disable force_unwrapping
-        var components = URLComponents(url: self, resolvingAgainstBaseURL: true)!
-        components.host = components.host!.replacingOccurrences(of: find, with: replace)
-        return components.url!
-        // swiftlint:enable force_unwrapping
-    }
-
-    func correct() -> URL {
-        domainReplacingOccurrences(of: ".zentral.idp.splitdns.ti-dienste.de", with: ".app.ti-dienste.de")
     }
 }

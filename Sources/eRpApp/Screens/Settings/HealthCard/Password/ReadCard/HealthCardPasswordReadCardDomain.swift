@@ -43,7 +43,7 @@ struct HealthCardPasswordReadCardDomain {
 
     enum Action: Equatable {
         case readCard
-        case backButtonTapped
+        case openHelpView
 
         case resetNavigation
         case destination(PresentationAction<Destination.Action>)
@@ -72,6 +72,8 @@ struct HealthCardPasswordReadCardDomain {
         @ReducerCaseEphemeral
         // sourcery: AnalyticsScreen = errorAlert
         case alert(ErpAlertState<Alert>)
+        // Screen tracking handled inside
+        case help(ReadCardHelpDomain)
 
         enum Alert: Equatable {
             case settings
@@ -161,9 +163,9 @@ struct HealthCardPasswordReadCardDomain {
             }
             return .none
 
-        case .backButtonTapped:
-            state.destination = nil
-            return .send(.delegate(.close))
+        case .openHelpView:
+            state.destination = .help(.init())
+            return .none
         case .destination(.presented(.alert(.settings))):
             state.destination = nil
             return .run { send in
@@ -193,6 +195,9 @@ struct HealthCardPasswordReadCardDomain {
                 await send(.delegate(.navigateToPukScreen))
             }
         case .resetNavigation:
+            state.destination = nil
+            return .none
+        case .destination(.presented(.help(.delegate(.close)))):
             state.destination = nil
             return .none
         case .delegate,

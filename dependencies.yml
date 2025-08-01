@@ -25,3 +25,4 @@ exclude_identities_from_package_resolved:
   - ohhttpstubs
   - plcrashreporter
   - commandant
+  - swiftgenplugin

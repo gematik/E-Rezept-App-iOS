@@ -25,7 +25,7 @@
     },
     {
         "id": "6",
-        "text": "**📲 Valorificați rețetele DiGA prescrise** \nAcum puteți valorifica rețetele pentru aplicații digitale de sănătate (DiGA) direct prin intermediul aplicației de rețete electronice. Puteți găsi codul de activare și linkul către DiGA prescris chiar aici, în aplicația de rețete electronice. \n \n **🏥 Noua bază de date a farmaciilor** \nAm introdus o nouă bază de date, pregătită pentru viitor, pentru căutările în farmacii.",
+        "text": "**📲 Valorificați rețetele DiGA prescrise** \nAcum puteți valorifica rețetele pentru aplicații digitale de sănătate (DiGA) direct prin intermediul aplicației de rețete electronice. Rețetele vor fi emise de specialiști din Hamburg, ca parte a unui proiect pilot. Puteți găsi codul de activare și linkul către DiGA chiar aici, în aplicația de rețete electronice. \n \n **🏥 Noua bază de date a farmaciilor** \nAm introdus o nouă bază de date, pregătită pentru viitor, pentru căutările în farmacii.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
     },
@@ -34,5 +34,11 @@
         "text": "**♿️ Accesibilitate** \nDeclarația noastră de accesibilitate este acum disponibilă în setări. Procesul de înregistrare a devenit, de asemenea, mai accesibil. \n \n **📲 Răscumpărați DiGA-uri la companiile de asigurări** \nRețetele pentru aplicații digitale de sănătate (DiGA) pot fi acum răscumpărate și la alte companii de asigurări.",
         "timestamp": "2025-06-24T08:00:00.000Z",
         "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Înregistrarea pentru persoanele asigurate privat** \nÎnregistrarea pentru persoanele asigurate privat a fost optimizată. Vă puteți conecta convenabil cu cardul dvs. de sănătate în doar câteva clicuri. \n \n **🏥 Date actualizate despre farmacie** \nModificările pe care farmaciile le fac în noua bază de date sunt acum afișate în mod fiabil. \n \n **📲 Mai multe informații pentru persoanele asigurate DiGA** \nDe acum înainte veți primi informații mai detaliate despre rețetele dvs. DiGA, cum ar fi prețul de vânzare sau sigla. \n \n **♿️ Accesibilitate** \nEcranul pentru introducerea numărului de acces al cardului de sănătate a fost reproiectat și este acum optimizat pentru utilizarea cu VoiceOver. \n \n **📤 Partajați rețetele** \nRețetele pot fi acum partajate cu alte persoane direct din aplicație.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
     }
 ]

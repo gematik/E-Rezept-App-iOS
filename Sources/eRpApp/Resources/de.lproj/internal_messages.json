@@ -25,7 +25,7 @@
     },
     {
         "id": "6",
-        "text": "**📲 Verordnete DiGAs einlösen**\nAb sofort können Sie Verordnungen für digitale Gesundheitsanwendungen (DiGAs) direkt über die E-Rezept App einlösen. Ihren Freischaltcode und den Link zur verschriebenen DiGA finden Sie direkt hier in der E-Rezept App.\n\n**🏥 Neue Apothekendatenbank**\nWir haben eine neue, zukunftssichere Datenbank für die Apothekensuche eingeführt.",
+        "text": "**📲 Verordnete DiGAs einlösen**\nAb sofort können Sie Verordnungen für digitale Gesundheitsanwendungen (DiGAs) direkt über die E-Rezept App einlösen. Die Rezepte werden im Rahmen eines Pilotprojekts von Fachkräften in Hamburg ausgestellt. Ihren Freischaltcode und den Link zur DiGA finden Sie direkt hier in der E-Rezept App.\n\n**🏥 Neue Apothekendatenbank**\nWir haben eine neue, zukunftssichere Datenbank für die Apothekensuche eingeführt.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
     },
@@ -34,5 +34,11 @@
         "text": "**♿️ Barrierefreiheit**\nUnsere Barrierefreiheitserklärung ist ab sofort in den Einstellungen verfügbar. Außerdem wurde der Onboarding-Prozess barrierefreundlicher gestaltet.\n\n**📲 DiGAs bei Versicherungen einlösen**\nVerordnungen für digitale Gesundheitsanwendungen (DiGAs) können jetzt auch bei anderen Versicherungen eingelöst werden.",
         "timestamp": "2025-06-24T08:00:00.000Z",
         "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Anmelden für Privatversicherte**\nDas Anmelden für Privatversicherte ist jetzt optimiert. Mit wenigen Klicks können Sie sich bequem mit Ihrer GesundheitsID anmelden.\n\n**🏥 Aktualisierte Apothekendaten**\nÄnderungen, die Apotheken in der neuen Datenbank vornehmen, werden jetzt zuverlässig angezeigt.\n\n**📲 Mehr Informationen für DiGAs**\nAb jetzt erhalten Sie ausführlichere Informationen zu Ihren DiGA-Verordnungen, wie den Verkaufspreis oder das Logo.\n\n**♿️ Barrierefreiheit**\nDer Screen zur Eingabe der Zugangsnummer der Gesundheitskarte wurde neu gestaltet und ist jetzt für die Nutzung mit VoiceOver optimiert.\n\n**📤 Rezepte teilen**\nRezepte können jetzt direkt aus der App mit anderen geteilt werden.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
     }
 ]

@@ -62,18 +62,19 @@ struct OnboardingStartView: View {
                         .multilineTextAlignment(.center)
                         .padding(.bottom, 32)
                         .fixedSize(horizontal: false, vertical: true)
-                    Button(action: {
-                        action()
-                    }, label: {
-                        Text(L10n.onbBtnStart)
-                            .accessibility(identifier: A11y.onboarding.start.onbBtnStart)
-                            .accessibility(hint: Text(L10n.onbBtnStart))
-                            .accessibility(label: Text(L10n.onbBtnStart))
-                    })
-                        .buttonStyle(.primaryHugging)
                 }
-                .padding(.bottom, 32)
                 .accessibilityElement(children: .combine)
+
+                Button(action: {
+                    action()
+                }, label: {
+                    Text(L10n.onbBtnStart)
+                        .accessibility(identifier: A11y.onboarding.start.onbBtnStart)
+                        .accessibility(hint: Text(L10n.onbBtnStart))
+                        .accessibility(label: Text(L10n.onbBtnStart))
+                })
+                    .buttonStyle(.primaryHugging)
+                    .padding(.bottom, 32)
 
                 Spacer()
             }

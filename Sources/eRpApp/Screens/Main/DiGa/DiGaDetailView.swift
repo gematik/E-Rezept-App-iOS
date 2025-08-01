@@ -55,13 +55,19 @@ struct DiGaDetailView: View {
                     Spacer()
 
                     GreyDivider()
+                        .padding(.bottom, 16)
+
+                    if let available = store.isAvailabeOniOS, !available {
+                        NotAvailableIOSHint()
+                            .padding(.horizontal)
+                    }
 
                     if !store.showSelectInsurance {
                         if let buttonText = store.diGaInfo.diGaState.buttonText {
                             PrimaryTextButton(text: LocalizedStringKey(buttonText),
                                               a11y: A11y.digaDetail.digaDtlBtnMainAction) {
                                 store.send(.mainButtonTapped)
-                            }.padding()
+                            }.padding([.horizontal, .bottom], 8)
                         }
                     } else {
                         PrimaryTextButton(text: store.isLoading ? L10n.digaDtlBtnMainRequest : L10n
@@ -69,7 +75,7 @@ struct DiGaDetailView: View {
                             a11y: A11y.digaDetail.digaDtlBtnMainSelectInsurance,
                             isEnabled: !store.isLoading) {
                                 store.send(.setNavigation(tag: .insuranceList))
-                        }.padding()
+                        }.padding([.horizontal, .bottom], 8)
 
                         if store.isLoading {
                             HStack(spacing: 4) {
@@ -79,28 +85,19 @@ struct DiGaDetailView: View {
 
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle())
-                            }.padding([.horizontal, .bottom], 8)
+                            }.padding([.horizontal, .bottom], 16)
                         }
                     }
 
                     if store.showRelatedInsurance {
-                        HStack(spacing: 4) {
-                            Text(L10n.digaDtlTxtSelectedInsurance)
-                                .fixedSize()
-                                .font(.subheadline)
-                                .foregroundColor(Color(.secondaryLabel))
-
-                            if let selectedInsuranceName = store.selectedInsurance?.name {
-                                Button {
-                                    store.send(.setNavigation(tag: .insuranceList))
-                                } label: {
-                                    Text(selectedInsuranceName)
-                                        .font(.subheadline)
-                                        .foregroundColor(Colors.primary700)
-                                        .underline()
-                                }.accessibility(identifier: A11y.digaDetail.digaDtlBtnMainSelectedInsurance)
-                            }
-                        }.padding([.horizontal, .bottom], 8)
+                        Button {
+                            store.send(.setNavigation(tag: .insuranceList))
+                        } label: {
+                            Text(store.relatedInsuranceText)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding([.horizontal, .bottom], 16)
+                        .accessibility(identifier: A11y.digaDetail.digaDtlBtnMainSelectedInsurance)
                     }
                 }
             }.task {
@@ -129,8 +126,17 @@ struct DiGaDetailView: View {
             WithPerceptionTracking {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Image(decorative: Asset.Prescriptions.DiGa.diGaImage)
-                            .accessibilityHidden(true)
+                        if let image = store.bfArMDisplayInfo?.image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .clipShape(Circle())
+                                .frame(width: 56, height: 56)
+                                .accessibilityHidden(true)
+                        } else {
+                            Image(decorative: Asset.Prescriptions.DiGa.diGaImage)
+                                .accessibilityHidden(true)
+                        }
                         Spacer()
                     }
 
@@ -150,6 +156,30 @@ struct DiGaDetailView: View {
                         .accessibility(identifier: A11y.digaDetail.digaDtlTxtPatientHeader)
                 }.padding()
             }
+        }
+    }
+
+    private struct NotAvailableIOSHint: View {
+        var body: some View {
+            HStack(spacing: 0) {
+                Image(systemName: SFSymbolName.exclamationMark)
+                    .foregroundColor(Colors.yellow900)
+                    .font(.title3)
+                    .padding(.trailing)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L10n.digaDtlTxtNotAvailableHint)
+                        .font(Font.subheadline)
+                        .foregroundColor(Colors.yellow900)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Colors.yellow100))
+            .accessibilityElement(children: .combine)
+            .border(Colors.yellow300, width: 0.5, cornerRadius: 12)
         }
     }
 

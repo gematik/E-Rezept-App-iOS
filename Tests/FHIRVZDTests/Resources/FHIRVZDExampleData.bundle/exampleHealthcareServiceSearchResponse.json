@@ -71,11 +71,6 @@
                         "coding": [
                             {
                                 "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
-                                "code": "30",
-                                "display": "Botendienst"
-                            },
-                            {
-                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
                                 "code": "50",
                                 "display": "Sterilherstellung"
                             },
@@ -86,6 +81,16 @@
                             }
                         ],
                         "text": "apo-vzd"
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "https://gematik.de/fhir/directory/CodeSystem/PharmacyHealthcareSpecialtyCS",
+                                "code": "30",
+                                "display": "Botendienst"
+                            }
+                        ],
+                        "text": "custom"
                     },
                     {
                         "coding": [

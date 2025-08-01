@@ -21,6 +21,7 @@
 //
 
 import AVS
+import BfArM
 import Combine
 import ComposableArchitecture
 import Dependencies
@@ -31,7 +32,9 @@ import FHIRClient
 import FHIRVZD
 import Foundation
 import HTTPClient
+import HTTPClientLive
 import IDP
+import IDPLive
 import Pharmacy
 import TrustStore
 import VAUClient
@@ -142,6 +145,15 @@ class StandardSessionContainer: UserSession {
         return DefaultFHIRVZDSession(config: fhirVZDConfig)
     }()
 
+    lazy var bfarmSession: BfArMSession = {
+        let bfarmConfig = BfArMClient.Configuration(
+            eRezeptAPIServer: appConfiguration.eRezept,
+            eRezeptAdditionalHeader: appConfiguration.eRezeptAdditionalHeader
+        )
+
+        return DefaultBfArMSession(config: bfarmConfig)
+    }()
+
     lazy var extAuthRequestStorage: ExtAuthRequestStorage = { PersistentExtAuthRequestStorage() }()
     lazy var secureUserStore: SecureUserDataStore = { keychainStorage }()
     lazy var localUserStore: UserDataStore = { UserDefaultsStore() }()
@@ -203,6 +215,12 @@ class StandardSessionContainer: UserSession {
         return DefaultPharmacyRepository(
             disk: pharmacyCoreDataStore,
             cloud: pharmacyServiceFactory.construct(fhirClient, fhirVZDSession)
+        )
+    }()
+
+    lazy var bfArMService: BfArMService = {
+        DefaultBfArMService(
+            session: bfarmSession
         )
     }()
 
@@ -386,7 +404,7 @@ extension StandardSessionContainer {
         // [REQ:gemSpec_IDP_Frontend:A_21325#2] Interceptor order defines what is encrypted via VAU
         let interceptors: [Interceptor] = [
             AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
-            idpSession.httpInterceptor(delegate: nil),
+            IDPInterceptor(session: idpSession, delegate: nil),
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
             session.provideInterceptor(),

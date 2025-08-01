@@ -122,8 +122,8 @@ extension Reducer {
             scenario = nil
         }
 
-        // swiftformat:disable:next redundantSelf
-        return self.transformDependency(\.self) { dependencies in
+        // swiftformat:disable:next redundaIntSelf
+        return transformDependency(\.self) { dependencies in
             guard scenario != nil || isRecording else { return }
 
             dependencies.userDataStore = SmartMocks.shared.smartMockUserDataStore(scenario, isRecording)
@@ -152,7 +152,6 @@ extension Reducer {
             if scenario?.idpSession != nil {
                 dependencies.idpSession = SmartMocks.shared.smartMockIDPSession(scenario, isRecording)
             }
-            @Dependency(\.userSession) var userSession
 
             if !isRecording {
                 let loginHandler = UITestLoginHandler()
@@ -164,6 +163,8 @@ extension Reducer {
                     SmartMocks.shared.smartMockRedeemService(scenario, isRecording, loginHandler)
                 }
             }
+
+            dependencies.drawerEvaluation.showDrawerEvaluation = { .none }
         }
     }
 }

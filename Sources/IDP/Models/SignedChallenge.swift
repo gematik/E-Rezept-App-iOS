@@ -47,8 +47,14 @@ public struct SignedChallenge {
         signedChallenge.serialize()
     }
 
-    func encrypt(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
-                 using cryptoBox: IDPCrypto) throws -> JWE {
+    /// Encrypt the signed challenge using the provided public key
+    /// - Parameters:
+    ///   - publicKey: BrainpoolP256r1 public key for encryption
+    ///   - cryptoBox: IDPCrypto instance containing encryption parameters
+    /// - Returns: JWE containing the encrypted signed challenge
+    /// - Throws: IDPError if encryption fails
+    public func encrypt(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
+                        using cryptoBox: IDPCrypto) throws -> JWE {
         // [REQ:BSI-eRp-ePA:O.Cryp_1#2] Signature via ecdh ephemeral-static
         // [REQ:BSI-eRp-ePA:O.Cryp_4#5] one time usage for JWE ECDH-ES Encryption
         let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(

@@ -209,7 +209,7 @@ extension DiGaDetailView {
                         }
 
                         if store.diGaDispense?.redeemCode != nil,
-                           store.bfarmDiGaDetails?.supportUrl != nil {
+                           store.bfArMDisplayInfo?.supportText != nil {
                             Button {
                                 store.send(.setNavigation(tag: .supportDiGa))
                             } label: {

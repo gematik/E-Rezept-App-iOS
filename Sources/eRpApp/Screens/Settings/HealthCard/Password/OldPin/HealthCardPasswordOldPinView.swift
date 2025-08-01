@@ -31,7 +31,7 @@ struct HealthCardPasswordOldPinView: View {
 
     var body: some View {
         WithPerceptionTracking {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(L10n.stgTxtCardResetOldpinHeadline)
@@ -66,7 +66,8 @@ struct HealthCardPasswordOldPinView: View {
                     label: { Text(L10n.stgBtnCardResetAdvance) }
                 )
                 .disabled(!store.oldPinMayAdvance)
-                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: store.oldPinMayAdvance, destructive: false))
+                .buttonStyle(.primary(isEnabled: store.oldPinMayAdvance, width: .wideHugging))
+                .frame(maxWidth: .infinity, alignment: .center)
                 .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
                 .padding(.horizontal)
                 .padding(.vertical, 8)

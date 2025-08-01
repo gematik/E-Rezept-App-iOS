@@ -95,6 +95,11 @@ extension MedicationRedeemView {
         self.init(text: text.key, a11y: a11y, isEnabled: isEnabled, action: action)
     }
 }
+extension NavButton {
+    init(text: StringAsset, a11y: String, back: Bool, action: @escaping () -> Void) {
+        self.init(text: text.key, a11y: a11y, back: back, action: action)
+    }
+}
 extension OptInCell {
     init(text: StringAsset, isOn: Binding<Bool>) {
         self.init(text: text.key, isOn: isOn)
@@ -160,8 +165,8 @@ extension SubTitleTop {
     }
 }
 extension TertiaryListButton {
-    init(text: StringAsset, imageName: String? = SFSymbolName.refresh, accessibilityIdentifier: String, action: @escaping () -> Void) {
-        self.init(text: text.key, imageName: imageName, accessibilityIdentifier: accessibilityIdentifier, action: action)
+    init(text: StringAsset, semiBold: Bool = false, imageName: String? = SFSymbolName.refresh, accessibilityIdentifier: String, action: @escaping () -> Void) {
+        self.init(text: text.key, semiBold: semiBold, imageName: imageName, accessibilityIdentifier: accessibilityIdentifier, action: action)
     }
 }
 extension Tile {

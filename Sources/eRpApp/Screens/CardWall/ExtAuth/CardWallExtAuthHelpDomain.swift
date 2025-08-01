@@ -20,14 +20,36 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 import ComposableArchitecture
+import eRpKit
 
 @Reducer
 struct CardWallExtAuthHelpDomain {
     @ObservableState
-    struct State: Equatable {}
+    struct State: Equatable {
+        var insuranceType: Profile.InsuranceType = .unknown
+    }
+
     enum Action: Equatable {}
 
     var body: some Reducer<State, Action> {
         EmptyReducer()
+    }
+}
+
+extension CardWallExtAuthHelpDomain {
+    enum Dummies {
+        static let state = State()
+
+        static let pkvState = State(insuranceType: .pKV)
+
+        static let store = Store(initialState: state) {
+            CardWallExtAuthHelpDomain()
+        }
+
+        static func store(for state: State) -> StoreOf<CardWallExtAuthHelpDomain> {
+            Store(initialState: state) {
+                CardWallExtAuthHelpDomain()
+            }
+        }
     }
 }

@@ -141,15 +141,16 @@ extension IDPSession {
     }
 }
 
-extension IDPSession {
-    /// Create a new IDPInterceptor for this session
+/// Delegate for HTTPClient Interceptor(s)
+public protocol IDPSessionDelegate: AnyObject {
+    /// Asks the delegate whether the given request should be authorized
     ///
-    /// - Parameter delegate: the IDP Session delegate
-    /// - Returns: new IDPInterceptor
-    public func httpInterceptor(delegate: IDPSessionDelegate?) -> IDPInterceptor {
-        IDPInterceptor(session: self, delegate: delegate)
-    }
+    /// - Parameter request: request to authorize
+    /// - Returns: when returning true the Interceptor must authorize the request
+    func shouldAuthorize(request: URLRequest) -> Bool
+}
 
+extension IDPSession {
     /// Exchange the token with verifier for the actual token
     ///
     /// - Parameters:

@@ -220,18 +220,26 @@ extension ModelsR4.HealthcareService {
     }
 
     var pharmacyTypes: [PharmacyLocation.PharmacyType] {
-        specialty?.first { concept in
-            concept.text?.value?.string == FHIRDirectory.Key.specialtyKey
-        }?
-            .coding?
-            .filter { coding in
-                coding.system?.value?.url.absoluteString == FHIRDirectory.Key.CodeSystem.pharmacyHealthcareSpecialty
+        guard let specialty = specialty else {
+            return []
+        }
+        let allSpecialities = specialty.flatMap {
+            $0
+                .coding?
+                .filter { coding in
+                    coding.system?.value?.url.absoluteString == FHIRDirectory.Key.CodeSystem.pharmacyHealthcareSpecialty
+                } ?? []
+        }
+        .compactMap { coding -> PharmacyLocation.PharmacyType? in
+            guard let rawValue = coding.code?.value?.string
+            else { return nil }
+            return Specialty(rawValue: rawValue)?.pharmacyType
+        }
+        return allSpecialities.reduce(into: []) { partialResult, specialty in
+            if !partialResult.contains(specialty) {
+                partialResult.append(specialty)
             }
-            .compactMap { coding -> PharmacyLocation.PharmacyType? in
-                guard let rawValue = coding.code?.value?.string
-                else { return nil }
-                return Specialty(rawValue: rawValue)?.pharmacyType
-            } ?? []
+        }
     }
 }
 

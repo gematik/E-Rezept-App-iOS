@@ -26,25 +26,35 @@ import OpenSSL
 
 /// All relevant constraints needed for a successful challenge exchange
 public struct IDPDirectoryKKApps {
-    let jwt: JWT
+    /// JWT containing the directory KK apps data
+    public let jwt: JWT
 
-    /// - Parameter njwt: original challenge
+    /// Initialize IDPDirectoryKKApps with a JWT string
+    /// - Parameter jwt: JWT string to parse
+    /// - Throws: If JWT parsing fails
     public init(jwt: String) throws {
         self.jwt = try JWT(from: jwt)
     }
 
     /// Initialize response from preformatted JWT
     ///
-    /// - Parameter njwt: original challenge
+    /// - Parameter jwt: original challenge
     public init(jwt: JWT) {
         self.jwt = jwt
     }
 
-    func verify(with certificate: X509) throws -> Bool {
+    /// Verify the JWT signature with the provided certificate
+    /// - Parameter certificate: X.509 certificate used for verification
+    /// - Returns: Boolean indicating if verification was successful
+    /// - Throws: If verification fails
+    public func verify(with certificate: X509) throws -> Bool {
         try jwt.verify(with: certificate)
     }
 
-    func claims() throws -> KKAppDirectory {
+    /// Extract claims from the JWT
+    /// - Returns: KKAppDirectory claims from the JWT payload
+    /// - Throws: If payload decoding fails
+    public func claims() throws -> KKAppDirectory {
         try jwt.decodePayload(type: KKAppDirectory.self)
     }
 }

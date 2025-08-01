@@ -32,6 +32,20 @@ public struct TokenPayload: Codable {
     public let ssoToken: String?
     public let tokenType: String
 
+    public init(
+        accessToken: String,
+        expiresIn: Int,
+        idToken: String,
+        ssoToken: String? = nil,
+        tokenType: String
+    ) {
+        self.accessToken = accessToken
+        self.expiresIn = expiresIn
+        self.idToken = idToken
+        self.ssoToken = ssoToken
+        self.tokenType = tokenType
+    }
+
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
         case expiresIn = "expires_in"
@@ -131,7 +145,11 @@ extension TokenPayload {
         case decryption(Swift.Error)
     }
 
-    func decrypted(with aesKey: SymmetricKey) throws -> TokenPayload {
+    /// Decrypt the token payload using the provided AES key
+    /// - Parameter aesKey: AES symmetric key for decryption
+    /// - Returns: Decrypted TokenPayload with access and ID tokens
+    /// - Throws: TokenPayload.Error if decryption fails
+    public func decrypted(with aesKey: SymmetricKey) throws -> TokenPayload {
         guard let accessTokenData = accessToken.data(using: .utf8),
               let idTokenData = idToken.data(using: .utf8) else {
             throw Error.dataEncoding
@@ -167,7 +185,7 @@ public struct KeyVerifier: Codable {
     ///  random generated verifier code that was created and sent with the request challenge API call
     let verifierCode: VerifierCode
 
-    init(with key: SymmetricKey, codeVerifier: String) throws {
+    public init(with key: SymmetricKey, codeVerifier: String) throws {
         guard let encoded = key.withUnsafeBytes({ Data(Array($0)) }).encodeBase64UrlSafe(),
               let keyDataString = String(bytes: encoded, encoding: .utf8) else {
             throw Error.stringConversion
@@ -187,8 +205,8 @@ public struct KeyVerifier: Codable {
         case stringConversion
     }
 
-    func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
-                   using cryptoBox: IDPCrypto) throws -> JWE {
+    public func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
+                          using cryptoBox: IDPCrypto) throws -> JWE {
         // [REQ:gemSpec_IDP_Frontend:A_21323#2] Encode into JSON object
         // [REQ:gemSpec_IDP_Frontend:A_21324#3] Encode into JSON object
         guard let keyVerifierEncoded = try? KeyVerifier.jsonEncoder.encode(self) else {

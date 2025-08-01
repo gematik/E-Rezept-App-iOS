@@ -97,9 +97,12 @@ struct PharmacyContactView: View {
                         .textContentType(.addressCity)
 
                         LabeledContent(L10n.phaContactTxtDeliveryInfo) {
-                            TextField(L10n.phaContactPlaceholderDeliveryInfo,
-                                      text: $store.contactInfo.deliveryInfo)
-                                .accessibility(identifier: A11y.pharmacyContact.phaContactAddressInfo)
+                            TextField(
+                                L10n.phaContactPlaceholderDeliveryInfo,
+                                text: $store.contactInfo.deliveryInfo,
+                                axis: .vertical
+                            )
+                            .accessibility(identifier: A11y.pharmacyContact.phaContactAddressInfo)
                         }
                     })
                 }
