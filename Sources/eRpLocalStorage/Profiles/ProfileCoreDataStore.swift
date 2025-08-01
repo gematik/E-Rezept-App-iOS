@@ -153,6 +153,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                     profileEntity.image = profile.image.rawValue
                     profileEntity.userImageData = profile.userImageData
                     profileEntity.lastAuthenticated = profile.lastAuthenticated
+                    profileEntity.hideWelcomeDrawerOnMainView = profile.hideWelcomeDrawerOnMainView
                     profileEntity.hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
                     profileEntity.shouldAutoUpdateNameAtNextLogin = profile.shouldAutoUpdateNameAtNextLogin
                     profileEntity.gIdEntry = try? ProfileCoreDataStore.encoder.encode(profile.gIdEntry)
@@ -191,6 +192,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                 profileEntity.image = profile.image.rawValue
                 profileEntity.userImageData = profile.userImageData
                 profileEntity.lastAuthenticated = profile.lastAuthenticated
+                profileEntity.hideWelcomeDrawerOnMainView = profile.hideWelcomeDrawerOnMainView
                 profileEntity.hidePkvConsentDrawerOnMainView = profile.hidePkvConsentDrawerOnMainView
                 profileEntity.shouldAutoUpdateNameAtNextLogin = profile.shouldAutoUpdateNameAtNextLogin
                 profileEntity.gIdEntry = try? ProfileCoreDataStore.encoder.encode(profile.gIdEntry)

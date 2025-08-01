@@ -25,6 +25,7 @@ import Foundation
 @testable import IDP
 import Nimble
 import OpenSSL
+import TestUtils
 import XCTest
 
 class IDPChallengeSessionTest: XCTestCase {

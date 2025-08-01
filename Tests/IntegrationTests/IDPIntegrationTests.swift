@@ -25,7 +25,9 @@ import Combine
 @testable import eRpFeatures
 import Foundation
 import HTTPClient
-@testable import IDP
+import HTTPClientLive
+import IDP
+@testable import IDPLive
 import Nimble
 import OpenSSL
 import Security

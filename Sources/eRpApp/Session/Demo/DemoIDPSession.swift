@@ -24,7 +24,9 @@ import Combine
 import CombineSchedulers
 import Dependencies
 import Foundation
+import HTTPClient
 import IDP
+import IDPLive
 
 class DemoIDPSession: IDPSession {
     @Dependency(\.schedulers) var schedulers

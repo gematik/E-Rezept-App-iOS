@@ -407,6 +407,8 @@ extension DiGaDetailDomain.Destination.Action {
                 action.analytics(tracker: tracker)
             case let .insuranceList(action):
                 action.analytics(tracker: tracker)
+            case let .duesInfo(action):
+                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -651,6 +653,8 @@ extension HealthCardPasswordReadCardDomain.Action {
 extension HealthCardPasswordReadCardDomain.Destination.Action {
     func analytics(tracker: Tracker) {
         switch self {
+            case let .help(action):
+                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -726,6 +730,8 @@ extension MainDomain.Destination.Action {
             case let .medicationReminder(action):
                 action.analytics(tracker: tracker)
             case let .diGaDetail(action):
+                action.analytics(tracker: tracker)
+            case let .osDeprecation(action):
                 action.analytics(tracker: tracker)
             default: break
         }
@@ -859,6 +865,13 @@ extension NewProfileDomain.Destination.Action {
         switch self {
             case let .editProfilePicture(action):
                 action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
+extension OSDeprecationDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
             default: break
         }
     }

@@ -42,7 +42,7 @@ public struct JWT {
     /// - Parameters:
     ///   - data: JWT data should be utf8 decodable
     /// - Throws: `JWT.Error`
-    init(from data: Data) throws {
+    public init(from data: Data) throws {
         guard let string = String(data: data, encoding: .ascii) else {
             throw Error.malformedJWT
         }

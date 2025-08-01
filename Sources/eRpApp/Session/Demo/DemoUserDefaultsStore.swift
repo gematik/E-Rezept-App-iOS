@@ -136,13 +136,6 @@ class DemoUserDefaultsStore: UserDataStore {
         set { appStartCounterValue = newValue }
     }
 
-    var hideWelcomeDrawerValue = true
-
-    var hideWelcomeDrawer: Bool {
-        get { hideWelcomeDrawerValue }
-        set { hideWelcomeDrawerValue = newValue }
-    }
-
     var readInternalCommunications: AnyPublisher<[String], Never> {
         readInternalCommunicationsCurrentValue.eraseToAnyPublisher()
     }

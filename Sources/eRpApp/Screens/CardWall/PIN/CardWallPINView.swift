@@ -38,18 +38,19 @@ struct CardWallPINView: View {
 
                 GreyDivider()
 
-                PrimaryTextButton(text: L10n.cdwBtnPinDone,
-                                  a11y: A11y.cardWall.pinInput.cdwBtnPinDone,
-                                  isEnabled: store.enteredPINValid) {
+                Button {
                     // workaround: dismiss keyboard to fix safearea bug for iOS 16
                     if #available(iOS 16, *) {
                         UIApplication.shared.dismissKeyboard()
                     }
                     store.send(.advance(store.transition))
+                } label: {
+                    Text(L10n.cdwBtnPinDone)
+                        .accessibilityIdentifier(A11y.cardWall.pinInput.cdwBtnPinNoPin)
+                        .accessibilityLabel(Text(L10n.cdwBtnPinDoneLabel))
                 }
-                .accessibility(label: Text(L10n.cdwBtnPinDoneLabel))
-                .padding(.horizontal)
-                .padding(.bottom, 8)
+                .buttonStyle(.primary(isEnabled: store.enteredPINValid, width: .wideHugging))
+                .frame(maxWidth: .infinity, alignment: .center)
 
                 if store.transition == .push {
                     Rectangle()

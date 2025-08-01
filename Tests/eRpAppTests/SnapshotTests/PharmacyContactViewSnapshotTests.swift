@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import ComposableArchitecture
 @testable import eRpFeatures
 import SnapshotTesting
 import SwiftUI
@@ -27,7 +28,25 @@ import XCTest
 
 final class PharmacyContactViewSnapshotTests: ERPSnapshotTestCase {
     func testPharmacyDetailWithAllButtons() {
-        let sut = NavigationStack { PharmacyContactView(store: PharmacyContactDomain.Dummies.store) }
+        let sut = NavigationStack {
+            PharmacyContactView(
+                store: StoreOf<PharmacyContactDomain>(
+                    initialState: PharmacyContactDomain.State(
+                        shipmentInfo: .init(
+                            name: "Anna Vetter",
+                            street: "Gartenstraße 5",
+                            addressDetail: "",
+                            zip: "102837",
+                            city: "Berlin",
+                            phone: "0987654321",
+                            deliveryInfo: "im Hinterhaus, das so lang ist, dass es einen Zeilenumbruch braucht"
+                        )
+                    )
+                ) {
+                    EmptyReducer()
+                }
+            )
+        }
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())

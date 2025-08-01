@@ -33,7 +33,6 @@ final class MainDomainTests: XCTestCase {
     typealias TestStore = TestStoreOf<MainDomain>
 
     let testScheduler = DispatchQueue.immediate
-    var mockUserDataStore: MockUserDataStore!
     var mockUserSessionContainer: MockUsersSessionContainer!
     var mockRouter: MockRouting!
     var mockUserSession: MockUserSession!
@@ -45,7 +44,6 @@ final class MainDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        mockUserDataStore = MockUserDataStore()
         mockUserSessionContainer = MockUsersSessionContainer()
         mockRouter = MockRouting()
         mockUserSession = MockUserSession()
@@ -68,7 +66,6 @@ final class MainDomainTests: XCTestCase {
             dependencies.erxTaskRepository = DummySessionContainer().erxTaskRepository
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.fhirDateFormatter = FHIRDateFormatter.testValue
-            dependencies.userDataStore = mockUserDataStore
             dependencies.deviceSecurityManager = mockDeviceSecurityManager
             dependencies.router = mockRouter
             dependencies.prescriptionRepository = mockPrescriptionRepository
@@ -157,91 +154,118 @@ final class MainDomainTests: XCTestCase {
     }
 
     func testWelcomeDrawerRoute() async {
-        // given
-        let sut = testStore(for: .init(prescriptionListState: .init(),
-                                       horizontalProfileSelectionState: .init()))
-        // when
-        mockUserDataStore.underlyingHideWelcomeDrawer = false
-        await sut.send(.showDrawer)
+        await withDependencies { dependencies in
+            dependencies.drawerEvaluation = DrawerEvaluation.liveValue
+        } operation: {
+            // given
+            let sut = testStore(for: .init(prescriptionListState: .init(),
+                                           horizontalProfileSelectionState: .init()))
+            mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+            // no drawer was shown yet
+            mockUserSession.profileReturnValue = Just(Self.Fixtures.newProfile)
+                .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
-        // then
-        await sut.receive(.response(.showDrawer(.welcomeDrawer))) { state in
-            state.destination = .welcomeDrawer
+            // when
+            await sut.send(.showDrawer)
+
+            // then
+            await sut.receive(.response(.showDrawer(.welcomeDrawer))) { state in
+                state.destination = .welcomeDrawer
+            }
+
+            // when
+            await sut.send(.showDrawer)
+            // then
+            expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == true
+            expect(self.mockProfileDataStore.updateProfileIdMutatingCallsCount) == 1
         }
-        expect(self.mockUserDataStore.hideWelcomeDrawer).to(beTrue())
-
-        // when
-        await sut.send(.showDrawer)
-        // then
-        expect(self.mockUserDataStore.hideWelcomeDrawer).to(beTrue())
     }
 
     func testWelcomeDrawerNotPresentedWhileRouteSet() async {
-        // given
-        let sut = testStore(for: .init(
-            destination: .deviceSecurity(DeviceSecurityDomain.State(warningType: .devicePinMissing)),
-            prescriptionListState: .init(),
-            horizontalProfileSelectionState: .init()
-        ))
-        // when
-        mockUserDataStore.underlyingHideWelcomeDrawer = false
+        await withDependencies { dependencies in
+            dependencies.drawerEvaluation = DrawerEvaluation.liveValue
+        } operation: {
+            // given
+            let sut = testStore(for: .init(
+                destination: .deviceSecurity(DeviceSecurityDomain.State(warningType: .devicePinMissing)),
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            ))
+            // no drawer was shown yet
+            mockUserSession.profileReturnValue = Just(Self.Fixtures.newProfile)
+                .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
-        await sut.send(.showDrawer)
-        // then
-        expect(self.mockUserDataStore.hideWelcomeDrawer).to(beFalse())
+            // when
+            await sut.send(.showDrawer)
+            // then no further action
+        }
     }
 
     func testConsentDrawerRoute_consentHasNotBeenGranted() async {
-        // given
-        let sut = testStore(for: .init(
-            prescriptionListState: .init(),
-            horizontalProfileSelectionState: .init()
-        ))
-        mockUserDataStore.underlyingHideWelcomeDrawer = true
-        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true).setFailureType(to: LocalStoreError.self)
-            .eraseToAnyPublisher()
+        await withDependencies { dependencies in
+            dependencies.drawerEvaluation = DrawerEvaluation.liveValue
+        } operation: {
+            // given
+            let sut = testStore(for: .init(
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            ))
+            mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
 
-        // when profile has already seen the drawer before
-        mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfileHideConsentDrawer)
-            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .notGranted }
-        await sut.send(.showDrawer)
+            // when profile has already seen both drawers before
+            mockUserSession
+                .profileReturnValue = Just(Self.Fixtures
+                    .privateProfileWithHidden(welcomeDrawer: true, consentDrawer: true))
+                .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+            sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .notGranted }
+            await sut.send(.showDrawer)
 
-        // then nothing happens
-        await sut.receive(.response(.showDrawer(.none)))
-        expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == false
+            // then nothing happens
+            await sut.receive(.response(.showDrawer(.none)))
+            expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == false
 
-        // when profile hasn't seen the drawer before
-        mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfile).setFailureType(to: LocalStoreError.self)
-            .eraseToAnyPublisher()
-        sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .notGranted }
-        await sut.send(.showDrawer)
+            // when profile hasn't seen the drawer before
+            mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfile)
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
+            sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .notGranted }
+            await sut.send(.showDrawer)
 
-        // then
-        await sut.receive(.response(.showDrawer(.consentDrawer))) { state in
-            state.destination = .grantChargeItemConsentDrawer
+            // then
+            await sut.receive(.response(.showDrawer(.consentDrawer))) { state in
+                state.destination = .grantChargeItemConsentDrawer
+            }
+
+            expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == true
+            expect(self.mockProfileDataStore.updateProfileIdMutatingCallsCount) == 1
         }
-
-        expect(self.mockProfileDataStore.updateProfileIdMutatingCalled) == true
-        expect(self.mockProfileDataStore.updateProfileIdMutatingCallsCount) == 1
     }
 
     func testConsentDrawerRoute_consentHasAlreadyBeenGranted() async {
-        // given
-        let sut = testStore(for: .init(
-            prescriptionListState: .init(),
-            horizontalProfileSelectionState: .init()
-        ))
-        mockUserDataStore.underlyingHideWelcomeDrawer = true
-        mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfile).setFailureType(to: LocalStoreError.self)
-            .eraseToAnyPublisher()
+        await withDependencies { dependencies in
+            dependencies.drawerEvaluation = DrawerEvaluation.liveValue
+        } operation: {
+            // given
+            let sut = testStore(for: .init(
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            ))
+            // welcome drawer was shown
+            mockUserSession.profileReturnValue = Just(Self.Fixtures.privateProfileWithHidden(welcomeDrawer: true))
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
 
-        // when
-        sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .granted }
-        await sut.send(.showDrawer)
+            // when
+            sut.dependencies.chargeItemConsentService.checkForConsent = { _ in .granted }
+            await sut.send(.showDrawer)
 
-        // then
-        await sut.receive(.response(.showDrawer(.none)))
+            // then
+            await sut.receive(.response(.showDrawer(.none)))
+        }
     }
 
     func testShowingLoginNecessaryAlertAfterIDPErrorServerResponse() async {
@@ -470,12 +494,17 @@ final class MainDomainTests: XCTestCase {
 
 extension MainDomainTests {
     enum Fixtures {
+        static let newProfile: Profile = .init(name: "SomeName", insuranceType: .unknown)
+
         static let privateProfile: Profile = .init(name: "SomeName", insuranceType: .pKV)
 
-        static let privateProfileHideConsentDrawer: Profile = .init(
-            name: "SomeName",
-            insuranceType: .pKV,
-            hidePkvConsentDrawerOnMainView: true
-        )
+        static func privateProfileWithHidden(welcomeDrawer: Bool = false, consentDrawer: Bool = false) -> Profile {
+            .init(
+                name: "SomeName",
+                insuranceType: .pKV,
+                hideWelcomeDrawerOnMainView: welcomeDrawer,
+                hidePkvConsentDrawerOnMainView: consentDrawer
+            )
+        }
     }
 }

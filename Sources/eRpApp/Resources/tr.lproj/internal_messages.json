@@ -25,7 +25,7 @@
     },
     {
         "id": "6",
-        "text": "**📲 Reçeteli DiGA'ları kullanın** \nArtık dijital sağlık uygulamaları (DiGA'lar) için reçeteleri doğrudan e-reçete uygulaması üzerinden kullanabilirsiniz. Aktivasyon kodunuzu ve reçeteli DiGA'ya giden bağlantıyı tam burada, e-reçete uygulamasında bulabilirsiniz. \n \n **🏥 Yeni eczane veritabanı** \nEczane aramaları için yeni, geleceğe yönelik bir veritabanı tanıttık.",
+        "text": "**📲 Reçeteli DiGA'ları kullanın** \nArtık dijital sağlık uygulamaları (DiGA'lar) için reçeteleri doğrudan e-reçete uygulaması üzerinden kullanabilirsiniz. Reçeteler, pilot proje kapsamında Hamburg'daki uzmanlar tarafından düzenlenecektir. Aktivasyon kodunuzu ve DiGA bağlantısını tam burada e-reçete uygulamasında bulabilirsiniz. \n \n **🏥 Yeni eczane veritabanı** \nEczane aramaları için yeni, geleceğe yönelik bir veritabanı tanıttık.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
     },
@@ -34,5 +34,11 @@
         "text": "**♿️ Erişilebilirlik** \nErişilebilirlik bildirimimiz artık ayarlarda mevcut. Katılım süreci de daha erişilebilir hale getirildi. \n \n **📲 DiGA'ları sigorta şirketlerinde kullanın** \nDijital sağlık uygulamaları (DiGA'lar) için reçeteler artık diğer sigorta şirketlerinde de kullanılabilir.",
         "timestamp": "2025-06-24T08:00:00.000Z",
         "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Özel sigortalılar için kayıt** \nÖzel sigortalılar için kayıt optimize edildi. Sağlık kimliğinizle birkaç tıklamayla rahatça giriş yapabilirsiniz. \n \n **🏥 Güncellenen eczane verileri** \nEczanelerin yeni veritabanında yaptığı değişiklikler artık güvenilir bir şekilde görüntüleniyor. \n \n **📲 DiGA'lar için daha fazla bilgi** \nArtık DiGA reçeteleriniz hakkında satış fiyatı veya logo gibi daha ayrıntılı bilgiler alacaksınız. \n \n **♿️ Erişilebilirlik** \nSağlık kartı erişim numarasını girme ekranı yeniden tasarlandı ve VoiceOver ile kullanım için optimize edildi. \n \n **📤 Reçeteleri paylaşın** \nReçeteler artık doğrudan uygulama üzerinden başkalarıyla paylaşılabilir.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
     }
 ]

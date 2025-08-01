@@ -1,10 +1,13 @@
 // Generated using Sourcery — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
+import BfArM
 import Combine
 import eRpKit
 import Foundation
+import HTTPClient
 import IDP
+import IDPLive
 import OpenSSL
 import Pharmacy
 import TrustStore
@@ -495,12 +498,6 @@ class StreamWrappedIDPSession: IDPSession {
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
-	}
-
-	func httpInterceptor(delegate: IDPSessionDelegate?) -> IDPInterceptor {
-        current.httpInterceptor(
-				delegate: delegate
-            )
 	}
 
 	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
@@ -1088,10 +1085,6 @@ class StreamWrappedUserDataStore: UserDataStore {
 		set { current.appStartCounter = newValue }
 		get { current.appStartCounter }
 	}
-	var hideWelcomeDrawer: Bool {
-		set { current.hideWelcomeDrawer = newValue }
-		get { current.hideWelcomeDrawer }
-	}
 	var readInternalCommunications: AnyPublisher<[String], Never> {
 		return stream
 			.map { $0.readInternalCommunications }
@@ -1225,6 +1218,7 @@ class StreamWrappedUserSession: UserSession {
 	lazy var pharmacyRepository: PharmacyRepository = {
 		StreamWrappedPharmacyRepository(stream: stream.map{ $0.pharmacyRepository }.eraseToAnyPublisher(), current: current.pharmacyRepository )
 	}()
+	var bfArMService: BfArMService { current.bfArMService }
 	var updateChecker: UpdateChecker { current.updateChecker }
 	lazy var localUserStore: UserDataStore = {
 		StreamWrappedUserDataStore(stream: stream.map{ $0.localUserStore }.eraseToAnyPublisher(), current: current.localUserStore )

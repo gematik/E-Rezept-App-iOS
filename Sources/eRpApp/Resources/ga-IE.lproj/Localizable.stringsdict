@@ -24,6 +24,46 @@
 			<string></string>
 		</dict>
 	</dict>
+	<key>auth_txt_password_failure_please_retry_with_delay</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Falsches Passwort. Bitte probieren Sie es in 1 Sekunde erneut.</string>
+			<key>other</key>
+			<string>Falsches Passwort. Bitte probieren Sie es in %u Sekunden erneut.</string>
+			<key>zero</key>
+			<string>Falsches Passwort. Bitte probieren Sie es in 0 Sekunden erneut.</string>
+		</dict>
+	</dict>
+	<key>auth_txt_please_retry_with_delay</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>Bitte probieren Sie es in %u Sekunde erneut.</string>
+			<key>other</key>
+			<string>Déan iarracht arís i gceann %u soicind.</string>
+			<key>two</key>
+			<string></string>
+		</dict>
+	</dict>
 	<key>erx_txt_accepted_until</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

@@ -73,6 +73,13 @@ struct MainView: View {
                 .demoBanner(isPresented: store.isDemoMode) {
                     store.send(MainDomain.Action.turnOffDemoMode)
                 }
+                // Delete this after iOS 16 deprecation
+                .osDeprecationBanner(
+                    osVersion: "16",
+                    isPresented: store.showIOS16DeprecationBanner
+                ) {
+                    store.send(.osDeprecationBannerTapped)
+                }
                 .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
                 .navigationTitle(Text(L10n.erxTitle))
                 .navigationBarTitleDisplayMode(.automatic)
@@ -173,16 +180,22 @@ private extension MainView {
                     }
                     .accessibilityHidden(true)
 
-                // WelcomeDrawerView small sheet presentation
+                // InsuranceDrawerView small sheet presentation
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .smallSheet(
                         $store.scope(
                             state: \.destination?.welcomeDrawer,
-                            action: \.destination.toast
+                            action: \.destination.welcomeDrawer
                         )
                     ) { _ in
-                        WelcomeDrawerView(store: store)
+                        InsuranceDrawerView(root: .main) {
+                            store.send(.setNavigation(tag: .none), animation: .easeInOut)
+                        } gkvInsuredAction: {
+                            store.send(.startCardWall, animation: .easeInOut)
+                        } pkvInsuredAction: {
+                            store.send(.setUserToPKVInsured, animation: .easeInOut)
+                        }
                     }
                     .accessibilityHidden(true)
 
@@ -297,6 +310,19 @@ private extension MainView {
                         )
                     ) { store in
                         MedicationReminderOneDaySummaryView(store: store)
+                    }
+                    .accessibility(hidden: true)
+
+                // OSDeprecationView sheet presentation
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .sheet(
+                        item: $store.scope(
+                            state: \.destination?.osDeprecation,
+                            action: \.destination.osDeprecation
+                        )
+                    ) { store in
+                        OSDeprecationView(store: store)
                     }
                     .accessibility(hidden: true)
 

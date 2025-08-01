@@ -20,6 +20,42 @@
 			<string></string>
 		</dict>
 	</dict>
+	<key>auth_txt_password_failure_please_retry_with_delay</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Incorrect password. Please try again in 1 second.</string>
+			<key>other</key>
+			<string>Incorrect password. Please try again in %u seconds.</string>
+			<key>zero</key>
+			<string>Incorrect password. Please try again in 0 seconds.</string>
+		</dict>
+	</dict>
+	<key>auth_txt_please_retry_with_delay</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Please try again in %u second.</string>
+			<key>other</key>
+			<string>Please try again in %u seconds.</string>
+			<key>zero</key>
+			<string>Please try again in %u seconds.</string>
+		</dict>
+	</dict>
 	<key>erx_txt_accepted_until</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

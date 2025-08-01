@@ -278,6 +278,8 @@ extension DiGaDetailDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case let .insuranceList(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case let .duesInfo(state: state):
+                return state.routeName() ?? destination.analyticsName
         }
     }
 }
@@ -310,6 +312,8 @@ extension EditProfileDomain.State {
                 return state.routeName() ?? destination.analyticsName
             case let .chargeItemList(state: state):
                 return state.routeName() ?? destination.analyticsName
+            case .insuranceDrawer:
+                return destination.analyticsName
             case let .editProfilePicture(state: state):
                 return state.routeName() ?? destination.analyticsName
         }
@@ -436,6 +440,8 @@ extension HealthCardPasswordReadCardDomain.State {
         switch destination {
             case .alert:
                 return destination.analyticsName
+            case let .help(state: state):
+                return state.routeName() ?? destination.analyticsName
         }
     }
 }
@@ -500,6 +506,8 @@ extension MainDomain.State {
             case .toast:
                 return destination.analyticsName
             case let .diGaDetail(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .osDeprecation(state: state):
                 return state.routeName() ?? destination.analyticsName
         }
     }
@@ -580,6 +588,12 @@ extension NewProfileDomain.State {
             case .alert:
                 return destination.analyticsName
         }
+    }
+}
+
+extension OSDeprecationDomain.State {
+    func routeName() -> String? {
+        return nil
     }
 }
 
@@ -1199,6 +1213,8 @@ extension DiGaDetailDomain.Destination.State {
                 return Analytics.Screens.prescriptionDetail_technicalInfo.name
             case .insuranceList:
                 return "insuranceList"
+            case .duesInfo:
+                return "duesInfo"
         }
     }
 }
@@ -1221,6 +1237,8 @@ extension EditProfileDomain.Destination.State {
                 return Analytics.Screens.profile_registeredDevices.name
             case .chargeItemList:
                 return Analytics.Screens.chargeItemList.name
+            case .insuranceDrawer:
+                return Analytics.Screens.profile_insuranceDrawer.name
             case .editProfilePicture:
                 return "editProfilePicture"
         }
@@ -1311,6 +1329,8 @@ extension HealthCardPasswordReadCardDomain.Destination.State {
         switch self {
             case .alert:
                 return Analytics.Screens.errorAlert.name
+            case .help:
+                return "help"
         }
     }
 }
@@ -1345,6 +1365,8 @@ extension MainDomain.Destination.State {
                 return Analytics.Screens.alert.name
             case .diGaDetail:
                 return Analytics.Screens.digasMain.name
+            case .osDeprecation:
+                return Analytics.Screens.main_osDeprecationDrawer.name
         }
     }
 }

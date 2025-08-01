@@ -25,7 +25,7 @@
     },
     {
         "id": "6",
-        "text": "**📲 Wykorzystaj przepisane DiGA** \nTeraz możesz realizować recepty na aplikacje zdrowia cyfrowego (DiGA) bezpośrednio za pośrednictwem aplikacji e-recept. Kod aktywacyjny i link do przepisanego DiGA znajdziesz tutaj, w aplikacji e-recept. \n \n **🏥 Nowa baza danych aptek** \nWprowadziliśmy nową, przyjazną dla przyszłości bazę danych do wyszukiwania aptek.",
+        "text": "**📲 Wykorzystaj przepisane DiGA** \nTeraz możesz realizować recepty na aplikacje zdrowia cyfrowego (DiGA) bezpośrednio za pośrednictwem aplikacji e-recept. Recepty będą wystawiane przez specjalistów w Hamburgu w ramach projektu pilotażowego. Kod aktywacyjny i link do DiGA znajdziesz tutaj, w aplikacji e-recept. \n \n **🏥 Nowa baza danych aptek** \nWprowadziliśmy nową, przyjazną dla przyszłości bazę danych do wyszukiwania aptek.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
     },
@@ -34,5 +34,11 @@
         "text": "**♿️ Dostępność** \nNasze oświadczenie o dostępności jest teraz dostępne w ustawieniach. Proces wdrażania stał się również bardziej dostępny. \n \n **📲 Realizuj DiGA u firm ubezpieczeniowych** \nRecepty na aplikacje zdrowia cyfrowego (DiGA) można teraz realizować również u innych firm ubezpieczeniowych.",
         "timestamp": "2025-06-24T08:00:00.000Z",
         "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Rejestracja dla osób ubezpieczonych prywatnie** \nRejestracja dla osób ubezpieczonych prywatnie została zoptymalizowana. Możesz wygodnie zalogować się za pomocą swojego identyfikatora zdrowotnego za pomocą zaledwie kilku kliknięć. \n \n **🏥 Zaktualizowane dane aptek** \nZmiany wprowadzane przez apteki w nowej bazie danych są teraz niezawodnie wyświetlane. \n \n **📲 Więcej informacji dla DiGA** \nOd teraz będziesz otrzymywać bardziej szczegółowe informacje o swoich receptach DiGA, takie jak cena sprzedaży lub logo. \n \n **♿️ Dostępność** \nEkran wprowadzania numeru dostępu do karty zdrowotnej został przeprojektowany i jest teraz zoptymalizowany pod kątem obsługi VoiceOver. \n \n **📤 Udostępniaj recepty** \nRecepty można teraz udostępniać innym osobom bezpośrednio z aplikacji.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
     }
 ]

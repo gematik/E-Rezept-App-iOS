@@ -26,6 +26,7 @@ import eRpKit
 import FHIRClient
 import Foundation
 import HTTPClient
+import HTTPClientLive
 import ModelsR4
 import Nimble
 import OHHTTPStubs
@@ -44,10 +45,15 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         host = "some-fhir-service.com"
         service = URL(string: "http://\(host ?? "")")!
-        fhirClient = FHIRClient(server: service, httpClient: DefaultHTTPClient(urlSessionConfiguration: .default))
-        sut = FHIRClient(server: service,
-                         httpClient: DefaultHTTPClient(urlSessionConfiguration: .default),
-                         receiveQueue: .immediate)
+        fhirClient = FHIRClient(
+            server: service,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        )
+        sut = FHIRClient(
+            server: service,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral),
+            receiveQueue: .immediate
+        )
     }
 
     func testFHIRClientTaskByIdJson() {

@@ -9,8 +9,10 @@ import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
 import Foundation
+import HTTPClient
 import IdentifiedCollections
 import IDP
+import IDPLive
 import OpenSSL
 import Pharmacy
 
@@ -1343,7 +1345,6 @@ class SmartMockIDPSession: IDPSession, SmartMock {
 
 
 
-
     struct Mocks: Codable {
         var requestChallengeRecordings: MockAnswer<IDPChallengeSession>? = .delegate
         var verifyRecordings: MockAnswer<IDPExchangeToken>? = .delegate
@@ -1667,7 +1668,6 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
         selectedProfileIdRecordings = mocks?.selectedProfileIdRecordings ?? .delegate
         latestCompatibleModelVersionRecordings = mocks?.latestCompatibleModelVersionRecordings ?? .delegate
         appStartCounterRecordings = mocks?.appStartCounterRecordings ?? .delegate
-        hideWelcomeDrawerRecordings = mocks?.hideWelcomeDrawerRecordings ?? .delegate
         readInternalCommunicationsRecordings = mocks?.readInternalCommunicationsRecordings ?? .delegate
         hideWelcomeMessageRecordings = mocks?.hideWelcomeMessageRecordings ?? .delegate
     }
@@ -1898,26 +1898,6 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
             return wrapped.appStartCounter
         }
     }
-    var hideWelcomeDrawerRecordings: MockAnswer<Bool>
-    var hideWelcomeDrawer: Bool {
-        set {
-            if isRecording {
-                hideWelcomeDrawerRecordings.record(newValue)
-            }
-            wrapped.hideWelcomeDrawer = newValue }
-        get {
-            guard !isRecording else {
-                let result = wrapped.hideWelcomeDrawer
-                hideWelcomeDrawerRecordings.record(result)
-                return result
-            }
-
-            if let first = hideWelcomeDrawerRecordings.next() {
-                return first
-            }
-            return wrapped.hideWelcomeDrawer
-        }
-    }
     var readInternalCommunicationsRecordings: MockAnswer<[String]>
 
     var readInternalCommunications: AnyPublisher<[String], Never> {
@@ -2040,7 +2020,6 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
         var selectedProfileIdRecordings: MockAnswer<UUID?>? = .delegate
         var latestCompatibleModelVersionRecordings: MockAnswer<ModelVersion>? = .delegate
         var appStartCounterRecordings: MockAnswer<Int>? = .delegate
-        var hideWelcomeDrawerRecordings: MockAnswer<Bool>? = .delegate
         var readInternalCommunicationsRecordings: MockAnswer<[String]>? = .delegate
         var hideWelcomeMessageRecordings: MockAnswer<Bool>? = .delegate
     }
@@ -2061,7 +2040,6 @@ class SmartMockUserDataStore: UserDataStore, SmartMock {
                 selectedProfileIdRecordings:selectedProfileIdRecordings,
                 latestCompatibleModelVersionRecordings: latestCompatibleModelVersionRecordings,
                 appStartCounterRecordings: appStartCounterRecordings,
-                hideWelcomeDrawerRecordings: hideWelcomeDrawerRecordings,
                 readInternalCommunicationsRecordings:readInternalCommunicationsRecordings,
                 hideWelcomeMessageRecordings:hideWelcomeMessageRecordings
             )

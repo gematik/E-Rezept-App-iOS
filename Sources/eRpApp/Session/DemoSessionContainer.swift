@@ -21,12 +21,14 @@
 //
 
 import AVS
+import BfArM
 import Combine
 import eRpKit
 import eRpLocalStorage
 import FHIRClient
 import Foundation
 import HTTPClient
+import HTTPClientLive
 import IDP
 import Pharmacy
 import TrustStore
@@ -89,6 +91,12 @@ class DemoSessionContainer: UserSession {
 
     lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
         DefaultNFCResetRetryCounterController()
+    }()
+
+    lazy var bfArMService: BfArMService = {
+        let appConfiguration = UserDefaultsStore().appConfiguration
+
+        return DemoBfArMService()
     }()
 
     lazy var pharmacyRepository: PharmacyRepository = {

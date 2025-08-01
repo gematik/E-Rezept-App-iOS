@@ -359,6 +359,23 @@ extension DependencyValues {
     }
 }
 
+// MARK: BfArM
+
+import BfArM
+
+struct BfArMServiceDependency: DependencyKey {
+    static let liveValue: BfArMService? = nil
+    static let previewValue: BfArMService? = nil
+    static let testValue: BfArMService? = UnimplementedBfArMService()
+}
+
+extension DependencyValues {
+    var bfArMService: BfArMService {
+        get { self[BfArMServiceDependency.self] ?? changeableUserSessionContainer.userSession.bfArMService }
+        set { self[BfArMServiceDependency.self] = newValue }
+    }
+}
+
 // MARK: factories
 
 import FHIRClient

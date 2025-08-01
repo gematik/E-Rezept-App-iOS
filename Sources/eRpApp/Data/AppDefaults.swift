@@ -27,6 +27,7 @@ struct AppDefaults: Equatable, Codable {
     var diga: DiGa = .init()
 
     struct DiGa: Equatable, Codable {
+        var hasPrescripedDiga = false
         var hasRedeemdADiga = false
         var hasSeenDigaSurvery = false
     }

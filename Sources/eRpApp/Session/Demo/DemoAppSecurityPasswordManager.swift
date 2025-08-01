@@ -21,6 +21,7 @@
 //
 
 import eRpKit
+import Foundation
 
 struct DemoAppSecurityPasswordManager: AppSecurityManager {
     func save(password _: String) throws -> Bool {
@@ -29,6 +30,18 @@ struct DemoAppSecurityPasswordManager: AppSecurityManager {
 
     func matches(password _: String) throws -> Bool {
         true
+    }
+
+    func registerFailedPasswordAttempt() throws {
+        // no-op
+    }
+
+    func resetPasswordDelay() {
+        // no-op
+    }
+
+    func currentPasswordDelay() -> TimeInterval {
+        0.0
     }
 
     var availableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?) {

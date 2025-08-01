@@ -22,81 +22,111 @@
 
 import Combine
 import ComposableArchitecture
-import eRpKit
 import eRpStyleKit
 import SwiftUI
 
 struct HealthCardPasswordReadCardView: View {
     @Perception.Bindable var store: StoreOf<HealthCardPasswordReadCardDomain>
 
-    static let height: CGFloat = {
-        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
-        180 * UIScreen.main.scale / UIScreen.main.nativeScale
-    }()
-
     var body: some View {
         WithPerceptionTracking {
             VStack(spacing: 0) {
-                // Use overlay to also fill safe area but specify fixed height
+                ScrollView {
+                    Text(L10n.cdwTxtRcCta)
+                        .font(.title3.bold())
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 8)
+                        .padding(.top, 48)
+                        .padding(.horizontal)
 
-                VStack {}
-                    .frame(width: nil, height: Self.height, alignment: .top)
-                    .overlay(
-                        HStack {
-                            Image(asset: Asset.CardWall.onScreenEgk)
-                                .scaledToFill()
-                                .frame(width: nil, height: Self.height, alignment: .bottom)
-                        }
-                    )
+                    Text(L10n.cdwTxtRcSubheadline)
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(.secondaryLabel))
+                        .padding(.horizontal)
+                        .padding(.bottom, 32)
 
-                Line()
-                    .stroke(style: StrokeStyle(lineWidth: 2,
-                                               lineCap: CoreGraphics.CGLineCap.round,
-                                               lineJoin: CoreGraphics.CGLineJoin.round,
-                                               miterLimit: 2,
-                                               dash: [8, 8],
-                                               dashPhase: 0))
-                    .foregroundColor(Color(.opaqueSeparator))
-                    .frame(width: nil, height: 2, alignment: .center)
+                    NFCPhoneView()
+                }
+                .padding(.horizontal)
 
-                Text(L10n.cdwTxtRcPlacement)
-                    .font(.subheadline.bold())
-                    .foregroundColor(Color(.secondaryLabel))
-                    .padding(8)
-                    .padding(.bottom, 16)
-
-                Text(L10n.cdwTxtRcCta)
-                    .font(.title3.bold())
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(16)
-                    .padding()
-
-                Spacer(minLength: 0)
+                Spacer()
 
                 GreyDivider()
 
-                Button(
-                    action: { store.send(.readCard) },
-                    label: { Text(L10n.stgBtnCardResetRead) }
-                )
-                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: false))
+                Button {
+                    store.send(.readCard)
+                } label: {
+                    Text(L10n.stgBtnCardResetRead)
+                }
+                .buttonStyle(.primary(isEnabled: true, width: .wideHugging))
                 .accessibility(identifier: A11y.settings.card.stgBtnCardResetRead)
-                .padding(.horizontal)
+                .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
                 .padding(.vertical, 8)
-
-                Button(
-                    action: { store.send(.backButtonTapped) },
-                    label: { Label(title: { Text(L10n.cdwBtnRcBack) }, icon: {}) }
-                )
-                .buttonStyle(.secondary)
-                .padding(.horizontal)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        store.send(.openHelpView)
+                    }, label: {
+                        HStack(alignment: .center) {
+                            Image(systemName: SFSymbolName.questionmarkCircle)
+                            Text(L10n.cdwBtnRcHelp)
+                        }
+                        .foregroundColor(Colors.textSecondary)
+                        .font(.subheadline.weight(.semibold))
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 16)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                    })
+                        .fullScreenCover(item: $store
+                            .scope(state: \.destination?.help, action: \.destination.help)) { store in
+                                NavigationStack {
+                                    ReadCardHelpView(store: store)
+                                }
+                                .tint(Colors.primary700)
+                                .navigationViewStyle(StackNavigationViewStyle())
+                        }
+                }
             }
             .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
             .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
-            .navigationBarHidden(true)
             .statusBar(hidden: true)
+        }
+    }
+
+    struct NFCPhoneView: View {
+        @State private var step1 = false
+        @State private var step2 = false
+
+        var body: some View {
+            ZStack(alignment: .topTrailing) {
+                ZStack(alignment: .center) {
+                    Circle()
+                        .fill(Colors.primary100)
+                        .frame(width: 210, height: 210, alignment: .leading)
+                        .opacity(step2 ? 0 : 1)
+                    Circle()
+                        .fill(Colors.primary300)
+                        .frame(width: 90, height: 90, alignment: .leading)
+                        .opacity(step1 ? 0 : 1)
+                }
+                .task {
+                    withAnimation(.easeInOut(duration: 0.45).delay(0.65).repeatForever(autoreverses: true)) {
+                        step2.toggle()
+                    }
+                    withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
+                        step1.toggle()
+                    }
+                }
+                Image(asset: Asset.CardReader.cardReadPosition1)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(.top, 50)
+                    .padding(.trailing, 35)
+                    .accessibilityLabel(L10n.cdwTxtRcImageLabel)
+            }
         }
     }
 

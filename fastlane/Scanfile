@@ -1,4 +1,4 @@
-destination("platform=iOS Simulator,name=iPhone 16,OS=18.4")
+destination("platform=iOS Simulator,name=iPhone 16,OS=18.5")
 
 project("eRp-App.xcodeproj")
 derived_data_path("./DerivedData/")

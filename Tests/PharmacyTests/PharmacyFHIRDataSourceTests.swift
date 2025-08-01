@@ -25,6 +25,7 @@ import eRpKit
 import FHIRClient
 import Foundation
 import HTTPClient
+import HTTPClientLive
 import Nimble
 import OHHTTPStubs
 import OHHTTPStubsSwift
@@ -45,7 +46,7 @@ final class PharmacyFHIRDataSourceTests: XCTestCase {
         service = URL(string: "http://\(host ?? "")")!
         fhirClient = FHIRClient(
             server: service,
-            httpClient: DefaultHTTPClient(urlSessionConfiguration: .default),
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral),
             receiveQueue: .immediate
         )
         sut = PharmacyFHIRDataSource(fhirClient: fhirClient)

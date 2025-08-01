@@ -162,11 +162,6 @@ public class UserDefaultsStore: UserDataStore {
         userDefaults.removePersistentDomain(forName: bundleIdentifier)
     }
 
-    public var hideWelcomeDrawer: Bool {
-        get { userDefaults.hideWelcomeDrawer }
-        set { userDefaults.hideWelcomeDrawer = newValue }
-    }
-
     // MARK: - Messages
 
     public var readInternalCommunications: AnyPublisher<[String], Never> {
@@ -211,8 +206,6 @@ extension UserDefaults {
     public static let kLatestCompatibleCoreDataModelVersion = "kLatestCompatibleCoreDataModelVersion"
     /// Kex for storing the app start count
     public static let kAppStartCounter = "kAppStartCounter"
-    ///
-    public static let kHideWelcomeDrawer = "kHideWelcomeDrawer"
     ///
     public static let kHasReadInternalCommunications = "kHasReadInternalCommunications"
     ///
@@ -287,12 +280,6 @@ extension UserDefaults {
     @objc public var appStartCounter: Int {
         get { integer(forKey: Self.kAppInstallSent) }
         set { set(newValue, forKey: Self.kAppInstallSent) }
-    }
-
-    /// Store if welcome drawer should be hidden
-    @objc public var hideWelcomeDrawer: Bool {
-        get { bool(forKey: Self.kHideWelcomeDrawer) }
-        set { set(newValue, forKey: Self.kHideWelcomeDrawer) }
     }
 
     /// Store for all read internal messages (Id)

@@ -17,6 +17,8 @@ screens:
     name: "main:welcomeDrawer"
   main_consentDrawer:
     name: "main:consentDrawer" 
+  main_osDeprecationDrawer:
+    name: "main:osDeprecationDrawer"
   main_medicationReminder:
     name: "main:medicationReminder"
   matrixCode_sharePrescription:
@@ -229,6 +231,8 @@ screens:
     name: "profile:registeredDevices"
   profile_auditEvents:
     name: "profile:auditEvents"
+  profile_insuranceDrawer:
+    name: "profile:insuranceDrawer"
   chargeItemList:
     name: "chargeItemList"
   chargeItemDetails:

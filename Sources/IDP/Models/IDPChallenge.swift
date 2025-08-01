@@ -62,6 +62,14 @@ public struct IDPChallenge: Codable, Equatable {
     public struct UserConsent: Codable, Equatable {
         let requestedScopes: [String: String]
         let requestedClaims: [String: String]
+
+        public init(
+            requestedScopes: [String: String],
+            requestedClaims: [String: String]
+        ) {
+            self.requestedScopes = requestedScopes
+            self.requestedClaims = requestedClaims
+        }
     }
 }
 

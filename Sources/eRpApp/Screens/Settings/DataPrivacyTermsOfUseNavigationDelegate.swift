@@ -35,6 +35,8 @@ class DataPrivacyTermsOfUseNavigationDelegate: NSObject, WKNavigationDelegate {
                 return
             } else if url.scheme?.lowercased() == "https" {
                 UIApplication.shared.open(url)
+            } else if url.scheme?.lowercased() == "mailto" {
+                UIApplication.shared.open(url)
             }
         }
         decisionHandler(.cancel, webView.configuration.defaultWebpagePreferences)

@@ -25,16 +25,22 @@ import Foundation
 public struct SharedTask: Equatable, Codable {
     public let id: String
     public let accessCode: String
+    public let name: String?
 
-    public init(id: String, accessCode: String) {
+    public init(id: String, accessCode: String, name: String? = nil) {
         self.id = id
         self.accessCode = accessCode
+        self.name = name
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
 
-        try container.encode("\(id)|\(accessCode)")
+        if let name = name {
+            try container.encode("\(id)|\(accessCode)|\(name)")
+        } else {
+            try container.encode("\(id)|\(accessCode)")
+        }
     }
 
     public init(from decoder: Decoder) throws {
@@ -44,7 +50,7 @@ public struct SharedTask: Equatable, Codable {
 
         let split = combined.split(separator: "|")
 
-        guard split.count == 2 else {
+        guard split.count >= 2, split.count <= 3 else {
             if split.isEmpty {
                 throw Error.failedDecodingEmptyString(combined)
             }
@@ -54,7 +60,11 @@ public struct SharedTask: Equatable, Codable {
             throw Error.tooManyComponents(combined)
         }
 
-        self.init(id: String(split[0]), accessCode: String(split[1]))
+        let id = String(split[0])
+        let accessCode = String(split[1])
+        let name = split.count == 3 ? String(split[2]) : nil
+
+        self.init(id: id, accessCode: accessCode, name: name)
     }
 
     // sourcery: CodedError = "207"
@@ -105,11 +115,15 @@ extension SharedTask {
     /// Initializes a `SharedTask` with an `ErxTask`.
     /// - Parameter task: The `ErxTaks` that should be converted
     public init(with task: ErxTask) {
-        self.init(id: task.id, accessCode: task.accessCode ?? "")
+        self.init(id: task.id, accessCode: task.accessCode ?? "", name: task.medication?.name)
     }
 
-    /// Creates a string of `ErxTask`'s id and accessCode.
+    /// Creates a string of `ErxTask`'s id, accessCode, and optionally name.
     public var asString: String {
-        "\(id)|\(accessCode)"
+        if let name = name {
+            return "\(id)|\(accessCode)|\(name)"
+        } else {
+            return "\(id)|\(accessCode)"
+        }
     }
 }

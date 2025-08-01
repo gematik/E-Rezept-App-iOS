@@ -132,20 +132,45 @@ final class AppAuthenticationBiometricPasswordDomainTests: XCTestCase {
             state.lastMatchResultSuccessful = true
         }
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beTrue())
+        expect(self.mockAppSecurityPasswordManager.resetPasswordDelayCalled).to(beTrue())
+        expect(self.mockAppSecurityPasswordManager.registerFailedPasswordAttemptCalled).to(beFalse())
     }
 
     func testPasswordDoesNotMatch() async {
-        let store = testStore(
-            for: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false, password: "abc"),
-            withResult: .failure(.cannotEvaluatePolicy(nil))
-        )
-        mockAppSecurityPasswordManager.matchesPasswordReturnValue = false
+        let clock = TestClock()
+        let mockAppSecurityManager = MockAppSecurityManager()
 
-        expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beFalse())
+        let store = TestStore(initialState: AppAuthenticationBiometricPasswordDomain.State(
+            biometryType: .faceID,
+            startImmediateAuthenticationChallenge: false,
+            password: "abc"
+        )) {
+            AppAuthenticationBiometricPasswordDomain()
+        } withDependencies: {
+            $0.appSecurityManager = mockAppSecurityManager
+            $0.continuousClock = clock
+        }
+        mockAppSecurityManager.matchesPasswordReturnValue = false
+        mockAppSecurityManager.currentPasswordDelayReturnValue = 10.0
+
+        expect(mockAppSecurityManager.matchesPasswordCalled).to(beFalse())
         await store.send(.loginButtonTapped)
         await store.receive(.passwordVerificationReceived(false)) { state in
             state.lastMatchResultSuccessful = false
         }
-        expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beTrue())
+        await store.receive(.currentPasswordDelayReceived(10.0)) { state in
+            state.passwordDelay = 10.0
+        }
+
+        await clock.advance(by: .seconds(10))
+        for _ in 0 ..< 10 {
+            await store.receive(.passwordDelayTimerTick) { state in
+                state.passwordDelay -= 1.0
+            }
+        }
+
+        expect(mockAppSecurityManager.matchesPasswordCalled).to(beTrue())
+        expect(mockAppSecurityManager.resetPasswordDelayCalled).to(beFalse())
+        expect(mockAppSecurityManager.registerFailedPasswordAttemptCalled).to(beTrue())
     }
 }

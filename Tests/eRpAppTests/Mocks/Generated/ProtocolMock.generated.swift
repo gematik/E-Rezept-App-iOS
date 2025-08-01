@@ -209,6 +209,58 @@ final class MockAppSecurityManager: AppSecurityManager {
         return try matchesPasswordClosure.map({ try $0(password) }) ?? matchesPasswordReturnValue
     }
     
+   // MARK: - registerFailedPasswordAttempt
+
+    var registerFailedPasswordAttemptThrowableError: Error?
+    var registerFailedPasswordAttemptCallsCount = 0
+    var registerFailedPasswordAttemptCalled: Bool {
+        registerFailedPasswordAttemptCallsCount > 0
+    }
+    var registerFailedPasswordAttemptClosure: (() throws -> Void)?
+
+    func registerFailedPasswordAttempt() throws {
+        if let error = registerFailedPasswordAttemptThrowableError {
+            throw error
+        }
+        registerFailedPasswordAttemptCallsCount += 1
+        try registerFailedPasswordAttemptClosure?()
+    }
+    
+   // MARK: - resetPasswordDelay
+
+    var resetPasswordDelayThrowableError: Error?
+    var resetPasswordDelayCallsCount = 0
+    var resetPasswordDelayCalled: Bool {
+        resetPasswordDelayCallsCount > 0
+    }
+    var resetPasswordDelayClosure: (() throws -> Void)?
+
+    func resetPasswordDelay() throws {
+        if let error = resetPasswordDelayThrowableError {
+            throw error
+        }
+        resetPasswordDelayCallsCount += 1
+        try resetPasswordDelayClosure?()
+    }
+    
+   // MARK: - currentPasswordDelay
+
+    var currentPasswordDelayThrowableError: Error?
+    var currentPasswordDelayCallsCount = 0
+    var currentPasswordDelayCalled: Bool {
+        currentPasswordDelayCallsCount > 0
+    }
+    var currentPasswordDelayReturnValue: TimeInterval!
+    var currentPasswordDelayClosure: (() throws -> TimeInterval)?
+
+    func currentPasswordDelay() throws -> TimeInterval {
+        if let error = currentPasswordDelayThrowableError {
+            throw error
+        }
+        currentPasswordDelayCallsCount += 1
+        return try currentPasswordDelayClosure.map({ try $0() }) ?? currentPasswordDelayReturnValue
+    }
+    
    // MARK: - migrate
 
     var migrateThrowableError: Error?
@@ -2404,14 +2456,6 @@ final class MockUserDataStore: UserDataStore {
         set(value) { underlyingAppStartCounter = value }
     }
     var underlyingAppStartCounter: Int!
-    
-   // MARK: - hideWelcomeDrawer
-
-    var hideWelcomeDrawer: Bool {
-        get { underlyingHideWelcomeDrawer }
-        set(value) { underlyingHideWelcomeDrawer = value }
-    }
-    var underlyingHideWelcomeDrawer: Bool!
     
    // MARK: - readInternalCommunications
 

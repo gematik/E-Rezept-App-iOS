@@ -22,7 +22,9 @@
 
 import Combine
 import Foundation
-@testable import IDP
+import HTTPClient
+import IDP
+@testable import IDPLive
 
 // swiftlint:disable all
 public class IDPSessionMock: IDPSession {

@@ -21,6 +21,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import IDP
 import UIKit
 
@@ -28,10 +29,10 @@ import UIKit
 struct CardWallExtAuthSelectionDomain {
     @ObservableState
     struct State: Equatable {
+        var insuranceType: Profile.InsuranceType = .unknown
         var kkList: KKAppDirectory?
         var filteredKKList: KKAppDirectory = .init(apps: [KKAppDirectory.Entry]())
         var error: IDPError?
-        var selectedKK: KKAppDirectory.Entry?
         var searchText: String = ""
 
         @Presents var destination: Destination.State?
@@ -48,7 +49,6 @@ struct CardWallExtAuthSelectionDomain {
     enum Action: Equatable {
         case loadKKList
         case selectKK(KKAppDirectory.Entry)
-        case confirmKK
         case error(IDPError)
         case updateSearchText(newString: String)
 
@@ -84,7 +84,6 @@ struct CardWallExtAuthSelectionDomain {
         switch action {
         case .loadKKList:
             state.error = nil
-            state.selectedKK = nil
             // [REQ:gemSpec_IDP_Frontend:A_22296-01] Load available apps
             // [REQ:gemSpec_IDP_Frontend:A_23082#2] Load available apps
             return .publisher(
@@ -97,7 +96,8 @@ struct CardWallExtAuthSelectionDomain {
             )
         case let .response(.loadKKList(.success(result))):
             state.error = nil
-            state.kkList = result
+            let kkListFilteredForInsuranceType = result.apps.filter { $0.pkv == (state.insuranceType == .pKV) }
+            state.kkList = KKAppDirectory(apps: kkListFilteredForInsuranceType)
             return .none
         case let .response(.loadKKList(.failure(error))):
             state.error = error
@@ -105,13 +105,8 @@ struct CardWallExtAuthSelectionDomain {
         case let .selectKK(entry):
             // [REQ:BSI-eRp-ePA:O.Auth_4#6] Business logic of user selecting the insurance company
             // [REQ:gemSpec_IDP_Frontend:A_22294-01] Select KK
-            state.selectedKK = entry
-            return .none
-        // [REQ:BSI-eRp-ePA:O.Auth_4#7] Proceed to confirmation screen
-        case .confirmKK:
-            guard let selectedKK = state.selectedKK else { return .none }
-
-            state.destination = .confirmation(.init(selectedKK: selectedKK))
+            // [REQ:BSI-eRp-ePA:O.Auth_4#7] Proceed to confirmation screen
+            state.destination = .confirmation(.init(selectedKK: entry))
             return .none
         case let .filteredKKList(search):
             if let kkList = state.kkList {
@@ -136,7 +131,7 @@ struct CardWallExtAuthSelectionDomain {
         case .destination(.presented(.confirmation(action: .delegate(.close)))):
             return Effect.send(.delegate(.close))
         case .helpButtonTapped:
-            state.destination = .help(.init())
+            state.destination = .help(.init(insuranceType: state.insuranceType))
             return .none
         case .destination,
              .delegate:

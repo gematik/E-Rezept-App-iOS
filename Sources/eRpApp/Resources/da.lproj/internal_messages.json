@@ -25,7 +25,7 @@
     },
     {
         "id": "6",
-        "text": "**📲 Indløs ordinerede DiGA'er** \nDu kan nu indløse recepter til digitale sundhedsapplikationer (DiGA'er) direkte via e-receptappen. Du kan finde din aktiveringskode og linket til den ordinerede DiGA lige her i e-receptappen. \n \n **🏥 Ny apoteksdatabase** \nVi har introduceret en ny, fremtidssikret database til apotekssøgninger.",
+        "text": "**📲 Indløs ordinerede DiGA'er** \nDu kan nu indløse recepter til digitale sundhedsapplikationer (DiGA'er) direkte via e-receptappen. Recepterne vil blive udstedt af specialister i Hamborg som en del af et pilotprojekt. Du kan finde din aktiveringskode og linket til DiGA lige her i e-receptappen. \n \n **🏥 Ny apoteksdatabase** \nVi har introduceret en ny, fremtidssikret database til apotekssøgninger.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
     },
@@ -34,5 +34,11 @@
         "text": "**♿️ Tilgængelighed** \nVores tilgængelighedserklæring er nu tilgængelig i indstillingerne. Onboarding-processen er også blevet mere tilgængelig. \n \n **📲 Indløs DiGA'er hos forsikringsselskaber** \nRecepter til digitale sundhedsapplikationer (DiGA'er) kan nu også indløses hos andre forsikringsselskaber.",
         "timestamp": "2025-06-24T08:00:00.000Z",
         "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Tilmelding for privatforsikrede** \nTilmeldingen for privatforsikrede er blevet optimeret. Du kan nemt logge ind med dit sundheds-ID med blot et par klik. \n \n **🏥 Opdaterede apoteksdata** \nÆndringer, som apoteker foretager i den nye database, vises nu pålideligt. \n \n **📲 Mere information om DiGA'er** \nFra nu af modtager du mere detaljerede oplysninger om dine DiGA-recepter, f.eks. salgspris eller logo. \n \n **♿️ Tilgængelighed** \nSkærmen til indtastning af sundhedskortets adgangsnummer er blevet redesignet og er nu optimeret til brug med VoiceOver. \n \n **📤 Del recepter** \nRecepter kan nu deles med andre direkte fra appen.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
     }
 ]

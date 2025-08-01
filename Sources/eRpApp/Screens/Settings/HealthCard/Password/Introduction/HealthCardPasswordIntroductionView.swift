@@ -94,7 +94,8 @@ struct HealthCardPasswordIntroductionView: View {
                 } label: {
                     Text(L10n.stgBtnCardResetAdvance)
                 }
-                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: false))
+                .buttonStyle(.primary(isEnabled: true, width: .wideHugging))
+                .frame(maxWidth: .infinity, alignment: .center)
                 .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
                 .padding(.horizontal)
                 .padding(.vertical, 8)

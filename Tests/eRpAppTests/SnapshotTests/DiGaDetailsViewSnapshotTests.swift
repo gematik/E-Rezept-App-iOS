@@ -32,13 +32,14 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
     func store(
         with erxTask: ErxTask,
         diGaInfo: DiGaInfo,
-        selectedInsurance: Insurance? = Insurance(name: "BKK Gematik", telematikId: "123123")
+        selectedInsurance: Insurance? = Insurance(name: "BKK Gematik", telematikId: "123123"),
+        bfarmInfo: BfArMDiGaDetails? = Fixtures.bfArmLong
     ) -> StoreOf<DiGaDetailDomain> {
         Store(
             initialState: .init(
                 diGaTask: .init(prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue)),
                 diGaInfo: diGaInfo,
-                bfarmDiGaDetails: Fixtures.bfArmLong,
+                bfarmDiGaDetails: bfarmInfo,
                 selectedInsurance: selectedInsurance
             )
         ) {
@@ -145,14 +146,13 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
                     diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
                                                                dateFormatter: UIDateFormatter.testValue)),
                     diGaInfo: .init(diGaState: .request),
-                    bfarmDiGaDetails: .init(description: "pretty long text",
-                                            languages: "Deutsch, Englisch",
-                                            platform: "iOS, Android",
-                                            contractMedicalService: "Nein",
-                                            additionalDevice: "keine Zusatzgeräte benötigt",
-                                            patientCost: "0 €",
-                                            producerCost: "500 €",
-                                            supportUrl: "https://www.gematik.de"),
+                    bfarmDiGaDetails: .init(contractMedicalServicesRequired: false,
+                                            additionalDevices: [String](),
+                                            manufacturerCost: "500",
+                                            description: "pretty long text",
+                                            languageNames: ["Deutsch, Englisch"],
+                                            supportedPlatforms: ["iOS, Android"],
+                                            handbookUrl: "https://gematik.de"),
                     profile: UserProfile.Dummies.profileA,
                     selectedView: .details
                 )) {
@@ -185,6 +185,42 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
+    func testDiGaDetail_DiGaSupportPDFOnlyView() {
+        let store = store(
+            with: ErxTask.Fixtures.erxTaskDeviceRequest,
+            diGaInfo: .init(diGaState: .request),
+            bfarmInfo: .init(contractMedicalServicesRequired: true,
+                             additionalDevices: [],
+                             languageNames: ["Deutsch"],
+                             supportedPlatforms: ["iOS"],
+                             handbookUrl: "https://gematik.de")
+        )
+        let sut = NavigationStack {
+            DiGaSupportView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testDiGaDetail_DiGaSupportLinkOnlyView() {
+        let store = store(
+            with: ErxTask.Fixtures.erxTaskDeviceRequest,
+            diGaInfo: .init(diGaState: .request),
+            bfarmInfo: .init(contractMedicalServicesRequired: true,
+                             additionalDevices: [],
+                             languageNames: ["Deutsch"],
+                             supportedPlatforms: ["iOS"],
+                             helpUrl: "https://gematik.de")
+        )
+        let sut = NavigationStack {
+            DiGaSupportView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
     func testDiGaDetail_DiGaDescriptionView() {
         let store = store(with: ErxTask.Fixtures.erxTaskDeviceRequest, diGaInfo: .init(diGaState: .request))
         let sut = NavigationStack {
@@ -194,12 +230,69 @@ final class DiGaDetailsViewSnapshotTests: ERPSnapshotTestCase {
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
     }
+
+    func testDiGaDetail_DiGaDuesView() {
+        let store = store(with: ErxTask.Fixtures.erxTaskDeviceRequest, diGaInfo: .init(diGaState: .request))
+        let sut = NavigationStack {
+            DiGaDuesInfoView(store: store)
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testDiGaDetail_DiGaDetails_NoBfarmHint() {
+        let sut = NavigationStack {
+            DiGaDetailView(store: .init(initialState:
+                .init(
+                    diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
+                                                               dateFormatter: UIDateFormatter.testValue)),
+                    diGaInfo: .init(diGaState: .request),
+                    profile: UserProfile.Dummies.profileA,
+                    selectedView: .details
+                )) {
+                EmptyReducer()
+            })
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testDiGaDetail_DiGaDetails_NotAvailableHint() {
+        let sut = NavigationStack {
+            DiGaDetailView(store: .init(initialState:
+                .init(
+                    diGaTask: .init(prescription: Prescription(erxTask: ErxTask.Fixtures.erxTaskDeviceRequest,
+                                                               dateFormatter: UIDateFormatter.testValue)),
+                    diGaInfo: .init(diGaState: .request),
+                    bfarmDiGaDetails: .init(contractMedicalServicesRequired: false,
+                                            additionalDevices: [String](),
+                                            manufacturerCost: "500",
+                                            description: "",
+                                            languageNames: ["Deutsch, Englisch"],
+                                            supportedPlatforms: ["Android"],
+                                            handbookUrl: ""),
+                    profile: UserProfile.Dummies.profileA,
+                    selectedView: .details
+                )) {
+                EmptyReducer()
+            })
+        }
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(of: sut, as: snapshotModiOnDevicesWithTheming())
+    }
 }
 
 extension DiGaDetailsViewSnapshotTests {
     enum Fixtures {
-        static let bfArmLong = DiGaDetailDomain.BfArMDiGaDetails(
-            description: """
+        static let bfArmLong = BfArMDiGaDetails(
+            contractMedicalServicesRequired: false,
+            additionalDevices: [],
+            manufacturerCost: "500",
+            description:
+            """
             Kaia Rückenschmerzen ist eine digitale Anwendung für erwachsene Patientinnen und Patienten mit
             nicht-spezifischen Rückenschmerzen. Sie vermittelt leitlinienbasierte, an das Krankheitsstadium der
             Patientin bzw. des Patienten angepasste Kerninhalte der multimodalen Therapie. Kaia Rückenschmerzen setzt
@@ -218,7 +311,10 @@ extension DiGaDetailsViewSnapshotTests {
             gesundheitsbezogenen Lebensqualität. Kaia Rückenschmerzen kann im Rahmen der Nachsorge, zur Überbrückung von
             Wartezeiten oder als Teil der Therapie (Therapiebegleitung) eingesetzt werden.
             """,
-            supportUrl: "https://gematik.de"
+            languageNames: ["Deutsch"],
+            supportedPlatforms: ["iOS"],
+            handbookUrl: "https://gematik.de",
+            helpUrl: "https://gematik.de"
         )
 
         static let medication8: ErxMedication = .init(

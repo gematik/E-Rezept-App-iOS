@@ -44,24 +44,22 @@ struct CardWallExtAuthSelectionView: View {
                             Section(header: CenteredActivityIndicator()) {}
                         }
                         .listStyle(GroupedListStyle())
-                        .introspect(.list, on: .iOS(.v15)) { tableView in
-                            tableView.separatorStyle = .none
-                            tableView.tableHeaderView = nil
-                            tableView.backgroundColor = UIColor.systemBackground
-                        }
                         .listStyle(PlainListStyle())
                     } else if let kkList = store.kkList,
                               !kkList.apps.isEmpty {
+                        Header {
+                            store.send(.helpButtonTapped)
+                        }
+                        .padding(.horizontal)
+
                         SearchBar(
                             searchText: $store.searchText.sending(\.updateSearchText),
                             prompt: L10n.cdwTxtExtauthSearchprompt.key
                         ) {}
-                            .padding()
+                            .padding(.horizontal)
 
                         List {
-                            Section(header: Header {
-                                store.send(.helpButtonTapped)
-                            }) {
+                            Section {
                                 // [REQ:gemSpec_IDP_Frontend:A_23082#5] Display of KK apps
                                 if !store.filteredKKList.apps.isEmpty {
                                     ForEach(store.filteredKKList.apps) { app in
@@ -71,15 +69,25 @@ struct CardWallExtAuthSelectionView: View {
                                                 store.send(.selectKK(app))
                                             }, label: {
                                                 HStack {
+                                                    let imageUrl = URL(string: app.logo ?? "")
+                                                    AsyncCachedImage(url: imageUrl) { image in
+                                                        image
+                                                            .resizable()
+                                                            .aspectRatio(contentMode: .fit)
+                                                    } placeholder: {
+                                                        Image(
+                                                            asset: Asset.CardWall.insuranceLogoPlaceholder
+                                                        )
+                                                    }.frame(width: 42, height: 42)
+
                                                     Text(app.name)
                                                         .foregroundColor(Color(.label))
 
                                                     Spacer()
 
-                                                    if store.selectedKK?.identifier == app.identifier {
-                                                        Image(systemName: SFSymbolName.checkmark)
-                                                    }
-                                                }.contentShape(Rectangle())
+                                                    Image(systemName: SFSymbolName.chevronForward)
+                                                        .tint(Colors.textSecondary)
+                                                }
                                             })
                                         }
                                     }
@@ -97,15 +105,16 @@ struct CardWallExtAuthSelectionView: View {
                                     .frame(maxWidth: .infinity)
                                 }
                             }
+                            .listSectionSeparator(.hidden)
                             .textCase(.none)
                         }
+                        .scrollContentBackground(.hidden)
                         .listStyle(GroupedListStyle())
-                        .introspect(.list, on: .iOS(.v15)) { tableView in
-                            tableView.separatorStyle = .none
-                            tableView.tableHeaderView = nil
-                            tableView.backgroundColor = UIColor.systemBackground
+                        // replace .introspect with .contentMargins after dropping iOS 16 support
+//                        .contentMargins(0, .top, .scrollContent)
+                        .introspect(.list, on: .iOS(.v16, .v17, .v18)) { collectionView in
+                            collectionView.contentInset.top = -35
                         }
-
                         .listStyle(PlainListStyle())
                         .onAppear {
                             store.send(.reset)
@@ -127,21 +136,6 @@ struct CardWallExtAuthSelectionView: View {
                     }
 
                     Spacer()
-
-                    GreyDivider()
-
-                    PrimaryTextButton(
-                        text: L10n.cdwBtnExtauthSelectionContinue,
-                        a11y: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionConfirm,
-                        isEnabled: store.state.selectedKK != nil
-                    ) {
-                        // workaround: dismiss keyboard to fix safearea bug for iOS 16
-                        if #available(iOS 16, *) {
-                            UIApplication.shared.dismissKeyboard()
-                        }
-                        store.send(.confirmKK)
-                    }
-                    .padding()
                 }
             }
             .navigationBarItems(
@@ -204,8 +198,8 @@ extension View {
     func destinations(store: Perception.Bindable<StoreOf<CardWallExtAuthSelectionDomain>>) -> some View {
         navigationDestination(
             item: store.scope(state: \.destination?.help, action: \.destination.help)
-        ) { _ in
-            CardWallExtAuthHelpView()
+        ) { store in
+            CardWallExtAuthHelpView(store: store)
         }
         .navigationDestination(
             item: store.scope(state: \.destination?.confirmation, action: \.destination.confirmation)
@@ -259,14 +253,18 @@ struct CardWallExtAuthSelectionView_Previews: PreviewProvider {
             CardWallExtAuthSelectionView(
                 store: StoreOf<CardWallExtAuthSelectionDomain>(
                     initialState: .init(
-                        kkList: .init(apps: [KKAppDirectory.Entry(name: "abc", identifier: "123")]),
-                        filteredKKList: .init(apps: [KKAppDirectory.Entry(name: "abc", identifier: "123")]),
-                        error: nil,
-                        selectedKK: .init(name: "Other KK", identifier: "def")
+                        kkList: .init(apps: [
+                            KKAppDirectory.Entry(name: "abc", identifier: "123"),
+                            KKAppDirectory.Entry(name: "def", identifier: "345"),
+                        ]),
+                        filteredKKList: .init(apps: [
+                            KKAppDirectory.Entry(name: "abc", identifier: "123"),
+                            KKAppDirectory.Entry(name: "def", identifier: "345"),
+                        ]),
+                        error: nil
                     )
                 ) {
                     EmptyReducer()
-//                    CardWallExtAuthSelectionDomain()
                 }
             )
         }

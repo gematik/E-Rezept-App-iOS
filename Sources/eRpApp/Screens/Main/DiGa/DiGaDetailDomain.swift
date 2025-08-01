@@ -20,11 +20,14 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import BfArM
 import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpStyleKit
+import FHIRVZD
 import Foundation
+import HTTPClient
 import IDP
 import Pharmacy
 import SwiftUI
@@ -39,6 +42,17 @@ struct DiGaDetailDomain {
         var diGaTask: DiGaTask
         var diGaInfo: DiGaInfo
         var bfarmDiGaDetails: BfArMDiGaDetails?
+
+        // stores the bfarmDiGaDetails in a displayable format
+        var bfArMDisplayInfo: BfArMDisplayInfo? {
+            BfArMDisplayInfo(bfarmDiGaDetail: bfarmDiGaDetails)
+        }
+
+        var isAvailabeOniOS: Bool? {
+            guard let bfarmDiGaDetails = bfarmDiGaDetails else { return nil }
+            return bfarmDiGaDetails.supportedPlatforms.contains { $0.lowercased().contains("ios") }
+        }
+
         var profile: UserProfile?
         var isLoading = false
         var selectedInsurance: Insurance?
@@ -61,10 +75,6 @@ struct DiGaDetailDomain {
             (diGaTask.practitioner ?? L10n.digaDtlTxtNa.text) + " " + L10n.digaDtlTxtOverviewSubheader.text
         }
 
-        var supportURLText: String {
-            L10n.digaDtlSupportTxtLink.text + " " + (bfarmDiGaDetails?.supportUrl ?? L10n.prscFdTxtNa.text)
-        }
-
         var diGaDispense: DiGaDispense? {
             diGaTask.erxTask.medicationDispenses.first?.diGaDispense
         }
@@ -75,6 +85,11 @@ struct DiGaDetailDomain {
 
         var showRelatedInsurance: Bool {
             selectedInsurance != nil && diGaInfo.diGaState == .request
+        }
+
+        var relatedInsuranceText: AttributedString {
+            digaInsuranceText(stringAsset: L10n
+                .digaDtlTxtSelectedInsuranceWith(selectedInsurance?.name ?? L10n.digaDtlTxtNa.text))
         }
 
         @Presents var destination: Destination.State?
@@ -116,6 +131,8 @@ struct DiGaDetailDomain {
 
         case insuranceList(DiGaInsuranceListDomain)
 
+        case duesInfo(EmptyDomain)
+
         enum Tag: Int {
             case descriptionDiGA
             case validDiGa
@@ -127,6 +144,7 @@ struct DiGaDetailDomain {
             case organization
             case technicalInformations
             case insuranceList
+            case duesInfo
         }
 
         enum Alert: Equatable {
@@ -139,6 +157,7 @@ struct DiGaDetailDomain {
     enum Action: Equatable {
         case task
         case loadInsurance
+        case fetchBfArMDiGaDetails
         case mainButtonTapped
         case changePickerView(DiGaDetailSegments)
         case refreshTask(silent: Bool)
@@ -162,6 +181,7 @@ struct DiGaDetailDomain {
             case receivedTelematikId(Result<Insurance?, PharmacyRepositoryError>)
             case redeemReceived(Result<IdentifiedArrayOf<OrderDiGaResponse>, RedeemServiceError>)
             case loadRemotePrescriptionsAndSaveReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
+            case receivedBfArMDiGaDetails(Result<BfArMDiGaDetails?, BfArMError>)
         }
 
         enum Delegate: Equatable {
@@ -179,6 +199,7 @@ struct DiGaDetailDomain {
     @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
     @Dependency(\.uiDateFormatter) var uiDateFormatter
     @Dependency(\.date) var dateGenerator: DateGenerator
+    @Dependency(\.bfArMService) var bfArMService: BfArMService
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
@@ -190,8 +211,6 @@ struct DiGaDetailDomain {
         switch action {
         case .task:
             state.isLoading = true
-            // MockData for future bfarm api call
-//            state.bfarmDiGaDetails = Dummies.placeholderValues
 
             let loadingTask = Effect.publisher {
                 erxTaskRepository.loadLocal(by: state.diGaInfo.taskId, accessCode: nil)
@@ -201,15 +220,36 @@ struct DiGaDetailDomain {
 
             if !state.diGaInfo.isRead {
                 return .concatenate(
+                    Effect.send(.fetchBfArMDiGaDetails),
                     Effect.send(.loadInsurance),
                     update(diGaInfo: state.diGaInfo.with(isRead: true)),
                     loadingTask
                 )
             }
             return .concatenate(
+                Effect.send(.fetchBfArMDiGaDetails),
                 Effect.send(.loadInsurance),
                 loadingTask
             )
+        case .fetchBfArMDiGaDetails:
+            guard let pzn = state.diGaTask.erxTask.deviceRequest?.pzn else { return .none }
+            return .run { send in
+                do {
+                    let bfarmResponse = try await bfArMService.fetchBfArMInfo(pzn: pzn)
+                    await send(.response(.receivedBfArMDiGaDetails(.success(bfarmResponse))))
+                } catch let error as BfArMError {
+                    await send(.response(.receivedBfArMDiGaDetails(.failure(error))))
+                }
+            }
+        case let .response(.receivedBfArMDiGaDetails(result)):
+            switch result {
+            case let .success(bfarmDiGaDetails):
+                state.bfarmDiGaDetails = bfarmDiGaDetails
+            case let .failure(error):
+                state.destination = .alert(.init(for: error))
+                return .none
+            }
+            return .none
         case .loadInsurance:
             // If me manually selected a insurance we dont want to load the insurance via ikNumber
             guard state.showSelectInsurance else {
@@ -443,6 +483,8 @@ struct DiGaDetailDomain {
                 state.destination = .technicalInformations(techInfoState)
             case .insuranceList:
                 state.destination = .insuranceList(.init())
+            case .duesInfo:
+                state.destination = .duesInfo(.init())
             case .none:
                 state.destination = nil
             case .alert:
@@ -608,41 +650,86 @@ extension DiGaDetailDomain {
         }
     }
 
-    /// bfarmDiGaDetails contain information from bfarm
-    struct BfArMDiGaDetails: Equatable {
-        /// DiGa description
-        let description: String?
-        /// available languages
+    /// BfArMDisplayInfo contains formatted data from BfArMDiGaDetails
+    struct BfArMDisplayInfo: Equatable {
         let languages: String?
         /// iOS or/and Android
         let platform: String?
         /// vertragsärztliche Leistung
         let contractMedicalService: String?
         /// additional device
-        let additionalDevice: String?
-        /// patient cost
-        let patientCost: String?
-        /// producer cost
-        let producerCost: String?
-        /// support url for DiGa
-        let supportUrl: String?
+        let additionalDevices: String?
+        /// decoded image
+        let image: UIImage?
+        /// text for supportView
+        let supportText: Text?
+        /// manufacturerCost with euro symbol
+        let manufacturerCost: String?
 
-        init(description: String? = nil,
-             languages: String? = nil,
-             platform: String? = nil,
-             contractMedicalService: String? = nil,
-             additionalDevice: String? = nil,
-             patientCost: String? = nil,
-             producerCost: String? = nil,
-             supportUrl: String? = nil) {
-            self.description = description
-            self.languages = languages
-            self.platform = platform
-            self.contractMedicalService = contractMedicalService
-            self.additionalDevice = additionalDevice
-            self.patientCost = patientCost
-            self.producerCost = producerCost
-            self.supportUrl = supportUrl
+        // swiftlint:disable:next cyclomatic_complexity function_body_length
+        init(bfarmDiGaDetail: BfArMDiGaDetails?) {
+            languages = bfarmDiGaDetail?.languageNames.joined(separator: ", ")
+            platform = bfarmDiGaDetail?.supportedPlatforms.map { platform in
+                switch platform.uppercased() {
+                case "IOS": return L10n.digaDtlTxtPlatformIos.text
+                case "ANDROID": return L10n.digaDtlTxtPlatformAndroid.text
+                case "WEB": return L10n.digaDtlTxtPlatformWeb.text
+                default: return L10n.digaDtlTxtPlatformOther.text
+                }
+            }
+            .joined(separator: ", ")
+
+            contractMedicalService = {
+                guard let contractMedicalServicesRequired = bfarmDiGaDetail?.contractMedicalServicesRequired
+                else { return nil }
+                return contractMedicalServicesRequired ? L10n.digaDtlTxtMedicalServiceTrue.text : L10n
+                    .digaDtlTxtMedicalServiceFalse.text
+            }()
+
+            additionalDevices = {
+                if bfarmDiGaDetail?.additionalDevices == [] {
+                    return L10n.digaDtlTxtEmptyAdditionalDevices.text
+                }
+
+                return bfarmDiGaDetail?.additionalDevices.map { device in
+                    switch device.uppercased() {
+                    case "OPTIONAL": return L10n.digaDtlTxtOptionalAdditionalDevices.text
+                    case "REQUIRED": return L10n.digaDtlTxtRequiredAdditionalDevices.text
+                    case "INCLUDED": return L10n.digaDtlTxtIncludedAdditionalDevices.text
+                    default: return L10n.digaDtlTxtNa.text
+                    }
+                }
+                .joined(separator: "\n")
+            }()
+
+            image = {
+                guard let iconData = bfarmDiGaDetail?.iconData else { return nil }
+                return UIImage(data: iconData)
+            }()
+
+            supportText = {
+                var supportString: String
+                var supportUrl: String
+                switch (bfarmDiGaDetail?.helpUrl, bfarmDiGaDetail?.handbookUrl) {
+                case let (helpUrl?, _?):
+                    supportString = L10n.digaDtlSupportTxtPdfLink.text
+                    supportUrl = helpUrl
+                case let (helpUrl?, nil):
+                    supportString = L10n.digaDtlSupportTxtLink.text
+                    supportUrl = helpUrl
+                case let (nil, handbookUrl?):
+                    supportString = L10n.digaDtlSupportTxtPdfOnly.text
+                    supportUrl = handbookUrl
+                case (nil, nil): return nil
+                }
+
+                return Text(supportString)
+                    .foregroundColor(Colors.systemLabelSecondary) +
+                    Text(" " + supportUrl)
+                    .foregroundColor(Colors.primary700)
+            }()
+
+            manufacturerCost = bfarmDiGaDetail?.manufacturerCost.map { "\($0)€" } ?? ""
         }
     }
 
@@ -670,6 +757,21 @@ extension DiGaDetailDomain {
             let result = try await erxTaskRepository.delete(erxTasks: [erxTask]).asyncResult(\.self)
             await send(.response(.taskDeletedReceived(result)))
         }
+    }
+}
+
+extension DiGaDetailDomain.State {
+    func digaInsuranceText(stringAsset: StringAsset) -> AttributedString {
+        var attributedString = AttributedString(stringAsset.text)
+        attributedString.font = .subheadline
+        if let standartRange = attributedString.range(of: L10n.digaDtlTxtSelectedInsuranceWith("").text) {
+            attributedString[standartRange].foregroundColor = Color(.secondaryLabel)
+            let restRange = standartRange.upperBound ..< attributedString.endIndex
+
+            attributedString[restRange].underlineStyle = .single
+            attributedString[restRange].foregroundColor = Colors.primary700
+        }
+        return attributedString
     }
 }
 
@@ -773,15 +875,6 @@ extension DiGaDetailDomain {
         static let state = State(diGaTask: .init(prescription: prescription),
                                  diGaInfo: DiGaInfo(diGaState: .request),
                                  profile: UserProfile.Dummies.profileA)
-
-        static let placeholderValues: BfArMDiGaDetails = .init(description: "pretty long text",
-                                                               languages: "Deutsch, Englisch",
-                                                               platform: "iOS, Android",
-                                                               contractMedicalService: "Nein",
-                                                               additionalDevice: "Keine Zusatzgeräte benötigt",
-                                                               patientCost: "0 €",
-                                                               producerCost: "500 €",
-                                                               supportUrl: "https://www.gematik.de")
 
         static let store = Store(
             initialState: state

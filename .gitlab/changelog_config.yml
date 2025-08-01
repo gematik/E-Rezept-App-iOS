@@ -1,0 +1,21 @@
+---
+categories:
+  feature: Features
+  added: Features
+  bug: Bug fixes
+  fixed: Bug fixes
+  performance: Performance improvements
+  internal: Internal changes
+template: |
+  {% if categories %}
+  {% each categories %}
+  ### {{ title }} ({% if single_change %}1 change{% else %}{{ count }} changes{% end %})
+
+  {% each entries %}
+  - [{{ title }}]
+  {% end %}
+
+  {% end %}
+  {% else %}
+  No changes.
+  {% end %}

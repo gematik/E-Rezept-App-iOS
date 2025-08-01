@@ -132,6 +132,28 @@ struct LoadingPrimaryButton: View {
     }
 }
 
+/// sourcery: StringAssetInitialized
+struct NavButton: View {
+    var text: LocalizedStringKey
+    var a11y: String
+    let back: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Image(systemName: SFSymbolName.chevronBackward)
+                    .hidden(!back)
+                Text(text, bundle: .module)
+                Image(systemName: SFSymbolName.chevronForward)
+                    .hidden(back)
+            }
+        }.foregroundColor(Colors.primary700)
+            .font(.body.weight(.semibold))
+            .accessibility(identifier: a11y)
+    }
+}
+
 struct PrimaryButtonStyle: ButtonStyle {
     private var isEnabled: Bool
     private var useFullWidth: Bool

@@ -1,5 +1,5 @@
 #spec;afo id;file
-<% SORTED_SPECS.each do |spec_name, afos| %><% afos.each do |afo_name, afo_details| %><% afo_details.each do |details| %>
+<% sorted_specs.each do |spec_name, afos| %><% afos.each do |afo_name, afo_details| %><% afo_details.each do |details| %>
 <%= spec_name %>;<%= afo_name %>;<%= details['file'] %>:<%= details['line'] %><% end # afos details %>
 <% end # afos %>
 <% end # specs %>

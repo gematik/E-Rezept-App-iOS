@@ -22,6 +22,7 @@
 
 import Combine
 import HTTPClient
+import HTTPClientLive
 import Nimble
 import OHHTTPStubs
 import OHHTTPStubsSwift
@@ -59,7 +60,10 @@ final class RealTrustStoreClientTests: XCTestCase {
         }
 
         // when
-        let sut = RealTrustStoreClient(serverURL: serviceURL)
+        let sut = RealTrustStoreClient(
+            serverURL: serviceURL,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        )
 
         // then
         sut.loadCertListFromServer()
@@ -87,7 +91,10 @@ final class RealTrustStoreClientTests: XCTestCase {
             return HTTPStubsResponse(data: Data(json.data(using: .utf8)!), statusCode: 200, headers: nil)
         }
 
-        let sut = RealTrustStoreClient(serverURL: serviceURL)
+        let sut = RealTrustStoreClient(
+            serverURL: serviceURL,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        )
 
         // when
         let pkiCertificates = try await sut.loadPKICertificatesFromServer(rootSubjectCn: "GEM.RCA3")
@@ -106,7 +113,10 @@ final class RealTrustStoreClientTests: XCTestCase {
             return HTTPStubsResponse(data: Data([0x0]), statusCode: 200, headers: nil)
         }
 
-        let sut = RealTrustStoreClient(serverURL: serviceURL)
+        let sut = RealTrustStoreClient(
+            serverURL: serviceURL,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        )
 
         // when
         let vauCertificate = try await sut.loadVauCertificateFromServer()
@@ -127,7 +137,10 @@ final class RealTrustStoreClientTests: XCTestCase {
             return HTTPStubsResponse(data: Data([0x1]), statusCode: 200, headers: nil)
         }
 
-        let sut = RealTrustStoreClient(serverURL: serviceURL)
+        let sut = RealTrustStoreClient(
+            serverURL: serviceURL,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        )
 
         // when
         let vauCertificate = try await sut.loadOcspResponseFromServer(issuerCn: "abcd", serialNr: "9313")

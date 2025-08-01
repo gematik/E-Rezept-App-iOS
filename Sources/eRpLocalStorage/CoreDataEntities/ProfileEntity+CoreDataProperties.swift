@@ -35,6 +35,7 @@ extension ProfileEntity {
     @NSManaged public var familyName: String?
     @NSManaged public var gIdEntry: Data?
     @NSManaged public var givenName: String?
+    @NSManaged public var hideWelcomeDrawerOnMainView: Bool
     @NSManaged public var hidePkvConsentDrawerOnMainView: Bool
     @NSManaged public var identifier: UUID?
     @NSManaged public var image: String?

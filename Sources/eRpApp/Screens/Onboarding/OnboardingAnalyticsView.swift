@@ -128,6 +128,8 @@ extension OnboardingAnalyticsView {
                     .multilineTextAlignment(.leading)
                     .font(Font.title.weight(.bold))
                     .accessibility(identifier: A11y.onboarding.analytics.onbAnaTxtTitle)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityRemoveTraits(.isStaticText)
                     .padding(.top, 22)
 
                 UIKitTextView(

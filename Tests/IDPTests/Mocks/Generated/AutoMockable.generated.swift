@@ -12,6 +12,7 @@ import AppKit
 
 import Combine
 import Foundation
+import HTTPClient
 import OpenSSL
 import TrustStore
 

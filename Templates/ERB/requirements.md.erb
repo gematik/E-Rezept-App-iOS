@@ -1,4 +1,4 @@
-# Requirements<% SORTED_SPECS.each do |spec_name, afos| %>
+# Requirements<% sorted_specs.each do |spec_name, afos| %>
 
 ## [<%= spec_name %>](https://gemspec.gematik.de/docs/gemSpec/<%= spec_name %>/latest/index.html)<% afos.each do |afo_name, details| %>
 
@@ -6,7 +6,7 @@
 
 #### Original Requirement
 
-<%= AFOS[afo_name] %>
+<%= original_afos[afo_name] %>
 
 #### Implementation
 

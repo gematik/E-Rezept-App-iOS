@@ -79,7 +79,6 @@ extension PrescriptionDetailView {
                         )
                         .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnDelete)
                     }
-                    .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenu)
                 }
             }
         }

@@ -63,6 +63,8 @@ struct MainDomain {
         case toast(ToastState<Toast>)
         // sourcery: AnalyticsScreen = digasMain
         case diGaDetail(DiGaDetailDomain)
+        // sourcery: AnalyticsScreen = main_osDeprecationDrawer
+        case osDeprecation(OSDeprecationDomain)
 
         enum Alert {
             case dismiss
@@ -83,6 +85,11 @@ struct MainDomain {
     @ObservableState
     struct State: Equatable {
         var isDemoMode = false
+        // Delete this after iOS 16 deprecation
+        var showIOS16DeprecationBanner: Bool {
+            ProcessInfo().operatingSystemVersion.majorVersion == 16
+        }
+
         @Presents var destination: Destination.State?
 
         var path = StackState<Path.State>()
@@ -120,6 +127,10 @@ struct MainDomain {
         case subscribeToDemoModeChange
         /// Tapping the demo mode banner can also turn the demo mode off
         case turnOffDemoMode
+        /// Tapping the OS deprecation banner shows more information
+        case osDeprecationBannerTapped
+        /// Set profile to pkv user
+        case setUserToPKVInsured
         case externalLogin(URL)
         case importTaskByUrl(URL)
         case showDrawer
@@ -143,7 +154,7 @@ struct MainDomain {
             case loadDeviceSecurityViewReceived(DeviceSecurityDomain.State?)
             case demoModeChangeReceived(Bool)
             case importReceived(Result<[ErxTask], Error>)
-            case showDrawer(MainDomain.Environment.DrawerEvaluationResult)
+            case showDrawer(DrawerEvaluation.DrawerEvaluationResult)
             case grantChargeItemsConsentActivate(ChargeItemConsentService.GrantResult)
             case showUpdateAlertResponse(Bool)
         }
@@ -178,6 +189,7 @@ struct MainDomain {
     @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.changeableUserSessionContainer) var userSessionContainer: UsersSessionContainer
+    @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.deviceSecurityManager) var deviceSecurityManager
@@ -185,6 +197,7 @@ struct MainDomain {
     @Dependency(\.chargeItemConsentService) var chargeItemConsentService: ChargeItemConsentService
     @Dependency(\.profileDataStore) var profileDataStore
     @Dependency(\.router) var router: Routing
+    @Dependency(\.drawerEvaluation) var drawerEvaluation: DrawerEvaluation
 
     var environment: Environment {
         .init(
@@ -225,6 +238,11 @@ struct MainDomain {
             return .run { _ in
                 await environment.router.routeTo(.settings(nil))
             }
+        case .osDeprecationBannerTapped:
+            state.destination = .osDeprecation(
+                OSDeprecationDomain.State(version: "16")
+            )
+            return .none
         case let .prescriptionList(action: .profilePictureViewTapped(profile)):
             state.destination = .editProfilePicture(
                 EditProfilePictureDomain.State(
@@ -388,6 +406,9 @@ struct MainDomain {
              .destination(.presented(.prescriptionDetail(action: .delegate(.close)))):
             state.destination = nil
             return .none
+        case .destination(.presented(.osDeprecation(action: .delegate(.continueWithAppButtonTapped)))):
+            state.destination = nil
+            return .none
         case let .horizontalProfileSelection(action: .response(.loadReceived(.failure(error)))):
             state.destination = .alert(
                 .init(for: error, actions: {
@@ -401,15 +422,29 @@ struct MainDomain {
             guard state.destination == nil
             else { return .none }
             return .run { send in
-                await send(.response(.showDrawer(environment.showDrawerEvaluation())))
+                await send(.response(.showDrawer(drawerEvaluation.showDrawerEvaluation())))
+            }
+        case .setUserToPKVInsured:
+            guard let profileId = state.horizontalProfileSelectionState.selectedProfileId else {
+                return .none
             }
 
+            return .run { send in
+                _ = try await userProfileService
+                    .update(profileId: profileId) { profile in
+                        profile.insuranceType = .pKV
+                    }
+                    .async()
+                await send(.startCardWall)
+            }
         case let .response(.showDrawer(drawerEvaluationResult)):
             switch drawerEvaluationResult {
             case .welcomeDrawer:
                 state.destination = .welcomeDrawer
-                environment.userDataStore.hideWelcomeDrawer = true
-                return .none
+                // welcome drawer has been shown to this profile
+                return .run { _ in
+                    _ = try await environment.setHideWelcomeDrawerOnMainViewToTrue()
+                }
             case .consentDrawer:
                 state.destination = .grantChargeItemConsentDrawer
                 // memorise the fact that the consent drawer has been shown to this profile
@@ -419,7 +454,6 @@ struct MainDomain {
             case .none:
                 return .none
             }
-
         case .grantChargeItemsConsentActivate,
              .destination(.presented(.alert(.retryGrantChargeItemConsent))):
 
@@ -491,7 +525,11 @@ struct MainDomain {
             switch delegateAction {
             case .close:
                 state.destination = nil
-                return .none
+                return .run { send in
+                    // wait for running effects to finish
+                    try await schedulers.main.sleep(for: 0.5)
+                    await send(.showDrawer)
+                }
             case let .failure(error):
                 state.destination = .alert(
                     .init(for: error, actions: {

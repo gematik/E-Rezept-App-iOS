@@ -54,28 +54,30 @@ struct SettingsContactInfoView: View {
                 .accessibility(identifier: A11y.settings.contact.stgConTxtSurvey)
                 .buttonStyle(.navigation)
 
-            Button(action: {
-                if appDefaults.diga.hasRedeemdADiga {
-                    $appDefaults.withLock { $0.diga.hasSeenDigaSurvery = true }
-                }
-
-                guard let url = URL(string: "https://gematik.shortcm.li/DIGA_Feedback"),
-                      UIApplication.shared.canOpenURL(url) else { return }
-
-                UIApplication.shared.open(url)
-            }, label: {
-                WithPerceptionTracking {
-                    if showDiGaBadge {
-                        Label(L10n.stgConTextDigaSurvey, systemImage: SFSymbolName.iPhoneGen2)
-                            .modifier(AnnotationBadgeModifier(text: L10n.stgConTextDigaSurveyBadge,
-                                                              bundle: L10n.stgConTextDigaSurveyBadge.bundle))
-                    } else {
-                        Label(L10n.stgConTextDigaSurvey, systemImage: SFSymbolName.iPhoneGen2)
+            if appDefaults.diga.hasPrescripedDiga {
+                Button(action: {
+                    if appDefaults.diga.hasRedeemdADiga {
+                        $appDefaults.withLock { $0.diga.hasSeenDigaSurvery = true }
                     }
-                }
-            })
-                .accessibility(identifier: A11y.settings.contact.stgConTxtDigaSurvey)
-                .buttonStyle(.navigation)
+
+                    guard let url = URL(string: "https://gematik.shortcm.li/DIGA_Feedback"),
+                          UIApplication.shared.canOpenURL(url) else { return }
+
+                    UIApplication.shared.open(url)
+                }, label: {
+                    WithPerceptionTracking {
+                        if showDiGaBadge {
+                            Label(L10n.stgConTextDigaSurvey, systemImage: SFSymbolName.iPhoneGen2)
+                                .modifier(AnnotationBadgeModifier(text: L10n.stgConTextDigaSurveyBadge,
+                                                                  bundle: L10n.stgConTextDigaSurveyBadge.bundle))
+                        } else {
+                            Label(L10n.stgConTextDigaSurvey, systemImage: SFSymbolName.iPhoneGen2)
+                        }
+                    }
+                })
+                    .accessibility(identifier: A11y.settings.contact.stgConTxtDigaSurvey)
+                    .buttonStyle(.navigation)
+            }
 
             Button(action: {
                 if let email: URL = Self.createEmailUrl() {

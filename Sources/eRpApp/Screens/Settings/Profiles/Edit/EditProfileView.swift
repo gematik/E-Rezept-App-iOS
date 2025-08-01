@@ -25,6 +25,7 @@ import eRpStyleKit
 import IDP
 import SwiftUI
 
+// swiftlint:disable file_length
 struct EditProfileView: View {
     @Perception.Bindable var store: StoreOf<EditProfileDomain>
 
@@ -96,6 +97,25 @@ struct EditProfileView: View {
                     .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: true))
                     .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileDelete)
                     .padding(.vertical)
+
+                    // InsuranceDrawerView small sheet presentation
+                    Rectangle()
+                        .frame(width: 0, height: 0, alignment: .center)
+                        .smallSheet(
+                            $store.scope(
+                                state: \.destination?.insuranceDrawer,
+                                action: \.destination.insuranceDrawer
+                            )
+                        ) { _ in
+                            InsuranceDrawerView(root: .settings) {
+                                store.send(.resetNavigation, animation: .easeInOut)
+                            } gkvInsuredAction: {
+                                store.send(.setUserToGKVInsured, animation: .easeInOut)
+                            } pkvInsuredAction: {
+                                store.send(.setUserToPKVInsured, animation: .easeInOut)
+                            }
+                        }
+                        .accessibilityHidden(true)
                 }
             }
             .background(Color(.secondarySystemBackground).ignoresSafeArea())
@@ -138,9 +158,6 @@ extension EditProfileView {
             if let fullName = store.fullName, !fullName.isEmpty {
                 return true
             }
-            if let insurance = store.insurance, insurance.isEmpty {
-                return true
-            }
             if let insuranceId = store.insuranceId, !insuranceId.isEmpty {
                 return true
             }
@@ -163,13 +180,9 @@ extension EditProfileView {
                                 .accessibility(value: Text(fullName))
                                 .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileName)
                         }
-                        if let insurance = store.insurance {
-                            SubTitle(title: insurance, description: L10n.stgTxtEditProfileLabelInsuranceCompany)
-                                .accessibilityElement(children: .combine)
-                                .accessibility(label: Text(L10n.stgTxtEditProfileLabelInsuranceCompany))
-                                .accessibility(value: Text(insurance))
-                                .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileInsuranceCompany)
-                        }
+
+                        EditInsuranceView(store: store)
+
                         if let can = store.can {
                             SubTitle(title: can, description: L10n.stgTxtEditProfileLabelCan)
                                 .accessibilityElement(children: .combine)
@@ -194,12 +207,14 @@ extension EditProfileView {
                         }
                     })
                 } else {
-                    Text(L10n.stgTxtEditProfileUserDataSectionTitle)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .font(.headline)
-                        .padding(.horizontal)
-                        .padding(.top)
-                        .padding(.bottom, 8)
+                    SingleElementSectionContainer(
+                        header: {
+                            Text(L10n.stgTxtEditProfileUserDataSectionTitle)
+                        },
+                        content: {
+                            EditInsuranceView(store: store)
+                        }
+                    )
                 }
 
                 if store.token != nil {
@@ -228,6 +243,33 @@ extension EditProfileView {
                         .padding(.bottom)
                         .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogin)
                 }
+            }
+        }
+    }
+
+    private struct EditInsuranceView: View {
+        @Perception.Bindable var store: StoreOf<EditProfileDomain>
+
+        var body: some View {
+            WithPerceptionTracking {
+                Button(action: {
+                    store.send(.changeInsurance)
+                }, label: {
+                    HStack {
+                        SubTitle(title: store.insuranceName, description: L10n.stgTxtEditProfileLabelInsuranceCompany)
+                        Spacer()
+                        HStack {
+                            Image(systemName: SFSymbolName.pencil)
+                            Text(L10n.stgBtnEditProfileLabelInsuranceCompany)
+                                .multilineTextAlignment(.trailing)
+                        }
+                        .padding(.trailing)
+                    }
+                })
+                    .accessibilityElement(children: .combine)
+                    .accessibility(label: Text(L10n.stgTxtEditProfileLabelInsuranceCompany))
+                    .accessibility(value: Text(store.insuranceName))
+                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileInsuranceCompany)
             }
         }
     }

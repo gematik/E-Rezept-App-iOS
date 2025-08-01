@@ -49,21 +49,40 @@ struct DiGaSupportView: View {
                         .font(.headline)
                         .accessibilityIdentifier(A11y.digaDetail.digaDtlSupportTxtHeader)
 
-                    Text(store.supportURLText)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 16)
-                        .accessibilityIdentifier(A11y.digaDetail.digaDtlSupportTxtProvidedLink)
-
-                    Button {
-                        store.send(.openLink(urlString: store.diGaDispense?.deepLink))
-                    } label: {
-                        Text(L10n.digaDtlSupportBtnOpenLink)
+                    if let supportText = store.bfArMDisplayInfo?.supportText {
+                        supportText
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .multilineTextAlignment(.center)
+                            .padding(.bottom, 16)
+                            .accessibilityIdentifier(A11y.digaDetail.digaDtlSupportTxtProvidedLink)
                     }
-                    .buttonStyle(.primaryHugging)
-                    .padding(.vertical)
+
+                    if let helpUrl = store.bfarmDiGaDetails?.helpUrl {
+                        Button {
+                            store.send(.openLink(urlString: helpUrl))
+                        } label: {
+                            Text(L10n.digaDtlSupportBtnOpenLink)
+                        }
+                        .buttonStyle(.primaryHugging)
+                    }
+
+                    if let handbookUrl = store.bfarmDiGaDetails?.handbookUrl {
+                        Button(
+                            action: { store.send(.openLink(urlString: handbookUrl)) },
+                            label: {
+                                Text(L10n.digaDtlSupportBtnOpenPdf).font(Font.body.weight(.semibold))
+                                    .multilineTextAlignment(.leading)
+                                    .padding(.vertical)
+                                    .padding(.horizontal, 64)
+                                    .foregroundColor(Colors.primary700)
+                            }
+                        )
+                        .padding(.horizontal)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .buttonStyle(PrimaryBorderButtonStyle())
+                    }
+
                     Spacer()
                 }
             }

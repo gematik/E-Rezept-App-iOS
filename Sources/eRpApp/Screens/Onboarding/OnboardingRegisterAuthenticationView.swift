@@ -75,6 +75,8 @@ extension OnboardingRegisterAuthenticationView {
                     .multilineTextAlignment(.leading)
                     .font(Font.title.weight(.bold))
                     .accessibility(identifier: A18n.onboarding.authentication.onbAuthTxtSectionTitle)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityRemoveTraits(.isStaticText)
                     .padding(.top, 22)
 
                 Text(L10n.onbAuthTxtSubtitle)
@@ -206,9 +208,7 @@ extension OnboardingRegisterAuthenticationView {
 }
 
 #Preview {
-    Group {
-        OnboardingRegisterAuthenticationView(store: RegisterAuthenticationDomain.Dummies.store)
-        OnboardingRegisterAuthenticationView(store: RegisterAuthenticationDomain.Dummies
-            .store(with: RegisterAuthenticationDomain.State(availableSecurityOptions: [.password])))
-    }
+    OnboardingRegisterAuthenticationView(store: RegisterAuthenticationDomain.Dummies.store)
+    OnboardingRegisterAuthenticationView(store: RegisterAuthenticationDomain.Dummies
+        .store(with: RegisterAuthenticationDomain.State(availableSecurityOptions: [.password])))
 }

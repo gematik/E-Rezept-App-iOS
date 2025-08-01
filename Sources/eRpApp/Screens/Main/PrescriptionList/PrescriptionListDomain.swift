@@ -48,15 +48,12 @@ struct PrescriptionListDomain {
             }
         }
 
+        @Shared(.appDefaults) var appDefaults
+
         private(set) var openPrescriptions: [Prescription] = []
         private(set) var hasArchivedPrescriptions = false
 
         var profile: UserProfile?
-
-        /// tempProfile is used to store the current loading UserProfile because activeUserProfileReceived updates
-        /// before state.profile is set during the effect.action causing an loop. By using tempProfile i can store
-        /// the Id of the loading profile and prevent loading the same profile again
-        var tempProfile: UserProfile?
 
         var showError: Bool {
             loadingState.error != nil
@@ -89,7 +86,7 @@ struct PrescriptionListDomain {
 
     enum Action: Equatable {
         /// Loads locally stored Prescriptions
-        case loadLocalPrescriptions(UserProfile?)
+        case loadLocalPrescriptions
         ///  Loads Prescriptions from server and stores them in the local store
         case loadRemotePrescriptionsAndSave
         /// Presents the CardWall when not logged in or executes `loadFromCloudAndSave`
@@ -111,7 +108,7 @@ struct PrescriptionListDomain {
 
         enum Response: Equatable {
             /// Response from `loadLocalPrescriptions`
-            case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>, UserProfile?)
+            case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
             /// Response from `loadRemotePrescriptionsAndSave`
             case loadRemotePrescriptionsAndSaveReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
             case activeUserProfileReceived(Result<UserProfile, UserProfileServiceError>)
@@ -164,45 +161,44 @@ struct PrescriptionListDomain {
             state.profile = nil
             return .none
         case let .response(.activeUserProfileReceived(.success(newProfile))):
-            // First time need to set profile and tempProfile to first loaded activeUserProfile and load prescriptions
-            guard let currentProfile = state.profile, let tempProfile = state.tempProfile else {
+            guard let currentProfile = state.profile else {
                 state.profile = newProfile
-                state.tempProfile = newProfile
                 return .concatenate(
-                    Effect.send(.loadLocalPrescriptions(newProfile)),
+                    Effect.send(.loadLocalPrescriptions),
                     Effect.send(.loadRemotePrescriptionsAndSave)
                 )
             }
 
-            // load new profile when id is not the same
-            if currentProfile.id != newProfile.id, tempProfile.id != newProfile.id {
-                // Need to set tempProfile because activeUserProfileReceived calles before profile is set correct
-                state.tempProfile = newProfile
+            // update current profile (UserProfile)
+            state.profile = newProfile
+
+            // load prescriptions for new profile when newProfile's id is not the same
+            if currentProfile.id != newProfile.id {
                 // concatenate is broken and wont go in order
                 return .concatenate(
-                    Effect.send(.loadLocalPrescriptions(newProfile)),
+                    Effect.send(.loadLocalPrescriptions),
                     Effect.send(.loadRemotePrescriptionsAndSave)
                 )
-                // update current profile
-            } else if currentProfile.id == newProfile.id, currentProfile != newProfile {
-                state.profile = newProfile
             }
             return .none
-        case let .loadLocalPrescriptions(profile):
+        case .loadLocalPrescriptions:
             state.loadingState = .loading(state.prescriptions)
             return .publisher(
                 prescriptionRepository.loadLocal()
                     .receive(on: schedulers.main.animation())
                     .catchToLoadingStateEffect()
-                    .map { Action.response(.loadLocalPrescriptionsReceived($0, profile)) }
+                    .map { Action.response(.loadLocalPrescriptionsReceived($0)) }
                     .eraseToAnyPublisher
             )
             .cancellable(id: CancelID.loadLocalPrescriptionId, cancelInFlight: true)
-        case let .response(.loadLocalPrescriptionsReceived(loadingState, profile)):
+        case let .response(.loadLocalPrescriptionsReceived(loadingState)):
             state.loadingState = loadingState
             state.prescriptions = loadingState.value ?? []
-            guard let profile = profile else { return .none }
-            state.profile = profile
+            // check if user has a DiGA prescription
+            if state.appDefaults.diga.hasPrescripedDiga == false,
+               state.prescriptions.first(where: { $0.isDiGaPrescription }) != nil {
+                state.$appDefaults.withLock { $0.diga.hasPrescripedDiga = true }
+            }
             return .none
         case .loadRemotePrescriptionsAndSave:
             state.loadingState = .loading(nil)

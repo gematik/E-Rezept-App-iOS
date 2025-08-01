@@ -159,14 +159,6 @@ final class MockUserDataStore: UserDataStore {
     }
     var underlyingAppStartCounter: Int!
     
-   // MARK: - hideWelcomeDrawer
-
-    var hideWelcomeDrawer: Bool {
-        get { underlyingHideWelcomeDrawer }
-        set(value) { underlyingHideWelcomeDrawer = value }
-    }
-    var underlyingHideWelcomeDrawer: Bool!
-    
    // MARK: - readInternalCommunications
 
     var readInternalCommunications: AnyPublisher<[String], Never> {

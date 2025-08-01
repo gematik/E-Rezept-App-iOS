@@ -25,7 +25,7 @@
     },
     {
         "id": "6",
-        "text": "**📲 Inwisselen van voorgeschreven DiGA's** \nU kunt nu recepten voor digitale gezondheidsapplicaties (DiGA's) rechtstreeks inwisselen via de e-recepten-app. U vindt uw activeringscode en de link naar de voorgeschreven DiGA hier in de e-recepten-app. \n \n **🏥 Nieuwe apotheekdatabase** \nWe hebben een nieuwe, toekomstbestendige database voor apotheekzoekopdrachten geïntroduceerd.",
+        "text": "**📲 Inwisselen van voorgeschreven DiGA's** \nU kunt nu recepten voor digitale gezondheidsapplicaties (DiGA's) rechtstreeks inwisselen via de e-recepten-app. De recepten worden in het kader van een pilotproject uitgeschreven door specialisten in Hamburg. U vindt uw activeringscode en de link naar de DiGA hier in de e-recepten-app. \n \n **🏥 Nieuwe apotheekdatabase** \nWe hebben een nieuwe, toekomstbestendige database voor apotheekzoekopdrachten geïntroduceerd.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
     },
@@ -34,5 +34,11 @@
         "text": "**♿️ Toegankelijkheid** \nOnze toegankelijkheidsverklaring is nu beschikbaar in de instellingen. Het onboardingproces is ook toegankelijker gemaakt. \n \n **📲 DiGA's inwisselen bij zorgverzekeraars** \nRecepten voor digitale zorgapplicaties (DiGA's) kunnen nu ook bij andere zorgverzekeraars worden ingewisseld.",
         "timestamp": "2025-06-24T08:00:00.000Z",
         "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Registratie voor particulier verzekerden** \nDe registratie voor particulier verzekerden is geoptimaliseerd. U kunt met een paar klikken gemakkelijk inloggen met uw gezondheids-ID. \n \n **🏥 Bijgewerkte apotheekgegevens** \nWijzigingen die apotheken in de nieuwe database aanbrengen, worden nu betrouwbaar weergegeven. \n \n **📲 Meer informatie voor DiGA's** \nVanaf nu ontvangt u meer gedetailleerde informatie over uw DiGA-recepten, zoals de verkoopprijs of het logo. \n \n **♿️ Toegankelijkheid** \nHet scherm voor het invoeren van het toegangsnummer van de zorgpas is opnieuw ontworpen en is nu geoptimaliseerd voor gebruik met VoiceOver. \n \n **📤 Deel recepten** \nRecepten kunnen nu rechtstreeks vanuit de app met anderen worden gedeeld.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
     }
 ]

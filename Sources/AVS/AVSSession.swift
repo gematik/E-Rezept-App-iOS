@@ -63,7 +63,7 @@ public class DefaultAVSSession: AVSSession {
     let logger: ((AVSMessage, AVSEndpoint, HTTPResponse) -> Void)?
 
     public convenience init(
-        httpClient: HTTPClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral),
+        httpClient: HTTPClient,
         logger: ((AVSMessage, AVSEndpoint, HTTPResponse) -> Void)? = nil
     ) {
         self.init(

@@ -117,9 +117,6 @@ public protocol UserDataStore: AnyObject {
     /// Deletes all data stored in the `UserDataStore`
     func wipeAll()
 
-    ///
-    var hideWelcomeDrawer: Bool { get set }
-
     // MARK: - Messages
 
     /// Publisher that returns all the ids from internal messages that already got displayed

@@ -28,4 +28,13 @@ public struct IDPExtAuthVerify {
     public let code: String
     /// State of IDP to dereference the code
     public let state: String
+
+    /// Initialize IDPExtAuthVerify with authentication code and state
+    /// - Parameters:
+    ///   - code: Authorization code from the sektoral identity provider
+    ///   - state: State value for dereferencing the code
+    public init(code: String, state: String) {
+        self.code = code
+        self.state = state
+    }
 }

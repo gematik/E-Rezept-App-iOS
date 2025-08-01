@@ -47,4 +47,25 @@ public struct IDPExtAuth {
         /// Using "Gesundheits ID"
         case gid
     }
+
+    /// Initialize IDPExtAuth with authentication parameters
+    /// - Parameters:
+    ///   - kkAppId: User selected identifier of the application
+    ///   - state: OAuth parameter state of high entropy
+    ///   - codeChallenge: SHA256 hashed verifier code
+    ///   - codeChallengeMethod: Code challenge hashing method
+    ///   - nonce: OpenID parameter nonce of high entropy
+    public init(
+        kkAppId: String,
+        state: String,
+        codeChallenge: String,
+        codeChallengeMethod: IDPCodeChallengeMode,
+        nonce: String
+    ) {
+        self.kkAppId = kkAppId
+        self.state = state
+        self.codeChallenge = codeChallenge
+        self.codeChallengeMethod = codeChallengeMethod
+        self.nonce = nonce
+    }
 }

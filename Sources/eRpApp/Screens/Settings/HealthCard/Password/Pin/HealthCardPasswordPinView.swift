@@ -49,7 +49,8 @@ struct HealthCardPasswordPinView: View {
                     label: { Text(L10n.stgBtnCardResetAdvance) }
                 )
                 .disabled(!store.pinMayAdvance)
-                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: store.pinMayAdvance, destructive: false))
+                .buttonStyle(.primary(isEnabled: store.pinMayAdvance, width: .wideHugging))
+                .frame(maxWidth: .infinity, alignment: .center)
                 .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
                 .padding(.horizontal)
                 .padding(.vertical, 8)
@@ -108,7 +109,7 @@ struct HealthCardPasswordPinView: View {
                         .padding()
                     }
                 }
-                .fullScreenCover(
+                .navigationDestination(
                     item: $store.scope(
                         state: \.destination?.readCard,
                         action: \.destination.readCard

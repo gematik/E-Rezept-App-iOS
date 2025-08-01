@@ -25,6 +25,7 @@ import Combine
 @testable import eRpFeatures
 import Foundation
 import HTTPClient
+import HTTPClientLive
 import Nimble
 import OpenSSL
 import TestUtils

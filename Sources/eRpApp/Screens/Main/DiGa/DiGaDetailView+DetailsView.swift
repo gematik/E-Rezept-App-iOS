@@ -31,95 +31,133 @@ extension DiGaDetailView {
 
         var body: some View {
             WithPerceptionTracking {
-                SectionContainer {
-                    SubTitle(
-                        title: store.diGaTask.appName ?? L10n.digaDtlTxtNa.text,
-                        description: L10n.digaDtlTxtDigaName
-                    )
-                    .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtAppName)
-
-                    // Readd these rows when Bfarm is available
-//                    SubTitle(
-//                        title: store.bfarmDiGaDetails?.languages ?? L10n.digaDtlTxtNa.text,
-//                        description: L10n.digaDtlTxtLanguages
-//                    )
-//                    .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtLanguages)
-//
-//                    SubTitle(
-//                        title: store.bfarmDiGaDetails?.platform ?? L10n.digaDtlTxtNa.text,
-//                        description: L10n.digaDtlTxtPlatform
-//                    )
-//                    .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtPlatform)
-//
-//                    SubTitle(
-//                        title: store.bfarmDiGaDetails?.contractMedicalService?.description ?? L10n.digaDtlTxtNa.text,
-//                        description: L10n.digaDtlTxtMedicalService
-//                    )
-//                    .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtMedicalService)
-//
-//                    SubTitle(
-//                        title: store.bfarmDiGaDetails?.additionalDevice ?? L10n.digaDtlTxtNa.text,
-//                        description: L10n.digaDtlTxtAdditionalDevices
-//                    )
-//                    .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtAdditionalDevices)
-//
-//                    SubTitle(
-//                        title: store.bfarmDiGaDetails?.patientCost ?? L10n.digaDtlTxtNa.text,
-//                        description: L10n.digaDtlTxtPatientCost
-//                    )
-//                    .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtPatientCost)
-//
-//                    SubTitle(
-//                        title: store.bfarmDiGaDetails?.producerCost ?? L10n.digaDtlTxtNa.text,
-//                        description: L10n.digaDtlTxtProducerCost
-//                    )
-//                    .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtProductionCost)
-
-                    Button(action: { store.send(.setNavigation(tag: .patient)) }, label: {
-                        SubTitle(
-                            title: store.diGaTask.patientName ?? L10n.digaDtlTxtNa.text,
-                            details: L10n.prscDtlTxtPractitionerPerson
-                        )
-                    })
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
-
-                    Button(action: { store.send(.setNavigation(tag: .practitioner)) }, label: {
-                        SubTitle(
-                            title: store.diGaTask.practitioner ?? L10n.digaDtlTxtNa.text,
-                            details: L10n.prscDtlTxtPractitionerPerson
-                        )
-                    })
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
-
-                    Button(action: { store.send(.setNavigation(tag: .organization)) }, label: {
-                        SubTitle(
-                            title: store.diGaTask.organization ?? L10n.digaDtlTxtNa.text,
-                            details: L10n.prscDtlTxtPractitionerPerson
-                        )
-                    })
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
-//                }, moreContent: {
-                    SubTitle(
-                        title: store.diGaTask.authoredOnDate ?? L10n.digaDtlTxtNa.text,
-                        description: L10n.digaDtlTxtAuthoredDate
-                    )
-                    .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtAuthoredOn)
-
-                    Button(
-                        action: { store.send(.setNavigation(tag: .technicalInformations)) },
-                        label: {
-                            SubTitle(title: L10n.prscDtlBtnTechnicalInformations)
-                        }
-                    )
-                    .buttonStyle(.navigation)
-                    .accessibilityIdentifier(A11y.prescriptionDetails
-                        .prscDtlBtnTechnicalInformations)
+                if store.bfarmDiGaDetails == nil {
+                    BfArMErrorHintView()
+                        .padding()
                 }
+
+                SectionContainer(
+                    content: {
+                        SubTitle(
+                            title: store.diGaTask.appName ?? L10n.digaDtlTxtNa.text,
+                            description: L10n.digaDtlTxtDigaName
+                        )
+                        .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtAppName)
+
+                        SubTitle(
+                            title: store.bfArMDisplayInfo?.languages ?? L10n.digaDtlTxtNa.text,
+                            description: L10n.digaDtlTxtLanguages
+                        )
+                        .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtLanguages)
+
+                        SubTitle(
+                            title: store.bfArMDisplayInfo?.platform ?? L10n.digaDtlTxtNa.text,
+                            description: L10n.digaDtlTxtPlatform
+                        )
+                        .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtPlatform)
+
+                        SubTitle(
+                            title: store.bfArMDisplayInfo?.contractMedicalService ?? L10n.digaDtlTxtNa.text,
+                            description: L10n.digaDtlTxtMedicalService
+                        )
+                        .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtMedicalService)
+
+                        SubTitle(
+                            title: store.bfArMDisplayInfo?.additionalDevices ?? L10n.digaDtlTxtNa.text,
+                            description: L10n.digaDtlTxtAdditionalDevices
+                        )
+                        .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtAdditionalDevices)
+
+                        Button(action: { store.send(.setNavigation(tag: .duesInfo)) }, label: {
+                            SubTitle(
+                                title: L10n.digaDtlTxtPatientCostZero.text,
+                                description: L10n.digaDtlTxtPatientCost
+                            ).subTitleStyle(.info)
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtPatientCost)
+
+                        SubTitle(
+                            title: store.bfArMDisplayInfo?.manufacturerCost ?? L10n.digaDtlTxtNa.text,
+                            description: L10n.digaDtlTxtProducerCost
+                        )
+                        .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtProductionCost)
+
+                        Button(action: { store.send(.setNavigation(tag: .patient)) }, label: {
+                            SubTitle(
+                                title: store.diGaTask.patientName ?? L10n.digaDtlTxtNa.text,
+                                details: L10n.prscDtlTxtPractitionerPerson
+                            )
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
+
+                        Button(action: { store.send(.setNavigation(tag: .practitioner)) }, label: {
+                            SubTitle(
+                                title: store.diGaTask.practitioner ?? L10n.digaDtlTxtNa.text,
+                                details: L10n.prscDtlTxtPractitionerPerson
+                            )
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
+
+                        Button(action: { store.send(.setNavigation(tag: .organization)) }, label: {
+                            SubTitle(
+                                title: store.diGaTask.organization ?? L10n.digaDtlTxtNa.text,
+                                details: L10n.prscDtlTxtPractitionerPerson
+                            )
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
+                    }, moreContent: {
+                        SubTitle(
+                            title: store.diGaTask.authoredOnDate ?? L10n.digaDtlTxtNa.text,
+                            description: L10n.digaDtlTxtAuthoredDate
+                        )
+                        .accessibilityIdentifier(A11y.digaDetail.digaDtlTxtAuthoredOn)
+
+                        Button(
+                            action: { store.send(.setNavigation(tag: .technicalInformations)) },
+                            label: {
+                                SubTitle(title: L10n.prscDtlBtnTechnicalInformations)
+                            }
+                        )
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails
+                            .prscDtlBtnTechnicalInformations)
+                    }
+                )
                 .sectionContainerStyle(.inline)
+                .smallSheet(
+                    $store.scope(state: \.destination?.duesInfo, action: \.destination.duesInfo)
+                ) { _ in
+                    DiGaDuesInfoView(store: store)
+                }
             }
+        }
+    }
+
+    struct BfArMErrorHintView: View {
+        var body: some View {
+            HStack(spacing: 0) {
+                Image(systemName: SFSymbolName.exclamationMark)
+                    .foregroundColor(Colors.yellow900)
+                    .font(.title3)
+                    .padding(.trailing)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L10n.digaDtlTxtBfarmLoadingHint)
+                        .font(Font.subheadline)
+                        .foregroundColor(Colors.yellow900)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(RoundedRectangle(cornerRadius: 12).fill(Colors.yellow100))
+            .accessibilityElement(children: .combine)
+            .border(Colors.yellow300, width: 0.5, cornerRadius: 12)
         }
     }
 }

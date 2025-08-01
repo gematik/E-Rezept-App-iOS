@@ -40,35 +40,6 @@ extension MainDomain {
         var profileDataStore: ProfileDataStore
         var chargeItemConsentService: ChargeItemConsentService
 
-        enum DrawerEvaluationResult {
-            case welcomeDrawer
-            case consentDrawer
-            case none
-        }
-
-        func showDrawerEvaluation() async -> DrawerEvaluationResult {
-            // show welcome drawer?
-            if !userDataStore.hideWelcomeDrawer {
-                return .welcomeDrawer
-            }
-
-            // show consent drawer?
-            do {
-                let profile = try await userSession.profile().async(\MainDomain.Error.Cases.localStoreError)
-                if profile.insuranceType == .pKV,
-                   profile.hidePkvConsentDrawerOnMainView == false,
-                   // Only if the service responded successfully that the consent has not been granted yet
-                   // (== .success(false)) we want to show the consent drawer. Otherwise we don't.
-                   case .notGranted = try await chargeItemConsentService.checkForConsent(profile.id) {
-                    return .consentDrawer
-                }
-            } catch {
-                // fall-through in case of any error
-            }
-
-            return .none
-        }
-
         func checkForTaskDuplicatesThenSave(_ sharedTasks: [SharedTask]) -> Effect<MainDomain.Action> {
             let authoredOn = fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
             let erxTaskRepository = self.erxTaskRepository
@@ -127,6 +98,14 @@ extension MainDomain {
                 }
                 .receive(on: schedulers.main)
                 .eraseToAnyPublisher()
+        }
+
+        func setHideWelcomeDrawerOnMainViewToTrue() async throws -> Bool {
+            let profileId = userSession.profileId
+            return try await profileDataStore.update(profileId: profileId) {
+                $0.hideWelcomeDrawerOnMainView = true
+            }
+            .async(\MainDomain.Error.Cases.localStoreError)
         }
 
         func setHidePkvConsentDrawerOnMainViewToTrue() async throws -> Bool {

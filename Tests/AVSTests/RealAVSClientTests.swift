@@ -23,6 +23,7 @@
 @testable import AVS
 import Combine
 import HTTPClient
+import HTTPClientLive
 import Nimble
 import OHHTTPStubs
 import OHHTTPStubsSwift
@@ -52,7 +53,9 @@ final class RealAVSClientTests: XCTestCase {
         }
 
         // when
-        let sut = RealAVSClient()
+        let sut = RealAVSClient(
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        )
 
         // then
         let httpResponse = try await sut.send(data: Data(), to: endPoint)
@@ -75,7 +78,9 @@ final class RealAVSClientTests: XCTestCase {
         }
 
         // when
-        let sut = RealAVSClient()
+        let sut = RealAVSClient(
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        )
 
         // then
         let httpResponse = try await sut.send(data: Data(), to: endPoint)

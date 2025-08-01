@@ -25,7 +25,7 @@
     },
     {
         "id": "6",
-        "text": "**📲 Canjea tus DiGAs recetadas** \nAhora puedes canjear recetas para aplicaciones de salud digital (DiGAs) directamente a través de la app de recetas electrónicas. Encuentra tu código de activación y el enlace a la DiGA recetada aquí mismo, en la app de recetas electrónicas. \n \n **🏥 Nueva base de datos de farmacias** \nHemos presentado una nueva base de datos con visión de futuro para búsquedas en farmacias.",
+        "text": "**📲 Canjea tus recetas DiGA** \nAhora puedes canjear recetas para aplicaciones de salud digital (DiGA) directamente a través de la app de receta electrónica. Las recetas serán emitidas por especialistas en Hamburgo como parte de un proyecto piloto. Puedes encontrar tu código de activación y el enlace a la DiGA aquí mismo, en la app de receta electrónica. \n \n **🏥 Nueva base de datos de farmacias** \nHemos presentado una nueva base de datos con visión de futuro para las búsquedas en farmacias.",
         "timestamp": "2025-05-22T08:00:00.000Z",
         "version": "1.31.0"
     },
@@ -34,5 +34,11 @@
         "text": "**♿️ Accesibilidad** \nNuestra declaración de accesibilidad ya está disponible en la configuración. El proceso de incorporación también es más accesible. \n \n **📲 Canjea DiGAs con aseguradoras** \nLas recetas para aplicaciones de salud digital (DiGAs) ahora también se pueden canjear con otras aseguradoras.",
         "timestamp": "2025-06-24T08:00:00.000Z",
         "version": "1.32.0"
+    },
+    {
+        "id": "8",
+        "text": "**🙌 Registro para personas con seguro privado** \nSe ha optimizado el registro para personas con seguro privado. Puedes iniciar sesión cómodamente con tu ID de salud en solo unos clics. \n \n **🏥 Datos de farmacia actualizados** \nLos cambios que las farmacias realizan en la nueva base de datos ahora se muestran de forma fiable. \n \n **📲 Más información para DiGAs** \nA partir de ahora recibirás información más detallada sobre tus recetas de DiGA, como el precio de venta o el logotipo. \n \n **♿️ Accesibilidad** \nLa pantalla para introducir el número de acceso a la tarjeta sanitaria se ha rediseñado y ahora está optimizada para su uso con VoiceOver. \n \n **📤 Compartir recetas** \nAhora las recetas se pueden compartir con otros directamente desde la aplicación.",
+        "timestamp": "2025-07-30T08:00:00.000Z",
+        "version": "1.33.0"
     }
 ]

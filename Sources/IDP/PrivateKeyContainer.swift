@@ -55,7 +55,8 @@ public struct PrivateKeyContainer {
     let privateKey: SecKey
     let publicKey: SecKey
 
-    let tag: String
+    /// The tag or identifier of the key
+    public let tag: String
 
     /// Initializes a `PrivateKeyContainer` for a given tag. Throws `PrivateKeyContainer.Error` in case of a failure.
     /// - Parameter tag: The `tag` or identifier of the key.
@@ -221,7 +222,10 @@ public struct PrivateKeyContainer {
         return unwrappedKeyData as Data
     }
 
-    func asn1PublicKey() throws -> Data {
+    /// Returns the public key in ASN.1 format
+    /// - Returns: The public key encoded as ASN.1 data
+    /// - Throws: An error if the ASN.1 encoding fails
+    public func asn1PublicKey() throws -> Data {
         let asn1 = ASN1Data.constructed(
             [
                 create(tag: .universal(.sequence), data: ASN1Data.constructed(

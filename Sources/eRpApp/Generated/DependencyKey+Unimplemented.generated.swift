@@ -2,6 +2,7 @@
 // DO NOT EDIT
 
 import AVS
+import BfArM
 import Combine
 import CombineSchedulers
 import CoreData
@@ -47,6 +48,15 @@ struct UnimplementedAppSecurityManager: AppSecurityManager {
     func matches(password: String) throws -> Bool {
         fatalError("matches(password:) has not been implemented")
     }
+    func registerFailedPasswordAttempt() throws -> Void {
+        fatalError("registerFailedPasswordAttempt has not been implemented")
+    }
+    func resetPasswordDelay() throws -> Void {
+        fatalError("resetPasswordDelay has not been implemented")
+    }
+    func currentPasswordDelay() throws -> TimeInterval {
+        fatalError("currentPasswordDelay has not been implemented")
+    }
     func migrate() throws -> Void {
         fatalError("migrate has not been implemented")
     }
@@ -56,6 +66,13 @@ struct UnimplementedAuthenticationChallengeProvider: AuthenticationChallengeProv
 
     func startAuthenticationChallenge() -> AnyPublisher<Result<Bool, AuthenticationChallengeProviderError>, Never> {
         fatalError("startAuthenticationChallenge has not been implemented")
+    }
+}
+struct UnimplementedBfArMService: BfArMService {
+    init() {}
+
+    func fetchBfArMInfo(pzn: String) async throws -> BfArMDiGaDetails? {
+        fatalError("fetchBfArMInfo(pzn:) has not been implemented")
     }
 }
 struct UnimplementedChargeItemListDomainService: ChargeItemListDomainService {
@@ -309,9 +326,6 @@ struct UnimplementedIDPSession: IDPSession {
     }
     func verifyAndExchange(signedChallenge: SignedChallenge, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         fatalError("verifyAndExchange(signedChallenge:idTokenValidator:) has not been implemented")
-    }
-    func httpInterceptor(delegate: IDPSessionDelegate?) -> IDPInterceptor {
-        fatalError("httpInterceptor(delegate:) has not been implemented")
     }
     func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
         fatalError("exchange(token:challengeSession:) has not been implemented")
@@ -787,11 +801,6 @@ class UnimplementedUserDataStore: NSObject, UserDataStore {
         set(value) { fatalError("") }
     }
 
-    var hideWelcomeDrawer: Bool {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
     var readInternalCommunications: AnyPublisher<[String], Never> {
         get { fatalError("") }
         set(value) { fatalError("") }
@@ -907,6 +916,11 @@ struct UnimplementedUserSession: UserSession {
     }
 
     var pharmacyRepository: PharmacyRepository {
+        get { fatalError("") }
+        set(value) { fatalError("") }
+    }
+
+    var bfArMService: BfArMService {
         get { fatalError("") }
         set(value) { fatalError("") }
     }

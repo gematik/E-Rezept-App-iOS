@@ -60,9 +60,9 @@ public struct JWE {
     ///   - payload: The payload of the JWE that will be encrypted
     ///   - nonceGenerator: Nonce used for generating the shared secret
     /// - Throws: If JWE encryption fails
-    init(header: Header,
-         payload: Data,
-         nonceGenerator: () throws -> Data) throws {
+    public init(header: Header,
+                payload: Data,
+                nonceGenerator: () throws -> Data) throws {
         self.payload = payload
         backing = try header.encryption.encrypt(payload: payload,
                                                 header: header,
@@ -137,7 +137,7 @@ extension JWE {
 }
 
 extension JWE {
-    struct Header: Encodable {
+    public struct Header: Encodable {
         /// algorithm used for encrypting the JWE
         var alg: String
         /// Encryption type
@@ -164,7 +164,7 @@ extension JWE {
         /// Key material used for encryption
         let encryptionContext: EncryptionContext
 
-        init(
+        public init(
             algorithm: Algorithm,
             encryption: Encryption,
             expiry: Date? = nil,
@@ -207,7 +207,7 @@ extension JWE {
             case epk
         }
 
-        func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
 
             try container.encode(enc, forKey: .enc)
@@ -247,7 +247,9 @@ extension JWK {
 extension JWE {
     private static let delimiter = UInt8(0x2E)
 
-    func encoded() -> Data {
+    /// Encode the JWE to its compact serialization format
+    /// - Returns: Data containing the encoded JWE
+    public func encoded() -> Data {
         backing.encoded()
     }
 }
@@ -255,7 +257,9 @@ extension JWE {
 extension JWE.Backing {
     private static let dot = Data([0x2E]) // "."
 
-    func encoded() -> Data {
+    /// Encode the JWE backing data to compact serialization format
+    /// - Returns: Data containing the encoded JWE components
+    public func encoded() -> Data {
         let encodedHeader = header.encodeBase64UrlSafe() ?? Data()
         let encodedWrappedKey = wrappedKey.encodeBase64UrlSafe() ?? Data()
         let encodedIV = iv.encodeBase64UrlSafe() ?? Data()

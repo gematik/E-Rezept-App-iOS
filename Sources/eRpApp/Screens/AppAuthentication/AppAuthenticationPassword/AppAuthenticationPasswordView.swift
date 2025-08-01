@@ -24,12 +24,6 @@ import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
 
-extension AppAuthenticationPasswordDomain.State {
-    var showUnsuccessfulAttemptMessage: Bool {
-        !(lastMatchResultSuccessful ?? true)
-    }
-}
-
 struct AppAuthenticationPasswordView: View {
     @Perception.Bindable var store: StoreOf<AppAuthenticationPasswordDomain>
 
@@ -49,15 +43,16 @@ struct AppAuthenticationPasswordView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(
-                            store.showUnsuccessfulAttemptMessage ? Colors.red600 : Color(.systemGray3),
-                            lineWidth: 1
+                            store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.textSecondary,
+                            lineWidth: 0.5
                         )
                 )
                 .padding(.horizontal)
+                .disabled(store.passwordDelayIsActive)
                 .accessibility(identifier: A11y.auth.authEdtPasswordInput)
 
                 if store.showUnsuccessfulAttemptMessage {
-                    UnsuccessfulAttemptMessageView()
+                    UnsuccessfulAttemptMessageView(store: store)
                         .padding(.horizontal)
                         .padding(.top, 4)
                 }
@@ -65,7 +60,7 @@ struct AppAuthenticationPasswordView: View {
                 PrimaryTextButton(
                     text: L10n.authBtnPasswordContinue,
                     a11y: A11y.auth.authBtnPasswordContinue,
-                    isEnabled: !store.password.isEmpty,
+                    isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
                     useFullWidth: false
                 ) {
                     store.send(.loginButtonTapped, animation: .default)
@@ -79,16 +74,23 @@ struct AppAuthenticationPasswordView: View {
                 }
             }
             .padding(.vertical)
+            .task {
+                await store.send(.task).finish()
+            }
         }
     }
 
     private struct UnsuccessfulAttemptMessageView: View {
+        @Perception.Bindable var store: StoreOf<AppAuthenticationPasswordDomain>
+
         var body: some View {
-            Text(L10n.authTxtPasswordFailure)
-                .foregroundColor(Colors.red600)
-                .font(.footnote)
-                .accessibility(identifier: A11y.auth.authTxtPasswordFailure)
-                .fixedSize(horizontal: false, vertical: true)
+            WithPerceptionTracking {
+                Text(store.unsuccessfulAttemptMessage)
+                    .foregroundColor(Colors.red600)
+                    .font(.footnote)
+                    .accessibility(identifier: A11y.auth.authTxtPasswordFailure)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 

@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import ComposableArchitecture
 @testable import eRpFeatures
 @testable import SnapshotTesting
 import SwiftUI
@@ -27,8 +28,20 @@ import TestUtils
 import XCTest
 
 final class CardWallExtAuthHelpViewSnapshotTests: ERPSnapshotTestCase {
+    func store(for state: CardWallExtAuthHelpDomain.State) -> StoreOf<CardWallExtAuthHelpDomain> {
+        .init(initialState: state) {
+            EmptyReducer()
+        }
+    }
+
     func testList() {
-        let sut = CardWallExtAuthHelpView()
+        let sut = CardWallExtAuthHelpView(store: store(for: .init()))
+
+        assertSnapshots(of: sut, as: snapshotModiOnDevices())
+    }
+
+    func testPKVList() {
+        let sut = CardWallExtAuthHelpView(store: store(for: .init(insuranceType: .pKV)))
 
         assertSnapshots(of: sut, as: snapshotModiOnDevices())
     }

@@ -21,6 +21,7 @@
 //
 
 import AVS
+import BfArM
 import Combine
 @testable import eRpFeatures
 import eRpKit
@@ -180,6 +181,8 @@ class MockUserSession: UserSession {
     lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
         MockSecureEnclaveSignatureProvider()
     }()
+
+    var bfArMService: BfArMService = BfArMServiceMock()
 }
 
 class MockSecureUserStore: SecureUserDataStore {

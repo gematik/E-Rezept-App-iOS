@@ -35,7 +35,7 @@ public typealias AESNonceGenerator = () throws -> Data
 public typealias AESSymmetricKey = SymmetricKey
 
 /// Container that holds all relevant crypto generators that are used by the IDP
-struct IDPCrypto {
+public struct IDPCrypto {
     /// The size of the verifier in bytes. Default 32 bytes.
     let verifierLength: Int
     /// The size of the nonce in bytes. Default is 16 bytes (which is equal to the api definition of max. 32 character).
@@ -45,13 +45,22 @@ struct IDPCrypto {
     /// (Pseudo) random byte generator. Default uses `generateSecureRandom()` with `kSecRandomDefault`
     let randomGenerator: Random<Data>
     /// Private key for key exchange that can be used to generate a BrainpoolP256r1 key pair
-    let brainpoolKeyPairGenerator: BrainpoolKeyGenerator
+    public let brainpoolKeyPairGenerator: BrainpoolKeyGenerator
     /// Secure random generator for aes nonce
-    let aesNonceGenerator: AESNonceGenerator
+    public let aesNonceGenerator: AESNonceGenerator
     /// AES symmetric key
-    let aesKey: SymmetricKey
+    public let aesKey: SymmetricKey
 
-    init(
+    /// Initialize IDPCrypto with custom or default cryptographic parameters
+    /// - Parameters:
+    ///   - verifierLength: Length of the verifier in bytes (default: 32)
+    ///   - nonceLength: Length of the nonce in bytes (default: 16)
+    ///   - stateLength: Length of the state in bytes (default: 16)
+    ///   - randomGenerator: Random byte generator function
+    ///   - brainpoolKeyPairGenerator: BrainpoolP256r1 key pair generator
+    ///   - aesNonceGenerator: AES nonce generator
+    ///   - aesKey: AES symmetric key
+    public init(
         verifierLength: Int = 32,
         nonceLength: Int = 16,
         stateLength: Int = 16,
@@ -80,7 +89,10 @@ struct IDPCrypto {
         self.aesKey = aesKey
     }
 
-    func generateRandomVerifier() throws -> String? {
+    /// Generate a random verifier string
+    /// - Returns: Base64 URL-safe encoded verifier string
+    /// - Throws: If random generation or encoding fails
+    public func generateRandomVerifier() throws -> String? {
         // [REQ:gemSpec_IDP_Frontend:A_20309] verifierLength is 32 bytes, encoded to base64 this results in 43 chars
         // (32 * 4 / 3 = 42,6)
         guard let encoded = try randomGenerator(verifierLength).encodeBase64UrlSafe() else {
@@ -89,17 +101,27 @@ struct IDPCrypto {
         return String(data: encoded, encoding: .utf8)
     }
 
-    func generateRandomNonce() throws -> String? {
+    /// Generate a random nonce string
+    /// - Returns: Hex-encoded nonce string
+    /// - Throws: If random generation fails
+    public func generateRandomNonce() throws -> String? {
         try Self.hexString(from: randomGenerator(nonceLength))
     }
 
-    func generateRandomState() throws -> String? {
+    /// Generate a random state string
+    /// - Returns: Hex-encoded state string
+    /// - Throws: If random generation fails
+    public func generateRandomState() throws -> String? {
         try Self.hexString(from: randomGenerator(stateLength))
     }
 
-    private static let AES256GCMSpec = Spec(nonceBytes: 12)
-    private struct Spec {
-        let nonceBytes: Int
+    /// AES-256-GCM specification constants
+    public static let AES256GCMSpec = Spec(nonceBytes: 12)
+
+    /// Specification for AES encryption parameters
+    public struct Spec {
+        /// Number of bytes for the nonce
+        public let nonceBytes: Int
     }
 
     static func hexString(from data: Data) -> String {

@@ -115,7 +115,7 @@ public struct IDPChallengeSession: ChallengeSession, Codable {
         }.eraseToAnyPublisher()
     }
 
-    func validateState(with state: String) -> Bool {
+    public func validateState(with state: String) -> Bool {
         self.state == state
     }
 

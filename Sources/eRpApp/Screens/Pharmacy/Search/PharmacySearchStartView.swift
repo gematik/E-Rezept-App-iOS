@@ -46,6 +46,7 @@ struct PharmacySearchStartView: View {
                 header: {
                     Text(L10n.phaSearchMapHeader)
                         .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchTxtMapHeader)
+                        .accessibilityAddTraits(.isHeader)
                 },
                 content: {
                     VStack {
@@ -65,6 +66,7 @@ struct PharmacySearchStartView: View {
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(L10n.phaSearchMapAccessibilityLabel.text)
                         .accessibilityAddTraits(.isButton)
+                        .accessibilityHint(L10n.phaSearchMapAccessibilityHint.text)
                         .frame(maxWidth: nil, maxHeight: Self.height)
                         .scaledToFill()
                         .clipShape(RoundedRectangle(
@@ -83,6 +85,7 @@ struct PharmacySearchStartView: View {
                 header: {
                     Text(L10n.phaSearchTxtQuickFilterSectionTitle)
                         .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchTxtQuickFilterTitle)
+                        .accessibilityAddTraits(.isHeader)
                 },
                 content: {
                     Button {
@@ -138,6 +141,7 @@ struct PharmacySearchStartView: View {
                     header: {
                         Text(L10n.phaSearchTxtLocalPharmTitle)
                             .accessibilityIdentifier(A11y.pharmacySearchStart.phaSearchTxtLocalPharmTitle)
+                            .accessibilityAddTraits(.isHeader)
                     }, content: {
                         let isLoading = store.searchState.isStartViewLoading
                         ForEach(store.localPharmacies) { pharmacyViewModel in

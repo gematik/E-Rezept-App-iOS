@@ -102,7 +102,6 @@ struct PrescriptionDetailDomain {
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userSession) var userSession: UserSession
-    @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
     @Dependency(\.chargeItemConsentService) var chargeItemConsentService: ChargeItemConsentService
@@ -604,30 +603,26 @@ extension RemoteStoreError {
 
 extension ErxTask {
     func shareUrl() -> URL? {
-        nil
-        // TODO: sharing task data as url fragment must approved by security first //swiftlint:disable:this todo
-//        let sharedTask = SharedTask(with: self)
-//        guard let encoded = try? JSONEncoder().encode([sharedTask]),
-//              var urlComponents = URLComponents(string: "https://erezept.gematik.de/prescription") else {
-//            return nil
-//        }
-//        urlComponents.fragment = String(data: encoded, encoding: .utf8)
-//        return urlComponents.url
+        let sharedTask = SharedTask(with: self)
+        guard let encoded = try? JSONEncoder().encode([sharedTask]),
+              var urlComponents = URLComponents(string: "https://erezept.gematik.de/prescription") else {
+            return nil
+        }
+        urlComponents.fragment = String(data: encoded, encoding: .utf8)
+        return urlComponents.url
     }
 }
 
 extension Collection where Element == ErxTask {
     func shareUrl() -> URL? {
-        nil
-        // TODO: sharing task data as url fragment must approved by security first //swiftlint:disable:this todo
-//        let shareTasks = map { SharedTask(with: $0).asString }.joined(separator: "&")
-//        guard let encoded = try? JSONEncoder().encode([shareTasks]),
-//              var urlComponents = URLComponents(string: "https://erezept.gematik.de/prescription") else {
-//            return nil
-//        }
-//
-//        urlComponents.fragment = String(data: encoded, encoding: .utf8)
-//        return urlComponents.url
+        let shareTasks = map { SharedTask(with: $0).asString }.joined(separator: "&")
+        guard let encoded = try? JSONEncoder().encode([shareTasks]),
+              var urlComponents = URLComponents(string: "https://erezept.gematik.de/prescription") else {
+            return nil
+        }
+
+        urlComponents.fragment = String(data: encoded, encoding: .utf8)
+        return urlComponents.url
     }
 }
 

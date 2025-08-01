@@ -33,7 +33,7 @@ protocol AVSClient {
 class RealAVSClient {
     private let httpClient: HTTPClient
 
-    init(httpClient: HTTPClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)) {
+    init(httpClient: HTTPClient) {
         self.httpClient = httpClient
     }
 }
