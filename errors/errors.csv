@@ -1,10 +1,15 @@
 Error Code,Technical Name,Description/Reason,Referenced Error
-i-54001,"AVSError.network","In case of HTTP/Connection error",HTTPClientError
-i-54002,"AVSError.invalidAVSMessageInput","When failed to create an AVSMessage",
-i-54003,"AVSError.invalidX509Input","When an X509 certificate was of unexpected format",
-i-54004,"AVSError.unspecified","Conversion error when trying to cast to `AVSError` but error type was different",
-i-54005,"AVSError.`internal`","Internal error",AVSError.InternalError
+i-54001,"AVSError.network","",HTTPClientError
+i-54002,"AVSError.invalidAVSMessageInput","",
+i-54003,"AVSError.invalidX509Input","",
+i-54004,"AVSError.unspecified","",
+i-54005,"AVSError.`internal`","",AVSError.InternalError
 i-54101,"AVSError.InternalError.cmsContentCreation","",
+i-30101,"BfArMError.network","In case of HTTP/Connection error",HTTPClientError
+i-30102,"BfArMError.decoding","Message failed to decode/parse",
+i-30103,"BfArMError.invalidAssetLink","When the asset link from bfarm endpoint is invalid",
+i-30104,"BfArMError.unspecified","Other error cases",
+i-,"BfArMError.LoadingError.message","",
 i-00901,"ZXingMatrixCodeGenerator.Error.cgImageConversion","",
 i-02701,"PrescriptionRepositoryError.loginHandler","",LoginHandlerError
 i-02702,"PrescriptionRepositoryError.erxRepository","",ErxRepositoryError
@@ -25,13 +30,13 @@ i-01202,"CardWallExtAuthConfirmationDomain.Error.universalLinkFailed","",
 i-02901,"CardWallIntroductionDomain.Error.idpError","",IDPError
 i-02902,"CardWallIntroductionDomain.Error.universalLinkFailed","",
 i-02903,"CardWallIntroductionDomain.Error.kkNotFound","",
-i-01001,"CardWallReadCardDomain.State.Error.idpError","`IDPError` thrown within the `CardWallReadCardDomain`",IDPError
-i-01002,"CardWallReadCardDomain.State.Error.inputError","Possible user input errors thrown within the `CardWallReadCardDomain`",CardWallReadCardDomain.State.Error.InputError
-i-01003,"CardWallReadCardDomain.State.Error.signChallengeError","NFC signature errors thrown within the `CardWallReadCardDomain`",NFCSignatureProviderError
-i-01004,"CardWallReadCardDomain.State.Error.biometrieError","Error that can occur during authentication with biometry",
-i-01005,"CardWallReadCardDomain.State.Error.profileValidation","Error when `Profile` validation with the given authentication fails.\nError is produces within the `IDPError.unspecified` error before saving the IDPToken",IDTokenValidatorError
-i-01101,"CardWallReadCardDomain.State.Error.InputError.missingPIN","User input for PIN is incorrect",
-i-01102,"CardWallReadCardDomain.State.Error.InputError.missingCAN","User input for CAN is incorrect",
+i-01001,"CardWallReadCardDomain.State.Error.idpError","",IDPError
+i-01002,"CardWallReadCardDomain.State.Error.inputError","",CardWallReadCardDomain.State.Error.InputError
+i-01003,"CardWallReadCardDomain.State.Error.signChallengeError","",NFCSignatureProviderError
+i-01004,"CardWallReadCardDomain.State.Error.biometrieError","",
+i-01005,"CardWallReadCardDomain.State.Error.profileValidation","",IDTokenValidatorError
+i-01101,"CardWallReadCardDomain.State.Error.InputError.missingPIN","",
+i-01102,"CardWallReadCardDomain.State.Error.InputError.missingCAN","",
 i-01301,"LoginHandlerError.biometrieFailed","",
 i-01302,"LoginHandlerError.biometrieFatal","",
 i-01303,"LoginHandlerError.ssoFailed","",
@@ -39,15 +44,15 @@ i-01304,"LoginHandlerError.ssoExpired","",
 i-01305,"LoginHandlerError.idpError","",IDPError
 i-01306,"LoginHandlerError.network","",
 i-,"LoginHandlerError.LoadingError.message","",
-i-00401,"NFCSignatureProviderError.cardError","Error while establishing a connection to the card",NFCTagReaderSession.Error
-i-00403,"NFCSignatureProviderError.wrongCAN","Error while verifying the CAN",
-i-00404,"NFCSignatureProviderError.cardConnectionError","Error while establishing Secure channel or card connection",
-i-00405,"NFCSignatureProviderError.verifyCardError","Any error related to PIN verification",NFCSignatureProviderError.VerifyPINError
-i-00406,"NFCSignatureProviderError.signingFailure","ESIGN Failed",NFCSignatureProviderError.SigningError
-i-00408,"NFCSignatureProviderError.genericError","Generic error while trying to sign the challenge",
-i-00409,"NFCSignatureProviderError.cardReadingError","Generic error while reading something from the card",
-i-00410,"NFCSignatureProviderError.secureEnclaveError","Generic error while reading something from the card",SecureEnclaveSignatureProviderError
-i-00411,"NFCSignatureProviderError.nfcHealthCardSession","Any error regarding the communication with the NFC health card itself\nor sending/receiving data (operation execution)",
+i-00401,"NFCSignatureProviderError.cardError","",NFCTagReaderSession.Error
+i-00403,"NFCSignatureProviderError.wrongCAN","",
+i-00404,"NFCSignatureProviderError.cardConnectionError","",
+i-00405,"NFCSignatureProviderError.verifyCardError","",NFCSignatureProviderError.VerifyPINError
+i-00406,"NFCSignatureProviderError.signingFailure","",NFCSignatureProviderError.SigningError
+i-00408,"NFCSignatureProviderError.genericError","",
+i-00409,"NFCSignatureProviderError.cardReadingError","",
+i-00410,"NFCSignatureProviderError.secureEnclaveError","",SecureEnclaveSignatureProviderError
+i-00411,"NFCSignatureProviderError.nfcHealthCardSession","",
 i-00501,"NFCSignatureProviderError.SigningError.unsupportedAlgorithm","",
 i-00502,"NFCSignatureProviderError.SigningError.responseStatus","",
 i-00503,"NFCSignatureProviderError.SigningError.certificate","",
@@ -59,9 +64,9 @@ i-00604,"NFCSignatureProviderError.VerifyPINError.passwordBlocked","",
 i-00605,"NFCSignatureProviderError.VerifyPINError.passwordNotUsable","",
 i-00606,"NFCSignatureProviderError.VerifyPINError.passwordNotFound","",
 i-00607,"NFCSignatureProviderError.VerifyPINError.unknownFailure","",
-i-01401,"ExtAuthPendingDomain.Error.idpError","Underlying `IDPError` for the external authentication agains `URL`",IDPError
-i-01401,"ExtAuthPendingDomain.Error.idpError","Underlying `IDPError` for the external authentication agains `URL`",
-i-01402,"ExtAuthPendingDomain.Error.profileValidation","Error when `Profile` validation with the given authentication fails.\nError is produces within the `IDPError.unspecified` error before saving the IDPToken",IDTokenValidatorError
+i-01401,"ExtAuthPendingDomain.Error.idpError","",IDPError
+i-01401,"ExtAuthPendingDomain.Error.idpError","",
+i-01402,"ExtAuthPendingDomain.Error.profileValidation","",IDTokenValidatorError
 i-01501,"MainDomain.Error.localStoreError","",LocalStoreError
 i-01502,"MainDomain.Error.userSessionError","",UserSessionError
 i-01503,"MainDomain.Error.importDuplicate","Import of shared Task failed due to being a duplicate already existing within the app",
@@ -80,28 +85,28 @@ i-03703,"DefaultOrdersRepository.Error.unspecified","",
 i-03901,"RedeemOrderServiceError.localStore","",LocalStoreError
 i-03902,"RedeemOrderServiceError.pharmacy","",PharmacyRepositoryError
 i-03903,"RedeemOrderServiceError.redeem","",RedeemServiceError
-i-02401,"RedeemServiceError.eRxRepository","When redeeming a task via Fachdienst",ErxRepositoryError
-i-02402,"RedeemServiceError.avs","When redeeming a task via AVS",AVSError
-i-02403,"RedeemServiceError.internalError","When an internal error occurs which most likely is a programming error",RedeemServiceError.InternalError
-i-02404,"RedeemServiceError.unspecified","When error conversion into `RedeemServiceError` fails",
-i-02405,"RedeemServiceError.noTokenAvailable","When the user has no valid token available while trying to redeem via Fachdienst",
-i-02406,"RedeemServiceError.loginHandler","When receiving an error while doing a login",LoginHandlerError
-i-02407,"RedeemServiceError.prescriptionAlreadyRedeemed","When the prescription has already been redeemed",
-i-02501,"RedeemServiceError.InternalError.missingAVSEndpoint","When the AVS endpoint for the selected redeem option is missing",
-i-02502,"RedeemServiceError.InternalError.missingAVSCertificate","When the required AVS certificates for redeeming via AVS are missing",
-i-02503,"RedeemServiceError.InternalError.missingTelematikId","When the Telematik-ID of the pharmacy to redeem in is missing",
-i-02504,"RedeemServiceError.InternalError.conversionVersionNumber","When converting AVS Version number",
-i-02505,"RedeemServiceError.InternalError.idMissmatch","When no order can be found to the received response",
-i-02506,"RedeemServiceError.InternalError.noService","When no service can be found for the selected pharmacy",
-i-02507,"RedeemServiceError.InternalError.unexpectedHTTPStatusCode","When the status code is not in [200..<300] but the service did not return an error beforehand",
-i-02508,"RedeemServiceError.InternalError.localStoreError","When persisting/extracting information from the store went wrong",LocalStoreError
+i-02401,"RedeemServiceError.eRxRepository","",ErxRepositoryError
+i-02402,"RedeemServiceError.avs","",AVSError
+i-02403,"RedeemServiceError.internalError","",RedeemServiceError.InternalError
+i-02404,"RedeemServiceError.unspecified","",
+i-02405,"RedeemServiceError.noTokenAvailable","",
+i-02406,"RedeemServiceError.loginHandler","",LoginHandlerError
+i-02407,"RedeemServiceError.prescriptionAlreadyRedeemed","",
+i-02501,"RedeemServiceError.InternalError.missingAVSEndpoint","",
+i-02502,"RedeemServiceError.InternalError.missingAVSCertificate","",
+i-02503,"RedeemServiceError.InternalError.missingTelematikId","",
+i-02504,"RedeemServiceError.InternalError.conversionVersionNumber","",
+i-02505,"RedeemServiceError.InternalError.idMissmatch","",
+i-02506,"RedeemServiceError.InternalError.noService","",
+i-02507,"RedeemServiceError.InternalError.unexpectedHTTPStatusCode","",
+i-02508,"RedeemServiceError.InternalError.localStoreError","",LocalStoreError
 i-02601,"NFCHealthCardPasswordControllerError.cardError","",NFCTagReaderSession.Error
 i-02602,"NFCHealthCardPasswordControllerError.openSecureSession","",
 i-02603,"NFCHealthCardPasswordControllerError.resetRetryCounter","",
 i-02604,"NFCHealthCardPasswordControllerError.wrongCan","",
 i-02605,"NFCHealthCardPasswordControllerError.changeReferenceData","",
 i-02606,"NFCHealthCardPasswordControllerError.couldNotInitializeSession","",
-i-02607,"NFCHealthCardPasswordControllerError.nfcHealthCardSession","Any error regarding the communication with the NFC health card itself\nor sending/receiving data (operation execution)",
+i-02607,"NFCHealthCardPasswordControllerError.nfcHealthCardSession","",
 i-04001,"OrganDonorJumpServiceError.fetchingProfile","",
 i-04002,"OrganDonorJumpServiceError.generatingGenericUrl","",
 i-04003,"OrganDonorJumpServiceError.openingSpecificUrl","",
@@ -156,6 +161,7 @@ i-04401,"AppSecurityManagerError.savePasswordFailed","",
 i-04402,"AppSecurityManagerError.retrievePasswordFailed","",
 i-04403,"AppSecurityManagerError.localAuthenticationContext","",
 i-04404,"AppSecurityManagerError.migrationFailed","",
+i-04405,"AppSecurityManagerError.passwordDelayInfoIOFailed","",
 i-02001,"KeychainAccessHelperError.illegalArgument","",
 i-02002,"KeychainAccessHelperError.keyChainError","",
 i-02002,"KeychainAccessHelperError.keyChainError","",
@@ -170,18 +176,18 @@ i-04301,"ShareSheetDomain.Error.shareFailure","",
 i-,"MockAnswer.Error.decodingError","",
 i-,"MockAnswer.Error.unkownType","",
 i-,"MockAnswer.Error.unkownType","",
-i-20201,"DefaultDataMatrixStringEncoderError.stringEncoding","Generic error while encoding the string.",
-i-20202,"DefaultDataMatrixStringEncoderError.missingAccessCode","Access code is missing",
-i-20601,"ErxConsent.Error.unableToConstructConsentRequest","Unable to construct consent request",
-i-20602,"ErxConsent.Error.invalidErxConsentInput","Invalid ErxConsent input",
+i-20201,"DefaultDataMatrixStringEncoderError.stringEncoding","",
+i-20202,"DefaultDataMatrixStringEncoderError.missingAccessCode","",
+i-20601,"ErxConsent.Error.unableToConstructConsentRequest","",
+i-20602,"ErxConsent.Error.invalidErxConsentInput","",
 i-20101,"ErxTask.Status.Error.decoding","",
 i-20102,"ErxTask.Status.Error.unknown","",
 i-20103,"ErxTask.Status.Error.missingStatus","",
 i-20104,"ErxTask.Status.Error.missingPatientReceiptReference","",
 i-20105,"ErxTask.Status.Error.missingPatientReceiptIdentifier","",
 i-20106,"ErxTask.Status.Error.missingPatientReceiptBundle","",
-i-20801,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","Unable to construct communication request",
-i-20802,"ErxTaskOrder.Error.invalidErxTaskOrderInput","Invalid ErxTaskOrder though previous validation checks have been passed",
+i-20801,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","",
+i-20802,"ErxTaskOrder.Error.invalidErxTaskOrderInput","",
 i-20001,"ErxRepositoryError.local","",LocalStoreError
 i-20002,"ErxRepositoryError.remote","",RemoteStoreError
 i-20301,"LocalStoreError.notImplemented","",
@@ -217,24 +223,22 @@ i-50401,"ShipmentInfoCoreDataStore.Error.noMatchingEntity","",
 i-50402,"ShipmentInfoCoreDataStore.Error.internalError","",
 i-58001,"RemoteStorageBundleParsingError.parseError","",
 i-52001,"FHIRClient.Error.internalError","",
-i-52004,"FHIRClient.Error.inconsistentResponse","When the server returned a successful response with inconsistent response data.\nE.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.",
+i-52004,"FHIRClient.Error.inconsistentResponse","",
 i-52005,"FHIRClient.Error.decoding","",
 i-52006,"FHIRClient.Error.unknown","",
 i-52007,"FHIRClient.Error.http","",
-i-30001,"FHIRVZDError.network","In case of HTTP/Connection error",HTTPClientError
-i-30002,"FHIRVZDError.tokenUnavailable","When a token is being requested, but none can be found",
-i-30003,"FHIRVZDError.decoding","Message failed to decode/parse",
-i-30004,"FHIRVZDError.unspecified","Other error cases",
+i-30001,"FHIRVZDError.network","",HTTPClientError
+i-30002,"FHIRVZDError.tokenUnavailable","",
+i-30003,"FHIRVZDError.decoding","",
+i-30004,"FHIRVZDError.unspecified","",
 i-,"FHIRVZDError.LoadingError.message","",
 i-61001,"HealthcareServiceBundleParsingError.parseError","",
-i-53001,"HTTPClientError.internalError","Internal error in the request/chain handling",
-i-53002,"HTTPClientError.httpError","The server responded with an error",
-i-53003,"HTTPClientError.networkError","The connection to the server has gone bad",
-i-53004,"HTTPClientError.authentication","Authentication error",
-i-53005,"HTTPClientError.vauError","Error emitted by the VAU client",
-i-53006,"HTTPClientError.unknown","Unclassified error",
-i-10201,"BiometricsSHA256Signer.Error.sessionClosed","",
-i-10202,"BiometricsSHA256Signer.Error.signatureFailed","",
+i-53001,"HTTPClientError.internalError","",
+i-53002,"HTTPClientError.httpError","",
+i-53003,"HTTPClientError.networkError","",
+i-53004,"HTTPClientError.authentication","",
+i-53005,"HTTPClientError.vauError","",
+i-53006,"HTTPClientError.unknown","",
 i-10301,"JWE.Error.invalidJWE","",
 i-10302,"JWE.Error.encodingError","",
 i-10401,"JWT.Error.malformedJWT","",
@@ -246,7 +250,7 @@ i-10501,"KeyVerifier.Error.stringConversion","",
 i-10601,"TokenPayload.Error.dataEncoding","",
 i-10602,"TokenPayload.Error.stringConversion","",
 i-10603,"TokenPayload.Error.decryption","",
-i-10001,"IDPError.network","In case of HTTP/Connection error",HTTPClientError
+i-10001,"IDPError.network","In case of HTTP/Connection error",
 i-10002,"IDPError.validation","In case a response (or request) could not be (cryptographically) verified",
 i-10003,"IDPError.tokenUnavailable","When a token is being requested, but none can be found",
 i-10004,"IDPError.unspecified","Other error cases",
@@ -259,7 +263,7 @@ i-10010,"IDPError.unsupported","When a method/algorithm is unsupported",
 i-10011,"IDPError.encryption","When encryption fails",
 i-10012,"IDPError.decryption","When decryption fails",
 i-10013,"IDPError.`internal`","Internal error",IDPError.InternalError
-i-10014,"IDPError.trustStore","Issues related to Building or Verifying the trust store",TrustStoreError
+i-10014,"IDPError.trustStore","Issues related to Building or Verifying the trust store",
 i-10015,"IDPError.pairing","",
 i-10016,"IDPError.invalidSignature","",
 i-10017,"IDPError.serverError","Server responded with an error",
@@ -327,20 +331,22 @@ i-10904,"SecureEnclaveSignatureProviderError.packagingSeCertificate","",
 i-10905,"SecureEnclaveSignatureProviderError.gatheringPairingData","",
 i-10906,"SecureEnclaveSignatureProviderError.`internal`","",
 i-10906,"SecureEnclaveSignatureProviderError.`internal`","",
+i-10201,"BiometricsSHA256Signer.Error.sessionClosed","",
+i-10202,"BiometricsSHA256Signer.Error.signatureFailed","",
 i-51001,"PharmacyBundleParsingError.parseError","",
 i-57001,"PharmacyFHIRDataSource.Error.fhirClient","",FHIRClient.Error
 i-57002,"PharmacyFHIRDataSource.Error.notFound","",
 i-57101,"PharmacyRepositoryError.local","",LocalStoreError
 i-57102,"PharmacyRepositoryError.remote","",PharmacyFHIRDataSource.Error
 i-56201,"TrustAnchor.Error.invalidPEM","",
-i-56001,"TrustStoreError.network","In case of HTTP/Connection error",HTTPClientError
-i-56002,"TrustStoreError.noCertificateFound","When failed to extract a certificate from the CertList",
-i-56003,"TrustStoreError.invalidOCSPResponse","When one (or more) OCSP response(s) can not be parsed or do not meet expiry conditions",
-i-56004,"TrustStoreError.eeCertificateOCSPStatusVerification","When one (or more) end entity certificate cannot be status verified by given OCSP responses",
-i-56005,"TrustStoreError.unspecified","Other error cases",
-i-56006,"TrustStoreError.`internal`","Internal error",TrustStoreError.InternalError
-i-56007,"TrustStoreError.noValidVauCertificateAvailable","When no valid VAU certificate can be provided by the system at the moment",
-i-56008,"TrustStoreError.malformedCertificate","When a certificate is of unexpected (e.g. not parsable) format",
+i-56001,"TrustStoreError.network","",HTTPClientError
+i-56002,"TrustStoreError.noCertificateFound","",
+i-56003,"TrustStoreError.invalidOCSPResponse","",
+i-56004,"TrustStoreError.eeCertificateOCSPStatusVerification","",
+i-56005,"TrustStoreError.unspecified","",
+i-56006,"TrustStoreError.`internal`","",TrustStoreError.InternalError
+i-56007,"TrustStoreError.noValidVauCertificateAvailable","",
+i-56008,"TrustStoreError.malformedCertificate","",
 i-56101,"TrustStoreError.InternalError.loadOCSPCheckedTrustStoreUnexpectedNil","",
 i-56102,"TrustStoreError.InternalError.loadCertListFromServerUnexpectedNil","",
 i-56103,"TrustStoreError.InternalError.loadOCSPListFromServerUnexpectedNil","",
@@ -351,9 +357,9 @@ i-56107,"TrustStoreError.InternalError.notImplemented","",
 i-56108,"TrustStoreError.InternalError.trustAnchorUnexpectedFormat","",
 i-56109,"TrustStoreError.InternalError.vauCertificateUnexpectedFormat","",
 i-56110,"TrustStoreError.InternalError.trustStoreCreationFailed","",
-i-55001,"VAUError.network","In case of HTTP/Connection error",HTTPClientError
-i-55002,"VAUError.certificateDecoding","When failed to extract a X.509 VAU certificate information",
-i-55003,"VAUError.internalCryptoError","When internal cryptographic operations fail",
-i-55004,"VAUError.responseValidation","In case a response (or request) could not be (cryptographically) verified",
-i-55005,"VAUError.unspecified","Other error cases",
-i-55006,"VAUError.internalError","Internal error",
+i-55001,"VAUError.network","",HTTPClientError
+i-55002,"VAUError.certificateDecoding","",
+i-55003,"VAUError.internalCryptoError","",
+i-55004,"VAUError.responseValidation","",
+i-55005,"VAUError.unspecified","",
+i-55006,"VAUError.internalError","",

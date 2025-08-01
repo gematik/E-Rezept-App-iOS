@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.32.0
+           1.33.0
  Docs
         </a>
          (100% documented)
@@ -63,25 +63,7 @@
             <a class="nav-group-name-link" href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer.html">BiometricsSHA256Signer</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer/Error.html">– Error</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession.html">DefaultIDPSession</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession/Configuration.html">– Configuration</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultSecureEnclaveSignatureProvider.html">DefaultSecureEnclaveSignatureProvider</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/IDPInterceptor.html">IDPInterceptor</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a>
+                <a class="nav-group-task-link" href="../Classes/PairingSession.html">PairingSession</a>
               </li>
             </ul>
           </li>
@@ -259,12 +241,6 @@
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP8IDPScopea">IDPScope</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP6Randoma">Random</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12TimeProvidera">TimeProvider</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12VerifierCodea">VerifierCode</a>
               </li>
             </ul>
@@ -305,7 +281,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Opens a pairing session and creates a <code><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></code> object with it. The <code><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></code> object must be
+                        <p>Opens a pairing session and creates a <code><a href="../Classes/PairingSession.html">PairingSession</a></code> object with it. The <code><a href="../Classes/PairingSession.html">PairingSession</a></code> object must be
 aborted with <code>abort</code> when the registration process was unsuccessfull.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
@@ -318,13 +294,13 @@ aborted with <code>abort</code> when the registration process was unsuccessfull.
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">createPairingSession</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">createPairingSession</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/PairingSession.html">PairingSession</a></span></code></pre>
 
                         </div>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>Instance of <code><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></code></p>
+                        <p>Instance of <code><a href="../Classes/PairingSession.html">PairingSession</a></code></p>
                       </div>
                     </section>
                   </div>
@@ -349,7 +325,7 @@ aborted with <code>abort</code> when the registration process was unsuccessfull.
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">signPairingSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">pairingSession</span><span class="p">:</span> <span class="kt"><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">signer</span><span class="p">:</span> <span class="kt">JWTSigner</span><span class="p">,</span> <span class="nv">certificate</span><span class="p">:</span> <span class="kt">X509</span><span class="p">)</span>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">signPairingSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">pairingSession</span><span class="p">:</span> <span class="kt"><a href="../Classes/PairingSession.html">PairingSession</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">signer</span><span class="p">:</span> <span class="kt">JWTSigner</span><span class="p">,</span> <span class="nv">certificate</span><span class="p">:</span> <span class="kt">X509</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/RegistrationData.html">RegistrationData</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/SecureEnclaveSignatureProviderError.html">SecureEnclaveSignatureProviderError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -366,7 +342,7 @@ aborted with <code>abort</code> when the registration process was unsuccessfull.
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></code> instance that is used to identify the biometric key.</p>
+                                  <p><code><a href="../Classes/PairingSession.html">PairingSession</a></code> instance that is used to identify the biometric key.</p>
                                 </div>
                               </td>
                             </tr>
@@ -420,7 +396,7 @@ aborted with <code>abort</code> when the registration process was unsuccessfull.
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">abort</span><span class="p">(</span><span class="nv">pairingSession</span><span class="p">:</span> <span class="kt"><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">abort</span><span class="p">(</span><span class="nv">pairingSession</span><span class="p">:</span> <span class="kt"><a href="../Classes/PairingSession.html">PairingSession</a></span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -436,7 +412,7 @@ aborted with <code>abort</code> when the registration process was unsuccessfull.
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></code> that needs cancelation.</p>
+                                  <p>The <code><a href="../Classes/PairingSession.html">PairingSession</a></code> that needs cancelation.</p>
                                 </div>
                               </td>
                             </tr>
@@ -529,7 +505,7 @@ automatically handle biometric unlock such as FaceID or TouchID.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-06-18)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-08-01)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

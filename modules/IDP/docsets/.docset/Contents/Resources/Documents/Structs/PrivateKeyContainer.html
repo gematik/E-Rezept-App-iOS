@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.32.0
+           1.33.0
  Docs
         </a>
          (100% documented)
@@ -63,25 +63,7 @@
             <a class="nav-group-name-link" href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer.html">BiometricsSHA256Signer</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/BiometricsSHA256Signer/Error.html">– Error</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession.html">DefaultIDPSession</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession/Configuration.html">– Configuration</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultSecureEnclaveSignatureProvider.html">DefaultSecureEnclaveSignatureProvider</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/IDPInterceptor.html">IDPInterceptor</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a>
+                <a class="nav-group-task-link" href="../Classes/PairingSession.html">PairingSession</a>
               </li>
             </ul>
           </li>
@@ -259,12 +241,6 @@
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP8IDPScopea">IDPScope</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP6Randoma">Random</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12TimeProvidera">TimeProvider</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12VerifierCodea">VerifierCode</a>
               </li>
             </ul>
@@ -326,6 +302,33 @@ authorization purposes
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:3IDP19PrivateKeyContainerV3tagSSvp"></a>
+                    <a name="//apple_ref/swift/Property/tag" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP19PrivateKeyContainerV3tagSSvp">tag</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The tag or identifier of the key</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">tag</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:3IDP19PrivateKeyContainerV4withACSS_tKcfc"></a>
                     <a name="//apple_ref/swift/Method/init(with:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:3IDP19PrivateKeyContainerV4withACSS_tKcfc">init(with:<wbr>)</a>
@@ -364,7 +367,7 @@ authorization purposes
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code>tag</code> or identifier of the key.</p>
+                                  <p>The <code><a href="../Structs/PrivateKeyContainer.html#/s:3IDP19PrivateKeyContainerV3tagSSvp">tag</a></code> or identifier of the key.</p>
                                 </div>
                               </td>
                             </tr>
@@ -415,7 +418,7 @@ authorization purposes
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code>tag</code> or identifier of the key.</p>
+                                  <p>The <code><a href="../Structs/PrivateKeyContainer.html#/s:3IDP19PrivateKeyContainerV3tagSSvp">tag</a></code> or identifier of the key.</p>
                                 </div>
                               </td>
                             </tr>
@@ -470,7 +473,7 @@ authorization purposes
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code>tag</code> or identifier of the key.</p>
+                                  <p>The <code><a href="../Structs/PrivateKeyContainer.html#/s:3IDP19PrivateKeyContainerV3tagSSvp">tag</a></code> or identifier of the key.</p>
                                 </div>
                               </td>
                             </tr>
@@ -508,6 +511,42 @@ integration tests.</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">createFromKeyChain</span><span class="p">(</span><span class="n">with</span> <span class="nv">tag</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">PrivateKeyContainer</span></code></pre>
 
                         </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP19PrivateKeyContainerV010asn1PublicC010Foundation4DataVyKF"></a>
+                    <a name="//apple_ref/swift/Method/asn1PublicKey()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP19PrivateKeyContainerV010asn1PublicC010Foundation4DataVyKF">asn1PublicKey()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns the public key in ASN.1 format</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An error if the ASN.1 encoding fails
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">asn1PublicKey</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Data</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The public key encoded as ASN.1 data</p>
                       </div>
                     </section>
                   </div>
@@ -575,7 +614,7 @@ integration tests.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-06-18)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-08-01)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

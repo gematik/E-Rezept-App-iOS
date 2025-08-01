@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.32.0 Docs
+           1.33.0 Docs
         </a>
          (0% documented)
       </p>
@@ -180,7 +180,7 @@ Our analytics framework does not use medical personal data, see DSFA section 5.6
 [REQ:BSI-eRp-ePA:O.Source_10#1] We use an external SAST and SCA tool that is run at least on every release build. See <code>Jenkinsfile_SAST</code> for technical details. There is additional integration into our merge-reqeuest tooling.</p>
 
 <p>[REQ:BSI-eRp-ePA:O.TrdP_1#1] Dependencies are handled with SPM. A technical description of all dependencies can be found within <code>dependencies.yml</code>. In the future, a generated SBOM will replace the <code>Package.resolved</code> for this purpose. 
-[REQ:BSI-eRp-ePA:O.TrdP_2#1] Dependencies are updated regulary by an organizational process. Any dependency security issues raised by automatic checking are handled immediately. A list of all compiled dependencies can be found within <code>dependencies.yml</code>.
+[REQ:BSI-eRp-ePA:O.TrdP_2#1] Dependencies are updated regulary by an organizational process. Our release process contains a step &lsquo;compile_foss&rsquo; which checks for old versions and highlightens them. If updates to the latest or previous version cannot be done, it should be documented in the merge request. Any dependency security issues raised by automatic checking are handled immediately. A list of all compiled dependencies can be found within <code>dependencies.yml</code>. 
 [REQ:BSI-eRp-ePA:O.TrdP_3#1] SCA Scans are part of our release pipeline, see <a href="#OSource_10">O.Source_10</a>.
 [REQ:BSI-eRp-ePA:O.TrdP_4#1] Library updates are done by a manual periodic process. If any security issues arise and no fix is expected to be provided, a manual fork of external libraries is implemented. In our documentation, we define a bug bar and a grace period depending on the criticality of the vulnerability. Our bug bar is set to &ldquo;Low&rdquo;, see <code>scripts/sast</code>, lines including <code>severity-threshold=low</code>.
 [REQ:BSI-eRp-ePA:O.TrdP_5#1] Actual dependencies can be found within <code>eRp-App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved</code>, containing pinned versions with corresponding hashes. Library updates always require manual interaction to update the <code>*.resolved</code> files. We use very few providers of libraries and try to avoid any unnecessary dependency. Each providing party/dependency is evaluated by looking at GitHub metrics like open issues, stars and activity in general.
@@ -207,7 +207,7 @@ Our analytics framework does not use medical personal data, see DSFA section 5.6
 [REQ:BSI-eRp-ePA:O.Auth_5#1] If the registered biometric features get changed (within system settings), private keys for alternate authentication are deleted. For privacy reasons, neither the FD nor the application gather or store user data that is not crutial, e.g. the current WiFi.
 [REQ:BSI-eRp-ePA:O.Auth_6#1] We increment a counter whenever the application is opened and an attempt to unlock the application fails. If the counter is greater than 0, the user is informed about that in a hint on the password/unlock screen. For remote logins, an Audit Log for every FD access is available in each user profile.
 [REQ:gemSpec_eRp_FdV:A_19177#1] An Audit Log for every FD access is available in each user profile.
-[REQ:BSI-eRp-ePA:O.Auth_7#1] There are no passwords to guess for server login within our application. Only eGK login is directly available within the application. The users application password is not delayed, as any user with Device-PIN access would have access to the unencrypted file system as well.
+[REQ:BSI-eRp-ePA:O.Auth_7#1] If passwords are used for app login, we introduce and increase a delay after 5 wrong attempts. This delay is capped, because a device restart would needs such amount of time and would reset the delay anyway.
 [REQ:BSI-eRp-ePA:O.Auth_8#1] The <code>SceneDelegate</code> exchanges the active window with an authentication window, every time the app gains focus.
 [REQ:BSI-eRp-ePA:O.Auth_9#1] A Timer is used to measure the time a user is inactive. Every user interaction resets the timer.
 [REQ:BSI-eRp-ePA:O.Auth_10#1] Token invalidation happens after 12 hours. If a user is still active, a re-authentication via eGK, Biometrics or Insurance App is necessary. Each meaning the possession and or knowledge of the needed user input.
@@ -286,7 +286,7 @@ Our analytics framework does not use medical personal data, see DSFA section 5.6
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-06-18)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-08-01)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
