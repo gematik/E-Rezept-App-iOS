@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.33.0
+           1.34.0
  Docs
         </a>
          (100% documented)
@@ -70,9 +70,6 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/ConversionError.html">ConversionError</a>
-              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/IDPCodeChallengeMode.html">IDPCodeChallengeMode</a>
               </li>
@@ -302,6 +299,33 @@ authorization purposes
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:3IDP19PrivateKeyContainerV06publicC0So03SecC3Refavp"></a>
+                    <a name="//apple_ref/swift/Property/publicKey" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP19PrivateKeyContainerV06publicC0So03SecC3Refavp">publicKey</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The public key associated with the private key.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">publicKey</span><span class="p">:</span> <span class="kt">SecKey</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:3IDP19PrivateKeyContainerV3tagSSvp"></a>
                     <a name="//apple_ref/swift/Property/tag" class="dashAnchor"></a>
                     <a class="token" href="#/s:3IDP19PrivateKeyContainerV3tagSSvp">tag</a>
@@ -518,42 +542,6 @@ integration tests.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP19PrivateKeyContainerV010asn1PublicC010Foundation4DataVyKF"></a>
-                    <a name="//apple_ref/swift/Method/asn1PublicKey()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP19PrivateKeyContainerV010asn1PublicC010Foundation4DataVyKF">asn1PublicKey()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Returns the public key in ASN.1 format</p>
-<div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    An error if the ASN.1 encoding fails
-
-</div>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">asn1PublicKey</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Data</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The public key encoded as ASN.1 data</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:3IDP19PrivateKeyContainerV4sign4data10Foundation4DataVAH_tKF"></a>
                     <a name="//apple_ref/swift/Method/sign(data:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:3IDP19PrivateKeyContainerV4sign4data10Foundation4DataVAH_tKF">sign(data:<wbr>)</a>
@@ -601,7 +589,7 @@ integration tests.</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>Data in concat format containing the Signature <code>r</code> | <code>s</code>.</p>
+                        <p>signature</p>
                       </div>
                     </section>
                   </div>
@@ -614,7 +602,7 @@ integration tests.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-08-01)</p>
+      <p>&copy; 2025 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2025-08-19)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
