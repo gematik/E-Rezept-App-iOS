@@ -27,58 +27,56 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct PatientView: View {
-        @Perception.Bindable var store: StoreOf<PatientDomain>
+        @Bindable var store: StoreOf<PatientDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                ScrollView(.vertical) {
-                    SectionContainer {
-                        SubTitle(
-                            title: store.patient.name ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPatientName
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaName)
+            ScrollView(.vertical) {
+                SectionContainer {
+                    SubTitle(
+                        title: store.patient.name ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPatientName
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaName)
 
-                        SubTitle(
-                            title: store.patient.insuranceId ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPatientInsuranceId
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaInsuranceId)
+                    SubTitle(
+                        title: store.patient.insuranceId ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPatientInsuranceId
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaInsuranceId)
 
-                        SubTitle(
-                            title: store.patient.address ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPatientAddress
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaAddress)
+                    SubTitle(
+                        title: store.patient.address ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPatientAddress
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaAddress)
 
-                        SubTitle(
-                            title: store.patient.birthDate ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPatientBirthdate
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaBirthDate)
+                    SubTitle(
+                        title: store.patient.birthDate ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPatientBirthdate
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaBirthDate)
 
-                        SubTitle(
-                            title: store.patient.phone ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPatientPhone
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaPhone)
+                    SubTitle(
+                        title: store.patient.phone ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPatientPhone
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaPhone)
 
-                        SubTitle(
-                            title: store.patient.insurance ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPatientInsurance
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaInsurance)
+                    SubTitle(
+                        title: store.patient.insurance ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPatientInsurance
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaInsurance)
 
-                        SubTitle(
-                            title: store.patient.localizedStausMember ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPatientStatus
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaStatus)
+                    SubTitle(
+                        title: store.patient.localizedStausMember ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPatientStatus
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaStatus)
 
-                    }.sectionContainerStyle(.inline)
-                }
-                .navigationBarTitle(Text(L10n.prscFdTxtPatientTitle), displayMode: .inline)
+                }.sectionContainerStyle(.inline)
             }
+            .navigationBarTitle(Text(L10n.prscFdTxtPatientTitle), displayMode: .inline)
         }
     }
 }

@@ -49,7 +49,7 @@ struct EditProfileDomain {
         @Presents var destination: Destination.State?
         var insuranceType: Profile.InsuranceType
         var routeToChargeItemList = false
-
+        var showCopySuccessInfo = false
         var insuranceName: String {
             if let insurance, !insurance.isEmpty {
                 return insurance
@@ -143,6 +143,8 @@ struct EditProfileDomain {
         case binding(BindingAction<State>)
         case showDeleteProfileAlert
         case changeInsurance
+        case copyKVNR(String)
+        case copyCompleted
         case setUserToGKVInsured
         case setUserToPKVInsured
         case login
@@ -186,6 +188,8 @@ struct EditProfileDomain {
     @Dependency(\.profileSecureDataWiper) var profileSecureDataWiper: ProfileSecureDataWiper
     @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
     @Dependency(\.router) var router: Routing
+    @Dependency(\.pasteboardService) var pasteboardService: PasteboardService
+    @Dependency(\.feedbackReceiver) var feedbackReceiver: FeedbackReceiver
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -272,12 +276,26 @@ struct EditProfileDomain {
                 .map(Action.response)
                 .eraseToAnyPublisher
             )
+        case let .copyKVNR(kvnr):
+            pasteboardService.copy(kvnr)
+            feedbackReceiver.hapticFeedbackSuccess()
+            state.showCopySuccessInfo = true
+            return .run { send in
+                // wait for 3 second to set showCopySuccessInfo to false
+                try await schedulers.main.sleep(for: 3)
+                await send(.copyCompleted)
+            }
+        case .copyCompleted:
+            state.showCopySuccessInfo = false
+            return .none
         case .changeInsurance:
             state.destination = .insuranceDrawer
             return .none
         case .setUserToGKVInsured:
+            state.insuranceType = .gKV
             return changeInsurance(for: .gKV, with: state.profileId)
         case .setUserToPKVInsured:
+            state.insuranceType = .pKV
             return changeInsurance(for: .pKV, with: state.profileId)
         case .showDeleteProfileAlert:
             state.destination = .alert(AlertStates.deleteProfile)
@@ -411,6 +429,9 @@ extension EditProfileDomain {
             .publisher(
                 updateProfile(with: profileId) { profile in
                     profile.insuranceType = type
+                    profile.insurance = nil
+                    profile.insuranceId = nil
+                    profile.insuranceIK = nil
                 }
                 .map(Action.Response.updateProfileReceived)
                 .map(Action.response)

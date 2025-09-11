@@ -15,6 +15,8 @@
                         "qualification": "doctor"
                     },
                     "prescriptionId": "1234",
+                    "isEURedeemable" : false,
+                    "isSetEURedeemableByPatient" : false,
                     "communications":
                     [],
                     "flowType": "160",
@@ -59,7 +61,7 @@
                         "substitutionAllowed": true,
                         "coPaymentStatus": "0",
                         "dosageInstructions": "1-0-2-0-0-3-1",
-                        "bvg": true,
+                        "ser": true,
                         "quantity":
                         {
                             "unit": "{Package}",

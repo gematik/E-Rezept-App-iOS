@@ -251,3 +251,36 @@ extension BrainpoolP256r1.Verify.PublicKey {
         return try create(tag: .universal(.sequence), data: asn1).serialize()
     }
 }
+
+extension PrivateKeyContainer {
+    /// Returns the public key in ASN.1 format
+    /// - Returns: The public key encoded as ASN.1 data
+    /// - Throws: An error if the ASN.1 encoding fails
+    func asn1PublicKey() throws -> Data {
+        let asn1 = ASN1Data.constructed(
+            [
+                create(tag: .universal(.sequence), data: ASN1Data.constructed(
+                    [
+                        try ObjectIdentifier.from(string: "1.2.840.10045.2.1").asn1encode(),
+                        try ObjectIdentifier.from(string: "1.2.840.10045.3.1.7").asn1encode(),
+                    ]
+                )),
+
+                try publicKeyData().asn1bitStringEncode(),
+            ]
+        )
+        return try create(tag: .universal(.sequence), data: asn1).serialize()
+    }
+
+    func publicKeyData() throws -> Data {
+        var error: Unmanaged<CFError>?
+
+        let keyData = SecKeyCopyExternalRepresentation(publicKey, &error)
+
+        guard let unwrappedKeyData = keyData else {
+            throw Error.convertingKey(error?.takeRetainedValue())
+        }
+
+        return unwrappedKeyData as Data
+    }
+}

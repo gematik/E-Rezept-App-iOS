@@ -69,14 +69,16 @@ public class VAUSession {
         self.vauStorage = vauStorage
         self.trustStoreSession = trustStoreSession
     }
+}
 
-    /// Provides the actual HTTP request interceptor that re-routes the original request to the VAU server.
-    public func provideInterceptor() -> Interceptor {
-        VAUInterceptor(
-            vauAccessTokenProvider: vauAccessTokenProvider,
-            vauCertificateProvider: self,
-            vauCryptoProvider: vauCryptoProvider,
-            vauEndpointHandler: self
+extension VAUInterceptor {
+    /// Initializes an HTTP request interceptor that re-routes the original request to the VAU server.
+    public convenience init(vauSession: VAUSession) {
+        self.init(
+            vauAccessTokenProvider: vauSession.vauAccessTokenProvider,
+            vauCertificateProvider: vauSession,
+            vauCryptoProvider: vauSession.vauCryptoProvider,
+            vauEndpointHandler: vauSession
         )
     }
 }

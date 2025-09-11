@@ -40,5 +40,11 @@
         "text": "**🙌 Tilmelding for privatforsikrede** \nTilmeldingen for privatforsikrede er blevet optimeret. Du kan nemt logge ind med dit sundheds-ID med blot et par klik. \n \n **🏥 Opdaterede apoteksdata** \nÆndringer, som apoteker foretager i den nye database, vises nu pålideligt. \n \n **📲 Mere information om DiGA'er** \nFra nu af modtager du mere detaljerede oplysninger om dine DiGA-recepter, f.eks. salgspris eller logo. \n \n **♿️ Tilgængelighed** \nSkærmen til indtastning af sundhedskortets adgangsnummer er blevet redesignet og er nu optimeret til brug med VoiceOver. \n \n **📤 Del recepter** \nRecepter kan nu deles med andre direkte fra appen.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Tilgængelighed** \nProfilindstillingerne er blevet revideret for yderligere at øge tilgængeligheden.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

@@ -51,7 +51,7 @@ struct MainScreen: Screen {
         staticText(by: name, fileID: fileID, file: file, line: line).tap()
 
         // assert label exists that contains the prescription name as a label
-        let title = staticText(by: A11y.digaDetail.digaDtlTxtNameHeader, fileID: fileID, file: file, line: line)
+        let title = staticText(by: A11y.diga.detail.digaDtlTxtNameHeader, fileID: fileID, file: file, line: line)
         expect(file: file, line: line, title.label).to(equal(name))
 
         return DiGaDetailsScreen(app: app, previous: self)
@@ -67,7 +67,7 @@ struct MainScreen: Screen {
         staticText(by: name, fileID: fileID, file: file, line: line).tap()
 
         // assert label exists that contains the prescription name as a label
-        let title = staticText(by: A11y.digaDetail.digaDtlTxtNameHeader, fileID: fileID, file: file, line: line)
+        let title = staticText(by: A11y.diga.detail.digaDtlTxtNameHeader, fileID: fileID, file: file, line: line)
         expect(file: file, line: line, title.label).to(equal(name))
 
         let diGaDetailsScreen = DiGaDetailsScreen(app: app, previous: self)
@@ -104,11 +104,35 @@ struct MainScreen: Screen {
         from.press(forDuration: 0.0, thenDragTo: to)
     }
 
-    func tapOpenCardwall(fileID: String = #fileID, file: String = #filePath,
-                         line: UInt = #line) -> CardWallIntroductionScreen {
+    func tapRegister(fileID: String = #fileID, file: String = #filePath,
+                     line: UInt = #line) -> MainScreen {
         button(by: A11y.mainScreen.erxBtnLogin, fileID: fileID, file: file, line: line).tap()
 
         return .init(app: app)
+    }
+
+    func tapWelcomeDrawerGkvUser(
+        _ screen: (CardWallIntroductionScreen) async -> Void,
+        fileID: String = #fileID,
+        file: String = #filePath,
+        line: UInt = #line
+    ) async {
+        button(by: A11y.welcomedrawer.wlcdBtnGkvUser, fileID: fileID, file: file, line: line).tap()
+
+        let cardWallIntroductionScreen = CardWallIntroductionScreen(app: app)
+        await screen(cardWallIntroductionScreen)
+    }
+
+    func tapWelcomeDrawerPkvUser(
+        _ screen: (CardWallExtAuthSelectionScreen) async -> Void,
+        fileID: String = #fileID,
+        file: String = #filePath,
+        line: UInt = #line
+    ) async {
+        button(by: A11y.welcomedrawer.wlcdBtnPkvUser, fileID: fileID, file: file, line: line).tap()
+
+        let cardWallExtAuthSelectionScreen = CardWallExtAuthSelectionScreen(app: app)
+        await screen(cardWallExtAuthSelectionScreen)
     }
 
     func tapArchive(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> ArchiveScreen {
@@ -187,7 +211,7 @@ struct MainScreen: Screen {
             staticText(by: name, fileID: fileID, file: file, line: line).tap()
 
             // assert label exists that contains the prescription name as a label
-            let title = staticText(by: A11y.digaDetail.digaDtlTxtNameHeader, fileID: fileID, file: file, line: line)
+            let title = staticText(by: A11y.diga.detail.digaDtlTxtNameHeader, fileID: fileID, file: file, line: line)
             expect(fileID: fileID, file: file, line: line, title.label).to(equal(name))
 
             return DiGaDetailsScreen(app: app, previous: self)
@@ -214,7 +238,7 @@ struct MainScreen: Screen {
             staticText(by: name, fileID: fileID, file: file, line: line).tap()
 
             // assert label exists that contains the prescription name as a label
-            let title = staticText(by: A11y.digaDetail.digaDtlTxtNameHeader, fileID: fileID, file: file, line: line)
+            let title = staticText(by: A11y.diga.detail.digaDtlTxtNameHeader, fileID: fileID, file: file, line: line)
             expect(fileID: fileID, file: file, line: line, title.label).to(equal(name))
 
             let diGaDetailsScreen = DiGaDetailsScreen(app: app, previous: self)

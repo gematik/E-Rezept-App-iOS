@@ -84,7 +84,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         expect(task.medicationRequest.dispenseValidityEnd).to(beNil())
         expect(task.medicationRequest.substitutionAllowed) == false
         expect(task.medicationRequest.coPaymentStatus) == .artificialInsemination
-        expect(task.medicationRequest.bvg) == true
+        expect(task.medicationRequest.ser) == true
         expect(task.medicationRequest.multiplePrescription?.mark) == true
         expect(task.medicationRequest.multiplePrescription?.numbering) == 4
         expect(task.medicationRequest.multiplePrescription?.totalNumber) == 4

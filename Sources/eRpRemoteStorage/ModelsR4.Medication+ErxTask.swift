@@ -290,7 +290,7 @@ private func createRatio(for amount: Ratio?, for version: ErpPrescription.Versio
             numerator: ErxMedication.Quantity(value: value, unit: numeratorUnit),
             denominator: denominator
         )
-    case .v1_1_0:
+    case .v1_1_0, .v1_2_0, .v1_3_2:
         if let value = numeratorValue {
             return ErxMedication.Ratio(
                 numerator: ErxMedication.Quantity(value: value, unit: numeratorUnit),

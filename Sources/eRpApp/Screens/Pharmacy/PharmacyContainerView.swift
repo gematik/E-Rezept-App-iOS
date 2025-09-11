@@ -26,29 +26,25 @@ import Perception
 import SwiftUI
 
 struct PharmacyContainerView: View {
-    @Perception.Bindable var store: StoreOf<PharmacyContainerDomain>
+    @Bindable var store: StoreOf<PharmacyContainerDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            NavigationStack(
-                path: $store.scope(state: \.path, action: \.path)
-            ) {
-                PharmacySearchView(
-                    store: store.scope(
-                        state: \.pharmacySearch,
-                        action: \.pharmacySearch
-                    )
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+            PharmacySearchView(
+                store: store.scope(
+                    state: \.pharmacySearch,
+                    action: \.pharmacySearch
                 )
-            } destination: { store in
-                WithPerceptionTracking {
-                    switch store.case {
-                    case let .redeem(store):
-                        PharmacyRedeemView(store: store)
-                    }
-                }
+            )
+        } destination: { store in
+            switch store.case {
+            case let .redeem(store):
+                PharmacyRedeemView(store: store)
             }
-            .accentColor(Colors.primary600)
-            .navigationViewStyle(StackNavigationViewStyle())
         }
+        .accentColor(Colors.primary600)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

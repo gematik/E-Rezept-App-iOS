@@ -49,7 +49,9 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
         organization: ErxOrganization? = nil,
         communications: [Communication] = [],
         medicationDispenses: [ErxMedicationDispense] = [],
-        deviceRequest: ErxDeviceRequest? = nil
+        deviceRequest: ErxDeviceRequest? = nil,
+        isEURedeemable: Bool = false,
+        isSetEURedeemableByPatient: Bool = false
     ) {
         self.identifier = identifier
         self.status = status
@@ -75,6 +77,8 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
         self.medicationDispenses = medicationDispenses
         self.avsTransactions = avsTransactions
         self.deviceRequest = deviceRequest
+        self.isEURedeemable = isEURedeemable
+        self.isSetEURedeemableByPatient = isSetEURedeemableByPatient
     }
 
     // MARK: Variables that only exist locally
@@ -113,6 +117,10 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
     /// The full URL composed of id and access code
     /// e.g. "https://prescriptionserver.telematik/Task/588780"
     public let fullUrl: String?
+    /// This flag is set by the server if the prescription is redeemable in the EU
+    public let isEURedeemable: Bool
+    /// This flag is set by the user if the prescription is redeemable in the EU
+    public var isSetEURedeemableByPatient: Bool
 
     // MARK: KBV profiled FHIR resources
 
@@ -181,7 +189,9 @@ public struct ErxTask: Identifiable, Equatable, Hashable, Codable, Sendable {
             organization: organization,
             communications: communications,
             medicationDispenses: medicationDispenses,
-            deviceRequest: deviceRequest
+            deviceRequest: deviceRequest,
+            isEURedeemable: isEURedeemable,
+            isSetEURedeemableByPatient: isSetEURedeemableByPatient
         )
     }
 }

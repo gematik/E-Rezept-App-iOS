@@ -105,7 +105,7 @@
 					"fullUrl": "https:\/\/erp-test.zentral.erp.splitdns.ti-dienste.de\/Task\/160.000.006.405.283.05",
 					"status": "ready",
 					"medicationRequest": {
-						"bvg": false,
+						"ser": false,
 						"coPaymentStatus": "1",
 						"dosageInstructions": "1-1-1-1",
 						"hasEmergencyServiceFee": true,
@@ -166,7 +166,9 @@
 					"acceptedUntil": "{{DATE:+5D}}",
 					"authoredOn": "{{DATETIME:-50D}}",
 					"flowType": "160",
-					"prescriptionId": "160.000.006.405.283.05"
+					"prescriptionId": "160.000.006.405.283.05",
+                    "isEURedeemable" : false,
+                    "isSetEURedeemableByPatient" : false,
 				}
 			]
 		]

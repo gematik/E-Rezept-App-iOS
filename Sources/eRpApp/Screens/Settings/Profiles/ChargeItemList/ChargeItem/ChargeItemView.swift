@@ -28,122 +28,119 @@ import Foundation
 import SwiftUI
 
 struct ChargeItemView: View {
-    @Perception.Bindable var store: StoreOf<ChargeItemDomain>
+    @Bindable var store: StoreOf<ChargeItemDomain>
 
     @Dependency(\.uiDateFormatter) var dateFormatter
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 0) {
-                ScrollView {
-                    SectionContainer(
-                        header: {
-                            Text(store.chargeItem.medication?.name ?? "-")
-                                .font(.title2.bold())
-                                .padding()
-                        },
-                        footer: {
-                            WithPerceptionTracking {
-                                if store.showRouteToChargeItemListButton {
-                                    Button {
-                                        store.send(.routeToChargeItemList)
-                                    } label: {
-                                        HStack(spacing: 4) {
-                                            Text(L10n.stgBtnChargeItemRouteToList)
-                                                .font(Font.subheadline)
-                                            Image(systemName: SFSymbolName.chevronRight)
-                                                .font(Font.subheadline.weight(.semibold))
-                                        }
-                                    }
-                                    .buttonStyle(TertiaryButtonStyle())
-                                    .foregroundColor(Colors.primary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(spacing: 0) {
+            ScrollView {
+                SectionContainer(
+                    header: {
+                        Text(store.chargeItem.medication?.name ?? "-")
+                            .font(.title2.bold())
+                            .padding()
+                    },
+                    footer: {
+                        if store.showRouteToChargeItemListButton {
+                            Button {
+                                store.send(.routeToChargeItemList)
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text(L10n.stgBtnChargeItemRouteToList)
+                                        .font(Font.subheadline)
+                                    Image(systemName: SFSymbolName.chevronRight)
+                                        .font(Font.subheadline.weight(.semibold))
                                 }
                             }
-                        },
-                        content: {
-                            SubTitle(
-                                title: dateFormatter.relativeDateAndTime(
-                                    store.chargeItem.medicationDispense?.whenHandedOver
-                                ) ?? "-",
-                                description: L10n.stgTxtChargeItemCreator
-                            )
-
-                            SubTitle(
-                                title: store.chargeItem.pharmacy?.name ?? "-",
-                                description: L10n.stgTxtChargeItemRedeemedAt
-                            )
-
-                            SubTitle(
-                                title: dateFormatter
-                                    .relativeDateAndTime(store.chargeItem.enteredDate) ?? "-",
-                                description: L10n.stgTxtChargeItemRedeemedOn
-                            )
+                            .buttonStyle(TertiaryButtonStyle())
+                            .foregroundColor(Colors.primary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                    )
-                    .sectionContainerStyle(.inline)
-                }
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(store.chargeItem.totalGrossPrice)
-                            .font(.title3.bold())
 
-                        Text(L10n.stgTxtChargeItemSum)
-                            .font(.body)
-                            .foregroundColor(Color(.secondaryLabel))
+                    },
+                    content: {
+                        SubTitle(
+                            title: dateFormatter.relativeDateAndTime(
+                                store.chargeItem.medicationDispense?.whenHandedOver
+                            ) ?? "-",
+                            description: L10n.stgTxtChargeItemCreator
+                        )
+
+                        SubTitle(
+                            title: store.chargeItem.pharmacy?.name ?? "-",
+                            description: L10n.stgTxtChargeItemRedeemedAt
+                        )
+
+                        SubTitle(
+                            title: dateFormatter
+                                .relativeDateAndTime(store.chargeItem.enteredDate) ?? "-",
+                            description: L10n.stgTxtChargeItemRedeemedOn
+                        )
                     }
-
-                    Spacer()
-
-                    Button {
-                        store.send(.redeem)
-                    } label: {
-                        Text(L10n.stgBtnChargeItemShare)
-                    }
-                    .buttonStyle(.primaryHuggingNarrowly)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
+                )
+                .sectionContainerStyle(.inline)
             }
-            .background(Colors.systemBackground.ignoresSafeArea())
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Menu {
-                        Menu {
-                            Button(action: {
-                                store.send(.alterChargeItem)
-                            }, label: {
-                                Text(L10n.stgBtnChargeItemAlterViaPharmacy)
-                                    .foregroundColor(Colors.primary700)
-                            })
-                            Button(action: {}, label: {
-                                Text(L10n.stgBtnChargeItemAlterViaApp)
-                                    .foregroundColor(Colors.primary700)
-                            })
-                                .disabled(true)
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(store.chargeItem.totalGrossPrice)
+                        .font(.title3.bold())
 
-                        } label: {
-                            Text(L10n.stgTxtChargeItemAlterTitle)
+                    Text(L10n.stgTxtChargeItemSum)
+                        .font(.body)
+                        .foregroundColor(Color(.secondaryLabel))
+                }
+
+                Spacer()
+
+                Button {
+                    store.send(.redeem)
+                } label: {
+                    Text(L10n.stgBtnChargeItemShare)
+                }
+                .buttonStyle(.primaryHuggingNarrowly)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
+        }
+        .background(Colors.systemBackground.ignoresSafeArea())
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Menu {
+                    Menu {
+                        Button(action: {
+                            store.send(.alterChargeItem)
+                        }, label: {
+                            Text(L10n.stgBtnChargeItemAlterViaPharmacy)
                                 .foregroundColor(Colors.primary700)
-                        }
-                        Button(role: .destructive,
-                               action: {
-                                   store.send(.deleteButtonTapped)
-                               }, label: {
-                                   Text(L10n.stgBtnChargeItemDelete)
-                                       .foregroundColor(Colors.red600)
-                               })
+                        })
+                        Button(action: {}, label: {
+                            Text(L10n.stgBtnChargeItemAlterViaApp)
+                                .foregroundColor(Colors.primary700)
+                        })
+                            .disabled(true)
+
                     } label: {
-                        Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.ellipsis)
+                        Text(L10n.stgTxtChargeItemAlterTitle)
                             .foregroundColor(Colors.primary700)
                     }
+                    Button(role: .destructive,
+                           action: {
+                               store.send(.deleteButtonTapped)
+                           }, label: {
+                               Text(L10n.stgBtnChargeItemDelete)
+                                   .foregroundColor(Colors.red600)
+                           })
+                } label: {
+                    Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.ellipsis)
+                        .foregroundColor(Colors.primary700)
                 }
-                ToolbarItemGroup(placement: .navigationBarTrailing) {}
             }
-            .destinations(store: $store)
+            ToolbarItemGroup(placement: .navigationBarTrailing) {}
         }
+        .destinations(store: $store)
     }
 
     private struct Flag: View {
@@ -160,7 +157,7 @@ struct ChargeItemView: View {
 }
 
 extension View {
-    func destinations(store: Perception.Bindable<StoreOf<ChargeItemDomain>>) -> some View {
+    func destinations(store: Bindable<StoreOf<ChargeItemDomain>>) -> some View {
         sheet(item: store.scope(
             state: \.destination?.shareSheet,
             action: \.destination.shareSheet
@@ -231,7 +228,7 @@ extension ErxChargeItem {
                 dosageInstructions: "1-0-0-0",
                 substitutionAllowed: true,
                 hasEmergencyServiceFee: false,
-                bvg: false,
+                ser: false,
                 coPaymentStatus: .subjectToCharge,
                 multiplePrescription: .init(mark: false),
                 quantity: .init(value: "17", unit: "Packungen")

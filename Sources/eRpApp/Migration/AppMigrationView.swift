@@ -25,28 +25,26 @@ import Perception
 import SwiftUI
 
 struct AppMigrationView: View {
-    @Perception.Bindable var store: StoreOf<AppMigrationDomain>
+    @Bindable var store: StoreOf<AppMigrationDomain>
 
     init(store: StoreOf<AppMigrationDomain>) {
         self.store = store
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            HStack {
-                if store.migration == .inProgress {
-                    ProgressView(L10n.amgTxtInProgress)
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .accessibility(identifier: A11y.migration.amgTxtAndSpinner)
-                }
+        HStack {
+            if store.migration == .inProgress {
+                ProgressView(L10n.amgTxtInProgress)
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .accessibility(identifier: A11y.migration.amgTxtAndSpinner)
             }
-            .alert($store.scope(
-                state: \.destination?.alert?.alert,
-                action: \.destination.alert
-            ))
-            .onAppear {
-                store.send(.loadCurrentModelVersion)
-            }
+        }
+        .alert($store.scope(
+            state: \.destination?.alert?.alert,
+            action: \.destination.alert
+        ))
+        .onAppear {
+            store.send(.loadCurrentModelVersion)
         }
     }
 }

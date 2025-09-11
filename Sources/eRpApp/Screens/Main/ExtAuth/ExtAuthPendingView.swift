@@ -26,7 +26,7 @@ import IDP
 import SwiftUI
 
 struct ExtAuthPendingView: View {
-    @Perception.Bindable var store: ExtAuthPendingDomain.Store
+    @Bindable var store: ExtAuthPendingDomain.Store
 
     var background: Color {
         switch store.state.extAuthState {
@@ -80,35 +80,33 @@ struct ExtAuthPendingView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                Spacer()
-                    .alert($store.scope(state: \.destination?.extAuthAlert?.alert, action: \.destination.extAuthAlert))
-                if showToast {
-                    HStack(spacing: 16) {
-                        icon()
+        VStack {
+            Spacer()
+                .alert($store.scope(state: \.destination?.extAuthAlert?.alert, action: \.destination.extAuthAlert))
+            if showToast {
+                HStack(spacing: 16) {
+                    icon()
 
-                        text()
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                    text()
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Button(action: {
-                            store.send(.cancelAllPendingRequests, animation: .easeInOut)
-                        }, label: {
-                            Image(systemName: SFSymbolName.crossIconPlain)
-                        })
-                    }
-                    .transition(.move(edge: .bottom))
-                    .foregroundColor(Color(.secondaryLabel))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-                    .background(background)
-                    .cornerRadius(16)
-                    .padding()
+                    Button(action: {
+                        store.send(.cancelAllPendingRequests, animation: .easeInOut)
+                    }, label: {
+                        Image(systemName: SFSymbolName.crossIconPlain)
+                    })
                 }
+                .transition(.move(edge: .bottom))
+                .foregroundColor(Color(.secondaryLabel))
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding()
+                .background(background)
+                .cornerRadius(16)
+                .padding()
             }
-            .task {
-                await store.send(.registerListener).finish()
-            }
+        }
+        .task {
+            await store.send(.registerListener).finish()
         }
     }
 }

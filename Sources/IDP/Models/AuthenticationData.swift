@@ -22,7 +22,6 @@
 
 import Combine
 import Foundation
-import OpenSSL
 
 /// Represents user/device data that is used for authentication for the idp while using alternative authentication/
 /// biometrics.

@@ -85,7 +85,7 @@ extension ModelsR4.Bundle {
 extension ModelsR4.Communication {
     func telematikId(for profile: ErxTask.Communication.Profile) -> String? {
         switch profile {
-        case .reply:
+        case .reply, .diga:
             if Workflow.Key.telematikIdKeys.contains(
                 where: { $0.value == sender?.identifier?.system?.value?.url.absoluteString }
             ) {
@@ -106,7 +106,7 @@ extension ModelsR4.Communication {
 
     func kvID(for profile: ErxTask.Communication.Profile) -> String? {
         switch profile {
-        case .reply:
+        case .reply, .diga:
             return recipient?.first { recipient in
                 Workflow.Key.kvIDKeys.contains {
                     $0.value == recipient.identifier?.system?.value?.url.absoluteString
@@ -150,22 +150,27 @@ extension ErxTask.Communication.Profile {
         case Workflow.Key.communicationReply[.v1_1_1],
              Workflow.Key.communicationReply[.v1_2_0],
              Workflow.Key.communicationReply[.v1_3_0],
-             Workflow.Key.communicationReply[.v1_4_3]:
+             Workflow.Key.communicationReply[.v1_4_3],
+             Workflow.Key.communicationReply[.v1_5_2]:
             self = .reply
         case Workflow.Key.communicationDispReq[.v1_1_1],
              Workflow.Key.communicationDispReq[.v1_2_0],
              Workflow.Key.communicationDispReq[.v1_3_0],
-             Workflow.Key.communicationDispReq[.v1_4_3]:
+             Workflow.Key.communicationDispReq[.v1_4_3],
+             Workflow.Key.communicationDispReq[.v1_5_2]:
             self = .dispReq
         case Workflow.Key.communicationInfoReq[.v1_1_1],
              Workflow.Key.communicationInfoReq[.v1_2_0],
              Workflow.Key.communicationInfoReq[.v1_3_0],
              Workflow.Key.communicationInfoReq[.v1_4_3]:
             self = .infoReq
+        case Workflow.Key.communicationDiga[.v1_5_2]:
+            self = .diga
         case Workflow.Key.communicationRepresentative[.v1_1_1],
              Workflow.Key.communicationRepresentative[.v1_2_0],
              Workflow.Key.communicationRepresentative[.v1_3_0],
-             Workflow.Key.communicationRepresentative[.v1_4_3]:
+             Workflow.Key.communicationRepresentative[.v1_4_3],
+             Workflow.Key.communicationRepresentative[.v1_5_2]:
             self = .representative
         default:
             self = .none

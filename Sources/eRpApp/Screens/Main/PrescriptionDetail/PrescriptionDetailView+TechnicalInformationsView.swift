@@ -26,28 +26,26 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct TechnicalInformationsView: View {
-        @Perception.Bindable var store: StoreOf<TechnicalInformationsDomain>
+        @Bindable var store: StoreOf<TechnicalInformationsDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                ScrollView(.vertical) {
-                    SectionContainer {
-                        SubTitle(
-                            title: store.accessCode ?? "",
-                            description: L10n.prscDtlTiTxtAccessCode
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTiAccessCode)
+            ScrollView(.vertical) {
+                SectionContainer {
+                    SubTitle(
+                        title: store.accessCode ?? "",
+                        description: L10n.prscDtlTiTxtAccessCode
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTiAccessCode)
 
-                        SubTitle(
-                            title: store.taskId,
-                            description: L10n.prscDtlTiTxtTaskId
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTiTaskId)
+                    SubTitle(
+                        title: store.taskId,
+                        description: L10n.prscDtlTiTxtTaskId
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTiTaskId)
 
-                    }.sectionContainerStyle(.inline)
-                }
-                .navigationBarTitle(Text(L10n.prscDtlTiTxtTitle), displayMode: .inline)
+                }.sectionContainerStyle(.inline)
             }
+            .navigationBarTitle(Text(L10n.prscDtlTiTxtTitle), displayMode: .inline)
         }
     }
 }

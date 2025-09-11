@@ -1,0 +1,73 @@
+{
+    "resourceType": "Medication",
+    "id": "a3ca01a4-92c1-422a-87d9-ef046e94527f",
+    "meta": {
+        "profile": [
+            "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.3"
+        ]
+    },
+    "extension": [
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "version": "http://snomed.info/sct/11000274103/version/20240515",
+                        "code": "763158003",
+                        "display": "Medicinal product (product)"
+                    }
+                ]
+            }
+        },
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+            "valueCoding": {
+                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                "code": "00"
+            }
+        },
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+            "valueBoolean": false
+        },
+        {
+            "url": "http://fhir.de/StructureDefinition/normgroesse",
+            "valueCode": "N3"
+        }
+    ],
+    "code": {
+        "coding": [
+            {
+                "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                "code": "05392039"
+            }
+        ],
+        "text": "Venlafaxin - 1 A Pharma® 75mg 100 Tabl. N3"
+    },
+    "form": {
+        "coding": [
+            {
+                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                "code": "TAB"
+            }
+        ]
+    },
+    "ingredient": [
+        {
+            "itemCodeableConcept": {
+                "text": "Venlafaxin"
+            },
+            "strength": {
+                "numerator": {
+                    "value": 75,
+                    "unit": "mg"
+                },
+                "denominator": {
+                    "value": 1,
+                    "unit": "Stück"
+                }
+            }
+        }
+    ]
+}

@@ -26,27 +26,25 @@ import eRpStyleKit
 import SwiftUI
 
 struct OnboardingRegisterPasswordView: View, KeyboardReadable {
-    @Perception.Bindable var store: StoreOf<RegisterPasswordDomain>
+    @Bindable var store: StoreOf<RegisterPasswordDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                ScrollView(.vertical, showsIndicators: true) {
-                    OnboardingProgressView(currentPage: .second)
-                        .padding(.top)
+        VStack {
+            ScrollView(.vertical, showsIndicators: true) {
+                OnboardingProgressView(currentPage: .second)
+                    .padding(.top)
 
-                    TitleView()
-                        .padding(.top)
+                TitleView()
+                    .padding(.top)
 
-                    PasswordView(store: store)
-                }
-
-                Spacer()
-
-                PasswordButtonView(store: store)
+                PasswordView(store: store)
             }
-            .padding(.horizontal)
+
+            Spacer()
+
+            PasswordButtonView(store: store)
         }
+        .padding(.horizontal)
     }
 }
 
@@ -74,20 +72,52 @@ extension OnboardingRegisterPasswordView {
     }
 
     struct PasswordView: View {
-        @Perception.Bindable var store: StoreOf<RegisterPasswordDomain>
+        @Bindable var store: StoreOf<RegisterPasswordDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(alignment: .leading, spacing: 6) {
-                    // This TextField is mandatory to support password autofill from iCloud Keychain, applying
-                    // `.hidden()` lets iOS no longer detect it.
-                    TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
-                        .textContentType(.username)
-                        .frame(width: 1, height: 1, alignment: .leading)
-                        .opacity(0.01)
-                        .accessibility(hidden: true)
+            VStack(alignment: .leading, spacing: 6) {
+                // This TextField is mandatory to support password autofill from iCloud Keychain, applying
+                // `.hidden()` lets iOS no longer detect it.
+                TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
+                    .textContentType(.username)
+                    .frame(width: 1, height: 1, alignment: .leading)
+                    .opacity(0.01)
+                    .accessibility(hidden: true)
 
-                    SecureField(L10n.cpwInpPasswordAPlaceholder, text: $store.passwordA)
+                SecureField(L10n.cpwInpPasswordAPlaceholder, text: $store.passwordA)
+                    .onSubmit { store.send(.enterButtonTapped) }
+                    .padding()
+                    .font(Font.body)
+                    .foregroundColor(Colors.systemLabel)
+                    .background(Color(.systemBackground))
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Colors.textSecondary, lineWidth: 0.5)
+                    )
+                    .padding(1)
+                    .textContentType(.newPassword)
+                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
+
+                Text(L10n.cpwTxtPasswordRecommendation)
+                    .font(.footnote)
+                    .foregroundColor(Colors.textSecondary)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.bottom, 10)
+                    .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
+
+                // [REQ:BSI-eRp-ePA:O.Pass_2#2] Password strength view within onboarding.
+                PasswordStrengthView(
+                    strength: store.passwordStrength,
+                    barBackgroundColor: Color(.secondarySystemBackground)
+                )
+                .accessibilityIdentifier(A11y.onboarding.authentication.onbAuthTxtPasswordStrength)
+                .padding(.bottom, 16)
+                .animation(.easeInOut, value: store.passwordA)
+
+                VStack(alignment: .leading, spacing: 11) {
+                    SecureField(L10n.cpwInpPasswordBPlaceholder, text: $store.passwordB)
                         .onSubmit { store.send(.enterButtonTapped) }
                         .padding()
                         .font(Font.body)
@@ -96,96 +126,61 @@ extension OnboardingRegisterPasswordView {
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(Colors.textSecondary, lineWidth: 0.5)
+                                .stroke(
+                                    store.hasValidPasswordEntries ? Color(.systemGreen) : Color(.systemGray3),
+                                    lineWidth: 1
+                                )
                         )
                         .padding(1)
                         .textContentType(.newPassword)
-                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordA)
+                        .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
+                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordB)
 
-                    Text(L10n.cpwTxtPasswordRecommendation)
-                        .font(.footnote)
-                        .foregroundColor(Colors.textSecondary)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.bottom, 10)
-                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
-
-                    // [REQ:BSI-eRp-ePA:O.Pass_2#2] Password strength view within onboarding.
-                    PasswordStrengthView(
-                        strength: store.passwordStrength,
-                        barBackgroundColor: Color(.secondarySystemBackground)
-                    )
-                    .padding(.bottom, 16)
-                    .animation(.easeInOut, value: store.passwordA)
-
-                    VStack(alignment: .leading, spacing: 11) {
-                        SecureField(L10n.cpwInpPasswordBPlaceholder, text: $store.passwordB)
-                            .onSubmit { store.send(.enterButtonTapped) }
-                            .padding()
-                            .font(Font.body)
-                            .foregroundColor(Colors.systemLabel)
-                            .background(Color(.systemBackground))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(
-                                        store.hasValidPasswordEntries ? Color(.systemGreen) : Color(.systemGray3),
-                                        lineWidth: 1
-                                    )
-                            )
-                            .padding(1)
-                            .textContentType(.newPassword)
-                            .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
-                            .accessibility(identifier: A11y.onboarding.authentication.onbAuthInpPasswordB)
-
-                        if let message = store.passwordErrorMessage {
-                            Text(message)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .foregroundColor(Colors.red600)
-                                .font(.footnote)
-                                .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordsDontMatch)
-                        }
+                    if let message = store.passwordErrorMessage {
+                        Text(message)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .foregroundColor(Colors.red600)
+                            .font(.footnote)
+                            .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordsDontMatch)
                     }
                 }
-                .padding(.top, 40)
             }
+            .padding(.top, 40)
         }
     }
 
     struct PasswordButtonView: View {
-        @Perception.Bindable var store: StoreOf<RegisterPasswordDomain>
+        @Bindable var store: StoreOf<RegisterPasswordDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack {
-                    Button(action: {
-                        store.send(.delegate(.nextPage))
-                    }, label: {
-                        Text(L10n.onbAuthBtnPasswordSave)
-                            .padding(.horizontal, 64)
-                            .padding(.vertical)
-                    })
-                        .disabled(!store.hasValidPasswordEntries)
-                        .accessibility(identifier: A18n.onboarding.authentication.onbAuthBtnPassword)
-                        .font(Font.body.weight(.semibold))
-                        .foregroundColor(Colors.systemColorWhite)
-                        .background(!store.hasValidPasswordEntries ? Colors.primary.opacity(0.5) : Colors.primary)
-                        .cornerRadius(16)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.center)
-                        .padding()
+            VStack {
+                Button(action: {
+                    store.send(.delegate(.nextPage))
+                }, label: {
+                    Text(L10n.onbAuthBtnPasswordSave)
+                        .padding(.horizontal, 64)
+                        .padding(.vertical)
+                })
+                    .disabled(!store.hasValidPasswordEntries)
+                    .accessibility(identifier: A18n.onboarding.authentication.onbAuthBtnPassword)
+                    .font(Font.body.weight(.semibold))
+                    .foregroundColor(Colors.systemColorWhite)
+                    .background(!store.hasValidPasswordEntries ? Colors.primary.opacity(0.5) : Colors.primary)
+                    .cornerRadius(16)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.center)
+                    .padding()
 
-                    NavButton(
-                        text: L10n.onbAuthBtnPasswordBack,
-                        a11y: A11y.onboarding.authentication.onbAuthBtnBack,
-                        back: true
-                    ) {
-                        store.send(.delegate(.prevPage))
-                    }
+                NavButton(
+                    text: L10n.onbAuthBtnPasswordBack,
+                    a11y: A11y.onboarding.authentication.onbAuthBtnBack,
+                    back: true
+                ) {
+                    store.send(.delegate(.prevPage))
                 }
-                .padding(.bottom, 32)
             }
+            .padding(.bottom, 32)
         }
     }
 }

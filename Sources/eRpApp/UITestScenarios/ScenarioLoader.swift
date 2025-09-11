@@ -165,6 +165,8 @@ extension Reducer {
             }
 
             dependencies.drawerEvaluation.showDrawerEvaluation = { .none }
+
+            dependencies.bfArMSession = SmartMocks.shared.smartMockBfArMSession(scenario, isRecording)
         }
     }
 }
@@ -313,6 +315,22 @@ struct SmartMocks {
         smartMockIDPSession = mock
         return mock
     }
+
+    private var smartMockBfArMSession: BfArMSession?
+    mutating func smartMockBfArMSession(_ scenario: Scenario?, _ isRecording: Bool) -> BfArMSession {
+        if let existingMock = smartMockBfArMSession {
+            return existingMock
+        }
+        @Dependency(\.bfArMSession) var bfArMSession: BfArMSession
+        let mock = BfArMSession.smartMock(
+            wrapped: bfArMSession,
+            mocks: scenario?.bfArMSession,
+            isRecording: isRecording
+        )
+        smartMockRegister.register(mock)
+        smartMockBfArMSession = mock
+        return mock
+    }
 }
 
 struct Scenario {
@@ -322,6 +340,7 @@ struct Scenario {
     var erxRemoteDataStore: SmartMockErxRemoteDataStore.Mocks?
     var redeemService: SmartMockRedeemService.Mocks?
     var idpSession: SmartMockIDPSession.Mocks?
+    var bfArMSession: BfArMSession.Mocks?
 }
 
 struct ScenarioLoader {
@@ -363,6 +382,10 @@ struct ScenarioLoader {
             scenarioUrl: scenarioPath,
             with: "IDPSession"
         )
+        let bfarmSession: BfArMSession.Mocks? = loadMockData(
+            scenarioUrl: scenarioPath,
+            with: "BfArMSession"
+        )
 
         return Scenario(
             userDataStore: userDataStoreMock,
@@ -370,7 +393,8 @@ struct ScenarioLoader {
             erxTaskCoreDataStore: erxTaskCoreDataStore,
             erxRemoteDataStore: erxRemoteDataStore,
             redeemService: redeemService,
-            idpSession: idpSession
+            idpSession: idpSession,
+            bfArMSession: bfarmSession
         )
     }
 
@@ -709,6 +733,12 @@ extension ErxTaskCoreDataStore {}
 extension ErxRemoteDataStore {}
 extension RedeemService {}
 extension IDPSession {}
+// sourcery:end
+
+import BfArM
+
+// sourcery:begin: SmartMockStruct
+extension BfArMSession {}
 // sourcery:end
 
 #endif

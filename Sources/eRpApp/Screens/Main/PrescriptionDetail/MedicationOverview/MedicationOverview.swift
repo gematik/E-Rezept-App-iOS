@@ -26,55 +26,53 @@ import eRpStyleKit
 import SwiftUI
 
 struct MedicationOverview: View {
-    @Perception.Bindable var store: StoreOf<MedicationOverviewDomain>
+    @Bindable var store: StoreOf<MedicationOverviewDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView(.vertical) {
-                SingleElementSectionContainer(
-                    header: {
-                        Label(L10n.prscDtlMedOvTxtSubscribedHeader)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvSubscribedHeader)
-                    }, content: {
-                        Button(action: { store.send(.showSubscribedMedication) }, label: {
-                            SubTitle(title: store.subscribed.displayName)
-                        })
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnSubscribedMedication)
-                    }
-                ).sectionContainerStyle(.inline)
+        ScrollView(.vertical) {
+            SingleElementSectionContainer(
+                header: {
+                    Label(L10n.prscDtlMedOvTxtSubscribedHeader)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvSubscribedHeader)
+                }, content: {
+                    Button(action: { store.send(.showSubscribedMedication) }, label: {
+                        SubTitle(title: store.subscribed.displayName)
+                    })
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnSubscribedMedication)
+                }
+            ).sectionContainerStyle(.inline)
 
-                SingleElementSectionContainer(
-                    header: {
-                        Label(L10n.prscDtlMedOvTxtDispensedHeader)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvDispensedHeader)
-                    }, content: {
-                        ForEach(store.dispensed.indices, id: \.self) { index in
-                            Button(
-                                action: { store.send(.showDispensedMedication(store.dispensed[index])) },
-                                label: {
-                                    SubTitle(title: store.dispensed[index].displayName)
-                                        .sectionContainerIsLastElement(index == store.dispensed.count - 1)
-                                }
-                            )
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnDispensedMedication)
-                        }
+            SingleElementSectionContainer(
+                header: {
+                    Label(L10n.prscDtlMedOvTxtDispensedHeader)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvDispensedHeader)
+                }, content: {
+                    ForEach(store.dispensed.indices, id: \.self) { index in
+                        Button(
+                            action: { store.send(.showDispensedMedication(store.dispensed[index])) },
+                            label: {
+                                SubTitle(title: store.dispensed[index].displayName)
+                                    .sectionContainerIsLastElement(index == store.dispensed.count - 1)
+                            }
+                        )
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedOvBtnDispensedMedication)
                     }
-                ).sectionContainerStyle(.inline)
-            }
-            .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
-            // MedicationView
-            .navigationDestination(
-                item: $store.scope(state: \.destination?.medication, action: \.destination.medication)
-            ) { store in
-                MedicationView(store: store)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.destination?.epaMedication, action: \.destination.epaMedication)
-            ) { store in
-                EpaMedicationView(store: store)
-            }
+                }
+            ).sectionContainerStyle(.inline)
+        }
+        .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
+        // MedicationView
+        .navigationDestination(
+            item: $store.scope(state: \.destination?.medication, action: \.destination.medication)
+        ) { store in
+            MedicationView(store: store)
+        }
+        .navigationDestination(
+            item: $store.scope(state: \.destination?.epaMedication, action: \.destination.epaMedication)
+        ) { store in
+            EpaMedicationView(store: store)
         }
     }
 }

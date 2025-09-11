@@ -25,84 +25,82 @@ import eRpStyleKit
 import SwiftUI
 
 struct SettingsLegalInfoView: View {
-    @Perception.Bindable var store: StoreOf<SettingsDomain>
+    @Bindable var store: StoreOf<SettingsDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            SectionContainer(header: {
-                Label(title: { Text(L10n.stgTxtHeaderLegalInfo) }, icon: {})
-                    .accessibilityIdentifier(A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo)
-            }, content: {
-                Button {
-                    store.send(.tappedLegalNotice)
-                } label: {
-                    Label(L10n.stgLnoTxtLegalNotice, systemImage: SFSymbolName.info)
-                }
-                .accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
-                .buttonStyle(.navigation)
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.legalNotice, action: \.destination.legalNotice)
-                ) { _ in
-                    LegalNoticeView()
-                }
+        SectionContainer(header: {
+            Label(title: { Text(L10n.stgTxtHeaderLegalInfo) }, icon: {})
+                .accessibilityIdentifier(A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo)
+        }, content: {
+            Button {
+                store.send(.tappedLegalNotice)
+            } label: {
+                Label(L10n.stgLnoTxtLegalNotice, systemImage: SFSymbolName.info)
+            }
+            .accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
+            .buttonStyle(.navigation)
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.legalNotice, action: \.destination.legalNotice)
+            ) { _ in
+                LegalNoticeView()
+            }
 
-                // [REQ:BSI-eRp-ePA:O.Arch_9#3,O.Purp_1#4] DataPrivacy display within Settings
-                Button {
-                    store.send(.tappedDataProtection)
-                } label: {
-                    Label(L10n.stgDpoTxtDataPrivacy, systemImage: SFSymbolName.shield)
-                }
-                .accessibility(identifier: A18n.settings.dataPrivacy.stgDprTxtDataPrivacy)
-                .buttonStyle(.navigation)
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.dataProtection, action: \.destination.dataProtection)
-                ) { _ in
-                    DataPrivacyView()
-                }
+            // [REQ:BSI-eRp-ePA:O.Arch_9#3,O.Purp_1#4] DataPrivacy display within Settings
+            Button {
+                store.send(.tappedDataProtection)
+            } label: {
+                Label(L10n.stgDpoTxtDataPrivacy, systemImage: SFSymbolName.shield)
+            }
+            .accessibility(identifier: A18n.settings.dataPrivacy.stgDprTxtDataPrivacy)
+            .buttonStyle(.navigation)
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.dataProtection, action: \.destination.dataProtection)
+            ) { _ in
+                DataPrivacyView()
+            }
 
-                Button {
-                    store.send(.tappedFOSS)
-                } label: {
-                    Label(L10n.stgDpoTxtFoss, systemImage: SFSymbolName.heartTextSquare)
-                }
-                .accessibility(identifier: A18n.settings.foss.stgDprTxtFoss)
-                .buttonStyle(.navigation)
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.openSourceLicence, action: \.destination.openSourceLicence)
-                ) { _ in
-                    FOSSView()
-                }
+            Button {
+                store.send(.tappedFOSS)
+            } label: {
+                Label(L10n.stgDpoTxtFoss, systemImage: SFSymbolName.heartTextSquare)
+            }
+            .accessibility(identifier: A18n.settings.foss.stgDprTxtFoss)
+            .buttonStyle(.navigation)
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.openSourceLicence, action: \.destination.openSourceLicence)
+            ) { _ in
+                FOSSView()
+            }
 
-                Button {
-                    store.send(.tappedTermsOfUse)
-                } label: {
-                    Label(L10n.stgDpoTxtTermsOfUse, systemImage: SFSymbolName.docPlaintext)
-                }
-                .accessibility(identifier: A18n.settings.termsOfUse.stgTouTxtTermsOfUse)
-                .buttonStyle(.navigation)
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.termsOfUse, action: \.destination.termsOfUse)
-                ) { _ in
-                    TermsOfUseView()
-                }
+            Button {
+                store.send(.tappedTermsOfUse)
+            } label: {
+                Label(L10n.stgDpoTxtTermsOfUse, systemImage: SFSymbolName.docPlaintext)
+            }
+            .accessibility(identifier: A18n.settings.termsOfUse.stgTouTxtTermsOfUse)
+            .buttonStyle(.navigation)
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.termsOfUse, action: \.destination.termsOfUse)
+            ) { _ in
+                TermsOfUseView()
+            }
 
-                Button(action: {
-                    guard let url =
-                        URL(
-                            // swiftlint:disable:next line_length
-                            string: "https://www.das-e-rezept-fuer-deutschland.de/erklaerung-zur-barrierefreiheit-e-rezept-app"
-                        ),
-                        UIApplication.shared.canOpenURL(url) else { return }
+            Button(action: {
+                guard let url =
+                    URL(
+                        // swiftlint:disable:next line_length
+                        string: "https://www.das-e-rezept-fuer-deutschland.de/erklaerung-zur-barrierefreiheit-e-rezept-app"
+                    ),
+                    UIApplication.shared.canOpenURL(url) else { return }
 
-                    UIApplication.shared.open(url)
-                }, label: {
-                    Label(L10n.stgDpoTxtAccessibilityStatement, systemImage: SFSymbolName.accessibility)
-                })
-                    .accessibilityLabel(L10n.stgDpoLblAccessibilityStatement)
-                    .accessibility(identifier: A18n.settings.accessibilityStatement.stgBtnAccessibilityStatement)
-                    .buttonStyle(.navigation)
+                UIApplication.shared.open(url)
+            }, label: {
+                Label(L10n.stgDpoTxtAccessibilityStatement, systemImage: SFSymbolName.accessibility)
             })
-        }
+                .accessibilityLabel(L10n.stgDpoLblAccessibilityStatement)
+                .accessibility(identifier: A18n.settings.accessibilityStatement.stgBtnAccessibilityStatement)
+                .buttonStyle(.navigation)
+        })
     }
 }
 

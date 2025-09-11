@@ -25,38 +25,36 @@ import eRpStyleKit
 import SwiftUI
 
 struct IngredientView: View {
-    @Perception.Bindable var store: StoreOf<IngredientDomain>
+    @Bindable var store: StoreOf<IngredientDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView(.vertical) {
-                SectionContainer {
-                    SubTitle(
-                        title: store.text ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscDtlMedIngredientName
-                    )
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientName)
+        ScrollView(.vertical) {
+            SectionContainer {
+                SubTitle(
+                    title: store.text ?? L10n.prscFdTxtNa.text,
+                    description: L10n.prscDtlMedIngredientName
+                )
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientName)
 
-                    SubTitle(
-                        title: store.strength ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscDtlMedTxtAmount
-                    )
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientStrength)
+                SubTitle(
+                    title: store.strength ?? L10n.prscFdTxtNa.text,
+                    description: L10n.prscDtlMedTxtAmount
+                )
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientStrength)
 
-                    SubTitle(
-                        title: store.form ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscFdTxtDetailsDosageForm
-                    )
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientForm)
+                SubTitle(
+                    title: store.form ?? L10n.prscFdTxtNa.text,
+                    description: L10n.prscFdTxtDetailsDosageForm
+                )
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientForm)
 
-                    SubTitle(
-                        title: store.number ?? L10n.prscFdTxtNa.text,
-                        description: L10n.prscDtlMedTxtIngredinetNumber
-                    )
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientNumber)
-                }.sectionContainerStyle(.inline)
-            }
-            .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
+                SubTitle(
+                    title: store.number ?? L10n.prscFdTxtNa.text,
+                    description: L10n.prscDtlMedTxtIngredinetNumber
+                )
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlMedIngredientNumber)
+            }.sectionContainerStyle(.inline)
         }
+        .navigationBarTitle(Text(L10n.prscDtlTxtMedication), displayMode: .inline)
     }
 }

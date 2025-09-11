@@ -24,13 +24,11 @@ import ComposableArchitecture
 import SwiftUI
 
 struct EditProfileNameView: View {
-    @Perception.Bindable var store: StoreOf<EditProfileNameDomain>
+    @Bindable var store: StoreOf<EditProfileNameDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            EnterProfileNameSubView(displayName: $store.profileName.sending(\.setProfileName)) {
-                store.send(.saveButtonTapped)
-            }
+        EnterProfileNameSubView(displayName: $store.profileName.sending(\.setProfileName)) {
+            store.send(.saveButtonTapped)
         }
     }
 }

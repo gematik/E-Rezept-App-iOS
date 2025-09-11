@@ -20,9 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
-import OpenSSL
 
 /// Signed (with eGK) version of `PairingData`.
 /// [REQ:gemSpec_IDP_Dienst:A_21415:Signed_Pairing_Data]

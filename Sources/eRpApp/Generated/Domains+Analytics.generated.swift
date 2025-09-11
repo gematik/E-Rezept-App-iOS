@@ -2,6 +2,7 @@
 // DO NOT EDIT
 
 import Foundation
+import FeatureEURedeem
 
 
 
@@ -236,6 +237,24 @@ extension CoPaymentDomain.State {
     }
 }
 
+extension CodeDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
+extension ConsentDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
+extension CountrySelectionDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
 extension CreatePasswordDomain.State {
     func routeName() -> String? {
         return nil
@@ -297,6 +316,39 @@ extension DiGaInsuranceListDomain.State {
 extension DosageInstructionsDomain.State {
     func routeName() -> String? {
         return nil
+    }
+}
+
+extension EURedeemDomain.State {
+    func routeName() -> String? {
+        if let pathId = path.ids.last,
+            let path = path[id: pathId] {
+            switch path {
+            case let .countrySelection(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .prescriptionSelection(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .instructions(state: state):
+                return state.routeName() ?? path.analyticsName
+            case let .code(state: state):
+                return state.routeName() ?? path.analyticsName
+            }
+        }
+        return nil
+    }
+}
+
+extension EURedeemSelectionDomain.State {
+    func routeName() -> String? {
+        guard let destination else { return nil }
+        switch destination {
+            case let .consent(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .selectPrescription(state: state):
+                return state.routeName() ?? destination.analyticsName
+            case let .selectCountry(state: state):
+                return state.routeName() ?? destination.analyticsName
+        }
     }
 }
 
@@ -459,6 +511,12 @@ extension IDPCardWallDomain.State {
 }
 
 extension IngredientDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
+extension InstructionsDomain.State {
     func routeName() -> String? {
         return nil
     }
@@ -956,6 +1014,12 @@ extension ScannerDomain.State {
     }
 }
 
+extension SelectEUPrescriptionsDomain.State {
+    func routeName() -> String? {
+        return nil
+    }
+}
+
 extension ServiceOptionDomain.State {
     func routeName() -> String? {
         return nil
@@ -1223,6 +1287,18 @@ extension DiGaInsuranceListDomain.Destination.State {
         switch self {
             case .alert:
                 return Analytics.Screens.alert.name
+        }
+    }
+}
+extension EURedeemSelectionDomain.Destination.State {
+    var analyticsName: String {
+        switch self {
+            case .consent:
+                return "consent"
+            case .selectPrescription:
+                return "selectPrescription"
+            case .selectCountry:
+                return "selectCountry"
         }
     }
 }
@@ -1669,6 +1745,20 @@ extension SettingsDomain.Destination.State {
     }
 }
 
+extension EURedeemDomain.Path.State {
+    var analyticsName: String {
+        switch self {
+            case .countrySelection:
+                return "countrySelection"
+            case .prescriptionSelection:
+                return "prescriptionSelection"
+            case .instructions:
+                return "instructions"
+            case .code:
+                return "code"
+        }
+    }
+}
 extension MainDomain.Path.State {
     var analyticsName: String {
         switch self {

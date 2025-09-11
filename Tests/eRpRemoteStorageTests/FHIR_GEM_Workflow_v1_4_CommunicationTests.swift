@@ -60,7 +60,8 @@ final class FHIR_GEM_Workflow_v1_4_CommunicationTests: XCTestCase {
     }
 }
 
-extension ErxTask {
+// swiftlint:disable:next no_extension_access_modifier
+private extension ErxTask {
     enum Fixtures {
         static let communicationDispReq = ErxTask.Communication(
             identifier: "01ebd9e1-47d8-bab8-2566-31341cc59b11",

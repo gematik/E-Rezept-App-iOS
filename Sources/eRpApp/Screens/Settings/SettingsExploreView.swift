@@ -25,19 +25,17 @@ import eRpStyleKit
 import SwiftUI
 
 struct SettingsExploreView: View {
-    @Perception.Bindable var store: StoreOf<SettingsDomain>
+    @Bindable var store: StoreOf<SettingsDomain>
 
     var body: some View {
         SectionContainer(header: {
             Label(title: { Text(L10n.stgExpTxtTitle) }, icon: {})
                 .accessibilityIdentifier(A11y.settings.explore.stgConHeaderExplore)
         }, content: {
-            WithPerceptionTracking {
-                Toggle(isOn: $store.isDemoMode.sending(\.toggleDemoModeSwitch).animation()) {
-                    EmptyView()
-                    Label(L10n.stgTxtDemoMode, systemImage: SFSymbolName.wandAndStars)
-                        .accessibilityIdentifier(A11y.settings.demo.stgTxtDemoMode)
-                }
+            Toggle(isOn: $store.isDemoMode.sending(\.toggleDemoModeSwitch).animation()) {
+                EmptyView()
+                Label(L10n.stgTxtDemoMode, systemImage: SFSymbolName.wandAndStars)
+                    .accessibilityIdentifier(A11y.settings.demo.stgTxtDemoMode)
             }
 
             Button(action: {

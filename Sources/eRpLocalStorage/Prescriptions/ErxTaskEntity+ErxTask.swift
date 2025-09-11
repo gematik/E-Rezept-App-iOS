@@ -45,7 +45,7 @@ extension ErxTaskEntity {
         redeemedOn = task.redeemedOn
         author = task.author
         dispenseValidityEnd = task.medicationRequest.dispenseValidityEnd
-        bvg = task.medicationRequest.bvg
+        ser = task.medicationRequest.ser
         dosageInstructions = task.medicationRequest.dosageInstructions
         coPaymentStatus = task.medicationRequest.coPaymentStatus?.rawValue
         noctuFeeWaiver = task.medicationRequest.hasEmergencyServiceFee
@@ -243,7 +243,7 @@ extension ErxTask {
                 hasEmergencyServiceFee: entity.noctuFeeWaiver,
                 dispenseValidityEnd: entity.dispenseValidityEnd,
                 accidentInfo: AccidentInfo(entity: entity.accidentInfo),
-                bvg: entity.bvg,
+                ser: entity.ser,
                 coPaymentStatus: CoPaymentStatus(rawValue: entity.coPaymentStatus ?? "nil"),
                 multiplePrescription: MultiplePrescription(entity: entity.multiplePrescription),
                 quantity: quantity

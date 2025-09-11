@@ -26,7 +26,7 @@ import SwiftUI
 import SwiftUIIntrospect
 
 struct RefreshScrollView<Content: View, StickyHeader: View>: View {
-    @Perception.Bindable var store: StoreOf<PrescriptionListDomain>
+    @Bindable var store: StoreOf<PrescriptionListDomain>
     let content: Content
     let header: StickyHeader
 
@@ -45,52 +45,50 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            ZStack(alignment: .bottomLeading) {
-                ScrollViewWithStickyHeader(
-                    applyBackgroundBlur: false,
-                    header: {
-                        header
-                    }, content: {
-                        let hasOpenPrescriptions = !store.prescriptions.filter { !$0.isArchived }.isEmpty
-                        content
-                            .padding(.bottom, hasOpenPrescriptions ? 80 : 28)
-                    }
-                )
-                .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18)) { scrollView in
-                    let refreshControl: RefreshControl
-                    if let control = scrollView.refreshControl as? RefreshControl {
-                        refreshControl = control
-                    } else {
-                        refreshControl = RefreshControl()
-                        scrollView.refreshControl = refreshControl
-                    }
-                    refreshControl.onRefreshAction = {
-                        store.send(.refresh)
-                    }
-                    if !store.loadingState.isLoading, refreshControl.isRefreshing {
-                        refreshControl.endRefreshing()
-                    }
+        ZStack(alignment: .bottomLeading) {
+            ScrollViewWithStickyHeader(
+                applyBackgroundBlur: false,
+                header: {
+                    header
+                }, content: {
+                    let hasOpenPrescriptions = !store.prescriptions.filter { !$0.isArchived }.isEmpty
+                    content
+                        .padding(.bottom, hasOpenPrescriptions ? 80 : 28)
                 }
+            )
+            .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18)) { scrollView in
+                let refreshControl: RefreshControl
+                if let control = scrollView.refreshControl as? RefreshControl {
+                    refreshControl = control
+                } else {
+                    refreshControl = RefreshControl()
+                    scrollView.refreshControl = refreshControl
+                }
+                refreshControl.onRefreshAction = {
+                    store.send(.refresh)
+                }
+                if !store.loadingState.isLoading, refreshControl.isRefreshing {
+                    refreshControl.endRefreshing()
+                }
+            }
 
-                let isReedemable = !store.prescriptions.filter(\.isPharmacyRedeemable).isEmpty
-                if isReedemable {
-                    HStack {
-                        Spacer()
-                        Button {
-                            action()
-                        } label: {
-                            if store.showRedeemDiGaButton {
-                                Text(L10n.digaDtlBtnMainRequest)
-                            } else {
-                                Text(L10n.mainBtnRedeem)
-                            }
+            let isReedemable = !store.prescriptions.filter(\.isPharmacyRedeemable).isEmpty
+            if isReedemable {
+                HStack {
+                    Spacer()
+                    Button {
+                        action()
+                    } label: {
+                        if store.showRedeemDiGaButton {
+                            Text(L10n.digaDtlBtnMainRequest)
+                        } else {
+                            Text(L10n.mainBtnRedeem)
                         }
-                        .buttonStyle(.primaryHugging)
-                        .padding(.vertical)
-                        .accessibilityIdentifier(A11y.mainScreen.erxBtnRedeemPrescriptions)
-                        Spacer()
                     }
+                    .buttonStyle(.primaryHugging)
+                    .padding(.vertical)
+                    .accessibilityIdentifier(A11y.mainScreen.erxBtnRedeemPrescriptions)
+                    Spacer()
                 }
             }
         }

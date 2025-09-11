@@ -1,6 +1,7 @@
 // sourcery:file:eRpApp/Generated/Domains+ActionAnalytics
 
 import Foundation
+import FeatureEURedeem
 
 {% macro FindSubdomainActions actionType %}
 {% typed actionType as Enum %}

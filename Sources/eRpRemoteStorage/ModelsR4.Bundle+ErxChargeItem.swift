@@ -86,11 +86,6 @@ extension ModelsR4.Bundle {
         )
         let pharmacy = dispenseBundle.organization
 
-        guard let pharmacyId = pharmacy?.davOrganizationIdentifier
-        else {
-            throw RemoteStorageBundleParsingError.parseError("Could not parse organization identifier.")
-        }
-
         guard let pharmacyName = pharmacy?.name?.value?.string
         else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse organization name.")
@@ -112,12 +107,15 @@ extension ModelsR4.Bundle {
             throw RemoteStorageBundleParsingError.parseError("Could not parse version number.")
         }
 
+        guard let pharmacyId = pharmacy?.davOrganizationIdentifier(from: fhirPackage)
+        else {
+            throw RemoteStorageBundleParsingError.parseError("Could not parse organization identifier.")
+        }
+
         let fhirAbgabedatenComposition = fhirPackage.dAV_PKV_PR_ERP_AbgabedatenComposition
         let fhirAbrechnungszeilen = fhirPackage.dAV_EX_ERP_Abrechnungszeilen
         let fhirZusatzdatenHerstellung = fhirPackage.dAV_EX_ERP_ZusatzdatenHerstellung
         let fhirZusatzdatenEinheit = fhirPackage.dAV_EX_ERP_ZusatzdatenEinheit
-
-        let invoice = dispenseBundle.invoice
 
         let dispenseComposition = dispenseBundle.findResource(
             for: fhirAbgabedatenComposition.meta_profile,
@@ -140,7 +138,7 @@ extension ModelsR4.Bundle {
 
             if let reference = invoice?.first?.value?.referenceOrNil?.reference {
                 let invoice = dispenseBundle.findResource(with: reference, type: Invoice.self)
-                chargeableItems += try invoice?.chargeableItems() ?? []
+                chargeableItems += try invoice?.chargeableItems(from: fhirPackage) ?? []
             }
 
             let ext = medicationDispense?.extensions(for: fhirZusatzdatenHerstellung.meta_profile)
@@ -157,7 +155,7 @@ extension ModelsR4.Bundle {
                     let invoice = secondMedicationDispense?.extensions(for: fhirZusatzdatenEinheit.meta_profile)
                     if let reference = invoice?.first?.value?.referenceOrNil?.reference {
                         let invoice = dispenseBundle.findResource(with: reference, type: Invoice.self)
-                        chargeableItems += try invoice?.chargeableItems(separation: true) ?? []
+                        chargeableItems += try invoice?.chargeableItems(from: fhirPackage, separation: true) ?? []
                     }
                 }
             } else {
@@ -172,7 +170,7 @@ extension ModelsR4.Bundle {
                     let invoice = secondMedicationDispense?.extensions(for: fhirZusatzdatenEinheit.meta_profile)
                     if let reference = invoice?.first?.value?.referenceOrNil?.reference {
                         let invoice = dispenseBundle.findResource(with: reference, type: Invoice.self)
-                        let ingredients = try invoice?.productionSteps() ?? []
+                        let ingredients = try invoice?.productionSteps(from: fhirPackage) ?? []
 
                         let sequence: Int32
                         if let ext = secondMedicationDispense?.extensions(for: fhirZusatzdatenEinheit.extension_counter)
@@ -196,7 +194,9 @@ extension ModelsR4.Bundle {
             }
         }
 
-        guard let totalAdditionalFee = invoice?.totalAdditionalFee
+        let invoice = dispenseBundle.invoice
+
+        guard let totalAdditionalFee = invoice?.totalAdditionalFee(from: fhirPackage)
         else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse invoice totalGross additionalFee.")
         }
@@ -317,11 +317,9 @@ extension ModelsR4.ChargeItem {
 }
 
 extension ModelsR4.Invoice {
-    var totalAdditionalFee: Decimal? {
+    func totalAdditionalFee(from fhirPackage: ABDAERezeptAbgabedaten) -> Decimal? {
         totalGross?.extension?.first { total in
-            Dispense.Key.totalAdditionalFee.contains { key in
-                key.value == total.url.value?.url.absoluteString
-            }
+            total.url.value?.url.absoluteString == fhirPackage.dAV_EX_ERP_Abrechnungszeilen.totalAdditionalFee
         }
         .flatMap {
             if let valueX = $0.value,
@@ -332,7 +330,8 @@ extension ModelsR4.Invoice {
         }
     }
 
-    func productionSteps(special _: Bool = false) throws -> [DavInvoice.Production.Ingredient] {
+    func productionSteps(from fhirPackage: ABDAERezeptAbgabedaten,
+                         special _: Bool = false) throws -> [DavInvoice.Production.Ingredient] {
         try lineItem?.map {
             let factor = $0.priceComponent?.first?.factor?.value?.decimal
 
@@ -353,7 +352,7 @@ extension ModelsR4.Invoice {
             }
 
             return DavInvoice.Production.Ingredient(
-                pzn: $0.pzn ?? $0.ta1 ?? "NA",
+                pzn: $0.pzn(from: fhirPackage) ?? $0.ta1(from: fhirPackage) ?? "NA",
                 factorMark: mark,
                 factor: factor.map { $0 / 1000 },
                 price: price
@@ -361,7 +360,8 @@ extension ModelsR4.Invoice {
         } ?? []
     }
 
-    func chargeableItems(separation: Bool = false) throws -> [DavInvoice.ChargeableItem] {
+    func chargeableItems(from fhirPackage: ABDAERezeptAbgabedaten,
+                         separation: Bool = false) throws -> [DavInvoice.ChargeableItem] {
         try lineItem?.map {
             guard let factor = $0.priceComponent?.first?.factor?.value?.decimal
             else {
@@ -380,9 +380,9 @@ extension ModelsR4.Invoice {
                     factor: factor / 1000,
                     price: nil,
                     description: $0.chargeItem.chargeItemCodeableConcept?.text?.value?.string,
-                    pzn: $0.pzn,
-                    ta1: $0.ta1,
-                    hmrn: $0.hmrn,
+                    pzn: $0.pzn(from: fhirPackage),
+                    ta1: $0.ta1(from: fhirPackage),
+                    hmrn: $0.hmnr(from: fhirPackage),
                     zusatzattribut: zusatzAttribute
                 )
             }
@@ -390,9 +390,9 @@ extension ModelsR4.Invoice {
                 factor: factor,
                 price: price,
                 description: $0.chargeItem.chargeItemCodeableConcept?.text?.value?.string,
-                pzn: $0.pzn,
-                ta1: $0.ta1,
-                hmrn: $0.hmrn,
+                pzn: $0.pzn(from: fhirPackage),
+                ta1: $0.ta1(from: fhirPackage),
+                hmrn: $0.hmnr(from: fhirPackage),
                 zusatzattribut: zusatzAttribute
             )
         } ?? []
@@ -454,24 +454,22 @@ extension ModelsR4.Invoice {
 }
 
 extension ModelsR4.InvoiceLineItem {
-    var pzn: String? {
-        coding(for: Dispense.Key.ChargeItem.pzn)?.code?.value?.string
+    func pzn(from fhirPackage: ABDAERezeptAbgabedaten) -> String? {
+        coding(for: fhirPackage.dAV_EX_ERP_Abrechnungszeilen.pzn)?.code?.value?.string
     }
 
-    var ta1: String? {
-        coding(for: Dispense.Key.ChargeItem.ta1)?.code?.value?.string
+    func ta1(from fhirPackage: ABDAERezeptAbgabedaten) -> String? {
+        coding(for: fhirPackage.dAV_EX_ERP_Abrechnungszeilen.ta1)?.code?.value?.string
     }
 
-    var hmrn: String? {
-        coding(for: Dispense.Key.ChargeItem.hmnr)?.code?.value?.string
+    func hmnr(from fhirPackage: ABDAERezeptAbgabedaten) -> String? {
+        coding(for: fhirPackage.dAV_EX_ERP_Abrechnungszeilen.hmnr)?.code?.value?.string
     }
 
-    func coding(for keys: [Dispense.Version: String]) -> ModelsR4.Coding? {
+    func coding(for key: String) -> ModelsR4.Coding? {
         if case let ChargeItemX.codeableConcept(item) = chargeItem {
             return item.coding?.first { coding in
-                keys.contains {
-                    $0.value == coding.system?.value?.url.absoluteString
-                }
+                coding.system?.value?.url.absoluteString == key
             }
         }
         return nil

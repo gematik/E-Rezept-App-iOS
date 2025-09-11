@@ -60,6 +60,26 @@
 			<string>Zkuste to prosím znovu za %u sekund.</string>
 		</dict>
 	</dict>
+	<key>dtl_txt_med_redeemed_on_direct_assignment</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>one</key>
+			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<key>other</key>
+			<string>Tento recept vám byl vydán dne % %@ jako součást léčby.</string>
+		</dict>
+	</dict>
 	<key>erx_txt_accepted_until</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

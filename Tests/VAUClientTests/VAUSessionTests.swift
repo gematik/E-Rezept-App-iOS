@@ -55,7 +55,7 @@ final class VAUSessionTests: XCTestCase {
             vauStorage: MemStorage(),
             trustStoreSession: trustStoreSession
         )
-        let interceptor = sut.provideInterceptor()
+        let interceptor = VAUInterceptor(vauSession: sut)
 
         // helping subscriber
         var currentVauEndpoints: [URL?] = []

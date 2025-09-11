@@ -27,177 +27,175 @@ import SwiftUI
 extension PrescriptionDetailView {
     // swiftlint:disable:next type_body_length
     struct HeaderView: View {
-        @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
+        @Bindable var store: StoreOf<PrescriptionDetailDomain>
         @FocusState var focus: PrescriptionDetailDomain.State.Field?
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack {
-                    if store.prescription.type == .scanned {
-                        HStack {
-                            TextField(
-                                store.prescription.title,
-                                text: $store.prescription.title.sending(\.setName)
-                            )
-                            .multilineTextAlignment(.center)
-                            .font(.title2.weight(.bold))
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitleInput)
-                            .fixedSize(horizontal: true, vertical: false)
-                            .focused($focus, equals: .medicationName)
-                            .bind(
-                                $store.focus.sending(\.setFocus),
-                                to: self.$focus
-                            )
-
-                            Button {
-                                store.send(.pencilButtonTapped)
-                            } label: {
-                                Image(systemName: SFSymbolName.pencil)
-                                    .font(.title3.weight(.bold))
-                                    .foregroundColor(Colors.primary700)
-                            }
-                            .buttonStyle(.borderless)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnEditTitle)
-                            .hidden(focus == .medicationName)
-                        }.padding()
-                    } else {
-                        Text(store.medicationName)
-                            .multilineTextAlignment(.center)
-                            .font(.title2.weight(.bold))
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitle)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-
-                    if store.prescription.erxTask.patient?.coverageType == .SEL {
-                        Button(
-                            action: { store.send(.setNavigation(tag: .selfPayerInfo)) },
-                            label: {
-                                Label(L10n.prscDtlBtnSelfPayer, systemImage: SFSymbolName.info)
-                                    .labelStyle(.blueFlag)
-                            }
+            VStack {
+                if store.prescription.type == .scanned {
+                    HStack {
+                        TextField(
+                            store.prescription.title,
+                            text: $store.prescription.title.sending(\.setName)
                         )
-                        .padding(8)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo)
-                    }
-
-                    // Flag/Hints for the prescription type
-                    switch store.type {
-                    case .directAssignment:
-                        Button(
-                            action: { store.send(.setNavigation(tag: .directAssignmentInfo)) },
-                            label: {
-                                Label(L10n.prscDtlBtnDirectAssignment, systemImage: SFSymbolName.info)
-                                    .labelStyle(.blueFlag)
-                            }
+                        .multilineTextAlignment(.center)
+                        .font(.title2.weight(.bold))
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitleInput)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .focused($focus, equals: .medicationName)
+                        .bind(
+                            $store.focus.sending(\.setFocus),
+                            to: self.$focus
                         )
-                        .padding(8)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnDirectAssignmentInfo)
-                    case .regular, .multiplePrescription:
-                        if store.prescription.viewStatus.isError {
-                            Button(
-                                action: { store.send(.setNavigation(tag: .errorInfo)) }, label: {
-                                    Label(L10n.prscDtlDrErrorInfoTitle, systemImage: SFSymbolName.exclamationMark)
-                                        .labelStyle(.redFlag)
-                                }
-                            )
-                            .padding(8)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnErrorInfo)
 
-                        } else if !store.isSubstitutionAllowed {
-                            Button(
-                                action: { store.send(.setNavigation(tag: .substitutionInfo)) }, label: {
-                                    Label(L10n.prscDtlTxtNoSubstitution, systemImage: SFSymbolName.info)
-                                        .labelStyle(.blueFlag)
-                                }
-                            )
-                            .padding(8)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnHeadlineSubstitutionInfo)
+                        Button {
+                            store.send(.pencilButtonTapped)
+                        } label: {
+                            Image(systemName: SFSymbolName.pencil)
+                                .font(.title3.weight(.bold))
+                                .foregroundColor(Colors.primary700)
                         }
-                    case .scanned:
-                        Button(
-                            action: { store.send(.setNavigation(tag: .scannedPrescriptionInfo)) }, label: {
-                                Label(L10n.prscDtlDrScannedPrescriptionInfoTitle, systemImage: SFSymbolName.info)
-                                    .labelStyle(.blueFlag)
-                            }
-                        )
-                        .padding(8)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnScannedPrescriptionInfo)
-                    }
-
-                    // Status message about validity and prescription status
-                    let message = store.statusMessage
-                    if !message.isEmpty {
-                        Button(
-                            action: { store.send(.setNavigation(tag: .prescriptionValidityInfo)) },
-                            label: {
-                                HStack {
-                                    Text(message)
-                                        .padding(.vertical, 8)
-                                        .multilineTextAlignment(.center)
-                                        .font(Font.subheadline)
-                                        .foregroundColor(Colors.systemLabelSecondary)
-
-                                    if store.showStatusMessageAsButton {
-                                        Image(systemName: SFSymbolName.info)
-                                            .foregroundColor(Colors.primary700)
-                                            .font(.subheadline.weight(.semibold))
-                                    }
-                                }
-                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtPrescriptionValidity)
-                            }
-                        )
-                        .disabled(!store.showStatusMessageAsButton)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPrescriptionValidityInfo)
-                    }
-
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .smallSheet($store.scope(
-                            state: \.destination?.prescriptionValidityInfo,
-                            action: \.destination.prescriptionValidityInfo
-                        )) { store in
-                            PrescriptionValidityView(store: store)
-                        }
-                        .accessibility(hidden: true)
-
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .smallSheet($store
-                            .scope(state: \.destination?.substitutionInfo,
-                                   action: \.destination.substitutionInfo)) { store in
-                                PrescriptionDetailView.HeaderView.SubstitutionAllowedDrawerView(store: store)
-                        }
-                        .accessibility(hidden: true)
-
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .smallSheet($store
-                            .scope(state: \.destination?.errorInfo, action: \.destination.errorInfo)) { _ in
-                                ErrorInfoDrawerView()
-                        }
-                        .accessibility(hidden: true)
-
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .smallSheet($store
-                            .scope(state: \.destination?.scannedPrescriptionInfo,
-                                   action: \.destination.scannedPrescriptionInfo)) { _ in
-                                ScannedPrescriptionInfoDrawerView()
-                        }
-                        .accessibility(hidden: true)
-
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .smallSheet($store
-                            .scope(state: \.destination?.directAssignmentInfo,
-                                   action: \.destination.directAssignmentInfo)) { _ in
-                                DirectAssignmentDrawerView()
-                        }
-                        .accessibility(hidden: true)
+                        .buttonStyle(.borderless)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnEditTitle)
+                        .hidden(focus == .medicationName)
+                    }.padding()
+                } else {
+                    Text(store.medicationName)
+                        .multilineTextAlignment(.center)
+                        .font(.title2.weight(.bold))
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitle)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                .padding(.horizontal)
-                .padding(.top)
+
+                if store.prescription.erxTask.patient?.coverageType == .SEL {
+                    Button(
+                        action: { store.send(.setNavigation(tag: .selfPayerInfo)) },
+                        label: {
+                            Label(L10n.prscDtlBtnSelfPayer, systemImage: SFSymbolName.info)
+                                .labelStyle(.blueFlag)
+                        }
+                    )
+                    .padding(8)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnSelfPayerInfo)
+                }
+
+                // Flag/Hints for the prescription type
+                switch store.type {
+                case .directAssignment:
+                    Button(
+                        action: { store.send(.setNavigation(tag: .directAssignmentInfo)) },
+                        label: {
+                            Label(L10n.prscDtlBtnDirectAssignment, systemImage: SFSymbolName.info)
+                                .labelStyle(.blueFlag)
+                        }
+                    )
+                    .padding(8)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnDirectAssignmentInfo)
+                case .regular, .multiplePrescription:
+                    if store.prescription.viewStatus.isError {
+                        Button(
+                            action: { store.send(.setNavigation(tag: .errorInfo)) }, label: {
+                                Label(L10n.prscDtlDrErrorInfoTitle, systemImage: SFSymbolName.exclamationMark)
+                                    .labelStyle(.redFlag)
+                            }
+                        )
+                        .padding(8)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnErrorInfo)
+
+                    } else if !store.isSubstitutionAllowed {
+                        Button(
+                            action: { store.send(.setNavigation(tag: .substitutionInfo)) }, label: {
+                                Label(L10n.prscDtlTxtNoSubstitution, systemImage: SFSymbolName.info)
+                                    .labelStyle(.blueFlag)
+                            }
+                        )
+                        .padding(8)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnHeadlineSubstitutionInfo)
+                    }
+                case .scanned:
+                    Button(
+                        action: { store.send(.setNavigation(tag: .scannedPrescriptionInfo)) }, label: {
+                            Label(L10n.prscDtlDrScannedPrescriptionInfoTitle, systemImage: SFSymbolName.info)
+                                .labelStyle(.blueFlag)
+                        }
+                    )
+                    .padding(8)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnScannedPrescriptionInfo)
+                }
+
+                // Status message about validity and prescription status
+                let message = store.statusMessage
+                if !message.isEmpty {
+                    Button(
+                        action: { store.send(.setNavigation(tag: .prescriptionValidityInfo)) },
+                        label: {
+                            HStack {
+                                Text(message)
+                                    .padding(.vertical, 8)
+                                    .multilineTextAlignment(.center)
+                                    .font(Font.subheadline)
+                                    .foregroundColor(Colors.systemLabelSecondary)
+
+                                if store.showStatusMessageAsButton {
+                                    Image(systemName: SFSymbolName.info)
+                                        .foregroundColor(Colors.primary700)
+                                        .font(.subheadline.weight(.semibold))
+                                }
+                            }
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtPrescriptionValidity)
+                        }
+                    )
+                    .disabled(!store.showStatusMessageAsButton)
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPrescriptionValidityInfo)
+                }
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet($store.scope(
+                        state: \.destination?.prescriptionValidityInfo,
+                        action: \.destination.prescriptionValidityInfo
+                    )) { store in
+                        PrescriptionValidityView(store: store)
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet($store
+                        .scope(state: \.destination?.substitutionInfo,
+                               action: \.destination.substitutionInfo)) { store in
+                            PrescriptionDetailView.HeaderView.SubstitutionAllowedDrawerView(store: store)
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet($store
+                        .scope(state: \.destination?.errorInfo, action: \.destination.errorInfo)) { _ in
+                            ErrorInfoDrawerView()
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet($store
+                        .scope(state: \.destination?.scannedPrescriptionInfo,
+                               action: \.destination.scannedPrescriptionInfo)) { _ in
+                            ScannedPrescriptionInfoDrawerView()
+                    }
+                    .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet($store
+                        .scope(state: \.destination?.directAssignmentInfo,
+                               action: \.destination.directAssignmentInfo)) { _ in
+                            DirectAssignmentDrawerView()
+                    }
+                    .accessibility(hidden: true)
             }
+            .padding(.horizontal)
+            .padding(.top)
         }
 
         struct DirectAssignmentDrawerView: View {
@@ -219,26 +217,24 @@ extension PrescriptionDetailView {
         }
 
         struct SubstitutionAllowedDrawerView: View {
-            @Perception.Bindable var store: StoreOf<SubstitutionInfoDomain>
+            @Bindable var store: StoreOf<SubstitutionInfoDomain>
 
             var body: some View {
-                WithPerceptionTracking {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(store.title)
-                            .font(.headline)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerTitle)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(store.title)
+                        .font(.headline)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerTitle)
 
-                        Text(store.description)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDescription)
-                        Spacer()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Colors.systemBackground.ignoresSafeArea())
-                    .accessibilityElement(children: .contain)
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo)
+                    Text(store.description)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerDescription)
+                    Spacer()
                 }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Colors.systemBackground.ignoresSafeArea())
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlDrawerSubstitutionInfo)
             }
         }
 
@@ -277,7 +273,7 @@ extension PrescriptionDetailView {
         }
 
         struct PrescriptionValidityView: View {
-            @Perception.Bindable var store: StoreOf<PrescriptionValidityDomain>
+            @Bindable var store: StoreOf<PrescriptionValidityDomain>
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 8) {

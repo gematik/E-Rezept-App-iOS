@@ -290,68 +290,81 @@ final class PrescriptionListDomainTests: XCTestCase {
     }
 
     func testRefreshShouldShowCardWallWhenNotAuthenticated() async {
-        userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
-        mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Just(.notAuthenticated)
-            .setFailureType(to: PrescriptionRepositoryError.self)
-            .eraseToAnyPublisher()
-        let store = testStore(for: mockPrescriptionRepository)
+        await withDependencies {
+            $0.drawerEvaluation.showDrawerEvaluationOnRefresh = { .none }
+        } operation: {
+            userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
+            mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Just(.notAuthenticated)
+                .setFailureType(to: PrescriptionRepositoryError.self)
+                .eraseToAnyPublisher()
+            let store = testStore(for: mockPrescriptionRepository)
 
-        let expected = CardWallIntroductionDomain.State(
-            isNFCReady: true,
-            profileId: userSession.profileId
-        )
-        await store.send(.refresh) {
-            $0.loadingState = .loading(nil)
+            let expected = CardWallIntroductionDomain.State(
+                isNFCReady: true,
+                profileId: userSession.profileId
+            )
+            await store.send(.refresh) {
+                $0.loadingState = .loading(nil)
+            }
+            await testScheduler.advance()
+            await store.receive(.response(.showCardWallReceived(expected)))
         }
-        await testScheduler.advance()
-        await store.receive(.response(.showCardWallReceived(expected)))
     }
 
     func testRefreshShouldShowCardWallServerResponseIs403Forbidden() async {
-        userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
-        mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Fail(
-            outputType: PrescriptionRepositoryLoadRemoteResult.self,
-            failure: PrescriptionRepositoryError.erxRepository(.remote(
-                .fhirClient(FHIRClient.Error
-                    .http(.init(httpClientError: .httpError(.init(URLError.Code(rawValue: 403))),
-                                operationOutcome: nil)))
-            ))
-        ).eraseToAnyPublisher()
-        let store = testStore(for: mockPrescriptionRepository)
+        await withDependencies {
+            $0.drawerEvaluation.showDrawerEvaluationOnRefresh = { .none }
+        } operation: {
+            userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
+            mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Fail(
+                outputType: PrescriptionRepositoryLoadRemoteResult.self,
+                failure: PrescriptionRepositoryError.erxRepository(.remote(
+                    .fhirClient(FHIRClient.Error
+                        .http(.init(httpClientError: .httpError(.init(URLError.Code(rawValue: 403))),
+                                    operationOutcome: nil)))
+                ))
+            ).eraseToAnyPublisher()
+            let store = testStore(for: mockPrescriptionRepository)
 
-        let expected = CardWallIntroductionDomain.State(
-            isNFCReady: true,
-            profileId: userSession.profileId
-        )
-        await store.send(.refresh) {
-            $0.loadingState = .loading(nil)
+            let expected = CardWallIntroductionDomain.State(
+                isNFCReady: true,
+                profileId: userSession.profileId
+            )
+            await store.send(.refresh) {
+                $0.loadingState = .loading(nil)
+            }
+            await testScheduler.advance()
+            await store.receive(.response(.showCardWallReceived(expected)))
         }
-        await testScheduler.advance()
-        await store.receive(.response(.showCardWallReceived(expected)))
     }
 
     func testRefreshShouldShowCardWallServerResponseIs401Unauthorized() async {
-        userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
+        await withDependencies {
+            $0.drawerEvaluation.showDrawerEvaluationOnRefresh = { .none }
+        } operation: {
+            userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
 
-        mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Fail(
-            outputType: PrescriptionRepositoryLoadRemoteResult.self,
-            failure: PrescriptionRepositoryError.erxRepository(.remote(
-                .fhirClient(FHIRClient.Error
-                    .http(.init(httpClientError: .httpError(.init(URLError.Code(rawValue: 401))),
-                                operationOutcome: nil)))
-            ))
-        ).eraseToAnyPublisher()
-        let store = testStore(for: mockPrescriptionRepository)
+            mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Fail(
+                outputType: PrescriptionRepositoryLoadRemoteResult.self,
+                failure: PrescriptionRepositoryError.erxRepository(.remote(
+                    .fhirClient(FHIRClient.Error
+                        .http(.init(httpClientError: .httpError(.init(URLError.Code(rawValue: 401))),
+                                    operationOutcome: nil)))
+                ))
+            ).eraseToAnyPublisher()
+            let store = testStore(for: mockPrescriptionRepository)
 
-        let expected = CardWallIntroductionDomain.State(
-            isNFCReady: true,
-            profileId: userSession.profileId
-        )
-        await store.send(.refresh) {
-            $0.loadingState = .loading(nil)
+            let expected = CardWallIntroductionDomain.State(
+                isNFCReady: true,
+                profileId: userSession.profileId
+            )
+
+            await store.send(.refresh) {
+                $0.loadingState = .loading(nil)
+            }
+            await testScheduler.advance()
+            await store.receive(.response(.showCardWallReceived(expected)))
         }
-        await testScheduler.advance()
-        await store.receive(.response(.showCardWallReceived(expected)))
     }
 
     func testRefreshShouldLoadFromCloudWhenAuthenticated() async {

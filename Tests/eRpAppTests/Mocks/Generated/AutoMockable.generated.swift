@@ -51,40 +51,6 @@ import ZXingCpp
 
 
 
-public class BfArMServiceMock: BfArMService {
-
-    public init() {}
-
-
-
-    //MARK: - fetchBfArMInfo
-
-    public var fetchBfArMInfoPznStringBfArMDiGaDetailsThrowableError: (any Error)?
-    public var fetchBfArMInfoPznStringBfArMDiGaDetailsCallsCount = 0
-    public var fetchBfArMInfoPznStringBfArMDiGaDetailsCalled: Bool {
-        return fetchBfArMInfoPznStringBfArMDiGaDetailsCallsCount > 0
-    }
-    public var fetchBfArMInfoPznStringBfArMDiGaDetailsReceivedPzn: (String)?
-    public var fetchBfArMInfoPznStringBfArMDiGaDetailsReceivedInvocations: [(String)] = []
-    public var fetchBfArMInfoPznStringBfArMDiGaDetailsReturnValue: BfArMDiGaDetails?
-    public var fetchBfArMInfoPznStringBfArMDiGaDetailsClosure: ((String) async throws -> BfArMDiGaDetails?)?
-
-    public func fetchBfArMInfo(pzn: String) async throws -> BfArMDiGaDetails? {
-        fetchBfArMInfoPznStringBfArMDiGaDetailsCallsCount += 1
-        fetchBfArMInfoPznStringBfArMDiGaDetailsReceivedPzn = pzn
-        fetchBfArMInfoPznStringBfArMDiGaDetailsReceivedInvocations.append(pzn)
-        if let error = fetchBfArMInfoPznStringBfArMDiGaDetailsThrowableError {
-            throw error
-        }
-        if let fetchBfArMInfoPznStringBfArMDiGaDetailsClosure = fetchBfArMInfoPznStringBfArMDiGaDetailsClosure {
-            return try await fetchBfArMInfoPznStringBfArMDiGaDetailsClosure(pzn)
-        } else {
-            return fetchBfArMInfoPznStringBfArMDiGaDetailsReturnValue
-        }
-    }
-
-
-}
 public class JWTSignerMock: JWTSigner {
 
     public init() {}

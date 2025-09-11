@@ -27,90 +27,86 @@ import eRpStyleKit
 import SwiftUI
 
 struct HealthCardPasswordOldPinView: View {
-    @Perception.Bindable var store: StoreOf<HealthCardPasswordOldPinDomain>
+    @Bindable var store: StoreOf<HealthCardPasswordOldPinDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .leading, spacing: 0) {
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L10n.stgTxtCardResetOldpinHeadline)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.headline.bold())
-                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetOldpinHeadline)
-                            .padding(.bottom)
+        VStack(alignment: .leading, spacing: 0) {
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.stgTxtCardResetOldpinHeadline)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.headline.bold())
+                        .accessibility(identifier: A11y.settings.card.stgTxtCardResetOldpinHeadline)
+                        .padding(.bottom)
 
-                        OldPinFieldView(store: store)
+                    OldPinFieldView(store: store)
 
-                        Text(L10n.stgTxtCardResetOldpinHint)
-                            .font(.footnote)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetOldpinHint)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
+                    Text(L10n.stgTxtCardResetOldpinHint)
+                        .font(.footnote)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibility(identifier: A11y.settings.card.stgTxtCardResetOldpinHint)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding()
-
-                Spacer(minLength: 0)
-
-                GreyDivider()
-
-                Button(
-                    action: {
-                        // workaround: dismiss keyboard to fix safearea bug for iOS 16
-                        if #available(iOS 16, *) {
-                            UIApplication.shared.dismissKeyboard()
-                        }
-                        store.send(.advance)
-                    },
-                    label: { Text(L10n.stgBtnCardResetAdvance) }
-                )
-                .disabled(!store.oldPinMayAdvance)
-                .buttonStyle(.primary(isEnabled: store.oldPinMayAdvance, width: .wideHugging))
-                .frame(maxWidth: .infinity, alignment: .center)
-                .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
-                .padding(.horizontal)
-                .padding(.vertical, 8)
             }
-            .navigationDestination(
-                item: $store.scope(
-                    state: \.destination?.pin,
-                    action: \.destination.pin
-                )
-            ) { store in
-                HealthCardPasswordPinView(store: store)
-            }
+            .padding()
+
+            Spacer(minLength: 0)
+
+            GreyDivider()
+
+            Button(
+                action: {
+                    // workaround: dismiss keyboard to fix safearea bug for iOS 16
+                    if #available(iOS 16, *) {
+                        UIApplication.shared.dismissKeyboard()
+                    }
+                    store.send(.advance)
+                },
+                label: { Text(L10n.stgBtnCardResetAdvance) }
+            )
+            .disabled(!store.oldPinMayAdvance)
+            .buttonStyle(.primary(isEnabled: store.oldPinMayAdvance, width: .wideHugging))
+            .frame(maxWidth: .infinity, alignment: .center)
+            .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+        .navigationDestination(
+            item: $store.scope(
+                state: \.destination?.pin,
+                action: \.destination.pin
+            )
+        ) { store in
+            HealthCardPasswordPinView(store: store)
         }
         .navigationBarTitleDisplayMode(.inline)
     }
 
     private struct OldPinFieldView: View {
-        @Perception.Bindable var store: StoreOf<HealthCardPasswordOldPinDomain>
+        @Bindable var store: StoreOf<HealthCardPasswordOldPinDomain>
         @FocusState private var focused: Bool
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(alignment: .leading) {
-                    SecureFieldWithReveal(
-                        titleKey: L10n.stgEdtCardResetOldpinInput,
-                        text: $store.oldPin.sending(\.updateOldPin),
-                        //                    text: binding.animation(),
-                        textContentType: .password,
-                        backgroundColor: Colors.systemGray5
-                    ) {}
-                        .textContentType(.oneTimeCode)
-                        .multilineTextAlignment(.leading)
-                        .keyboardType(.numberPad)
-                        .padding()
-                        .font(Font.title3)
-                        .background(Colors.systemGray5)
-                        .cornerRadius(8)
-                        .focused($focused)
-                        .accessibility(identifier: A11y.settings.card.stgEdtCardResetOldpinInput)
-                }
-                .onAppear {
-                    focused = true
-                }
+            VStack(alignment: .leading) {
+                SecureFieldWithReveal(
+                    titleKey: L10n.stgEdtCardResetOldpinInput,
+                    text: $store.oldPin.sending(\.updateOldPin),
+                    //                    text: binding.animation(),
+                    textContentType: .password,
+                    backgroundColor: Colors.systemGray5
+                ) {}
+                    .textContentType(.oneTimeCode)
+                    .multilineTextAlignment(.leading)
+                    .keyboardType(.numberPad)
+                    .padding()
+                    .font(Font.title3)
+                    .background(Colors.systemGray5)
+                    .cornerRadius(8)
+                    .focused($focused)
+                    .accessibility(identifier: A11y.settings.card.stgEdtCardResetOldpinInput)
+            }
+            .onAppear {
+                focused = true
             }
         }
     }

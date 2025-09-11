@@ -26,40 +26,38 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct ChargeItemHintView: View {
-        @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
+        @Bindable var store: StoreOf<PrescriptionDetailDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack {
-                    if store.chargeItem != nil {
-                        Button(action: {
-                            store.send(.setNavigation(tag: .chargeItem))
-                        }, label: {
-                            Text(L10n.prscDtlBtnPkvInvoice)
-                        })
-                            .buttonStyle(.primaryHuggingNarrowly)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPkvInvoice)
-                    } else {
-                        switch store.chargeItemConsentState {
-                        case .granted:
-                            HintView<PrescriptionDetailDomain.Action>(
-                                hint: Hints.noInvoiceForTask
-                            )
-                            .border(Colors.primary300, width: 0.5, cornerRadius: 16)
-                        case .notGranted:
-                            HintView<PrescriptionDetailDomain.Action>(
-                                hint: Hints.activateInvoice,
-                                textAction: { store.send(.showGrantConsentAlert) }
-                            )
-                            .border(Colors.primary300, width: 0.5, cornerRadius: 16)
-                        case .notAuthenticated:
-                            EmptyView()
-                        }
+            VStack {
+                if store.chargeItem != nil {
+                    Button(action: {
+                        store.send(.setNavigation(tag: .chargeItem))
+                    }, label: {
+                        Text(L10n.prscDtlBtnPkvInvoice)
+                    })
+                        .buttonStyle(.primaryHuggingNarrowly)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPkvInvoice)
+                } else {
+                    switch store.chargeItemConsentState {
+                    case .granted:
+                        HintView<PrescriptionDetailDomain.Action>(
+                            hint: Hints.noInvoiceForTask
+                        )
+                        .border(Colors.primary300, width: 0.5, cornerRadius: 16)
+                    case .notGranted:
+                        HintView<PrescriptionDetailDomain.Action>(
+                            hint: Hints.activateInvoice,
+                            textAction: { store.send(.showGrantConsentAlert) }
+                        )
+                        .border(Colors.primary300, width: 0.5, cornerRadius: 16)
+                    case .notAuthenticated:
+                        EmptyView()
                     }
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 40)
             }
+            .padding(.horizontal)
+            .padding(.bottom, 40)
         }
     }
 
@@ -71,7 +69,7 @@ extension PrescriptionDetailView {
             actionText: L10n.prscDtlBtnPkvHintActivate,
             actionImageName: SFSymbolName.arrowRight,
             image: AccessibilityImage(
-                name: Asset.Prescriptions.Details.refreshLamp.name,
+                asset: Asset.Prescriptions.Details.refreshLamp,
                 accessibilityName: A11y.prescriptionDetails.prscDtlImgHintPkvActivate
             ),
             buttonStyle: .tertiary
@@ -82,7 +80,7 @@ extension PrescriptionDetailView {
             title: L10n.prscDtlTxtPkvHintNoInvoiceTitle.text,
             message: L10n.prscDtlTxtPkvHintNoInvoiceMsg.text,
             image: AccessibilityImage(
-                name: Asset.Prescriptions.Details.lampIcon.name,
+                asset: Asset.Prescriptions.Details.lampIcon,
                 accessibilityName: A11y.prescriptionDetails.prscDtlImgHintPkvNoInvoice
             ),
             buttonStyle: .tertiary

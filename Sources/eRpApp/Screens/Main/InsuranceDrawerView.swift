@@ -39,7 +39,7 @@ struct InsuranceDrawerView: View {
     let pkvInsuredAction: () -> Void
 
     var body: some View {
-        VStack(alignment: .center, spacing: 24) {
+        VStack(alignment: .center) {
             HStack {
                 Spacer()
                 CloseButton {
@@ -48,6 +48,7 @@ struct InsuranceDrawerView: View {
             }
 
             Image(decorative: Asset.Illustrations.mannkarteCircleBlue)
+                .padding(.top, 24)
 
             VStack(alignment: .center, spacing: 8) {
                 Text(root == .main ? L10n.mainInsuranceDrawerTxtHeader : L10n.stgInsuranceDrawerTxtHeader)
@@ -57,9 +58,9 @@ struct InsuranceDrawerView: View {
                     .foregroundColor(Colors.textSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-            }
+            }.padding(.bottom, 24)
 
-            VStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .center, spacing: 8) {
                 Button {
                     gkvInsuredAction()
                 } label: {

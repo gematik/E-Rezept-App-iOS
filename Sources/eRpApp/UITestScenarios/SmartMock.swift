@@ -25,7 +25,7 @@
 import Dependencies
 import Foundation
 
-protocol SmartMock: AnyObject {
+protocol SmartMock {
     func recordedData() throws -> CodableMock
 }
 

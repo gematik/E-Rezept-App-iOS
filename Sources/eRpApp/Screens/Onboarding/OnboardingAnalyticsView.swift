@@ -25,93 +25,91 @@ import eRpStyleKit
 import SwiftUI
 
 struct OnboardingAnalyticsView: View {
-    @Perception.Bindable var store: StoreOf<OnboardingDomain>
+    @Bindable var store: StoreOf<OnboardingDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                ScrollView {
-                    VStack {
-                        OnboardingProgressView(currentPage: .third)
+        VStack {
+            ScrollView {
+                VStack {
+                    OnboardingProgressView(currentPage: .third)
 
-                        TitleView {
-                            store.send(.showAnalyticsDetail)
-                        }
-                        .padding(.bottom)
-
-                        // [REQ:gemSpec_eRp_FdV:A_19184] Information for the user what is collected
-                        VStack(alignment: .leading, spacing: 16) {
-                            Group {
-                                Label(title: {
-                                    Text(L10n.onbAnaTxtUsability)
-                                }, icon: {
-                                    Image(systemName: SFSymbolName.wandAndRays)
-                                        .foregroundColor(Colors.primary700)
-                                        .font(.title3.weight(.bold))
-                                })
-
-                                Label(title: {
-                                    Text(L10n.onbAnaTxtAccessibility)
-                                }, icon: {
-                                    Image(systemName: SFSymbolName.accessibility)
-                                        .foregroundColor(Colors.primary700)
-                                        .font(.title3.weight(.bold))
-                                })
-
-                                Label(title: {
-                                    Text(L10n.onbAnaTxtCrash)
-                                }, icon: {
-                                    Image(systemName: SFSymbolName.ant)
-                                        .foregroundColor(Colors.primary700)
-                                        .font(.title3.weight(.bold))
-                                })
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .multilineTextAlignment(.leading)
-                        }
-                        .padding(.vertical)
+                    TitleView {
+                        store.send(.showAnalyticsDetail)
                     }
+                    .padding(.bottom)
+
+                    // [REQ:gemSpec_eRp_FdV:A_19184] Information for the user what is collected
+                    VStack(alignment: .leading, spacing: 16) {
+                        Group {
+                            Label(title: {
+                                Text(L10n.onbAnaTxtUsability)
+                            }, icon: {
+                                Image(systemName: SFSymbolName.wandAndRays)
+                                    .foregroundColor(Colors.primary700)
+                                    .font(.title3.weight(.bold))
+                            })
+
+                            Label(title: {
+                                Text(L10n.onbAnaTxtAccessibility)
+                            }, icon: {
+                                Image(systemName: SFSymbolName.accessibility)
+                                    .foregroundColor(Colors.primary700)
+                                    .font(.title3.weight(.bold))
+                            })
+
+                            Label(title: {
+                                Text(L10n.onbAnaTxtCrash)
+                            }, icon: {
+                                Image(systemName: SFSymbolName.ant)
+                                    .foregroundColor(Colors.primary700)
+                                    .font(.title3.weight(.bold))
+                            })
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.leading)
+                    }
+                    .padding(.vertical)
                 }
-                Spacer()
-
-                Text(L10n.onbAnaTxtChangeable)
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(Colors.systemLabelSecondary)
-                    .padding(.horizontal)
-                    .padding(.bottom, 8)
-
-                // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button allows tracking
-                Button(action: {
-                    store.send(.allowTracking)
-                }, label: {
-                    Text(L10n.onbAnaBtnAllow)
-                        .padding(.horizontal, 64)
-                        .padding(.vertical)
-                })
-                    .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnAllow)
-                    .font(Font.body.weight(.semibold))
-                    .foregroundColor(Colors.systemColorWhite)
-                    .background(Colors.primary700)
-                    .cornerRadius(16)
-
-                // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button denies tracking
-                Button(action: {
-                    store.send(.denyTracking)
-                }, label: {
-                    Text(L10n.onbAnaBtnDeny)
-                        .padding(.horizontal, 71)
-                        .padding(.vertical)
-                })
-                    .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnDeny)
-                    .font(Font.body.weight(.semibold))
-                    .foregroundColor(Colors.systemColorWhite)
-                    .background(Colors.primary700)
-                    .cornerRadius(16)
             }
-            .padding()
+            Spacer()
+
+            Text(L10n.onbAnaTxtChangeable)
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundColor(Colors.systemLabelSecondary)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+
+            // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button allows tracking
+            Button(action: {
+                store.send(.allowTracking)
+            }, label: {
+                Text(L10n.onbAnaBtnAllow)
+                    .padding(.horizontal, 64)
+                    .padding(.vertical)
+            })
+                .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnAllow)
+                .font(Font.body.weight(.semibold))
+                .foregroundColor(Colors.systemColorWhite)
+                .background(Colors.primary700)
+                .cornerRadius(16)
+
+            // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button denies tracking
+            Button(action: {
+                store.send(.denyTracking)
+            }, label: {
+                Text(L10n.onbAnaBtnDeny)
+                    .padding(.horizontal, 71)
+                    .padding(.vertical)
+            })
+                .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnDeny)
+                .font(Font.body.weight(.semibold))
+                .foregroundColor(Colors.systemColorWhite)
+                .background(Colors.primary700)
+                .cornerRadius(16)
         }
+        .padding()
     }
 }
 

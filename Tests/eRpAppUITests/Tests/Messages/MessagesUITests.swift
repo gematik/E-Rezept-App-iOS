@@ -243,4 +243,14 @@ class MessagesUITests: XCTestCase, Sendable {
 
         expect(messagesScreen.navigationTitle()).to(exist("Navigation Title"))
     }
+
+    @MainActor
+    func testWelcomeMessage() {
+        let tabBar = TabBarScreen(app: app)
+
+        let messages = tabBar.tapOrderTab().tapOrderDetailsForPharmacyNamed("E-Rezept App Team")
+        expect(messages.app.textViews
+            .containing(NSPredicate(format: "label BEGINSWITH %@", "Herzlich Willkommen in der E-Rezept App!")).element
+            .exists).to(beTrue())
+    }
 }

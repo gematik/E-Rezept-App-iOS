@@ -1,0 +1,1266 @@
+{
+    "resourceType": "Bundle",
+    "id": "11989888-5a17-42e7-b4e1-da4692502f4f",
+    "type": "collection",
+    "timestamp": "2023-02-23T15:08:32.870+00:00",
+    "entry":
+    [
+        {
+            "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/ChargeItem/200.000.001.206.112.29",
+            "resource":
+            {
+                "resourceType": "ChargeItem",
+                "id": "200.000.001.206.112.29",
+                "meta":
+                {
+                    "profile":
+                    [
+                        "https://gematik.de/fhir/erpchrg/StructureDefinition/GEM_ERPCHRG_PR_ChargeItem|1.1"
+                    ]
+                },
+                "extension":
+                [
+                    {
+                        "extension":
+                        [
+                            {
+                                "url": "insuranceProvider",
+                                "valueBoolean": false
+                            },
+                            {
+                                "url": "subsidy",
+                                "valueBoolean": false
+                            },
+                            {
+                                "url": "taxOffice",
+                                "valueBoolean": false
+                            }
+                        ],
+                        "url": "https://gematik.de/fhir/erpchrg/StructureDefinition/GEM_ERPCHRG_EX_MarkingFlag"
+                    }
+                ],
+                "identifier":
+                [
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                        "value": "200.000.001.206.112.29"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
+                        "value": "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
+                    }
+                ],
+                "status": "billable",
+                "code":
+                {
+                    "coding":
+                    [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                            "code": "not-applicable"
+                        }
+                    ]
+                },
+                "subject":
+                {
+                    "identifier":
+                    {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "P987654321"
+                    }
+                },
+                "enterer":
+                {
+                    "identifier":
+                    {
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-2-APO-XanthippeVeilchenblau01"
+                    }
+                },
+                "enteredDate": "2025-10-01T15:29:00.434+00:00",
+                "supportingInformation":
+                [
+                    {
+                        "reference": "urn:uuid:c8606712-0000-0000-0001-000000000000",
+                        "display": "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle"
+                    },
+                    {
+                        "reference": "urn:uuid:c8606712-0000-0000-0004-000000000000",
+                        "display": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle"
+                    },
+                    {
+                        "reference": "urn:uuid:c8606712-0000-0000-0003-000000000000",
+                        "display": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle"
+                    }
+                ]
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:c8606712-0000-0000-0004-000000000000",
+            "resource":
+            {
+                "resourceType": "Bundle",
+                "id": "ad80703d-8c62-44a3-b12b-2ea66eda0aa2",
+                "meta":
+                {
+                    "profile":
+                    [
+                        "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle|1.4"
+                    ],
+                    "tag":
+                    [
+                        {
+                            "display": "Beispiel RezeptAbgabedatenPKV Bundle (FAM)"
+                        },
+                        {
+                            "display": "ACHTUNG! Der fachlich korrekte Inhalt der Beispielinstanz kann nicht gewährleistet werden. Wir sind jederzeit dankbar für Hinweise auf Fehler oder für Verbesserungsvorschläge."
+                        }
+                    ]
+                },
+                "identifier":
+                {
+                    "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                    "value": "200.000.001.206.112.29"
+                },
+                "type": "document",
+                "timestamp": "2023-07-24T11:30:00+00:00",
+                "entry":
+                [
+                    {
+                        "fullUrl": "urn:uuid:72183b44-61cf-4fe7-8f74-1e37d58fcea8",
+                        "resource":
+                        {
+                            "resourceType": "Composition",
+                            "id": "72183b44-61cf-4fe7-8f74-1e37d58fcea8",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenComposition|1.4"
+                                ]
+                            },
+                            "status": "final",
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-CompositionTypes",
+                                        "code": "ERezeptAbgabedaten"
+                                    }
+                                ]
+                            },
+                            "date": "2023-07-24T11:30:00Z",
+                            "author":
+                            [
+                                {
+                                    "reference": "urn:uuid:5dc67a4f-c936-4c26-a7c0-967673a70740"
+                                }
+                            ],
+                            "title": "ERezeptAbgabedaten",
+                            "section":
+                            [
+                                {
+                                    "title": "Abgabeinformationen",
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "urn:uuid:335784b4-3f89-47cc-b32f-bc386a212e11"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "title": "Apotheke",
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "urn:uuid:5dc67a4f-c936-4c26-a7c0-967673a70740"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "urn:uuid:5dc67a4f-c936-4c26-a7c0-967673a70740",
+                        "resource":
+                        {
+                            "resourceType": "Organization",
+                            "id": "5dc67a4f-c936-4c26-a7c0-967673a70740",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Apotheke|1.4"
+                                ]
+                            },
+                            "identifier":
+                            [
+                                {
+                                    "system": "http://fhir.de/sid/arge-ik/iknr",
+                                    "value": "308412345"
+                                }
+                            ],
+                            "name": "Adler-Apotheke",
+                            "address":
+                            [
+                                {
+                                    "type": "physical",
+                                    "line":
+                                    [
+                                        "Taunusstraße 89"
+                                    ],
+                                    "_line":
+                                    [
+                                        {
+                                            "extension":
+                                            [
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                                                    "valueString": "Taunusstraße"
+                                                },
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                                                    "valueString": "89"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "city": "Langen",
+                                    "postalCode": "63225",
+                                    "country": "D"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "urn:uuid:335784b4-3f89-47cc-b32f-bc386a212e11",
+                        "resource":
+                        {
+                            "resourceType": "MedicationDispense",
+                            "id": "335784b4-3f89-47cc-b32f-bc386a212e11",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Abgabeinformationen|1.4"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Abrechnungszeilen",
+                                    "valueReference":
+                                    {
+                                        "reference": "urn:uuid:cfd49ec7-fd9c-4ab3-865f-f0aaf010ca19"
+                                    }
+                                },
+                                {
+                                    "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-EX-ERP-AbrechnungsTyp",
+                                    "valueCodeableConcept":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-PKV-CS-ERP-AbrechnungsTyp",
+                                                "code": "1"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "status": "completed",
+                            "medicationCodeableConcept":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                                        "code": "not-applicable"
+                                    }
+                                ]
+                            },
+                            "performer":
+                            [
+                                {
+                                    "actor":
+                                    {
+                                        "reference": "urn:uuid:5dc67a4f-c936-4c26-a7c0-967673a70740"
+                                    }
+                                }
+                            ],
+                            "authorizingPrescription":
+                            [
+                                {
+                                    "identifier":
+                                    {
+                                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                                        "value": "200.000.001.206.112.29"
+                                    }
+                                }
+                            ],
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-MedicationDispenseTyp",
+                                        "code": "Abgabeinformationen"
+                                    }
+                                ]
+                            },
+                            "whenHandedOver": "2023-07-24"
+                        }
+                    },
+                    {
+                        "fullUrl": "urn:uuid:cfd49ec7-fd9c-4ab3-865f-f0aaf010ca19",
+                        "resource":
+                        {
+                            "resourceType": "Invoice",
+                            "id": "cfd49ec7-fd9c-4ab3-865f-f0aaf010ca19",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Abrechnungszeilen|1.4"
+                                ]
+                            },
+                            "status": "issued",
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-InvoiceTyp",
+                                        "code": "Abrechnungszeilen"
+                                    }
+                                ]
+                            },
+                            "lineItem":
+                            [
+                                {
+                                    "sequence": 1,
+                                    "chargeItemCodeableConcept":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                                                "code": "06313728"
+                                            }, {
+                                                "system": "http://TA1.abda.de",
+                                                "code": "84256543"
+                                            }, {
+                                                "system": "http://fhir.de/sid/gkv/hmnr",
+                                                "code": "85258976"
+                                            }
+                                        ],
+                                        "text": "Sumatriptan 1A Pharma 100 mg Tabletten, 12 St"
+                                    },
+                                    "priceComponent":
+                                    [
+                                        {
+                                            "extension":
+                                            [
+                                                {
+                                                    "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-MwStSatz",
+                                                    "valueDecimal": 19
+                                                },
+                                                {
+                                                    "extension":
+                                                    [
+                                                        {
+                                                            "url": "Kategorie",
+                                                            "valueCodeableConcept":
+                                                            {
+                                                                "coding":
+                                                                [
+                                                                    {
+                                                                        "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-PKV-CS-ERP-KostenVersicherterKategorie",
+                                                                        "code": "0"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "url": "Kostenbetrag",
+                                                            "valueMoney":
+                                                            {
+                                                                "value": 0,
+                                                                "currency": "EUR"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-KostenVersicherter"
+                                                }
+                                            ],
+                                            "type": "informational",
+                                            "factor": 1,
+                                            "amount":
+                                            {
+                                                "value": 21.04,
+                                                "currency": "EUR"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ],
+                            "totalGross":
+                            {
+                                "extension":
+                                [
+                                    {
+                                        "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung",
+                                        "valueMoney":
+                                        {
+                                            "value": 0,
+                                            "currency": "EUR"
+                                        }
+                                    }
+                                ],
+                                "value": 21.04,
+                                "currency": "EUR"
+                            }
+                        }
+                    }
+                ],
+                "signature":
+                {
+                    "type":
+                    [
+                        {
+                            "system": "urn:iso-astm:E1762-95:2013",
+                            "code": "1.2.840.10065.1.12.1.1"
+                        }
+                    ],
+                    "when": "2023-02-17T14:07:47.809+00:00",
+                    "who":
+                    {
+                        "reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
+                    },
+                    "sigFormat": "application/pkcs7-mime",
+                    "data": "aOEsSfDw=="
+                }
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:c8606712-0000-0000-0001-000000000000",
+            "resource":
+            {
+                "resourceType": "Bundle",
+                "id": "aea2f4c5-675a-4d76-ab9b-7994c80b64ec",
+                "meta":
+                {
+                    "profile":
+                    [
+                        "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.2"
+                    ]
+                },
+                "identifier":
+                {
+                    "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                    "value": "160.100.000.000.001.39"
+                },
+                "type": "document",
+                "timestamp": "2024-05-20T08:30:00+00:00",
+                "entry":
+                [
+                    {
+                        "fullUrl": "http://pvs.praxis.local/fhir/Composition/6aba4ca1-6bc9-47db-a58d-946b5ded26b7",
+                        "resource":
+                        {
+                            "resourceType": "Composition",
+                            "id": "6aba4ca1-6bc9-47db-a58d-946b5ded26b7",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Composition|1.2"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Legal_basis",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_STATUSKENNZEICHEN",
+                                        "code": "00"
+                                    }
+                                }
+                            ],
+                            "status": "final",
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_FORMULAR_ART",
+                                        "code": "e16A"
+                                    }
+                                ]
+                            },
+                            "subject":
+                            {
+                                "reference": "Patient/30635f5d-c233-4500-94e8-6414940236aa"
+                            },
+                            "date": "2024-05-20T08:00:00Z",
+                            "author":
+                            [
+                                {
+                                    "reference": "Practitioner/0c4e1a54-8a42-4d3d-a12c-0bbf2db48570",
+                                    "type": "Practitioner"
+                                },
+                                {
+                                    "type": "Device",
+                                    "identifier":
+                                    {
+                                        "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_FOR_Pruefnummer",
+                                        "value": "Y/400/2107/36/999"
+                                    }
+                                }
+                            ],
+                            "title": "elektronische Arzneimittelverordnung",
+                            "custodian":
+                            {
+                                "reference": "Organization/4ad4ae52-bd62-4cbd-bae9-7f7d6ece3fd2"
+                            },
+                            "section":
+                            [
+                                {
+                                    "code":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
+                                                "code": "Prescription"
+                                            }
+                                        ]
+                                    },
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "MedicationRequest/7d871b93-e18c-4865-bad0-6b55196be46b"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
+                                                "code": "Coverage"
+                                            }
+                                        ]
+                                    },
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "Coverage/e51239e1-ba74-48e0-97fb-9754d2b05c60"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "http://pvs.praxis.local/fhir/MedicationRequest/7d871b93-e18c-4865-bad0-6b55196be46b",
+                        "resource":
+                        {
+                            "resourceType": "MedicationRequest",
+                            "id": "7d871b93-e18c-4865-bad0-6b55196be46b",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Prescription|1.2"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_StatusCoPayment",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_StatusCoPayment",
+                                        "code": "1"
+                                    }
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee",
+                                    "valueBoolean": false
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_SER",
+                                    "valueBoolean": true
+                                },
+                                {
+                                    "extension":
+                                    [
+                                        {
+                                            "url": "Kennzeichen",
+                                            "valueBoolean": false
+                                        }
+                                    ],
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription"
+                                }
+                            ],
+                            "status": "active",
+                            "intent": "order",
+                            "medicationReference":
+                            {
+                                "reference": "Medication/a3ca01a4-92c1-422a-87d9-ef046e94527f"
+                            },
+                            "subject":
+                            {
+                                "reference": "Patient/30635f5d-c233-4500-94e8-6414940236aa"
+                            },
+                            "authoredOn": "2024-05-20",
+                            "requester":
+                            {
+                                "reference": "Practitioner/0c4e1a54-8a42-4d3d-a12c-0bbf2db48570"
+                            },
+                            "insurance":
+                            [
+                                {
+                                    "reference": "Coverage/e51239e1-ba74-48e0-97fb-9754d2b05c60"
+                                }
+                            ],
+                            "dosageInstruction":
+                            [
+                                {
+                                    "extension":
+                                    [
+                                        {
+                                            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag",
+                                            "valueBoolean": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "dispenseRequest":
+                            {
+                                "quantity":
+                                {
+                                    "value": 1,
+                                    "unit": "Packung"
+                                }
+                            },
+                            "substitution":
+                            {
+                                "allowedBoolean": true
+                            }
+                        }
+                    },
+                    {
+                        "fullUrl": "http://pvs.praxis.local/fhir/Medication/a3ca01a4-92c1-422a-87d9-ef046e94527f",
+                        "resource":
+                        {
+                            "resourceType": "Medication",
+                            "id": "a3ca01a4-92c1-422a-87d9-ef046e94527f",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.2"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+                                    "valueCodeableConcept":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://snomed.info/sct",
+                                                "version": "http://snomed.info/sct/11000274103/version/20240515",
+                                                "code": "763158003",
+                                                "display": "Medicinal product (product)"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                                        "code": "00"
+                                    }
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                                    "valueBoolean": false
+                                },
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/normgroesse",
+                                    "valueCode": "N3"
+                                }
+                            ],
+                            "code":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                                        "code": "05392039"
+                                    }
+                                ],
+                                "text": "Venlafaxin - 1 A Pharma® 75mg 100 Tabl. N3"
+                            },
+                            "form":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                                        "code": "TAB"
+                                    }
+                                ]
+                            },
+                            "ingredient":
+                            [
+                                {
+                                    "itemCodeableConcept":
+                                    {
+                                        "text": "Venlafaxinhydrochlorid"
+                                    },
+                                    "strength":
+                                    {
+                                        "numerator":
+                                        {
+                                            "value": 84.88,
+                                            "unit": "mg"
+                                        },
+                                        "denominator":
+                                        {
+                                            "value": 1
+                                        }
+                                    }
+                                }
+                            ],
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "extension":
+                                    [
+                                        {
+                                            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
+                                            "valueString": "1"
+                                        }
+                                    ],
+                                    "unit": "Stk"
+                                },
+                                "denominator":
+                                {
+                                    "value": 1
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "fullUrl": "http://pvs.praxis.local/fhir/Patient/30635f5d-c233-4500-94e8-6414940236aa",
+                        "resource":
+                        {
+                            "resourceType": "Patient",
+                            "id": "30635f5d-c233-4500-94e8-6414940236aa",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.2"
+                                ]
+                            },
+                            "identifier":
+                            [
+                                {
+                                    "type":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                                                "code": "KVZ10"
+                                            }
+                                        ]
+                                    },
+                                    "system": "http://fhir.de/sid/gkv/kvid-10",
+                                    "value": "K220645122"
+                                }
+                            ],
+                            "name":
+                            [
+                                {
+                                    "use": "official",
+                                    "family": "Schuhmann",
+                                    "_family":
+                                    {
+                                        "extension":
+                                        [
+                                            {
+                                                "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                                                "valueString": "Schuhmann"
+                                            }
+                                        ]
+                                    },
+                                    "given":
+                                    [
+                                        "Sahra"
+                                    ]
+                                }
+                            ],
+                            "birthDate": "1970-12-24",
+                            "address":
+                            [
+                                {
+                                    "type": "both",
+                                    "line":
+                                    [
+                                        "Berliner Straße 1"
+                                    ],
+                                    "_line":
+                                    [
+                                        {
+                                            "extension":
+                                            [
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                                                    "valueString": "1"
+                                                },
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                                                    "valueString": "Berliner Straße"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "city": "Husum",
+                                    "postalCode": "25813",
+                                    "country": "D"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "http://pvs.praxis.local/fhir/Practitioner/0c4e1a54-8a42-4d3d-a12c-0bbf2db48570",
+                        "resource":
+                        {
+                            "resourceType": "Practitioner",
+                            "id": "0c4e1a54-8a42-4d3d-a12c-0bbf2db48570",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.2"
+                                ]
+                            },
+                            "identifier":
+                            [
+                                {
+                                    "type":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                                "code": "LANR"
+                                            }
+                                        ]
+                                    },
+                                    "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_ANR",
+                                    "value": "582369858"
+                                }
+                            ],
+                            "name":
+                            [
+                                {
+                                    "use": "official",
+                                    "family": "Becker",
+                                    "_family":
+                                    {
+                                        "extension":
+                                        [
+                                            {
+                                                "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                                                "valueString": "Becker"
+                                            }
+                                        ]
+                                    },
+                                    "given":
+                                    [
+                                        "Emilia"
+                                    ]
+                                }
+                            ],
+                            "qualification":
+                            [
+                                {
+                                    "code":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Qualification_Type",
+                                                "code": "00"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Berufsbezeichnung",
+                                                "code": "Berufsbezeichnung"
+                                            }
+                                        ],
+                                        "text": "Fachärztin für Psychiatrie und Psychotherapie"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "http://pvs.praxis.local/fhir/Organization/4ad4ae52-bd62-4cbd-bae9-7f7d6ece3fd2",
+                        "resource":
+                        {
+                            "resourceType": "Organization",
+                            "id": "4ad4ae52-bd62-4cbd-bae9-7f7d6ece3fd2",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.2"
+                                ]
+                            },
+                            "identifier":
+                            [
+                                {
+                                    "type":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                                "code": "BSNR"
+                                            }
+                                        ]
+                                    },
+                                    "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR",
+                                    "value": "723333300"
+                                }
+                            ],
+                            "name": "Praxis für Psychiatrie und Psychotherapie",
+                            "telecom":
+                            [
+                                {
+                                    "system": "phone",
+                                    "value": "030369258147"
+                                }
+                            ],
+                            "address":
+                            [
+                                {
+                                    "type": "both",
+                                    "line":
+                                    [
+                                        "Herbert-Lewin-Platz 2"
+                                    ],
+                                    "_line":
+                                    [
+                                        {
+                                            "extension":
+                                            [
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                                                    "valueString": "2"
+                                                },
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                                                    "valueString": "Herbert-Lewin-Platz"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "city": "Berlin",
+                                    "postalCode": "10623",
+                                    "country": "D"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "http://pvs.praxis.local/fhir/Coverage/e51239e1-ba74-48e0-97fb-9754d2b05c60",
+                        "resource":
+                        {
+                            "resourceType": "Coverage",
+                            "id": "e51239e1-ba74-48e0-97fb-9754d2b05c60",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.2"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/gkv/besondere-personengruppe",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PERSONENGRUPPE",
+                                        "code": "06"
+                                    }
+                                },
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/gkv/dmp-kennzeichen",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DMP",
+                                        "code": "00"
+                                    }
+                                },
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/gkv/wop",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ITA_WOP",
+                                        "code": "01"
+                                    }
+                                },
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/gkv/versichertenart",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_VERSICHERTENSTATUS",
+                                        "code": "1"
+                                    }
+                                }
+                            ],
+                            "status": "active",
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.de/CodeSystem/versicherungsart-de-basis",
+                                        "code": "GKV"
+                                    }
+                                ]
+                            },
+                            "beneficiary":
+                            {
+                                "reference": "Patient/30635f5d-c233-4500-94e8-6414940236aa"
+                            },
+                            "payor":
+                            [
+                                {
+                                    "identifier":
+                                    {
+                                        "system": "http://fhir.de/sid/arge-ik/iknr",
+                                        "value": "108018347"
+                                    },
+                                    "display": "AOK Baden-Württember/BVG"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "signature":
+                {
+                    "type":
+                    [
+                        {
+                            "system": "urn:iso-astm:E1762-95:2013",
+                            "code": "1.2.840.10065.1.12.1.1"
+                        }
+                    ],
+                    "when": "2023-02-23T15:08:32.983+00:00",
+                    "who":
+                    {
+                        "reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
+                    },
+                    "sigFormat": "application/pkcs7-mime",
+                    "data": "MII0wgYJKoZIhvcNAQcCoII0szCCNK8CAQUxDTALBglghkgBZQMEAgEwgiqcBgkqhkiG9w0BBwGggiqNBIIqiTw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9InV0Zi04Ij8+CjxCdW5kbGUgeG1sbnM9Imh0dHA6Ly9obDcub3JnL2ZoaXIiPjxpZCB2YWx1ZT0iOTZhM2NiZDctMGZmMy00NmUzLThkNmUtNTY1OTA1YmU1ZjRjIi8+PG1ldGE+PGxhc3RVcGRhdGVkIHZhbHVlPSIyMDIzLTAyLTIzVDE2OjA4OjI2LjQ5NSswMTowMCIvPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0VSUF9CdW5kbGV8MS4xLjAiLz48L21ldGE+PGlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL05hbWluZ1N5c3RlbS9HRU1fRVJQX05TX1ByZXNjcmlwdGlvbklkIi8+PHZhbHVlIHZhbHVlPSIyMDAuMDAwLjAwMS4yMDYuMTEyLjI5Ii8+PC9pZGVudGlmaWVyPjx0eXBlIHZhbHVlPSJkb2N1bWVudCIvPjx0aW1lc3RhbXAgdmFsdWU9IjIwMjMtMDItMjNUMTY6MDg6MjYuNDk1KzAxOjAwIi8+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvQ29tcG9zaXRpb24vOTgwZjJiN2ItNDMwMC00YjViLTk5MGItMGM2YWQzYjExMWZkIi8+PHJlc291cmNlPjxDb21wb3NpdGlvbj48aWQgdmFsdWU9Ijk4MGYyYjdiLTQzMDAtNGI1Yi05OTBiLTBjNmFkM2IxMTFmZCIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0VSUF9Db21wb3NpdGlvbnwxLjEuMCIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9GT1JfUEtWX1RhcmlmZiI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX1BLVl9UQVJJRkYiLz48Y29kZSB2YWx1ZT0iMDMiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0ZPUl9MZWdhbF9iYXNpcyI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX1NUQVRVU0tFTk5aRUlDSEVOIi8+PGNvZGUgdmFsdWU9IjAwIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48c3RhdHVzIHZhbHVlPSJmaW5hbCIvPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19TRkhJUl9LQlZfRk9STVVMQVJfQVJUIi8+PGNvZGUgdmFsdWU9ImUxNkEiLz48L2NvZGluZz48L3R5cGU+PHN1YmplY3Q+PHJlZmVyZW5jZSB2YWx1ZT0iUGF0aWVudC83MDAzNjk0NC00NDY0LTRlOWItYjljNy03YWU2YzcwNWRmYzQiLz48L3N1YmplY3Q+PGRhdGUgdmFsdWU9IjIwMjMtMDItMjNUMTY6MDg6MjYrMDE6MDAiLz48YXV0aG9yPjxyZWZlcmVuY2UgdmFsdWU9IlByYWN0aXRpb25lci85ZjAxNzRhNS0yYWVkLTQ0ZGUtYWI3Yi1iM2NmNmVjY2ZjMDQiLz48dHlwZSB2YWx1ZT0iUHJhY3RpdGlvbmVyIi8+PC9hdXRob3I+PGF1dGhvcj48dHlwZSB2YWx1ZT0iRGV2aWNlIi8+PGlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9OYW1pbmdTeXN0ZW0vS0JWX05TX0ZPUl9QcnVlZm51bW1lciIvPjx2YWx1ZSB2YWx1ZT0iR0VNQVRJSy80MTAvMjEwOS8zNi8xMjMiLz48L2lkZW50aWZpZXI+PC9hdXRob3I+PHRpdGxlIHZhbHVlPSJlbGVrdHJvbmlzY2hlIEFyem5laW1pdHRlbHZlcm9yZG51bmciLz48Y3VzdG9kaWFuPjxyZWZlcmVuY2UgdmFsdWU9Ik9yZ2FuaXphdGlvbi83YzhjNTVhZS1lN2NhLTRhMWItYmFhZC1mMjUxMTQxY2VkNDAiLz48L2N1c3RvZGlhbj48c2VjdGlvbj48Y29kZT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRVJQX1NlY3Rpb25fVHlwZSIvPjxjb2RlIHZhbHVlPSJDb3ZlcmFnZSIvPjwvY29kaW5nPjwvY29kZT48ZW50cnk+PHJlZmVyZW5jZSB2YWx1ZT0iQ292ZXJhZ2UvNWI0MGNjNzktOTczZS00MGNjLTg4OWUtMGJiMmNlMDQ0MTY4Ii8+PC9lbnRyeT48L3NlY3Rpb24+PHNlY3Rpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX0VSUF9TZWN0aW9uX1R5cGUiLz48Y29kZSB2YWx1ZT0iUHJlc2NyaXB0aW9uIi8+PC9jb2Rpbmc+PC9jb2RlPjxlbnRyeT48cmVmZXJlbmNlIHZhbHVlPSJNZWRpY2F0aW9uUmVxdWVzdC9kMGI3NTQyNS0xOTA1LTRiYjAtOWYyNS1jZGI3YzI1Y2MwMjYiLz48L2VudHJ5Pjwvc2VjdGlvbj48L0NvbXBvc2l0aW9uPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9NZWRpY2F0aW9uUmVxdWVzdC9kMGI3NTQyNS0xOTA1LTRiYjAtOWYyNS1jZGI3YzI1Y2MwMjYiLz48cmVzb3VyY2U+PE1lZGljYXRpb25SZXF1ZXN0PjxpZCB2YWx1ZT0iZDBiNzU0MjUtMTkwNS00YmIwLTlmMjUtY2RiN2MyNWNjMDI2Ii8+PG1ldGE+PHByb2ZpbGUgdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfUFJfRVJQX1ByZXNjcmlwdGlvbnwxLjEuMCIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfQlZHIj48dmFsdWVCb29sZWFuIHZhbHVlPSJmYWxzZSIvPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0VSUF9FbWVyZ2VuY3lTZXJ2aWNlc0ZlZSI+PHZhbHVlQm9vbGVhbiB2YWx1ZT0iZmFsc2UiLz48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTXVsdGlwbGVfUHJlc2NyaXB0aW9uIj48ZXh0ZW5zaW9uIHVybD0iS2VubnplaWNoZW4iPjx2YWx1ZUJvb2xlYW4gdmFsdWU9ImZhbHNlIi8+PC9leHRlbnNpb24+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfRk9SX1N0YXR1c0NvUGF5bWVudCI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRk9SX1N0YXR1c0NvUGF5bWVudCIvPjxjb2RlIHZhbHVlPSIwIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48c3RhdHVzIHZhbHVlPSJhY3RpdmUiLz48aW50ZW50IHZhbHVlPSJvcmRlciIvPjxtZWRpY2F0aW9uUmVmZXJlbmNlPjxyZWZlcmVuY2UgdmFsdWU9Ik1lZGljYXRpb24vYTUzNTM5NjYtMDhlMC00YzcwLWEwNjMtYzRhMzQyOTk2N2Y3Ii8+PC9tZWRpY2F0aW9uUmVmZXJlbmNlPjxzdWJqZWN0PjxyZWZlcmVuY2UgdmFsdWU9IlBhdGllbnQvNzAwMzY5NDQtNDQ2NC00ZTliLWI5YzctN2FlNmM3MDVkZmM0Ii8+PC9zdWJqZWN0PjxhdXRob3JlZE9uIHZhbHVlPSIyMDIzLTAyLTIzIi8+PHJlcXVlc3Rlcj48cmVmZXJlbmNlIHZhbHVlPSJQcmFjdGl0aW9uZXIvOWYwMTc0YTUtMmFlZC00NGRlLWFiN2ItYjNjZjZlY2NmYzA0Ii8+PC9yZXF1ZXN0ZXI+PGluc3VyYW5jZT48cmVmZXJlbmNlIHZhbHVlPSJDb3ZlcmFnZS81YjQwY2M3OS05NzNlLTQwY2MtODg5ZS0wYmIyY2UwNDQxNjgiLz48L2luc3VyYW5jZT48ZG9zYWdlSW5zdHJ1Y3Rpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfRVJQX0Rvc2FnZUZsYWciPjx2YWx1ZUJvb2xlYW4gdmFsdWU9InRydWUiLz48L2V4dGVuc2lvbj48dGV4dCB2YWx1ZT0iMS0wLTAtMCIvPjwvZG9zYWdlSW5zdHJ1Y3Rpb24+PGRpc3BlbnNlUmVxdWVzdD48cXVhbnRpdHk+PHZhbHVlIHZhbHVlPSIxIi8+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL3VuaXRzb2ZtZWFzdXJlLm9yZyIvPjxjb2RlIHZhbHVlPSJ7UGFja2FnZX0iLz48L3F1YW50aXR5PjwvZGlzcGVuc2VSZXF1ZXN0PjxzdWJzdGl0dXRpb24+PGFsbG93ZWRCb29sZWFuIHZhbHVlPSJ0cnVlIi8+PC9zdWJzdGl0dXRpb24+PC9NZWRpY2F0aW9uUmVxdWVzdD48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvTWVkaWNhdGlvbi9hNTM1Mzk2Ni0wOGUwLTRjNzAtYTA2My1jNGEzNDI5OTY3ZjciLz48cmVzb3VyY2U+PE1lZGljYXRpb24+PGlkIHZhbHVlPSJhNTM1Mzk2Ni0wOGUwLTRjNzAtYTA2My1jNGEzNDI5OTY3ZjciLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9QUl9FUlBfTWVkaWNhdGlvbl9QWk58MS4xLjAiLz48L21ldGE+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfQmFzZV9NZWRpY2F0aW9uX1R5cGUiPjx2YWx1ZUNvZGVhYmxlQ29uY2VwdD48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9zbm9tZWQuaW5mby9zY3QiLz48dmVyc2lvbiB2YWx1ZT0iaHR0cDovL3Nub21lZC5pbmZvL3NjdC85MDAwMDAwMDAwMDAyMDcwMDgvdmVyc2lvbi8yMDIyMDMzMSIvPjxjb2RlIHZhbHVlPSI3NjMxNTgwMDMiLz48ZGlzcGxheSB2YWx1ZT0iTWVkaWNpbmFsIHByb2R1Y3QgKHByb2R1Y3QpIi8+PC9jb2Rpbmc+PC92YWx1ZUNvZGVhYmxlQ29uY2VwdD48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTWVkaWNhdGlvbl9DYXRlZ29yeSI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRVJQX01lZGljYXRpb25fQ2F0ZWdvcnkiLz48Y29kZSB2YWx1ZT0iMDAiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0VSUF9NZWRpY2F0aW9uX1ZhY2NpbmUiPjx2YWx1ZUJvb2xlYW4gdmFsdWU9ImZhbHNlIi8+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9maGlyLmRlL1N0cnVjdHVyZURlZmluaXRpb24vbm9ybWdyb2Vzc2UiPjx2YWx1ZUNvZGUgdmFsdWU9Ik5CIi8+PC9leHRlbnNpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5kZS9Db2RlU3lzdGVtL2lmYS9wem4iLz48Y29kZSB2YWx1ZT0iMTUyMjIxMzYiLz48L2NvZGluZz48dGV4dCB2YWx1ZT0iU2NobWVyem1pdHRlbCIvPjwvY29kZT48Zm9ybT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX0RBUlJFSUNIVU5HU0ZPUk0iLz48Y29kZSB2YWx1ZT0iVEFCIi8+PC9jb2Rpbmc+PC9mb3JtPjxhbW91bnQ+PG51bWVyYXRvcj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTWVkaWNhdGlvbl9QYWNrYWdpbmdTaXplIj48dmFsdWVTdHJpbmcgdmFsdWU9IjEiLz48L2V4dGVuc2lvbj48dW5pdCB2YWx1ZT0iU3RrIi8+PC9udW1lcmF0b3I+PGRlbm9taW5hdG9yPjx2YWx1ZSB2YWx1ZT0iMSIvPjwvZGVub21pbmF0b3I+PC9hbW91bnQ+PC9NZWRpY2F0aW9uPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9QYXRpZW50LzcwMDM2OTQ0LTQ0NjQtNGU5Yi1iOWM3LTdhZTZjNzA1ZGZjNCIvPjxyZXNvdXJjZT48UGF0aWVudD48aWQgdmFsdWU9IjcwMDM2OTQ0LTQ0NjQtNGU5Yi1iOWM3LTdhZTZjNzA1ZGZjNCIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0ZPUl9QYXRpZW50fDEuMS4wIi8+PC9tZXRhPjxpZGVudGlmaWVyPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL2ZoaXIuZGUvQ29kZVN5c3RlbS9pZGVudGlmaWVyLXR5cGUtZGUtYmFzaXMiLz48Y29kZSB2YWx1ZT0iUEtWIi8+PC9jb2Rpbmc+PC90eXBlPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9maGlyLmRlL3NpZC9wa3Yva3ZpZC0xMCIvPjx2YWx1ZSB2YWx1ZT0iWDExMDQ2NTc3MCIvPjwvaWRlbnRpZmllcj48bmFtZT48dXNlIHZhbHVlPSJvZmZpY2lhbCIvPjxmYW1pbHkgdmFsdWU9IkFuZ2VybcOkbm4iPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaHVtYW5uYW1lLW93bi1uYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IkFuZ2VybcOkbm4iLz48L2V4dGVuc2lvbj48L2ZhbWlseT48Z2l2ZW4gdmFsdWU9IkfDvG50aGVyIi8+PC9uYW1lPjxiaXJ0aERhdGUgdmFsdWU9IjE5NjQtMDMtMTAiLz48YWRkcmVzcz48dHlwZSB2YWx1ZT0iYm90aCIvPjxsaW5lIHZhbHVlPSJEcmllc2NoZXIgSGVja2UgNTYiPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaXNvMjEwOTAtQURYUC1ob3VzZU51bWJlciI+PHZhbHVlU3RyaW5nIHZhbHVlPSI1NiIvPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaXNvMjEwOTAtQURYUC1zdHJlZXROYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IkRyaWVzY2hlciBIZWNrZSIvPjwvZXh0ZW5zaW9uPjwvbGluZT48Y2l0eSB2YWx1ZT0iTmV1IEVsYWRvcmYiLz48cG9zdGFsQ29kZSB2YWx1ZT0iNjcxMzAiLz48Y291bnRyeSB2YWx1ZT0iRCIvPjwvYWRkcmVzcz48L1BhdGllbnQ+PC9yZXNvdXJjZT48L2VudHJ5PjxlbnRyeT48ZnVsbFVybCB2YWx1ZT0iaHR0cHM6Ly9wdnMuZ2VtYXRpay5kZS9maGlyL09yZ2FuaXphdGlvbi83YzhjNTVhZS1lN2NhLTRhMWItYmFhZC1mMjUxMTQxY2VkNDAiLz48cmVzb3VyY2U+PE9yZ2FuaXphdGlvbj48aWQgdmFsdWU9IjdjOGM1NWFlLWU3Y2EtNGExYi1iYWFkLWYyNTExNDFjZWQ0MCIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0ZPUl9Pcmdhbml6YXRpb258MS4xLjAiLz48L21ldGE+PGlkZW50aWZpZXI+PHR5cGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vdGVybWlub2xvZ3kuaGw3Lm9yZy9Db2RlU3lzdGVtL3YyLTAyMDMiLz48Y29kZSB2YWx1ZT0iQlNOUiIvPjwvY29kaW5nPjwvdHlwZT48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL05hbWluZ1N5c3RlbS9LQlZfTlNfQmFzZV9CU05SIi8+PHZhbHVlIHZhbHVlPSI4MzE5NTcwOTMiLz48L2lkZW50aWZpZXI+PG5hbWUgdmFsdWU9IkFyenRwcmF4aXMgU2NocmHDn2VyIi8+PHRlbGVjb20+PHN5c3RlbSB2YWx1ZT0icGhvbmUiLz48dmFsdWUgdmFsdWU9Iis0OS03MjAtMTgyODI2MyIvPjwvdGVsZWNvbT48dGVsZWNvbT48c3lzdGVtIHZhbHVlPSJlbWFpbCIvPjx2YWx1ZSB2YWx1ZT0iZGluYS5hc3NtdXNAYXBpdHoubmV0Ii8+PC90ZWxlY29tPjxhZGRyZXNzPjx0eXBlIHZhbHVlPSJib3RoIi8+PGxpbmUgdmFsdWU9IlJ1ZG9sZi1NYW5uLVBsYXR6IDUiPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaXNvMjEwOTAtQURYUC1ob3VzZU51bWJlciI+PHZhbHVlU3RyaW5nIHZhbHVlPSI1Ii8+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9obDcub3JnL2ZoaXIvU3RydWN0dXJlRGVmaW5pdGlvbi9pc28yMTA5MC1BRFhQLXN0cmVldE5hbWUiPjx2YWx1ZVN0cmluZyB2YWx1ZT0iUnVkb2xmLU1hbm4tUGxhdHoiLz48L2V4dGVuc2lvbj48L2xpbmU+PGNpdHkgdmFsdWU9IkNleWxpbmJ1cmciLz48cG9zdGFsQ29kZSB2YWx1ZT0iODM4NTIiLz48Y291bnRyeSB2YWx1ZT0iRCIvPjwvYWRkcmVzcz48L09yZ2FuaXphdGlvbj48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvQ292ZXJhZ2UvNWI0MGNjNzktOTczZS00MGNjLTg4OWUtMGJiMmNlMDQ0MTY4Ii8+PHJlc291cmNlPjxDb3ZlcmFnZT48aWQgdmFsdWU9IjViNDBjYzc5LTk3M2UtNDBjYy04ODllLTBiYjJjZTA0NDE2OCIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0ZPUl9Db3ZlcmFnZXwxLjEuMCIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9na3YvYmVzb25kZXJlLXBlcnNvbmVuZ3J1cHBlIj48dmFsdWVDb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19TRkhJUl9LQlZfUEVSU09ORU5HUlVQUEUiLz48Y29kZSB2YWx1ZT0iMDAiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vZmhpci5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL2drdi9kbXAta2VubnplaWNoZW4iPjx2YWx1ZUNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX1NGSElSX0tCVl9ETVAiLz48Y29kZSB2YWx1ZT0iMDAiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vZmhpci5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL2drdi93b3AiPjx2YWx1ZUNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX1NGSElSX0lUQV9XT1AiLz48Y29kZSB2YWx1ZT0iMzgiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vZmhpci5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL2drdi92ZXJzaWNoZXJ0ZW5hcnQiPjx2YWx1ZUNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX1NGSElSX0tCVl9WRVJTSUNIRVJURU5TVEFUVVMiLz48Y29kZSB2YWx1ZT0iMSIvPjwvdmFsdWVDb2Rpbmc+PC9leHRlbnNpb24+PHN0YXR1cyB2YWx1ZT0iYWN0aXZlIi8+PHR5cGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5kZS9Db2RlU3lzdGVtL3ZlcnNpY2hlcnVuZ3NhcnQtZGUtYmFzaXMiLz48Y29kZSB2YWx1ZT0iUEtWIi8+PC9jb2Rpbmc+PC90eXBlPjxiZW5lZmljaWFyeT48cmVmZXJlbmNlIHZhbHVlPSJQYXRpZW50LzZiNzI1OTQ1LTA1YmEtNGI3OS1iODgwLTZiOWNkMTlhOGNhYSIvPjwvYmVuZWZpY2lhcnk+PHBheW9yPjxpZGVudGlmaWVyPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9maGlyLmRlL3NpZC9hcmdlLWlrL2lrbnIiLz48dmFsdWUgdmFsdWU9Ijc1OTQyODE4OSIvPjwvaWRlbnRpZmllcj48ZGlzcGxheSB2YWx1ZT0iRmFybWVyIFBmYWx6Ii8+PC9wYXlvcj48L0NvdmVyYWdlPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9QcmFjdGl0aW9uZXIvOWYwMTc0YTUtMmFlZC00NGRlLWFiN2ItYjNjZjZlY2NmYzA0Ii8+PHJlc291cmNlPjxQcmFjdGl0aW9uZXI+PGlkIHZhbHVlPSI5ZjAxNzRhNS0yYWVkLTQ0ZGUtYWI3Yi1iM2NmNmVjY2ZjMDQiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9QUl9GT1JfUHJhY3RpdGlvbmVyfDEuMS4wIi8+PC9tZXRhPjxpZGVudGlmaWVyPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL3Rlcm1pbm9sb2d5LmhsNy5vcmcvQ29kZVN5c3RlbS92Mi0wMjAzIi8+PGNvZGUgdmFsdWU9IkxBTlIiLz48L2NvZGluZz48L3R5cGU+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9OYW1pbmdTeXN0ZW0vS0JWX05TX0Jhc2VfQU5SIi8+PHZhbHVlIHZhbHVlPSIyMDg4MTgyNTQiLz48L2lkZW50aWZpZXI+PG5hbWU+PHVzZSB2YWx1ZT0ib2ZmaWNpYWwiLz48ZmFtaWx5IHZhbHVlPSJTY2hyYcOfZXIiPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaHVtYW5uYW1lLW93bi1uYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IlNjaHJhw59lciIvPjwvZXh0ZW5zaW9uPjwvZmFtaWx5PjxnaXZlbiB2YWx1ZT0iRHIuIi8+PHByZWZpeCB2YWx1ZT0iRHIuIj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2hsNy5vcmcvZmhpci9TdHJ1Y3R1cmVEZWZpbml0aW9uL2lzbzIxMDkwLUVOLXF1YWxpZmllciI+PHZhbHVlQ29kZSB2YWx1ZT0iQUMiLz48L2V4dGVuc2lvbj48L3ByZWZpeD48L25hbWU+PHF1YWxpZmljYXRpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX0ZPUl9RdWFsaWZpY2F0aW9uX1R5cGUiLz48Y29kZSB2YWx1ZT0iMDAiLz48L2NvZGluZz48L2NvZGU+PC9xdWFsaWZpY2F0aW9uPjxxdWFsaWZpY2F0aW9uPjxjb2RlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19GT1JfQmVydWZzYmV6ZWljaG51bmciLz48Y29kZSB2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"
+                }
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:c8606712-0000-0000-0003-000000000000",
+            "resource":
+            {
+                "resourceType": "Bundle",
+                "id": "dffbfd6a-5712-4798-bdc8-07201eb77ab8",
+                "meta":
+                {
+                    "profile":
+                    [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle|1.5"
+                    ],
+                    "tag":
+                    [
+                        {
+                            "display": "Receipt Bundle 'Quittung' for completed dispensation of a prescription"
+                        }
+                    ]
+                },
+                "type": "document",
+                "identifier":
+                {
+                    "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                    "value": "200.000.001.206.112.29"
+                },
+                "signature":
+                {
+                    "type":
+                    [
+                        {
+                            "system": "urn:iso-astm:E1762-95:2013",
+                            "code": "1.2.840.10065.1.12.1.1"
+                        }
+                    ],
+                    "when": "2023-02-23T15:08:32.985+00:00",
+                    "who":
+                    {
+                        "reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
+                    },
+                    "sigFormat": "application/pkcs7-mime",
+                    "data": "MIIUnAYJKoZIhvcNAQcCoIIUjTCCFIkCAQUxDTALBglghkgBZQMEAgEwggp1BgkqhkiG9w0BBwGgggpmBIIKYjw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9InV0Zi04Ij8+CjxCdW5kbGUgeG1sbnM9Imh0dHA6Ly9obDcub3JnL2ZoaXIiPjxpZCB2YWx1ZT0iYzg2MDY3MTItMDAwMC0wMDAwLTAwMDMtMDAwMDAwMDAwMDAwIi8+PG1ldGE+PHByb2ZpbGUgdmFsdWU9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9TdHJ1Y3R1cmVEZWZpbml0aW9uL0dFTV9FUlBfUFJfQnVuZGxlfDEuMiIvPjwvbWV0YT48aWRlbnRpZmllcj48c3lzdGVtIHZhbHVlPSJodHRwczovL2dlbWF0aWsuZGUvZmhpci9lcnAvTmFtaW5nU3lzdGVtL0dFTV9FUlBfTlNfUHJlc2NyaXB0aW9uSWQiLz48dmFsdWUgdmFsdWU9IjIwMC4wMDAuMDAxLjIwNi4xMTIuMjkiLz48L2lkZW50aWZpZXI+PHR5cGUgdmFsdWU9ImRvY3VtZW50Ii8+PHRpbWVzdGFtcCB2YWx1ZT0iMjAyMy0wMi0yM1QxNTowODozMC44MDMrMDA6MDAiLz48bGluaz48cmVsYXRpb24gdmFsdWU9InNlbGYiLz48dXJsIHZhbHVlPSJodHRwczovL2VycC1kZXYuemVudHJhbC5lcnAuc3BsaXRkbnMudGktZGllbnN0ZS5kZS9UYXNrLzIwMC4wMDAuMDAxLjIwNi4xMTIuMjkvJGNsb3NlLyIvPjwvbGluaz48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9InVybjp1dWlkOjFmMTA3YWQ3LWY0YmYtNDdlMy1hNjA2LTAxODFmNWRkNGY3MyIvPjxyZXNvdXJjZT48Q29tcG9zaXRpb24+PGlkIHZhbHVlPSIxZjEwN2FkNy1mNGJmLTQ3ZTMtYTYwNi0wMTgxZjVkZDRmNzMiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL1N0cnVjdHVyZURlZmluaXRpb24vR0VNX0VSUF9QUl9Db21wb3NpdGlvbnwxLjIiLz48L21ldGE+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9TdHJ1Y3R1cmVEZWZpbml0aW9uL0dFTV9FUlBfRVhfQmVuZWZpY2lhcnkiPjx2YWx1ZUlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvc2lkL3RlbGVtYXRpay1pZCIvPjx2YWx1ZSB2YWx1ZT0iMy1TTUMtQi1UZXN0a2FydGUtODgzMTEwMDAwMTE2ODczIi8+PC92YWx1ZUlkZW50aWZpZXI+PC9leHRlbnNpb24+PHN0YXR1cyB2YWx1ZT0iZmluYWwiLz48dHlwZT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9Db2RlU3lzdGVtL0dFTV9FUlBfQ1NfRG9jdW1lbnRUeXBlIi8+PGNvZGUgdmFsdWU9IjMiLz48ZGlzcGxheSB2YWx1ZT0iUmVjZWlwdCIvPjwvY29kaW5nPjwvdHlwZT48ZGF0ZSB2YWx1ZT0iMjAyMy0wMi0yM1QxNTowODozMC44MDIrMDA6MDAiLz48YXV0aG9yPjxyZWZlcmVuY2UgdmFsdWU9Imh0dHBzOi8vZXJwLWRldi56ZW50cmFsLmVycC5zcGxpdGRucy50aS1kaWVuc3RlLmRlL0RldmljZS8xIi8+PC9hdXRob3I+PHRpdGxlIHZhbHVlPSJRdWl0dHVuZyIvPjxldmVudD48cGVyaW9kPjxzdGFydCB2YWx1ZT0iMjAyMy0wMi0yM1QxNTowODoyOS44NDMrMDA6MDAiLz48ZW5kIHZhbHVlPSIyMDIzLTAyLTIzVDE1OjA4OjMwLjgwMiswMDowMCIvPjwvcGVyaW9kPjwvZXZlbnQ+PHNlY3Rpb24+PGVudHJ5PjxyZWZlcmVuY2UgdmFsdWU9IkJpbmFyeS9QcmVzY3JpcHRpb25EaWdlc3QtMjAwLjAwMC4wMDEuMjA2LjExMi4yOSIvPjwvZW50cnk+PC9zZWN0aW9uPjwvQ29tcG9zaXRpb24+PC9yZXNvdXJjZT48L2VudHJ5PjxlbnRyeT48ZnVsbFVybCB2YWx1ZT0iaHR0cHM6Ly9lcnAtZGV2LnplbnRyYWwuZXJwLnNwbGl0ZG5zLnRpLWRpZW5zdGUuZGUvRGV2aWNlLzEiLz48cmVzb3VyY2U+PERldmljZT48aWQgdmFsdWU9IjEiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL1N0cnVjdHVyZURlZmluaXRpb24vR0VNX0VSUF9QUl9EZXZpY2V8MS4yIi8+PC9tZXRhPjxzdGF0dXMgdmFsdWU9ImFjdGl2ZSIvPjxzZXJpYWxOdW1iZXIgdmFsdWU9IjEuOS4wIi8+PGRldmljZU5hbWU+PG5hbWUgdmFsdWU9IkUtUmV6ZXB0IEZhY2hkaWVuc3QiLz48dHlwZSB2YWx1ZT0idXNlci1mcmllbmRseS1uYW1lIi8+PC9kZXZpY2VOYW1lPjx2ZXJzaW9uPjx2YWx1ZSB2YWx1ZT0iMS45LjAiLz48L3ZlcnNpb24+PGNvbnRhY3Q+PHN5c3RlbSB2YWx1ZT0iZW1haWwiLz48dmFsdWUgdmFsdWU9ImJldHJpZWJAZ2VtYXRpay5kZSIvPjwvY29udGFjdD48L0RldmljZT48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL2VycC1kZXYuemVudHJhbC5lcnAuc3BsaXRkbnMudGktZGllbnN0ZS5kZS9CaW5hcnkvUHJlc2NyaXB0aW9uRGlnZXN0LTIwMC4wMDAuMDAxLjIwNi4xMTIuMjkiLz48cmVzb3VyY2U+PEJpbmFyeT48aWQgdmFsdWU9IlByZXNjcmlwdGlvbkRpZ2VzdC0yMDAuMDAwLjAwMS4yMDYuMTEyLjI5Ii8+PG1ldGE+PHZlcnNpb25JZCB2YWx1ZT0iMSIvPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2dlbWF0aWsuZGUvZmhpci9lcnAvU3RydWN0dXJlRGVmaW5pdGlvbi9HRU1fRVJQX1BSX0RpZ2VzdHwxLjIiLz48L21ldGE+PGNvbnRlbnRUeXBlIHZhbHVlPSJhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0iLz48ZGF0YSB2YWx1ZT0iYVlEa2pQb3N3M1NhNWRYNUVtU2dod2hWZzdkOWpob1hIZHdzekVUWFYvOD0iLz48L0JpbmFyeT48L3Jlc291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"
+                },
+                "timestamp": "2025-10-01T15:29:00+00:00",
+                "entry":
+                [
+                    {
+                        "fullUrl": "urn:uuid:c624cf47-e235-4624-af71-0a09dc9254dc",
+                        "resource":
+                        {
+                            "resourceType": "Composition",
+                            "id": "c624cf47-e235-4624-af71-0a09dc9254dc",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Composition|1.5"
+                                ]
+                            },
+                            "status": "final",
+                            "title": "Quittung",
+                            "extension":
+                            [
+                                {
+                                    "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_Beneficiary",
+                                    "valueIdentifier":
+                                    {
+                                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                                        "value": "3-SMC-B-Testkarte-883110000129070"
+                                    }
+                                }
+                            ],
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
+                                        "code": "3",
+                                        "display": "Receipt"
+                                    }
+                                ]
+                            },
+                            "date": "2025-10-01T15:29:00+00:00",
+                            "event":
+                            [
+                                {
+                                    "period":
+                                    {
+                                        "start": "2025-10-01T15:29:00+00:00",
+                                        "end": "2025-10-01T15:29:00+00:00"
+                                    }
+                                }
+                            ],
+                            "author":
+                            [
+                                {
+                                    "reference": "urn:uuid:1413b38d-81a6-432a-a801-98d7307a422b"
+                                }
+                            ],
+                            "section":
+                            [
+                                {
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "urn:uuid:b939a82a-9c23-4b6d-a139-f468d1b9d652"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "urn:uuid:1413b38d-81a6-432a-a801-98d7307a422b",
+                        "resource":
+                        {
+                            "resourceType": "Device",
+                            "id": "1",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Device|1.5"
+                                ]
+                            },
+                            "status": "active",
+                            "serialNumber": "1.14.0",
+                            "deviceName":
+                            [
+                                {
+                                    "name": "E-Rezept-Fachdienst",
+                                    "type": "user-friendly-name"
+                                }
+                            ],
+                            "version":
+                            [
+                                {
+                                    "value": "1.14.0"
+                                }
+                            ],
+                            "contact":
+                            [
+                                {
+                                    "system": "email",
+                                    "value": "betrieb@gematik.de"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "urn:uuid:b939a82a-9c23-4b6d-a139-f468d1b9d652",
+                        "resource":
+                        {
+                            "resourceType": "Binary",
+                            "id": "b939a82a-9c23-4b6d-a139-f468d1b9d652",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Digest|1.5"
+                                ]
+                            },
+                            "contentType": "application/octet-stream",
+                            "data": "tJg8c5ZtdhzEEhJ0ZpAsUVFx5dKuYgQFs5oKgthi17M="
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

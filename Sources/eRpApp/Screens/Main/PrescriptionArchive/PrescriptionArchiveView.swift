@@ -25,78 +25,70 @@ import Perception
 import SwiftUI
 
 struct PrescriptionArchiveView: View {
-    @Perception.Bindable var store: StoreOf<PrescriptionArchiveDomain>
+    @Bindable var store: StoreOf<PrescriptionArchiveDomain>
 
     init(store: StoreOf<PrescriptionArchiveDomain>) {
         self.store = store
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView(.vertical) {
-                if !store.diGaPrescriptions.isEmpty {
-                    Picker(
-                        selection: $store.pickerView.sending(\.selectView),
-                        label: Text("")
-                    ) {
-                        ForEach(PrescriptionArchiveDomain.PickerView.allCases, id: \.self) { viewOption in
-                            WithPerceptionTracking {
-                                Text(viewOption.text).tag(viewOption)
-                                    .accessibilityIdentifier(viewOption.accessibilityIdentifier)
-                            }
-                        }
+        ScrollView(.vertical) {
+            if !store.diGaPrescriptions.isEmpty {
+                Picker(
+                    selection: $store.pickerView.sending(\.selectView),
+                    label: Text("")
+                ) {
+                    ForEach(PrescriptionArchiveDomain.PickerView.allCases, id: \.self) { viewOption in
+                        Text(viewOption.text).tag(viewOption)
+                            .accessibilityIdentifier(viewOption.accessibilityIdentifier)
                     }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    .accessibilityIdentifier(A11y.prescriptionArchive.arcBtnSegmentedControl)
                 }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .accessibilityIdentifier(A11y.prescriptionArchive.arcBtnSegmentedControl)
+            }
 
-                VStack(spacing: 16) {
-                    switch store.pickerView {
-                    case .prescriptions:
-                        ForEach(store.prescriptions.filter { !$0.isDiGaPrescription }) { prescription in
-                            WithPerceptionTracking {
-                                PrescriptionView(
-                                    prescription: prescription
-                                ) {
-                                    store.send(.prescriptionDetailViewTapped(
-                                        selectedPrescription: prescription
-                                    ))
-                                }
-                            }
+            VStack(spacing: 16) {
+                switch store.pickerView {
+                case .prescriptions:
+                    ForEach(store.prescriptions.filter { !$0.isDiGaPrescription }) { prescription in
+                        PrescriptionView(
+                            prescription: prescription
+                        ) {
+                            store.send(.prescriptionDetailViewTapped(
+                                selectedPrescription: prescription
+                            ))
                         }
-                    case .diGa:
-                        ForEach(store.diGaPrescriptions) { prescription in
-                            WithPerceptionTracking {
-                                PrescriptionView(
-                                    prescription: prescription
-                                ) {
-                                    store.send(.prescriptionDetailViewTapped(
-                                        selectedPrescription: prescription
-                                    ))
-                                }
-                            }
+                    }
+                case .diGa:
+                    ForEach(store.diGaPrescriptions) { prescription in
+                        PrescriptionView(
+                            prescription: prescription
+                        ) {
+                            store.send(.prescriptionDetailViewTapped(
+                                selectedPrescription: prescription
+                            ))
                         }
                     }
                 }
-                .padding()
             }
-            .navigationBarTitle(Text(L10n.prscArchTxtTitle), displayMode: .inline)
-            .task {
-                await store.send(.loadLocalPrescriptions).finish()
-            }
-            // Navigation into details
-            .navigationDestination(
-                item: $store.scope(state: \.destination?.prescriptionDetail, action: \.destination.prescriptionDetail)
-            ) { store in
-                PrescriptionDetailView(store: store)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.destination?.diGaDetail, action: \.destination.diGaDetail)
-            ) { store in
-                DiGaDetailView(store: store)
-            }
+            .padding()
+        }
+        .navigationBarTitle(Text(L10n.prscArchTxtTitle), displayMode: .inline)
+        .task {
+            await store.send(.loadLocalPrescriptions).finish()
+        }
+        // Navigation into details
+        .navigationDestination(
+            item: $store.scope(state: \.destination?.prescriptionDetail, action: \.destination.prescriptionDetail)
+        ) { store in
+            PrescriptionDetailView(store: store)
+        }
+        .navigationDestination(
+            item: $store.scope(state: \.destination?.diGaDetail, action: \.destination.diGaDetail)
+        ) { store in
+            DiGaDetailView(store: store)
         }
     }
 }

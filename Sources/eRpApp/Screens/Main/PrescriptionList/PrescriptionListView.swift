@@ -26,7 +26,7 @@ import eRpStyleKit
 import SwiftUI
 
 struct PrescriptionListView<StickyHeader: View>: View {
-    @Perception.Bindable var store: StoreOf<PrescriptionListDomain>
+    @Bindable var store: StoreOf<PrescriptionListDomain>
 
     let header: StickyHeader
 
@@ -36,137 +36,131 @@ struct PrescriptionListView<StickyHeader: View>: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            RefreshScrollView(
-                store: store,
-                content: {
-                    if store.openPrescriptions.isEmpty {
-                        PrescriptionListEmptyView(store: store)
-                            .transition(.opacity.animation(.easeOut(duration: 0.2)))
-                    } else {
-                        ListView(store: store)
-                            .transition(.opacity.animation(.easeOut(duration: 0.2)))
-                    }
-                },
-                header: {
-                    header
-                }, action: {
-                    store.send(.redeemButtonTapped(
-                        openPrescriptions: store.openPrescriptions
-                    ))
+        RefreshScrollView(
+            store: store,
+            content: {
+                if store.openPrescriptions.isEmpty {
+                    PrescriptionListEmptyView(store: store)
+                        .transition(.opacity.animation(.easeOut(duration: 0.2)))
+                } else {
+                    ListView(store: store)
+                        .transition(.opacity.animation(.easeOut(duration: 0.2)))
                 }
-            )
-            .onAppear {
-                store.send(.registerActiveUserProfileListener)
+            },
+            header: {
+                header
+            }, action: {
+                store.send(.redeemButtonTapped(
+                    openPrescriptions: store.openPrescriptions
+                ))
             }
-            .onDisappear {
-                store.send(.unregisterActiveUserProfileListener)
-            }
-            .alert(
-                L10n.alertErrorTitle.key,
-                isPresented: .init(get: {
-                    store.showError
-                }, set: { show in
-                    if !show {
-                        store.send(.alertDismissButtonTapped)
-                    }
-                }),
-                actions: {
-                    Button(L10n.alertBtnOk) {
-                        store.send(.alertDismissButtonTapped)
-                    }
-                },
-                message: {
-                    Text(store.loadingState.error?
-                        .localizedDescriptionWithErrorList ?? "alert_error_message_unknown")
-                }
-            )
+        )
+        .onAppear {
+            store.send(.registerActiveUserProfileListener)
         }
+        .onDisappear {
+            store.send(.unregisterActiveUserProfileListener)
+        }
+        .alert(
+            L10n.alertErrorTitle.key,
+            isPresented: .init(get: {
+                store.showError
+            }, set: { show in
+                if !show {
+                    store.send(.alertDismissButtonTapped)
+                }
+            }),
+            actions: {
+                Button(L10n.alertBtnOk) {
+                    store.send(.alertDismissButtonTapped)
+                }
+            },
+            message: {
+                Text(store.loadingState.error?
+                    .localizedDescriptionWithErrorList ?? "alert_error_message_unknown")
+            }
+        )
     }
 
     private struct ListView: View {
-        @Perception.Bindable var store: StoreOf<PrescriptionListDomain>
+        @Bindable var store: StoreOf<PrescriptionListDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(spacing: 0) {
-                    ListHeaderView(store: store)
-                        .padding(.bottom, 4)
+            VStack(spacing: 0) {
+                ListHeaderView(store: store)
+                    .padding(.bottom, 4)
 
-                    VStack(spacing: 16) {
-                        ForEach(store.openPrescriptions) { prescription in
-                            PrescriptionView(
-                                prescription: prescription
-                            ) {
-                                if prescription.isDiGaPrescription {
-                                    store.send(.diGaDetailViewTapped(selectedPrescription: prescription,
-                                                                     profile: store.profile))
-                                } else {
-                                    store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
-                                }
+                VStack(spacing: 16) {
+                    ForEach(store.openPrescriptions) { prescription in
+                        PrescriptionView(
+                            prescription: prescription
+                        ) {
+                            if prescription.isDiGaPrescription {
+                                store.send(.diGaDetailViewTapped(selectedPrescription: prescription,
+                                                                 profile: store.profile))
+                            } else {
+                                store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
                             }
                         }
                     }
-                    .padding()
+                }
+                .padding()
 
-                    if let date = store.profile?.lastSuccessfulSync {
-                        RelativeTimerView(date: date)
-                            .font(.footnote)
-                            .foregroundColor(Colors.textSecondary)
-                    }
+                if let date = store.profile?.lastSuccessfulSync {
+                    RelativeTimerView(date: date)
+                        .font(.footnote)
+                        .foregroundColor(Colors.textSecondary)
+                }
 
-                    if store.hasArchivedPrescriptions {
-                        Button {
-                            store.send(.showArchivedButtonTapped)
-                        } label: {
-                            Text(L10n.mainBtnArchivedPresc)
-                                .font(.subheadline.weight(.semibold))
-                        }
-                        .accessibilityIdentifier(A11y.mainScreen.erxBtnArcPrescription)
-                        .padding(.top, 28)
-                        .padding(.bottom)
+                if store.hasArchivedPrescriptions {
+                    Button {
+                        store.send(.showArchivedButtonTapped)
+                    } label: {
+                        Text(L10n.mainBtnArchivedPresc)
+                            .font(.subheadline.weight(.semibold))
                     }
+                    .accessibilityIdentifier(A11y.mainScreen.erxBtnArcPrescription)
+                    .padding(.top, 28)
+                    .padding(.bottom)
                 }
             }
         }
     }
 
     private struct ListHeaderView: View {
-        @Perception.Bindable var store: StoreOf<PrescriptionListDomain>
+        @Bindable var store: StoreOf<PrescriptionListDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                HStack {
-                    ProfilePictureView(
-                        image: store.profile?.image,
-                        userImageData: store.profile?.userImageData,
-                        color: store.profile?.color,
-                        connection: store.profile?.connectionStatus,
-                        style: .small
-                    ) {
-                        if let profile = store.profile {
-                            store.send(.profilePictureViewTapped(profile))
-                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        }
+            HStack {
+                ProfilePictureView(
+                    image: store.profile?.image,
+                    userImageData: store.profile?.userImageData,
+                    color: store.profile?.color,
+                    connection: store.profile?.connectionStatus,
+                    style: .small
+                ) {
+                    if let profile = store.profile {
+                        store.send(.profilePictureViewTapped(profile))
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     }
-                    Spacer()
-
-                    Button {
-                        store.send(.refresh)
-                    } label: {
-                        if store.isConnected {
-                            Image(systemName: SFSymbolName.refresh)
-                        } else {
-                            Text(L10n.mainBtnLogin)
-                        }
-                    }
-                    .buttonStyle(.quartary)
-                    .accessibilityIdentifier(store.isConnected ? A11y.mainScreen.erxBtnRefresh : A11y.mainScreen
-                        .erxBtnLogin)
                 }
-                .padding(.top, 38)
-                .padding(.horizontal)
+                Spacer()
+
+                Button {
+                    store.send(.refresh)
+                } label: {
+                    if store.isConnected {
+                        Image(systemName: SFSymbolName.refresh)
+                    } else {
+                        Text(L10n.mainBtnLogin)
+                    }
+                }
+                .buttonStyle(.quartary)
+                .accessibilityIdentifier(store.isConnected ? A11y.mainScreen.erxBtnRefresh : A11y.mainScreen
+                    .erxBtnLogin)
             }
+            .padding(.top, 38)
+            .padding(.horizontal)
         }
     }
 }

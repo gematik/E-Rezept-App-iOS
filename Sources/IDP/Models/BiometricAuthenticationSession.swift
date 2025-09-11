@@ -22,7 +22,6 @@
 
 import Combine
 import Foundation
-import OpenSSL
 
 /// This struct combines AuthenticationData, the IDPChallengeSession and a signer to create a signature for using while
 /// authentication against the idp.

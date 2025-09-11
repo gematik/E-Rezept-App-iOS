@@ -26,44 +26,39 @@ import eRpStyleKit
 import SwiftUI
 
 struct DiGaDuesInfoView: View {
-    @Perception.Bindable var store: StoreOf<DiGaDetailDomain>
+    @Bindable var store: StoreOf<DiGaDetailDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                HStack {
-                    Spacer()
-                    Button {
-                        store.send(.setNavigation(tag: .none))
-                    } label: {
-                        Image(systemName: SFSymbolName.crossIconPlain)
-                            .font(Font.caption.weight(.bold))
-                            .foregroundColor(Color(.label))
-                            .padding(12)
-                            .background(Circle().foregroundColor(Color(.systemGray6)))
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L10n.digaDtlDuesTxtHeader)
-                        .font(.headline)
-                        .accessibilityIdentifier(A11y.digaDetail.digaDtlSupportTxtHeader)
-
-                    Text(L10n.digaDtlDuesTxtInfo)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .accessibilityIdentifier(A11y.digaDetail.digaDtlSupportTxtProvidedLink)
-
-                    Text(L10n.digaDtlDuesTxtInfoDate)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .padding(.bottom, 16)
-                    Spacer()
+        VStack {
+            HStack {
+                Spacer()
+                Button {
+                    store.send(.setNavigation(tag: .none))
+                } label: {
+                    Image(systemName: SFSymbolName.crossIconPlain)
+                        .font(Font.caption.weight(.bold))
+                        .foregroundColor(Color(.label))
+                        .padding(12)
+                        .background(Circle().foregroundColor(Color(.systemGray6)))
                 }
             }
-            .accessibilityIdentifier(A11y.digaDetail.digaDtlSupportBtnOpenLink)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Colors.systemBackground.ignoresSafeArea())
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L10n.digaDtlDuesTxtHeader)
+                    .font(.headline)
+
+                Text(L10n.digaDtlDuesTxtInfo)
+                    .foregroundColor(Colors.systemLabelSecondary)
+
+                Text(L10n.digaDtlDuesTxtInfoDate)
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    .padding(.bottom, 16)
+                Spacer()
+            }
         }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Colors.systemBackground.ignoresSafeArea())
     }
 }
 

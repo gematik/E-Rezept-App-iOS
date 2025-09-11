@@ -26,109 +26,106 @@ import SwiftUI
 import UIKit
 
 struct CardWallLoginOptionView: View {
-    @Perception.Bindable var store: StoreOf<CardWallLoginOptionDomain>
+    @Bindable var store: StoreOf<CardWallLoginOptionDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .leading) {
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading) {
-                        Text(L10n.cdwTxtBiometrySubtitle)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.title3)
-                            .bold()
-                            .accessibility(identifier: A11y.cardWall.loginOption.cdwTxtLoginOptionSubtitle)
-                            .padding(.bottom, 16)
-                    }
-
-                    SelectionCell(
-                        text: L10n.cdwTxtBiometryOptionBiometryTitle,
-                        description: L10n.cdwTxtBiometryOptionBiometryDescription,
-                        a11y: A11y.cardWall.loginOption.cdwTxtLoginOptionBiometry,
-                        systemImage: SFSymbolName.faceId,
-                        isOn: $store.selectedLoginOption.isWithBiometry
-                    )
-                    .padding(.horizontal)
-                    .border(Colors.systemGray5, cornerRadius: 16)
-
-                    SelectionCell(
-                        text: L10n.cdwTxtBiometryOptionNoneTitle,
-                        description: L10n.cdwTxtBiometryOptionNoneDescription,
-                        a11y: A11y.cardWall.loginOption.cdwTxtLoginOptionWithoutBiometry,
-                        systemImage: SFSymbolName.rollback,
-                        isOn: $store.selectedLoginOption.isWithoutBiometry
-                    )
-                    .padding(.horizontal)
-                    .border(Colors.systemGray5, cornerRadius: 16)
-
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .hidden()
-                        .accessibility(hidden: true)
-                        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-
-                    PrivacyWarningViewContainer(store: store)
+        VStack(alignment: .leading) {
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading) {
+                    Text(L10n.cdwTxtBiometrySubtitle)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.title3)
+                        .bold()
+                        .accessibility(identifier: A11y.cardWall.loginOption.cdwTxtLoginOptionSubtitle)
+                        .padding(.bottom, 16)
                 }
-                .padding()
 
-                Spacer()
+                SelectionCell(
+                    text: L10n.cdwTxtBiometryOptionBiometryTitle,
+                    description: L10n.cdwTxtBiometryOptionBiometryDescription,
+                    a11y: A11y.cardWall.loginOption.cdwTxtLoginOptionBiometry,
+                    systemImage: SFSymbolName.faceId,
+                    isOn: $store.selectedLoginOption.isWithBiometry
+                )
+                .padding(.horizontal)
+                .border(Colors.systemGray5, cornerRadius: 16)
 
-                GreyDivider()
+                SelectionCell(
+                    text: L10n.cdwTxtBiometryOptionNoneTitle,
+                    description: L10n.cdwTxtBiometryOptionNoneDescription,
+                    a11y: A11y.cardWall.loginOption.cdwTxtLoginOptionWithoutBiometry,
+                    systemImage: SFSymbolName.rollback,
+                    isOn: $store.selectedLoginOption.isWithoutBiometry
+                )
+                .padding(.horizontal)
+                .border(Colors.systemGray5, cornerRadius: 16)
 
-                Button {
-                    store.send(.advance)
-                } label: {
-                    Text(L10n.cdwBtnBiometryContinue)
-                        .accessibilityIdentifier(A11y.cardWall.loginOption.cdwBtnLoginOptionContinue)
-                        .accessibilityLabel(Text(L10n.cdwBtnBiometryContinueLabel))
-                }
-                .buttonStyle(.primary(isEnabled: store.selectedLoginOption.hasSelection, width: .wideHugging))
-                .frame(maxWidth: .infinity, alignment: .center)
-                .navigationDestination(
-                    item: $store.scope(state: \.destination?.readCard, action: \.destination.readCard)
-                ) { store in
-                    CardWallReadCardView(store: store)
-                }
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .hidden()
+                    .accessibility(hidden: true)
+                    .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+
+                PrivacyWarningViewContainer(store: store)
             }
-            .demoBanner(isPresented: store.isDemoModus) {
-                Text(L10n.cdwTxtBiometryDemoModeInfo)
+            .padding()
+
+            Spacer()
+
+            GreyDivider()
+
+            Button {
+                store.send(.advance)
+            } label: {
+                Text(L10n.cdwBtnBiometryContinue)
+                    .accessibilityIdentifier(A11y.cardWall.loginOption.cdwBtnLoginOptionContinue)
+                    .accessibilityLabel(Text(L10n.cdwBtnBiometryContinueLabel))
             }
-            .navigationBarTitle(L10n.cdwTxtBiometryTitle, displayMode: .inline)
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem {
-                    store.send(.delegate(.close))
-                }
-                .accessibility(identifier: A11y.cardWall.loginOption.cdwBtnLoginOptionCancel)
-                .accessibility(label: Text(L10n.cdwBtnBiometryCancelLabel))
-            )
+            .buttonStyle(.primary(isEnabled: store.selectedLoginOption.hasSelection, width: .wideHugging))
+            .padding(.bottom, 8)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .navigationDestination(
+                item: $store.scope(state: \.destination?.readCard, action: \.destination.readCard)
+            ) { store in
+                CardWallReadCardView(store: store)
+            }
         }
+        .demoBanner(isPresented: store.isDemoModus) {
+            Text(L10n.cdwTxtBiometryDemoModeInfo)
+        }
+        .navigationBarTitle(L10n.cdwTxtBiometryTitle, displayMode: .inline)
+        .navigationBarItems(
+            trailing: NavigationBarCloseItem {
+                store.send(.delegate(.close))
+            }
+            .accessibility(identifier: A11y.cardWall.loginOption.cdwBtnLoginOptionCancel)
+            .accessibility(label: Text(L10n.cdwBtnBiometryCancelLabel))
+        )
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
     // [REQ:BSI-eRp-ePA:O.Resi_1#3] View containing information regarding the login options.
     struct PrivacyWarningViewContainer: View {
-        @Perception.Bindable var store: StoreOf<CardWallLoginOptionDomain>
+        @Bindable var store: StoreOf<CardWallLoginOptionDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(alignment: .leading) {
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .fullScreenCover(isPresented: Binding<Bool>(
-                            get: { store.destination == .warning },
-                            set: { show in
-                                if !show {
-                                    store.send(.resetNavigation)
-                                }
-                            }
-                        )) {
-                            CardWallLoginOptionView.PrivacyWarningViewContainer.PrivacyWarningView {
-                                store.send(.acceptSecurityWarning)
+            VStack(alignment: .leading) {
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(isPresented: Binding<Bool>(
+                        get: { store.destination == .warning },
+                        set: { show in
+                            if !show {
+                                store.send(.resetNavigation)
                             }
                         }
-                        .hidden()
-                        .accessibility(hidden: true)
-                }
+                    )) {
+                        CardWallLoginOptionView.PrivacyWarningViewContainer.PrivacyWarningView {
+                            store.send(.acceptSecurityWarning)
+                        }
+                    }
+                    .hidden()
+                    .accessibility(hidden: true)
             }
         }
     }
@@ -175,6 +172,7 @@ extension CardWallLoginOptionView.PrivacyWarningViewContainer {
                         .accessibilityIdentifier(A11y.cardWall.loginOption.cdwBtnLoginOptionSecurityWarningAccept)
                 }
                 .buttonStyle(.primary(isEnabled: true, width: .wideHugging))
+                .padding(.bottom, 8)
                 .frame(maxWidth: .infinity, alignment: .center)
             }
         }

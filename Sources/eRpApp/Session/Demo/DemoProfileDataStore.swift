@@ -28,6 +28,7 @@ class DemoProfileDataStore: ProfileDataStore {
     static let anna = Profile(name: "Anna Vetter",
                               identifier: UUID(),
                               insuranceId: "X123456789",
+                              insuranceType: .gKV,
                               color: .red,
                               lastAuthenticated: Date(),
                               erxTasks: [])

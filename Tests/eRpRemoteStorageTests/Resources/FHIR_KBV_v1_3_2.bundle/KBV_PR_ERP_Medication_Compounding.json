@@ -1,0 +1,90 @@
+{
+    "resourceType": "Medication",
+    "id": "fd681c2a-6f35-4fa9-8c84-573157130773",
+    "meta": {
+        "profile": [
+            "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Compounding|1.3"
+        ]
+    },
+    "extension": [
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+            "valueCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "version": "http://snomed.info/sct/11000274103/version/20240515",
+                        "code": "1208954007",
+                        "display": "Extemporaneous preparation (product)"
+                    }
+                ]
+            }
+        },
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+            "valueCoding": {
+                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                "code": "00"
+            }
+        },
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+            "valueBoolean": false
+        }
+    ],
+    "code": {
+        "coding": [
+            {
+                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Type",
+                "code": "rezeptur"
+            }
+        ]
+    },
+    "form": {
+        "text": "Infusionslösung"
+    },
+    "amount": {
+        "numerator": {
+            "extension": [
+                {
+                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
+                    "valueString": "500"
+                }
+            ],
+            "unit": "ml"
+        },
+        "denominator": {
+            "value": 1
+        }
+    },
+    "ingredient": [
+        {
+            "itemCodeableConcept": {
+                "text": "Etoposid"
+            },
+            "strength": {
+                "numerator": {
+                    "value": 180,
+                    "unit": "mg"
+                },
+                "denominator": {
+                    "value": 1
+                }
+            }
+        },
+        {
+            "itemCodeableConcept": {
+                "text": "NaCl 0,9 %"
+            },
+            "strength": {
+                "numerator": {
+                    "value": 500,
+                    "unit": "ml"
+                },
+                "denominator": {
+                    "value": 1
+                }
+            }
+        }
+    ]
+}

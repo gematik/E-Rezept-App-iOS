@@ -24,7 +24,7 @@ import Foundation
 import IDP
 import TrustStore
 
-extension IDPError: @retroactive LocalizedError {
+extension IDPError: LocalizedError {
     public var errorDescription: String? {
         // [REQ:gemSpec_IDP_Frontend:A_20085] Error localization is not done yet, this is the place to localize
         // accordingly.

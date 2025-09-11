@@ -29,7 +29,7 @@ import Perception
 import SwiftUI
 
 struct OrdersView: View {
-    @Perception.Bindable var store: StoreOf<OrdersDomain>
+    @Bindable var store: StoreOf<OrdersDomain>
     // TODO: move dependency into domain and do formatting in the view model // swiftlint:disable:this todo
     @Dependency(\.uiDateFormatter) var uiDateFormatter
 
@@ -38,59 +38,57 @@ struct OrdersView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            NavigationStack {
-                VStack {
-                    if !store.state.communicationMessage.isEmpty || store.isLoading {
-                        ScrollView(.vertical) {
-                            VStack(alignment: .leading, spacing: 8) {
-                                ForEach(store.communicationMessage) { message in
-                                    OrderCellView(
-                                        title: message.title,
-                                        message: message.latestMessage,
-                                        subtitle: uiDateFormatter.relativeDate(message.lastUpdated) ?? "",
-                                        isNew: message.hasUnreadMessages,
-                                        prescriptionCount: message.order?.tasksCount ?? 0
-                                    ) {
-                                        store.send(.didSelect(message.id))
-                                    }
+        NavigationStack {
+            VStack {
+                if !store.state.communicationMessage.isEmpty || store.isLoading {
+                    ScrollView(.vertical) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(store.communicationMessage) { message in
+                                OrderCellView(
+                                    title: message.title,
+                                    message: message.latestMessage,
+                                    subtitle: uiDateFormatter.relativeDate(message.lastUpdated) ?? "",
+                                    isNew: message.hasUnreadMessages,
+                                    prescriptionCount: message.order?.tasksCount ?? 0
+                                ) {
+                                    store.send(.didSelect(message.id))
                                 }
-                                .redacted(reason: store.isLoading ? .placeholder : .init())
-                                .padding(.top)
-                                .accessibilityElement(children: .contain)
-                                .accessibility(identifier: A11y.orders.list.ordTxtList)
                             }
+                            .redacted(reason: store.isLoading ? .placeholder : .init())
                             .padding(.top)
-                            .padding(.bottom)
+                            .accessibilityElement(children: .contain)
+                            .accessibility(identifier: A11y.orders.list.ordTxtList)
                         }
-                    } else {
-                        NoOrdersView()
-                            .padding()
+                        .padding(.top)
+                        .padding(.bottom)
                     }
+                } else {
+                    NoOrdersView()
+                        .padding()
                 }
-                // Navigation into details
-                .navigationDestination(
-                    item: $store.scope(
-                        state: \.destination?.orderDetail,
-                        action: \.destination.orderDetail
-                    )
-                ) { store in
-                    OrderDetailView(store: store)
-                }
-                .navigationBarTitle(L10n.msgTxtTitle, displayMode: .automatic)
-                .accessibility(identifier: A11y.orders.list.msgTxtTitle)
-                .alert($store.scope(
-                    state: \.destination?.alert?.alert,
-                    action: \.destination.alert
-                ))
-                .task {
-                    await store.send(.task).finish()
-                }
-                .toolbar {}
             }
-            .tint(Colors.primary700)
-            .navigationViewStyle(StackNavigationViewStyle())
+            // Navigation into details
+            .navigationDestination(
+                item: $store.scope(
+                    state: \.destination?.orderDetail,
+                    action: \.destination.orderDetail
+                )
+            ) { store in
+                OrderDetailView(store: store)
+            }
+            .navigationBarTitle(L10n.msgTxtTitle, displayMode: .automatic)
+            .accessibility(identifier: A11y.orders.list.msgTxtTitle)
+            .alert($store.scope(
+                state: \.destination?.alert?.alert,
+                action: \.destination.alert
+            ))
+            .task {
+                await store.send(.task).finish()
+            }
+            .toolbar {}
         }
+        .tint(Colors.primary700)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     struct NoOrdersView: View {

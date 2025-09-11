@@ -107,7 +107,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
                 IDPInterceptor(session: idpSession, delegate: nil),
                 LoggingInterceptor(log: .body),
-                vauSession.provideInterceptor(),
+                VAUInterceptor(vauSession: vauSession),
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
                 LoggingInterceptor(log: .body),
             ]
@@ -188,7 +188,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 IDPInterceptor(session: idpSession, delegate: nil),
                 LoggingInterceptor(log: .body),
                 ExceptionInterceptor(order: order),
-                vauSession.provideInterceptor(),
+                VAUInterceptor(vauSession: vauSession),
                 AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
                 LoggingInterceptor(log: .body),
             ]

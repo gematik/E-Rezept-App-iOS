@@ -26,114 +26,109 @@ import SwiftUI
 
 // [REQ:BSI-eRp-ePA:O.Pass_3#2] View for changing the user password
 struct CreatePasswordView: View {
-    @Perception.Bindable var store: StoreOf<CreatePasswordDomain>
+    @Bindable var store: StoreOf<CreatePasswordDomain>
 
     var updatePassword: Bool {
         store.mode == .update
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView {
-                if updatePassword {
-                    SingleElementSectionContainer(
-                        header: {
-                            SectionHeaderView(
-                                text: L10n.cpwTxtSectionUpdateTitle,
-                                a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
-                            ).padding(.bottom, 8)
-                        },
-                        footer: {
-                            WithPerceptionTracking {
-                                if store.showOriginalPasswordWrong {
-                                    VStack(alignment: .leading) {
-                                        Text(L10n.cpwTxtCurrentPasswordWrong)
-                                            .foregroundColor(Colors.red600)
-                                            .font(.footnote)
-                                            .accessibilityIdentifier(A11y.settings.createPassword
-                                                .cpwTxtCurrentPasswordWrong)
-                                    }
-                                } else {
-                                    EmptyView()
-                                }
-                            }
-                        },
-                        content: {
-                            SecureField(
-                                L10n.cpwInpCurrentPasswordPlaceholder,
-                                text: $store.password
-                            )
-                            .textContentType(.password)
-                            .onSubmit { store.send(.enterButtonTapped) }
-                            .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
-                            .padding()
-                        }
-                    )
-                }
-
-                // This TextField is mandatory to support password autofill from iCloud Keychain, applying  `.hidden()`
-                // lets iOS no longer detect it.
-                TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
-                    .textContentType(.username)
-                    .frame(width: 1, height: 1, alignment: .leading)
-                    .opacity(0.01)
-                    .accessibility(hidden: true)
-
+        ScrollView {
+            if updatePassword {
                 SingleElementSectionContainer(
                     header: {
                         SectionHeaderView(
-                            text: L10n.cpwTxtSectionTitle,
-                            a11y: A11y.settings.createPassword.cpwTxtSectionTitle
+                            text: L10n.cpwTxtSectionUpdateTitle,
+                            a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
                         ).padding(.bottom, 8)
                     },
                     footer: {
-                        WithPerceptionTracking {
-                            VStack(spacing: 8) {
-                                FootnoteView(
-                                    text: L10n.cpwTxtPasswordRecommendation,
-                                    a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
-                                )
-
-                                // [REQ:BSI-eRp-ePA:O.Pass_2#4] Password strength view within settings.
-                                PasswordStrengthView(strength: store.passwordStrength)
-                                    .accessibility(identifier: A11y.settings.createPassword.cpwTxtPasswordStrength)
+                        if store.showOriginalPasswordWrong {
+                            VStack(alignment: .leading) {
+                                Text(L10n.cpwTxtCurrentPasswordWrong)
+                                    .foregroundColor(Colors.red600)
+                                    .font(.footnote)
+                                    .accessibilityIdentifier(A11y.settings.createPassword
+                                        .cpwTxtCurrentPasswordWrong)
                             }
+                        } else {
+                            EmptyView()
                         }
+
                     },
                     content: {
-                        VStack {
-                            SecureField(
-                                L10n.cpwInpPasswordAPlaceholder,
-                                text: $store.passwordA
-                            )
-                            .textContentType(.newPassword)
-                            .onSubmit { store.send(.enterButtonTapped) }
-                            .padding()
-                            .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
-                        }
+                        SecureField(
+                            L10n.cpwInpCurrentPasswordPlaceholder,
+                            text: $store.password
+                        )
+                        .textContentType(.password)
+                        .onSubmit { store.send(.enterButtonTapped) }
+                        .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
+                        .padding()
                     }
                 )
-
-                SingleElementSectionContainer {
-                    SecureField(
-                        L10n.cpwInpPasswordBPlaceholder,
-                        text: $store.passwordB
-                    )
-                    .textContentType(.newPassword)
-                    .onSubmit { store.send(.saveButtonTapped) }
-                    .padding()
-                    .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
-                    .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordB)
-                }
-
-                errorFooter()
-                    .accessibilityIdentifier(A11y.settings.createPassword.cpwTxtPasswordStrengthErrorFooter)
-                saveButtonAndError()
-                    .padding()
             }
-            .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
-            .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
+
+            // This TextField is mandatory to support password autofill from iCloud Keychain, applying  `.hidden()`
+            // lets iOS no longer detect it.
+            TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
+                .textContentType(.username)
+                .frame(width: 1, height: 1, alignment: .leading)
+                .opacity(0.01)
+                .accessibility(hidden: true)
+
+            SingleElementSectionContainer(
+                header: {
+                    SectionHeaderView(
+                        text: L10n.cpwTxtSectionTitle,
+                        a11y: A11y.settings.createPassword.cpwTxtSectionTitle
+                    ).padding(.bottom, 8)
+                },
+                footer: {
+                    VStack(spacing: 8) {
+                        FootnoteView(
+                            text: L10n.cpwTxtPasswordRecommendation,
+                            a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
+                        )
+
+                        // [REQ:BSI-eRp-ePA:O.Pass_2#4] Password strength view within settings.
+                        PasswordStrengthView(strength: store.passwordStrength)
+                            .accessibility(identifier: A11y.settings.createPassword.cpwTxtPasswordStrength)
+                    }
+                },
+                content: {
+                    VStack {
+                        SecureField(
+                            L10n.cpwInpPasswordAPlaceholder,
+                            text: $store.passwordA
+                        )
+                        .textContentType(.newPassword)
+                        .onSubmit { store.send(.enterButtonTapped) }
+                        .padding()
+                        .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
+                    }
+                }
+            )
+
+            SingleElementSectionContainer {
+                SecureField(
+                    L10n.cpwInpPasswordBPlaceholder,
+                    text: $store.passwordB
+                )
+                .textContentType(.newPassword)
+                .onSubmit { store.send(.saveButtonTapped) }
+                .padding()
+                .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
+                .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordB)
+            }
+
+            errorFooter()
+                .accessibilityIdentifier(A11y.settings.createPassword.cpwTxtPasswordStrengthErrorFooter)
+            saveButtonAndError()
+                .padding()
         }
+        .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
+        .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
     }
 
     @ViewBuilder private func errorFooter() -> some View {

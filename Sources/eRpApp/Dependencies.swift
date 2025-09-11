@@ -363,16 +363,37 @@ extension DependencyValues {
 
 import BfArM
 
-struct BfArMServiceDependency: DependencyKey {
-    static let liveValue: BfArMService? = nil
-    static let previewValue: BfArMService? = nil
-    static let testValue: BfArMService? = UnimplementedBfArMService()
+extension BfArMSession: @retroactive
+DependencyKey {
+    public static let liveValue: BfArMSession = .init { pzn in
+        @Dependency(\.bfarmClient) var client
+        @Dependency(\.userDataStore.appConfiguration) var appConfiguration
+
+        let config = BfArMClient.Configuration(
+            eRezeptAPIServer: appConfiguration.eRezept,
+            eRezeptAdditionalHeader: appConfiguration.eRezeptAdditionalHeader
+        )
+
+        return try await client.bfarmInfo(pzn, config)
+    } fetchCachedImage: { url in
+        @Dependency(\.bfarmClient) var client
+        @Dependency(\.userDataStore.appConfiguration) var appConfiguration
+
+        let config = BfArMClient.Configuration(
+            eRezeptAPIServer: appConfiguration.eRezept,
+            eRezeptAdditionalHeader: appConfiguration.eRezeptAdditionalHeader
+        )
+
+        return try await client.fetchCachedImage(url, config)
+    }
+
+    public static let testValue = BfArMSession()
 }
 
 extension DependencyValues {
-    var bfArMService: BfArMService {
-        get { self[BfArMServiceDependency.self] ?? changeableUserSessionContainer.userSession.bfArMService }
-        set { self[BfArMServiceDependency.self] = newValue }
+    var bfArMSession: BfArMSession {
+        get { self[BfArMSession.self] }
+        set { self[BfArMSession.self] = newValue }
     }
 }
 

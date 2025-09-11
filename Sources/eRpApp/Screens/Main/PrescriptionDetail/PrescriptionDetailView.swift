@@ -27,261 +27,259 @@ import SwiftUI
 import WebKit
 
 struct PrescriptionDetailView: View {
-    @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
+    @Bindable var store: StoreOf<PrescriptionDetailDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView(.vertical) {
-                HeaderView(store: store)
+        ScrollView(.vertical) {
+            HeaderView(store: store)
 
-                if store.profile?.profile.insuranceType == .pKV
-                    && store.chargeItem != nil
-                    || store.chargeItemConsentState != .notAuthenticated {
-                    ChargeItemHintView(store: store)
-                }
+            if store.profile?.profile.insuranceType == .pKV
+                && store.chargeItem != nil
+                || store.chargeItemConsentState != .notAuthenticated {
+                ChargeItemHintView(store: store)
+            }
 
-                if store.prescription.isRedeemable {
-                    HStack {
-                        Button {
-                            store.send(.redeemPressed)
-                        } label: {
-                            Label {
-                                Text(L10n.prscDtlBtnRedeem)
-                            } icon: {
-                                Image(asset: Asset.Pharmacy.btnApoSmall)
-                                    .resizable()
-                            }
+            if store.prescription.isRedeemable {
+                HStack {
+                    Button {
+                        store.send(.redeemPressed)
+                    } label: {
+                        Label {
+                            Text(L10n.prscDtlBtnRedeem)
+                        } icon: {
+                            Image(asset: Asset.Pharmacy.btnApoSmall)
+                                .resizable()
                         }
-                        .buttonStyle(.picture(isActive: true))
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnRedeem)
+                    }
+                    .buttonStyle(.picture(isActive: true))
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnRedeem)
 
-                        Button {
-                            store.send(.setNavigation(tag: .matrixCode))
-                        } label: {
-                            Label {
-                                Text(L10n.prscDtlBtnShowMatrixCode)
-                            } icon: {
-                                Image(asset: Asset.Prescriptions.datamatrix)
-                                    .resizable()
-                            }
+                    Button {
+                        store.send(.setNavigation(tag: .matrixCode))
+                    } label: {
+                        Label {
+                            Text(L10n.prscDtlBtnShowMatrixCode)
+                        } icon: {
+                            Image(asset: Asset.Prescriptions.datamatrix)
+                                .resizable()
                         }
-                        .buttonStyle(.picture(isActive: true))
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnShowMatrixCode)
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 24)
+                    .buttonStyle(.picture(isActive: true))
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnShowMatrixCode)
                 }
+                .padding(.horizontal)
+                .padding(.bottom, 24)
+            }
 
-                if store.prescription.isManualRedeemEnabled {
-                    MedicationRedeemView(
-                        text: store.medicationRedeemButtonTitle,
-                        a11y: A11y.prescriptionDetails.prscDtlBtnToggleRedeem,
-                        isEnabled: store.prescription.isRedeemable
-                    ) {
-                        store.send(.toggleRedeemPrescription)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.bottom, 24)
+            if store.prescription.isManualRedeemEnabled {
+                MedicationRedeemView(
+                    text: store.medicationRedeemButtonTitle,
+                    a11y: A11y.prescriptionDetails.prscDtlBtnToggleRedeem,
+                    isEnabled: store.prescription.isRedeemable
+                ) {
+                    store.send(.toggleRedeemPrescription)
                 }
+                .padding(.horizontal, 8)
+                .padding(.bottom, 24)
+            }
 
-                if store.prescription.type != .scanned {
-                    EmptyView()
-                    SectionContainer(
-                        header: {
-                            Text(L10n.prscDtlTxtSectionDetailsHeader)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.bottom, 8)
-                                .font(.title2.bold())
-                                .accessibilityIdentifier(A11y.prescriptionDetails
-                                    .prscDtlTxtSectionDetailsHeader)
-                        },
-                        footer: {
-                            FooterView { store.send(.openUrlGesundBundDe) }
-                        },
-                        content: {
-                            Button(
-                                action: { store.send(.setNavigation(tag: .medicationReminder)) },
-                                label: {
-                                    SubTitle(
-                                        title: L10n.prscDtlTxtMedicationReminder.text,
-                                        description: L10n.prscDtlBtnMedicationReminder.text
-                                    )
-                                    .subTitleStyle(.navigation(
-                                        stateText: store.medicationReminderState
-                                    ))
-                                }
-                            )
-                            .buttonStyle(.navigation)
-                            .accessibilityValue(store.medicationReminderState)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedicationReminder)
-
-                            Button(
-                                action: { store.send(.setNavigation(tag: .dosageInstructionsInfo)) },
-                                label: {
-                                    SubTitle(
-                                        title: store.dosageInstructions,
-                                        description: L10n.prscDtlTxtDosageInstructions
-                                    ).subTitleStyle(.info)
-                                }
-                            )
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtDosageInstructions)
-
-                            Button(action: { store.send(.setNavigation(tag: .coPaymentInfo)) }, label: {
+            if store.prescription.type != .scanned {
+                EmptyView()
+                SectionContainer(
+                    header: {
+                        Text(L10n.prscDtlTxtSectionDetailsHeader)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.bottom, 8)
+                            .font(.title2.bold())
+                            .accessibilityIdentifier(A11y.prescriptionDetails
+                                .prscDtlTxtSectionDetailsHeader)
+                    },
+                    footer: {
+                        FooterView { store.send(.openUrlGesundBundDe) }
+                    },
+                    content: {
+                        Button(
+                            action: { store.send(.setNavigation(tag: .medicationReminder)) },
+                            label: {
                                 SubTitle(
-                                    title: store.prescription.coPaymentStatusText,
-                                    description: L10n.prscDtlTxtAdditionalFee
+                                    title: L10n.prscDtlTxtMedicationReminder.text,
+                                    description: L10n.prscDtlBtnMedicationReminder.text
+                                )
+                                .subTitleStyle(.navigation(
+                                    stateText: store.medicationReminderState
+                                ))
+                            }
+                        )
+                        .buttonStyle(.navigation)
+                        .accessibilityValue(store.medicationReminderState)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedicationReminder)
+
+                        Button(
+                            action: { store.send(.setNavigation(tag: .dosageInstructionsInfo)) },
+                            label: {
+                                SubTitle(
+                                    title: store.dosageInstructions,
+                                    description: L10n.prscDtlTxtDosageInstructions
+                                ).subTitleStyle(.info)
+                            }
+                        )
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtDosageInstructions)
+
+                        Button(action: { store.send(.setNavigation(tag: .coPaymentInfo)) }, label: {
+                            SubTitle(
+                                title: store.prescription.coPaymentStatusText,
+                                description: L10n.prscDtlTxtAdditionalFee
+                            )
+                            .subTitleStyle(.info)
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails
+                                .prscDtlBtnScannedPrescriptionInfo)
+
+                        Button(
+                            action: { store.send(.setNavigation(tag: .emergencyServiceFeeInfo)) },
+                            label: {
+                                SubTitle(
+                                    title: store.prescription.medicationRequest.hasEmergencyServiceFee ? L10n
+                                        .prscDtlTxtEmergencyServiceFeeCovered : L10n
+                                        .prscDtlTxtEmergencyServiceFeeNotCovered,
+                                    description: L10n.prscDtlTxtEmergencyServiceFee
                                 )
                                 .subTitleStyle(.info)
+                            }
+                        )
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails
+                            .prscDtlBtnEmergencyServiceFee)
+
+                        Button(
+                            action: { store.send(.setNavigation(tag: .substitutionInfo)) },
+                            label: {
+                                SubTitle(
+                                    title: store.isSubstitutionAllowed ? L10n
+                                        .prscDtlTxtSubstitutionPossible : L10n
+                                        .prscDtlTxtNoSubstitution,
+                                    description: L10n.prscDtlTxtSubstitution
+                                )
+                                .subTitleStyle(.info)
+                            }
+                        )
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo)
+
+                        SubTitle(title: store.quantity, description: L10n.prscDtlTxtQuantity)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtQuantity)
+
+                        Button(action: { store.send(.setNavigation(tag: .medication)) }, label: {
+                            SubTitle(title: store.prescription.title, details: L10n.prscDtlTxtMedication)
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedication)
+
+                        if let number = store.multiplePrescriptionNumber {
+                            SubTitle(title: number, description: L10n.prscDtlTxtMultiPrescription)
+                                .accessibilityIdentifier(A11y.prescriptionDetails
+                                    .prscDtlTxtMultiPrescription)
+                        }
+
+                        Button(action: { store.send(.setNavigation(tag: .patient)) }, label: {
+                            SubTitle(title: store.patientName, details: L10n.prscDtlTxtInsuredPerson)
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInsuredPerson)
+
+                        Button(action: { store.send(.setNavigation(tag: .practitioner)) }, label: {
+                            SubTitle(
+                                title: store.practitionerName,
+                                details: L10n.prscDtlTxtPractitionerPerson
+                            )
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
+
+                    }, moreContent: {
+                        Button(action: { store.send(.setNavigation(tag: .organization)) }, label: {
+                            SubTitle(title: store.institutionName, details: L10n.prscDtlTxtInstitution)
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInstitution)
+
+                        if let accidentReason = store.accidentReason {
+                            Button(action: { store.send(.setNavigation(tag: .accidentInfo)) }, label: {
+                                SubTitle(title: accidentReason, description: L10n.prscDtlTxtAccidentReason)
                             })
                                 .buttonStyle(.navigation)
                                 .accessibilityIdentifier(A11y.prescriptionDetails
-                                    .prscDtlBtnScannedPrescriptionInfo)
-
-                            Button(
-                                action: { store.send(.setNavigation(tag: .emergencyServiceFeeInfo)) },
-                                label: {
-                                    SubTitle(
-                                        title: store.prescription.medicationRequest.hasEmergencyServiceFee ? L10n
-                                            .prscDtlTxtEmergencyServiceFeeCovered : L10n
-                                            .prscDtlTxtEmergencyServiceFeeNotCovered,
-                                        description: L10n.prscDtlTxtEmergencyServiceFee
-                                    )
-                                    .subTitleStyle(.info)
-                                }
-                            )
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails
-                                .prscDtlBtnEmergencyServiceFee)
-
-                            Button(
-                                action: { store.send(.setNavigation(tag: .substitutionInfo)) },
-                                label: {
-                                    SubTitle(
-                                        title: store.isSubstitutionAllowed ? L10n
-                                            .prscDtlTxtSubstitutionPossible : L10n
-                                            .prscDtlTxtNoSubstitution,
-                                        description: L10n.prscDtlTxtSubstitution
-                                    )
-                                    .subTitleStyle(.info)
-                                }
-                            )
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnSubstitutionInfo)
-
-                            SubTitle(title: store.quantity, description: L10n.prscDtlTxtQuantity)
-                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtQuantity)
-
-                            Button(action: { store.send(.setNavigation(tag: .medication)) }, label: {
-                                SubTitle(title: store.prescription.title, details: L10n.prscDtlTxtMedication)
-                            })
-                                .buttonStyle(.navigation)
-                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedication)
-
-                            if let number = store.multiplePrescriptionNumber {
-                                SubTitle(title: number, description: L10n.prscDtlTxtMultiPrescription)
-                                    .accessibilityIdentifier(A11y.prescriptionDetails
-                                        .prscDtlTxtMultiPrescription)
-                            }
-
-                            Button(action: { store.send(.setNavigation(tag: .patient)) }, label: {
-                                SubTitle(title: store.patientName, details: L10n.prscDtlTxtInsuredPerson)
-                            })
-                                .buttonStyle(.navigation)
-                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInsuredPerson)
-
-                            Button(action: { store.send(.setNavigation(tag: .practitioner)) }, label: {
-                                SubTitle(
-                                    title: store.practitionerName,
-                                    details: L10n.prscDtlTxtPractitionerPerson
-                                )
-                            })
-                                .buttonStyle(.navigation)
-                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnPractitioner)
-
-                        }, moreContent: {
-                            Button(action: { store.send(.setNavigation(tag: .organization)) }, label: {
-                                SubTitle(title: store.institutionName, details: L10n.prscDtlTxtInstitution)
-                            })
-                                .buttonStyle(.navigation)
-                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInstitution)
-
-                            if let accidentReason = store.accidentReason {
-                                Button(action: { store.send(.setNavigation(tag: .accidentInfo)) }, label: {
-                                    SubTitle(title: accidentReason, description: L10n.prscDtlTxtAccidentReason)
-                                })
-                                    .buttonStyle(.navigation)
-                                    .accessibilityIdentifier(A11y.prescriptionDetails
-                                        .prscDtlBtnWorkRelatedAccident)
-                            }
-
-                            SubTitle(
-                                title: store.bvg ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
-                                description: L10n.prscDtlTxtBvg
-                            )
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtBvg)
-
-                            SubTitle(
-                                title: store.authoredOnDate,
-                                description: L10n.prscDtlTxtAuthoredOnDate
-                            )
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtAuthoredOn)
-
-                            Button(
-                                action: { store.send(.setNavigation(tag: .technicalInformations)) },
-                                label: {
-                                    SubTitle(title: L10n.prscDtlBtnTechnicalInformations)
-                                }
-                            )
-                            .buttonStyle(.navigation)
-                            .accessibilityIdentifier(A11y.prescriptionDetails
-                                .prscDtlBtnTechnicalInformations)
+                                    .prscDtlBtnWorkRelatedAccident)
                         }
-                    )
-                    .sectionContainerStyle(.inline)
-                } else {
-                    SectionContainer(
-                        footer: { FooterView { store.send(.openUrlGesundBundDe) } },
-                        content: {
-                            Button(
-                                action: { store.send(.setNavigation(tag: .medicationReminder)) },
-                                label: {
-                                    SubTitle(
-                                        title: L10n.prscDtlTxtMedicationReminder.text,
-                                        description: L10n.prscDtlBtnMedicationReminder.text
-                                    )
-                                    .subTitleStyle(.navigation(
-                                        stateText: store.medicationReminderState
-                                    ))
-                                }
-                            )
-                            .buttonStyle(.navigation)
-                            .accessibilityValue(store.medicationReminderState)
-                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedicationReminder)
 
-                            Button(action: { store.send(.setNavigation(tag: .technicalInformations)) }, label: {
+                        SubTitle(
+                            title: store.ser ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
+                            description: L10n.prscDtlTxtBvg
+                        )
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtBvg)
+
+                        SubTitle(
+                            title: store.authoredOnDate,
+                            description: L10n.prscDtlTxtAuthoredOnDate
+                        )
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtAuthoredOn)
+
+                        Button(
+                            action: { store.send(.setNavigation(tag: .technicalInformations)) },
+                            label: {
                                 SubTitle(title: L10n.prscDtlBtnTechnicalInformations)
-                            })
-                                .buttonStyle(.navigation)
-                                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnTechnicalInformations)
-                        }
-                    ).sectionContainerStyle(.inline)
-                }
+                            }
+                        )
+                        .buttonStyle(.navigation)
+                        .accessibilityIdentifier(A11y.prescriptionDetails
+                            .prscDtlBtnTechnicalInformations)
+                    }
+                )
+                .sectionContainerStyle(.inline)
+            } else {
+                SectionContainer(
+                    footer: { FooterView { store.send(.openUrlGesundBundDe) } },
+                    content: {
+                        Button(
+                            action: { store.send(.setNavigation(tag: .medicationReminder)) },
+                            label: {
+                                SubTitle(
+                                    title: L10n.prscDtlTxtMedicationReminder.text,
+                                    description: L10n.prscDtlBtnMedicationReminder.text
+                                )
+                                .subTitleStyle(.navigation(
+                                    stateText: store.medicationReminderState
+                                ))
+                            }
+                        )
+                        .buttonStyle(.navigation)
+                        .accessibilityValue(store.medicationReminderState)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedicationReminder)
 
-                Navigations(store: store)
+                        Button(action: { store.send(.setNavigation(tag: .technicalInformations)) }, label: {
+                            SubTitle(title: L10n.prscDtlBtnTechnicalInformations)
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnTechnicalInformations)
+                    }
+                ).sectionContainerStyle(.inline)
             }
-            .redacted(reason: store.isDeleting ? .placeholder : .init())
-            .prescriptionDetailToolbarItem(store: store)
-            .task {
-                await store.send(.task).finish()
-            }
-            .onAppear {
-                store.send(.startHandoffActivity)
-            }
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
-            .navigationBarTitle(Text(L10n.prscFdTxtNavigationTitle), displayMode: .inline)
+
+            Navigations(store: store)
         }
+        .redacted(reason: store.isDeleting ? .placeholder : .init())
+        .prescriptionDetailToolbarItem(store: store)
+        .task {
+            await store.send(.task).finish()
+        }
+        .onAppear {
+            store.send(.startHandoffActivity)
+        }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
+        .navigationBarTitle(Text(L10n.prscFdTxtNavigationTitle), displayMode: .inline)
     }
 }
 
@@ -335,8 +333,8 @@ extension PrescriptionDetailDomain.State {
         prescription.medicationRequest.dosageInstructions ?? L10n.prscFdTxtNa.text
     }
 
-    var bvg: Bool {
-        prescription.medicationRequest.bvg
+    var ser: Bool {
+        prescription.medicationRequest.ser
     }
 
     var accidentReason: String? {

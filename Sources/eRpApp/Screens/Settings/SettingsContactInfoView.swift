@@ -65,15 +65,14 @@ struct SettingsContactInfoView: View {
 
                     UIApplication.shared.open(url)
                 }, label: {
-                    WithPerceptionTracking {
-                        if showDiGaBadge {
-                            Label(L10n.stgConTextDigaSurvey, systemImage: SFSymbolName.iPhoneGen2)
-                                .modifier(AnnotationBadgeModifier(text: L10n.stgConTextDigaSurveyBadge,
-                                                                  bundle: L10n.stgConTextDigaSurveyBadge.bundle))
-                        } else {
-                            Label(L10n.stgConTextDigaSurvey, systemImage: SFSymbolName.iPhoneGen2)
-                        }
+                    if showDiGaBadge {
+                        Label(L10n.stgConTextDigaSurvey, systemImage: SFSymbolName.iPhoneGen2)
+                            .modifier(AnnotationBadgeModifier(text: L10n.stgConTextDigaSurveyBadge,
+                                                              bundle: L10n.stgConTextDigaSurveyBadge.bundle))
+                    } else {
+                        Label(L10n.stgConTextDigaSurvey, systemImage: SFSymbolName.iPhoneGen2)
                     }
+
                 })
                     .accessibility(identifier: A11y.settings.contact.stgConTxtDigaSurvey)
                     .buttonStyle(.navigation)

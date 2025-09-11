@@ -40,5 +40,11 @@
         "text": "**🙌 Registration for privately insured people** \nRegistration for privately insured people has been optimized. You can log in conveniently with your health ID in just a few clicks. \n \n **🏥 Updated pharmacy data** \nChanges that pharmacies make in the new database are now reliably displayed. \n \n **📲 More information for DiGAs** \nFrom now on you will receive more detailed information about your DiGA prescriptions, such as the sales price or the logo. \n \n **♿️ Accessibility** \nThe screen for entering the health card access number has been redesigned and is now optimized for use with VoiceOver. \n \n **📤 Share prescriptions** \nPrescriptions can now be shared with others directly from the app.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Accessibility** \nThe profile settings have been revised to further increase accessibility.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

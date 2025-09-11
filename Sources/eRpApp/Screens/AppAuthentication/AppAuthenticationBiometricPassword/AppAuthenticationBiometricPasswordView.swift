@@ -32,122 +32,118 @@ extension AppAuthenticationBiometricPasswordDomain.State {
 }
 
 struct AppAuthenticationBiometricPasswordView: View {
-    @Perception.Bindable var store: StoreOf<AppAuthenticationBiometricPasswordDomain>
+    @Bindable var store: StoreOf<AppAuthenticationBiometricPasswordDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            if !store.showPassword {
-                VStack(alignment: .center) {
-                    switch store.biometryType {
-                    case .faceID:
-                        PrimaryTextButton(
-                            text: L10n.authBtnBapFaceid,
-                            a11y: A11y.auth.authBtnBapFaceid,
-                            image: Image(systemName: SFSymbolName.faceId),
-                            useFullWidth: false
-                        ) {
-                            store.send(.startAuthenticationChallenge)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .center)
-
-                    case .touchID:
-                        PrimaryTextButton(
-                            text: L10n.authBtnBapTouchid,
-                            a11y: A11y.auth.authBtnBapTouchid,
-                            image: Image(systemName: SFSymbolName.touchId),
-                            useFullWidth: false
-                        ) {
-                            store.send(.startAuthenticationChallenge)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    }
-
-                    NavButton(
-                        text: L10n.authBtnBapChange,
-                        a11y: A11y.auth.authBtnBapChange,
-                        back: false
+        if !store.showPassword {
+            VStack(alignment: .center) {
+                switch store.biometryType {
+                case .faceID:
+                    PrimaryTextButton(
+                        text: L10n.authBtnBapFaceid,
+                        a11y: A11y.auth.authBtnBapFaceid,
+                        image: Image(systemName: SFSymbolName.faceId),
+                        useFullWidth: false
                     ) {
-                        store.send(.switchToPassword(true), animation: .default)
-                    }
-                }
-                .onAppear {
-                    if store.startImmediateAuthenticationChallenge {
                         store.send(.startAuthenticationChallenge)
                     }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .center)
+
+                case .touchID:
+                    PrimaryTextButton(
+                        text: L10n.authBtnBapTouchid,
+                        a11y: A11y.auth.authBtnBapTouchid,
+                        image: Image(systemName: SFSymbolName.touchId),
+                        useFullWidth: false
+                    ) {
+                        store.send(.startAuthenticationChallenge)
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            } else {
-                PasswordView(store: store)
+
+                NavButton(
+                    text: L10n.authBtnBapChange,
+                    a11y: A11y.auth.authBtnBapChange,
+                    back: false
+                ) {
+                    store.send(.switchToPassword(true), animation: .default)
+                }
             }
+            .onAppear {
+                if store.startImmediateAuthenticationChallenge {
+                    store.send(.startAuthenticationChallenge)
+                }
+            }
+            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        } else {
+            PasswordView(store: store)
         }
     }
 }
 
 struct PasswordView: View {
-    @Perception.Bindable var store: StoreOf<AppAuthenticationBiometricPasswordDomain>
+    @Bindable var store: StoreOf<AppAuthenticationBiometricPasswordDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .leading) {
-                SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
-                                      accessibilityLabelKey: L10n.authTxtPasswordLabel,
-                                      text: $store.password.sending(\.setPassword),
-                                      textContentType: .password) {
-                    store.send(.loginButtonTapped, animation: .default)
-                }
-                .padding()
-                .font(Font.body)
-                .background(Color(.systemBackground))
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(
-                            store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.textSecondary,
-                            lineWidth: 0.5
-                        )
-                )
-                .padding(.horizontal)
-                .disabled(store.passwordDelayIsActive)
-                .accessibility(identifier: A11y.auth.authEdtPasswordInput)
-
-                if store.showUnsuccessfulAttemptMessage {
-                    UnsuccessfulAttemptMessageView(store: store)
-                        .padding(.horizontal)
-                        .padding(.top, 4)
-                }
-
-                PrimaryTextButton(
-                    text: L10n.authBtnPasswordContinue,
-                    a11y: A11y.auth.authBtnPasswordContinue,
-                    isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
-                    useFullWidth: false
-                ) {
-                    store.send(.loginButtonTapped, animation: .default)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .center)
-
-                NavButton(
-                    text: L10n.authBtnBapBack,
-                    a11y: A11y.auth.authBtnBapChange,
-                    back: true
-                ) {
-                    store.send(.switchToPassword(false), animation: .default)
-                }
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .center)
-                .multilineTextAlignment(.center)
+        VStack(alignment: .leading) {
+            SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
+                                  accessibilityLabelKey: L10n.authTxtPasswordLabel,
+                                  text: $store.password.sending(\.setPassword),
+                                  textContentType: .password) {
+                store.send(.loginButtonTapped, animation: .default)
             }
-            .task {
-                await store.send(.task).finish()
+            .padding()
+            .font(Font.body)
+            .background(Color(.systemBackground))
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(
+                        store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.textSecondary,
+                        lineWidth: 0.5
+                    )
+            )
+            .padding(.horizontal)
+            .disabled(store.passwordDelayIsActive)
+            .accessibility(identifier: A11y.auth.authEdtPasswordInput)
+
+            if store.showUnsuccessfulAttemptMessage {
+                UnsuccessfulAttemptMessageView(store: store)
+                    .padding(.horizontal)
+                    .padding(.top, 4)
             }
+
+            PrimaryTextButton(
+                text: L10n.authBtnPasswordContinue,
+                a11y: A11y.auth.authBtnPasswordContinue,
+                isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
+                useFullWidth: false
+            ) {
+                store.send(.loginButtonTapped, animation: .default)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .center)
+
+            NavButton(
+                text: L10n.authBtnBapBack,
+                a11y: A11y.auth.authBtnBapChange,
+                back: true
+            ) {
+                store.send(.switchToPassword(false), animation: .default)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .multilineTextAlignment(.center)
+        }
+        .task {
+            await store.send(.task).finish()
         }
     }
 
     private struct UnsuccessfulAttemptMessageView: View {
-        @Perception.Bindable var store: StoreOf<AppAuthenticationBiometricPasswordDomain>
+        @Bindable var store: StoreOf<AppAuthenticationBiometricPasswordDomain>
         var body: some View {
             Text(store.unsuccessfulAttemptMessage)
                 .foregroundColor(Colors.red600)

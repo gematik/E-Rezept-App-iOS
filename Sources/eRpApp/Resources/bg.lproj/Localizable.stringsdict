@@ -52,6 +52,22 @@
 			<string>Моля, опитайте отново след %u секунди.</string>
 		</dict>
 	</dict>
+	<key>dtl_txt_med_redeemed_on_direct_assignment</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Dieses Rezept wurde %%@ im Rahmen einer Behandlung für Sie eingelöst.</string>
+			<key>other</key>
+			<string>Тази рецепта е издадена за Вас на % %@ като част от лечение.</string>
+		</dict>
+	</dict>
 	<key>erx_txt_accepted_until</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

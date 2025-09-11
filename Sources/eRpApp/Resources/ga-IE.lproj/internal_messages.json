@@ -40,5 +40,11 @@
         "text": "**🙌 Clárú do dhaoine atá árachaithe go príobháideach** \nTá clárú do dhaoine atá árachaithe go príobháideach optamaithe. Is féidir leat logáil isteach go háisiúil le d’aitheantas sláinte le cúpla cad a tharlaíonn. \n \n **🏥 Sonraí cógaisíochta nuashonraithe** \nTaispeántar athruithe a dhéanann cógaslanna sa bhunachar sonraí nua go hiontaofa anois. \n \n **📲 Tuilleadh eolais do DiGAanna** \nAs seo amach gheobhaidh tú tuilleadh eolais mhionsonraithe faoi d’oidis DiGA, amhail an praghas díola nó an lógó. \n \n **♿️ Inrochtaineacht** \nTá an scáileán chun uimhir rochtana an chárta sláinte a iontráil athdhearadh agus tá sé optamaithe anois le húsáid le VoiceOver. \n \n **📤 Comhroinn oidis** \nIs féidir oidis a roinnt le daoine eile anois go díreach ón aip.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Inrochtaineacht** \nAthbhreithníodh na socruithe próifíle chun inrochtaineacht a mhéadú tuilleadh.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

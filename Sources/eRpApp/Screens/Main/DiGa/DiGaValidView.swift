@@ -26,53 +26,51 @@ import eRpStyleKit
 import SwiftUI
 
 struct DiGaValidView: View {
-    @Perception.Bindable var store: StoreOf<DiGaDetailDomain>
+    @Bindable var store: StoreOf<DiGaDetailDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                HStack {
-                    Spacer()
-                    Button {
-                        store.send(.setNavigation(tag: .none))
-                    } label: {
-                        Image(systemName: SFSymbolName.crossIconPlain)
-                            .font(Font.caption.weight(.bold))
-                            .foregroundColor(Color(.label))
-                            .padding(12)
-                            .background(Circle().foregroundColor(Color(.systemGray6)))
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L10n.digaDtlValidTxtHeader)
-                        .font(.headline)
-                        .padding(.bottom, 8)
-                        .accessibilityIdentifier(A11y.digaDetail.digaDtlValidTxtHeader)
-
-                    HStack {
-                        Text(store.diGaTask.authoredOn ?? L10n.digaDtlTxtNa.text)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibilityIdentifier(A11y.digaDetail.digaDtlValidTxtStartDate)
-
-                        Image(systemName: SFSymbolName.arrowRight)
-                            .foregroundColor(Colors.primary700)
-
-                        Text(store.diGaTask.expiresOnDisplayDate)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibilityIdentifier(A11y.digaDetail.digaDtlValidTxtEndDate)
-                    }
-
-                    Text(L10n.digaDtlValidTxtSubheader)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .accessibilityIdentifier(A11y.digaDetail.digaDtlValidTxtSubheader)
-                    Spacer()
+        VStack {
+            HStack {
+                Spacer()
+                Button {
+                    store.send(.setNavigation(tag: .none))
+                } label: {
+                    Image(systemName: SFSymbolName.crossIconPlain)
+                        .font(Font.caption.weight(.bold))
+                        .foregroundColor(Color(.label))
+                        .padding(12)
+                        .background(Circle().foregroundColor(Color(.systemGray6)))
                 }
             }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Colors.systemBackground.ignoresSafeArea())
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L10n.digaDtlValidTxtHeader)
+                    .font(.headline)
+                    .padding(.bottom, 8)
+                    .accessibilityIdentifier(A11y.diga.valid.digaDtlValidTxtHeader)
+
+                HStack {
+                    Text(store.diGaTask.authoredOn ?? L10n.digaDtlTxtNa.text)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibilityIdentifier(A11y.diga.valid.digaDtlValidTxtStartDate)
+
+                    Image(systemName: SFSymbolName.arrowRight)
+                        .foregroundColor(Colors.primary700)
+
+                    Text(store.diGaTask.expiresOnDisplayDate)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibilityIdentifier(A11y.diga.valid.digaDtlValidTxtEndDate)
+                }
+
+                Text(L10n.digaDtlValidTxtSubheader)
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    .accessibilityIdentifier(A11y.diga.valid.digaDtlValidTxtSubheader)
+                Spacer()
+            }
         }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Colors.systemBackground.ignoresSafeArea())
     }
 }
 

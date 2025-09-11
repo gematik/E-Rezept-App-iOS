@@ -31,7 +31,8 @@ struct HintView<Action: Equatable>: View {
 
     var body: some View {
         HStack(alignment: hint.isTopAligned ? .top : .bottom, spacing: 0) {
-            HintImage(name: hint.image.name, isSystemName: hint.image.isSystemName)
+            Image(asset: hint.image.asset)
+                .font(.title3)
                 .foregroundColor(hint.actionColor)
                 .padding(.leading)
                 .padding(.top, hint.isTopAligned ? 16 : 0)
@@ -95,20 +96,5 @@ struct HintView<Action: Equatable>: View {
         .accessibility(identifier: hint.id)
         .background(RoundedRectangle(cornerRadius: 16).fill(hint.fillColor))
         .border(hint.borderColor, width: 0.5, cornerRadius: 16)
-    }
-
-    struct HintImage: View {
-        let name: String
-        let isSystemName: Bool
-
-        var body: some View {
-            if isSystemName {
-                Image(systemName: name)
-                    .font(.title.weight(.semibold))
-            } else {
-                Image(name, bundle: .module)
-                    .font(.title3)
-            }
-        }
     }
 }

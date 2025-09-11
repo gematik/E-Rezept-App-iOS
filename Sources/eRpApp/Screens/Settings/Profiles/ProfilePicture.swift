@@ -21,6 +21,7 @@
 //
 
 import eRpKit
+import eRpResources
 import Foundation
 import SwiftUI
 

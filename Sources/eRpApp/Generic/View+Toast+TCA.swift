@@ -179,36 +179,34 @@ struct TCAToast_PreviewProvider: PreviewProvider {
     }
 
     struct TestView: View {
-        @Perception.Bindable var store: StoreOf<Domain>
+        @Bindable var store: StoreOf<Domain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack {
-                    Spacer()
-                    Button {
-                        store.send(.simpleText, animation: .easeInOut)
-                    } label: {
-                        Text("Simple Text")
-                    }
-                    Button {
-                        store.send(.twoLines, animation: .easeInOut)
-                    } label: {
-                        Text("Two Lines")
-                    }
-                    Button {
-                        store.send(.action, animation: .easeInOut)
-                    } label: {
-                        Text("Toast with action")
-                    }
-
-                    Spacer()
+            VStack {
+                Spacer()
+                Button {
+                    store.send(.simpleText, animation: .easeInOut)
+                } label: {
+                    Text("Simple Text")
                 }
-                .onAppear {
+                Button {
+                    store.send(.twoLines, animation: .easeInOut)
+                } label: {
+                    Text("Two Lines")
+                }
+                Button {
                     store.send(.action, animation: .easeInOut)
+                } label: {
+                    Text("Toast with action")
                 }
-                .frame(maxWidth: .infinity)
-                .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
+
+                Spacer()
             }
+            .onAppear {
+                store.send(.action, animation: .easeInOut)
+            }
+            .frame(maxWidth: .infinity)
+            .toast($store.scope(state: \.destination?.toast, action: \.destination.toast))
         }
     }
 

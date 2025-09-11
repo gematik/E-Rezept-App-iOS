@@ -1,4 +1,4 @@
-// swift-tools-version:5.8
+// swift-tools-version:5.9
 //
 //  Copyright (Change Date see Readme), gematik GmbH
 //
@@ -27,10 +27,11 @@ let package = Package(
     name: "eRpKit",
     defaultLocalization: "de",
     platforms: [
-        .iOS(.v16), .macOS(.v13)
+        .iOS(.v17), .macOS(.v13)
     ],
     products: [
         .library(name: "eRpFeatures", targets: ["eRpFeatures"]),
+        .library(name: "FeatureEURedeem", targets: ["FeatureEURedeem"]),
         .library(name: "eRpStyleKit", targets: ["eRpStyleKit"]),
         .library(name: "eRpResources", targets: ["eRpResources"]),
         .library(name: "eRpKit", targets: ["eRpKit"]),
@@ -39,6 +40,7 @@ let package = Package(
         .library(name: "Pharmacy", targets: ["Pharmacy"]),
         .library(name: "FHIRVZD", targets: ["FHIRVZD"]),
         .library(name: "BfArM", targets: ["BfArM"]),
+        .library(name: "BfArMLive", targets: ["BfArMLive"]),
         .library(name: "AVS", targets: ["AVS"]),
         .library(name: "IDP", targets: ["IDP"]),
         .library(name: "IDPLive", targets: ["IDPLive"]),
@@ -61,6 +63,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.3.2"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.4.1"),
         .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "1.1.0"),
+        .package(url: "https://github.com/pointfreeco/swift-sharing", from: "2.5.2"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.18.3"),
         .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.1.2"),
         .package(url: "https://github.com/Quick/Nimble", from: "13.0.0"),
@@ -84,6 +87,7 @@ let package = Package(
                 "Pharmacy",
                 "FHIRVZD",
                 "BfArM",
+                "BfArMLive",
                 "IDP",
                 "IDPLive",
                 "HTTPClient",
@@ -92,6 +96,7 @@ let package = Package(
                 "TrustStore",
                 "VAUClient",
                 "AVS",
+                "FeatureEURedeem",
                 .product(name: "ASN1Kit", package: "ASN1Kit"),
                 .product(name: "ModelsR4", package: "FHIRModels"),
                 .product(name: "ContentsquareModule", package: "CS_iOS_SDK"),
@@ -124,6 +129,22 @@ let package = Package(
             plugins: [
                 .plugin(name: "ErpAppPlugin"),
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
+            ]
+        ),
+        .target(
+            name: "FeatureEURedeem",
+            dependencies: [
+                "eRpStyleKit",
+                "eRpKit",
+                .product(name: "CasePaths", package: "swift-case-paths"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "IdentifiedCollections", package: "swift-identified-collections"),
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+            ],
+            path: "Sources/FeatureEURedeem",
+            resources: [
+                .process("Resources")
             ]
         ),
         .plugin(
@@ -183,6 +204,7 @@ let package = Package(
                 "FHIRClient",
                 "eRpKit",
                 .product(name: "ModelsR4", package: "FHIRModels"),
+                .product(name: "Sharing", package: "swift-sharing"),
             ]
         ),
         .target(
@@ -213,10 +235,17 @@ let package = Package(
         .target(
             name: "BfArM",
             dependencies: [
-                "HTTPClient",
                 "eRpKit",
                 // change to swift-sharing & dependencies after TCA update
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "DependenciesMacros", package: "swift-dependencies")
+            ]
+        ),
+        .target(
+            name: "BfArMLive",
+            dependencies: [
+                "BfArM",
+                "HTTPClientLive",
             ]
         ),
         .target(
@@ -230,7 +259,6 @@ let package = Package(
         .target(
             name: "IDP",
             dependencies: [
-                .product(name: "ASN1Kit", package: "ASN1Kit"),
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),
                 .product(name: "CombineSchedulers", package: "combine-schedulers"),
                 .product(name: "CasePaths", package: "swift-case-paths"),
@@ -242,6 +270,7 @@ let package = Package(
                 "HTTPClient",
                 "IDP",
                 "TrustStore",
+                .product(name: "ASN1Kit", package: "ASN1Kit"),
             ]
         ),
         .target(
@@ -273,6 +302,7 @@ let package = Package(
         .target(
             name: "VAUClient",
             dependencies: [
+                .product(name: "CasePaths", package: "swift-case-paths"),
                 "HTTPClient",
                 "TrustStore",
                 .product(name: "OpenSSL-Swift", package: "OpenSSL-Swift"),

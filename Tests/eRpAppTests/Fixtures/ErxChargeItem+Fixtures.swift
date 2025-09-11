@@ -64,7 +64,7 @@ extension ErxChargeItem {
                 dosageInstructions: "1-0-0-0",
                 substitutionAllowed: true,
                 hasEmergencyServiceFee: false,
-                bvg: false,
+                ser: false,
                 coPaymentStatus: .subjectToCharge,
                 multiplePrescription: .init(mark: false),
                 quantity: .init(value: "17", unit: "Packungen")

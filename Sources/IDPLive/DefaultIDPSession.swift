@@ -27,6 +27,7 @@ import CombineSchedulers
 import Foundation
 import HTTPClient
 import IDP
+import OpenSSL
 import OSLog
 import TrustStore
 
@@ -816,6 +817,114 @@ extension Publisher where Output == IDPToken?, Failure == Never {
                 return Just(token).setFailureType(to: IDPError.self).eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
+    }
+}
+
+extension SignedChallenge {
+    /// Encrypt the signed challenge using the provided public key
+    /// - Parameters:
+    ///   - publicKey: BrainpoolP256r1 public key for encryption
+    ///   - cryptoBox: IDPCrypto instance containing encryption parameters
+    /// - Returns: JWE containing the encrypted signed challenge
+    /// - Throws: IDPError if encryption fails
+    func encrypt(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
+                 using cryptoBox: IDPCrypto) throws -> JWE {
+        // [REQ:BSI-eRp-ePA:O.Cryp_1#2] Signature via ecdh ephemeral-static
+        // [REQ:BSI-eRp-ePA:O.Cryp_4#5] one time usage for JWE ECDH-ES Encryption
+        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+            publicKey,
+            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
+        ))
+        let signedChallengePayload = NestedJWT(njwt: serialize())
+        guard let jweHeader = try? JWE.Header(algorithm: algorithm,
+                                              encryption: .a256gcm,
+                                              expiry: originalChallenge.challenge.exp,
+                                              contentType: "NJWT"),
+            let jwePayload = try? SignedChallenge.defaultEncoder.encode(signedChallengePayload),
+            let signedChallengeJWE = try? JWE(header: jweHeader,
+                                              payload: jwePayload,
+                                              nonceGenerator: cryptoBox.aesNonceGenerator) else {
+            throw IDPError.internal(error: .signedChallengeEncryption)
+        }
+
+        return signedChallengeJWE
+    }
+
+    private static let defaultEncoder: JSONEncoder = {
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.dataEncodingStrategy = .base64
+        return jsonEncoder
+    }()
+}
+
+extension SignedAuthenticationData {
+    /// Encrypt the signed authentication data using the provided public key
+    /// - Parameters:
+    ///   - publicKey: BrainpoolP256r1 public key for encryption
+    ///   - cryptoBox: IDPCrypto instance containing encryption parameters
+    /// - Returns: JWE containing the encrypted signed authentication data
+    /// - Throws: IDPError if encryption fails
+    func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
+                   using cryptoBox: IDPCrypto) throws -> JWE {
+        // [REQ:BSI-eRp-ePA:O.Cryp_1#3] Signature via ecdh ephemeral-static
+        // [REQ:BSI-eRp-ePA:O.Cryp_4#4] one time usage for JWE ECDH-ES Encryption
+        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+            publicKey,
+            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
+        ))
+        let signedChallengePayload = NestedJWT(njwt: serialize())
+        guard let jweHeader = try? JWE.Header(algorithm: algorithm,
+                                              encryption: .a256gcm,
+                                              /// [REQ:gemSpec_IDP_Frontend:A_21431] exp header
+                                              expiry: originalChallenge.challenge.exp,
+                                              contentType: "NJWT",
+                                              type: "JWT"),
+            let jwePayload = try? SignedAuthenticationData.defaultEncoder.encode(signedChallengePayload),
+            let signedChallengeJWE = try? JWE(header: jweHeader,
+                                              payload: jwePayload,
+                                              nonceGenerator: cryptoBox.aesNonceGenerator) else {
+            throw IDPError.internal(error: .signedAuthenticationDataEncryption)
+        }
+
+        return signedChallengeJWE
+    }
+
+    private static let defaultEncoder: JSONEncoder = {
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.dataEncodingStrategy = .base64
+        return jsonEncoder
+    }()
+}
+
+extension RegistrationData {
+    private static var defaultEncoder: JSONEncoder = {
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.dataEncodingStrategy = .base64
+        return jsonEncoder
+    }()
+
+    /// [REQ:gemSpec_IDP_Dienst:A_21415:Encrypted_Registration_Data] Returns JWE encrypted Registration_Data
+    /// [REQ:gemSpec_IDP_Frontend:A_21416] Encryption
+    func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
+                   using cryptoBox: IDPCrypto) throws -> JWE {
+        // [REQ:BSI-eRp-ePA:O.Cryp_1#4] Signature via ecdh ephemeral-static
+        // [REQ:BSI-eRp-ePA:O.Cryp_4#3] one time usage for JWE ECDH-ES Encryption
+        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
+            publicKey,
+            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
+        ))
+        guard let jweHeader = try? JWE.Header(algorithm: algorithm,
+                                              encryption: .a256gcm,
+                                              contentType: "JSON",
+                                              type: "JWT"),
+            let jwePayload = try? RegistrationData.defaultEncoder.encode(self),
+            let signedChallengeJWE = try? JWE(header: jweHeader,
+                                              payload: jwePayload,
+                                              nonceGenerator: cryptoBox.aesNonceGenerator) else {
+            throw IDPError.internal(error: .registrationDataEncryption)
+        }
+
+        return signedChallengeJWE
     }
 }
 

@@ -27,40 +27,38 @@ import SwiftUI
 
 // [REQ:BSI-eRp-ePA:O.Resi_1#2] View containing onboarding authentication
 struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
-    @Perception.Bindable var store: StoreOf<RegisterAuthenticationDomain>
+    @Bindable var store: StoreOf<RegisterAuthenticationDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                ScrollView(.vertical, showsIndicators: true) {
-                    OnboardingProgressView(currentPage: .second)
-                        .padding(.top)
+        VStack {
+            ScrollView(.vertical, showsIndicators: true) {
+                OnboardingProgressView(currentPage: .second)
+                    .padding(.top)
 
-                    TitleView()
-                        .padding(.top)
+                TitleView()
+                    .padding(.top)
 
-                    if store.hasFaceIdOption {
-                        FaceIDView {
-                            store.send(.startBiometry(.biometry(.faceID)))
-                        }
+                if store.hasFaceIdOption {
+                    FaceIDView {
+                        store.send(.startBiometry(.biometry(.faceID)))
                     }
-                    if store.hasTouchIdOption {
-                        TouchIDView {
-                            store.send(.startBiometry(.biometry(.touchID)))
-                        }
+                }
+                if store.hasTouchIdOption {
+                    TouchIDView {
+                        store.send(.startBiometry(.biometry(.touchID)))
                     }
-                    if store.hasPasswordOption {
-                        PasswordView {
-                            store.send(.delegate(.showRegisterPassword))
-                        }
+                }
+                if store.hasPasswordOption {
+                    PasswordView {
+                        store.send(.delegate(.showRegisterPassword))
                     }
                 }
             }
-            .padding(.horizontal)
-            .alert($store.scope(state: \.alertState, action: \.alert))
-            .onAppear {
-                store.send(.loadAvailableSecurityOptions)
-            }
+        }
+        .padding(.horizontal)
+        .alert($store.scope(state: \.alertState, action: \.alert))
+        .onAppear {
+            store.send(.loadAvailableSecurityOptions)
         }
     }
 }

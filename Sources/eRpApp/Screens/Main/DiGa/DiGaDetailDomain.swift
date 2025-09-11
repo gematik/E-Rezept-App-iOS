@@ -199,7 +199,7 @@ struct DiGaDetailDomain {
     @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
     @Dependency(\.uiDateFormatter) var uiDateFormatter
     @Dependency(\.date) var dateGenerator: DateGenerator
-    @Dependency(\.bfArMService) var bfArMService: BfArMService
+    @Dependency(\.bfArMSession) var bfArMSession: BfArMSession
 
     var body: some Reducer<State, Action> {
         Reduce(self.core)
@@ -235,7 +235,12 @@ struct DiGaDetailDomain {
             guard let pzn = state.diGaTask.erxTask.deviceRequest?.pzn else { return .none }
             return .run { send in
                 do {
-                    let bfarmResponse = try await bfArMService.fetchBfArMInfo(pzn: pzn)
+                    var bfarmResponse = try await bfArMSession.fetchBfArMInfo(pzn)
+                    guard let url = bfarmResponse?.iconUrl else {
+                        await send(.response(.receivedBfArMDiGaDetails(.success(bfarmResponse))))
+                        return
+                    }
+                    bfarmResponse?.iconData = try await bfArMSession.fetchCachedImage(url)
                     await send(.response(.receivedBfArMDiGaDetails(.success(bfarmResponse))))
                 } catch let error as BfArMError {
                     await send(.response(.receivedBfArMDiGaDetails(.failure(error))))
@@ -729,7 +734,7 @@ extension DiGaDetailDomain {
                     .foregroundColor(Colors.primary700)
             }()
 
-            manufacturerCost = bfarmDiGaDetail?.manufacturerCost.map { "\($0)€" } ?? ""
+            manufacturerCost = bfarmDiGaDetail?.manufacturerCost.map { "\($0)€" }
         }
     }
 

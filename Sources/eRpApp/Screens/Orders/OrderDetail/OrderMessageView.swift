@@ -72,7 +72,7 @@ struct OrderMessageView: View {
                         if let action = timelineEntry.actions.first?.action {
                             store.send(action)
                         }
-                    case .reply:
+                    case .reply, .diga:
                         store.send(.openPhoneAppWith(url: url))
                     case .chargeItem,
                          .internalCommunication:

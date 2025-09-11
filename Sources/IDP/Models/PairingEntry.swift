@@ -20,9 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
-import OpenSSL
 
 /// Represents stored data within the idp.
 /// [REQ:gemSpec_IDP_Dienst:A_21450:Pairing_Entry]

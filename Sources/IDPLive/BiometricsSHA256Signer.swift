@@ -20,6 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import ASN1Kit
 import Combine
 import Foundation
 import IDP
@@ -45,9 +46,51 @@ public class BiometricsSHA256Signer: JWTSigner {
 
     public func sign(message: Data) async throws -> Data {
         do {
-            return try privateKeyContainer.sign(data: message)
+            // Data in concat format containing the Signature `r` | `s`.
+            return try privateKeyContainer.sign(data: message).derToConcat()
         } catch {
             throw Error.signatureFailed
+        }
+    }
+}
+
+// sourcery: CodedError = "107"
+public enum ConversionError: Swift.Error {
+    // sourcery: errorCode = "01"
+    case generic(String?)
+}
+
+extension Data {
+    // From jose4j EcdsaUsingShaAlgorithm.java
+    func derToConcat() throws -> Data {
+        let wholeASN1 = try ASN1Decoder.decode(asn1: self)
+        let sequence = try Array(from: wholeASN1)
+
+        guard sequence.count == 2 else {
+            throw ConversionError.generic("Error converting EC signature. Expected 2 elements, found \(sequence.count)")
+        }
+
+        let signatureR = try Data(from: sequence[0]).dropLeadingZeroByte.padWithLeadingZeroes(totalLength: 32)
+        let signatureS = try Data(from: sequence[1]).dropLeadingZeroByte.padWithLeadingZeroes(totalLength: 32)
+
+        return signatureR + signatureS
+    }
+}
+
+extension Data {
+    var dropLeadingZeroByte: Data {
+        if first == 0x0 {
+            return dropFirst()
+        } else {
+            return self
+        }
+    }
+
+    func padWithLeadingZeroes(totalLength: Int) -> Data {
+        if count >= totalLength {
+            return self
+        } else {
+            return Data(count: totalLength - count) + self
         }
     }
 }

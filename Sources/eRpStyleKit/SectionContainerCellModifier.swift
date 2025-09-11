@@ -27,7 +27,8 @@ private struct SectionContainerCellLastElementKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var sectionContainerIsLastElement: Bool {
+    /// Use this key to indicate if the current element in a `SectionContainer` is the last element.
+    public var sectionContainerIsLastElement: Bool {
         get { self[SectionContainerCellLastElementKey.self] }
         set { self[SectionContainerCellLastElementKey.self] = newValue }
     }

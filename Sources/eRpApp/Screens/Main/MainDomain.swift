@@ -129,8 +129,8 @@ struct MainDomain {
         case turnOffDemoMode
         /// Tapping the OS deprecation banner shows more information
         case osDeprecationBannerTapped
-        /// Set profile to pkv user
-        case setUserToPKVInsured
+        case gkvInsuredButtonTapped
+        case pkvInsuredButtonTapped
         case externalLogin(URL)
         case importTaskByUrl(URL)
         case showDrawer
@@ -367,6 +367,9 @@ struct MainDomain {
         case let .prescriptionList(action: .response(.showCardWallReceived(cardWallState))):
             state.destination = .cardWall(cardWallState)
             return .none
+        case .prescriptionList(action: .response(.showInsuranceTypeSelectionSheetReceived)):
+            state.destination = .welcomeDrawer
+            return .none
         case let .prescriptionList(action: .diGaDetailViewTapped(prescription, profile)):
             guard let diGaInfo = prescription.erxTask.deviceRequest?.diGaInfo else { return .none }
             state.destination = .diGaDetail(DiGaDetailDomain.State(
@@ -424,7 +427,20 @@ struct MainDomain {
             return .run { send in
                 await send(.response(.showDrawer(drawerEvaluation.showDrawerEvaluation())))
             }
-        case .setUserToPKVInsured:
+        case .gkvInsuredButtonTapped:
+            guard let profileId = state.horizontalProfileSelectionState.selectedProfileId else {
+                return .none
+            }
+
+            return .run { send in
+                _ = try await userProfileService
+                    .update(profileId: profileId) { profile in
+                        profile.insuranceType = .gKV
+                    }
+                    .async()
+                await send(.startCardWall)
+            }
+        case .pkvInsuredButtonTapped:
             guard let profileId = state.horizontalProfileSelectionState.selectedProfileId else {
                 return .none
             }

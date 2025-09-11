@@ -34,41 +34,39 @@ struct RedeemSuccessView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView {
-                VStack(spacing: 16) {
-                    if let url = videoURLforSource(store.redeemOption) {
-                        LoopingVideoPlayerContainerView(withURL: url)
-                            .frame(
-                                minWidth: 160,
-                                idealWidth: 240,
-                                maxWidth: 300,
-                                minHeight: 160,
-                                idealHeight: 240,
-                                maxHeight: 300
-                            )
-                            .clipShape(Circle())
-                            .padding(.vertical, 8)
-                    }
-
-                    Text(titlelForSource(store.redeemOption), bundle: .module)
-                        .font(Font.title3.bold())
-
-                    ContentView(option: store.state.redeemOption)
-
-                    Spacer()
-
-                    LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
-                                         isLoading: false) {
-                        store.send(.closeButtonTapped)
-                    }
-                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
+        ScrollView {
+            VStack(spacing: 16) {
+                if let url = videoURLforSource(store.redeemOption) {
+                    LoopingVideoPlayerContainerView(withURL: url)
+                        .frame(
+                            minWidth: 160,
+                            idealWidth: 240,
+                            maxWidth: 300,
+                            minHeight: 160,
+                            idealHeight: 240,
+                            maxHeight: 300
+                        )
+                        .clipShape(Circle())
+                        .padding(.vertical, 8)
                 }
-                .navigationBarBackButtonHidden(true)
-                .navigationTitle(L10n.phaSuccessRedeemTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .padding()
+
+                Text(titlelForSource(store.redeemOption), bundle: .module)
+                    .font(Font.title3.bold())
+
+                ContentView(option: store.state.redeemOption)
+
+                Spacer()
+
+                LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
+                                     isLoading: false) {
+                    store.send(.closeButtonTapped)
+                }
+                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
             }
+            .navigationBarBackButtonHidden(true)
+            .navigationTitle(L10n.phaSuccessRedeemTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .padding()
         }
     }
 

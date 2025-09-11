@@ -25,83 +25,81 @@ import eRpStyleKit
 import SwiftUI
 
 struct OnboardingAnalyticsDetailView: View {
-    @Perception.Bindable var store: StoreOf<OnboardingDomain>
+    @Bindable var store: StoreOf<OnboardingDomain>
 
     @State var calculatedHeight = CGFloat(1)
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(L10n.onbAnaDtlTxtTitle)
-                            .font(.title2)
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(L10n.onbAnaDtlTxtTitle)
+                        .font(.title2)
 
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(L10n.onbAnaDtlTxtSubtitleWhy)
-                                .font(.body.weight(.bold))
-                            Text(L10n.onbAnaDtlTxtBodyWhy)
-                                .font(.body)
-                        }
-
-                        VStack(alignment: .leading, spacing: 0) {
-                            Text(L10n.onbAnaDtlTxtSubtitleHow)
-                                .font(.body.weight(.bold))
-                                .padding(.bottom, 8)
-                            Text(L10n.onbAnaDtlTxtBodyHowPart1)
-                                .font(.body)
-                            UIKitTextView(
-                                attributedString: list(input: L10n.onbAnaDtlTxtBodyHowPart2.text),
-                                calculatedHeight: $calculatedHeight,
-                                font: .preferredFont(forTextStyle: .body),
-                                foregroundColor: .label
-                            ) { _ in }
-                                .frame(height: calculatedHeight)
-                        }
-
-                        Text(L10n.onbAnaDtlTxtBodyHowPart3)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(L10n.onbAnaDtlTxtSubtitleWhy)
+                            .font(.body.weight(.bold))
+                        Text(L10n.onbAnaDtlTxtBodyWhy)
                             .font(.body)
+                    }
 
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(L10n.onbAnaDtlTxtSubtitleOptOut)
-                                .font(.body.weight(.bold))
-                            Text(L10n.onbAnaDtlTxtBodyOptOut)
-                                .font(.body)
-                        }
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(L10n.onbAnaDtlTxtSubtitleHow)
+                            .font(.body.weight(.bold))
+                            .padding(.bottom, 8)
+                        Text(L10n.onbAnaDtlTxtBodyHowPart1)
+                            .font(.body)
+                        UIKitTextView(
+                            attributedString: list(input: L10n.onbAnaDtlTxtBodyHowPart2.text),
+                            calculatedHeight: $calculatedHeight,
+                            font: .preferredFont(forTextStyle: .body),
+                            foregroundColor: .label
+                        ) { _ in }
+                            .frame(height: calculatedHeight)
+                    }
+
+                    Text(L10n.onbAnaDtlTxtBodyHowPart3)
+                        .font(.body)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(L10n.onbAnaDtlTxtSubtitleOptOut)
+                            .font(.body.weight(.bold))
+                        Text(L10n.onbAnaDtlTxtBodyOptOut)
+                            .font(.body)
                     }
                 }
-                Spacer()
-
-                // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button allows tracking
-                Button(action: {
-                    store.send(.allowTracking)
-                }, label: {
-                    Text(L10n.onbAnaBtnAllow)
-                        .padding(.horizontal, 64)
-                        .padding(.vertical)
-                })
-                    .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnAllow)
-                    .font(Font.body.weight(.semibold))
-                    .foregroundColor(Colors.systemColorWhite)
-                    .background(Colors.primary700)
-                    .cornerRadius(16)
-
-                // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button denies tracking
-                Button(action: {
-                    store.send(.denyTracking)
-                }, label: {
-                    Text(L10n.onbAnaBtnDeny)
-                        .padding(.horizontal, 71)
-                        .padding(.vertical)
-                })
-                    .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnDeny)
-                    .font(Font.body.weight(.semibold))
-                    .foregroundColor(Colors.systemColorWhite)
-                    .background(Colors.primary700)
-                    .cornerRadius(16)
             }
-            .padding()
+            Spacer()
+
+            // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button allows tracking
+            Button(action: {
+                store.send(.allowTracking)
+            }, label: {
+                Text(L10n.onbAnaBtnAllow)
+                    .padding(.horizontal, 64)
+                    .padding(.vertical)
+            })
+                .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnAllow)
+                .font(Font.body.weight(.semibold))
+                .foregroundColor(Colors.systemColorWhite)
+                .background(Colors.primary700)
+                .cornerRadius(16)
+
+            // [REQ:BSI-eRp-ePA:O.Purp_3#4] Button denies tracking
+            Button(action: {
+                store.send(.denyTracking)
+            }, label: {
+                Text(L10n.onbAnaBtnDeny)
+                    .padding(.horizontal, 71)
+                    .padding(.vertical)
+            })
+                .accessibility(identifier: A18n.onboarding.analytics.onbAnaBtnDeny)
+                .font(Font.body.weight(.semibold))
+                .foregroundColor(Colors.systemColorWhite)
+                .background(Colors.primary700)
+                .cornerRadius(16)
         }
+        .padding()
     }
 
     func list(input: String) -> AttributedString {

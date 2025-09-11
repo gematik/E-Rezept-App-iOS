@@ -40,5 +40,11 @@
         "text": "**🙌 Registro para personas con seguro privado** \nSe ha optimizado el registro para personas con seguro privado. Puedes iniciar sesión cómodamente con tu ID de salud en solo unos clics. \n \n **🏥 Datos de farmacia actualizados** \nLos cambios que las farmacias realizan en la nueva base de datos ahora se muestran de forma fiable. \n \n **📲 Más información para DiGAs** \nA partir de ahora recibirás información más detallada sobre tus recetas de DiGA, como el precio de venta o el logotipo. \n \n **♿️ Accesibilidad** \nLa pantalla para introducir el número de acceso a la tarjeta sanitaria se ha rediseñado y ahora está optimizada para su uso con VoiceOver. \n \n **📤 Compartir recetas** \nAhora las recetas se pueden compartir con otros directamente desde la aplicación.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Accesibilidad** \nSe han revisado los ajustes del perfil para aumentar aún más la accesibilidad.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

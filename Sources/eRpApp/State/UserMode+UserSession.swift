@@ -62,10 +62,6 @@ extension UserMode: UserSession {
         sessionContainer.pharmacyRepository
     }
 
-    var bfArMService: BfArMService {
-        sessionContainer.bfArMService
-    }
-
     var updateChecker: UpdateChecker {
         sessionContainer.updateChecker
     }

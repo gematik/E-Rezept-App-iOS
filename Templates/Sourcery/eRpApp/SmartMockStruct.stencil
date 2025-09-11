@@ -1,0 +1,84 @@
+
+{% macro properties type %}
+    {% typed type as Type %}
+    {% for property in type.variables where not property.isComputed %}
+    static var {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ property.typeName }}>
+    {% endfor %}
+{% endmacro %}
+
+{% macro properties2 type %}
+    {% typed type as Type %}
+    {% for property in type.variables where property.typeName.isClosure %}
+            {{ property.name }}: {
+                guard !isRecording else {
+                    let result = {% if property.typeName.closure.throws %}try {% endif %}{% if property.typeName.closure.isAsync %}await {% endif %}wrapped.{{ property.name }}({% for parameter in property.typeName.closure.parameters %}${{ forloop.counter0 }}{% if not forloop.last %},{% endif %}{% endfor %})
+                    Self.mocks.{{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings?.record(result)
+                    return result{% if property.typeName.closure.returnTypeName.isOptional %} ?? nil {% endif %}
+                }
+                if let first = Self.mocks.{{property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter}}Recordings?.next() {
+                    return first
+                }
+                return {% if property.typeName.closure.throws %}try {% endif %}{% if property.typeName.closure.isAsync %}await {% endif %}wrapped.{{ property.name }}({% for parameter in property.typeName.closure.parameters %}${{ forloop.counter0 }}{% if not forloop.last %},{% endif %}{% endfor %}){% if property.typeName.closure.returnTypeName.isOptional %} ?? nil {% endif %}
+            }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro serializationProperties type %}
+    {% typed type as Type %}
+    {% for property in type.variables where property.typeName.isClosure %}
+        var {{ property.name|swiftIdentifier|snakeToCamelCase|lowerFirstLetter }}Recordings: MockAnswer<{{ property.typeName.closure.actualReturnTypeName }}>? = .delegate
+    {% endfor %}
+{% endmacro %}
+
+{% macro serialization type %}
+    {% typed type as Type %}
+    struct Mocks: Codable {
+    {% call serializationProperties type %}
+    }
+    
+    func recordedData() throws -> CodableMock {
+        return try CodableMock(
+            "{{ type.name }}",
+            Self.mocks
+        )
+    }
+{% endmacro %}
+
+{% macro wrap type %}
+    {% typed type as Type %}
+extension {{ type.name }}: SmartMock {
+    static func smartMock(wrapped: {{ type.name }}, mocks: Mocks?, isRecording: Bool = false) -> {{ type.name }} {
+        Self.mocks = mocks ?? Self.mocks
+        return {{ type.name }}(
+            {% call properties2 type %}
+        )
+    }
+
+    static var mocks: Mocks = Mocks()
+
+    {% call serialization type %}
+}
+
+{% endmacro %}
+
+// sourcery:file:eRpApp/UITestScenarios/SmartMockStruct
+/// Use sourcery to update this file.
+
+import BfArM
+import eRpKit
+import Foundation
+
+#if DEBUG
+
+{% for type in types.structs where type|annotated:"SmartMockStruct" %}
+{% if type.name != "SmartMock" %}
+
+// MARK: - SmartMock{{ type.name }} -
+
+{% call wrap type %}
+{% endif %}
+{% endfor %}
+
+#endif
+
+// sourcery:end

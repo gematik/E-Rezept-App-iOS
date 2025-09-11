@@ -96,7 +96,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
             date: "2020-05-01"
         )
         expect(task.medicationRequest.coPaymentStatus) == .subjectToCharge
-        expect(task.medicationRequest.bvg) == true
+        expect(task.medicationRequest.ser) == true
     }
 
     /// FHIRBundle test with
@@ -147,7 +147,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
             date: "2021-04-01"
         )
         expect(task.medicationRequest.coPaymentStatus) == .noSubjectToCharge
-        expect(task.medicationRequest.bvg) == true
+        expect(task.medicationRequest.ser) == true
         expect(task.medicationRequest.quantity) == .init(value: "1", unit: "{Package}")
         // patient
         expect(task.patient?.name) == "Prof. Dr. Karl-Friederich Graf Freiherr von Schaumberg"

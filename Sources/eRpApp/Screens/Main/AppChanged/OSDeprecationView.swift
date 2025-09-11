@@ -25,34 +25,32 @@ import eRpStyleKit
 import SwiftUI
 
 struct OSDeprecationView: View {
-    @Perception.Bindable var store: StoreOf<OSDeprecationDomain>
+    @Bindable var store: StoreOf<OSDeprecationDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 32) {
-                    // Header with icon and title
-                    HeaderSection(version: store.version)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 32) {
+                // Header with icon and title
+                HeaderSection(version: store.version)
 
-                    // Information section
-                    InformationSection()
+                // Information section
+                InformationSection()
 
-                    Spacer()
+                Spacer()
 
-                    // Continue button
-                    Button(L10n.appChangedIosDeprecationContinueButton) {
-                        store.send(.continueButtonTapped)
-                    }
-                    .buttonStyle(.primary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
+                // Continue button
+                Button(L10n.appChangedIosDeprecationContinueButton) {
+                    store.send(.continueButtonTapped)
                 }
-                .padding(.top, 32)
-                .padding(.bottom, 32)
+                .buttonStyle(.primary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
             }
-            .background(Colors.systemBackground)
-            .navigationBarHidden(true)
+            .padding(.top, 32)
+            .padding(.bottom, 32)
         }
+        .background(Colors.systemBackground)
+        .navigationBarHidden(true)
     }
 }
 

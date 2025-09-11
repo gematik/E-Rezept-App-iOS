@@ -24,61 +24,59 @@ import ComposableArchitecture
 import SwiftUI
 
 struct PrescriptionListEmptyView: View {
-    @Perception.Bindable var store: StoreOf<PrescriptionListDomain>
+    @Bindable var store: StoreOf<PrescriptionListDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 0) {
-                ProfilePictureView(
-                    image: store.profile?.image,
-                    userImageData: store.profile?.userImageData,
-                    color: store.profile?.color,
-                    connection: store.profile?.connectionStatus,
-                    style: .large
-                ) {
-                    if let profile = store.profile {
-                        store.send(.profilePictureViewTapped(profile))
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    }
-                }
-                .padding(.bottom)
-
-                Button(action: {
-                    store.send(.refresh)
-                }, label: {
-                    Text(store.isConnected ? L10n.mainBtnRefresh : L10n.mainBtnLogin)
-                })
-                    .buttonStyle(.quartary)
-                    .padding(.bottom)
-                    .accessibilityIdentifier(store.isConnected ? A11y.mainScreen.erxBtnRefresh : A11y.mainScreen
-                        .erxBtnLogin)
-
-                Text(L10n.mainEmptyTxtTitle)
-                    .font(.headline.weight(.bold))
-                    .padding(.vertical, 8)
-                    .accessibilityIdentifier(A11y.mainScreen.erxTxtEmptyTitle)
-
-                Text(store.isConnected ? L10n.mainEmptyTxtConnected : L10n.mainEmptyTxtDisconnected)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .accessibilityIdentifier(A11y.mainScreen.erxTxtEmptySubtitle)
-
-                if store.hasArchivedPrescriptions {
-                    Button {
-                        store
-                            .send(.showArchivedButtonTapped)
-                    } label: {
-                        Text(L10n.mainBtnArchivedPresc)
-                            .font(.subheadline.weight(.semibold))
-                    }
-                    .padding(.top, 28)
-                    .accessibilityIdentifier(A11y.mainScreen.erxBtnArcPrescription)
+        VStack(spacing: 0) {
+            ProfilePictureView(
+                image: store.profile?.image,
+                userImageData: store.profile?.userImageData,
+                color: store.profile?.color,
+                connection: store.profile?.connectionStatus,
+                style: .large
+            ) {
+                if let profile = store.profile {
+                    store.send(.profilePictureViewTapped(profile))
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding()
+            .padding(.bottom)
+
+            Button(action: {
+                store.send(.refresh)
+            }, label: {
+                Text(store.isConnected ? L10n.mainBtnRefresh : L10n.mainBtnLogin)
+            })
+                .buttonStyle(.quartary)
+                .padding(.bottom)
+                .accessibilityIdentifier(store.isConnected ? A11y.mainScreen.erxBtnRefresh : A11y.mainScreen
+                    .erxBtnLogin)
+
+            Text(L10n.mainEmptyTxtTitle)
+                .font(.headline.weight(.bold))
+                .padding(.vertical, 8)
+                .accessibilityIdentifier(A11y.mainScreen.erxTxtEmptyTitle)
+
+            Text(store.isConnected ? L10n.mainEmptyTxtConnected : L10n.mainEmptyTxtDisconnected)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .accessibilityIdentifier(A11y.mainScreen.erxTxtEmptySubtitle)
+
+            if store.hasArchivedPrescriptions {
+                Button {
+                    store
+                        .send(.showArchivedButtonTapped)
+                } label: {
+                    Text(L10n.mainBtnArchivedPresc)
+                        .font(.subheadline.weight(.semibold))
+                }
+                .padding(.top, 28)
+                .accessibilityIdentifier(A11y.mainScreen.erxBtnArcPrescription)
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
     }
 }
 

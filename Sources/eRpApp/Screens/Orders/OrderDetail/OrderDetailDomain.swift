@@ -372,7 +372,8 @@ extension Array where Element == TimelineEntry {
                     chipTexts = [L10n.ordDetailTxtChipAll.text]
                 }
                 return TimelineEntry.dispReq(communication, pharmacy: pharmacy, chipTexts: chipTexts)
-            case let .reply(communication, _):
+            case let .reply(communication, _),
+                 let .diga(communication, _):
                 let relatedTasks = tasks.filter { task in communication.taskIds.contains(task.identifier) }
                     .compactMap { $0.medication?.displayName }
                 var chipTexts: [String] = []

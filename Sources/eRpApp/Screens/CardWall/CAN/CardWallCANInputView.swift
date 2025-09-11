@@ -71,7 +71,7 @@ struct CardWallCANInputView: View {
                 .accessibilityLabel(Text(L10n.cdwTxtCanInputFieldLabel))
                 .accessibilityIdentifier(A11y.cardWall.canInput.cdwTxtCanInput)
         }
-        .onChange(of: can) { newValue in
+        .onChange(of: can) { _, newValue in
             can = String(newValue.prefix(6))
         }
     }

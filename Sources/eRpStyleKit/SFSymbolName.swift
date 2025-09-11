@@ -44,6 +44,7 @@ public enum SFSymbolName {
     public static let list = "list.dash"
     public static let message = "message"
     public static let textBubble = "text.bubble"
+    public static let textFormat123 = "textformat.123"
     public static let bubbleLeft = "bubble.left"
     public static let magnifyingGlasCircle = "magnifyingglass.circle"
     public static let magnifyingGlas = "magnifyingglass"
@@ -156,6 +157,7 @@ public enum SFSymbolName {
         }
     }
 
+    public static let speakerWave2 = "speaker.wave.2"
     public static let lightbulbSlash = "lightbulb.slash"
     public static let questionmarkCircle = "questionmark.circle"
     public static let personCirclePlus = "person.crop.circle.badge.plus"

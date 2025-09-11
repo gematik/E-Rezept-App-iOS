@@ -27,7 +27,7 @@ import SwiftUI
 import SwiftUIIntrospect
 
 struct PickupCodeView: View {
-    @Perception.Bindable var store: StoreOf<PickupCodeDomain>
+    @Bindable var store: StoreOf<PickupCodeDomain>
     @State var originalBrightness: CGFloat?
 
     init(store: StoreOf<PickupCodeDomain>) {
@@ -35,70 +35,66 @@ struct PickupCodeView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            NavigationStack {
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(spacing: 0) {
-                        if let dmcCode = store.pickupCodeDMC {
-                            DMCView(image: store.dmcImage, dmcCode: dmcCode)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical)
-                        }
-
-                        if let hrCode = store.pickupCodeHR {
-                            HRCodeView(code: hrCode)
-                                .padding(.vertical, 8)
-                        }
-
-                        TitleView(store: store)
+        NavigationStack {
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 0) {
+                    if let dmcCode = store.pickupCodeDMC {
+                        DMCView(image: store.dmcImage, dmcCode: dmcCode)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical)
                     }
-                }
-                .navigationBarItems(trailing: CloseButton { store.send(.delegate(.close)) }
-                    .accessibilityIdentifier(A11y.orderDetail.pickupCode.pucBtnClose))
-                .navigationBarTitleDisplayMode(.inline)
-                .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
-                    let navigationBar = navigationController.navigationBar
-                    navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                    let navigationBarAppearance = UINavigationBarAppearance()
-                    navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                    navigationBar.standardAppearance = navigationBarAppearance
-                }
-                .task {
-                    await store.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size)).finish()
-                }
-                .onAppear {
-                    originalBrightness = UIScreen.main.brightness
-                }
-                .onDisappear {
-                    if let originalBrightness = originalBrightness {
-                        UIScreen.main.brightness = originalBrightness
+
+                    if let hrCode = store.pickupCodeHR {
+                        HRCodeView(code: hrCode)
+                            .padding(.vertical, 8)
                     }
+
+                    TitleView(store: store)
                 }
             }
-            .tint(Colors.primary700)
-            .navigationViewStyle(StackNavigationViewStyle())
+            .navigationBarItems(trailing: CloseButton { store.send(.delegate(.close)) }
+                .accessibilityIdentifier(A11y.orderDetail.pickupCode.pucBtnClose))
+            .navigationBarTitleDisplayMode(.inline)
+            .introspect(.navigationView(style: .stack), on: .iOS(.v15, .v16, .v17, .v18)) { navigationController in
+                let navigationBar = navigationController.navigationBar
+                navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                let navigationBarAppearance = UINavigationBarAppearance()
+                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                navigationBar.standardAppearance = navigationBarAppearance
+            }
+            .task {
+                await store.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size)).finish()
+            }
+            .onAppear {
+                originalBrightness = UIScreen.main.brightness
+            }
+            .onDisappear {
+                if let originalBrightness = originalBrightness {
+                    UIScreen.main.brightness = originalBrightness
+                }
+            }
         }
+        .tint(Colors.primary700)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     struct TitleView: View {
-        @Perception.Bindable var store: StoreOf<PickupCodeDomain>
+        @Bindable var store: StoreOf<PickupCodeDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(spacing: 8) {
-                    Text(L10n.pucTxtTitle)
-                        .foregroundColor(Colors.systemLabel)
-                        .font(Font.subheadline.weight(.semibold))
-                        .accessibility(identifier: A11y.orderDetail.pickupCode.pucTxtTitle)
+            VStack(spacing: 8) {
+                Text(L10n.pucTxtTitle)
+                    .foregroundColor(Colors.systemLabel)
+                    .font(Font.subheadline.weight(.semibold))
+                    .accessibility(identifier: A11y.orderDetail.pickupCode.pucTxtTitle)
 
-                    let name = store.pharmacyName ?? L10n.ordTxtNoPharmacyName.text
-                    Text(L10n.pucTxtSubtitle(name))
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .font(Font.subheadline)
-                        .multilineTextAlignment(.center)
-                        .accessibility(identifier: A11y.orderDetail.pickupCode.pucTxtSubtitle)
-                }
+                let name = store.pharmacyName ?? L10n.ordTxtNoPharmacyName.text
+                Text(L10n.pucTxtSubtitle(name))
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    .font(Font.subheadline)
+                    .multilineTextAlignment(.center)
+                    .accessibility(identifier: A11y.orderDetail.pickupCode.pucTxtSubtitle)
             }
         }
     }

@@ -28,130 +28,126 @@ import SwiftUIIntrospect
 
 // [REQ:BSI-eRp-ePA:O.Auth_4#4] View containing the list of insurance companies
 struct CardWallExtAuthSelectionView: View {
-    @Perception.Bindable var store: StoreOf<CardWallExtAuthSelectionDomain>
+    @Bindable var store: StoreOf<CardWallExtAuthSelectionDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 0) {
-                if let error = store.error {
-                    ErrorView(error: error) {
-                        store.send(.loadKKList, animation: .default)
+        VStack(spacing: 0) {
+            if let error = store.error {
+                ErrorView(error: error) {
+                    store.send(.loadKKList, animation: .default)
+                }
+                .padding()
+            } else {
+                if store.kkList == nil {
+                    List {
+                        Section(header: CenteredActivityIndicator()) {}
                     }
-                    .padding()
-                } else {
-                    if store.kkList == nil {
-                        List {
-                            Section(header: CenteredActivityIndicator()) {}
-                        }
-                        .listStyle(GroupedListStyle())
-                        .listStyle(PlainListStyle())
-                    } else if let kkList = store.kkList,
-                              !kkList.apps.isEmpty {
-                        Header {
-                            store.send(.helpButtonTapped)
-                        }
+                    .listStyle(GroupedListStyle())
+                    .listStyle(PlainListStyle())
+                } else if let kkList = store.kkList,
+                          !kkList.apps.isEmpty {
+                    Header {
+                        store.send(.helpButtonTapped)
+                    }
+                    .padding(.horizontal)
+
+                    SearchBar(
+                        searchText: $store.searchText.sending(\.updateSearchText),
+                        prompt: L10n.cdwTxtExtauthSearchprompt.key
+                    ) {}
                         .padding(.horizontal)
 
-                        SearchBar(
-                            searchText: $store.searchText.sending(\.updateSearchText),
-                            prompt: L10n.cdwTxtExtauthSearchprompt.key
-                        ) {}
-                            .padding(.horizontal)
+                    List {
+                        Section {
+                            // [REQ:gemSpec_IDP_Frontend:A_23082#5] Display of KK apps
+                            if !store.filteredKKList.apps.isEmpty {
+                                ForEach(store.filteredKKList.apps) { app in
+                                    // [REQ:BSI-eRp-ePA:O.Auth_4#5] User selection of the insurance company
+                                    Button(action: {
+                                        store.send(.selectKK(app))
+                                    }, label: {
+                                        HStack {
+                                            let imageUrl = URL(string: app.logo ?? "")
+                                            AsyncCachedImage(url: imageUrl) { image in
+                                                image
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                            } placeholder: {
+                                                Image(
+                                                    asset: Asset.CardWall.insuranceLogoPlaceholder
+                                                )
+                                            }.frame(width: 42, height: 42)
 
-                        List {
-                            Section {
-                                // [REQ:gemSpec_IDP_Frontend:A_23082#5] Display of KK apps
-                                if !store.filteredKKList.apps.isEmpty {
-                                    ForEach(store.filteredKKList.apps) { app in
-                                        WithPerceptionTracking {
-                                            // [REQ:BSI-eRp-ePA:O.Auth_4#5] User selection of the insurance company
-                                            Button(action: {
-                                                store.send(.selectKK(app))
-                                            }, label: {
-                                                HStack {
-                                                    let imageUrl = URL(string: app.logo ?? "")
-                                                    AsyncCachedImage(url: imageUrl) { image in
-                                                        image
-                                                            .resizable()
-                                                            .aspectRatio(contentMode: .fit)
-                                                    } placeholder: {
-                                                        Image(
-                                                            asset: Asset.CardWall.insuranceLogoPlaceholder
-                                                        )
-                                                    }.frame(width: 42, height: 42)
+                                            Text(app.name)
+                                                .foregroundColor(Color(.label))
 
-                                                    Text(app.name)
-                                                        .foregroundColor(Color(.label))
+                                            Spacer()
 
-                                                    Spacer()
-
-                                                    Image(systemName: SFSymbolName.chevronForward)
-                                                        .tint(Colors.textSecondary)
-                                                }
-                                            })
+                                            Image(systemName: SFSymbolName.chevronForward)
+                                                .tint(Colors.textSecondary)
                                         }
-                                    }
-                                } else {
-                                    VStack {
-                                        Text(L10n.cdwTxtExtauthNoresultsTitle)
-                                            .font(.headline)
-                                            .padding(.bottom, 1)
-                                        Text(L10n.cdwTxtExtauthNoresults)
-                                            .font(.subheadline)
-                                            .foregroundColor(Colors.textSecondary)
-                                            .multilineTextAlignment(.center)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                    .frame(maxWidth: .infinity)
+                                    })
                                 }
+                            } else {
+                                VStack {
+                                    Text(L10n.cdwTxtExtauthNoresultsTitle)
+                                        .font(.headline)
+                                        .padding(.bottom, 1)
+                                    Text(L10n.cdwTxtExtauthNoresults)
+                                        .font(.subheadline)
+                                        .foregroundColor(Colors.textSecondary)
+                                        .multilineTextAlignment(.center)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                .frame(maxWidth: .infinity)
                             }
-                            .listSectionSeparator(.hidden)
-                            .textCase(.none)
                         }
-                        .scrollContentBackground(.hidden)
-                        .listStyle(GroupedListStyle())
-                        // replace .introspect with .contentMargins after dropping iOS 16 support
-//                        .contentMargins(0, .top, .scrollContent)
-                        .introspect(.list, on: .iOS(.v16, .v17, .v18)) { collectionView in
-                            collectionView.contentInset.top = -35
-                        }
-                        .listStyle(PlainListStyle())
-                        .onAppear {
-                            store.send(.reset)
-                        }
-
-                    } else {
-                        VStack(spacing: 8) {
-                            Text(L10n.cdwTxtExtauthSelectionEmptyListHeadline)
-                                .multilineTextAlignment(.center)
-                                .font(.headline)
-
-                            Text(L10n.cdwTxtExtauthSelectionEmptyListDescription)
-                                .multilineTextAlignment(.center)
-                                .font(.subheadline)
-                                .foregroundColor(Color(.secondaryLabel))
-                        }
-                        .padding()
-                        .frame(maxHeight: .infinity, alignment: .center)
+                        .listSectionSeparator(.hidden)
+                        .textCase(.none)
+                    }
+                    .scrollContentBackground(.hidden)
+                    .listStyle(GroupedListStyle())
+                    // replace .introspect with .contentMargins after dropping iOS 16 support
+                    //                        .contentMargins(0, .top, .scrollContent)
+                    .introspect(.list, on: .iOS(.v16, .v17, .v18)) { collectionView in
+                        collectionView.contentInset.top = -35
+                    }
+                    .listStyle(PlainListStyle())
+                    .onAppear {
+                        store.send(.reset)
                     }
 
-                    Spacer()
+                } else {
+                    VStack(spacing: 8) {
+                        Text(L10n.cdwTxtExtauthSelectionEmptyListHeadline)
+                            .multilineTextAlignment(.center)
+                            .font(.headline)
+
+                        Text(L10n.cdwTxtExtauthSelectionEmptyListDescription)
+                            .multilineTextAlignment(.center)
+                            .font(.subheadline)
+                            .foregroundColor(Color(.secondaryLabel))
+                    }
+                    .padding()
+                    .frame(maxHeight: .infinity, alignment: .center)
                 }
+
+                Spacer()
             }
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem {
-                    store.send(.delegate(.close))
-                }
-                .accessibility(identifier: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionCancel)
-                .accessibility(label: Text(L10n.cdwBtnExtauthSelectionCancel))
-            )
-            .navigationTitle(L10n.cdwTxtExtauthSelectionTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                store.send(.loadKKList)
-            }
-            .destinations(store: $store)
         }
+        .navigationBarItems(
+            trailing: NavigationBarCloseItem {
+                store.send(.delegate(.close))
+            }
+            .accessibility(identifier: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionCancel)
+            .accessibility(label: Text(L10n.cdwBtnExtauthSelectionCancel))
+        )
+        .navigationTitle(L10n.cdwTxtExtauthSelectionTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            store.send(.loadKKList)
+        }
+        .destinations(store: $store)
     }
 
     struct CenteredActivityIndicator: View {
@@ -195,7 +191,7 @@ struct CardWallExtAuthSelectionView: View {
 }
 
 extension View {
-    func destinations(store: Perception.Bindable<StoreOf<CardWallExtAuthSelectionDomain>>) -> some View {
+    func destinations(store: Bindable<StoreOf<CardWallExtAuthSelectionDomain>>) -> some View {
         navigationDestination(
             item: store.scope(state: \.destination?.help, action: \.destination.help)
         ) { store in

@@ -40,5 +40,11 @@
         "text": "**🙌 Înregistrarea pentru persoanele asigurate privat** \nÎnregistrarea pentru persoanele asigurate privat a fost optimizată. Vă puteți conecta convenabil cu cardul dvs. de sănătate în doar câteva clicuri. \n \n **🏥 Date actualizate despre farmacie** \nModificările pe care farmaciile le fac în noua bază de date sunt acum afișate în mod fiabil. \n \n **📲 Mai multe informații pentru persoanele asigurate DiGA** \nDe acum înainte veți primi informații mai detaliate despre rețetele dvs. DiGA, cum ar fi prețul de vânzare sau sigla. \n \n **♿️ Accesibilitate** \nEcranul pentru introducerea numărului de acces al cardului de sănătate a fost reproiectat și este acum optimizat pentru utilizarea cu VoiceOver. \n \n **📤 Partajați rețetele** \nRețetele pot fi acum partajate cu alte persoane direct din aplicație.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Accesibilitate** \nSetările profilului au fost revizuite pentru a crește și mai mult accesibilitatea.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

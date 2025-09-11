@@ -24,7 +24,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -37,6 +37,8 @@
                         "authoredOn": "{{DATE:-9D}}",
                         "status": "ready",
                         "identifier": "160.000.006.456.334.15",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -56,7 +58,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -69,6 +71,8 @@
                         "authoredOn": "{{DATE:-9D}}",
                         "status": "ready",
                         "identifier": "160.000.006.456.334.15",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -93,7 +97,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -106,6 +110,8 @@
                         "authoredOn": "{{DATE:-9D}}",
                         "status": "in-progress",
                         "identifier": "160.000.006.456.334.15",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -125,7 +131,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -138,6 +144,8 @@
                         "authoredOn": "{{DATE:-9D}}",
                         "status": "ready",
                         "identifier": "160.000.006.456.334.16",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -162,7 +170,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -175,6 +183,8 @@
                         "authoredOn": "{{DATE:-9D}}",
                         "status": "in-progress",
                         "identifier": "160.000.006.456.334.15",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -194,7 +204,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -207,6 +217,8 @@
                         "authoredOn": "{{DATE:-9D}}",
                         "status": "in-progress",
                         "identifier": "160.000.006.456.334.16",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -239,7 +251,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -286,6 +298,8 @@
                             "name": "Dr. Adelheid Ulmenwald"
                         },
                         "identifier": "160.000.006.456.334.15",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "organization":
                         {
                             "name": "Count Orff",
@@ -304,6 +318,8 @@
                             "insuranceId": "M070759114"
                         },
                         "prescriptionId": "160.000.006.456.334.15",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -324,7 +340,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -371,6 +387,8 @@
                             "name": "Dr. Adelheid Ulmenwald"
                         },
                         "identifier": "160.000.006.456.334.16",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "organization":
                         {
                             "name": "Count Orff",
@@ -414,7 +432,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -461,6 +479,8 @@
                             "name": "Dr. Adelheid Ulmenwald"
                         },
                         "identifier": "160.000.006.456.334.15",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "organization":
                         {
                             "name": "Count Orff",
@@ -499,7 +519,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -546,6 +566,8 @@
                             "name": "Dr. Adelheid Ulmenwald"
                         },
                         "identifier": "160.000.006.456.334.16",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "organization":
                         {
                             "name": "Count Orff",
@@ -589,7 +611,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -636,6 +658,8 @@
                             "name": "Dr. Adelheid Ulmenwald"
                         },
                         "identifier": "160.000.006.456.334.15",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "organization":
                         {
                             "name": "Count Orff",
@@ -674,7 +698,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "1-1-1-1",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE}}",
                             "multiplePrescription":
@@ -721,6 +745,8 @@
                             "name": "Dr. Adelheid Ulmenwald"
                         },
                         "identifier": "160.000.006.456.334.16",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "organization":
                         {
                             "name": "Count Orff",

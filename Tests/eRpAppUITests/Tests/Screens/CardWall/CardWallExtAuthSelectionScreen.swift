@@ -35,11 +35,27 @@ struct CardWallExtAuthSelectionScreen: Screen {
         return .init(app: app)
     }
 
-    func tapHelpButton(fileID: String = #fileID, file: String = #filePath,
-                       line: UInt = #line) -> CardWallExtAuthHelpScreen {
+    func tapHelpButton(
+        _ screen: (CardWallExtAuthHelpScreen) async -> Void,
+        fileID: String = #fileID,
+        file: String = #filePath,
+        line: UInt = #line
+    ) async {
         button(by: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionHelp, fileID: fileID, file: file, line: line)
             .tap()
 
-        return .init(app: app)
+        let cardWallExtAuthHelpScreen = CardWallExtAuthHelpScreen(app: app)
+        await screen(cardWallExtAuthHelpScreen)
+    }
+
+    func navigationTitle(fileID: String = #fileID, file: String = #filePath, line: UInt = #line) -> XCUIElement {
+        staticText(
+            within: app.navigationBars,
+            by: "GesundheitsID",
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: false
+        )
     }
 }

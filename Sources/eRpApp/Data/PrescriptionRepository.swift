@@ -70,6 +70,10 @@ enum PrescriptionRepositoryLoadRemoteResult: Equatable {
     case prescriptions([Prescription])
     case notAuthenticated
     case authenticationRequired
+    // There seems to be no real difference between .notAuthenticated and .authenticationRequired result-wise
+    // but rather indicating how the callee should proceed:
+    //  - notAuthenticated: informative
+    //  - authenticationRequired: insinuated more action(s): present cardwall, ask user how to proceed, ... etc.
 }
 
 // sourcery: CodedError = "027"

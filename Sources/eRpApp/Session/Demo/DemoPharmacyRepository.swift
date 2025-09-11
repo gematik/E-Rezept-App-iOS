@@ -24,6 +24,7 @@ import Combine
 import CombineSchedulers
 import eRpKit
 import eRpLocalStorage
+import FHIRVZD
 import Foundation
 import IdentifiedCollections
 import OpenSSL
@@ -31,7 +32,7 @@ import Pharmacy
 
 class DemoPharmacyRepository: PharmacyRepository {
     private let delay: Double
-    private let cloud: PharmacyFHIRDataSource
+    private let cloud: HealthcareServiceFHIRDataSource
     private let schedulers: Schedulers
     private var uiScheduler: AnySchedulerOf<DispatchQueue> {
         schedulers.main
@@ -39,7 +40,7 @@ class DemoPharmacyRepository: PharmacyRepository {
 
     private var store = IdentifiedArrayOf<PharmacyLocation>()
 
-    init(cloud: PharmacyFHIRDataSource,
+    init(cloud: HealthcareServiceFHIRDataSource,
          requestDelayInSeconds: Double = 0.1,
          schedulers: Schedulers = Schedulers()) {
         self.cloud = cloud

@@ -25,30 +25,28 @@ import eRpStyleKit
 import SwiftUI
 
 struct AppAuthenticationWithBiometricsView: View {
-    @Perception.Bindable var store: StoreOf<AppAuthenticationBiometricsDomain>
+    @Bindable var store: StoreOf<AppAuthenticationBiometricsDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 8) {
-                switch store.biometryType {
-                case .faceID:
-                    FaceIDView {
-                        store.send(.startAuthenticationChallenge)
-                    }
-                case .touchID:
-                    TouchIDView {
-                        store.send(.startAuthenticationChallenge)
-                    }
+        VStack(spacing: 8) {
+            switch store.biometryType {
+            case .faceID:
+                FaceIDView {
+                    store.send(.startAuthenticationChallenge)
                 }
-            }
-            .padding(.vertical)
-            .onAppear {
-                if store.startImmediateAuthenticationChallenge {
+            case .touchID:
+                TouchIDView {
                     store.send(.startAuthenticationChallenge)
                 }
             }
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
         }
+        .padding(.vertical)
+        .onAppear {
+            if store.startImmediateAuthenticationChallenge {
+                store.send(.startAuthenticationChallenge)
+            }
+        }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
     }
 
     struct FaceIDView: View {

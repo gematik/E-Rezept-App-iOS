@@ -27,7 +27,7 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct AccidentInfoView: View {
-        @Perception.Bindable var store: StoreOf<AccidentInfoDomain>
+        @Bindable var store: StoreOf<AccidentInfoDomain>
 
         var body: some View {
             ScrollView(.vertical) {

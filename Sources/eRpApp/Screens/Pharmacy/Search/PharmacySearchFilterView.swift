@@ -25,31 +25,29 @@ import eRpStyleKit
 import SwiftUI
 
 struct PharmacySearchFilterView: View {
-    @Perception.Bindable var store: StoreOf<PharmacySearchFilterDomain>
+    @Bindable var store: StoreOf<PharmacySearchFilterDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 24) {
-                Text(L10n.psfTxtTitle)
-                    .font(.subheadline.weight(.bold))
+        VStack(spacing: 24) {
+            Text(L10n.psfTxtTitle)
+                .font(.subheadline.weight(.bold))
 
-                VStack(alignment: .leading, spacing: 8) {
-                    FilterRow(store: store)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Button(action: {
-                    store.send(.delegate(.close), animation: .easeInOut)
-                }, label: {
-                    Text(L10n.psfBtnAccept)
-                })
-                    .frame(idealWidth: 120, alignment: .center)
-                    .buttonStyle(.secondaryAlt)
+            VStack(alignment: .leading, spacing: 8) {
+                FilterRow(store: store)
             }
-            .padding()
-            .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
-            .navigationBarTitleDisplayMode(.inline)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button(action: {
+                store.send(.delegate(.close), animation: .easeInOut)
+            }, label: {
+                Text(L10n.psfBtnAccept)
+            })
+                .frame(idealWidth: 120, alignment: .center)
+                .buttonStyle(.secondaryAlt)
         }
+        .padding()
+        .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     struct FilterView: View {
@@ -70,38 +68,32 @@ struct PharmacySearchFilterView: View {
     }
 
     struct FilterRow: View {
-        @Perception.Bindable var store: StoreOf<PharmacySearchFilterDomain>
+        @Bindable var store: StoreOf<PharmacySearchFilterDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                HStack {
-                    ForEach(store.pharmacyFilterShow[0 ..< 2], id: \.self) { filterOption in
-                        WithPerceptionTracking {
-                            let isEnabled = store.pharmacyFilterOptions.contains(filterOption)
-                            FilterView(
-                                title: filterOption.localizedStringKey,
-                                isEnabled: Binding { isEnabled }
-                                set: { _ in
-                                    store.send(.toggleFilter(filterOption))
-                                }
-                            )
+            HStack {
+                ForEach(store.pharmacyFilterShow[0 ..< 2], id: \.self) { filterOption in
+                    let isEnabled = store.pharmacyFilterOptions.contains(filterOption)
+                    FilterView(
+                        title: filterOption.localizedStringKey,
+                        isEnabled: Binding { isEnabled }
+                        set: { _ in
+                            store.send(.toggleFilter(filterOption))
                         }
-                    }
+                    )
                 }
-                HStack {
-                    ForEach(store.pharmacyFilterShow[2 ..< store.pharmacyFilterShow.count],
-                            id: \.self) { filterOption in
-                        WithPerceptionTracking {
-                            let isEnabled = store.pharmacyFilterOptions.contains(filterOption)
-                            FilterView(
-                                title: filterOption.localizedStringKey,
-                                isEnabled: Binding { isEnabled }
-                                set: { _ in
-                                    store.send(.toggleFilter(filterOption))
-                                }
-                            )
+            }
+            HStack {
+                ForEach(store.pharmacyFilterShow[2 ..< store.pharmacyFilterShow.count],
+                        id: \.self) { filterOption in
+                    let isEnabled = store.pharmacyFilterOptions.contains(filterOption)
+                    FilterView(
+                        title: filterOption.localizedStringKey,
+                        isEnabled: Binding { isEnabled }
+                        set: { _ in
+                            store.send(.toggleFilter(filterOption))
                         }
-                    }
+                    )
                 }
             }
         }

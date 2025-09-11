@@ -29,55 +29,49 @@ import SwiftUI
 import SwiftUIIntrospect
 
 struct PharmacyPrescriptionSelectionView: View {
-    @Perception.Bindable var store: StoreOf<PharmacyPrescriptionSelectionDomain>
+    @Bindable var store: StoreOf<PharmacyPrescriptionSelectionDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                ScrollView {
-                    SingleElementSectionContainer(header: {
-                        WithPerceptionTracking {
-                            if let profile = store.profile {
-                                HStack {
-                                    ProfilePictureView(profile: profile)
-                                        .frame(width: 40, height: 40, alignment: .center)
-                                    Text(profile.name).bold()
-                                }
-                            }
+        VStack {
+            ScrollView {
+                SingleElementSectionContainer(header: {
+                    if let profile = store.profile {
+                        HStack {
+                            ProfilePictureView(profile: profile)
+                                .frame(width: 40, height: 40, alignment: .center)
+                            Text(profile.name).bold()
                         }
-                    }, content: {
-                        ForEach(Array(store.prescriptions.enumerated()), id: \.element) { index, prescription in
-                            WithPerceptionTracking {
-                                Button(action: { store.send(.didSelect(prescription.id)) },
-                                       label: {
-                                           TitleWithSubtitleCellView(
-                                               title: prescription.title,
-                                               subtitle: "",
-                                               isSelected: store.selectedPrescriptionsCopy.contains(prescription)
-                                           ).multilineTextAlignment(.leading)
-                                       })
-                                    .sectionContainerIsLastElement(index == store.prescriptions.count - 1)
-                                    .padding(.horizontal)
-                            }
-                        }
-                    })
-                }
+                    }
+                }, content: {
+                    ForEach(Array(store.prescriptions.enumerated()), id: \.element) { index, prescription in
+                        Button(action: { store.send(.didSelect(prescription.id)) },
+                               label: {
+                                   TitleWithSubtitleCellView(
+                                       title: prescription.title,
+                                       subtitle: "",
+                                       isSelected: store.selectedPrescriptionsCopy.contains(prescription)
+                                   ).multilineTextAlignment(.leading)
+                               })
+                            .sectionContainerIsLastElement(index == store.prescriptions.count - 1)
+                            .padding(.horizontal)
+                    }
+                })
             }
-            .background(Color(.secondarySystemBackground))
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(L10n.phaRedeemTxtPrescriptionHeader)
-            .task {
-                store.send(.updateRedeemablePrescriptions)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        store.send(.saveSelection(store.selectedPrescriptionsCopy))
-                    }, label: {
-                        Text(L10n.phaRedeemTxtSelectedPrescriptionSave)
-                    })
-                        .accessibility(identifier: A11y.pharmacyPrescriptionList.phaPrescriptionListBtnSave)
-                }
+        }
+        .background(Color(.secondarySystemBackground))
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(L10n.phaRedeemTxtPrescriptionHeader)
+        .task {
+            store.send(.updateRedeemablePrescriptions)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    store.send(.saveSelection(store.selectedPrescriptionsCopy))
+                }, label: {
+                    Text(L10n.phaRedeemTxtSelectedPrescriptionSave)
+                })
+                    .accessibility(identifier: A11y.pharmacyPrescriptionList.phaPrescriptionListBtnSave)
             }
         }
     }
