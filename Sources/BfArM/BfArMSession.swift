@@ -20,36 +20,17 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import ComposableArchitecture
+import Dependencies
+import DependenciesMacros
 import eRpKit
 import Foundation
-import HTTPClient
 
 /// BfArMSession acts as an interactor/mediator for the BfArMClient
-public protocol BfArMSession {
+@DependencyClient
+public struct BfArMSession {
     /// fetches BfArMDiGaDetails based on provided pzn
-    ///
-    /// - Returns: BfArMDiGaDetails or Error
-    func fetchBfArMInfo(pzn: String) async throws -> BfArMDiGaDetails?
+    public var fetchBfArMInfo: @Sendable (String) async throws -> BfArMDiGaDetails?
+
     /// fetches Date(asset) based on provided url
-    ///
-    /// - Returns: Data or Error
-    func fetchCachedImage(url: String) async throws -> Data?
-}
-
-public class DefaultBfArMSession: BfArMSession {
-    private let config: BfArMClient.Configuration
-    @Dependency(\.bfarmClient) var client
-
-    public init(config: BfArMClient.Configuration) {
-        self.config = config
-    }
-
-    public func fetchBfArMInfo(pzn: String) async throws -> BfArMDiGaDetails? {
-        try await client.bfarmInfo(pzn, config)
-    }
-
-    public func fetchCachedImage(url: String) async throws -> Data? {
-        try await client.fetchCachedImage(url, config)
-    }
+    public var fetchCachedImage: @Sendable (String) async throws -> Data?
 }

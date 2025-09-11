@@ -39,9 +39,10 @@ extension ModelsR4.MedicationRequest {
         } ?? false
     }
 
-    var bvg: Bool {
-        `extension`?.first {
-            $0.url.value?.url.absoluteString == ErpPrescription.Key.MedicationRequest.bvg
+    var ser: Bool {
+        `extension`?.first { identifier in
+            ErpPrescription.Key.MedicationRequest.ser
+                .contains { $0.value == identifier.url.value?.url.absoluteString }
         }
         .map {
             if let valueX = $0.value,

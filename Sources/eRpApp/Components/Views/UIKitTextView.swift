@@ -61,12 +61,17 @@ struct UIKitTextView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UITextView, context _: Context) {
+        #if TEST_ENVIRONMENT
+        // Due to layout changes from dynamic text sizing, the system miscalculates the position of attributes
+        // (e.g., links) in the attributed text. As a result, UI tests interact with incorrect positions.
+        #else
         let newSize = uiView.sizeThatFits(CGSize(width: uiView.frame.width,
                                                  height: .greatestFiniteMagnitude))
 
         guard calculatedHeight != newSize.height else { return }
 
         DispatchQueue.main.async { $calculatedHeight.wrappedValue = newSize.height }
+        #endif
     }
 
     class Coordinator: NSObject, UITextViewDelegate {

@@ -20,9 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
-import OpenSSL
 
 /// Signed (with `PrK_SE_AUT`) representation of `AuthenticationData`.
 public struct SignedAuthenticationData {
@@ -49,41 +47,4 @@ public struct SignedAuthenticationData {
     public func serialize() -> String {
         signedAuthenticationData.serialize()
     }
-
-    /// Encrypt the signed authentication data using the provided public key
-    /// - Parameters:
-    ///   - publicKey: BrainpoolP256r1 public key for encryption
-    ///   - cryptoBox: IDPCrypto instance containing encryption parameters
-    /// - Returns: JWE containing the encrypted signed authentication data
-    /// - Throws: IDPError if encryption fails
-    public func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
-                          using cryptoBox: IDPCrypto) throws -> JWE {
-        // [REQ:BSI-eRp-ePA:O.Cryp_1#3] Signature via ecdh ephemeral-static
-        // [REQ:BSI-eRp-ePA:O.Cryp_4#4] one time usage for JWE ECDH-ES Encryption
-        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
-            publicKey,
-            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
-        ))
-        let signedChallengePayload = NestedJWT(njwt: serialize())
-        guard let jweHeader = try? JWE.Header(algorithm: algorithm,
-                                              encryption: .a256gcm,
-                                              /// [REQ:gemSpec_IDP_Frontend:A_21431] exp header
-                                              expiry: originalChallenge.challenge.exp,
-                                              contentType: "NJWT",
-                                              type: "JWT"),
-            let jwePayload = try? SignedAuthenticationData.defaultEncoder.encode(signedChallengePayload),
-            let signedChallengeJWE = try? JWE(header: jweHeader,
-                                              payload: jwePayload,
-                                              nonceGenerator: cryptoBox.aesNonceGenerator) else {
-            throw IDPError.internal(error: .signedAuthenticationDataEncryption)
-        }
-
-        return signedChallengeJWE
-    }
-
-    private static let defaultEncoder: JSONEncoder = {
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.dataEncodingStrategy = .base64
-        return jsonEncoder
-    }()
 }

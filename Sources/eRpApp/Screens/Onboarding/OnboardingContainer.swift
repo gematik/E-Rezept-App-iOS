@@ -25,37 +25,33 @@ import eRpStyleKit
 import SwiftUI
 
 struct OnboardingContainer: View, KeyboardReadable {
-    @Perception.Bindable var store: StoreOf<OnboardingDomain>
+    @Bindable var store: StoreOf<OnboardingDomain>
     @State var isKeyboardVisible = false
 
     var body: some View {
-        WithPerceptionTracking {
-            NavigationStack(
-                path: $store.scope(state: \.path, action: \.path)
-            ) {
-                OnboardingStartView { store.send(.showLegalInfo) }
-            } destination: { pathStore in
-                WithPerceptionTracking {
-                    switch pathStore.case {
-                    case .legalInfo:
-                        OnboardingLegalInfoView(store: store)
-                            .toolbar(.hidden, for: .navigationBar)
-                    case let .registerAuth(store):
-                        OnboardingRegisterAuthenticationView(store: store)
-                            .toolbar(.hidden, for: .navigationBar)
-                    case let .registerPassword(store):
-                        OnboardingRegisterPasswordView(store: store)
-                            .toolbar(.hidden, for: .navigationBar)
-                    case .analytics:
-                        OnboardingAnalyticsView(store: store)
-                            .toolbar(.hidden, for: .navigationBar)
-                    case .analyticsDetail:
-                        OnboardingAnalyticsDetailView(store: store)
-                    }
-                }
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+            OnboardingStartView { store.send(.showLegalInfo) }
+        } destination: { pathStore in
+            switch pathStore.case {
+            case .legalInfo:
+                OnboardingLegalInfoView(store: store)
+                    .toolbar(.hidden, for: .navigationBar)
+            case let .registerAuth(store):
+                OnboardingRegisterAuthenticationView(store: store)
+                    .toolbar(.hidden, for: .navigationBar)
+            case let .registerPassword(store):
+                OnboardingRegisterPasswordView(store: store)
+                    .toolbar(.hidden, for: .navigationBar)
+            case .analytics:
+                OnboardingAnalyticsView(store: store)
+                    .toolbar(.hidden, for: .navigationBar)
+            case .analyticsDetail:
+                OnboardingAnalyticsDetailView(store: store)
             }
-            .background(Colors.systemBackground)
         }
+        .background(Colors.systemBackground)
     }
 }
 

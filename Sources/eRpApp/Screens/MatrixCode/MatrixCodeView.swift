@@ -37,7 +37,7 @@ extension MatrixCodeDomain.State {
 // [REQ:gemSpec_eRp_FdV:A_20181-01#2] Screen that presents the DataMatrix code for redeeming a prescription only
 // contains some static texts and the image of the code.
 struct MatrixCodeView: View {
-    @Perception.Bindable var store: StoreOf<MatrixCodeDomain>
+    @Bindable var store: StoreOf<MatrixCodeDomain>
     @State var originalBrightness: CGFloat?
 
     init(store: StoreOf<MatrixCodeDomain>) {
@@ -59,73 +59,71 @@ struct MatrixCodeView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView {
-                if store.type == .erxTask {
-                    Text(title)
-                        .foregroundColor(Colors.systemLabel)
-                        .font(Font.title.bold())
-                        .accessibility(identifier: A18n.matrixCode.dmcTxtTitle)
-                }
-                Text(subtitle)
+        ScrollView {
+            if store.type == .erxTask {
+                Text(title)
+                    .foregroundColor(Colors.systemLabel)
+                    .font(Font.title.bold())
+                    .accessibility(identifier: A18n.matrixCode.dmcTxtTitle)
+            }
+            Text(subtitle)
+                .multilineTextAlignment(.center)
+                .font(.subheadline)
+                .padding()
+                .foregroundColor(Colors.systemLabelSecondary)
+                .accessibility(identifier: A18n.matrixCode.dmcTxtSubtitle)
+
+            TabBarView(store: store)
+
+            if store.state.type == .erxChargeItem {
+                Text(title)
+                    .foregroundColor(Colors.systemLabel)
+                    .font(Font.subheadline.bold())
+                    .padding(.bottom)
+                    .accessibility(identifier: A18n.matrixCode.dmcTxtTitle)
+                Text(store.state.medicationName)
+                    .lineLimit(2)
                     .multilineTextAlignment(.center)
-                    .font(.subheadline)
-                    .padding()
                     .foregroundColor(Colors.systemLabelSecondary)
-                    .accessibility(identifier: A18n.matrixCode.dmcTxtSubtitle)
-
-                TabBarView(store: store)
-
-                if store.state.type == .erxChargeItem {
-                    Text(title)
-                        .foregroundColor(Colors.systemLabel)
-                        .font(Font.subheadline.bold())
-                        .padding(.bottom)
-                        .accessibility(identifier: A18n.matrixCode.dmcTxtTitle)
-                    Text(store.state.medicationName)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .font(Font.subheadline)
-                        .accessibility(identifier: A18n.matrixCode.dmcTxtTitle)
-                }
-
-                Spacer()
+                    .font(Font.subheadline)
+                    .accessibility(identifier: A18n.matrixCode.dmcTxtTitle)
             }
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            .navigationBarItems(
-                trailing: Button(
-                    action: {
-                        store.send(.shareButtonTapped)
-                    }, label: {
-                        Label(L10n.prscDtlBtnShare, systemImage: SFSymbolName.share)
-                    }
-                )
-                .disabled(store.disableShareButton)
-                .accessibility(identifier: A18n.matrixCode.dmcBtnShare)
+
+            Spacer()
+        }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        .navigationBarItems(
+            trailing: Button(
+                action: {
+                    store.send(.shareButtonTapped)
+                }, label: {
+                    Label(L10n.prscDtlBtnShare, systemImage: SFSymbolName.share)
+                }
             )
-            .sheet(item: $store.scope(
-                state: \.destination?.sharePrescription,
-                action: \.destination.sharePrescription
-            )) { scopedStore in
-                ShareViewController(
-                    store: scopedStore
-                )
-            }
-            .onAppear {
-                store.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size))
-                originalBrightness = UIScreen.main.brightness
-            }
-            .onDisappear {
-                if let originalBrightness = originalBrightness {
-                    UIScreen.main.brightness = originalBrightness
-                }
+            .disabled(store.disableShareButton)
+            .accessibility(identifier: A18n.matrixCode.dmcBtnShare)
+        )
+        .sheet(item: $store.scope(
+            state: \.destination?.sharePrescription,
+            action: \.destination.sharePrescription
+        )) { scopedStore in
+            ShareViewController(
+                store: scopedStore
+            )
+        }
+        .onAppear {
+            store.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size))
+            originalBrightness = UIScreen.main.brightness
+        }
+        .onDisappear {
+            if let originalBrightness = originalBrightness {
+                UIScreen.main.brightness = originalBrightness
             }
         }
     }
 
     struct TabBarView: View {
-        @Perception.Bindable var store: StoreOf<MatrixCodeDomain>
+        @Bindable var store: StoreOf<MatrixCodeDomain>
 
         // TabView used for creating the paging effect is very greedy with space. We calculate the size beforehand to
         // accomodate that.
@@ -135,90 +133,86 @@ struct MatrixCodeView: View {
         }()
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(spacing: 0) {
-                    switch store.loadingState {
-                    case .loading:
-                        ProgressView()
-                            .accessibility(identifier: A18n.matrixCode.dmcImgLoadingIndicator)
-                    case let .value(images):
-                        if let singleImage = images.first,
-                           images.count == 1 {
-                            if let chunk = singleImage.chunk {
-                                SelfPayerWarningView(erxTasks: chunk)
-                                    .padding(.horizontal)
-                            }
-                            SingleMatrixCode(image: singleImage.image, isZoomed: store.isMatrixCodeZoomed) {
-                                store.send(.zoomButtonTapped, animation: .default)
-                            }
+            VStack(spacing: 0) {
+                switch store.loadingState {
+                case .loading:
+                    ProgressView()
+                        .accessibility(identifier: A18n.matrixCode.dmcImgLoadingIndicator)
+                case let .value(images):
+                    if let singleImage = images.first,
+                       images.count == 1 {
+                        if let chunk = singleImage.chunk {
+                            SelfPayerWarningView(erxTasks: chunk)
+                                .padding(.horizontal)
+                        }
+                        SingleMatrixCode(image: singleImage.image, isZoomed: store.isMatrixCodeZoomed) {
+                            store.send(.zoomButtonTapped, animation: .default)
+                        }
 
-                            if let chunk = singleImage.chunk {
-                                Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
-                                    .font(.headline)
-                                    .padding(.bottom, 8)
-
-                                HStack {
-                                    Text(
-                                        "\(chunk.compactMap { $0.medication?.displayName }.joined(separator: " & "))"
-                                    )
-                                    .padding(.horizontal)
-                                    .frame(maxWidth: .infinity)
-                                }
-                                .multilineTextAlignment(.center)
-                                .animation(.easeInOut.delay(0.2), value: store.page)
-                            }
-
-                            Spacer()
-                        } else {
-                            if let chunk = images[store.page].chunk {
-                                SelfPayerWarningView(erxTasks: chunk)
-                                    .padding(.horizontal)
-                            }
-
-                            TabView(selection: $store.page.sending(\.pageChanged)) {
-                                ForEach(Array(images.enumerated()), id: \.element.id) { index, image in
-                                    WithPerceptionTracking {
-                                        SingleMatrixCode(image: image.image, isZoomed: store.isMatrixCodeZoomed) {
-                                            store.send(.zoomButtonTapped, animation: .default)
-                                        }
-                                        .tag(index)
-                                    }
-                                }
-                            }
-                            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                            .frame(width: Self.deviceWidth, height: Self.pagedPartHeight)
+                        if let chunk = singleImage.chunk {
+                            Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
+                                .font(.headline)
+                                .padding(.bottom, 8)
 
                             HStack {
-                                Spacer()
-                                PageControl(
-                                    numberOfPages: images.count,
-                                    currentPage: $store.page.sending(\.pageChanged)
+                                Text(
+                                    "\(chunk.compactMap { $0.medication?.displayName }.joined(separator: " & "))"
                                 )
-                                Spacer()
+                                .padding(.horizontal)
+                                .frame(maxWidth: .infinity)
                             }
-                            .padding(.bottom, 40)
+                            .multilineTextAlignment(.center)
+                            .animation(.easeInOut.delay(0.2), value: store.page)
+                        }
 
-                            if let chunk = images[store.page].chunk {
-                                Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
-                                    .font(.headline)
-                                    .padding(.bottom, 8)
+                        Spacer()
+                    } else {
+                        if let chunk = images[store.page].chunk {
+                            SelfPayerWarningView(erxTasks: chunk)
+                                .padding(.horizontal)
+                        }
 
-                                HStack {
-                                    Text(
-                                        "\(chunk.compactMap { $0.medication?.displayName }.joined(separator: " & "))"
-                                    )
-                                    .padding(.horizontal)
-                                    .frame(maxWidth: .infinity)
+                        TabView(selection: $store.page.sending(\.pageChanged)) {
+                            ForEach(Array(images.enumerated()), id: \.element.id) { index, image in
+                                SingleMatrixCode(image: image.image, isZoomed: store.isMatrixCodeZoomed) {
+                                    store.send(.zoomButtonTapped, animation: .default)
                                 }
-                                .multilineTextAlignment(.center)
-                                .animation(.easeInOut.delay(0.2), value: store.page)
+                                .tag(index)
                             }
+                        }
+                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        .frame(width: Self.deviceWidth, height: Self.pagedPartHeight)
 
+                        HStack {
+                            Spacer()
+                            PageControl(
+                                numberOfPages: images.count,
+                                currentPage: $store.page.sending(\.pageChanged)
+                            )
                             Spacer()
                         }
-                    default:
-                        EmptyView()
+                        .padding(.bottom, 40)
+
+                        if let chunk = images[store.page].chunk {
+                            Text(chunk.count > 1 ? L10n.dmcTxtCodeMultiple : L10n.dmcTxtCodeSingle)
+                                .font(.headline)
+                                .padding(.bottom, 8)
+
+                            HStack {
+                                Text(
+                                    "\(chunk.compactMap { $0.medication?.displayName }.joined(separator: " & "))"
+                                )
+                                .padding(.horizontal)
+                                .frame(maxWidth: .infinity)
+                            }
+                            .multilineTextAlignment(.center)
+                            .animation(.easeInOut.delay(0.2), value: store.page)
+                        }
+
+                        Spacer()
                     }
+                default:
+                    EmptyView()
                 }
             }
         }

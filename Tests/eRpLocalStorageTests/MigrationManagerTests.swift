@@ -572,7 +572,7 @@ extension ErxTask {
                 hasEmergencyServiceFee: medicationRequest.hasEmergencyServiceFee,
                 dispenseValidityEnd: medicationRequest.dispenseValidityEnd,
                 accidentInfo: medicationRequest.accidentInfo,
-                bvg: medicationRequest.bvg,
+                ser: medicationRequest.ser,
                 coPaymentStatus: medicationRequest.coPaymentStatus,
                 multiplePrescription: medicationRequest.multiplePrescription
             ),

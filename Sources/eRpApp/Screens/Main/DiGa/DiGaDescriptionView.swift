@@ -26,23 +26,21 @@ import eRpStyleKit
 import SwiftUI
 
 struct DiGaDescriptionView: View {
-    @Perception.Bindable var store: StoreOf<DiGaDetailDomain>
+    @Bindable var store: StoreOf<DiGaDetailDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text(L10n.digaDtlDescriptionTxtHeader)
-                        .accessibilityIdentifier(A11y.digaDetail.digaDtlDescriptionTxtHeader)
-                    Text(store.bfarmDiGaDetails?.description ?? L10n.prscFdTxtNa.text)
-                        .font(.subheadline)
-                        .multilineTextAlignment(.leading)
-                        .foregroundColor(Color(.secondaryLabel))
-                        .accessibilityIdentifier(A11y.digaDetail.digaDtlDescriptionTxtDesc)
-                }.padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }.navigationBarTitle(Text(L10n.digaDtlDescriptionTxtNavTitle), displayMode: .inline)
-        }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(L10n.digaDtlDescriptionTxtHeader)
+                    .accessibilityIdentifier(A11y.diga.description.digaDtlDescriptionTxtHeader)
+                Text(store.bfarmDiGaDetails?.description ?? L10n.prscFdTxtNa.text)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.leading)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .accessibilityIdentifier(A11y.diga.description.digaDtlDescriptionTxtDesc)
+            }.padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }.navigationBarTitle(Text(L10n.digaDtlDescriptionTxtNavTitle), displayMode: .inline)
     }
 }
 

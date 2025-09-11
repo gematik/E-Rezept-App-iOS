@@ -21,7 +21,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 public struct KKAppDirectory: Codable, Equatable, Claims {
     public init(apps: [KKAppDirectory.Entry]) {

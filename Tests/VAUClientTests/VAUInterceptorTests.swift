@@ -55,7 +55,7 @@ final class VAUInterceptorTests: XCTestCase {
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
 
-        let sut = session.provideInterceptor()
+        let sut = VAUInterceptor(vauSession: session)
 
         // expectations
         sut.interceptPublisher(chain: chain)

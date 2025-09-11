@@ -25,72 +25,68 @@ import eRpStyleKit
 import SwiftUI
 
 struct AppAuthenticationPasswordView: View {
-    @Perception.Bindable var store: StoreOf<AppAuthenticationPasswordDomain>
+    @Bindable var store: StoreOf<AppAuthenticationPasswordDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .leading) {
-                SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
-                                      accessibilityLabelKey: L10n.authTxtPasswordLabel,
-                                      text: $store.password.sending(\.setPassword),
-                                      textContentType: .password) {
-                    store.send(.loginButtonTapped, animation: .default)
-                }
-                .padding()
-                .font(Font.body)
-                .background(Color(.systemBackground))
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(
-                            store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.textSecondary,
-                            lineWidth: 0.5
-                        )
-                )
-                .padding(.horizontal)
-                .disabled(store.passwordDelayIsActive)
-                .accessibility(identifier: A11y.auth.authEdtPasswordInput)
-
-                if store.showUnsuccessfulAttemptMessage {
-                    UnsuccessfulAttemptMessageView(store: store)
-                        .padding(.horizontal)
-                        .padding(.top, 4)
-                }
-
-                PrimaryTextButton(
-                    text: L10n.authBtnPasswordContinue,
-                    a11y: A11y.auth.authBtnPasswordContinue,
-                    isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
-                    useFullWidth: false
-                ) {
-                    store.send(.loginButtonTapped, animation: .default)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .center)
-
-                if store.showUnsuccessfulAttemptMessage {
-                    FooterView()
-                        .frame(maxHeight: .infinity, alignment: .bottom)
-                }
+        VStack(alignment: .leading) {
+            SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
+                                  accessibilityLabelKey: L10n.authTxtPasswordLabel,
+                                  text: $store.password.sending(\.setPassword),
+                                  textContentType: .password) {
+                store.send(.loginButtonTapped, animation: .default)
             }
-            .padding(.vertical)
-            .task {
-                await store.send(.task).finish()
+            .padding()
+            .font(Font.body)
+            .background(Color(.systemBackground))
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(
+                        store.showUnsuccessfulAttemptMessage ? Colors.red600 : Colors.textSecondary,
+                        lineWidth: 0.5
+                    )
+            )
+            .padding(.horizontal)
+            .disabled(store.passwordDelayIsActive)
+            .accessibility(identifier: A11y.auth.authEdtPasswordInput)
+
+            if store.showUnsuccessfulAttemptMessage {
+                UnsuccessfulAttemptMessageView(store: store)
+                    .padding(.horizontal)
+                    .padding(.top, 4)
             }
+
+            PrimaryTextButton(
+                text: L10n.authBtnPasswordContinue,
+                a11y: A11y.auth.authBtnPasswordContinue,
+                isEnabled: !store.password.isEmpty && !store.passwordDelayIsActive,
+                useFullWidth: false
+            ) {
+                store.send(.loginButtonTapped, animation: .default)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .center)
+
+            if store.showUnsuccessfulAttemptMessage {
+                FooterView()
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+            }
+        }
+        .padding(.vertical)
+        .task {
+            await store.send(.task).finish()
         }
     }
 
     private struct UnsuccessfulAttemptMessageView: View {
-        @Perception.Bindable var store: StoreOf<AppAuthenticationPasswordDomain>
+        @Bindable var store: StoreOf<AppAuthenticationPasswordDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                Text(store.unsuccessfulAttemptMessage)
-                    .foregroundColor(Colors.red600)
-                    .font(.footnote)
-                    .accessibility(identifier: A11y.auth.authTxtPasswordFailure)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+            Text(store.unsuccessfulAttemptMessage)
+                .foregroundColor(Colors.red600)
+                .font(.footnote)
+                .accessibility(identifier: A11y.auth.authTxtPasswordFailure)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

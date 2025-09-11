@@ -24,10 +24,15 @@ import Foundation
 
 enum FHIRBundleDirectories: String, Equatable {
     case gem_erpChrg_v1_0_0 = "FHIR_GEM_ERPCHRG_v_1_0_0"
+    case gem_erpChrg_v1_1_0 = "FHIR_GEM_ERPCHRG_v_1_1_0"
     case kbv_v1_0_2 = "FHIR_KBV_v1_0_2"
     case kbv_v1_1_0 = "FHIR_KBV_v1_1_0"
+    case kbv_v1_2_0 = "FHIR_KBV_v1_2_0"
+    case kbv_v1_3_2 = "FHIR_KBV_v1_3_2"
     case gem_wf_v1_1_with_kbv_v1_0_2 = "FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2"
     case gem_wf_v1_2_with_kbv_v1_1_0 = "FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0"
+    case gem_wf_v1_5_2_with_kbv_v1_3_2 = "FHIR_GEM_Workflow_v1_5_2_with_KBV_v1_3_2"
     case gem_wf_v1_3 = "FHIR_GEM_Workflow_v1_3"
     case gem_wf_v1_4 = "FHIR_GEM_Workflow_v1_4"
+    case gem_wf_v1_5_2 = "FHIR_GEM_Workflow_v1_5_2"
 }

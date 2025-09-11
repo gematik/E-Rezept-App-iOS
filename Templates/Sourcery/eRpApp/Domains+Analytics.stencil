@@ -1,6 +1,7 @@
 // sourcery:file:eRpApp/Generated/Domains+Analytics
 
 import Foundation
+import FeatureEURedeem
 
 {% macro DomainReducerRouteEnum stateType typeName %}
 {% typed stateType as Enum %}

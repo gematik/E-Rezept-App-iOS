@@ -26,83 +26,81 @@ import eRpStyleKit
 import SwiftUI
 
 struct CardWallReadCardView: View {
-    @Perception.Bindable var store: StoreOf<CardWallReadCardDomain>
+    @Bindable var store: StoreOf<CardWallReadCardDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 0) {
-                ScrollView {
-                    Text(L10n.cdwTxtRcCta)
-                        .font(.title3.bold())
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 8)
-                        .padding(.top, 48)
-                        .padding(.horizontal)
+        VStack(spacing: 0) {
+            ScrollView {
+                Text(L10n.cdwTxtRcCta)
+                    .font(.title3.bold())
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 8)
+                    .padding(.top, 48)
+                    .padding(.horizontal)
 
-                    Text(L10n.cdwTxtRcSubheadline)
-                        .font(.subheadline)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color(.secondaryLabel))
-                        .padding(.horizontal)
-                        .padding(.bottom, 32)
+                Text(L10n.cdwTxtRcSubheadline)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .padding(.horizontal)
+                    .padding(.bottom, 32)
 
-                    NFCPhoneView()
-                }
-                .padding(.horizontal)
+                NFCPhoneView()
+            }
+            .padding(.horizontal)
 
-                Spacer()
+            Spacer()
 
-                GreyDivider()
+            GreyDivider()
 
-                Button {
-                    store.send(store.output.nextAction)
-                } label: {
-                    Label {
-                        Text(store.output.buttonTitle, bundle: .module)
-                    } icon: {
-                        if !store.output.nextButtonEnabled {
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle())
-                        }
+            Button {
+                store.send(store.output.nextAction)
+            } label: {
+                Label {
+                    Text(store.output.buttonTitle, bundle: .module)
+                } icon: {
+                    if !store.output.nextButtonEnabled {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
                     }
                 }
-                .buttonStyle(.primary(isEnabled: store.output.nextButtonEnabled, width: .wideHugging))
-                .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcNext)
-                .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
-                .padding(.vertical, 8)
             }
-            .demoBanner(isPresented: store.isDemoModus) {
-                Text(L10n.cdwTxtRcDemoModeInfo)
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        store.send(.openHelpView)
-                    }, label: {
-                        HStack(alignment: .center) {
-                            Image(systemName: SFSymbolName.questionmarkCircle)
-                            Text(L10n.cdwBtnRcHelp)
-                        }
-                        .foregroundColor(Colors.textSecondary)
-                        .font(.subheadline.weight(.semibold))
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 16)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    })
-                        .fullScreenCover(item: $store
-                            .scope(state: \.destination?.help, action: \.destination.help)) { store in
-                                NavigationStack {
-                                    ReadCardHelpView(store: store)
-                                }
-                                .tint(Colors.primary700)
-                                .navigationViewStyle(StackNavigationViewStyle())
-                        }
-                }
-            }
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
+            .buttonStyle(.primary(isEnabled: store.output.nextButtonEnabled, width: .wideHugging))
+            .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcNext)
+            .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
+            .padding(.vertical, 8)
         }
+        .demoBanner(isPresented: store.isDemoModus) {
+            Text(L10n.cdwTxtRcDemoModeInfo)
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    store.send(.openHelpView)
+                }, label: {
+                    HStack(alignment: .center) {
+                        Image(systemName: SFSymbolName.questionmarkCircle)
+                        Text(L10n.cdwBtnRcHelp)
+                    }
+                    .foregroundColor(Colors.textSecondary)
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 16)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                })
+                    .fullScreenCover(item: $store
+                        .scope(state: \.destination?.help, action: \.destination.help)) { store in
+                            NavigationStack {
+                                ReadCardHelpView(store: store)
+                            }
+                            .tint(Colors.primary700)
+                            .navigationViewStyle(StackNavigationViewStyle())
+                    }
+            }
+        }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
         .statusBar(hidden: true)
     }
 

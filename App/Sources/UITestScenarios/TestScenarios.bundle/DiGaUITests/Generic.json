@@ -48,6 +48,8 @@
         "flowType": "162",
         "lastModified": "2025-05-15T14:44:45.651+00:00",
         "prescriptionId": "162.000.000.004.263.63",
+        "isEURedeemable" : false,
+        "isSetEURedeemableByPatient" : false,
         "authoredOn": "2025-05-15T14:44:45.482+00:00",
         "practitioner":
         {
@@ -62,7 +64,7 @@
         "status": "{{STATUS}}",
         "accessCode": "448fe1e4b6819fa89cd758337ef3e9ca29bb48eceb63c217d2f6b3170cfac86f",
         "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
-        "expiresOn": "2025-08-15",
+        "expiresOn": "{{DATE:+15D}}",
         "deviceRequest":
         {
             "authoredOn": "2025-05-15",
@@ -84,7 +86,7 @@
         },
         "avsTransactions":
         [],
-        "acceptedUntil": "2025-08-15",
+        "acceptedUntil": "{{DATE:+15D}}",
         "patient":
         {
             "insurance": "AOK Rheinland/Hamburg",
@@ -95,9 +97,11 @@
             "insuranceId": "M070759114",
             "status": "1"
         },
+        "isEURedeemable": false,
+        "isSetEURedeemableByPatient": false,
         "medicationRequest":
         {
-            "bvg": false,
+            "ser": false,
             "substitutionAllowed": false,
             "hasEmergencyServiceFee": false
         }
@@ -107,22 +111,26 @@
         "flowType": "162",
         "lastModified": "2025-05-15T14:44:45.651+00:00",
         "prescriptionId": "162.000.000.004.263.63",
+        "isEURedeemable" : false,
+        "isSetEURedeemableByPatient" : false,
         "authoredOn": "2025-05-15T14:44:45.482+00:00",
         "communications":
         [],
         "source": "server",
         "status": "ready",
-        "expiresOn": "2025-08-15",
+        "expiresOn": "{{DATE:+15D}}",
         "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
         "medicationDispenses":
         [],
         "identifier": "162.000.000.004.263.63",
         "avsTransactions":
         [],
-        "acceptedUntil": "2025-08-15",
+        "acceptedUntil": "{{DATE:+15D}}",
+        "isEURedeemable": false,
+        "isSetEURedeemableByPatient": false,
         "medicationRequest":
         {
-            "bvg": false,
+            "ser": false,
             "hasEmergencyServiceFee": false,
             "substitutionAllowed": false
         }
@@ -140,7 +148,7 @@
                 "unit": "{Package}"
             },
             "dosageInstructions": "",
-            "bvg": true,
+            "ser": true,
             "coPaymentStatus": "0",
             "authoredOn": "2024-01-16",
             "multiplePrescription":
@@ -148,6 +156,8 @@
                 "mark": false
             }
         },
+        "isEURedeemable": false,
+        "isSetEURedeemableByPatient": false,
         "medicationDispenses":
         [],
         "medication":
@@ -205,6 +215,8 @@
             "insuranceId": "M070759114"
         },
         "prescriptionId": "160.000.006.456.334.01",
+        "isEURedeemable" : false,
+        "isSetEURedeemableByPatient" : false,
         "source": "server",
         "communications":
         [],

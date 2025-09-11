@@ -25,54 +25,50 @@ import eRpStyleKit
 import SwiftUI
 
 struct HorizontalProfileSelectionView: View {
-    @Perception.Bindable var store: StoreOf<HorizontalProfileSelectionDomain>
+    @Bindable var store: StoreOf<HorizontalProfileSelectionDomain>
     let width = UIScreen.main.bounds.size.width * UIScreen.main.scale / UIScreen.main.nativeScale
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(store.profiles) { userProfile in
-                        WithPerceptionTracking {
-                            HorizontalProfileSelectionChipView(
-                                userProfile: userProfile,
-                                isSelected: store.selectedProfileId == userProfile.id
-                            )
-                            .onTapGesture {
-                                store.send(.selectProfile(userProfile), animation: .default)
-                            }
-                            .onLongPressGesture(minimumDuration: 0.5) {
-                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                store.send(.profileButtonLongPressed(userProfile))
-                            }
-                            .if(userProfile == store.profiles.first) {
-                                $0.tooltip(tooltip: MainViewTooltip.rename)
-                            }
-                            .frame(maxWidth: width * 0.4, alignment: .leading)
-                        }
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach(store.profiles) { userProfile in
+                    HorizontalProfileSelectionChipView(
+                        userProfile: userProfile,
+                        isSelected: store.selectedProfileId == userProfile.id
+                    )
+                    .onTapGesture {
+                        store.send(.selectProfile(userProfile), animation: .default)
                     }
-                    .accessibility(identifier: A11y.profileSelection.proBtnSelectionProfileRow)
-
-                    Button(action: {
-                        store.send(.showAddProfileView)
-                    }, label: {
-                        Image(systemName: SFSymbolName.personCirclePlus)
-                    })
-                        .padding(.horizontal)
-                        .padding(.vertical, 5)
-                        .background(Colors.backgroundNeutral)
-                        .border(Colors.systemGray6, cornerRadius: 8)
-                        .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
-                        .tooltip(tooltip: MainViewTooltip.addProfile)
-
-                    Spacer()
+                    .onLongPressGesture(minimumDuration: 0.5) {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        store.send(.profileButtonLongPressed(userProfile))
+                    }
+                    .if(userProfile == store.profiles.first) {
+                        $0.tooltip(tooltip: MainViewTooltip.rename)
+                    }
+                    .frame(maxWidth: width * 0.4, alignment: .leading)
                 }
+                .accessibility(identifier: A11y.profileSelection.proBtnSelectionProfileRow)
 
-                .padding(.vertical)
-                .padding(.horizontal)
-                .task {
-                    await store.send(.registerListener).finish()
-                }
+                Button(action: {
+                    store.send(.showAddProfileView)
+                }, label: {
+                    Image(systemName: SFSymbolName.personCirclePlus)
+                })
+                    .padding(.horizontal)
+                    .padding(.vertical, 5)
+                    .background(Colors.backgroundNeutral)
+                    .border(Colors.systemGray6, cornerRadius: 8)
+                    .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
+                    .tooltip(tooltip: MainViewTooltip.addProfile)
+
+                Spacer()
+            }
+
+            .padding(.vertical)
+            .padding(.horizontal)
+            .task {
+                await store.send(.registerListener).finish()
             }
         }
         .background(Colors.systemBackground)

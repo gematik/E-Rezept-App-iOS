@@ -39,7 +39,6 @@ import VAUClient
 // sourcery:begin: AutoMockable
 extension JWTSigner {}
 extension SearchHistory {}
-extension BfArMService {}
 // sourcery:end
 
 // sourcery:begin: ProtocolMock

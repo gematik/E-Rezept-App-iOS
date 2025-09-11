@@ -28,6 +28,8 @@ import Foundation
 struct DrawerEvaluation {
     var showDrawerEvaluation: () async -> DrawerEvaluationResult = { .none }
 
+    var showDrawerEvaluationOnRefresh: () async -> DrawerEvaluationResult = { .none }
+
     enum DrawerEvaluationResult {
         case welcomeDrawer
         case consentDrawer
@@ -61,10 +63,19 @@ extension DrawerEvaluation: DependencyKey {
         }
 
         return .none
-    }
+    } showDrawerEvaluationOnRefresh: {
+        @Dependency(\.userSession) var userSession: UserSession
 
-    static var testValue: DrawerEvaluation = .init {
-        .none
+        do {
+            let profile = try await userSession.profile().async()
+            // show welcome drawer?
+            if profile.insuranceType == .unknown {
+                return .welcomeDrawer
+            }
+        } catch {
+            // fall-through in case of any error
+        }
+        return .none
     }
 }
 

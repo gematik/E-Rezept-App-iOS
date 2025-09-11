@@ -40,5 +40,11 @@
         "text": "**🙌 Registrace pro soukromě pojištěné osoby** \nRegistrace pro soukromě pojištěné osoby byla optimalizována. Můžete se pohodlně přihlásit pomocí svého zdravotního průkazu během několika kliknutí. \n \n **🏥 Aktualizovaná data o lékárnách** \nZměny, které lékárny provedou v nové databázi, se nyní spolehlivě zobrazují. \n \n **📲 Více informací pro DiGA** \nOd nynějška budete dostávat podrobnější informace o svých receptech DiGA, jako je prodejní cena nebo logo. \n \n **♿️ Přístupnost** \nObrazovka pro zadání přístupového čísla zdravotní karty byla přepracována a nyní je optimalizována pro použití s VoiceOverem. \n \n **📤 Sdílení receptů** \nRecepty lze nyní sdílet s ostatními přímo z aplikace.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Přístupnost** \nNastavení profilu bylo upraveno pro další zvýšení přístupnosti.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

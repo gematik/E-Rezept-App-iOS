@@ -27,7 +27,7 @@ import eRpStyleKit
 import SwiftUI
 
 struct TabContainerView: View {
-    @Perception.Bindable var store: StoreOf<AppDomain>
+    @Bindable var store: StoreOf<AppDomain>
 
     @Shared(.appDefaults) var appDefaults
 
@@ -40,58 +40,72 @@ struct TabContainerView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            ZStack(alignment: .top) {
-                #if ENABLE_DEBUG_VIEW
-                DebugEnvironmentView()
-                    .offset(x: 0, y: -12)
-                    .zIndex(1000)
-                #endif
+        ZStack(alignment: .top) {
+            #if ENABLE_DEBUG_VIEW
+            DebugEnvironmentView()
+                .offset(x: 0, y: -12)
+                .zIndex(1000)
+            #endif
 
-                TabView(selection: $store.destination.sending(\.setNavigation)) {
-                    Group {
-                        MainView(store: store.scope(state: \.main, action: \.main))
-                            .tabItem {
-                                Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
-                            }
-                            .tag(AppDomain.Destinations.State.main)
-
-                        PharmacyContainerView(
-                            store: store.scope(
-                                state: \.pharmacy,
-                                action: \.pharmacy
-                            )
-                        )
+            TabView(selection: $store.destination.sending(\.setNavigation)) {
+                Group {
+                    MainView(store: store.scope(state: \.main, action: \.main))
                         .tabItem {
-                            Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
-                        }
-                        .tag(AppDomain.Destinations.State.pharmacy)
-
-                        OrdersView(store: store.scope(state: \.orders, action: \.orders))
-                            .tabItem {
-                                Label(L10n.tabTxtMessages, image: Asset.TabIcon.message.name)
+                            Label {
+                                Text(L10n.tabTxtMain)
+                            } icon: {
+                                Image(asset: Asset.TabIcon.appLogoTabItem)
                             }
-                            .badge(store.unreadMessageCount)
-                            .tag(AppDomain.Destinations.State.orders)
-
-                        SettingsView(
-                            store: store.scope(state: \.settings, action: \.settings)
-                        )
-                        .tabItem {
-                            Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                         }
-                        .badge(settingsBadge)
-                        .tag(AppDomain.Destinations.State.settings)
+                        .tag(AppDomain.Destinations.State.main)
+
+                    PharmacyContainerView(
+                        store: store.scope(
+                            state: \.pharmacy,
+                            action: \.pharmacy
+                        )
+                    )
+                    .tabItem {
+                        Label {
+                            Text(L10n.tabTxtPharmacySearch)
+                        } icon: {
+                            Image(asset: Asset.TabIcon.mapPinAndEllipse)
+                        }
                     }
-                    .toolbarBackground(.visible, for: .tabBar)
-                    .toolbarBackground(Colors.tabViewToolBarBackground, for: .tabBar)
+                    .tag(AppDomain.Destinations.State.pharmacy)
+
+                    OrdersView(store: store.scope(state: \.orders, action: \.orders))
+                        .tabItem {
+                            Label {
+                                Text(L10n.tabTxtMessages)
+                            } icon: {
+                                Image(asset: Asset.TabIcon.message)
+                            }
+                        }
+                        .badge(store.unreadMessageCount)
+                        .tag(AppDomain.Destinations.State.orders)
+
+                    SettingsView(
+                        store: store.scope(state: \.settings, action: \.settings)
+                    )
+                    .tabItem {
+                        Label {
+                            Text(L10n.tabTxtSettings)
+                        } icon: {
+                            Image(asset: Asset.TabIcon.gearshape)
+                        }
+                    }
+                    .badge(settingsBadge)
+                    .tag(AppDomain.Destinations.State.settings)
                 }
-                .task {
-                    await store.send(.task).finish()
-                }
-                .tint(Colors.primary700)
-                .zIndex(0)
+                .toolbarBackground(.visible, for: .tabBar)
+                .toolbarBackground(Colors.tabViewToolBarBackground, for: .tabBar)
             }
+            .task {
+                await store.send(.task).finish()
+            }
+            .tint(Colors.primary700)
+            .zIndex(0)
         }
     }
 

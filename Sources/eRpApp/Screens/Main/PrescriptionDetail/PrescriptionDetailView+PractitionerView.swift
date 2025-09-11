@@ -26,45 +26,43 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct PractitionerView: View {
-        @Perception.Bindable var store: StoreOf<PractitionerDomain>
+        @Bindable var store: StoreOf<PractitionerDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                ScrollView(.vertical) {
-                    SectionContainer {
-                        SubTitle(
-                            title: store.practitioner.name ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPractitionerName
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrName)
+            ScrollView(.vertical) {
+                SectionContainer {
+                    SubTitle(
+                        title: store.practitioner.name ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPractitionerName
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrName)
 
-                        SubTitle(
-                            title: store.practitioner.qualification ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPractitionerQualification
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrQualification)
+                    SubTitle(
+                        title: store.practitioner.qualification ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPractitionerQualification
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrQualification)
 
-                        SubTitle(
-                            title: store.practitioner.lanr ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtPractitionerId
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrLanr)
+                    SubTitle(
+                        title: store.practitioner.lanr ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtPractitionerId
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrLanr)
 
-                        SubTitle(
-                            title: store.practitioner.address ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscDtlPrTxtAddress
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrAddress)
+                    SubTitle(
+                        title: store.practitioner.address ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscDtlPrTxtAddress
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrAddress)
 
-                        SubTitle(
-                            title: store.practitioner.email ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscDtlPrTxtEmail
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrEmail)
-                    }.sectionContainerStyle(.inline)
-                }
-                .navigationBarTitle(Text(L10n.prscFdTxtPractitionerTitle), displayMode: .inline)
+                    SubTitle(
+                        title: store.practitioner.email ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscDtlPrTxtEmail
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPrEmail)
+                }.sectionContainerStyle(.inline)
             }
+            .navigationBarTitle(Text(L10n.prscFdTxtPractitionerTitle), displayMode: .inline)
         }
     }
 }

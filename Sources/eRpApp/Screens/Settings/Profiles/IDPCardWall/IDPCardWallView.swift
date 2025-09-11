@@ -25,31 +25,29 @@ import SwiftUI
 
 // TODO: do we actually need this //swiftlint:disable:this todo
 struct IDPCardWallView: View {
-    @Perception.Bindable var store: StoreOf<IDPCardWallDomain>
+    @Bindable var store: StoreOf<IDPCardWallDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            NavigationStack {
-                VStack(alignment: .leading) {
-                    if let store = store.scope(state: \.subdomain, action: \.subdomain) {
-                        switch store.case {
-                        case let .can(store):
-                            CardWallCANView(store: store)
-                        case let .pin(store):
-                            CardWallPINView(store: store)
-                        case let .readCard(store):
-                            CardWallReadCardView(store: store)
-                        }
+        NavigationStack {
+            VStack(alignment: .leading) {
+                if let store = store.scope(state: \.subdomain, action: \.subdomain) {
+                    switch store.case {
+                    case let .can(store):
+                        CardWallCANView(store: store)
+                    case let .pin(store):
+                        CardWallPINView(store: store)
+                    case let .readCard(store):
+                        CardWallReadCardView(store: store)
                     }
                 }
             }
-            .task {
-                await store.send(.task).finish()
-            }
-            .background(Color(.systemBackground))
-            .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
-            .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
         }
+        .task {
+            await store.send(.task).finish()
+        }
+        .background(Color(.systemBackground))
+        .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
+        .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
     }
 }
 

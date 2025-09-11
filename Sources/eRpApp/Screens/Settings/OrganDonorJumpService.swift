@@ -66,7 +66,7 @@ extension OrganDonorJumpService: DependencyKey {
                     url = organDonationUrl.appending(queryItems: [URLQueryItem(name: "iss", value: idpIss)])
                 } else {
                     guard let genericUrl = URL(string: AppConfiguration.Environment
-                        .ORGAN_DONATION_REGISTER_FALLBACK_PU) else {
+                        .ORGAN_DONATION_REGISTER_PU_FALLBACK_URL_TEMP) else {
                         throw OrganDonorJumpServiceError.generatingGenericUrl
                     }
                     url = genericUrl

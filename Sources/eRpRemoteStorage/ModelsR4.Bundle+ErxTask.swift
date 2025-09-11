@@ -90,7 +90,7 @@ extension ModelsR4.Bundle {
         let fullUrl = entry.fullUrl
         let bundle = self
         let taskAccessCode = task.accessCode
-        var flowType: ErxTask.FlowType = task.flowTypeCode.map {
+        let flowType: ErxTask.FlowType = task.flowTypeCode.map {
             ErxTask.FlowType(rawValue: $0)
         } ?? ErxTask.FlowType(taskId: taskId)
 
@@ -118,7 +118,9 @@ extension ModelsR4.Bundle {
                 expiresOn: task.expiryDate,
                 acceptedUntil: task.acceptDate,
                 lastMedicationDispense: task.lastMedicationDispense,
-                prescriptionId: task.prescriptionId
+                prescriptionId: task.prescriptionId,
+                isEURedeemable: task.isEURedeemable,
+                isSetEURedeemableByPatient: task.isSetEURedeemableByPatient
             )
         }
         guard let patientReceiptIdentifier = patientReceiptReference.value.identifierValue else {
@@ -133,7 +135,9 @@ extension ModelsR4.Bundle {
                 expiresOn: task.expiryDate,
                 acceptedUntil: task.acceptDate,
                 lastMedicationDispense: task.lastMedicationDispense,
-                prescriptionId: task.prescriptionId
+                prescriptionId: task.prescriptionId,
+                isEURedeemable: task.isEURedeemable,
+                isSetEURedeemableByPatient: task.isSetEURedeemableByPatient
             )
         }
         // Find the Document Bundle (KBV-Bundle)
@@ -150,7 +154,9 @@ extension ModelsR4.Bundle {
                 expiresOn: task.expiryDate,
                 acceptedUntil: task.acceptDate,
                 lastMedicationDispense: task.lastMedicationDispense,
-                prescriptionId: task.prescriptionId
+                prescriptionId: task.prescriptionId,
+                isEURedeemable: task.isEURedeemable,
+                isSetEURedeemableByPatient: task.isSetEURedeemableByPatient
             )
         }
 
@@ -210,7 +216,9 @@ extension ModelsR4.Bundle {
                 isSER: deviceRequest?.isSer,
                 accidentInfo: deviceRequest?.accidentInfo,
                 authoredOn: deviceRequest?.authoredOn?.value?.description
-            )
+            ),
+            isEURedeemable: task.isEURedeemable,
+            isSetEURedeemableByPatient: task.isSetEURedeemableByPatient
         )
     }
 
@@ -283,7 +291,7 @@ extension ModelsR4.Bundle {
             hasEmergencyServiceFee: medicationRequest?.noctuFeeWaiver,
             dispenseValidityEnd: dispenseValidityEnd,
             accidentInfo: medicationRequest?.accidentInfo,
-            bvg: medicationRequest?.bvg,
+            ser: medicationRequest?.ser,
             coPaymentStatus: medicationRequest?.coPaymentStatus,
             multiplePrescription: medicationRequest?.multiplePrescription,
             quantity: medicationRequest?.erxTaskQuantity
@@ -383,6 +391,33 @@ extension ModelsR4.Task {
             }
             return nil
         }
+    }
+
+    var isEURedeemable: Bool {
+        `extension`?.first { anExtension in
+            Workflow.Key.euIsRedeemableByProperties.contains { $0.value == anExtension.url.value?.url.absoluteString }
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case Extension.ValueX.boolean(true) = valueX {
+                return true
+            }
+            return false
+        } ?? false
+    }
+
+    var isSetEURedeemableByPatient: Bool {
+        `extension`?.first { anExtension in
+            Workflow.Key.euIsRedeemableByPatientAuthorization
+                .contains { $0.value == anExtension.url.value?.url.absoluteString }
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case Extension.ValueX.boolean(true) = valueX {
+                return true
+            }
+            return false
+        } ?? false
     }
 }
 

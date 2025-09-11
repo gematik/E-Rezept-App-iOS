@@ -26,59 +26,55 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct ToolbarViewModifier: ViewModifier {
-        @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
+        @Bindable var store: StoreOf<PrescriptionDetailDomain>
 
         func body(content: Content) -> some View {
-            WithPerceptionTracking {
-                content
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Menu(
-                                content: { ToolbarMenu(store: store) },
-                                label: { Image(systemName: SFSymbolName.ellipsis).padding() }
-                            )
-                            .accessibility(identifier: A11y.prescriptionDetails.prscDtlBtnToolbarItem)
-                        }
+            content
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Menu(
+                            content: { ToolbarMenu(store: store) },
+                            label: { Image(systemName: SFSymbolName.ellipsis).padding() }
+                        )
+                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlBtnToolbarItem)
                     }
-                    .sheet(item: $store
-                        .scope(state: \.destination?.sharePrescription,
-                               action: \.destination.sharePrescription)) { store in
-                            ShareViewController(store: store)
-                    }
-            }
+                }
+                .sheet(item: $store
+                    .scope(state: \.destination?.sharePrescription,
+                           action: \.destination.sharePrescription)) { store in
+                        ShareViewController(store: store)
+                }
         }
 
         private struct ToolbarMenu: View {
-            @Perception.Bindable var store: StoreOf<PrescriptionDetailDomain>
+            @Bindable var store: StoreOf<PrescriptionDetailDomain>
 
             var body: some View {
-                WithPerceptionTracking {
-                    VStack {
+                VStack {
+                    Button(
+                        action: { store.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size)) },
+                        label: { Label(L10n.prscDtlBtnShare, systemImage: SFSymbolName.share) }
+                    )
+                    .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnShare)
+                    if store.prescription.type == .scanned {
                         Button(
-                            action: { store.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size)) },
-                            label: { Label(L10n.prscDtlBtnShare, systemImage: SFSymbolName.share) }
-                        )
-                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnShare)
-                        if store.prescription.type == .scanned {
-                            Button(
-                                action: { store.send(.toggleRedeemPrescription) },
-                                label: {
-                                    if store.prescription.isArchived {
-                                        Label(L10n.dtlBtnToogleMarkedRedeemed, systemImage: SFSymbolName.cross)
-                                    } else {
-                                        Label(L10n.dtlBtnToogleMarkRedeemed, systemImage: SFSymbolName.checkmark)
-                                    }
+                            action: { store.send(.toggleRedeemPrescription) },
+                            label: {
+                                if store.prescription.isArchived {
+                                    Label(L10n.dtlBtnToogleMarkedRedeemed, systemImage: SFSymbolName.cross)
+                                } else {
+                                    Label(L10n.dtlBtnToogleMarkRedeemed, systemImage: SFSymbolName.checkmark)
                                 }
-                            )
-                            .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnRedeem)
-                        }
-                        Button(
-                            role: .destructive,
-                            action: { store.send(.delete) },
-                            label: { Label(L10n.prscDtlBtnDelete, systemImage: SFSymbolName.trash) }
+                            }
                         )
-                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnDelete)
+                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnRedeem)
                     }
+                    Button(
+                        role: .destructive,
+                        action: { store.send(.delete) },
+                        label: { Label(L10n.prscDtlBtnDelete, systemImage: SFSymbolName.trash) }
+                    )
+                    .accessibility(identifier: A11y.prescriptionDetails.prscDtlToolbarMenuBtnDelete)
                 }
             }
         }

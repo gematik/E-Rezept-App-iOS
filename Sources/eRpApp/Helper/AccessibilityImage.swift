@@ -20,18 +20,17 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
+import eRpResources
+
 struct AccessibilityImage: Equatable {
-    let name: String
-    let isSystemName: Bool
+    let asset: ImageAsset
     var accessibilityName: String?
 
     init(
-        name: String,
-        isSystemName: Bool = false,
+        asset: ImageAsset,
         accessibilityName: String? = nil
     ) {
-        self.name = name
-        self.isSystemName = isSystemName
+        self.asset = asset
         self.accessibilityName = accessibilityName
     }
 }

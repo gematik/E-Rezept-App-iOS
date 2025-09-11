@@ -65,7 +65,7 @@ struct TooltipView<Content: View>: View {
                 GeometryReader { ownSizeProxy in
                     Rectangle()
                         .fill(.clear)
-                        .onChange(of: tooltipId.description) { _ in
+                        .onChange(of: tooltipId.description) { _, _ in
                             self.width = ownSizeProxy.size.width
                             self.height = ownSizeProxy.size.height
                         }

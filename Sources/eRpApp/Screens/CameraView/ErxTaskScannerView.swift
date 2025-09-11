@@ -26,29 +26,27 @@ import eRpKit
 import SwiftUI
 
 struct ErxTaskScannerView: View {
-    @Perception.Bindable var store: StoreOf<ScannerDomain>
+    @Bindable var store: StoreOf<ScannerDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            ZStack {
-                AVScannerView(erxCodeTypes: [.dataMatrix, .qr],
-                              supportedCodeTypes: [.dataMatrix, .qr, .aztec],
-                              scanning: store.scanState.isIdle) {
-                    if store.state.scanState.isIdle {
-                        // [REQ:BSI-eRp-ePA:O.Purp_2#1,O.Data_6#3] Scanning tasks contains purpose related data input
-                        // [REQ:BSI-eRp-ePA:O.Source_1#1] Scanning tasks starts with scanner callback
-                        store.send(.analyse(scanOutput: $0))
-                    }
+        ZStack {
+            AVScannerView(erxCodeTypes: [.dataMatrix, .qr],
+                          supportedCodeTypes: [.dataMatrix, .qr, .aztec],
+                          scanning: store.scanState.isIdle) {
+                if store.state.scanState.isIdle {
+                    // [REQ:BSI-eRp-ePA:O.Purp_2#1,O.Data_6#3] Scanning tasks contains purpose related data input
+                    // [REQ:BSI-eRp-ePA:O.Source_1#1] Scanning tasks starts with scanner callback
+                    store.send(.analyse(scanOutput: $0))
                 }
-                .edgesIgnoringSafeArea(.all)
-
-                ScannerOverlay(store: store)
-
-                CameraAuthorizationAlertView()
             }
-            .onChange(of: store.scanState, perform: hapticAndAudioFeedback)
-            .alert($store.scope(state: \.destination?.alert, action: \.destination.alert))
+            .edgesIgnoringSafeArea(.all)
+
+            ScannerOverlay(store: store)
+
+            CameraAuthorizationAlertView()
         }
+        .onChange(of: store.scanState, perform: hapticAndAudioFeedback)
+        .alert($store.scope(state: \.destination?.alert, action: \.destination.alert))
     }
 
     private func hapticAndAudioFeedback(for state: LoadingState<[ScannedErxTask], ScannerDomain.Error>) {

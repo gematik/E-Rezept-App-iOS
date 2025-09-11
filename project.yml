@@ -6,7 +6,7 @@ options:
   useBaseInternationalization: false
   deploymentTarget:
     macOS: 13.0
-    iOS: 16.0
+    iOS: 17.0
 schemes:
   UITests_iOS:
     build:
@@ -164,6 +164,24 @@ targets:
       region: DE
       testTargets:
         - eRpAppTests
+      gatherCoverageData: false
+  EUPrescriptionPreview:
+    type: application
+    platform: iOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ${GEM_PRODUCT_BUNDLE_IDENTIFIER}.Preview.EUPrescription
+        TARGETED_DEVICE_FAMILY: 1
+    sources:
+      - path: App/Previews/EUPrescription
+        excludes:
+          - "Package.swift"
+    dependencies:
+      - package: eRpKit
+        product: FeatureEURedeem
+    scheme:
+      language: de
+      region: DE
       gatherCoverageData: false
   eRpAppTests:
     type: bundle.unit-test

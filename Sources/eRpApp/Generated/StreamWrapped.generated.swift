@@ -1218,7 +1218,6 @@ class StreamWrappedUserSession: UserSession {
 	lazy var pharmacyRepository: PharmacyRepository = {
 		StreamWrappedPharmacyRepository(stream: stream.map{ $0.pharmacyRepository }.eraseToAnyPublisher(), current: current.pharmacyRepository )
 	}()
-	var bfArMService: BfArMService { current.bfArMService }
 	var updateChecker: UpdateChecker { current.updateChecker }
 	lazy var localUserStore: UserDataStore = {
 		StreamWrappedUserDataStore(stream: stream.map{ $0.localUserStore }.eraseToAnyPublisher(), current: current.localUserStore )

@@ -28,148 +28,146 @@ import SwiftUI
 import UIKit
 
 struct PharmacySearchView: View {
-    @Perception.Bindable var store: StoreOf<PharmacySearchDomain>
+    @Bindable var store: StoreOf<PharmacySearchDomain>
 
     @State var scrollOffset: CGFloat = 0
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 0) {
-                DebugPharmacies(store: store)
+        VStack(spacing: 0) {
+            DebugPharmacies(store: store)
 
-                ZStack {
-                    switch store.searchState {
-                    case .searchAfterLocalizationWasAuthorized,
-                         .localizingDevice:
-                        LocalizingDeviceView()
+            ZStack {
+                switch store.searchState {
+                case .searchAfterLocalizationWasAuthorized,
+                     .localizingDevice:
+                    LocalizingDeviceView()
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
+                case .startView:
+                    ScrollView {
+                        PharmacySearchStartView(store: store)
                             .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
-                    case .startView:
-                        ScrollView {
-                            PharmacySearchStartView(store: store)
-                                .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
-                        }
-                    case .searchResultEmpty:
-                        VStack {
+                    }
+                case .searchResultEmpty:
+                    VStack {
+                        PharmacyFilterBar(openFiltersAction: {
+                            store.send(.showPharmacyFilter, animation: .default)
+                        }, removeFilter: { option in
+                            store.send(.removeFilterOption(option.element), animation: .default)
+                        }, elements: filter)
+                            .padding(.horizontal)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+
+                        NoResultsView()
+                            .accessibility(identifier: A11y.pharmacySearch.phaSearchNoResults)
+                            .padding(.horizontal, 30)
+                    }
+                case .error:
+                    ErrorView { store.send(.performSearch) }
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
+                case .searchRunning,
+                     .searchResultOk:
+                    ZStack(alignment: .bottomTrailing) {
+                        ScrollViewWithStickyHeader(header: {
                             PharmacyFilterBar(openFiltersAction: {
                                 store.send(.showPharmacyFilter, animation: .default)
                             }, removeFilter: { option in
-                                store.send(.removeFilterOption(option.element), animation: .default)
+                                store.send(
+                                    .removeFilterOption(option.element),
+                                    animation: .default
+                                )
                             }, elements: filter)
                                 .padding(.horizontal)
-                                .transition(.move(edge: .top).combined(with: .opacity))
+                                .transition(.move(edge: .top)
+                                    .combined(with: .opacity))
+                        }, content: {
+                            ResultsView(store: store)
+                        })
 
-                            NoResultsView()
-                                .accessibility(identifier: A11y.pharmacySearch.phaSearchNoResults)
-                                .padding(.horizontal, 30)
-                        }
-                    case .error:
-                        ErrorView { store.send(.performSearch) }
-                            .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
-                    case .searchRunning,
-                         .searchResultOk:
-                        ZStack(alignment: .bottomTrailing) {
-                            ScrollViewWithStickyHeader(header: {
-                                PharmacyFilterBar(openFiltersAction: {
-                                    store.send(.showPharmacyFilter, animation: .default)
-                                }, removeFilter: { option in
-                                    store.send(
-                                        .removeFilterOption(option.element),
-                                        animation: .default
-                                    )
-                                }, elements: filter)
-                                    .padding(.horizontal)
-                                    .transition(.move(edge: .top)
-                                        .combined(with: .opacity))
-                            }, content: {
-                                ResultsView(store: store)
-                            })
-
-                            Button(action: { store.send(.switchToMapView) }, label: {
-                                Image(systemName: SFSymbolName.map)
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(Colors.primary)
-                                    .padding(16)
-                                    .background(Circle().foregroundColor(Colors.systemColorWhite))
-                                    .padding(.all, 26)
-                                    .shadow(color: Colors.separator, radius: 4)
-                            }).accessibility(identifier: A11y.pharmacySearch.phaSearchSwitchResultMap)
-                        }
+                        Button(action: { store.send(.switchToMapView) }, label: {
+                            Image(systemName: SFSymbolName.map)
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundColor(Colors.primary)
+                                .padding(16)
+                                .background(Circle().foregroundColor(Colors.systemColorWhite))
+                                .padding(.all, 26)
+                                .shadow(color: Colors.separator, radius: 4)
+                        }).accessibility(identifier: A11y.pharmacySearch.phaSearchSwitchResultMap)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .overlay(VStack {
-                    if store.searchState == .searchRunning {
-                        SearchRunningView()
-                            .accessibility(identifier: A11y.pharmacySearch.phaSearchSearchRunning)
-                            .transition(.slide)
-                            .padding(.top, 80)
-                    }
-                }, alignment: .top)
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
+            .overlay(VStack {
+                if store.searchState == .searchRunning {
+                    SearchRunningView()
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchSearchRunning)
+                        .transition(.slide)
+                        .padding(.top, 80)
+                }
+            }, alignment: .top)
 
-                Spacer(minLength: 0)
+            Spacer(minLength: 0)
 
-                if store.inRedeemProcess {
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .navigationDestination(
-                            item: $store.scope(
-                                state: \.destination?.pharmacyMapSearch,
-                                action: \.destination.pharmacyMapSearch
-                            )
-                        ) { store in
-                            PharmacySearchMapView(store: store)
-                        }
-                        .accessibility(hidden: true)
-                } else {
-                    Rectangle()
-                        .frame(width: 0, height: 0, alignment: .center)
-                        .fullScreenCover(item: $store.scope(
+            if store.inRedeemProcess {
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .navigationDestination(
+                        item: $store.scope(
                             state: \.destination?.pharmacyMapSearch,
                             action: \.destination.pharmacyMapSearch
-                        )) { store in
-                            NavigationStack {
-                                PharmacySearchMapView(store: store)
-                                    .navigationViewStyle(StackNavigationViewStyle())
-                            }
+                        )
+                    ) { store in
+                        PharmacySearchMapView(store: store)
+                    }
+                    .accessibility(hidden: true)
+            } else {
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(item: $store.scope(
+                        state: \.destination?.pharmacyMapSearch,
+                        action: \.destination.pharmacyMapSearch
+                    )) { store in
+                        NavigationStack {
+                            PharmacySearchMapView(store: store)
+                                .navigationViewStyle(StackNavigationViewStyle())
                         }
-                        .hidden()
-                        .accessibility(hidden: true)
-                }
+                    }
+                    .hidden()
+                    .accessibility(hidden: true)
             }
-            .destinations(store: $store)
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if store.inRedeemProcess {
-                        NavigationBarCloseItem {
-                            store.send(.closeButtonTouched)
-                        }
+        }
+        .destinations(store: $store)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if store.inRedeemProcess {
+                    NavigationBarCloseItem {
+                        store.send(.closeButtonTouched)
                     }
                 }
             }
-            .navigationTitle(L10n.tabTxtPharmacySearch)
-            .searchable(text: $store.searchText,
-                        placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: L10n.phaSearchTxtSearchHint.text) {
-                Suggestions(store: store)
-            }
-            .onSubmit(of: .search) {
-                store.send(.performSearch, animation: .default)
-            }
-            .task {
-                await store.send(.task).finish()
-            }
-            .task {
-                await store.send(.onAppear).finish()
-            }
-            .onReceive(NotificationCenter.default
-                .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                    store.send(.task)
-            }
+        }
+        .navigationTitle(L10n.tabTxtPharmacySearch)
+        .searchable(text: $store.searchText,
+                    placement: .navigationBarDrawer(displayMode: .always),
+                    prompt: L10n.phaSearchTxtSearchHint.text) {
+            Suggestions(store: store)
+        }
+        .onSubmit(of: .search) {
+            store.send(.performSearch, animation: .default)
+        }
+        .task {
+            await store.send(.task).finish()
+        }
+        .task {
+            await store.send(.onAppear).finish()
+        }
+        .onReceive(NotificationCenter.default
+            .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                store.send(.task)
         }
     }
 
     struct Suggestions: View {
-        @Perception.Bindable var store: StoreOf<PharmacySearchDomain>
+        @Bindable var store: StoreOf<PharmacySearchDomain>
 
         struct Suggestion: View {
             internal init(_ text: String) {
@@ -189,20 +187,18 @@ struct PharmacySearchView: View {
         }
 
         var body: some View {
-            WithPerceptionTracking {
-                let searchHistory = store.searchText.isEmpty ? store.searchHistory : []
-                if !searchHistory.isEmpty {
-                    Text(L10n.phaSearchTxtHistoryTitle)
-                        .font(.headline)
-                        .padding(.bottom)
-                        .padding(.top, 24)
+            let searchHistory = store.searchText.isEmpty ? store.searchHistory : []
+            if !searchHistory.isEmpty {
+                Text(L10n.phaSearchTxtHistoryTitle)
+                    .font(.headline)
+                    .padding(.bottom)
+                    .padding(.top, 24)
 
-                    ForEach(searchHistory, id: \.hash) { item in
-                        Suggestion(item)
-                    }
-                } else {
-                    EmptyView()
+                ForEach(searchHistory, id: \.hash) { item in
+                    Suggestion(item)
                 }
+            } else {
+                EmptyView()
             }
         }
     }
@@ -227,7 +223,7 @@ struct PharmacySearchView: View {
 }
 
 extension View {
-    func destinations(store: Perception.Bindable<StoreOf<PharmacySearchDomain>>) -> some View {
+    func destinations(store: Bindable<StoreOf<PharmacySearchDomain>>) -> some View {
         navigationDestination(
             item: store.scope(
                 state: \.destination?.pharmacyDetail,
@@ -252,23 +248,21 @@ extension PharmacySearchView {
         @AppStorage("debug_pharmacies") var debugPharmacies: [DebugPharmacy] = []
         @AppStorage("show_debug_pharmacies") var showDebugPharmacies = false
 
-        @Perception.Bindable var store: StoreOf<PharmacySearchDomain>
+        @Bindable var store: StoreOf<PharmacySearchDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                if showDebugPharmacies, !debugPharmacies.isEmpty {
-                    List {
-                        ForEach(debugPharmacies) { debugPharmacy in
-                            let viewModel = debugPharmacy.asPharmacyViewModel()
-                            Button(
-                                action: { store.send(.showDetails(viewModel)) },
-                                label: { PharmacySearchCell(pharmacy: viewModel, showDistance: false) }
-                            )
-                            .fixedSize(horizontal: false, vertical: true)
-                        }
+            if showDebugPharmacies, !debugPharmacies.isEmpty {
+                List {
+                    ForEach(debugPharmacies) { debugPharmacy in
+                        let viewModel = debugPharmacy.asPharmacyViewModel()
+                        Button(
+                            action: { store.send(.showDetails(viewModel)) },
+                            label: { PharmacySearchCell(pharmacy: viewModel, showDistance: false) }
+                        )
+                        .fixedSize(horizontal: false, vertical: true)
                     }
-                    .listStyle(PlainListStyle())
                 }
+                .listStyle(PlainListStyle())
             }
         }
     }
@@ -276,38 +270,34 @@ extension PharmacySearchView {
 
 extension PharmacySearchView {
     private struct ResultsView: View {
-        @Perception.Bindable var store: StoreOf<PharmacySearchDomain>
+        @Bindable var store: StoreOf<PharmacySearchDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                SingleElementSectionContainer {
-                    LazyVStack(spacing: 0) {
-                        ForEach(store.pharmacies) { pharmacyViewModel in
-                            WithPerceptionTracking {
-                                Button(
-                                    action: { store.send(.showDetails(pharmacyViewModel)) },
-                                    label: { Label(title: {
-                                        let showDistance = store.pharmacyFilterOptions
-                                            .contains { $0 == .currentLocation }
-                                        PharmacySearchCell(
-                                            pharmacy: pharmacyViewModel,
-                                            showDistance: showDistance
-                                        )
-                                    }, icon: {})
-                                    }
+            SingleElementSectionContainer {
+                LazyVStack(spacing: 0) {
+                    ForEach(store.pharmacies) { pharmacyViewModel in
+                        Button(
+                            action: { store.send(.showDetails(pharmacyViewModel)) },
+                            label: { Label(title: {
+                                let showDistance = store.pharmacyFilterOptions
+                                    .contains { $0 == .currentLocation }
+                                PharmacySearchCell(
+                                    pharmacy: pharmacyViewModel,
+                                    showDistance: showDistance
                                 )
-                                .fixedSize(horizontal: false, vertical: true)
-                                .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
-                                .buttonStyle(.navigation(showSeparator: true))
-                                .modifier(SectionContainerCellModifier(last: false))
+                            }, icon: {})
                             }
-                        }
+                        )
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
+                        .buttonStyle(.navigation(showSeparator: true))
+                        .modifier(SectionContainerCellModifier(last: false))
                     }
                 }
-                .sectionContainerStyle(.inline)
-                .accessibilityElement(children: .contain)
-                .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
             }
+            .sectionContainerStyle(.inline)
+            .accessibilityElement(children: .contain)
+            .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
         }
     }
 

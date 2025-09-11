@@ -32,7 +32,6 @@ extension ErxTaskEntity {
     @NSManaged public var accessCode: String?
     @NSManaged public var author: String?
     @NSManaged public var authoredOn: String?
-    @NSManaged public var bvg: Bool
     @NSManaged public var coPaymentStatus: String?
     @NSManaged public var dispenseValidityEnd: String?
     @NSManaged public var dosageInstructions: String?
@@ -41,27 +40,28 @@ extension ErxTaskEntity {
     @NSManaged public var form: String?
     @NSManaged public var fullUrl: String?
     @NSManaged public var identifier: String?
+    @NSManaged public var lastMedicationDispense: String?
     @NSManaged public var lastModified: String?
     @NSManaged public var noctuFeeWaiver: Bool
     @NSManaged public var prescriptionId: String?
     @NSManaged public var redeemedOn: String?
+    @NSManaged public var ser: Bool
     @NSManaged public var source: String?
     @NSManaged public var status: String?
     @NSManaged public var substitutionAllowed: Bool
+    @NSManaged public var accidentInfo: ErxTaskAccidentInfoEntity?
     @NSManaged public var avsTransaction: NSSet?
     @NSManaged public var communications: NSSet?
-    @NSManaged public var lastMedicationDispense: String?
+    @NSManaged public var deviceRequest: ErxTaskDeviceRequestEntity?
     @NSManaged public var medication: ErxTaskMedicationEntity?
     @NSManaged public var medicationDispenses: NSSet?
+    @NSManaged public var medicationSchedule: MedicationScheduleEntity?
     @NSManaged public var multiplePrescription: ErxTaskMultiplePrescriptionEntity?
     @NSManaged public var organization: ErxTaskOrganizationEntity?
     @NSManaged public var patient: ErxTaskPatientEntity?
     @NSManaged public var practitioner: ErxTaskPractitionerEntity?
     @NSManaged public var profile: ProfileEntity?
-    @NSManaged public var accidentInfo: ErxTaskAccidentInfoEntity?
     @NSManaged public var quantity: ErxTaskQuantityEntity?
-    @NSManaged public var medicationSchedule: MedicationScheduleEntity?
-    @NSManaged public var deviceRequest: ErxTaskDeviceRequestEntity?
 }
 
 // MARK: Generated accessors for avsTransaction

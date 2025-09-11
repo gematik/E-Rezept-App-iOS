@@ -40,5 +40,11 @@
         "text": "**🙌 Rejestracja dla osób ubezpieczonych prywatnie** \nRejestracja dla osób ubezpieczonych prywatnie została zoptymalizowana. Możesz wygodnie zalogować się za pomocą swojego identyfikatora zdrowotnego za pomocą zaledwie kilku kliknięć. \n \n **🏥 Zaktualizowane dane aptek** \nZmiany wprowadzane przez apteki w nowej bazie danych są teraz niezawodnie wyświetlane. \n \n **📲 Więcej informacji dla DiGA** \nOd teraz będziesz otrzymywać bardziej szczegółowe informacje o swoich receptach DiGA, takie jak cena sprzedaży lub logo. \n \n **♿️ Dostępność** \nEkran wprowadzania numeru dostępu do karty zdrowotnej został przeprojektowany i jest teraz zoptymalizowany pod kątem obsługi VoiceOver. \n \n **📤 Udostępniaj recepty** \nRecepty można teraz udostępniać innym osobom bezpośrednio z aplikacji.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Dostępność** \nUstawienia profilu zostały zmienione w celu dalszego zwiększenia dostępności.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

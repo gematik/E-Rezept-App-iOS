@@ -25,103 +25,101 @@ import eRpStyleKit
 import SwiftUI
 
 struct CardWallExtAuthHelpView: View {
-    @Perception.Bindable var store: StoreOf<CardWallExtAuthHelpDomain>
+    @Bindable var store: StoreOf<CardWallExtAuthHelpDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            ScrollView {
-                switch store.insuranceType {
-                case .gKV, .unknown:
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L10n.cdwTxtExtauthHelpCaption)
-                            .font(.title.bold())
+        ScrollView {
+            switch store.insuranceType {
+            case .gKV, .unknown:
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.cdwTxtExtauthHelpCaption)
+                        .font(.title.bold())
 
-                        Text(L10n.cdwTxtExtauthHelpDescription)
-                            .font(.footnote)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .padding(.bottom, 32)
+                    Text(L10n.cdwTxtExtauthHelpDescription)
+                        .font(.footnote)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .padding(.bottom, 32)
 
-                        VStack(alignment: .leading, spacing: 32) {
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfo1)
-                                    .font(.body)
-                            }
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfo2)
-                                    .font(.body)
-                            }
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfo3)
-                                    .font(.body)
-                            }
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfo4)
-                                    .font(.body)
-                            }
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfo5)
-                                    .font(.body)
-                            }
+                    VStack(alignment: .leading, spacing: 32) {
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfo1)
+                                .font(.body)
+                        }
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfo2)
+                                .font(.body)
+                        }
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfo3)
+                                .font(.body)
+                        }
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfo4)
+                                .font(.body)
+                        }
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfo5)
+                                .font(.body)
                         }
                     }
-                    .padding()
-                case .pKV:
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L10n.cdwTxtExtauthHelpCaption)
-                            .font(.title.bold())
-
-                        Text(L10n.cdwTxtExtauthHelpDescription)
-                            .font(.footnote)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .padding(.bottom, 32)
-
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(L10n.cdwTxtExtauthHelpTitlePkv1)
-                                .font(.body.weight(.bold))
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfoPkv1)
-                                    .font(.body)
-                            }
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfoPkv2)
-                                    .font(.body)
-                            }
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfoPkv3)
-                                    .font(.body)
-                            }.padding(.bottom, 32)
-
-                            Text(L10n.cdwTxtExtauthHelpTitlePkv2)
-                                .font(.body.weight(.bold))
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfoPkv4)
-                                    .font(.body)
-                            }.padding(.bottom, 32)
-
-                            Text(L10n.cdwTxtExtauthHelpTitlePkv3)
-                                .font(.body.weight(.bold))
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-                                Text(L10n.cdwTxtExtauthHelpInfoPkv5)
-                                    .font(.body)
-                            }
-                        }
-                    }
-                    .padding()
                 }
+                .padding()
+            case .pKV:
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.cdwTxtExtauthHelpCaption)
+                        .font(.title.bold())
+
+                    Text(L10n.cdwTxtExtauthHelpDescription)
+                        .font(.footnote)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .padding(.bottom, 32)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(L10n.cdwTxtExtauthHelpTitlePkv1)
+                            .font(.body.weight(.bold))
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfoPkv1)
+                                .font(.body)
+                        }
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfoPkv2)
+                                .font(.body)
+                        }
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfoPkv3)
+                                .font(.body)
+                        }.padding(.bottom, 32)
+
+                        Text(L10n.cdwTxtExtauthHelpTitlePkv2)
+                            .font(.body.weight(.bold))
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfoPkv4)
+                                .font(.body)
+                        }.padding(.bottom, 32)
+
+                        Text(L10n.cdwTxtExtauthHelpTitlePkv3)
+                            .font(.body.weight(.bold))
+                        HStack(alignment: .top) {
+                            OnboardingFeatureCheckmarkView()
+                            Text(L10n.cdwTxtExtauthHelpInfoPkv5)
+                                .font(.body)
+                        }
+                    }
+                }
+                .padding()
             }
-            .navigationTitle(L10n.cdwTxtExtauthHelpTitle)
-            .navigationBarTitleDisplayMode(.inline)
         }
+        .navigationTitle(L10n.cdwTxtExtauthHelpTitle)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

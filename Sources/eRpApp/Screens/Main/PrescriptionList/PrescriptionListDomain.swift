@@ -114,6 +114,7 @@ struct PrescriptionListDomain {
             case activeUserProfileReceived(Result<UserProfile, UserProfileServiceError>)
             /// Response from `refresh` that presents the CardWall sheet
             case showCardWallReceived(CardWallIntroductionDomain.State)
+            case showInsuranceTypeSelectionSheetReceived
             case errorReceived(LoginHandlerError)
         }
     }
@@ -127,6 +128,7 @@ struct PrescriptionListDomain {
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
     @Dependency(\.prescriptionRepository) var prescriptionRepository: PrescriptionRepository
+    @Dependency(\.drawerEvaluation) var drawerEvaluation: DrawerEvaluation
 
     private var environment: Environment {
         .init(
@@ -135,6 +137,7 @@ struct PrescriptionListDomain {
             userSession: userSession,
             userProfileService: userProfileService,
             prescriptionRepository: prescriptionRepository,
+            drawerEvaluation: drawerEvaluation,
             locale: Locale.current.language.languageCode?.identifier ?? "de"
         )
     }
@@ -213,11 +216,15 @@ struct PrescriptionListDomain {
             return .none
         case .refresh:
             state.loadingState = .loading(nil)
-            return environment.refreshOrShowCardWall().cancellable(id: CancelID.refreshId, cancelInFlight: true)
+            return environment.refreshOrShowInsuranceSelectionOrCardWall().cancellable(
+                id: CancelID.refreshId,
+                cancelInFlight: true
+            )
         case .alertDismissButtonTapped:
             state.loadingState = .idle
             return .none
         case .response(.showCardWallReceived),
+             .response(.showInsuranceTypeSelectionSheetReceived),
              .prescriptionDetailViewTapped,
              .redeemButtonTapped,
              .diGaDetailViewTapped,
@@ -238,25 +245,10 @@ extension PrescriptionListDomain {
         var userSession: UserSession
         var userProfileService: UserProfileService
         var prescriptionRepository: PrescriptionRepository
+        var drawerEvaluation: DrawerEvaluation
         var locale: String?
 
         typealias Action = PrescriptionListDomain.Action
-
-        func cardWall() -> AnyPublisher<CardWallIntroductionDomain.State, Never> {
-            let hideCardWallIntro = userSession.localUserStore.hideCardWallIntro
-            let canAvailable = userSession.secureUserStore.can
-
-            return canAvailable
-                .combineLatest(hideCardWallIntro)
-                .first()
-                .map { _, _ in
-                    CardWallIntroductionDomain.State(
-                        isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
-                        profileId: userSession.profileId
-                    )
-                }
-                .eraseToAnyPublisher()
-        }
 
         /// "Silently" try to load ErxTasks if preconditions are met
         func loadRemoteTasksAndSave() -> Effect<PrescriptionListDomain.Action> {
@@ -278,8 +270,8 @@ extension PrescriptionListDomain {
             )
         }
 
-        /// Load ErxTasks if already logged in else show CardWall or error
-        func refreshOrShowCardWall() -> Effect<PrescriptionListDomain.Action> {
+        /// Load ErxTasks if already logged in else show Insurance Selection or CardWall or error
+        func refreshOrShowInsuranceSelectionOrCardWall() -> Effect<PrescriptionListDomain.Action> {
             .publisher(
                 prescriptionRepository
                     .forcedLoadRemote(for: locale)
@@ -292,11 +284,24 @@ extension PrescriptionListDomain {
                                 .eraseToAnyPublisher()
                         case .notAuthenticated,
                              .authenticationRequired:
-                            return cardWall()
-                                .receive(on: schedulers.main)
-                                .setFailureType(to: PrescriptionRepositoryError.self)
-                                .map { .response(.showCardWallReceived($0)) }
-                                .eraseToAnyPublisher()
+                            // Use profile.lastAuthenticated for differentiation between
+                            //  present insuranceTypeSelectionDrawer <> present cardWall
+
+                            return Future {
+                                await drawerEvaluation.showDrawerEvaluationOnRefresh()
+                            }
+                            .setFailureType(to: PrescriptionRepositoryError.self)
+                            .map { drawerEvaluationResult -> PrescriptionListDomain.Action in
+                                if drawerEvaluationResult == .welcomeDrawer {
+                                    return .response(.showInsuranceTypeSelectionSheetReceived)
+                                } else {
+                                    return .response(.showCardWallReceived(CardWallIntroductionDomain.State(
+                                        isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
+                                        profileId: userSession.profileId
+                                    )))
+                                }
+                            }
+                            .eraseToAnyPublisher()
                         }
                     }
                     .catch { error in

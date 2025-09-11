@@ -20,7 +20,6 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import ASN1Kit
 import Combine
 @testable import eRpFeatures
 import Foundation
@@ -178,7 +177,7 @@ final class IDPIntegrationTests: XCTestCase {
 
         func sign(message: Data) async throws -> Data {
             do {
-                return try privateKeyContainer.sign(data: message)
+                return try privateKeyContainer.sign(data: message).derToConcat()
             } catch {
                 throw Error.signatureFailed
             }
@@ -522,7 +521,7 @@ final class IDPIntegrationTests: XCTestCase {
         components.host = idpsekURL.host
         components.port = idpsekURL.port
         components.path = idpsekURL.path
-        components.queryItems?.append(.init(name: "user_id", value: "P179293935"))
+        components.queryItems?.append(.init(name: "user_id", value: "P179293933"))
         if let clientIdIndex = components.queryItems?.firstIndex(where: { item in
             item.name == "client_id"
         }) {

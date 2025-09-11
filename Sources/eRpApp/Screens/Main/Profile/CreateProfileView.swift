@@ -24,18 +24,16 @@ import ComposableArchitecture
 import SwiftUI
 
 struct CreateProfileView: View {
-    @Perception.Bindable var store: StoreOf<CreateProfileDomain>
+    @Bindable var store: StoreOf<CreateProfileDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            EnterProfileNameSubView(
-                displayName: $store.profileName.sending(\.setProfileName),
-                didTapButtonAction: { store.send(.createAndSaveProfile(name: store.profileName)) },
-                validating: { name in
-                    !name.trimmed().isEmpty
-                }
-            )
-        }
+        EnterProfileNameSubView(
+            displayName: $store.profileName.sending(\.setProfileName),
+            didTapButtonAction: { store.send(.createAndSaveProfile(name: store.profileName)) },
+            validating: { name in
+                !name.trimmed().isEmpty
+            }
+        )
     }
 }
 

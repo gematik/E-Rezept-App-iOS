@@ -26,74 +26,72 @@ import eRpStyleKit
 import SwiftUI
 
 struct HealthCardPasswordReadCardView: View {
-    @Perception.Bindable var store: StoreOf<HealthCardPasswordReadCardDomain>
+    @Bindable var store: StoreOf<HealthCardPasswordReadCardDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 0) {
-                ScrollView {
-                    Text(L10n.cdwTxtRcCta)
-                        .font(.title3.bold())
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 8)
-                        .padding(.top, 48)
-                        .padding(.horizontal)
+        VStack(spacing: 0) {
+            ScrollView {
+                Text(L10n.cdwTxtRcCta)
+                    .font(.title3.bold())
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 8)
+                    .padding(.top, 48)
+                    .padding(.horizontal)
 
-                    Text(L10n.cdwTxtRcSubheadline)
-                        .font(.subheadline)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color(.secondaryLabel))
-                        .padding(.horizontal)
-                        .padding(.bottom, 32)
+                Text(L10n.cdwTxtRcSubheadline)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .padding(.horizontal)
+                    .padding(.bottom, 32)
 
-                    NFCPhoneView()
-                }
-                .padding(.horizontal)
-
-                Spacer()
-
-                GreyDivider()
-
-                Button {
-                    store.send(.readCard)
-                } label: {
-                    Text(L10n.stgBtnCardResetRead)
-                }
-                .buttonStyle(.primary(isEnabled: true, width: .wideHugging))
-                .accessibility(identifier: A11y.settings.card.stgBtnCardResetRead)
-                .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
-                .padding(.vertical, 8)
+                NFCPhoneView()
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        store.send(.openHelpView)
-                    }, label: {
-                        HStack(alignment: .center) {
-                            Image(systemName: SFSymbolName.questionmarkCircle)
-                            Text(L10n.cdwBtnRcHelp)
-                        }
-                        .foregroundColor(Colors.textSecondary)
-                        .font(.subheadline.weight(.semibold))
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 16)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
-                    })
-                        .fullScreenCover(item: $store
-                            .scope(state: \.destination?.help, action: \.destination.help)) { store in
-                                NavigationStack {
-                                    ReadCardHelpView(store: store)
-                                }
-                                .tint(Colors.primary700)
-                                .navigationViewStyle(StackNavigationViewStyle())
-                        }
-                }
+            .padding(.horizontal)
+
+            Spacer()
+
+            GreyDivider()
+
+            Button {
+                store.send(.readCard)
+            } label: {
+                Text(L10n.stgBtnCardResetRead)
             }
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
-            .statusBar(hidden: true)
+            .buttonStyle(.primary(isEnabled: true, width: .wideHugging))
+            .accessibility(identifier: A11y.settings.card.stgBtnCardResetRead)
+            .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
+            .padding(.vertical, 8)
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    store.send(.openHelpView)
+                }, label: {
+                    HStack(alignment: .center) {
+                        Image(systemName: SFSymbolName.questionmarkCircle)
+                        Text(L10n.cdwBtnRcHelp)
+                    }
+                    .foregroundColor(Colors.textSecondary)
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 16)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                })
+                    .fullScreenCover(item: $store
+                        .scope(state: \.destination?.help, action: \.destination.help)) { store in
+                            NavigationStack {
+                                ReadCardHelpView(store: store)
+                            }
+                            .tint(Colors.primary700)
+                            .navigationViewStyle(StackNavigationViewStyle())
+                    }
+            }
+        }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
+        .statusBar(hidden: true)
     }
 
     struct NFCPhoneView: View {

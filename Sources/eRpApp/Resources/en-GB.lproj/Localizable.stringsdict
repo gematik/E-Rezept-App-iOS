@@ -56,6 +56,24 @@
 			<string>Please try again in %u seconds.</string>
 		</dict>
 	</dict>
+	<key>dtl_txt_med_redeemed_on_direct_assignment</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>This prescription was filled %%@ for you as part of a treatment.</string>
+			<key>other</key>
+			<string>This prescription was filled for you on % %@ as part of a treatment.</string>
+			<key>zero</key>
+			<string></string>
+		</dict>
+	</dict>
 	<key>erx_txt_accepted_until</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

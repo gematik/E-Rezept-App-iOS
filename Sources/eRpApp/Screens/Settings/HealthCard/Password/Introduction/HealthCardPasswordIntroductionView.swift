@@ -27,84 +27,82 @@ import eRpStyleKit
 import SwiftUI
 
 struct HealthCardPasswordIntroductionView: View {
-    @Perception.Bindable var store: StoreOf<HealthCardPasswordIntroductionDomain>
+    @Bindable var store: StoreOf<HealthCardPasswordIntroductionDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .leading, spacing: 0) {
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            // headline
-                            store.mode.headLineText
-                                .font(.title.bold())
-                                .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroHeadline)
+        VStack(alignment: .leading, spacing: 0) {
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        // headline
+                        store.mode.headLineText
+                            .font(.title.bold())
+                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroHeadline)
 
-                            VStack(alignment: .leading, spacing: 16) {
-                                // subheadline
-                                Text(L10n.stgTxtCardResetIntroSubheadline)
-                                    .font(Font.body.weight(.semibold))
+                        VStack(alignment: .leading, spacing: 16) {
+                            // subheadline
+                            Text(L10n.stgTxtCardResetIntroSubheadline)
+                                .font(Font.body.weight(.semibold))
 
-                                // 1st checkmark
-                                Label(
-                                    title: { Text(L10n.stgTxtCardResetIntroNeedYourCard) },
-                                    icon: {
-                                        Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                            .foregroundColor(Colors.secondary500)
-                                            .font(.title3)
-                                    }
-                                )
-                                .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroNeedYourCard)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(8)
-
-                                // 2nd checkmark
-                                Label(
-                                    title: { store.mode.checkmarkText },
-                                    icon: {
-                                        Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                            .foregroundColor(Colors.secondary500)
-                                            .font(.title3)
-                                    }
-                                )
-                                .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroNeedYourCardsPin)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(8)
-
-                                // Hint
-                                VStack(spacing: 8) {
-                                    store.mode.hintText
-                                        .foregroundColor(Color(.secondaryLabel))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .fixedSize(horizontal: false, vertical: true)
+                            // 1st checkmark
+                            Label(
+                                title: { Text(L10n.stgTxtCardResetIntroNeedYourCard) },
+                                icon: {
+                                    Image(systemName: SFSymbolName.checkmarkCircleFill)
+                                        .foregroundColor(Colors.secondary500)
+                                        .font(.title3)
                                 }
-                                .font(.subheadline)
+                            )
+                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroNeedYourCard)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(8)
+
+                            // 2nd checkmark
+                            Label(
+                                title: { store.mode.checkmarkText },
+                                icon: {
+                                    Image(systemName: SFSymbolName.checkmarkCircleFill)
+                                        .foregroundColor(Colors.secondary500)
+                                        .font(.title3)
+                                }
+                            )
+                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroNeedYourCardsPin)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(8)
+
+                            // Hint
+                            VStack(spacing: 8) {
+                                store.mode.hintText
+                                    .foregroundColor(Color(.secondaryLabel))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
-                            .padding(.top, 32)
-                        }.padding()
-                    }
+                            .font(.subheadline)
+                        }
+                        .padding(.top, 32)
+                    }.padding()
                 }
-
-                Spacer(minLength: 0)
-
-                GreyDivider()
-
-                Button {
-                    store.send(.advance)
-                } label: {
-                    Text(L10n.stgBtnCardResetAdvance)
-                }
-                .buttonStyle(.primary(isEnabled: true, width: .wideHugging))
-                .frame(maxWidth: .infinity, alignment: .center)
-                .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
-                .padding(.horizontal)
-                .padding(.vertical, 8)
             }
-            .navigationDestination(
-                item: $store.scope(state: \.destination?.can, action: \.destination.can)
-            ) { store in
-                HealthCardPasswordCanView(store: store)
+
+            Spacer(minLength: 0)
+
+            GreyDivider()
+
+            Button {
+                store.send(.advance)
+            } label: {
+                Text(L10n.stgBtnCardResetAdvance)
             }
+            .buttonStyle(.primary(isEnabled: true, width: .wideHugging))
+            .frame(maxWidth: .infinity, alignment: .center)
+            .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+        .navigationDestination(
+            item: $store.scope(state: \.destination?.can, action: \.destination.can)
+        ) { store in
+            HealthCardPasswordCanView(store: store)
         }
         .navigationBarTitleDisplayMode(.inline)
     }

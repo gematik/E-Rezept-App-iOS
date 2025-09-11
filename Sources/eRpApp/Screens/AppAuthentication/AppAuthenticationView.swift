@@ -26,70 +26,68 @@ import Foundation
 import SwiftUI
 
 struct AppAuthenticationView: View {
-    @Perception.Bindable var store: StoreOf<AppAuthenticationDomain>
+    @Bindable var store: StoreOf<AppAuthenticationDomain>
 
     var body: some View {
         // GeometryReader is needed to expand ScrollView content to full screen
         GeometryReader { geometry in
             ScrollView {
-                WithPerceptionTracking {
-                    VStack {
-                        HStack {
-                            Image(decorative: Asset.LaunchAssets.logoGematik)
-                                .padding()
-                            Spacer()
-                        }
-
-                        // [REQ:BSI-eRp-ePA:O.Pass_4#2] Display of failed login attempts counter
-                        if store.failedAuthenticationsCount != 0 {
-                            HintView<AppAuthenticationDomain.Action>(
-                                hint: Hint(
-                                    id: A11y.auth.authTxtFailedLoginHint,
-                                    title: L10n.authTxtFailedLoginHintTitle.text,
-                                    message: L10n.authTxtFailedLoginHintMsg(store.failedAuthenticationsCount).text,
-                                    image: .init(name: Asset.Illustrations.girlRedCircle.name),
-                                    style: Hint.Style.important,
-                                    imageStyle: Hint.ImageStyle.topAligned
-                                )
-                            )
+                VStack {
+                    HStack {
+                        Image(decorative: Asset.LaunchAssets.logoGematik)
                             .padding()
-                        } else {
-                            Spacer()
-                        }
+                        Spacer()
+                    }
 
-                        Text(L10n.authTxtBiometricsTitle)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .padding(.top)
-                            .padding(.bottom, 1)
+                    // [REQ:BSI-eRp-ePA:O.Pass_4#2] Display of failed login attempts counter
+                    if store.failedAuthenticationsCount != 0 {
+                        HintView<AppAuthenticationDomain.Action>(
+                            hint: Hint(
+                                id: A11y.auth.authTxtFailedLoginHint,
+                                title: L10n.authTxtFailedLoginHintTitle.text,
+                                message: L10n.authTxtFailedLoginHintMsg(store.failedAuthenticationsCount).text,
+                                image: AccessibilityImage(asset: Asset.Illustrations.girlRedCircle),
+                                style: Hint.Style.important,
+                                imageStyle: Hint.ImageStyle.topAligned
+                            )
+                        )
+                        .padding()
+                    } else {
+                        Spacer()
+                    }
 
-                        Text(L10n.authTxtSubtitle)
-                            .foregroundColor(Colors.textSecondary)
-                            .padding(.bottom)
+                    Text(L10n.authTxtBiometricsTitle)
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .padding(.top)
+                        .padding(.bottom, 1)
 
-                        VStack {
-                            if let store = store.scope(state: \.subdomain, action: \.subdomain) {
-                                switch store.case {
-                                case let .biometrics(store):
-                                    AppAuthenticationWithBiometricsView(store: store)
-                                case let .password(store):
-                                    AppAuthenticationPasswordView(store: store)
-                                case let .biometricAndPassword(store):
-                                    AppAuthenticationBiometricPasswordView(store: store)
-                                }
+                    Text(L10n.authTxtSubtitle)
+                        .foregroundColor(Colors.textSecondary)
+                        .padding(.bottom)
+
+                    VStack {
+                        if let store = store.scope(state: \.subdomain, action: \.subdomain) {
+                            switch store.case {
+                            case let .biometrics(store):
+                                AppAuthenticationWithBiometricsView(store: store)
+                            case let .password(store):
+                                AppAuthenticationPasswordView(store: store)
+                            case let .biometricAndPassword(store):
+                                AppAuthenticationBiometricPasswordView(store: store)
                             }
                         }
-
-                        Spacer()
-
-                        if store.showGroupShot {
-                            Image(asset: Asset.Illustrations.groupShot)
-                                .resizable()
-                                .scaledToFit()
-                        }
                     }
-                    .frame(minHeight: geometry.size.height)
+
+                    Spacer()
+
+                    if store.showGroupShot {
+                        Image(asset: Asset.Illustrations.groupShot)
+                            .resizable()
+                            .scaledToFit()
+                    }
                 }
+                .frame(minHeight: geometry.size.height)
             }
         }.task {
             await store.send(.task).finish()

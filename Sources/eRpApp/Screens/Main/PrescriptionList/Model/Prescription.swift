@@ -70,10 +70,7 @@ struct Prescription: Equatable, Identifiable {
         if erxTask.medicationRequest.multiplePrescription?.mark == true {
             type = .multiplePrescription
         }
-        if erxTask.flowType == .directAssignment ||
-            erxTask.flowType == .directAssignmentForPKV ||
-            erxTask.id.starts(with: ErxTask.FlowType.Code.kDirectAssignment) ||
-            erxTask.id.starts(with: ErxTask.FlowType.Code.kDirectAssignmentForPKV) {
+        if erxTask.isDirectAssignment {
             type = .directAssignment
         }
         if erxTask.source == .scanner {
@@ -205,7 +202,19 @@ struct Prescription: Equatable, Identifiable {
                 return .open(until: L10n.erxTxtDigaClaimedAt(localizedString).text)
             }
             let redeemedOnDate = uiDateFormatter.relativeDate(whenHandedOver) ?? L10n.prscFdTxtNa.text
-            return .archived(message: L10n.dtlTxtMedRedeemedOn(redeemedOnDate).text)
+            if erxTask.isDirectAssignment {
+                // check for relative date formatting (e.g. today, yesterday)
+                // default to "on today, on yesterday, on 22.08.2024"
+                let elapsedDays = whenHandedOver?.date?.days(until: date) ?? 2
+                return .archived(
+                    message: String(
+                        format: L10n.dtlTxtMedRedeemedOnDirectAssignment(elapsedDays > 2 ? 2 : 1).text,
+                        redeemedOnDate
+                    )
+                )
+            } else {
+                return .archived(message: L10n.dtlTxtMedRedeemedOn(redeemedOnDate).text)
+            }
         case .cancelled:
             if let lastModified = erxTask.lastModified?.date,
                let elapsedDays = lastModified.days(until: date) {
@@ -596,6 +605,15 @@ extension Prescription {
                                                   dateFormatter: UIDateFormatter.previewValue)
         static let prescriptionSelfPayer = Prescription(erxTask: ErxTask.Demo.erxTaskSelfPayer,
                                                         dateFormatter: UIDateFormatter.previewValue)
+    }
+}
+
+extension ErxTask {
+    var isDirectAssignment: Bool {
+        flowType == .directAssignment ||
+            flowType == .directAssignmentForPKV ||
+            id.starts(with: ErxTask.FlowType.Code.kDirectAssignment) ||
+            id.starts(with: ErxTask.FlowType.Code.kDirectAssignmentForPKV)
     }
 }
 

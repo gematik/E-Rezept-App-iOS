@@ -20,9 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
-import OpenSSL
 
 /// All relevant constraints needed for a successful challenge exchange
 public struct IDPDirectoryKKApps {
@@ -41,14 +39,6 @@ public struct IDPDirectoryKKApps {
     /// - Parameter jwt: original challenge
     public init(jwt: JWT) {
         self.jwt = jwt
-    }
-
-    /// Verify the JWT signature with the provided certificate
-    /// - Parameter certificate: X.509 certificate used for verification
-    /// - Returns: Boolean indicating if verification was successful
-    /// - Throws: If verification fails
-    public func verify(with certificate: X509) throws -> Bool {
-        try jwt.verify(with: certificate)
     }
 
     /// Extract claims from the JWT

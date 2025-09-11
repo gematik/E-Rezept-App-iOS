@@ -26,6 +26,7 @@ import Combine
 import eRpKit
 import eRpLocalStorage
 import FHIRClient
+import FHIRVZD
 import Foundation
 import HTTPClient
 import HTTPClientLive
@@ -93,10 +94,10 @@ class DemoSessionContainer: UserSession {
         DefaultNFCResetRetryCounterController()
     }()
 
-    lazy var bfArMService: BfArMService = {
+    lazy var bfarmSession: BfArMSession = {
         let appConfiguration = UserDefaultsStore().appConfiguration
 
-        return DemoBfArMService()
+        return BfArMSession(fetchBfArMInfo: { _ in nil }, fetchCachedImage: { _ in nil })
     }()
 
     lazy var pharmacyRepository: PharmacyRepository = {
@@ -107,17 +108,22 @@ class DemoSessionContainer: UserSession {
             DebugLiveLogger.LogInterceptor(),
         ]
 
+        let fhirVZDConfig = FHIRVZDClient.Configuration(eRezeptAPIServer: appConfiguration.eRezept,
+                                                        eRezeptAdditionalHeader: appConfiguration
+                                                            .eRezeptAdditionalHeader)
+
         // Remote FHIR data source configuration
         let client = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
             interceptors: interceptors
         )
         return DemoPharmacyRepository(
-            cloud: PharmacyFHIRDataSource(
+            cloud: HealthcareServiceFHIRDataSource(
                 fhirClient: FHIRClient(
                     server: appConfiguration.fhirVzd,
                     httpClient: client
-                )
+                ),
+                session: DefaultFHIRVZDSession(config: fhirVZDConfig)
             ),
             requestDelayInSeconds: 0.9,
             schedulers: Schedulers()

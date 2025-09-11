@@ -25,61 +25,59 @@ import eRpStyleKit
 import SwiftUI
 
 struct HealthCardSectionView: View {
-    @Perception.Bindable var store: StoreOf<SettingsDomain>
+    @Bindable var store: StoreOf<SettingsDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            SectionContainer(
-                header: {
-                    Text(L10n.stgTxtCardSectionHeader)
-                },
-                content: {
-                    Button {
-                        store.send(.tappedEgk)
-                    } label: {
-                        Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon)
-                    }
-                    .accessibility(identifier: A11y.settings.card.stgTxtCardOrderNewCard)
-                    .buttonStyle(.navigation)
-
-                    // Destination: "Forgot PIN"
-                    Button {
-                        store.send(.tappedForgotPin)
-                    } label: {
-                        Label(L10n.stgTxtCardForgotPin,
-                              systemImage: SFSymbolName.questionmarkCircle)
-                    }
-                    .accessibility(identifier: A11y.settings.card.stgTxtCardForgotPin)
-                    .buttonStyle(.navigation)
-
-                    // Destination: "Set a custom PIN"
-                    Button {
-                        store.send(.tappedCustomPin)
-                    } label: {
-                        Label(L10n.stgTxtCardCustomPin,
-                              systemImage: SFSymbolName.cardIconAnd123)
-                    }
-                    .accessibility(identifier: A11y.settings.card.stgTxtCardCustomPin)
-                    .buttonStyle(.navigation)
-
-                    // Destination: "Unlock health card"
-                    Button {
-                        store.send(.tappedUnlockCard)
-                    } label: {
-                        Label(L10n.stgTxtCardUnlockCard,
-                              systemImage: SFSymbolName.lockRotation)
-                    }
-                    .accessibility(identifier: A11y.settings.card.stgTxtCardUnlockCard)
-                    .buttonStyle(.navigation)
+        SectionContainer(
+            header: {
+                Text(L10n.stgTxtCardSectionHeader)
+            },
+            content: {
+                Button {
+                    store.send(.tappedEgk)
+                } label: {
+                    Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon)
                 }
-            )
-            .destinations(store: $store)
-        }
+                .accessibility(identifier: A11y.settings.card.stgTxtCardOrderNewCard)
+                .buttonStyle(.navigation)
+
+                // Destination: "Forgot PIN"
+                Button {
+                    store.send(.tappedForgotPin)
+                } label: {
+                    Label(L10n.stgTxtCardForgotPin,
+                          systemImage: SFSymbolName.questionmarkCircle)
+                }
+                .accessibility(identifier: A11y.settings.card.stgTxtCardForgotPin)
+                .buttonStyle(.navigation)
+
+                // Destination: "Set a custom PIN"
+                Button {
+                    store.send(.tappedCustomPin)
+                } label: {
+                    Label(L10n.stgTxtCardCustomPin,
+                          systemImage: SFSymbolName.cardIconAnd123)
+                }
+                .accessibility(identifier: A11y.settings.card.stgTxtCardCustomPin)
+                .buttonStyle(.navigation)
+
+                // Destination: "Unlock health card"
+                Button {
+                    store.send(.tappedUnlockCard)
+                } label: {
+                    Label(L10n.stgTxtCardUnlockCard,
+                          systemImage: SFSymbolName.lockRotation)
+                }
+                .accessibility(identifier: A11y.settings.card.stgTxtCardUnlockCard)
+                .buttonStyle(.navigation)
+            }
+        )
+        .destinations(store: $store)
     }
 }
 
 extension View {
-    func destinations(store: Perception.Bindable<StoreOf<SettingsDomain>>) -> some View {
+    func destinations(store: Bindable<StoreOf<SettingsDomain>>) -> some View {
         navigationDestination(
             item: store.scope(state: \.destination?.egk, action: \.destination.egk)
         ) { store in

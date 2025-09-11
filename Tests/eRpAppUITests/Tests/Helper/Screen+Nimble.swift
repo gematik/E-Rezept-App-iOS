@@ -138,4 +138,17 @@ extension Screen {
                          line _: UInt) -> [XCUIElement] {
         app.otherElements.matching(.any, identifier: identifier).allElementsBoundByIndex
     }
+
+    @MainActor
+    func link(within query: XCUIElementQuery? = nil, by identifier: String, fileID: String, file: FileString,
+              line: UInt, checkExistence: Bool = true) -> XCUIElement {
+        elements(
+            query: query?.links ?? app.links,
+            identifier: identifier,
+            fileID: fileID,
+            file: file,
+            line: line,
+            checkExistence: checkExistence
+        )
+    }
 }

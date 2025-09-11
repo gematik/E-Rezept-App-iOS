@@ -28,28 +28,26 @@ import SwiftUI
 
 extension MedicationReminderSetupView {
     struct RepetitionView: View {
-        @Perception.Bindable var store: StoreOf<MedicationReminderSetupDomain>
+        @Bindable var store: StoreOf<MedicationReminderSetupDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack {
-                    Form {
-                        // Weekday selection
-                        Section {
-                            ForEach(MedicationSchedule.Weekday.allCases) { weekday in
-                                Button {
-                                    store.send(.repetitionWeekdayButtonTapped(weekday))
-                                } label: {
-                                    HStack {
-                                        Text(weekday.name)
-                                            .foregroundColor(Colors.text)
-                                        Spacer()
-                                        if store.isWeekdaySelected(weekday) {
-                                            Image(systemName: SFSymbolName.checkmark)
-                                                .font(.body.weight(.semibold))
-                                                .foregroundColor(Colors.primary)
-                                        }
-                                    }
+            VStack {
+                Form {
+                    // Weekday selection
+                    Section {
+                        ForEach(MedicationSchedule.Weekday.allCases) { weekday in
+                            Button {
+                                store.send(.repetitionWeekdayButtonTapped(weekday))
+                            } label: {
+                                HStack {
+                                    Text(weekday.name)
+                                        .foregroundColor(Colors.text)
+                                    Spacer()
+                                    Image(systemName: SFSymbolName.checkmark)
+                                        .font(.body.weight(.semibold))
+                                        .foregroundColor(
+                                            store.isWeekdaySelected(weekday) ? Colors.primary : .clear
+                                        )
                                 }
                                 .accessibilityElement(children: .combine)
                                 .accessibilityIdentifier(weekday.accessibilityIdentifier)
@@ -58,72 +56,72 @@ extension MedicationReminderSetupView {
                                         L10n.sectionTxtIsInactiveValue.text
                                 )
                             }
-                        } header: {
-                            Label(L10n.medReminderTxtFormSectionHeaderWeekday)
-                                .font(.headline)
                         }
-                        .headerProminence(.increased)
-
-                        // Duration
-                        Section {
-                            Button {
-                                store.send(.repetitionTypeChanged(.infinite))
-                            } label: {
-                                HStack {
-                                    Text(L10n.medReminderTxtRepetitionTypeInfinite)
-                                        .foregroundColor(Colors.text)
-                                    Spacer()
-                                    if store.medicationSchedule.repetitionType == .infinite {
-                                        Image(systemName: SFSymbolName.checkmark)
-                                            .font(.body.weight(.semibold))
-                                            .foregroundColor(Colors.primary)
-                                    }
-                                }
-                            }
-                            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionInfinite)
-
-                            Button {
-                                store.send(.repetitionTypeChanged(.finite))
-                            } label: {
-                                HStack {
-                                    Text(L10n.medReminderTxtRepetitionTypeFinite)
-                                        .foregroundColor(Colors.text)
-                                    Spacer()
-                                    if store.medicationSchedule.repetitionType == .finite {
-                                        Image(systemName: SFSymbolName.checkmark)
-                                            .font(.body.weight(.semibold))
-                                            .foregroundColor(Colors.primary)
-                                    }
-                                }
-                            }
-                            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionFinite)
-
-                            if store.medicationSchedule.repetitionType == .finite {
-                                DatePicker(
-                                    L10n.medReminderBtnRepetitionDatepickerStart.text,
-                                    selection: $store.medicationSchedule.start,
-                                    in: Date() ... Date.distantFuture,
-                                    displayedComponents: .date
-                                )
-                                .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDateStart)
-
-                                DatePicker(
-                                    L10n.medReminderBtnRepetitionDatepickerEnd.text,
-                                    selection: $store.medicationSchedule.end,
-                                    in: store.medicationSchedule.start ... Date.distantFuture,
-                                    displayedComponents: .date
-                                )
-                                .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDateEnd)
-                            }
-                        } header: {
-                            Text(L10n.medReminderTxtFormSectionHeaderDuration)
-                                .font(.headline)
-                        }
-                        .headerProminence(.increased)
+                    } header: {
+                        Label(L10n.medReminderTxtFormSectionHeaderWeekday)
+                            .font(.headline)
                     }
-                    .navigationTitle(L10n.medReminderTxtRepetitionTitle)
-                    .navigationBarTitleDisplayMode(.inline)
+                    .headerProminence(.increased)
+
+                    // Duration
+                    Section {
+                        Button {
+                            store.send(.repetitionTypeChanged(.infinite))
+                        } label: {
+                            HStack {
+                                Text(L10n.medReminderTxtRepetitionTypeInfinite)
+                                    .foregroundColor(Colors.text)
+                                Spacer()
+                                if store.medicationSchedule.repetitionType == .infinite {
+                                    Image(systemName: SFSymbolName.checkmark)
+                                        .font(.body.weight(.semibold))
+                                        .foregroundColor(Colors.primary)
+                                }
+                            }
+                        }
+                        .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionInfinite)
+
+                        Button {
+                            store.send(.repetitionTypeChanged(.finite))
+                        } label: {
+                            HStack {
+                                Text(L10n.medReminderTxtRepetitionTypeFinite)
+                                    .foregroundColor(Colors.text)
+                                Spacer()
+                                if store.medicationSchedule.repetitionType == .finite {
+                                    Image(systemName: SFSymbolName.checkmark)
+                                        .font(.body.weight(.semibold))
+                                        .foregroundColor(Colors.primary)
+                                }
+                            }
+                        }
+                        .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionFinite)
+
+                        if store.medicationSchedule.repetitionType == .finite {
+                            DatePicker(
+                                L10n.medReminderBtnRepetitionDatepickerStart.text,
+                                selection: $store.medicationSchedule.start,
+                                in: Date() ... Date.distantFuture,
+                                displayedComponents: .date
+                            )
+                            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDateStart)
+
+                            DatePicker(
+                                L10n.medReminderBtnRepetitionDatepickerEnd.text,
+                                selection: $store.medicationSchedule.end,
+                                in: store.medicationSchedule.start ... Date.distantFuture,
+                                displayedComponents: .date
+                            )
+                            .accessibilityIdentifier(A11y.medicationReminder.medReminderBtnRepetitionDateEnd)
+                        }
+                    } header: {
+                        Text(L10n.medReminderTxtFormSectionHeaderDuration)
+                            .font(.headline)
+                    }
+                    .headerProminence(.increased)
                 }
+                .navigationTitle(L10n.medReminderTxtRepetitionTitle)
+                .navigationBarTitleDisplayMode(.inline)
             }
         }
     }

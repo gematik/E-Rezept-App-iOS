@@ -25,7 +25,7 @@ import Foundation
 import SwiftUI
 
 struct ShareViewController: UIViewControllerRepresentable {
-    @Perception.Bindable var store: StoreOf<ShareSheetDomain>
+    @Bindable var store: StoreOf<ShareSheetDomain>
 
     init(store: StoreOf<ShareSheetDomain>) {
         self.store = store

@@ -154,7 +154,8 @@ extension DefaultErxTaskCoreDataStore {
                     // swiftlint:disable:next todo
                     // FIXME: This is potentially broken. Currently it`s possible to redeem a task several times.
                     // That can cause a wrong match between the dispReq and the reply
-                    if newCommunicationEntity.profile == ErxTask.Communication.Profile.reply.rawValue {
+                    if newCommunicationEntity.profile == ErxTask.Communication.Profile.reply.rawValue
+                        || newCommunicationEntity.profile == ErxTask.Communication.Profile.diga.rawValue {
                         // check if in the new communications is also the related disp req
                         var communicationDispReq = communications
                             .first { $0.profile == .dispReq &&

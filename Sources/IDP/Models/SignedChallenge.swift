@@ -21,7 +21,6 @@
 //
 
 import Foundation
-import OpenSSL
 
 /// Model that holds a challenge and its signed counterpart
 public struct SignedChallenge {
@@ -46,41 +45,6 @@ public struct SignedChallenge {
     public func serialize() -> String {
         signedChallenge.serialize()
     }
-
-    /// Encrypt the signed challenge using the provided public key
-    /// - Parameters:
-    ///   - publicKey: BrainpoolP256r1 public key for encryption
-    ///   - cryptoBox: IDPCrypto instance containing encryption parameters
-    /// - Returns: JWE containing the encrypted signed challenge
-    /// - Throws: IDPError if encryption fails
-    public func encrypt(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
-                        using cryptoBox: IDPCrypto) throws -> JWE {
-        // [REQ:BSI-eRp-ePA:O.Cryp_1#2] Signature via ecdh ephemeral-static
-        // [REQ:BSI-eRp-ePA:O.Cryp_4#5] one time usage for JWE ECDH-ES Encryption
-        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
-            publicKey,
-            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
-        ))
-        let signedChallengePayload = NestedJWT(njwt: serialize())
-        guard let jweHeader = try? JWE.Header(algorithm: algorithm,
-                                              encryption: .a256gcm,
-                                              expiry: originalChallenge.challenge.exp,
-                                              contentType: "NJWT"),
-            let jwePayload = try? SignedChallenge.defaultEncoder.encode(signedChallengePayload),
-            let signedChallengeJWE = try? JWE(header: jweHeader,
-                                              payload: jwePayload,
-                                              nonceGenerator: cryptoBox.aesNonceGenerator) else {
-            throw IDPError.internal(error: .signedChallengeEncryption)
-        }
-
-        return signedChallengeJWE
-    }
-
-    private static let defaultEncoder: JSONEncoder = {
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.dataEncodingStrategy = .base64
-        return jsonEncoder
-    }()
 }
 
 extension SignedChallenge: Equatable {}

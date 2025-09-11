@@ -26,43 +26,40 @@ import eRpStyleKit
 import SwiftUI
 
 struct ProfilesView: View {
-    @Perception.Bindable var store: StoreOf<ProfilesDomain>
+    @Bindable var store: StoreOf<ProfilesDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            SectionContainer(
-                header: {
-                    Label(title: {
-                        Text(L10n.stgTxtHeaderProfiles)
-                    }, icon: {})
-                        .accessibility(identifier: A11y.settings.profiles.stgTxtHeaderProfiles)
-                }, content: {
-                    ForEach(store.profiles) { profile in
-                        WithPerceptionTracking {
-                            Button(action: {
-                                store.send(.editProfile(profile))
-                            }, label: {
-                                SingleProfileView(profile: profile, selectedProfileId: store.selectedProfileId)
-                            })
-                                .buttonStyle(.navigation)
-                                .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
-                        }
-                    }
-                    .accessibilityElement(children: .contain)
-                    .accessibility(identifier: A11y.settings.profiles.stgConProfiles)
-
+        SectionContainer(
+            header: {
+                Label(title: {
+                    Text(L10n.stgTxtHeaderProfiles)
+                }, icon: {})
+                    .accessibility(identifier: A11y.settings.profiles.stgTxtHeaderProfiles)
+            }, content: {
+                ForEach(store.profiles) { profile in
                     Button(action: {
-                        store.send(.addNewProfile)
+                        store.send(.editProfile(profile))
                     }, label: {
-                        Label(L10n.stgBtnAddProfile, systemImage: SFSymbolName.plus)
+                        SingleProfileView(profile: profile, selectedProfileId: store.selectedProfileId)
                     })
-                        .buttonStyle(.simple(showSeparator: false))
-                        .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
+                        .buttonStyle(.navigation)
+                        .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
                 }
-            )
-            .task {
-                await store.send(.registerListener).finish()
+
+                .accessibilityElement(children: .contain)
+                .accessibility(identifier: A11y.settings.profiles.stgConProfiles)
+
+                Button(action: {
+                    store.send(.addNewProfile)
+                }, label: {
+                    Label(L10n.stgBtnAddProfile, systemImage: SFSymbolName.plus)
+                })
+                    .buttonStyle(.simple(showSeparator: false))
+                    .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
             }
+        )
+        .task {
+            await store.send(.registerListener).finish()
         }
     }
 

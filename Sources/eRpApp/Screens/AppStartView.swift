@@ -28,7 +28,7 @@ struct AppStartView: View {
     @State var store: AppStartDomain.Store
 
     var body: some View {
-        WithPerceptionTracking {
+        Group {
             switch store.scope(state: \.destination, action: \.destination).case {
             case let .onboarding(store):
                 OnboardingContainer(store: store)

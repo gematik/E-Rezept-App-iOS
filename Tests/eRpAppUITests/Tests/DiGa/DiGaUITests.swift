@@ -77,12 +77,12 @@ final class DiGaUITests: XCTestCase, Sendable {
             await mainScreen.tapDetailsForDiGaNamed("Vantis KHK und Herzinfarkt 001") { diGaDetails in
                 // einlösen
                 diGaDetails.tapMainButton()
-                expect(self.app.buttons[A11y.digaDetail.digaDtlBtnMainAction].exists).to(beFalse())
+                expect(self.app.buttons[A11y.diga.detail.digaDtlBtnMainAction].exists).to(beFalse())
 
                 await bridge.sendMessage(.scenarioStep(1))
 
                 diGaDetails.tapRefreshButton()
-                expect(self.app.buttons[A11y.digaDetail.digaDtlBtnMainAction].exists).to(beFalse())
+                expect(self.app.buttons[A11y.diga.detail.digaDtlBtnMainAction].exists).to(beFalse())
 
                 // erfolgreich
                 await bridge.sendMessage(.scenarioStep(2))
@@ -131,19 +131,19 @@ final class DiGaUITests: XCTestCase, Sendable {
             await prescriptionsTab.tapDetailsForDiGaNamed("Vantis KHK und Herzinfarkt 001") { diGaDetails in
                 // Redeem
                 diGaDetails.tapMainButton()
-                expect(self.app.buttons[A11y.digaDetail.digaDtlBtnMainAction].exists).to(beFalse())
+                expect(self.app.buttons[A11y.diga.detail.digaDtlBtnMainAction].exists).to(beFalse())
 
                 // Accept
                 await bridge.sendMessage(.scenarioStep(1))
 
                 diGaDetails.tapRefreshButton()
-                expect(self.app.buttons[A11y.digaDetail.digaDtlBtnMainAction].exists).to(beFalse())
+                expect(self.app.buttons[A11y.diga.detail.digaDtlBtnMainAction].exists).to(beFalse())
 
                 // Declined
                 await bridge.sendMessage(.scenarioStep(3))
                 diGaDetails.tapRefreshButton()
 
-                expect(self.app.staticTexts[A11y.digaDetail.digaDtlTxtDeclineNote].label)
+                expect(self.app.staticTexts[A11y.diga.detail.digaDtlTxtDeclineNote].label)
                     .to(equal("##Insurance company decline reason##"))
             }
 
@@ -197,7 +197,7 @@ final class DiGaUITests: XCTestCase, Sendable {
             // Einlösbar -> Löschbar
             diGaDetails.tapMainButton()
             // Check no "einlösen Button"
-            expect(self.app.buttons[A11y.digaDetail.digaDtlBtnMainAction].exists).to(beFalse())
+            expect(self.app.buttons[A11y.diga.detail.digaDtlBtnMainAction].exists).to(beFalse())
 
             let menu = diGaDetails.tapMenu()
             menu.tapDelete()
@@ -209,7 +209,7 @@ final class DiGaUITests: XCTestCase, Sendable {
             await bridge.sendMessage(.scenarioStep(1))
 
             diGaDetails.tapRefreshButton()
-            expect(self.app.buttons[A11y.digaDetail.digaDtlBtnMainAction].exists).to(beFalse())
+            expect(self.app.buttons[A11y.diga.detail.digaDtlBtnMainAction].exists).to(beFalse())
 
             _ = diGaDetails.tapMenu()
             menu.tapDelete()
@@ -274,8 +274,106 @@ final class DiGaUITests: XCTestCase, Sendable {
                     insuranceList.selectInsurance("KNAPPSCHAFT")
                 }
 
-                expect(diGaDetails.app.buttons[A11y.digaDetail.digaDtlBtnMainSelectedInsurance].label)
+                expect(diGaDetails.app.buttons[A11y.diga.detail.digaDtlBtnMainSelectedInsurance].label)
                     .to(equal("Wir fragen den Code an bei: KNAPPSCHAFT"))
+            }
+        }
+    }
+
+    @MainActor
+    func testBfArMDetails() async {
+        let bridge = UITestBridgeClient()
+
+        let tabBar = TabBarScreen(app: app)
+
+        await tabBar.tapPrescriptionsTab { prescriptionsTab in
+
+            await bridge.sendMessage(.scenarioStep(2))
+
+            prescriptionsTab.swipeToRefresh()
+
+            await prescriptionsTab.tapDetailsForDiGaNamed("Vantis KHK und Herzinfarkt 001") { diGaDetails in
+
+                await diGaDetails.tapDescriptionButton { descriptionView in
+                    expect(descriptionView.app.staticTexts[A11y.diga.description.digaDtlDescriptionTxtDesc])
+                        .to(exist(A11y.diga.description.digaDtlDescriptionTxtDesc))
+
+                    descriptionView.tapBackButton()
+                }
+
+                await diGaDetails.tapSupportButton { supportView in
+                    expect(supportView.app.buttons[A11y.diga.support.digaDtlSupportBtnOpenLink])
+                        .to(exist(A11y.diga.support.digaDtlSupportBtnOpenLink))
+
+                    expect(supportView.app.buttons[A11y.diga.support.digaDtlSupportBtnOpenPdf])
+                        .to(exist(A11y.diga.support.digaDtlSupportBtnOpenPdf))
+
+                    supportView.tapCloseButton()
+                }
+
+                diGaDetails.tapSelectSegmented(segment: .details)
+
+                expect(diGaDetails
+                    .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtLanguages, label: "Deutsch"))
+                                    .to(beTrue())
+
+                expect(diGaDetails
+                    .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtPlatform, label: "iOS, Android"))
+                                    .to(beTrue())
+
+                expect(diGaDetails
+                    .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtMedicalService, label: "Nein"))
+                                    .to(beTrue())
+
+                expect(diGaDetails.digaDetailStaticText(
+                    identifier: A11y.diga.detail.digaDtlTxtAdditionalDevices,
+                    label: "Zusatzgeräte möglich"
+                )).to(beTrue())
+
+                expect(diGaDetails.app.buttons[A11y.diga.detail.digaDtlTxtPatientCost].label)
+                    .to(equal("0€, Ihr Beitrag"))
+
+                expect(diGaDetails
+                    .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtProductionCost, label: "250€"))
+                                    .to(beTrue())
+            }
+            // only for Android available
+            await bridge.sendMessage(.scenarioStep(3))
+
+            await prescriptionsTab.tapDetailsForDiGaNamed("Vantis KHK und Herzinfarkt 001") { diGaDetails in
+                diGaDetails.tapSelectSegmented(segment: .details)
+
+                expect(diGaDetails.noIosHint().exists).to(beTrue())
+
+                expect(diGaDetails
+                    .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtPlatform, label: "Android"))
+                                    .to(beTrue())
+            }
+
+            // no connection (to bfarm)
+            await bridge.sendMessage(.scenarioStep(5))
+            await prescriptionsTab.tapDetailsForDiGaNamed("Vantis KHK und Herzinfarkt 001") { diGaDetails in
+                diGaDetails.tapSelectSegmented(segment: .details)
+
+                expect(diGaDetails.bfarmErrorHint().exists).to(beTrue())
+
+                expect(diGaDetails.digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtLanguages, label: "-"))
+                    .to(beTrue())
+
+                expect(diGaDetails.digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtPlatform, label: "-"))
+                    .to(beTrue())
+
+                expect(diGaDetails
+                    .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtMedicalService, label: "-"))
+                                    .to(beTrue())
+
+                expect(diGaDetails
+                    .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtAdditionalDevices, label: "-"))
+                                    .to(beTrue())
+
+                expect(diGaDetails
+                    .digaDetailStaticText(identifier: A11y.diga.detail.digaDtlTxtProductionCost, label: "-"))
+                                    .to(beTrue())
             }
         }
     }

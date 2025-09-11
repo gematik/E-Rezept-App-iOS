@@ -58,8 +58,6 @@ protocol UserSession {
     /// Access to the `PharmacyRepository`
     var pharmacyRepository: PharmacyRepository { get }
 
-    var bfArMService: BfArMService { get }
-
     /// Check for forced app updates
     var updateChecker: UpdateChecker { get }
 

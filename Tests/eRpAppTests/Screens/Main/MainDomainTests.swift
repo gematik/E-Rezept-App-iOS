@@ -311,13 +311,17 @@ final class MainDomainTests: XCTestCase {
             .eraseToAnyPublisher()
         mockProfileDataWiper.wipeSecureDataOfReturnValue = Just(()).eraseToAnyPublisher()
 
-        await sut.send(.refreshPrescription)
-        await sut.receive(.prescriptionList(action: .refresh)) {
-            $0.prescriptionListState.loadingState = .loading(nil)
-        }
-        await sut.receive(.prescriptionList(action: .response(.errorReceived(expectedError)))) {
-            $0.prescriptionListState.loadingState = .idle
-            $0.destination = .alert(MainDomain.AlertStates.devicePairingInvalid())
+        await withDependencies {
+            $0.drawerEvaluation.showDrawerEvaluationOnRefresh = { .none }
+        } operation: {
+            await sut.send(.refreshPrescription)
+            await sut.receive(.prescriptionList(action: .refresh)) {
+                $0.prescriptionListState.loadingState = .loading(nil)
+            }
+            await sut.receive(.prescriptionList(action: .response(.errorReceived(expectedError)))) {
+                $0.prescriptionListState.loadingState = .idle
+                $0.destination = .alert(MainDomain.AlertStates.devicePairingInvalid())
+            }
         }
 
         expect(self.mockProfileDataWiper.wipeSecureDataOfCalled).to(beTrue())

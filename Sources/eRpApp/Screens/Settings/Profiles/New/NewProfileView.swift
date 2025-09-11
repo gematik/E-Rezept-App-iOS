@@ -26,79 +26,77 @@ import IDP
 import SwiftUI
 
 struct NewProfileView: View {
-    @Perception.Bindable var store: StoreOf<NewProfileDomain>
+    @Bindable var store: StoreOf<NewProfileDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            NavigationStack {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        ProfilePictureView(
-                            image: store.image,
-                            userImageData: store.userImageData,
-                            color: store.color,
-                            connection: nil,
-                            style: .xxLarge,
-                            isBorderOn: true
-                        ) {
-                            store.send(.tappedEditProfilePicture)
-                        }
-
-                        Button {
-                            store.send(.tappedEditProfilePicture)
-                        } label: {
-                            Text(L10n.stgBtnEditPicture)
-                        }
-
-                        SingleElementSectionContainer {
-                            FormTextField(
-                                L10n.stgTxtNewProfileNamePlaceholder.key,
-                                bundle: .module,
-                                text: $store.name
-                            )
-                            .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
-                        }
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 0) {
+                    ProfilePictureView(
+                        image: store.image,
+                        userImageData: store.userImageData,
+                        color: store.color,
+                        connection: nil,
+                        style: .xxLarge,
+                        isBorderOn: true
+                    ) {
+                        store.send(.tappedEditProfilePicture)
                     }
 
-                    Spacer(minLength: 0)
-                }
-                .background(Color(.secondarySystemBackground).ignoresSafeArea())
-                .gesture(TapGesture().onEnded {
-                    UIApplication.shared.dismissKeyboard()
-                })
-                .navigationDestination(
-                    item: $store.scope(
-                        state: \.destination?.editProfilePicture,
-                        action: \.destination.editProfilePicture
-                    )
-                ) { store in
-                    EditProfilePictureView(store: store)
-                        .navigationTitle(L10n.editPictureTxt)
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .navigationBarTitle(L10n.stgTxtNewProfileTitle, displayMode: .inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigation) {
-                        NavigationBarCloseItem {
-                            store.send(.closeButtonTapped)
-                        }
-                        .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileCancel)
-                        .embedToolbarContent()
+                    Button {
+                        store.send(.tappedEditProfilePicture)
+                    } label: {
+                        Text(L10n.stgBtnEditPicture)
                     }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button(action: {
-                            store.send(.save)
-                        }, label: {
-                            Text(L10n.stgBtnNewProfileCreate)
-                        })
-                            .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileSave)
-                            .embedToolbarContent()
+
+                    SingleElementSectionContainer {
+                        FormTextField(
+                            L10n.stgTxtNewProfileNamePlaceholder.key,
+                            bundle: .module,
+                            text: $store.name
+                        )
+                        .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
                     }
                 }
-                .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+
+                Spacer(minLength: 0)
             }
-            .tint(Colors.primary700)
+            .background(Color(.secondarySystemBackground).ignoresSafeArea())
+            .gesture(TapGesture().onEnded {
+                UIApplication.shared.dismissKeyboard()
+            })
+            .navigationDestination(
+                item: $store.scope(
+                    state: \.destination?.editProfilePicture,
+                    action: \.destination.editProfilePicture
+                )
+            ) { store in
+                EditProfilePictureView(store: store)
+                    .navigationTitle(L10n.editPictureTxt)
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+            .navigationBarTitle(L10n.stgTxtNewProfileTitle, displayMode: .inline)
+            .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    NavigationBarCloseItem {
+                        store.send(.closeButtonTapped)
+                    }
+                    .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileCancel)
+                    .embedToolbarContent()
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: {
+                        store.send(.save)
+                    }, label: {
+                        Text(L10n.stgBtnNewProfileCreate)
+                    })
+                        .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileSave)
+                        .embedToolbarContent()
+                }
+            }
+            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
         }
+        .tint(Colors.primary700)
     }
 }
 

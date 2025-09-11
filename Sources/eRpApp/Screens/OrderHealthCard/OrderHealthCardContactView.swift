@@ -25,57 +25,55 @@ import eRpStyleKit
 import SwiftUI
 
 struct OrderHealthCardContactView: View {
-    @Perception.Bindable var store: StoreOf<OrderHealthCardContactDomain>
+    @Bindable var store: StoreOf<OrderHealthCardContactDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .center) {
-                if store.isPinServiceAndContact || store.isHealthCardAndPinServiceAndContact {
-                    Text(L10n.oderEgkContactTitle)
-                        .font(Font.largeTitle.weight(.bold))
+        VStack(alignment: .center) {
+            if store.isPinServiceAndContact || store.isHealthCardAndPinServiceAndContact {
+                Text(L10n.oderEgkContactTitle)
+                    .font(Font.largeTitle.weight(.bold))
+                    .foregroundColor(Color(.label))
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 8)
+
+                Text(L10n.oderEgkContactSubtitle)
+                    .font(.subheadline)
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    .multilineTextAlignment(.center)
+
+                ContactOptionsRowView(
+                    healthInsuranceCompany: store.insuranceCompany,
+                    serviceInquiry: store.serviceInquiry
+                )
+
+                Spacer()
+            } else {
+                ZStack(alignment: .bottom) {
+                    Image(asset: Asset.OrderEGK.womanShrug)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(Circle())
+                        .frame(width: 200, height: 200)
+
+                    Text(L10n.oderEgkContactNoTitle)
+                        .font(Font.body.weight(.bold))
                         .foregroundColor(Color(.label))
                         .multilineTextAlignment(.center)
-                        .padding(.bottom, 8)
-
-                    Text(L10n.oderEgkContactSubtitle)
-                        .font(.subheadline)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .multilineTextAlignment(.center)
-
-                    ContactOptionsRowView(
-                        healthInsuranceCompany: store.insuranceCompany,
-                        serviceInquiry: store.serviceInquiry
-                    )
-
-                    Spacer()
-                } else {
-                    ZStack(alignment: .bottom) {
-                        Image(asset: Asset.OrderEGK.womanShrug)
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(Circle())
-                            .frame(width: 200, height: 200)
-
-                        Text(L10n.oderEgkContactNoTitle)
-                            .font(Font.body.weight(.bold))
-                            .foregroundColor(Color(.label))
-                            .multilineTextAlignment(.center)
-                    }
-                    Text(L10n.oderEgkContactNoSubtitle)
-                        .font(.subheadline)
-                        .foregroundColor(Colors.systemLabelSecondary)
-                        .multilineTextAlignment(.center)
                 }
+                Text(L10n.oderEgkContactNoSubtitle)
+                    .font(.subheadline)
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    .multilineTextAlignment(.center)
             }
-            .padding()
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem {
-                    store.send(.delegate(.close))
-                }
-                .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
-                .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
-            )
         }
+        .padding()
+        .navigationBarItems(
+            trailing: NavigationBarCloseItem {
+                store.send(.delegate(.close))
+            }
+            .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
+            .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
+        )
     }
 }
 

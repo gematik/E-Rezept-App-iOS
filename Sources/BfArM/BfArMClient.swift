@@ -24,21 +24,19 @@ import Dependencies
 import DependenciesMacros
 import eRpKit
 import Foundation
-import HTTPClient
-import HTTPClientLive
 
 /// BfArM Client interacts with the authorization endpoints of the service
 @DependencyClient
 public struct BfArMClient {
     /// fetches information of the provided pzn
-    var bfarmInfo: @Sendable (String, Configuration) async throws -> BfArMDiGaDetails?
+    public var bfarmInfo: @Sendable (String, Configuration) async throws -> BfArMDiGaDetails?
     /// fetches the images from the url provided by bfarmInfo function
-    var fetchCachedImage: @Sendable (String, Configuration) async throws -> Data?
+    public var fetchCachedImage: @Sendable (String, Configuration) async throws -> Data?
 }
 
 extension DependencyValues {
     /// BfArM Client
-    var bfarmClient: BfArMClient {
+    public var bfarmClient: BfArMClient {
         get { self[BfArMClient.self] }
         set { self[BfArMClient.self] = newValue }
     }
@@ -48,63 +46,13 @@ extension BfArMClient: TestDependencyKey {
     public static let testValue: BfArMClient = Self()
 }
 
-extension BfArMClient: DependencyKey {
-    public static let liveValue = Self(
-        bfarmInfo: { pzn, configuration in
-            let httpClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
-            let decoder = JSONDecoder()
-
-            let url = configuration.eRezeptAPIServer.appendingPathComponent("diga/pzn/\(pzn)")
-            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
-            request.httpMethod = "GET"
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            for (key, value) in configuration.eRezeptAdditionalHeader {
-                request.addValue(value, forHTTPHeaderField: key)
-            }
-
-            do {
-                let result = try await httpClient.sendAsync(request: request)
-                return try decoder.decode(BfArMDiGaDetails.self, from: result.data)
-            } catch let error as HTTPClientError {
-                throw BfArMError.network(error: error)
-            } catch let error as DecodingError {
-                throw BfArMError.decoding(error: error)
-            } catch {
-                throw BfArMError.unspecified(error: error)
-            }
-        },
-        fetchCachedImage: { url, configuration in
-            let httpClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
-            let decoder = JSONDecoder()
-
-            guard let url = URL(string: url) else { throw BfArMError.invalidAssetLink }
-            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
-            request.httpMethod = "GET"
-            request.addValue("application/json", forHTTPHeaderField: "Accept")
-            for (key, value) in configuration.eRezeptAdditionalHeader {
-                request.addValue(value, forHTTPHeaderField: key)
-            }
-
-            do {
-                return try await httpClient.sendAsync(request: request).data
-            } catch let error as HTTPClientError {
-                throw BfArMError.network(error: error)
-            } catch let error as DecodingError {
-                throw BfArMError.decoding(error: error)
-            } catch {
-                throw BfArMError.unspecified(error: error)
-            }
-        }
-    )
-}
-
 extension BfArMClient {
     /// BfArMClient Configuration
     public struct Configuration {
         /// eRezept API URL
-        let eRezeptAPIServer: URL
+        public let eRezeptAPIServer: URL
         /// eRezept API headers
-        let eRezeptAdditionalHeader: [String: String]
+        public let eRezeptAdditionalHeader: [String: String]
 
         /// Initialize BfArMClient Configuration
         ///

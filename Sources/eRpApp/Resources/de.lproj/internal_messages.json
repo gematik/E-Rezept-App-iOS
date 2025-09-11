@@ -40,5 +40,11 @@
         "text": "**🙌 Anmelden für Privatversicherte**\nDas Anmelden für Privatversicherte ist jetzt optimiert. Mit wenigen Klicks können Sie sich bequem mit Ihrer GesundheitsID anmelden.\n\n**🏥 Aktualisierte Apothekendaten**\nÄnderungen, die Apotheken in der neuen Datenbank vornehmen, werden jetzt zuverlässig angezeigt.\n\n**📲 Mehr Informationen für DiGAs**\nAb jetzt erhalten Sie ausführlichere Informationen zu Ihren DiGA-Verordnungen, wie den Verkaufspreis oder das Logo.\n\n**♿️ Barrierefreiheit**\nDer Screen zur Eingabe der Zugangsnummer der Gesundheitskarte wurde neu gestaltet und ist jetzt für die Nutzung mit VoiceOver optimiert.\n\n**📤 Rezepte teilen**\nRezepte können jetzt direkt aus der App mit anderen geteilt werden.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Barrierefreiheit**\nDie Profileinstellungen wurden überarbeitet, um die Barrierefreiheit weiter zu erhöhen.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

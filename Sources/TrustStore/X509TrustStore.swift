@@ -40,7 +40,13 @@ struct X509TrustStore {
     // Category D: IDP certificates
     let idpCerts: [X509]
 
-    init(trustAnchor: X509, addRoots: [X509], caCerts: [X509], eeCerts: [X509]) throws {
+    init(
+        trustAnchor: X509,
+        addRoots: [X509],
+        caCerts: [X509],
+        eeCerts: [X509],
+        validationTime: Date? = nil
+    ) throws {
         rootCa = trustAnchor
 
         // Category A:
@@ -49,17 +55,24 @@ struct X509TrustStore {
         //  so a simple forEach loop is already sufficient here. See also gemSpec_Krypt A_21216.
         var validatedAddRoots: [X509] = []
         try addRoots.forEach { addRoot in
-            if try addRoot.validateWith(trustStore: [trustAnchor] + validatedAddRoots) {
+            if try addRoot.validateWith(
+                trustStore: [trustAnchor] + validatedAddRoots,
+                validationTime: validationTime
+            ) {
                 validatedAddRoots.append(addRoot)
             }
         }
         self.addRoots = validatedAddRoots
 
         // Category B:
-        self.caCerts = Self.filter(caCerts: caCerts, trusting: [rootCa] + addRoots)
+        self.caCerts = Self.filter(caCerts: caCerts, trusting: [rootCa] + addRoots, validationTime: validationTime)
 
         // Category C and D:
-        let vauAndIdpCerts = Self.filter(eeCerts: eeCerts, trusting: [rootCa] + addRoots + self.caCerts)
+        let vauAndIdpCerts = Self.filter(
+            eeCerts: eeCerts,
+            trusting: [rootCa] + addRoots + self.caCerts,
+            validationTime: validationTime
+        )
         guard let vauCert = vauAndIdpCerts.vauCerts.first, vauAndIdpCerts.vauCerts.count == 1 else {
             throw TrustStoreError.noCertificateFound
         }
@@ -67,16 +80,24 @@ struct X509TrustStore {
         idpCerts = vauAndIdpCerts.idpCerts
     }
 
-    init(trustAnchor: TrustAnchor, certList: CertList) throws {
+    init(trustAnchor: TrustAnchor, certList: CertList,
+         validationTime: Date? = nil) throws {
         // Expect certificates to be DER formatted
         let addRoots = certList.addRoots.compactMap { try? X509(der: $0) }
         let caCerts = certList.caCerts.compactMap { try? X509(der: $0) }
         let eeCerts = certList.eeCerts.compactMap { try? X509(der: $0) }
 
-        try self.init(trustAnchor: trustAnchor.certificate, addRoots: addRoots, caCerts: caCerts, eeCerts: eeCerts)
+        try self.init(
+            trustAnchor: trustAnchor.certificate,
+            addRoots: addRoots,
+            caCerts: caCerts,
+            eeCerts: eeCerts,
+            validationTime: validationTime
+        )
     }
 
-    init(trustAnchor: TrustAnchor, pkiCertificates: PKICertificates, vauCertData: Data) throws {
+    init(trustAnchor: TrustAnchor, pkiCertificates: PKICertificates, vauCertData: Data,
+         validationTime: Date? = nil) throws {
         // Expect certificates to be DER formatted
         let addRoots = pkiCertificates.addRoots.compactMap { try? X509(der: $0) }
         let caCerts = pkiCertificates.caCerts.compactMap { try? X509(der: $0) }
@@ -88,7 +109,8 @@ struct X509TrustStore {
             trustAnchor: trustAnchor.certificate,
             addRoots: addRoots,
             caCerts: caCerts,
-            eeCerts: [vauCert]
+            eeCerts: [vauCert],
+            validationTime: validationTime
         )
     }
 
@@ -184,9 +206,9 @@ extension X509TrustStore {
     private static let caCertRegex =
         try! NSRegularExpression(pattern: "CN=GEM\\.KOMP-CA\\d+") // swiftlint:disable:this force_try
 
-    static func filter(caCerts: [X509], trusting trustStore: [X509]) -> [X509] {
+    static func filter(caCerts: [X509], trusting trustStore: [X509], validationTime: Date? = nil) -> [X509] {
         caCerts.filter { caCert in
-            guard let chainCheck = try? caCert.validateWith(trustStore: trustStore),
+            guard let chainCheck = try? caCert.validateWith(trustStore: trustStore, validationTime: validationTime),
                   let subjectOneLine = try? caCert.subjectOneLine()
             else {
                 return false
@@ -203,10 +225,14 @@ extension X509TrustStore {
     // [REQ:gemSpec_Krypt:A_21218:(4)] Check ee_certs against category A+B certificates
     // [REQ:gemSpec_Krypt:A_A_25061] Check ee_certs against category A+B certificates
     typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
-    static func filter(eeCerts: [X509], trusting trustStore: [X509]) -> VauAndIpdCerts {
+    static func filter(
+        eeCerts: [X509],
+        trusting trustStore: [X509],
+        validationTime: Date? = nil
+    ) -> VauAndIpdCerts {
         eeCerts.reduce(([X509](), [X509]())) { vauAndIdpCerts, eeCert in
             guard
-                let chainCheck = try? eeCert.validateWith(trustStore: trustStore),
+                let chainCheck = try? eeCert.validateWith(trustStore: trustStore, validationTime: validationTime),
                 chainCheck == true
             else {
                 return vauAndIdpCerts

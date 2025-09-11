@@ -20,9 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
-import OpenSSL
 
 /// Bundles data needed for creating and verifiying a pairing.
 /// [REQ:gemSpec_IDP_Dienst:A_21415:Registration_Data]
@@ -109,35 +107,5 @@ public struct RegistrationData: Claims, Codable {
             case deviceInformationDataVersion = "device_information_data_version"
             case deviceType = "device_type"
         }
-    }
-
-    private static var defaultEncoder: JSONEncoder = {
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.dataEncodingStrategy = .base64
-        return jsonEncoder
-    }()
-
-    /// [REQ:gemSpec_IDP_Dienst:A_21415:Encrypted_Registration_Data] Returns JWE encrypted Registration_Data
-    /// [REQ:gemSpec_IDP_Frontend:A_21416] Encryption
-    public func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
-                          using cryptoBox: IDPCrypto) throws -> JWE {
-        // [REQ:BSI-eRp-ePA:O.Cryp_1#4] Signature via ecdh ephemeral-static
-        // [REQ:BSI-eRp-ePA:O.Cryp_4#3] one time usage for JWE ECDH-ES Encryption
-        let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
-            publicKey,
-            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
-        ))
-        guard let jweHeader = try? JWE.Header(algorithm: algorithm,
-                                              encryption: .a256gcm,
-                                              contentType: "JSON",
-                                              type: "JWT"),
-            let jwePayload = try? RegistrationData.defaultEncoder.encode(self),
-            let signedChallengeJWE = try? JWE(header: jweHeader,
-                                              payload: jwePayload,
-                                              nonceGenerator: cryptoBox.aesNonceGenerator) else {
-            throw IDPError.internal(error: .registrationDataEncryption)
-        }
-
-        return signedChallengeJWE
     }
 }

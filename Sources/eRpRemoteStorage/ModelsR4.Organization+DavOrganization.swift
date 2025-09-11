@@ -25,11 +25,9 @@ import Foundation
 import ModelsR4
 
 extension ModelsR4.Organization {
-    var davOrganizationIdentifier: String? {
+    func davOrganizationIdentifier(from fhirPackage: ABDAERezeptAbgabedaten) -> String? {
         identifier?.first { id in
-            Dispense.Key.organisationIdentifier.contains { key in
-                key.value == id.system?.value?.url.absoluteString
-            }
+            id.system?.value?.url.absoluteString == fhirPackage.dav_PKV_PR_ERP_Apotheke.organisationIdentifier
         }?.value?.value?.string
     }
 }

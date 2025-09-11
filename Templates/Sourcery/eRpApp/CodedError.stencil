@@ -60,9 +60,6 @@ import ZXingCpp
     
 {% set localizedString %}{% for case in type.inheritedTypes where case|contains:"LocalizedError" %}1{% endfor %}{% endset %}
 {% typed localizedString as String %}
-{% if localizedString.count == 0 and type.accessLevel == "public" %}
-extension {{ type.name }}: @retroactive LocalizedError {}
-{% endif %}
 extension {{ type.name }}: CodedError {
     var erpErrorCode: String {
         switch self {

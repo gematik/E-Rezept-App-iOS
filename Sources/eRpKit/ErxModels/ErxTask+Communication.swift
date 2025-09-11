@@ -159,14 +159,13 @@ extension ErxTask {
         public enum Profile: String, Codable, Sendable {
             case reply
             case dispReq
+            // infoReq is deprecated with workflow version v1_5_2
+            @available(*, deprecated)
             case infoReq
+            case diga
             case representative
             case all
             case none
-
-            public var isReply: Bool {
-                self == .reply
-            }
 
             public var isAll: Bool {
                 self == .all

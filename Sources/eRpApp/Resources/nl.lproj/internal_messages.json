@@ -40,5 +40,11 @@
         "text": "**🙌 Registratie voor particulier verzekerden** \nDe registratie voor particulier verzekerden is geoptimaliseerd. U kunt met een paar klikken gemakkelijk inloggen met uw gezondheids-ID. \n \n **🏥 Bijgewerkte apotheekgegevens** \nWijzigingen die apotheken in de nieuwe database aanbrengen, worden nu betrouwbaar weergegeven. \n \n **📲 Meer informatie voor DiGA's** \nVanaf nu ontvangt u meer gedetailleerde informatie over uw DiGA-recepten, zoals de verkoopprijs of het logo. \n \n **♿️ Toegankelijkheid** \nHet scherm voor het invoeren van het toegangsnummer van de zorgpas is opnieuw ontworpen en is nu geoptimaliseerd voor gebruik met VoiceOver. \n \n **📤 Deel recepten** \nRecepten kunnen nu rechtstreeks vanuit de app met anderen worden gedeeld.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Toegankelijkheid** \nDe profielinstellingen zijn herzien om de toegankelijkheid verder te vergroten.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

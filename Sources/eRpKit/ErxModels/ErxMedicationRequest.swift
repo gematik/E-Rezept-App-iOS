@@ -30,7 +30,7 @@ public struct ErxMedicationRequest: Hashable, Codable, Sendable {
         hasEmergencyServiceFee: Bool? = false,
         dispenseValidityEnd: String? = nil,
         accidentInfo: AccidentInfo? = nil,
-        bvg: Bool? = false,
+        ser: Bool? = false,
         coPaymentStatus: ErxTask.CoPaymentStatus? = nil,
         multiplePrescription: MultiplePrescription? = nil,
         quantity: ErxMedication.Quantity? = nil
@@ -41,7 +41,7 @@ public struct ErxMedicationRequest: Hashable, Codable, Sendable {
         self.hasEmergencyServiceFee = hasEmergencyServiceFee ?? false
         self.dispenseValidityEnd = dispenseValidityEnd
         self.accidentInfo = accidentInfo
-        self.bvg = bvg ?? false
+        self.ser = ser ?? false
         self.coPaymentStatus = coPaymentStatus
         self.multiplePrescription = multiplePrescription
         self.quantity = quantity
@@ -58,9 +58,9 @@ public struct ErxMedicationRequest: Hashable, Codable, Sendable {
     public let dispenseValidityEnd: String?
     /// Work-related accident info
     public let accidentInfo: AccidentInfo?
-    /// Indicates if this prescription is related to the
-    /// 'Bundesentschädigungsgesetz' or 'Bundesversorgungsgesetz'
-    public let bvg: Bool
+    /// Indicates if this prescription is related to
+    /// ' Soziales Entschädigungsrecht nach SGB XIV' (SER)
+    public let ser: Bool
     /// Indicates if additional charges are applied
     public let coPaymentStatus: ErxTask.CoPaymentStatus?
     /// Information about multiple tasks (e.g. prescription)

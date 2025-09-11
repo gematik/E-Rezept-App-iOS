@@ -28,7 +28,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "{{DATE:-10D}}",
                             "multiplePrescription":
@@ -41,6 +41,8 @@
                         "authoredOn": "{{DATE:-10D}}",
                         "status": "ready",
                         "identifier": "160.000.006.456.334.01",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -60,7 +62,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "2024-01-16",
                             "multiplePrescription":
@@ -73,6 +75,8 @@
                         "authoredOn": "{{DATE:-18D}}",
                         "status": "ready",
                         "identifier": "160.000.006.456.334.02",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -92,7 +96,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "2024-01-16",
                             "multiplePrescription":
@@ -105,6 +109,8 @@
                         "authoredOn": "{{DATE:-12D}}",
                         "status": "ready",
                         "identifier": "160.000.006.456.334.03",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -124,7 +130,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "2024-01-16",
                             "multiplePrescription":
@@ -137,6 +143,8 @@
                         "authoredOn": "{{DATE:-12D}}",
                         "status": "ready",
                         "identifier": "160.000.006.456.334.04",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -167,7 +175,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "2024-01-16",
                             "multiplePrescription":
@@ -232,6 +240,8 @@
                             "insuranceId": "M070759114"
                         },
                         "prescriptionId": "160.000.006.456.334.01",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -252,7 +262,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "2024-01-16",
                             "multiplePrescription":
@@ -317,6 +327,8 @@
                             "insuranceId": "M070759114"
                         },
                         "prescriptionId": "160.000.006.456.334.02",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -337,7 +349,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "2024-01-16",
                             "multiplePrescription":
@@ -402,6 +414,8 @@
                             "insuranceId": "M070759114"
                         },
                         "prescriptionId": "160.000.006.456.334.03",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],
@@ -422,7 +436,7 @@
                                 "unit": "{Package}"
                             },
                             "dosageInstructions": "",
-                            "bvg": true,
+                            "ser": true,
                             "coPaymentStatus": "0",
                             "authoredOn": "2024-01-16",
                             "multiplePrescription":
@@ -487,6 +501,8 @@
                             "insuranceId": "M070759114"
                         },
                         "prescriptionId": "160.000.006.456.334.04",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "source": "server",
                         "communications":
                         [],

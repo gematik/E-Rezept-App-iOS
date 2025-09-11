@@ -13,13 +13,6 @@ strings:
 ##   - Especially the `forceProvidesNamespaces: true` param forces to create sub-namespace for each folder/group used in your Asset Catalogs, even the ones without "Provides Namespace". Without this param, SwiftGen only generates sub-namespaces for folders/groups which have the "Provides Namespace" box checked in the Inspector pane.
 ##   - To know which params are supported for a template, use `swiftgen template doc xcassets swift5` to open the template documentation on GitHub.
 xcassets:
-    - inputs: ./Resources/Assets.xcassets
-      outputs:
-        - templatePath: ../../Templates/xcassets.stencil
-          params:
-            forceProvidesNamespaces: true
-            bundle: Bundle.module
-          output: ${DERIVED_SOURCES_DIR}/XCAssets+Generated.swift
     - inputs: ../../Tests/eRpAppTests/Resources/Assets.xcassets
       outputs:
         - templatePath: ../../Templates/xcassets.stencil

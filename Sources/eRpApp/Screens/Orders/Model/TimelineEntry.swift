@@ -31,6 +31,7 @@ enum TimelineEntry: Equatable, Identifiable {
     case dispReq(ErxTask.Communication.Unique, pharmacy: PharmacyLocation?, chipTexts: [String])
     case reply(ErxTask.Communication.Unique, chipTexts: [String])
     case chargeItem(ErxChargeItem)
+    case diga(ErxTask.Communication.Unique, chipTexts: [String])
     case internalCommunication(InternalCommunication.Message)
 
     var id: String {
@@ -41,6 +42,8 @@ enum TimelineEntry: Equatable, Identifiable {
             return communication.identifier
         case let .chargeItem(chargeItem):
             return chargeItem.identifier
+        case let .diga(communication, _):
+            return communication.identifier
         case let .internalCommunication(message):
             return message.id
         }
@@ -54,6 +57,8 @@ enum TimelineEntry: Equatable, Identifiable {
             return communication.timestamp
         case let .chargeItem(chargeItem):
             return chargeItem.enteredDate ?? ""
+        case let .diga(communication, _):
+            return communication.timestamp
         case let .internalCommunication(message):
             // Temporary convert the Date to a String, will be removed when 'lastUpdated: Date'
             return dateToString(date: message.timestamp)
@@ -68,6 +73,8 @@ enum TimelineEntry: Equatable, Identifiable {
             return communication.isRead
         case let .chargeItem(chargeItem):
             return chargeItem.isRead
+        case let .diga(communication, _):
+            return communication.isRead
         case let .internalCommunication(message):
             return message.isRead
         }
@@ -81,7 +88,8 @@ enum TimelineEntry: Equatable, Identifiable {
                 L10n.ordDetailTxtPresc(1).text,
                 pharmacyName
             ).text
-        case let .reply(communication, _):
+        case let .reply(communication, _),
+             let .diga(communication, _):
             guard let payload = communication.payload else {
                 return L10n.ordDetailTxtError.text
             }
@@ -113,7 +121,8 @@ enum TimelineEntry: Equatable, Identifiable {
                 return formattedText
             }
             return AttributedString(text)
-        case let .reply(communication, _):
+        case let .reply(communication, _),
+             let .diga(communication, _):
             if let payload = communication.payload,
                let text = payload.infoText, !text.isEmpty {
                 @Dependency(\.dataDetector) var dataDetector: DataDetector
@@ -196,6 +205,7 @@ enum TimelineEntry: Equatable, Identifiable {
         switch self {
         case let .dispReq(_, _, text): return text
         case let .reply(_, text): return text
+        case let .diga(_, text): return text
         case let .chargeItem(chargeItem):
             guard let displayName = chargeItem.medication?.displayName else { return [] }
             return [displayName]
@@ -247,7 +257,8 @@ enum TimelineEntry: Equatable, Identifiable {
             return IdentifiedArray(uniqueElements: [
                 ActionEntry(id: .loadAndShowPharmacy, name: name, action: .loadAndShowPharmacy),
             ])
-        case let .reply(communication, _):
+        case let .reply(communication, _),
+             let .diga(communication, _):
             guard let payload = communication.payload else {
                 return IdentifiedArray(uniqueElements: [
                     ActionEntry(

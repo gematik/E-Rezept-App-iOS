@@ -26,132 +26,128 @@ import SwiftUI
 import UIKit
 
 struct CardWallPINView: View {
-    @Perception.Bindable var store: StoreOf<CardWallPINDomain>
+    @Bindable var store: StoreOf<CardWallPINDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .leading) {
-                // [REQ:BSI-eRp-ePA:O.Purp_2#3,O.Data_6#4] PIN is used for eGK Connection
-                PINView(store: store).padding()
+        VStack(alignment: .leading) {
+            // [REQ:BSI-eRp-ePA:O.Purp_2#3,O.Data_6#4] PIN is used for eGK Connection
+            PINView(store: store).padding()
 
-                Spacer()
+            Spacer()
 
-                GreyDivider()
+            GreyDivider()
 
-                Button {
-                    // workaround: dismiss keyboard to fix safearea bug for iOS 16
-                    if #available(iOS 16, *) {
-                        UIApplication.shared.dismissKeyboard()
+            Button {
+                // workaround: dismiss keyboard to fix safearea bug for iOS 16
+                if #available(iOS 16, *) {
+                    UIApplication.shared.dismissKeyboard()
+                }
+                store.send(.advance(store.transition))
+            } label: {
+                Text(L10n.cdwBtnPinDone)
+                    .accessibilityIdentifier(A11y.cardWall.pinInput.cdwBtnPinNoPin)
+                    .accessibilityLabel(Text(L10n.cdwBtnPinDoneLabel))
+            }
+            .buttonStyle(.primary(isEnabled: store.enteredPINValid, width: .wideHugging))
+            .frame(maxWidth: .infinity, alignment: .center)
+
+            if store.transition == .push {
+                Rectangle()
+                    .navigationDestination(
+                        item: $store.scope(state: \.destination?.login, action: \.destination.login)
+                    ) { store in
+                        CardWallLoginOptionView(store: store)
                     }
-                    store.send(.advance(store.transition))
-                } label: {
-                    Text(L10n.cdwBtnPinDone)
-                        .accessibilityIdentifier(A11y.cardWall.pinInput.cdwBtnPinNoPin)
-                        .accessibilityLabel(Text(L10n.cdwBtnPinDoneLabel))
-                }
-                .buttonStyle(.primary(isEnabled: store.enteredPINValid, width: .wideHugging))
-                .frame(maxWidth: .infinity, alignment: .center)
-
-                if store.transition == .push {
-                    Rectangle()
-                        .navigationDestination(
-                            item: $store.scope(state: \.destination?.login, action: \.destination.login)
-                        ) { store in
-                            CardWallLoginOptionView(store: store)
-                        }
-                        .frame(width: 0, height: 0)
-                        .accessibilityHidden(true)
-                } else {
-                    Rectangle()
-                        .fullScreenCover(
-                            item: $store.scope(state: \.destination?.login, action: \.destination.login)
-                        ) { store in
-                            CardWallLoginOptionView(store: store)
-                        }
-                        .frame(width: 0, height: 0)
-                        .accessibilityHidden(true)
-                }
+                    .frame(width: 0, height: 0)
+                    .accessibilityHidden(true)
+            } else {
+                Rectangle()
+                    .fullScreenCover(
+                        item: $store.scope(state: \.destination?.login, action: \.destination.login)
+                    ) { store in
+                        CardWallLoginOptionView(store: store)
+                    }
+                    .frame(width: 0, height: 0)
+                    .accessibilityHidden(true)
             }
-            .demoBanner(isPresented: store.isDemoModus) {
-                Text(L10n.cdwTxtPinDemoModeInfo)
-            }
-            .navigationBarTitle(L10n.cdwTxtPinTitle, displayMode: .inline)
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem {
-                    store.send(.delegate(.close))
-                }
-                .accessibility(identifier: A11y.cardWall.pinInput.cdwBtnPinCancel)
-                .accessibility(label: Text(L10n.cdwBtnPinCancelLabel))
-            )
         }
+        .demoBanner(isPresented: store.isDemoModus) {
+            Text(L10n.cdwTxtPinDemoModeInfo)
+        }
+        .navigationBarTitle(L10n.cdwTxtPinTitle, displayMode: .inline)
+        .navigationBarItems(
+            trailing: NavigationBarCloseItem {
+                store.send(.delegate(.close))
+            }
+            .accessibility(identifier: A11y.cardWall.pinInput.cdwBtnPinCancel)
+            .accessibility(label: Text(L10n.cdwBtnPinCancelLabel))
+        )
     }
 
     private struct PINView: View {
-        @Perception.Bindable var store: StoreOf<CardWallPINDomain>
+        @Bindable var store: StoreOf<CardWallPINDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                ScrollView(.vertical, showsIndicators: true) {
-                    if store.wrongPinEntered {
-                        WorngPINEnteredWarningView().padding()
-                    }
+            ScrollView(.vertical, showsIndicators: true) {
+                if store.wrongPinEntered {
+                    WorngPINEnteredWarningView().padding()
+                }
 
-                    VStack(alignment: .leading) {
-                        Text(L10n.cdwTxtPinSubtitle)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.title)
-                            .bold()
-                            .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinSubtitle)
-                            .padding(.bottom, 16)
+                VStack(alignment: .leading) {
+                    Text(L10n.cdwTxtPinSubtitle)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.title)
+                        .bold()
+                        .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinSubtitle)
+                        .padding(.bottom, 16)
 
-                        Text(L10n.cdwTxtPinDescription)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.title3)
-                            .accessibility(identifier: A11y.cardWall.pinInput.cdwBtnPinNoPin)
-                    }
+                    Text(L10n.cdwTxtPinDescription)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.title3)
+                        .accessibility(identifier: A11y.cardWall.pinInput.cdwBtnPinNoPin)
+                }
 
-                    Button(L10n.cdwBtnPinNoPin) {
-                        store.send(.egkButtonTapped)
-                    }
-                    .fullScreenCover(item: $store
-                        .scope(state: \.destination?.egk, action: \.destination.egk)) { store in
-                            NavigationStack {
-                                OrderHealthCardListView(store: store)
-                            }
-                            .tint(Colors.primary700)
-                            .navigationViewStyle(StackNavigationViewStyle())
-                    }
-                    .padding([.bottom, .top], 6)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-
-                    PINFieldView(store: store) {
-                        store.send(
-                            .advance(.none),
-                            animation: Animation.default
-                        )
-                    }.padding([.top, .bottom])
-
-                    if !store.showWarning {
-                        Text(L10n.cdwTxtPinHint)
-                            .font(.footnote)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinHint)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                    } else {
-                        // PIN count out-of-bounds warn message // todo styling
-                        HStack(spacing: 4) {
-                            Image(systemName: SFSymbolName.exclamationMark)
-                                .foregroundColor(Colors.alertNegativ)
-                                .font(.footnote)
-
-                            Text(store.warningMessage)
-                                .font(.footnote)
-                                .foregroundColor(Colors.alertNegativ)
-                                .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinWarning)
-
-                            Spacer()
+                Button(L10n.cdwBtnPinNoPin) {
+                    store.send(.egkButtonTapped)
+                }
+                .fullScreenCover(item: $store
+                    .scope(state: \.destination?.egk, action: \.destination.egk)) { store in
+                        NavigationStack {
+                            OrderHealthCardListView(store: store)
                         }
+                        .tint(Colors.primary700)
+                        .navigationViewStyle(StackNavigationViewStyle())
+                }
+                .padding([.bottom, .top], 6)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+
+                PINFieldView(store: store) {
+                    store.send(
+                        .advance(.none),
+                        animation: Animation.default
+                    )
+                }.padding([.top, .bottom])
+
+                if !store.showWarning {
+                    Text(L10n.cdwTxtPinHint)
+                        .font(.footnote)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinHint)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                } else {
+                    // PIN count out-of-bounds warn message // todo styling
+                    HStack(spacing: 4) {
+                        Image(systemName: SFSymbolName.exclamationMark)
+                            .foregroundColor(Colors.alertNegativ)
+                            .font(.footnote)
+
+                        Text(store.warningMessage)
+                            .font(.footnote)
+                            .foregroundColor(Colors.alertNegativ)
+                            .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinWarning)
+
+                        Spacer()
                     }
                 }
             }
@@ -159,7 +155,7 @@ struct CardWallPINView: View {
     }
 
     private struct PINFieldView: View {
-        @Perception.Bindable var store: StoreOf<CardWallPINDomain>
+        @Bindable var store: StoreOf<CardWallPINDomain>
         @FocusState private var focused: Bool
 
         init(store: StoreOf<CardWallPINDomain>, completion: @escaping () -> Void) {
@@ -170,33 +166,31 @@ struct CardWallPINView: View {
         let completion: () -> Void
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(alignment: .leading) {
-                    SecureFieldWithReveal(
-                        titleKey: L10n.cdwEdtPinInput,
-                        accessibilityLabelKey: L10n.cdwTxtPinInputLabel,
-                        text: $store.pin.sending(\.update),
-                        textContentType: .password,
-                        backgroundColor: Colors.systemGray5
-                    ) {}
-                        .textContentType(.oneTimeCode)
-                        .multilineTextAlignment(.leading)
-                        .keyboardType(.numberPad)
-                        .padding()
-                        .font(Font.title3)
-                        .background(Colors.systemGray5)
-                        .cornerRadius(8)
-                        .focused($focused)
-                        .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
-                }
-                .onAppear {
-                    #if DEBUG
-                    // Disable focus on tests to avoid keyboard pop-up
-                    focused = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil
-                    #else
-                    focused = true
-                    #endif
-                }
+            VStack(alignment: .leading) {
+                SecureFieldWithReveal(
+                    titleKey: L10n.cdwEdtPinInput,
+                    accessibilityLabelKey: L10n.cdwTxtPinInputLabel,
+                    text: $store.pin.sending(\.update),
+                    textContentType: .password,
+                    backgroundColor: Colors.systemGray5
+                ) {}
+                    .textContentType(.oneTimeCode)
+                    .multilineTextAlignment(.leading)
+                    .keyboardType(.numberPad)
+                    .padding()
+                    .font(Font.title3)
+                    .background(Colors.systemGray5)
+                    .cornerRadius(8)
+                    .focused($focused)
+                    .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
+            }
+            .onAppear {
+                #if DEBUG
+                // Disable focus on tests to avoid keyboard pop-up
+                focused = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil
+                #else
+                focused = true
+                #endif
             }
         }
     }

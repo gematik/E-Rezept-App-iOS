@@ -242,10 +242,10 @@ struct URLTester: View {
             viewModel.url = url
             viewModel.headers = headers
         }
-        .onChange(of: url) { newValue in
+        .onChange(of: url) { _, newValue in
             viewModel.url = newValue
         }
-        .onChange(of: headers) { newValue in
+        .onChange(of: headers) { _, newValue in
             viewModel.headers = newValue
         }
     }

@@ -1004,7 +1004,7 @@ extension ErxChargeItem.Fixtures {
             dosageInstructions: "1-0-0-0",
             substitutionAllowed: true,
             hasEmergencyServiceFee: false,
-            bvg: false,
+            ser: false,
             coPaymentStatus: .subjectToCharge,
             multiplePrescription: .init(mark: false)
         ),
@@ -1117,7 +1117,7 @@ extension ErxChargeItem.Fixtures {
             dosageInstructions: "1-0-0-0",
             substitutionAllowed: true,
             hasEmergencyServiceFee: false,
-            bvg: false,
+            ser: false,
             coPaymentStatus: .subjectToCharge,
             multiplePrescription: .init(mark: false),
             quantity: .init(value: "1", unit: "{Package}")

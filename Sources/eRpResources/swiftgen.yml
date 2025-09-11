@@ -19,6 +19,7 @@ xcassets:
       outputs:
         - templatePath: ../../Templates/xcassets.stencil
           params:
+            publicAccess: true
             forceProvidesNamespaces: true
             bundle: Bundle.module
           output: ${DERIVED_SOURCES_DIR}/XCAssets+Generated.swift
@@ -37,4 +38,5 @@ yaml:
         - templatePath: ../../Templates/analytics.stencil
           params:
             enumName: "Analytics"
+            publicAccess: true
           output: ${DERIVED_SOURCES_DIR}/Analytics+Generated.swift

@@ -26,85 +26,83 @@ import eRpStyleKit
 import SwiftUI
 
 struct ServiceOptionView: View {
-    @Perception.Bindable var store: StoreOf<ServiceOptionDomain>
+    @Bindable var store: StoreOf<ServiceOptionDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            HStack(alignment: .top, spacing: 16) {
-                if store.availableOptions.contains(.onPremise) {
-                    Button(
-                        action: { store.send(.redeemOptionTapped(.onPremise)) },
-                        label: {
-                            Label {
-                                Text(L10n.phaDetailBtnPickup)
-                            } icon: {
-                                Image(asset: Asset.Pharmacy.btnApoLarge)
-                                    .resizable()
-                                    .padding(4)
-                            }
+        HStack(alignment: .top, spacing: 16) {
+            if store.availableOptions.contains(.onPremise) {
+                Button(
+                    action: { store.send(.redeemOptionTapped(.onPremise)) },
+                    label: {
+                        Label {
+                            Text(L10n.phaDetailBtnPickup)
+                        } icon: {
+                            Image(asset: Asset.Pharmacy.btnApoLarge)
+                                .resizable()
+                                .padding(4)
                         }
-                    ).buttonStyle(.picture(
-                        style: .supplyLarge,
-                        isActive: store.selectedOption == .onPremise
-                    ))
-                        .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
-                        .accessibility(identifier: store.redeemOptionProvider?.reservationService
-                            .hasServiceAfterLogin == true
-                            ? A11y.pharmacyDetail.phaDetailBtnPickupViaLogin
-                            : A11y.pharmacyDetail.phaDetailBtnPickup)
-                }
+                    }
+                ).buttonStyle(.picture(
+                    style: .supplyLarge,
+                    isActive: store.selectedOption == .onPremise
+                ))
+                    .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
+                    .accessibility(identifier: store.redeemOptionProvider?.reservationService
+                        .hasServiceAfterLogin == true
+                        ? A11y.pharmacyDetail.phaDetailBtnPickupViaLogin
+                        : A11y.pharmacyDetail.phaDetailBtnPickup)
+            }
 
-                if store.availableOptions.contains(.delivery) {
-                    Button(
-                        action: { store.send(.redeemOptionTapped(.delivery)) },
-                        label: {
-                            Label {
-                                Text(L10n.phaDetailBtnDelivery)
-                            } icon: {
-                                Image(asset: Asset.Pharmacy.btnCarLarge)
-                                    .resizable()
-                                    .padding(4)
-                            }
+            if store.availableOptions.contains(.delivery) {
+                Button(
+                    action: { store.send(.redeemOptionTapped(.delivery)) },
+                    label: {
+                        Label {
+                            Text(L10n.phaDetailBtnDelivery)
+                        } icon: {
+                            Image(asset: Asset.Pharmacy.btnCarLarge)
+                                .resizable()
+                                .padding(4)
                         }
-                    ).buttonStyle(.picture(
-                        style: .supplyLarge,
-                        isActive: store.selectedOption == .delivery
-                    ))
-                        .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
-                        .accessibility(identifier: store.redeemOptionProvider?.deliveryService
-                            .hasServiceAfterLogin == true
-                            ? A11y.pharmacyDetail.phaDetailBtnDeliveryViaLogin
-                            : A11y.pharmacyDetail.phaDetailBtnDelivery)
-                }
+                    }
+                ).buttonStyle(.picture(
+                    style: .supplyLarge,
+                    isActive: store.selectedOption == .delivery
+                ))
+                    .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
+                    .accessibility(identifier: store.redeemOptionProvider?.deliveryService
+                        .hasServiceAfterLogin == true
+                        ? A11y.pharmacyDetail.phaDetailBtnDeliveryViaLogin
+                        : A11y.pharmacyDetail.phaDetailBtnDelivery)
+            }
 
-                if store.availableOptions.contains(.shipment) {
-                    Button(
-                        action: { store.send(.redeemOptionTapped(.shipment)) },
-                        label: {
-                            Label {
-                                Text(L10n.phaDetailBtnShipment)
-                            } icon: {
-                                Image(asset: Asset.Pharmacy.btnLkwLarge)
-                                    .resizable()
-                                    .padding(4)
-                            }
+            if store.availableOptions.contains(.shipment) {
+                Button(
+                    action: { store.send(.redeemOptionTapped(.shipment)) },
+                    label: {
+                        Label {
+                            Text(L10n.phaDetailBtnShipment)
+                        } icon: {
+                            Image(asset: Asset.Pharmacy.btnLkwLarge)
+                                .resizable()
+                                .padding(4)
                         }
-                    ).buttonStyle(.picture(
-                        style: .supplyLarge,
-                        isActive: store.selectedOption == .shipment
-                    ))
-                        .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
-                        .accessibility(identifier: store.redeemOptionProvider?.shipmentService
-                            .hasServiceAfterLogin == true
-                            ? A11y.pharmacyDetail.phaDetailBtnShipmentViaLogin
-                            : A11y.pharmacyDetail.phaDetailBtnShipment)
-                }
+                    }
+                ).buttonStyle(.picture(
+                    style: .supplyLarge,
+                    isActive: store.selectedOption == .shipment
+                ))
+                    .opacity(store.prescriptions.isEmpty ? 0.25 : 1)
+                    .accessibility(identifier: store.redeemOptionProvider?.shipmentService
+                        .hasServiceAfterLogin == true
+                        ? A11y.pharmacyDetail.phaDetailBtnShipmentViaLogin
+                        : A11y.pharmacyDetail.phaDetailBtnShipment)
+            }
 
-                ForEach(store.availableOptions.count ..< 3, id: \.self) { _ in
-                    EmptyServiceView()
-                }
-            }.frame(maxWidth: .infinity, alignment: .center)
-        }
+            ForEach(store.availableOptions.count ..< 3, id: \.self) { _ in
+                EmptyServiceView()
+            }
+        }.frame(maxWidth: .infinity, alignment: .center)
     }
 
     struct EmptyServiceView: View {

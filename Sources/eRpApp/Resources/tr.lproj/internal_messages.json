@@ -40,5 +40,11 @@
         "text": "**🙌 Özel sigortalılar için kayıt** \nÖzel sigortalılar için kayıt optimize edildi. Sağlık kimliğinizle birkaç tıklamayla rahatça giriş yapabilirsiniz. \n \n **🏥 Güncellenen eczane verileri** \nEczanelerin yeni veritabanında yaptığı değişiklikler artık güvenilir bir şekilde görüntüleniyor. \n \n **📲 DiGA'lar için daha fazla bilgi** \nArtık DiGA reçeteleriniz hakkında satış fiyatı veya logo gibi daha ayrıntılı bilgiler alacaksınız. \n \n **♿️ Erişilebilirlik** \nSağlık kartı erişim numarasını girme ekranı yeniden tasarlandı ve VoiceOver ile kullanım için optimize edildi. \n \n **📤 Reçeteleri paylaşın** \nReçeteler artık doğrudan uygulama üzerinden başkalarıyla paylaşılabilir.",
         "timestamp": "2025-07-30T08:00:00.000Z",
         "version": "1.33.0"
+    },
+    {
+        "id": "9",
+        "text": "**♿ Erişilebilirlik** \nErişilebilirliği daha da artırmak için profil ayarları revize edildi.",
+        "timestamp": "2025-08-26T08:00:00.000Z",
+        "version": "1.34.0"
     }
 ]

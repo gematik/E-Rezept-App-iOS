@@ -1,3 +1,36 @@
+# 1.34.0
+
+### Features (6 changes)
+
+- Add KBV Prescription changes for version 1_3_2
+- Add GEM ERPCharge changes for version 1_1_0
+- Add KBV Prescription changes for version 1_2_0
+- Add GEM Workflow changes for version 1_5_2
+- Add feature flag for sending 1.5 communications to support testing and production environment
+- Add module with scaffold for EU-Prescriptions
+
+### changed (2 changes)
+
+- Rename ErxTask attribute from bvg to ser
+- Present insurance type selection drawer when refresh is tapped
+
+### Bug fixes (5 changes)
+
+- Fix DemoMode PharmacySearch and PKV/GKV drawer
+- Fix InsuranceDrawer padding and EditProfile Accessibility/ UI
+- Update insurance related fields in EditProfileView after part-way insurance change
+- BfDI link in Data Privacy section opens browser
+- Fix Divider in EditProfileView
+
+### Internal changes (6 changes)
+
+- Move assets to resouce module
+- Update dispReq communication version
+- Add eu redeemable flags for UI test data
+- Add smart mock implementation for struct based protocols
+- Added BfArMLive target with live implementation
+- Add BfArM UITests
+
 # Release 1.33.0
 
 ### Features (4 changes)

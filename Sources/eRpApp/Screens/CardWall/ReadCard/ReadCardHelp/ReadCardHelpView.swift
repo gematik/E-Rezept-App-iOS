@@ -25,7 +25,7 @@ import eRpStyleKit
 import SwiftUI
 
 struct ReadCardHelpView: View {
-    @Perception.Bindable var store: StoreOf<ReadCardHelpDomain>
+    @Bindable var store: StoreOf<ReadCardHelpDomain>
 
     init(store: StoreOf<ReadCardHelpDomain>) {
         self.store = store
@@ -34,24 +34,22 @@ struct ReadCardHelpView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            TabView(selection: $store.destination.sending(\.updatePageIndex)) {
-                ReadCardHelpCardView(store: store)
-                    .tag(ReadCardHelpDomain.Destination.State.first)
+        TabView(selection: $store.destination.sending(\.updatePageIndex)) {
+            ReadCardHelpCardView(store: store)
+                .tag(ReadCardHelpDomain.Destination.State.first)
 
-                ReadCardHelpPositionView(store: store)
-                    .tag(ReadCardHelpDomain.Destination.State.second)
+            ReadCardHelpPositionView(store: store)
+                .tag(ReadCardHelpDomain.Destination.State.second)
 
-                ReadCardHelpVideoView(store: store)
-                    .tag(ReadCardHelpDomain.Destination.State.third)
+            ReadCardHelpVideoView(store: store)
+                .tag(ReadCardHelpDomain.Destination.State.third)
 
-                ReadCardHelpListView(store: store)
-                    .tag(ReadCardHelpDomain.Destination.State.fourth)
-            }
-            .background(Colors.systemBackground)
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+            ReadCardHelpListView(store: store)
+                .tag(ReadCardHelpDomain.Destination.State.fourth)
         }
+        .background(Colors.systemBackground)
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
+        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
     }
 }
 

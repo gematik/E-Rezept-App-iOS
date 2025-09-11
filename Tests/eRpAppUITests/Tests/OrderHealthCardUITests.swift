@@ -56,25 +56,26 @@ class OrderHealthCardUITests: XCTestCase, Sendable {
 
         let tabBar = TabBarScreen(app: app)
 
-        let orderHealthCard = tabBar
+        await tabBar
             .tapPrescriptionsTab()
-            .tapOpenCardwall()
-            .tapOrderHealthCard()
+            .tapRegister()
+            .tapWelcomeDrawerGkvUser { orderHealthCardScreen in
+                let orderHealthCard = orderHealthCardScreen.tapOrderHealthCard()
+                let details = orderHealthCard.selectInsuranceCompany("AOK - Die Gesundheitskasse Niedersachsen")
 
-        let details = orderHealthCard.selectInsuranceCompany("AOK - Die Gesundheitskasse Niedersachsen")
+                let contact = details.tapPin()
 
-        let contact = details.tapPin()
+                expect(contact.mailBtn().exists).to(beFalse())
+                expect(contact.webBtn().exists).to(beTrue())
+                expect(contact.phoneBtn().exists).to(beTrue())
 
-        expect(contact.mailBtn().exists).to(beFalse())
-        expect(contact.webBtn().exists).to(beTrue())
-        expect(contact.phoneBtn().exists).to(beTrue())
+                let contact2 = contact
+                    .tapBackButton()
+                    .tapPinAndCard()
 
-        let contact2 = contact
-            .tapBackButton()
-            .tapPinAndCard()
-
-        expect(contact2.mailBtn().exists).to(beFalse())
-        expect(contact2.webBtn().exists).to(beFalse())
-        expect(contact2.phoneBtn().exists).to(beTrue())
+                expect(contact2.mailBtn().exists).to(beFalse())
+                expect(contact2.webBtn().exists).to(beFalse())
+                expect(contact2.phoneBtn().exists).to(beTrue())
+            }
     }
 }

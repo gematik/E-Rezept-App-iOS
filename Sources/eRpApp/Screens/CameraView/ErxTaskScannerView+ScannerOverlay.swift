@@ -29,113 +29,111 @@ import SwiftUI
 
 extension ErxTaskScannerView {
     struct ScannerOverlay: View {
-        @Perception.Bindable var store: StoreOf<ScannerDomain>
+        @Bindable var store: StoreOf<ScannerDomain>
         @State var isImageScaled = false
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack {
-                    HStack {
-                        CloseButton { store.send(.closeWithoutSave) }
-                            .accessibility(identifier: A11y.scanner.scnBtnCancelScan)
-                            .accessibility(label: Text(L10n.scnBtnCancelScan))
-
-                        Spacer()
-
-                        if (AVCaptureDevice.default(for: AVMediaType.video)?.hasTorch) == true {
-                            Button(action: {
-                                store.send(.toggleFlashLight)
-                                toggleFlashlight(status: store.isFlashOn)
-                            }, label: {
-                                HStack {
-                                    Image(
-                                        systemName: !store.isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
-                                            .lightbulbSlash
-                                    ).foregroundColor(Color.primary)
-                                    Text(!store.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
-                                        .foregroundColor(Color.primary)
-                                }
-                            })
-                                .padding(.horizontal)
-                                .padding(.vertical, 8)
-                                .background(Color(.systemGray5))
-                                .cornerRadius(8)
-                                .padding()
-                        }
-                    }
-
-                    InfoView(localizedTextKey: textLabel(
-                        for: store.scanState,
-                        hasScannedBatches: !store.acceptedTaskBatches.isEmpty
-                    ))
+            VStack {
+                HStack {
+                    CloseButton { store.send(.closeWithoutSave) }
+                        .accessibility(identifier: A11y.scanner.scnBtnCancelScan)
+                        .accessibility(label: Text(L10n.scnBtnCancelScan))
 
                     Spacer()
-                    if store.scanState.isIdle || store.scanState.isLoading {
-                        if isImageScaled {
-                            Image(systemName: SFSymbolName.plusViewFinder)
-                                .font(Font.largeTitle)
-                                .foregroundColor(Colors.yellow500)
-                                .transition(.endlessScale(from: 1, to: 1.2))
-                        }
-                    } else {
-                        ScanStateImage(imageAsset: imageAsset(for: store.scanState),
-                                       foregroundColor: alertTintColor(for: store.scanState))
-                    }
-                    Spacer()
 
-                    HStack {
-                        Spacer()
+                    if (AVCaptureDevice.default(for: AVMediaType.video)?.hasTorch) == true {
                         Button(action: {
-                            store.send(.importButtonTapped)
+                            store.send(.toggleFlashLight)
+                            toggleFlashlight(status: store.isFlashOn)
                         }, label: {
-                            Image(systemName: SFSymbolName.photoOnRect)
-                                .frame(width: 56, height: 56)
-                                .font(.body.weight(.semibold))
-                                .foregroundColor(Color.primary)
-                                .background(
-                                    Circle().foregroundColor(Colors.systemGray6)
-                                )
-                        })
-                    }
-                    .padding(.horizontal)
-
-                    if !store.acceptedTaskBatches.isEmpty {
-                        FinishButton(scannedBatches: store.acceptedTaskBatches) {
-                            store.send(.saveAndClose(store.acceptedTaskBatches))
-                        }
-                    }
-                }
-                .confirmationDialog($store.scope(state: \.destination?.sheet, action: \.destination.sheet))
-                .fileImporter(
-                    isPresented: Binding<Bool>(
-                        get: { store.destination == .documentImporter },
-                        set: { show in
-                            if !show {
-                                store.send(.resetNavigation)
+                            HStack {
+                                Image(
+                                    systemName: !store.isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
+                                        .lightbulbSlash
+                                ).foregroundColor(Color.primary)
+                                Text(!store.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
+                                    .foregroundColor(Color.primary)
                             }
+                        })
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(Color(.systemGray5))
+                            .cornerRadius(8)
+                            .padding()
+                    }
+                }
+
+                InfoView(localizedTextKey: textLabel(
+                    for: store.scanState,
+                    hasScannedBatches: !store.acceptedTaskBatches.isEmpty
+                ))
+
+                Spacer()
+                if store.scanState.isIdle || store.scanState.isLoading {
+                    if isImageScaled {
+                        Image(systemName: SFSymbolName.plusViewFinder)
+                            .font(Font.largeTitle)
+                            .foregroundColor(Colors.yellow500)
+                            .transition(.endlessScale(from: 1, to: 1.2))
+                    }
+                } else {
+                    ScanStateImage(imageAsset: imageAsset(for: store.scanState),
+                                   foregroundColor: alertTintColor(for: store.scanState))
+                }
+                Spacer()
+
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        store.send(.importButtonTapped)
+                    }, label: {
+                        Image(systemName: SFSymbolName.photoOnRect)
+                            .frame(width: 56, height: 56)
+                            .font(.body.weight(.semibold))
+                            .foregroundColor(Color.primary)
+                            .background(
+                                Circle().foregroundColor(Colors.systemGray6)
+                            )
+                    })
+                }
+                .padding(.horizontal)
+
+                if !store.acceptedTaskBatches.isEmpty {
+                    FinishButton(scannedBatches: store.acceptedTaskBatches) {
+                        store.send(.saveAndClose(store.acceptedTaskBatches))
+                    }
+                }
+            }
+            .confirmationDialog($store.scope(state: \.destination?.sheet, action: \.destination.sheet))
+            .fileImporter(
+                isPresented: Binding<Bool>(
+                    get: { store.destination == .documentImporter },
+                    set: { show in
+                        if !show {
+                            store.send(.resetNavigation)
                         }
-                    ),
-                    allowedContentTypes: [.pdf],
-                    allowsMultipleSelection: false
-                ) { result in
-                    store.send(.response(.documentFileReceived(
-                        result.mapError { _ in ScannerDomain.Error.invalid }
-                    )))
-                }
-                .sheet(item: $store
-                    .scope(state: \.destination?.imageGallery, action: \.destination.imageGallery)) { _ in
-                        ImagePicker(image: .init(get: { nil },
-                                                 set: { store.send(.response(.galleryImageReceived($0))) }))
-                }
-                .onAppear {
-                    self.isImageScaled.toggle()
-                }
-                .onReceive(NotificationCenter.default
-                    .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                        store.send(.flashLightOff)
-                }
-                .onChange(of: store.isFlashOn) { _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                }
+                    }
+                ),
+                allowedContentTypes: [.pdf],
+                allowsMultipleSelection: false
+            ) { result in
+                store.send(.response(.documentFileReceived(
+                    result.mapError { _ in ScannerDomain.Error.invalid }
+                )))
+            }
+            .sheet(item: $store
+                .scope(state: \.destination?.imageGallery, action: \.destination.imageGallery)) { _ in
+                    ImagePicker(image: .init(get: { nil },
+                                             set: { store.send(.response(.galleryImageReceived($0))) }))
+            }
+            .onAppear {
+                self.isImageScaled.toggle()
+            }
+            .onReceive(NotificationCenter.default
+                .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    store.send(.flashLightOff)
+            }
+            .onChange(of: store.isFlashOn) { _, _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
             }
         }
 

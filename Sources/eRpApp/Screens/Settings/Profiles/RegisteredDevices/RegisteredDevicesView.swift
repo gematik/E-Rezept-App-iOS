@@ -27,7 +27,7 @@ import IDP
 import SwiftUI
 
 struct RegisteredDevicesView: View {
-    @Perception.Bindable var store: StoreOf<RegisteredDevicesDomain>
+    @Bindable var store: StoreOf<RegisteredDevicesDomain>
 
     func delete(at offsets: IndexSet) {
         let deviceKeysToDelete: [String] = offsets.compactMap { offset in
@@ -53,107 +53,105 @@ struct RegisteredDevicesView: View {
     }
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 0) {
-                switch store.content {
-                case let .loading(entries):
-                    if !entries.isEmpty {
-                        List {
-                            Section(
-                                content: {
-                                    ForEach(entries) { entry in
-                                        SubTitle(
-                                            title: entry.name,
-                                            description: description(for: entry)
-                                        )
-                                        .padding(.vertical)
-                                    }
-                                },
-                                header: {
-                                    ProgressView()
-                                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
+        VStack(spacing: 0) {
+            switch store.content {
+            case let .loading(entries):
+                if !entries.isEmpty {
+                    List {
+                        Section(
+                            content: {
+                                ForEach(entries) { entry in
+                                    SubTitle(
+                                        title: entry.name,
+                                        description: description(for: entry)
+                                    )
+                                    .padding(.vertical)
                                 }
-                            )
-                        }
-                        .listStyle(InsetGroupedListStyle())
-                    } else {
-                        VStack {
-                            ProgressView()
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    }
-                case let .loaded(entries):
-                    if !entries.isEmpty {
-                        List {
-                            ForEach(entries) { entry in
-                                SubTitle(
-                                    title: entry.name,
-                                    description: description(for: entry)
-                                )
-                                .padding(.vertical)
-                                .accessibilityElement(children: .combine)
+                            },
+                            header: {
+                                ProgressView()
+                                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .center)
                             }
-                            .onDelete(perform: delete)
-                        }
-                        .listStyle(InsetGroupedListStyle())
-                        .toolbar {
-                            EditButton()
-                        }
-                    } else {
-                        VStack(spacing: 8) {
-                            Text(L10n.stgTxtRegDevicesEmptyListTitle)
-                                .font(.headline)
-
-                            Text(L10n.stgTxtRegDevicesEmptyList)
-                                .font(.subheadline)
-                                .foregroundColor(Color(.secondaryLabel))
-                                .multilineTextAlignment(.center)
-                        }
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        )
                     }
-                case .notLoaded:
+                    .listStyle(InsetGroupedListStyle())
+                } else {
+                    VStack {
+                        ProgressView()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                }
+            case let .loaded(entries):
+                if !entries.isEmpty {
+                    List {
+                        ForEach(entries) { entry in
+                            SubTitle(
+                                title: entry.name,
+                                description: description(for: entry)
+                            )
+                            .padding(.vertical)
+                            .accessibilityElement(children: .combine)
+                        }
+                        .onDelete(perform: delete)
+                    }
+                    .listStyle(InsetGroupedListStyle())
+                    .toolbar {
+                        EditButton()
+                    }
+                } else {
                     VStack(spacing: 8) {
-                        Text(L10n.stgTxtRegDevicesInfoTitle)
+                        Text(L10n.stgTxtRegDevicesEmptyListTitle)
                             .font(.headline)
 
-                        Text(L10n.stgTxtRegDevicesInfo)
+                        Text(L10n.stgTxtRegDevicesEmptyList)
                             .font(.subheadline)
                             .foregroundColor(Color(.secondaryLabel))
                             .multilineTextAlignment(.center)
-
-                        Button(action: {
-                            store.send(.loadDevices)
-                        }, label: {
-                            Label(title: {
-                                Text(L10n.stgBtnRegDevicesLoad)
-                                    .font(.subheadline)
-                            }, icon: {
-                                Image(systemName: SFSymbolName.refresh)
-                            })
-                        })
                     }
                     .padding()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 }
-            }
-            .task {
-                await store.send(.task).finish()
-            }
-            .fullScreenCover(item: $store.scope(state: \.destination?.cardWallCAN,
-                                                action: \.destination.cardWallCAN)) { store in
-                NavigationStack {
-                    CardWallCANView(store: store)
+            case .notLoaded:
+                VStack(spacing: 8) {
+                    Text(L10n.stgTxtRegDevicesInfoTitle)
+                        .font(.headline)
+
+                    Text(L10n.stgTxtRegDevicesInfo)
+                        .font(.subheadline)
+                        .foregroundColor(Color(.secondaryLabel))
+                        .multilineTextAlignment(.center)
+
+                    Button(action: {
+                        store.send(.loadDevices)
+                    }, label: {
+                        Label(title: {
+                            Text(L10n.stgBtnRegDevicesLoad)
+                                .font(.subheadline)
+                        }, icon: {
+                            Image(systemName: SFSymbolName.refresh)
+                        })
+                    })
                 }
-                .navigationViewStyle(StackNavigationViewStyle())
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
-            .subTitleStyle(PlainSectionContainerSubTitleStyle())
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            .navigationTitle(L10n.stgTxtRegDevicesTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .background(Color(.secondarySystemBackground)
-                .ignoresSafeArea())
         }
+        .task {
+            await store.send(.task).finish()
+        }
+        .fullScreenCover(item: $store.scope(state: \.destination?.cardWallCAN,
+                                            action: \.destination.cardWallCAN)) { store in
+            NavigationStack {
+                CardWallCANView(store: store)
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+        }
+        .subTitleStyle(PlainSectionContainerSubTitleStyle())
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        .navigationTitle(L10n.stgTxtRegDevicesTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .background(Color(.secondarySystemBackground)
+            .ignoresSafeArea())
     }
 }
 

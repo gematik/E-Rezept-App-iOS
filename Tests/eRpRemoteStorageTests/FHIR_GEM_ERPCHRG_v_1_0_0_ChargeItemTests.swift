@@ -64,7 +64,7 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
         expect(chargeItem.medicationRequest.dispenseValidityEnd).to(beNil())
         expect(chargeItem.medicationRequest.substitutionAllowed) == true
         expect(chargeItem.medicationRequest.coPaymentStatus) == .subjectToCharge
-        expect(chargeItem.medicationRequest.bvg) == false
+        expect(chargeItem.medicationRequest.ser) == false
         expect(chargeItem.medicationRequest.multiplePrescription?.mark) == false
         expect(chargeItem.medicationRequest.multiplePrescription?.numbering).to(beNil())
         expect(chargeItem.medicationRequest.multiplePrescription?.totalNumber).to(beNil())

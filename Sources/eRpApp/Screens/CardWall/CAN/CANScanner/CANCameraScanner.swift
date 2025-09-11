@@ -132,7 +132,7 @@ struct LightSwitch: View {
                 toggleFlashlight(status: false)
                 isFlashOn = false
         }
-        .onChange(of: isFlashOn) { _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        .onChange(of: isFlashOn) { _, _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
     }
 }

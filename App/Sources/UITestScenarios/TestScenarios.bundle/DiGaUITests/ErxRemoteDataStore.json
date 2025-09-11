@@ -120,23 +120,27 @@
                         "lastModified": "2025-05-15T14:59:05.197+00:00",
                         "prescriptionId": "162.000.000.004.263.63",
                         "authoredOn": "2025-05-15T14:44:45.482+00:00",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "communications":
                         [],
                         "source": "server",
                         "status": "in-progress",
-                        "expiresOn": "2025-08-15",
+                        "expiresOn": "{{DATE:+15D}}",
                         "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
                         "medicationDispenses":
                         [],
                         "identifier": "162.000.000.004.263.63",
                         "avsTransactions":
                         [],
-                        "acceptedUntil": "2025-08-15",
+                        "acceptedUntil": "{{DATE:+15D}}",
+                        "isEURedeemable": false,
+                        "isSetEURedeemableByPatient": false,
                         "medicationRequest":
                         {
                             "substitutionAllowed": false,
                             "hasEmergencyServiceFee": false,
-                            "bvg": false
+                            "ser": false
                         }
                     }
                 ]
@@ -148,23 +152,27 @@
                         "flowType": "162",
                         "lastModified": "2025-05-15T14:59:09.447+00:00",
                         "prescriptionId": "162.000.000.004.263.63",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "authoredOn": "2025-05-15T14:44:45.482+00:00",
                         "communications":
                         [],
                         "source": "server",
                         "status": "completed",
-                        "expiresOn": "2025-08-15",
+                        "expiresOn": "{{DATE:+15D}}",
                         "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
                         "medicationDispenses":
                         [],
                         "identifier": "162.000.000.004.263.63",
                         "avsTransactions":
                         [],
-                        "acceptedUntil": "2025-08-15",
+                        "acceptedUntil": "{{DATE:+15D}}",
+                        "isEURedeemable": false,
+                        "isSetEURedeemableByPatient": false,
                         "medicationRequest":
                         {
                             "hasEmergencyServiceFee": false,
-                            "bvg": false,
+                            "ser": false,
                             "substitutionAllowed": false
                         }
                     }
@@ -177,23 +185,27 @@
                         "flowType": "162",
                         "lastModified": "2025-05-15T14:59:09.447+00:00",
                         "prescriptionId": "162.000.000.004.263.63",
+                        "isEURedeemable" : false,
+                        "isSetEURedeemableByPatient" : false,
                         "authoredOn": "2025-05-15T14:44:45.482+00:00",
                         "communications":
                         [],
                         "source": "server",
                         "status": "completed",
-                        "expiresOn": "2025-08-15",
+                        "expiresOn": "{{DATE:+15D}}",
                         "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/162.000.000.004.263.63",
                         "medicationDispenses":
                         [],
                         "identifier": "162.000.000.004.263.63",
                         "avsTransactions":
                         [],
-                        "acceptedUntil": "2025-08-15",
+                        "acceptedUntil": "{{DATE:+15D}}",
+                        "isEURedeemable": false,
+                        "isSetEURedeemableByPatient": false,
                         "medicationRequest":
                         {
                             "hasEmergencyServiceFee": false,
-                            "bvg": false,
+                            "ser": false,
                             "substitutionAllowed": false
                         }
                     }

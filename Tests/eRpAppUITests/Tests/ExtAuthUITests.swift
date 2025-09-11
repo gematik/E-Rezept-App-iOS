@@ -56,12 +56,15 @@ class ExtAuthUITests: XCTestCase, Sendable {
 
         let tabBar = TabBarScreen(app: app)
 
-        let helpScreen = tabBar
+        await tabBar
             .tapPrescriptionsTab()
-            .tapOpenCardwall()
-            .tapExtAuth()
-            .tapHelpButton()
-
-        expect(helpScreen.navigationTitle()).to(exist("Navigation Title"))
+            .tapRegister()
+            .tapWelcomeDrawerGkvUser { cardWallIntroScreen in
+                await cardWallIntroScreen
+                    .tapExtAuth()
+                    .tapHelpButton { helpScreen in
+                        expect(helpScreen.navigationTitle()).to(exist("Navigation Title"))
+                    }
+            }
     }
 }

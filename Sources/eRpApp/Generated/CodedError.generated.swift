@@ -67,7 +67,6 @@ extension AVSError.InternalError: CodedError {
     }
 }
 
-extension AVSTransactionCoreDataStore.Error: @retroactive LocalizedError {}
 extension AVSTransactionCoreDataStore.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -173,7 +172,6 @@ extension AuthenticationChallengeProviderError: CodedError {
     }
 }
 
-extension BfArMError: @retroactive LocalizedError {}
 extension BfArMError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -205,7 +203,6 @@ extension BfArMError: CodedError {
     }
 }
 
-extension BiometricsSHA256Signer.Error: @retroactive LocalizedError {}
 extension BiometricsSHA256Signer.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -518,7 +515,6 @@ extension ChargeItemPDFServiceError: CodedError {
     }
 }
 
-extension ConversionError: @retroactive LocalizedError {}
 extension ConversionError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -551,7 +547,6 @@ extension CoreDataController.Error: CodedError {
     }
 }
 
-extension DefaultDataMatrixStringEncoderError: @retroactive LocalizedError {}
 extension DefaultDataMatrixStringEncoderError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -611,7 +606,6 @@ extension DemoError: CodedError {
     }
 }
 
-extension ErxConsent.Error: @retroactive LocalizedError {}
 extension ErxConsent.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -650,7 +644,6 @@ extension ErxRepositoryError: CodedError {
     }
 }
 
-extension ErxTask.Status.Error: @retroactive LocalizedError {}
 extension ErxTask.Status.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -680,7 +673,6 @@ extension ErxTask.Status.Error: CodedError {
     }
 }
 
-extension ErxTaskOrder.Error: @retroactive LocalizedError {}
 extension ErxTaskOrder.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -754,7 +746,6 @@ extension FHIRClient.Error: CodedError {
     }
 }
 
-extension FHIRVZDError: @retroactive LocalizedError {}
 extension FHIRVZDError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -786,7 +777,6 @@ extension FHIRVZDError: CodedError {
     }
 }
 
-extension FileManager.ExcludeFileError: @retroactive LocalizedError {}
 extension FileManager.ExcludeFileError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -847,7 +837,6 @@ extension HTTPClientError: CodedError {
     }
 }
 
-extension HealthcareServiceBundleParsingError: @retroactive LocalizedError {}
 extension HealthcareServiceBundleParsingError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -950,7 +939,6 @@ extension IDPError: CodedError {
     }
 }
 
-extension IDPError.InternalError: @retroactive LocalizedError {}
 extension IDPError.InternalError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1106,7 +1094,6 @@ extension InternalCommunicationError: CodedError {
     }
 }
 
-extension JWE.Error: @retroactive LocalizedError {}
 extension JWE.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1147,7 +1134,6 @@ extension JWT.Error: CodedError {
     }
 }
 
-extension KeyVerifier.Error: @retroactive LocalizedError {}
 extension KeyVerifier.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1546,7 +1532,6 @@ extension OrganDonorJumpServiceError: CodedError {
     }
 }
 
-extension PharmacyBundleParsingError: @retroactive LocalizedError {}
 extension PharmacyBundleParsingError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1562,7 +1547,6 @@ extension PharmacyBundleParsingError: CodedError {
     }
 }
 
-extension PharmacyCoreDataStore.Error: @retroactive LocalizedError {}
 extension PharmacyCoreDataStore.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1650,7 +1634,6 @@ extension PrescriptionRepositoryError: CodedError {
     }
 }
 
-extension PrivateKeyContainer.Error: @retroactive LocalizedError {}
 extension PrivateKeyContainer.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1700,7 +1683,6 @@ extension PrivateKeyContainer.Error: CodedError {
     }
 }
 
-extension ProfileCoreDataStore.Error: @retroactive LocalizedError {}
 extension ProfileCoreDataStore.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1857,7 +1839,6 @@ extension RegisteredDevicesServiceError: CodedError {
     }
 }
 
-extension RemoteStorageBundleParsingError: @retroactive LocalizedError {}
 extension RemoteStorageBundleParsingError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1944,7 +1925,6 @@ extension ScannerDomain.Error: CodedError {
     }
 }
 
-extension SecureEnclaveSignatureProviderError: @retroactive LocalizedError {}
 extension SecureEnclaveSignatureProviderError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -2018,7 +1998,6 @@ extension ShareSheetDomain.Error: CodedError {
     }
 }
 
-extension SharedTask.Error: @retroactive LocalizedError {}
 extension SharedTask.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -2042,7 +2021,6 @@ extension SharedTask.Error: CodedError {
     }
 }
 
-extension ShipmentInfoCoreDataStore.Error: @retroactive LocalizedError {}
 extension ShipmentInfoCoreDataStore.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -2060,7 +2038,6 @@ extension ShipmentInfoCoreDataStore.Error: CodedError {
     }
 }
 
-extension TokenPayload.Error: @retroactive LocalizedError {}
 extension TokenPayload.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -2084,7 +2061,6 @@ extension TokenPayload.Error: CodedError {
     }
 }
 
-extension TrustAnchor.Error: @retroactive LocalizedError {}
 extension TrustAnchor.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -2137,7 +2113,6 @@ extension TrustStoreError: CodedError {
     }
 }
 
-extension TrustStoreError.InternalError: @retroactive LocalizedError {}
 extension TrustStoreError.InternalError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -2216,7 +2191,6 @@ extension UserSessionProviderError: CodedError {
     }
 }
 
-extension VAUError: @retroactive LocalizedError {}
 extension VAUError: CodedError {
     var erpErrorCode: String {
         switch self {

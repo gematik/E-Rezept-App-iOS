@@ -20,9 +20,7 @@
 // For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
 //
 
-import Combine
 import Foundation
-import OpenSSL
 
 /// Structure for registering a biometric key. See `SignedPairingData` for sigend representation.
 /// [REQ:gemSpec_IDP_Dienst:A_21415:Pairing_Data]

@@ -145,15 +145,6 @@ class StandardSessionContainer: UserSession {
         return DefaultFHIRVZDSession(config: fhirVZDConfig)
     }()
 
-    lazy var bfarmSession: BfArMSession = {
-        let bfarmConfig = BfArMClient.Configuration(
-            eRezeptAPIServer: appConfiguration.eRezept,
-            eRezeptAdditionalHeader: appConfiguration.eRezeptAdditionalHeader
-        )
-
-        return DefaultBfArMSession(config: bfarmConfig)
-    }()
-
     lazy var extAuthRequestStorage: ExtAuthRequestStorage = { PersistentExtAuthRequestStorage() }()
     lazy var secureUserStore: SecureUserDataStore = { keychainStorage }()
     lazy var localUserStore: UserDataStore = { UserDefaultsStore() }()
@@ -215,12 +206,6 @@ class StandardSessionContainer: UserSession {
         return DefaultPharmacyRepository(
             disk: pharmacyCoreDataStore,
             cloud: pharmacyServiceFactory.construct(fhirClient, fhirVZDSession)
-        )
-    }()
-
-    lazy var bfArMService: BfArMService = {
-        DefaultBfArMService(
-            session: bfarmSession
         )
     }()
 
@@ -407,7 +392,7 @@ extension StandardSessionContainer {
             IDPInterceptor(session: idpSession, delegate: nil),
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
-            session.provideInterceptor(),
+            VAUInterceptor(vauSession: session),
             AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
         ]
 

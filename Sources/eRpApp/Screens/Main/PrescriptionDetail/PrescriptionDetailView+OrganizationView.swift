@@ -26,45 +26,43 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct OrganizationView: View {
-        @Perception.Bindable var store: StoreOf<OrganizationDomain>
+        @Bindable var store: StoreOf<OrganizationDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                ScrollView(.vertical) {
-                    SectionContainer {
-                        SubTitle(
-                            title: store.organization.name ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtOrganizationName
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrName)
+            ScrollView(.vertical) {
+                SectionContainer {
+                    SubTitle(
+                        title: store.organization.name ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtOrganizationName
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrName)
 
-                        SubTitle(
-                            title: store.organization.identifier ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtOrganizationId
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrIdentifier)
+                    SubTitle(
+                        title: store.organization.identifier ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtOrganizationId
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrIdentifier)
 
-                        SubTitle(
-                            title: store.organization.address ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtOrganizationAddress
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrAddress)
+                    SubTitle(
+                        title: store.organization.address ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtOrganizationAddress
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrAddress)
 
-                        SubTitle(
-                            title: store.organization.phone ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtOrganizationPhone
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrPhone)
+                    SubTitle(
+                        title: store.organization.phone ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtOrganizationPhone
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrPhone)
 
-                        SubTitle(
-                            title: store.organization.email ?? L10n.prscFdTxtNa.text,
-                            description: L10n.prscFdTxtOrganizationEmail
-                        )
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrEmail)
-                    }.sectionContainerStyle(.inline)
-                }
-                .navigationBarTitle(Text(L10n.prscFdTxtOrganizationTitle), displayMode: .inline)
+                    SubTitle(
+                        title: store.organization.email ?? L10n.prscFdTxtNa.text,
+                        description: L10n.prscFdTxtOrganizationEmail
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlOrEmail)
+                }.sectionContainerStyle(.inline)
             }
+            .navigationBarTitle(Text(L10n.prscFdTxtOrganizationTitle), displayMode: .inline)
         }
     }
 }

@@ -182,7 +182,7 @@ class MockUserSession: UserSession {
         MockSecureEnclaveSignatureProvider()
     }()
 
-    var bfArMService: BfArMService = BfArMServiceMock()
+    var bfarmSession: BfArMSession = .init(fetchBfArMInfo: { _ in nil }, fetchCachedImage: { _ in nil })
 }
 
 class MockSecureUserStore: SecureUserDataStore {

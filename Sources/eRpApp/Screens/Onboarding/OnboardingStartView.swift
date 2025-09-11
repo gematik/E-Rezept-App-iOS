@@ -133,7 +133,7 @@ struct OnboardingStartView: View {
                     Spacer()
                     Image(decorative: Asset.Onboarding.Start.disabledMale).padding(.trailing, 16)
                     Spacer()
-                    Image(decorative: Asset.Onboarding.Start.baby).padding(.trailing, 16)
+                    Image(decorative: Asset.Onboarding.Start.babyMale).padding(.trailing, 16)
                     Spacer()
                 }
             }

@@ -27,124 +27,119 @@ import eRpStyleKit
 import SwiftUI
 
 struct HealthCardPasswordPinView: View {
-    @Perception.Bindable var store: StoreOf<HealthCardPasswordPinDomain>
+    @Bindable var store: StoreOf<HealthCardPasswordPinDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack(alignment: .leading, spacing: 0) {
-                PINView(store: store).padding()
+        VStack(alignment: .leading, spacing: 0) {
+            PINView(store: store).padding()
 
-                Spacer(minLength: 0)
+            Spacer(minLength: 0)
 
-                GreyDivider()
+            GreyDivider()
 
-                Button(
-                    action: {
-                        // workaround: dismiss keyboard to fix safearea bug for iOS 16
-                        if #available(iOS 16, *) {
-                            UIApplication.shared.dismissKeyboard()
-                        }
-                        store.send(.advance)
-                    },
-                    label: { Text(L10n.stgBtnCardResetAdvance) }
-                )
-                .disabled(!store.pinMayAdvance)
-                .buttonStyle(.primary(isEnabled: store.pinMayAdvance, width: .wideHugging))
-                .frame(maxWidth: .infinity, alignment: .center)
-                .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .alert($store.scope(state: \.destination?.pinAlert, action: \.destination.pinAlert))
+            Button(
+                action: {
+                    // workaround: dismiss keyboard to fix safearea bug for iOS 16
+                    if #available(iOS 16, *) {
+                        UIApplication.shared.dismissKeyboard()
+                    }
+                    store.send(.advance)
+                },
+                label: { Text(L10n.stgBtnCardResetAdvance) }
+            )
+            .disabled(!store.pinMayAdvance)
+            .buttonStyle(.primary(isEnabled: store.pinMayAdvance, width: .wideHugging))
+            .frame(maxWidth: .infinity, alignment: .center)
+            .accessibility(identifier: A11y.settings.card.stgBtnCardResetAdvance)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .alert($store.scope(state: \.destination?.pinAlert, action: \.destination.pinAlert))
     }
 
     private struct PINView: View {
-        @Perception.Bindable var store: StoreOf<HealthCardPasswordPinDomain>
+        @Bindable var store: StoreOf<HealthCardPasswordPinDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L10n.stgTxtCardResetPinHeadline)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.headline.bold())
-                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHeadline)
-                            .padding(.bottom)
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.stgTxtCardResetPinHeadline)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.headline.bold())
+                        .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHeadline)
+                        .padding(.bottom)
 
-                        PINField1View(store: store)
+                    PINField1View(store: store)
 
-                        Text(L10n.stgTxtCardResetPinHint)
+                    Text(L10n.stgTxtCardResetPinHint)
+                        .font(.footnote)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHint)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    PINField2View(store: store)
+
+                    if store.pinShowWarning {
+                        Text(L10n.stgTxtCardResetPinWarning)
                             .font(.footnote)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHint)
+                            .foregroundColor(Colors.red700)
+                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinWarning)
                             .frame(maxWidth: .infinity, alignment: .leading)
-
-                        PINField2View(store: store)
-
-                        if store.pinShowWarning {
-                            Text(L10n.stgTxtCardResetPinWarning)
-                                .font(.footnote)
-                                .foregroundColor(Colors.red700)
-                                .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinWarning)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-
-                        HintView(
-                            hint: Hint<SettingsDomain.Action>(
-                                id: A11y.settings.card.stgTxtCardResetPinHintMessage,
-                                title: L10n.stgTxtCardResetPinHintTitle.text,
-                                message: L10n.stgTxtCardResetPinHintMessage.text,
-                                image: .init(name: Asset.Illustrations.infoLogo.name),
-                                style: .neutral,
-                                buttonStyle: .quaternary,
-                                imageStyle: .topAligned
-                            ),
-                            textAction: nil,
-                            closeAction: nil
-                        )
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets())
-                        .padding()
                     }
-                }
-                .navigationDestination(
-                    item: $store.scope(
-                        state: \.destination?.readCard,
-                        action: \.destination.readCard
+
+                    HintView(
+                        hint: Hint<SettingsDomain.Action>(
+                            id: A11y.settings.card.stgTxtCardResetPinHintMessage,
+                            title: L10n.stgTxtCardResetPinHintTitle.text,
+                            message: L10n.stgTxtCardResetPinHintMessage.text,
+                            image: .init(asset: Asset.Illustrations.infoLogo),
+                            style: .neutral,
+                            buttonStyle: .quaternary,
+                            imageStyle: .topAligned
+                        ),
+                        textAction: nil,
+                        closeAction: nil
                     )
-                ) { store in
-                    HealthCardPasswordReadCardView(store: store)
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
+                    .padding()
                 }
+            }
+            .navigationDestination(
+                item: $store.scope(
+                    state: \.destination?.readCard,
+                    action: \.destination.readCard
+                )
+            ) { store in
+                HealthCardPasswordReadCardView(store: store)
             }
         }
     }
 
     private struct PINField1View: View {
-        @Perception.Bindable var store: StoreOf<HealthCardPasswordPinDomain>
+        @Bindable var store: StoreOf<HealthCardPasswordPinDomain>
         @FocusState private var focused: Bool
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(alignment: .leading) {
-                    SecureFieldWithReveal(
-                        titleKey: L10n.stgEdtCardResetPinInputPin1,
-                        text: $store.pin1.sending(\.updatePin1),
-                        textContentType: .password,
-                        backgroundColor: Colors.systemGray5
-                    ) {}
-                        .textContentType(.oneTimeCode)
-                        .multilineTextAlignment(.leading)
-                        .keyboardType(.numberPad)
-                        .padding()
-                        .font(Font.title3)
-                        .background(Colors.systemGray5)
-                        .cornerRadius(8)
-                        .focused($focused)
-                        .accessibility(identifier: A11y.settings.card.stgEdtCardResetPinInputPin1)
-                }
+            VStack(alignment: .leading) {
+                SecureFieldWithReveal(
+                    titleKey: L10n.stgEdtCardResetPinInputPin1,
+                    text: $store.pin1.sending(\.updatePin1),
+                    textContentType: .password,
+                    backgroundColor: Colors.systemGray5
+                ) {}
+                    .textContentType(.oneTimeCode)
+                    .multilineTextAlignment(.leading)
+                    .keyboardType(.numberPad)
+                    .padding()
+                    .font(Font.title3)
+                    .background(Colors.systemGray5)
+                    .cornerRadius(8)
+                    .focused($focused)
+                    .accessibility(identifier: A11y.settings.card.stgEdtCardResetPinInputPin1)
             }
+
             .onAppear {
                 focused = true
             }
@@ -152,26 +147,24 @@ struct HealthCardPasswordPinView: View {
     }
 
     private struct PINField2View: View {
-        @Perception.Bindable var store: StoreOf<HealthCardPasswordPinDomain>
+        @Bindable var store: StoreOf<HealthCardPasswordPinDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(alignment: .leading) {
-                    SecureFieldWithReveal(
-                        titleKey: L10n.stgEdtCardResetPinInputPin2,
-                        text: $store.pin2.sending(\.updatePin2),
-                        textContentType: .password,
-                        backgroundColor: Colors.systemGray5
-                    ) {}
-                        .textContentType(.oneTimeCode)
-                        .multilineTextAlignment(.leading)
-                        .keyboardType(.numberPad)
-                        .padding()
-                        .font(Font.title3)
-                        .background(Colors.systemGray5)
-                        .cornerRadius(8)
-                        .accessibility(identifier: A11y.settings.card.stgEdtCardResetPinInputPin2)
-                }
+            VStack(alignment: .leading) {
+                SecureFieldWithReveal(
+                    titleKey: L10n.stgEdtCardResetPinInputPin2,
+                    text: $store.pin2.sending(\.updatePin2),
+                    textContentType: .password,
+                    backgroundColor: Colors.systemGray5
+                ) {}
+                    .textContentType(.oneTimeCode)
+                    .multilineTextAlignment(.leading)
+                    .keyboardType(.numberPad)
+                    .padding()
+                    .font(Font.title3)
+                    .background(Colors.systemGray5)
+                    .cornerRadius(8)
+                    .accessibility(identifier: A11y.settings.card.stgEdtCardResetPinInputPin2)
             }
         }
     }

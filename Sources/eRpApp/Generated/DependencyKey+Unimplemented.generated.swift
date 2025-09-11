@@ -68,13 +68,6 @@ struct UnimplementedAuthenticationChallengeProvider: AuthenticationChallengeProv
         fatalError("startAuthenticationChallenge has not been implemented")
     }
 }
-struct UnimplementedBfArMService: BfArMService {
-    init() {}
-
-    func fetchBfArMInfo(pzn: String) async throws -> BfArMDiGaDetails? {
-        fatalError("fetchBfArMInfo(pzn:) has not been implemented")
-    }
-}
 struct UnimplementedChargeItemListDomainService: ChargeItemListDomainService {
     init() {}
 
@@ -916,11 +909,6 @@ struct UnimplementedUserSession: UserSession {
     }
 
     var pharmacyRepository: PharmacyRepository {
-        get { fatalError("") }
-        set(value) { fatalError("") }
-    }
-
-    var bfArMService: BfArMService {
         get { fatalError("") }
         set(value) { fatalError("") }
     }

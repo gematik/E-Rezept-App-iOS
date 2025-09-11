@@ -26,74 +26,72 @@ import eRpStyleKit
 import SwiftUI
 
 struct DiGaInsuranceListView: View {
-    @Perception.Bindable var store: StoreOf<DiGaInsuranceListDomain>
+    @Bindable var store: StoreOf<DiGaInsuranceListDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L10n.digaInsuranceListTxtHeader)
-                        .multilineTextAlignment(.leading)
-                        .font(Font.title.weight(.bold))
-                        .accessibility(identifier: A11y.digaInsuranceList.digaInsuranceListTxtSubheader)
+        VStack {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L10n.digaInsuranceListTxtHeader)
+                    .multilineTextAlignment(.leading)
+                    .font(Font.title.weight(.bold))
+                    .accessibility(identifier: A11y.digaInsuranceList.digaInsuranceListTxtSubheader)
 
-                    Text(L10n.digaInsuranceListTxtSubtext)
-                        .multilineTextAlignment(.leading)
-                        .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
-                        .accessibility(identifier: A11y.digaInsuranceList.digaInsuranceListTxtSubheader)
-                }.padding()
+                Text(L10n.digaInsuranceListTxtSubtext)
+                    .multilineTextAlignment(.leading)
+                    .font(.subheadline)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .accessibility(identifier: A11y.digaInsuranceList.digaInsuranceListTxtSubheader)
+            }.padding()
 
-                SearchBar(
-                    searchText: $store.searchText.sending(\.searchList),
-                    prompt: L10n.orderEgkTxtSearchPrompt.key
-                ) {}.padding()
+            SearchBar(
+                searchText: $store.searchText.sending(\.searchList),
+                prompt: L10n.orderEgkTxtSearchPrompt.key
+            ) {}.padding()
 
-                if store.isLoading {
-                    VStack {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
-                    }
-                    .padding()
-                    .frame(maxHeight: .infinity, alignment: .center)
-                } else {
-                    List {
-                        if !store.filteredinsurances.isEmpty {
-                            ForEach(store.filteredinsurances) { insurance in
-                                Button(action: {
-                                    store.send(.selectInsurance(insurance))
-                                }, label: {
-                                    HStack {
-                                        Image(asset: Asset.InsuranceLogo.imageAsset(for: insurance.telematikId))
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 42, height: 42)
-                                        Text(insurance.name ?? L10n.digaDtlTxtNa.text)
-                                    }
-                                })
-                            }
-                        } else {
-                            VStack {
-                                Text(L10n.phaSearchTxtNoResultsTitle)
-                                    .font(.headline)
-                                    .padding(.bottom, 1)
-                                Text(L10n.phaSearchTxtNoResults)
-                                    .font(.subheadline)
-                                    .foregroundColor(Colors.textSecondary)
-                                    .multilineTextAlignment(.center)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding()
-                            .frame(maxHeight: .infinity, alignment: .center)
-                        }
-                    }
-                    .listStyle(PlainListStyle())
+            if store.isLoading {
+                VStack {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
                 }
+                .padding()
+                .frame(maxHeight: .infinity, alignment: .center)
+            } else {
+                List {
+                    if !store.filteredinsurances.isEmpty {
+                        ForEach(store.filteredinsurances) { insurance in
+                            Button(action: {
+                                store.send(.selectInsurance(insurance))
+                            }, label: {
+                                HStack {
+                                    Image(asset: Asset.InsuranceLogo.imageAsset(for: insurance.telematikId))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 42, height: 42)
+                                    Text(insurance.name ?? L10n.digaDtlTxtNa.text)
+                                }
+                            })
+                        }
+                    } else {
+                        VStack {
+                            Text(L10n.phaSearchTxtNoResultsTitle)
+                                .font(.headline)
+                                .padding(.bottom, 1)
+                            Text(L10n.phaSearchTxtNoResults)
+                                .font(.subheadline)
+                                .foregroundColor(Colors.textSecondary)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding()
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                }
+                .listStyle(PlainListStyle())
             }
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            .task {
-                store.send(.task)
-            }
+        }
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        .task {
+            store.send(.task)
         }
     }
 }

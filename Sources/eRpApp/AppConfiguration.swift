@@ -43,6 +43,8 @@ extension AppConfiguration.Environment {
     static let ERP_IBM_PU_URL_TEMP: String = "https://erp.app.ti-dienste.de/"
     static let FHIRVZD_PU_URL_TEMP: String = "https://fhir-directory.vzd.ti-dienste.de/"
     static let API_EREZEPT_GEMATIK_DE_PU_URL_TEMP: String = "https://api.erezept.gematik.de/"
+    static let ORGAN_DONATION_REGISTER_PU_URL_TEMP: String = "https://organspende-register.de/erklaerendenportal/epa"
+    static let ORGAN_DONATION_REGISTER_PU_FALLBACK_URL_TEMP: String = "https://www.organspende-info.de/"
     // swiftlint:enable identifier_name
 }
 
@@ -290,7 +292,7 @@ let ORGAN_DONATION_REGISTER_RU_URL = URL(string: AppConfiguration.Environment.OR
 
 #endif
 
-let ORGAN_DONATION_REGISTER_PU_URL = URL(string: AppConfiguration.Environment.ORGAN_DONATION_REGISTER_PU)
+let ORGAN_DONATION_REGISTER_PU_URL = URL(string: AppConfiguration.Environment.ORGAN_DONATION_REGISTER_PU_URL_TEMP)
 
 // swiftlint:enable identifier_name
 

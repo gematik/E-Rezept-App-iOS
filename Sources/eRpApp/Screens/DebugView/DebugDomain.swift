@@ -23,6 +23,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpRemoteStorage
 import FHIRVZD
 import Foundation
 import IDP
@@ -39,6 +40,7 @@ struct DebugDomain {
         @Shared(.fhirVZDToken) var fhirVZDToken
         @Shared(.overwriteDIGAIK) var overwriteDIGAIK
         @Shared(.appDefaults) var appDefaults
+        @Shared(.useWorkflow15ForSendingCommunications) var useWorkflow15: Bool
 
         var localTasks: [ErxTask] = []
         var hideOnboarding = true

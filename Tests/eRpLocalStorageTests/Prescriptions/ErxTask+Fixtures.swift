@@ -67,7 +67,7 @@ extension ErxTask {
                         workPlaceIdentifier: "Hard-Work-Comp",
                         date: "2021-06-05T10:55:04+02:00"
                     ),
-                    bvg: true,
+                    ser: true,
                     coPaymentStatus: .artificialInsemination,
                     multiplePrescription: .init(
                         mark: true,

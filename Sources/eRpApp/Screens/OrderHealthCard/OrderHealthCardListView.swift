@@ -26,62 +26,60 @@ import eRpStyleKit
 import SwiftUI
 
 struct OrderHealthCardListView: View {
-    @Perception.Bindable var store: StoreOf<OrderHealthCardDomain>
+    @Bindable var store: StoreOf<OrderHealthCardDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                SearchBar(
-                    searchText: $store.searchText,
-                    prompt: L10n.orderEgkTxtSearchPrompt.key
-                ) {
-                    store.send(.searchList)
-                }
-                .padding()
-                List {
-                    if !store.filteredInsuranceCompanies.isEmpty {
-                        ForEach(store.filteredInsuranceCompanies) { insurance in
-                            Button(insurance.name) {
-                                store.send(.selectHealthInsurance(insurance))
-                            }
+        VStack {
+            SearchBar(
+                searchText: $store.searchText,
+                prompt: L10n.orderEgkTxtSearchPrompt.key
+            ) {
+                store.send(.searchList)
+            }
+            .padding()
+            List {
+                if !store.filteredInsuranceCompanies.isEmpty {
+                    ForEach(store.filteredInsuranceCompanies) { insurance in
+                        Button(insurance.name) {
+                            store.send(.selectHealthInsurance(insurance))
                         }
-                    } else {
-                        VStack {
-                            Text(L10n.phaSearchTxtNoResultsTitle)
-                                .font(.headline)
-                                .padding(.bottom, 1)
-                            Text(L10n.phaSearchTxtNoResults)
-                                .font(.subheadline)
-                                .foregroundColor(Colors.textSecondary)
-                                .multilineTextAlignment(.center)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        .frame(maxWidth: .infinity)
                     }
+                } else {
+                    VStack {
+                        Text(L10n.phaSearchTxtNoResultsTitle)
+                            .font(.headline)
+                            .padding(.bottom, 1)
+                        Text(L10n.phaSearchTxtNoResults)
+                            .font(.subheadline)
+                            .foregroundColor(Colors.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .listStyle(PlainListStyle())
             }
-            .navigationDestination(
-                item: $store.scope(state: \.destination?.serviceInquiry, action: \.destination.serviceInquiry)
-            ) { store in
-                OrderHealthCardInquiryView(store: store)
-            }
-            .onAppear {
-                store.send(.loadList)
+            .listStyle(PlainListStyle())
+        }
+        .navigationDestination(
+            item: $store.scope(state: \.destination?.serviceInquiry, action: \.destination.serviceInquiry)
+        ) { store in
+            OrderHealthCardInquiryView(store: store)
+        }
+        .onAppear {
+            store.send(.loadList)
+            store.send(.resetList)
+        }
+        .onChange(of: store.searchText) { _, _ in
+            if store.searchText.isEmpty {
                 store.send(.resetList)
             }
-            .onChange(of: store.searchText) { _ in
-                if store.searchText.isEmpty {
-                    store.send(.resetList)
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem {
-                    store.send(.delegate(.close))
-                }
-            )
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarItems(
+            trailing: NavigationBarCloseItem {
+                store.send(.delegate(.close))
+            }
+        )
     }
 }
 

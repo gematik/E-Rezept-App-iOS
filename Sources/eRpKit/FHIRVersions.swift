@@ -24,6 +24,7 @@
 import Foundation
 
 // swiftlint:disable identifier_name
+// swiftlint:disable line_length
 // swiftlint:disable file_length
 
 /// Checkout the FHIR Version document for more informations about all types of versions and when they will be applied
@@ -74,6 +75,19 @@ public enum Workflow {
         case v1_3_0
         /// https://simplifier.net/packages/de.gematik.erezept-workflow.r4/1.4.3
         case v1_4_3
+        /// https://simplifier.net/packages/de.gematik.erezept-workflow.r4/1.5.2
+        case v1_5_2
+
+        /// FHIR Profiles this resource claims to conform to
+        public var majorMinor: String {
+            switch self {
+            case .v1_1_1: return "1.1"
+            case .v1_2_0: return "1.2"
+            case .v1_3_0: return "1.3"
+            case .v1_4_3: return "1.4"
+            case .v1_5_2: return "1.5"
+            }
+        }
     }
 
     /// Supported Keys of GEM `Workflow` definitions
@@ -81,8 +95,8 @@ public enum Workflow {
         /// indicates when that last medication dispense has been created
         public static let lastMedicationDispense: [Version: String] = [
             .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_LastMedicationDispense",
-            .v1_4_3:
-                "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_LastMedicationDispense",
+            .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_LastMedicationDispense",
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_LastMedicationDispense",
         ]
 
         /// Prescription Type
@@ -91,6 +105,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
             .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
             .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
         ]
         /// Flow Type
         public static let flowTypeKeys: [Version: String] = [
@@ -98,6 +113,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
             .v1_3_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
             .v1_4_3: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
+            .v1_5_2: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
         ]
         /// Document Type
         public static let documentTypeKeys: [Version: String] = [
@@ -105,6 +121,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
             .v1_3_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
             .v1_4_3: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
+            .v1_5_2: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
         ]
         /// Prescription ID
         public static let prescriptionIdKeys: [Version: String] = [
@@ -112,6 +129,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
             .v1_3_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
             .v1_4_3: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+            .v1_5_2: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
         ]
         /// Access Code
         public static let accessCodeKeys: [Version: String] = [
@@ -119,6 +137,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
             .v1_3_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
             .v1_4_3: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
+            .v1_5_2: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
         ]
         /// Accept Date
         public static let acceptDateKeys: [Version: String] = [
@@ -126,6 +145,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AcceptDate",
             .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AcceptDate",
             .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AcceptDate",
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AcceptDate",
         ]
         /// Expiry Date
         public static let expiryDateKeys: [Version: String] = [
@@ -133,6 +153,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_ExpiryDate",
             .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_ExpiryDate",
             .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_ExpiryDate",
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_ExpiryDate",
         ]
         /// Telematik ID
         public static let telematikIdKeys: [Version: String] = [
@@ -140,6 +161,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/sid/telematik-id",
             .v1_3_0: "https://gematik.de/fhir/sid/telematik-id",
             .v1_4_3: "https://gematik.de/fhir/sid/telematik-id",
+            .v1_5_2: "https://gematik.de/fhir/sid/telematik-id",
         ]
         /// Communication Reply
         public static let communicationReply: [Version: String] = [
@@ -147,6 +169,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Reply",
             .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Reply",
             .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Reply",
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Reply",
         ]
         /// Communication Dispense Request
         public static let communicationDispReq: [Version: String] = [
@@ -154,6 +177,7 @@ public enum Workflow {
             .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
             .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
         ]
         /// Communication Info Request
         public static let communicationInfoReq: [Version: String] = [
@@ -168,6 +192,19 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Representative",
             .v1_3_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Representative",
             .v1_4_3: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Representative",
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Representative",
+        ]
+        /// Communication DiGA
+        public static let communicationDiga: [Version: String] = [
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DiGA",
+        ]
+        /// Redeemable in EU Flag
+        public static let euIsRedeemableByProperties: [Version: String] = [
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_EU_IS_REDEEMABLE_BY_PROPERTIES",
+        ]
+        /// Redeemable EU ePrescription by Patient Authorization
+        public static let euIsRedeemableByPatientAuthorization: [Version: String] = [
+            .v1_5_2: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_EU_IS_REDEEMABLE_BY_PATIENT_AUTHORIZATION",
         ]
         /// Insured Person ID
         public static let kvIDKeys: [Version: String] = [
@@ -175,6 +212,7 @@ public enum Workflow {
             .v1_2_0: "http://fhir.de/sid/gkv/kvid-10",
             .v1_3_0: "http://fhir.de/sid/gkv/kvid-10",
             .v1_4_3: Self.unifiedKvIDKeys[.v1_4_3]!, // swiftlint:disable:this force_unwrapping
+            .v1_5_2: Self.unifiedKvIDKeys[.v1_5_2]!, // swiftlint:disable:this force_unwrapping
         ]
         /// Insured Person ID
         /// // to-do: delete when FD is talking workflow >= 1.4.3 only
@@ -182,11 +220,13 @@ public enum Workflow {
             .v1_2_0: "http://fhir.de/sid/pkv/kvid-10",
             .v1_3_0: "http://fhir.de/sid/pkv/kvid-10",
             .v1_4_3: Self.unifiedKvIDKeys[.v1_4_3]!, // swiftlint:disable:this force_unwrapping
+            .v1_5_2: Self.unifiedKvIDKeys[.v1_5_2]!, // swiftlint:disable:this force_unwrapping
         ]
         /// Insured Person ID
         /// "Der PKV- und GKV-Identifier wurde in den deutschen Basisprofilen mit folgendem .system vereinheitlicht"
         public static let unifiedKvIDKeys: [Version: String] = [
             .v1_4_3: "http://fhir.de/sid/gkv/kvid-10",
+            .v1_5_2: "http://fhir.de/sid/gkv/kvid-10",
         ]
         /// Order ID
         public static let orderIdKeys: [Version: String] = [
@@ -194,6 +234,7 @@ public enum Workflow {
             .v1_2_0: "https://gematik.de/fhir/NamingSystem/OrderID",
             .v1_3_0: "https://gematik.de/fhir/NamingSystem/OrderID",
             .v1_4_3: "https://gematik.de/fhir/NamingSystem/OrderID",
+            .v1_5_2: "https://gematik.de/fhir/NamingSystem/OrderID",
         ]
     }
 }
@@ -208,6 +249,10 @@ public enum ErpPrescription {
         case v1_0_2 = "1.0.2"
         /// https://simplifier.net/packages/kbv.ita.erp/1.1.0
         case v1_1_0 = "1.1.0"
+        /// https://simplifier.net/packages/kbv.ita.erp/1.2.0
+        case v1_2_0 = "1.2.0"
+        /// https://simplifier.net/packages/kbv.ita.erp/1.3.2
+        case v1_3_2 = "1.3.2"
     }
 
     /// Collection of defined keys within the KBV profiles (begins with `fhir.kbv.de/`)
@@ -254,6 +299,8 @@ public enum ErpPrescription {
             /// Base Medication Type
             public static let baseMedicationTypeKey: [Version: String] = [
                 .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+                .v1_2_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+                .v1_3_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
             ]
         }
 
@@ -263,31 +310,46 @@ public enum ErpPrescription {
             public static let statusCoPaymentKey: [Version: String] = [
                 .v1_0_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_StatusCoPayment",
                 .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_StatusCoPayment",
+                .v1_2_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_StatusCoPayment",
+                .v1_3_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_StatusCoPayment",
             ]
             /// Nocturne Fee Waiver
             public static let noctuFeeWaiverKey =
                 "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee"
-            /// Federal Supply Act (BVG)
-            public static let bvg = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG"
+            /// Social compensation law (SER)
+            public static let ser: [Version: String] = [
+                .v1_0_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
+                .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
+                .v1_2_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_SER",
+                .v1_3_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_SER",
+            ]
             /// Accident Info
             public static let accidentInfoKey: [Version: String] = [
                 .v1_0_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Accident",
                 .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Accident",
+                .v1_2_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Accident",
+                .v1_3_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Accident",
             ]
             /// Accident Type
             public static let accidentTypeKey: [Version: String] = [
                 .v1_0_2: "unfallkennzeichen",
                 .v1_1_0: "Unfallkennzeichen",
+                .v1_2_0: "Unfallkennzeichen",
+                .v1_3_2: "Unfallkennzeichen",
             ]
             /// Accident Place
             public static let accidentPlaceKey: [Version: String] = [
                 .v1_0_2: "unfallbetrieb",
                 .v1_1_0: "Unfallbetrieb",
+                .v1_2_0: "Unfallbetrieb",
+                .v1_3_2: "Unfallbetrieb",
             ]
             /// Accident Date
             public static let accidentDateKey: [Version: String] = [
                 .v1_0_2: "unfalltag",
                 .v1_1_0: "Unfalltag",
+                .v1_2_0: "Unfalltag",
+                .v1_3_2: "Unfalltag",
             ]
             /// Multiple Prescription
             public static let multiplePrescriptionKey =
@@ -335,17 +397,22 @@ public enum ErpPrescription {
 
         /// Pharmaceutical Number (PZN)
         public static let pznKey = "http://fhir.de/CodeSystem/ifa/pzn"
-        /// Dosage Flag
-        public static let dosageFlag = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag"
         /// Legal Insured Person ID
         public static let gkvKvIDKeys: [Version: String] = [
             .v1_0_2: "http://fhir.de/NamingSystem/gkv/kvid-10",
             .v1_1_0: "http://fhir.de/sid/gkv/kvid-10",
+            .v1_2_0: Self.unifiedKvIDKeys[.v1_2_0]!, // swiftlint:disable:this force_unwrapping
         ]
         /// Privately Insured Person ID
         public static let pkvKvIDKeys: [Version: String] = [
             .v1_0_2: "http://www.acme.com/identifiers/patient",
             .v1_1_0: "http://fhir.de/sid/pkv/kvid-10",
+            .v1_2_0: Self.unifiedKvIDKeys[.v1_2_0]!, // swiftlint:disable:this force_unwrapping
+        ]
+        /// Insured Person ID
+        /// "Der PKV- und GKV-Identifier wurde in den deutschen Basisprofilen mit folgendem .system vereinheitlicht"
+        public static let unifiedKvIDKeys: [Version: String] = [
+            .v1_2_0: "http://fhir.de/sid/gkv/kvid-10",
         ]
         /// Dosage Form
         public static let dosageFormKey = "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM"
@@ -381,7 +448,6 @@ public enum EpaMedication {
 
         /// Dosage form of an ingredient in a formulation.
         public static let ingredientDarreichungsformExtensionKey =
-            // swiftlint:disable:next line_length
             "https://gematik.de/fhir/epa-medication/StructureDefinition/medication-ingredient-darreichungsform-extension"
 
         /// Amount text in Ingredient's strength
@@ -396,6 +462,8 @@ public enum ErpCharge {
     public enum Version {
         /// https://simplifier.net/packages/de.gematik.erezept-patientenrechnung.r4/1.0.0
         case v1_0_0
+        /// https://simplifier.net/packages/de.gematik.erezept-patientenrechnung.r4/1.1.0
+        case v1_1_0
     }
 
     /// Supported Keys of GEM `ErpCharge` definitions
@@ -405,10 +473,12 @@ public enum ErpCharge {
             /// Consent
             public static let consent: [Version: String] = [
                 .v1_0_0: "https://gematik.de/fhir/erpchrg/StructureDefinition/GEM_ERPCHRG_PR_Consent",
+                .v1_1_0: "https://gematik.de/fhir/erpchrg/StructureDefinition/GEM_ERPCHRG_PR_Consent",
             ]
             /// Consent Type
             public static let consentType: [Version: String] = [
                 .v1_0_0: "https://gematik.de/fhir/erpchrg/CodeSystem/GEM_ERPCHRG_CS_ConsentType",
+                .v1_1_0: "https://gematik.de/fhir/erpchrg/CodeSystem/GEM_ERPCHRG_CS_ConsentType",
             ]
         }
 
@@ -417,14 +487,17 @@ public enum ErpCharge {
             /// Prescription Bundle
             public static let prescriptionBundle: [Version: String] = [
                 .v1_0_0: "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle",
+                .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle",
             ]
             /// Receipt Bundle
             public static let receiptBundle: [Version: String] = [
                 .v1_0_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle",
+                .v1_1_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle",
             ]
             /// Dispense Bundle
             public static let dispenseBundle: [Version: String] = [
                 .v1_0_0: "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle",
+                .v1_1_0: "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle",
             ]
         }
     }
@@ -440,6 +513,8 @@ public struct ABDAERezeptAbgabedaten {
         case v1_2 = "1.2"
         /// https://simplifier.net/packages/de.abda.erezeptabgabedatenpkv/1.3.0
         case v1_3 = "1.3"
+        /// https://simplifier.net/packages/de.abda.eRezeptAbgabedatenPKV/1.4.0
+        case v1_4 = "1.4"
     }
 
     /// instanced DAV_PKV_PR_ERP_AbgabedatenComposition profile
@@ -450,6 +525,8 @@ public struct ABDAERezeptAbgabedaten {
     public let dAV_EX_ERP_ZusatzdatenHerstellung: DAV_EX_ERP_ZusatzdatenHerstellung
     /// instanced DAV_EX_ERP_ZusatzdatenEinheit profile
     public let dAV_EX_ERP_ZusatzdatenEinheit: DAV_EX_ERP_ZusatzdatenEinheit
+    /// instanced DAV_PKV_PR_ERP_Apotheke profile
+    public let dav_PKV_PR_ERP_Apotheke: DAV_PKV_PR_ERP_Apotheke
 
     /// Default initalizer
     public init?(from string: String) {
@@ -459,6 +536,7 @@ public struct ABDAERezeptAbgabedaten {
         dAV_EX_ERP_Abrechnungszeilen = DAV_EX_ERP_Abrechnungszeilen(version: .init(abdaVersion: version))
         dAV_EX_ERP_ZusatzdatenHerstellung = DAV_EX_ERP_ZusatzdatenHerstellung(version: .init(abdaVersion: version))
         dAV_EX_ERP_ZusatzdatenEinheit = DAV_EX_ERP_ZusatzdatenEinheit(version: .init(abdaVersion: version))
+        dav_PKV_PR_ERP_Apotheke = DAV_PKV_PR_ERP_Apotheke(version: .init(abdaVersion: version))
     }
 
     /// https://simplifier.net/packages/de.abda.erezeptabgabedatenpkv/1.3.0/files/2527401
@@ -468,12 +546,14 @@ public struct ABDAERezeptAbgabedaten {
             case v1_1 = "1.1"
             case v1_2 = "1.2"
             case v1_3 = "1.3"
+            case v1_4 = "1.4"
 
             init(abdaVersion: ABDAERezeptAbgabedaten.Version) {
                 switch abdaVersion {
                 case .v1_1: self = .v1_1
                 case .v1_2: self = .v1_2
                 case .v1_3: self = .v1_3
+                case .v1_4: self = .v1_4
                 }
             }
         }
@@ -485,13 +565,13 @@ public struct ABDAERezeptAbgabedaten {
         public var meta_profile: String {
             switch version {
             case .v1_1:
-                // swiftlint:disable line_length
                 return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenComposition"
             case .v1_2:
                 return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenComposition"
             case .v1_3:
                 return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenComposition"
-                // swiftlint:enable line_length
+            case .v1_4:
+                return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenComposition"
             }
         }
 
@@ -506,12 +586,14 @@ public struct ABDAERezeptAbgabedaten {
             case v1_1 = "1.1"
             case v1_2 = "1.2"
             case v1_3 = "1.3"
+            case v1_4 = "1.4"
 
             init(abdaVersion: ABDAERezeptAbgabedaten.Version) {
                 switch abdaVersion {
                 case .v1_1: self = .v1_1
                 case .v1_2: self = .v1_2
                 case .v1_3: self = .v1_3
+                case .v1_4: self = .v1_4
                 }
             }
         }
@@ -525,6 +607,49 @@ public struct ABDAERezeptAbgabedaten {
             case .v1_1: return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Abrechnungszeilen"
             case .v1_2: return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Abrechnungszeilen"
             case .v1_3: return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Abrechnungszeilen"
+            case .v1_4: return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Abrechnungszeilen"
+            }
+        }
+
+        /// Total Additional Fee
+        public var totalAdditionalFee: String {
+            switch version {
+            case .v1_1: return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung"
+            case .v1_2: return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung"
+            case .v1_3: return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung"
+            case .v1_4: return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung"
+            }
+        }
+
+        // MARK: - ChargeItem
+
+        /// Aid Number (HMNR)
+        public var hmnr: String {
+            switch version {
+            case .v1_1: return "http://fhir.de/sid/gkv/hmnr"
+            case .v1_2: return "http://fhir.de/sid/gkv/hmnr"
+            case .v1_3: return "http://fhir.de/sid/gkv/hmnr"
+            case .v1_4: return "http://fhir.de/sid/gkv/hmnr"
+            }
+        }
+
+        /// Medication Dispense Number (TA1)
+        public var ta1: String {
+            switch version {
+            case .v1_1: return "http://TA1.abda.de"
+            case .v1_2: return "http://TA1.abda.de"
+            case .v1_3: return "http://TA1.abda.de"
+            case .v1_4: return "http://TA1.abda.de"
+            }
+        }
+
+        /// Pharmaceutical Number (PZN)
+        public var pzn: String {
+            switch version {
+            case .v1_1: return "http://fhir.de/CodeSystem/ifa/pzn"
+            case .v1_2: return "http://fhir.de/CodeSystem/ifa/pzn"
+            case .v1_3: return "http://fhir.de/CodeSystem/ifa/pzn"
+            case .v1_4: return "http://fhir.de/CodeSystem/ifa/pzn"
             }
         }
     }
@@ -536,12 +661,14 @@ public struct ABDAERezeptAbgabedaten {
             case v1_1 = "1.1"
             case v1_2 = "1.2"
             case v1_3 = "1.3"
+            case v1_4 = "1.4"
 
             init(abdaVersion: ABDAERezeptAbgabedaten.Version) {
                 switch abdaVersion {
                 case .v1_1: self = .v1_1
                 case .v1_2: self = .v1_2
                 case .v1_3: self = .v1_3
+                case .v1_4: self = .v1_4
                 }
             }
         }
@@ -557,6 +684,8 @@ public struct ABDAERezeptAbgabedaten {
             case .v1_2:
                 return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenHerstellung"
             case .v1_3:
+                return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenHerstellung"
+            case .v1_4:
                 return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenHerstellung"
             }
         }
@@ -569,12 +698,14 @@ public struct ABDAERezeptAbgabedaten {
             case v1_1 = "1.1"
             case v1_2 = "1.2"
             case v1_3 = "1.3"
+            case v1_4 = "1.4"
 
             init(abdaVersion: ABDAERezeptAbgabedaten.Version) {
                 switch abdaVersion {
                 case .v1_1: self = .v1_1
                 case .v1_2: self = .v1_2
                 case .v1_3: self = .v1_3
+                case .v1_4: self = .v1_4
                 }
             }
         }
@@ -591,56 +722,45 @@ public struct ABDAERezeptAbgabedaten {
                 return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenEinheit"
             case .v1_3:
                 return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenEinheit"
+            case .v1_4:
+                return "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenEinheit"
             }
         }
 
         /// Extension for some counter element
         public let extension_counter = "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Zaehler"
     }
-}
 
-// ChargeItem
-//   - AbgabedatenBundle
-//      - AbgabedatenComposition
-//      - Organisation (pharmacy)
-//      - Abgabeinformation/MedicationDispense
-//      - invoice
-//      - MedicationDispense
-//      - invoice
+    /// https://simplifier.net/packages/de.abda.erezeptabgabedatenpkv/1.4.0/files/2780094/
+    public struct DAV_PKV_PR_ERP_Apotheke {
+        /// Available Profile Versions
+        public enum Version: String {
+            case v1_1 = "1.1"
+            case v1_2 = "1.2"
+            case v1_3 = "1.3"
+            case v1_4 = "1.4"
 
-/// https://simplifier.net/erezeptabgabedatenpkv
-public enum Dispense {
-    /// Supported Versions of DAV `Dispense` definitions
-    public enum Version {
-        /// https://simplifier.net/packages/de.abda.erezeptabgabedatenpkv/1.2.0
-        case v1_2_0
-    }
+            init(abdaVersion: ABDAERezeptAbgabedaten.Version) {
+                switch abdaVersion {
+                case .v1_1: self = .v1_1
+                case .v1_2: self = .v1_2
+                case .v1_3: self = .v1_3
+                case .v1_4: self = .v1_4
+                }
+            }
+        }
 
-    /// Supported Keys of DAV `Dispense` definitions
-    public enum Key {
-        /// Total Additional Fee
-        public static let totalAdditionalFee: [Version: String] = [
-            .v1_2_0: "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung",
-        ]
+        /// Profile Version
+        public let version: Version
+
         /// Organisation ID
-        public static let organisationIdentifier: [Version: String] = [
-            .v1_2_0: "http://fhir.de/sid/arge-ik/iknr",
-        ]
-
-        /// ChargeItem keys
-        public enum ChargeItem {
-            /// Aid Number (HMNR)
-            public static let hmnr: [Version: String] = [
-                .v1_2_0: "http://fhir.de/sid/gkv/hmnr",
-            ]
-            /// Medication Dispense Number (TA1)
-            public static let ta1: [Version: String] = [
-                .v1_2_0: "http://TA1.abda.de",
-            ]
-            /// Pharmaceutical Number (PZN)
-            public static let pzn: [Version: String] = [
-                .v1_2_0: "http://fhir.de/CodeSystem/ifa/pzn",
-            ]
+        public var organisationIdentifier: String {
+            switch version {
+            case .v1_1: return "http://fhir.de/sid/arge-ik/iknr"
+            case .v1_2: return "http://fhir.de/sid/arge-ik/iknr"
+            case .v1_3: return "http://fhir.de/sid/arge-ik/iknr"
+            case .v1_4: return "http://fhir.de/sid/arge-ik/iknr"
+            }
         }
     }
 }
@@ -677,4 +797,5 @@ public enum FHIRDirectory {
 }
 
 // swiftlint:enable identifier_name
+// swiftlint:enable line_length
 // swiftlint:enable file_length

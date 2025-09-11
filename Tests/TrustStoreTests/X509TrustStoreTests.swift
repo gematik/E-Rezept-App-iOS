@@ -116,7 +116,8 @@ final class X509TrustStoreTests: XCTestCase {
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: [],
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
         )
 
         // then
@@ -130,7 +131,11 @@ final class X509TrustStoreTests: XCTestCase {
         let caCerts = [kompCa10TestOnly, kompCa11TestOnly]
 
         // when
-        let validatedCerts = X509TrustStore.filter(caCerts: caCerts, trusting: trustStore)
+        let validatedCerts = X509TrustStore.filter(
+            caCerts: caCerts,
+            trusting: trustStore,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
+        )
 
         // then
         expect(validatedCerts) == [kompCa10TestOnly, kompCa11TestOnly]
@@ -142,7 +147,11 @@ final class X509TrustStoreTests: XCTestCase {
         let eeCerts = [vauEncReference, idpSigReference2, idpSigReference3]
 
         // when
-        let validatedCerts = X509TrustStore.filter(eeCerts: eeCerts, trusting: trustStore)
+        let validatedCerts = X509TrustStore.filter(
+            eeCerts: eeCerts,
+            trusting: trustStore,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
+        )
 
         // then
         expect(validatedCerts.vauCerts) == [vauEncReference]
@@ -155,7 +164,11 @@ final class X509TrustStoreTests: XCTestCase {
         let eeCerts = [vauEncOtherCa]
 
         // when
-        let validatedCerts = X509TrustStore.filter(eeCerts: eeCerts, trusting: trustStore)
+        let validatedCerts = X509TrustStore.filter(
+            eeCerts: eeCerts,
+            trusting: trustStore,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
+        )
 
         // expect
         expect(validatedCerts.vauCerts) == [vauEncOtherCa]
@@ -168,7 +181,11 @@ final class X509TrustStoreTests: XCTestCase {
         let eeCerts = [vauSigReference, vauEncExpired, vauEncOtherCa]
 
         // when
-        let validatedCerts = X509TrustStore.filter(eeCerts: eeCerts, trusting: trustStore)
+        let validatedCerts = X509TrustStore.filter(
+            eeCerts: eeCerts,
+            trusting: trustStore,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
+        )
 
         // then
         expect(validatedCerts.vauCerts) == []
@@ -190,7 +207,11 @@ final class X509TrustStoreTests: XCTestCase {
         let certList = try CertList.from(data: json)
 
         // when
-        let sut = try X509TrustStore(trustAnchor: rootCa3TestOnlyTrustAnchor, certList: certList)
+        let sut = try X509TrustStore(
+            trustAnchor: rootCa3TestOnlyTrustAnchor,
+            certList: certList,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
+        )
 
         // then
         let expectedVauCert =
@@ -210,12 +231,17 @@ final class X509TrustStoreTests: XCTestCase {
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: [],
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
         )
 
         // when
         let certList = trustStore.certList
-        let sut = try X509TrustStore(trustAnchor: rootCa3TestOnlyTrustAnchor, certList: certList)
+        let sut = try X509TrustStore(
+            trustAnchor: rootCa3TestOnlyTrustAnchor,
+            certList: certList,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
+        )
 
         // then
         expect(sut.vauCert) == vauEncReference
@@ -232,7 +258,8 @@ final class X509TrustStoreTests: XCTestCase {
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: [],
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
         )
 
         // then
@@ -255,7 +282,8 @@ final class X509TrustStoreTests: XCTestCase {
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: addRootCerts,
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
         )
 
         // then
@@ -278,7 +306,8 @@ final class X509TrustStoreTests: XCTestCase {
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: addRootCerts,
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
         )
 
         // then
@@ -297,8 +326,8 @@ final class X509TrustStoreTests: XCTestCase {
         return try! OCSPList.from(data: json)
     }()
 
-    private lazy var ocspList_FdEncIdpSig1IdpSig3: OCSPList = {
-        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig1-idp-sig3",
+    private lazy var ocspList_FdEncIdpSig3: OCSPList = {
+        guard let url = Bundle.module.url(forResource: "oscp-responses-fd-enc-idp-sig3",
                                           withExtension: "json",
                                           subdirectory: "Resources/OCSPList.bundle"),
             let json = try? Data(contentsOf: url)
@@ -330,7 +359,8 @@ final class X509TrustStoreTests: XCTestCase {
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: addRootCerts,
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189)
         )
         let ocspResponses_FdEnc = try ocspList_FdEnc.responses.map { try OCSPResponse(der: $0) }
 
@@ -344,18 +374,19 @@ final class X509TrustStoreTests: XCTestCase {
         // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
         let addRootCerts = [rootCa4TestOnlyCrossRootCa3TestOnly, rootCa5TestOnlyCrossRootCa4TestOnly]
         let caCerts = [kompCa10TestOnly, kompCa51TestOnly]
-        let eeCerts = [vauEncReference, idpSigReference1, idpSigReference3]
+        let eeCerts = [vauEncReference, idpSigReference3]
         let sut = try X509TrustStore(
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: addRootCerts,
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189) // Wed Jan 08 2025 09:39:49 GMT+0000
         )
-        let ocspResponses_FdEncIdpSig1IdpSig3 = try ocspList_FdEncIdpSig1IdpSig3.responses
+        let ocspResponses_FdEncIdpSig3 = try ocspList_FdEncIdpSig3.responses
             .map { try OCSPResponse(der: $0) }
 
         // then
-        expect(try sut.checkEeCertificatesStatus(with: ocspResponses_FdEncIdpSig1IdpSig3)) == true
+        expect(try sut.checkEeCertificatesStatus(with: ocspResponses_FdEncIdpSig3)) == true
     }
 
     // [REQ:gemSpec_Krypt:A_21218] For every EE certificate there must be a matching OCSP response
@@ -367,7 +398,8 @@ final class X509TrustStoreTests: XCTestCase {
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: [],
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189) // Wed Jan 08 2025 09:39:49 GMT+0000
         )
         let ocspResponses_FdEnc = try ocspList_FdEnc.responses.map { try OCSPResponse(der: $0) }
         // enforce for this test: responses.count == eeCerts.count == 2
@@ -381,19 +413,20 @@ final class X509TrustStoreTests: XCTestCase {
     func testCheckCertificateStatus_failWhenOneResponseHasNoMatchingEeCert() throws {
         // given
         let caCerts = [kompCa10TestOnly]
-        // enforce for this test: responses.count == eeCerts.count == 3
-        let eeCerts = [vauEncReference, idpSigReference1, idpSigReference1] // missing idpSigReference3
+        // enforce for this test: responses.count == eeCerts.count == 2
+        let eeCerts = [vauEncReference] // missing idpSigReference3
         let sut = try X509TrustStore(
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: [],
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189) // Wed Jan 08 2025 09:39:49 GMT+0000
         )
-        let ocspResponses_FdEncIdpSig1IdpSig3 = try ocspList_FdEncIdpSig1IdpSig3.responses
+        let ocspResponses_FdEncIdpSig3 = try ocspList_FdEncIdpSig3.responses
             .map { try OCSPResponse(der: $0) }
 
         // then
-        expect(try sut.checkEeCertificatesStatus(with: ocspResponses_FdEncIdpSig1IdpSig3)) == false
+        expect(try sut.checkEeCertificatesStatus(with: ocspResponses_FdEncIdpSig3)) == false
     }
 
     // [REQ:gemSpec_Krypt:A_21218] OCSP responder certificates must be verifiable by the trust store
@@ -405,7 +438,8 @@ final class X509TrustStoreTests: XCTestCase {
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
             addRoots: [],
             caCerts: caCerts,
-            eeCerts: eeCerts
+            eeCerts: eeCerts,
+            validationTime: Date(timeIntervalSince1970: 1_736_329_189) // Wed Jan 08 2025 09:39:49 GMT+0000
         )
         let ocspResponses = try ocspList_NotSignedByKompCa.responses.map { try OCSPResponse(der: $0) }
 

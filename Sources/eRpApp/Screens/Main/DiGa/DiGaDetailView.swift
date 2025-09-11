@@ -26,136 +26,134 @@ import eRpStyleKit
 import SwiftUI
 
 struct DiGaDetailView: View {
-    @Perception.Bindable var store: StoreOf<DiGaDetailDomain>
+    @Bindable var store: StoreOf<DiGaDetailDomain>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                ScrollView {
-                    HeaderView(store: store)
+        VStack {
+            ScrollView {
+                HeaderView(store: store)
 
-                    // Causing an Perceptible Warning https://github.com/pointfreeco/swift-perception/issues/100
-                    _Picker(selection: $store.selectedView.sending(\.changePickerView)) {
-                        ForEach(DiGaDetailDomain.DiGaDetailSegments.allCases, id: \.self) { viewOption in
-                            WithPerceptionTracking {
-                                Text(viewOption.displayText).tag(viewOption)
-                            }
-                        }
+                Picker(selection: $store.selectedView.sending(\.changePickerView)) {
+                    ForEach(DiGaDetailDomain.DiGaDetailSegments.allCases, id: \.self) { viewOption in
+                        Text(viewOption.displayText).tag(viewOption)
                     }
+                } label: {
+                    Text("")
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.top, 8)
 
-                    switch store.selectedView {
-                    case .overview:
-                        OverviewView(store: store)
-                    case .details:
-                        DetailsView(store: store)
-                    }
+                switch store.selectedView {
+                case .overview:
+                    OverviewView(store: store)
+                case .details:
+                    DetailsView(store: store)
+                }
+            }
+
+            if store.showMainButton {
+                Spacer()
+
+                GreyDivider()
+                    .padding(.bottom, 16)
+
+                if let available = store.isAvailabeOniOS, !available {
+                    NotAvailableIOSHint()
+                        .padding(.horizontal)
                 }
 
-                if store.showMainButton {
-                    Spacer()
-
-                    GreyDivider()
-                        .padding(.bottom, 16)
-
-                    if let available = store.isAvailabeOniOS, !available {
-                        NotAvailableIOSHint()
-                            .padding(.horizontal)
-                    }
-
-                    if !store.showSelectInsurance {
-                        if let buttonText = store.diGaInfo.diGaState.buttonText {
-                            PrimaryTextButton(text: LocalizedStringKey(buttonText),
-                                              a11y: A11y.digaDetail.digaDtlBtnMainAction) {
-                                store.send(.mainButtonTapped)
-                            }.padding([.horizontal, .bottom], 8)
-                        }
-                    } else {
-                        PrimaryTextButton(text: store.isLoading ? L10n.digaDtlBtnMainRequest : L10n
-                            .digaDtlBtnMainSelectInsurance,
-                            a11y: A11y.digaDetail.digaDtlBtnMainSelectInsurance,
-                            isEnabled: !store.isLoading) {
-                                store.send(.setNavigation(tag: .insuranceList))
+                if !store.showSelectInsurance {
+                    if let buttonText = store.diGaInfo.diGaState.buttonText {
+                        PrimaryTextButton(text: LocalizedStringKey(buttonText),
+                                          a11y: A11y.diga.detail.digaDtlBtnMainAction) {
+                            store.send(.mainButtonTapped)
                         }.padding([.horizontal, .bottom], 8)
-
-                        if store.isLoading {
-                            HStack(spacing: 4) {
-                                Text(L10n.digaDtlTxtLoadingInsurance)
-                                    .font(.subheadline)
-                                    .foregroundColor(Color(.secondaryLabel))
-
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle())
-                            }.padding([.horizontal, .bottom], 16)
-                        }
                     }
-
-                    if store.showRelatedInsurance {
-                        Button {
+                } else {
+                    PrimaryTextButton(text: store.isLoading ? L10n.digaDtlBtnMainRequest : L10n
+                        .digaDtlBtnMainSelectInsurance,
+                        a11y: A11y.diga.detail.digaDtlBtnMainSelectInsurance,
+                        isEnabled: !store.isLoading) {
                             store.send(.setNavigation(tag: .insuranceList))
-                        } label: {
-                            Text(store.relatedInsuranceText)
-                                .multilineTextAlignment(.center)
-                        }
-                        .padding([.horizontal, .bottom], 16)
-                        .accessibility(identifier: A11y.digaDetail.digaDtlBtnMainSelectedInsurance)
+                    }.padding([.horizontal, .bottom], 8)
+
+                    if store.isLoading {
+                        HStack(spacing: 4) {
+                            Text(L10n.digaDtlTxtLoadingInsurance)
+                                .font(.subheadline)
+                                .foregroundColor(Color(.secondaryLabel))
+
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                        }.padding([.horizontal, .bottom], 16)
                     }
                 }
-            }.task {
-                store.send(.task)
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu(
-                        content: { ToolbarMenu(store: store) },
-                        label: { Image(systemName: SFSymbolName.ellipsis).foregroundStyle(Colors.primary700) }
-                    )
-                    .accessibility(identifier: A11y.digaDetail.digaDtlBtnToolbarItem)
-                    .contentShape(Rectangle())
+
+                if store.showRelatedInsurance {
+                    Button {
+                        store.send(.setNavigation(tag: .insuranceList))
+                    } label: {
+                        Text(store.relatedInsuranceText)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding([.horizontal, .bottom], 16)
+                    .accessibility(identifier: A11y.diga.detail.digaDtlBtnMainSelectedInsurance)
                 }
             }
-            .destinations(store: $store)
+        }.task {
+            store.send(.task)
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .alert($store.scope(state: \.destination?.alert?.alert, action: \.destination.alert))
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu(
+                    content: { ToolbarMenu(store: store) },
+                    label: { Image(systemName: SFSymbolName.ellipsis).foregroundStyle(Colors.primary700) }
+                )
+                .accessibility(identifier: A11y.diga.detail.digaDtlBtnToolbarItem)
+                .contentShape(Rectangle())
+            }
+        }
+        .destinations(store: $store)
     }
 
     private struct HeaderView: View {
-        @Perception.Bindable var store: StoreOf<DiGaDetailDomain>
+        @Bindable var store: StoreOf<DiGaDetailDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        if let image = store.bfArMDisplayInfo?.image {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                                .clipShape(Circle())
-                                .frame(width: 56, height: 56)
-                                .accessibilityHidden(true)
-                        } else {
-                            Image(decorative: Asset.Prescriptions.DiGa.diGaImage)
-                                .accessibilityHidden(true)
-                        }
-                        Spacer()
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    if let image = store.bfArMDisplayInfo?.image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(Circle())
+                            .frame(width: 56, height: 56)
+                            .accessibilityHidden(true)
+                    } else {
+                        Image(decorative: Asset.Prescriptions.DiGa.diGaImage)
+                            .accessibilityHidden(true)
                     }
+                    Spacer()
+                }
 
-                    Text(store.diGaTask.appName ?? L10n.digaDtlTxtNa.text)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.leading)
-                        .font(Font.title.weight(.bold))
-                        .accessibility(identifier: A11y.digaDetail.digaDtlTxtNameHeader)
+                Text(store.diGaTask.appName ?? L10n.digaDtlTxtNa.text)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
+                    .font(Font.title.weight(.bold))
+                    .accessibility(identifier: A11y.diga.detail.digaDtlTxtNameHeader)
 
-                    Text(store.diGaTask.patientName ?? L10n.digaDtlTxtNa.text)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .multilineTextAlignment(.leading)
-                        .font(.subheadline)
-                        .foregroundColor(Color(.secondaryLabel))
-                        .accessibility(identifier: A11y.digaDetail.digaDtlTxtPatientHeader)
-                }.padding()
-            }
+                Text(store.diGaTask.patientName ?? L10n.digaDtlTxtNa.text)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
+                    .font(.subheadline)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .accessibility(identifier: A11y.diga.detail.digaDtlTxtPatientHeader)
+            }.padding()
         }
     }
 
@@ -179,56 +177,55 @@ struct DiGaDetailView: View {
             .padding(.vertical, 8)
             .background(RoundedRectangle(cornerRadius: 12).fill(Colors.yellow100))
             .accessibilityElement(children: .combine)
+            .accessibilityIdentifier(A11y.diga.detail.digaDtlTxtHintNoIos)
             .border(Colors.yellow300, width: 0.5, cornerRadius: 12)
         }
     }
 
     private struct ToolbarMenu: View {
-        @Perception.Bindable var store: StoreOf<DiGaDetailDomain>
+        @Bindable var store: StoreOf<DiGaDetailDomain>
 
         var body: some View {
-            WithPerceptionTracking {
-                VStack {
-                    if case .archived = store.diGaTask.prescription.viewStatus {
-                    } else {
-                        if store.diGaInfo.diGaState.archivable {
-                            Button(
-                                action: { store.send(.archive) },
-                                label: { Text(L10n.digaDtlBtnTbmArchive) }
-                            )
-                            .accessibility(identifier: A11y.digaDetail.digaDtlBtnArchiveToolbar)
-                        }
-                        if store.diGaInfo.diGaState.unarchivable {
-                            Button(
-                                action: { store.send(.unarchive) },
-                                label: { Text(L10n.digaDtlBtnTbmUnarchive) }
-                            )
-                            .accessibility(identifier: A11y.digaDetail.digaDtlBtnUnarchiveToolbar)
-                        }
-                    }
-
-                    if store.diGaInfo.diGaState == .insurance {
+            VStack {
+                if case .archived = store.diGaTask.prescription.viewStatus {
+                } else {
+                    if store.diGaInfo.diGaState.archivable {
                         Button(
-                            action: { store.send(.redeem) },
-                            label: { Text(L10n.digaDtlBtnTbmRedeemAgain) }
+                            action: { store.send(.archive) },
+                            label: { Text(L10n.digaDtlBtnTbmArchive) }
                         )
-                        .accessibility(identifier: A11y.digaDetail.digaDtlBtnRedeemAgainToolbar)
+                        .accessibility(identifier: A11y.diga.detail.digaDtlBtnArchiveToolbar)
                     }
-
-                    if store.diGaTask.erxTask.status == .ready {
+                    if store.diGaInfo.diGaState.unarchivable {
                         Button(
-                            action: { store.send(.redeem) },
-                            label: { Text(L10n.digaDtlBtnTbmRequest) }
+                            action: { store.send(.unarchive) },
+                            label: { Text(L10n.digaDtlBtnTbmUnarchive) }
                         )
-                        .accessibility(identifier: A11y.digaDetail.digaDtlBtnRequestToolbar)
+                        .accessibility(identifier: A11y.diga.detail.digaDtlBtnUnarchiveToolbar)
                     }
-                    Button(
-                        role: .destructive,
-                        action: { store.send(.delete) },
-                        label: { Text(L10n.digaDtlBtnTbmDelete) }
-                    )
-                    .accessibility(identifier: A11y.digaDetail.digaDtlBtnDeleteToolbar)
                 }
+
+                if store.diGaInfo.diGaState == .insurance {
+                    Button(
+                        action: { store.send(.redeem) },
+                        label: { Text(L10n.digaDtlBtnTbmRedeemAgain) }
+                    )
+                    .accessibility(identifier: A11y.diga.detail.digaDtlBtnRedeemAgainToolbar)
+                }
+
+                if store.diGaTask.erxTask.status == .ready {
+                    Button(
+                        action: { store.send(.redeem) },
+                        label: { Text(L10n.digaDtlBtnTbmRequest) }
+                    )
+                    .accessibility(identifier: A11y.diga.detail.digaDtlBtnRequestToolbar)
+                }
+                Button(
+                    role: .destructive,
+                    action: { store.send(.delete) },
+                    label: { Text(L10n.digaDtlBtnTbmDelete) }
+                )
+                .accessibility(identifier: A11y.diga.detail.digaDtlBtnDeleteToolbar)
             }
         }
     }
@@ -236,7 +233,7 @@ struct DiGaDetailView: View {
 
 extension View {
     func destinations(
-        store: Perception.Bindable<StoreOf<DiGaDetailDomain>>
+        store: Bindable<StoreOf<DiGaDetailDomain>>
     ) -> some View {
         navigationDestination(
             item: store.scope(state: \.destination?.patient, action: \.destination.patient)
@@ -267,30 +264,6 @@ extension View {
             item: store.scope(state: \.destination?.insuranceList, action: \.destination.insuranceList)
         ) { store in
             DiGaInsuranceListView(store: store)
-        }
-    }
-}
-
-// Workaround based on: https://github.com/pointfreeco/swift-perception/issues/100#issuecomment-2419870624
-public struct _Picker<SelectionValue, Content>: View
-    where SelectionValue: Hashable, Content: View {
-    let content: Content
-    let selection: Binding<SelectionValue>
-
-    public init(
-        selection: Binding<SelectionValue>,
-        @ViewBuilder content: () -> Content
-    ) {
-        self.content = content()
-        self.selection = selection
-    }
-
-    public var body: some View {
-        _PerceptionLocals.$skipPerceptionChecking.withValue(true) {
-            Picker(selection: selection, content: { content }, label: { Text("") })
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .padding(.top, 8)
         }
     }
 }

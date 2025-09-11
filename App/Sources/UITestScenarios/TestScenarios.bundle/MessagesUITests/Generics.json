@@ -10,7 +10,7 @@
                 "unit": "{Package}"
             },
             "dosageInstructions": "",
-            "bvg": true,
+            "ser": true,
             "coPaymentStatus": "0",
             "authoredOn": "2024-01-16",
             "multiplePrescription":
@@ -43,7 +43,7 @@
                 "unit": "{Package}"
             },
             "dosageInstructions": "",
-            "bvg": true,
+            "ser": true,
             "coPaymentStatus": "0",
             "authoredOn": "2024-01-16",
             "multiplePrescription":
@@ -108,6 +108,8 @@
             "insuranceId": "M070759114"
         },
         "prescriptionId": "{{TASKID}}",
+        "isEURedeemable" : false,
+        "isSetEURedeemableByPatient" : false,
         "source": "server",
         "communications":
         [],

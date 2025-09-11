@@ -34,23 +34,3 @@ public protocol JWTSignatureVerifier {
     /// - Throws: `Swift.Error`
     func verify(signature: Data, message: Data) throws -> Bool
 }
-
-extension BrainpoolP256r1.Verify.PublicKey: JWTSignatureVerifier {
-    // [REQ:gemSpec_Krypt:A_17207]
-    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02]
-    public func verify(signature raw: Data, message: Data) throws -> Bool {
-        let signature = try BrainpoolP256r1.Verify.Signature(rawRepresentation: raw)
-        return try verify(signature: signature, message: message)
-    }
-}
-
-extension X509: JWTSignatureVerifier {
-    public func verify(signature: Data, message: Data) throws -> Bool {
-        // [REQ:gemSpec_Krypt:A_17207]
-        // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
-        guard let key = brainpoolP256r1VerifyPublicKey() else {
-            throw IDPError.unsupported("expected brainpool P256r1 key")
-        }
-        return try key.verify(signature: signature, message: message)
-    }
-}
